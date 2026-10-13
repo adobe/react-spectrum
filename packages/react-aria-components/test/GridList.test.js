@@ -512,6 +512,47 @@ describe('GridList', () => {
     expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
+  describe('items arriving after an empty list', () => {
+    function Example({items}) {
+      return (
+        <>
+          <GridList aria-label="Async list" items={items} renderEmptyState={() => 'No results'}>
+            {item => <GridListItem id={item.id}>{item.name}</GridListItem>}
+          </GridList>
+          <button>After</button>
+        </>
+      );
+    }
+
+    let items = [
+      {id: 'one', name: 'One'},
+      {id: 'two', name: 'Two'}
+    ];
+
+    it('should navigate to the new rows while the list is focused', async () => {
+      let {getByRole, getAllByRole, rerender} = render(<Example items={[]} />);
+      await user.tab();
+      expect(getByRole('grid')).toHaveFocus();
+
+      rerender(<Example items={items} />);
+      await user.keyboard('{ArrowDown}');
+      expect(getAllByRole('row')[0]).toHaveFocus();
+    });
+
+    it('should leave focus outside the list when items arrive after tabbing away', async () => {
+      let {getByRole, rerender} = render(<Example items={[]} />);
+      await user.tab();
+      expect(getByRole('grid')).toHaveFocus();
+      await user.tab();
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+
+      rerender(<Example items={items} />);
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+      await user.keyboard('{ArrowDown}');
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+    });
+  });
+
   it('should support empty state', () => {
     render(
       <GridList aria-label="Test" renderEmptyState={() => 'No results'}>
@@ -521,6 +562,49 @@ describe('GridList', () => {
     // JSDOM seems to pretend to be WebKit so uses role="group" instead of role="grid".
     let gridList = document.querySelector('.react-aria-GridList');
     expect(gridList).toHaveAttribute('data-empty', 'true');
+  });
+
+  it.each([false, true])('should tab through interactive empty state (shift=%s)', async shift => {
+    let {getByRole} = render(
+      <>
+        <button>Before</button>
+        <GridList
+          aria-label="Test"
+          renderEmptyState={() => (
+            <div>
+              <a href="/#">No results</a>
+              <a href="/#">Another link</a>
+            </div>
+          )}>
+          {[]}
+        </GridList>
+        <button>After</button>
+      </>
+    );
+
+    await user.click(getByRole('button', {name: shift ? 'After' : 'Before'}));
+    for (let name of shift ? ['Another link', 'No results'] : ['No results', 'Another link']) {
+      await user.tab({shift});
+      expect(getByRole('link', {name})).toHaveFocus();
+    }
+    await user.tab({shift});
+    expect(getByRole('button', {name: shift ? 'Before' : 'After'})).toHaveFocus();
+  });
+
+  it('should allow text selection in an empty state input', async () => {
+    let {getByRole} = render(
+      <GridList
+        aria-label="Test"
+        selectionMode="multiple"
+        renderEmptyState={() => <input aria-label="Search" defaultValue="hello" />}>
+        {[]}
+      </GridList>
+    );
+
+    let input = getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{Control>}a{/Control}x');
+    expect(input).toHaveValue('x');
   });
 
   it('should support dynamic collections', () => {

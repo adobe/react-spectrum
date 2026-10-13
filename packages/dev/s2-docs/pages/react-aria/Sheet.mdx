@@ -33,7 +33,7 @@ export const description = 'An overlay that slides in from the edge of the scree
       .filter(item => item.qty > 0));
     let subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
     let delivery = items.length ? 2.99 : 0;
-    
+
     return (
       <SheetTrigger>
         <Button>
@@ -100,7 +100,7 @@ export const description = 'An overlay that slides in from the edge of the scree
       .filter(item => item.qty > 0));
     let subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
     let delivery = items.length ? 2.99 : 0;
-    
+
     return (
       <SheetTrigger>
         <Button>
@@ -203,6 +203,15 @@ import {SheetTrigger} from 'react-aria-components/Sheet';
 import {Sheet, Heading} from 'vanilla-starter/Sheet';
 import {Button} from 'vanilla-starter/Button';
 import {Star, MapPin, Clock, Phone} from 'lucide-react';
+import {Map} from './Map';
+
+let reviews = [
+  {name: 'Maya R.', date: '2 days ago', text: 'The espresso was smooth and the staff was lovely. A great spot for a quiet morning.'},
+  {name: 'Jordan K.', date: '1 week ago', text: 'Really good pour-over and plenty of seating. It gets busy around lunch, but the line moves quickly.'},
+  {name: 'Avery L.', date: '2 weeks ago', text: 'The iced coffee was bright and refreshing, and the pastries were excellent. I will definitely be back.'},
+  {name: 'Chris T.', date: '1 month ago', text: 'Beautiful space with consistently good coffee. The cappuccino had the perfect amount of foam.'},
+  {name: 'Samira P.', date: '1 month ago', text: 'Friendly service, fast Wi-Fi, and a great neighborhood atmosphere. One of my favorite coffee shops in Port Marlow.'}
+];
 
 function Example() {
   return (
@@ -211,18 +220,33 @@ function Example() {
       {/*- begin highlight -*/}
       <Sheet position="bottom" snapPoints={[280]}>
       {/*- end highlight -*/}
-        <Heading slot="title" style={{marginBottom: 4}}>Blue Bottle Coffee</Heading>
+        <Heading slot="title" style={{marginBottom: 4}}>Harborlight Coffee</Heading>
         <div style={{display: 'flex', alignItems: 'center', gap: 8, color: 'var(--gray-1000)', marginBottom: 32}}>
           <Star size={16} fill="currentColor" style={{color: '#ff9500'}} />
           <strong>4.6</strong> · Coffee shop · $$
         </div>
         <div style={{display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'start'}}>
-          <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><MapPin size={18} /> 300 Webster St, Oakland</div>
+          <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><MapPin size={18} /> 300 Harbor St, Port Marlow</div>
           <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><Clock size={18} /> Open until 6:00 PM</div>
           <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><Phone size={18} /> (510) 555-0142</div>
           <p>Drag this sheet up to see more, or swipe down to dismiss. Snap points let you preview the most relevant content first, then expand for the full story.</p>
-          <div style={{height: 300, width: '100%', background: 'var(--gray-200)', borderRadius: 16}} />
+          <Map />
           <Button slot="close">Get directions</Button>
+          <h3 style={{margin: '8px 0 0'}}>Reviews</h3>
+          <div style={{display: 'flex', flexDirection: 'column', gap: 16, width: '100%'}}>
+            {reviews.map(review => (
+              <div key={review.name} style={{padding: 16, border: '1px solid var(--gray-300)', borderRadius: 12}}>
+                <div style={{display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8}}>
+                  <strong>{review.name}</strong>
+                  <span style={{color: 'var(--gray-700)', fontSize: 14}}>{review.date}</span>
+                </div>
+                <div style={{display: 'flex', gap: 2, color: '#ff9500', marginBottom: 8}}>
+                  {Array.from({length: 5}, (_, i) => <Star key={i} size={14} fill="currentColor" />)}
+                </div>
+                <div>{review.text}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </Sheet>
     </SheetTrigger>
