@@ -138,26 +138,28 @@ describeOrSkip('TokenField browser interactions', () => {
   });
 
   describe('caret movement', () => {
-    it('reports every caret move through onChange', async () => {
-      let offsets: number[] = [];
-      let screen = await render(
-        <TokenField
-          defaultValue={segments(text('abcdefgh'))}
-          aria-label="Caret onChange"
-          onChange={value => offsets.push(value.caretPosition.offset)}>
-          <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
-        </TokenField>
-      );
-      let textbox = screen.getByRole('textbox', {name: 'Caret onChange'});
+    it('updates the selected range in the value on every caret move', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(abTokCd);
       await focusField(textbox);
       await userEvent.keyboard('{Home}');
-      await expect.poll(() => getFieldSelection(textbox.element())?.[0].offset).toBe(0);
-      offsets = [];
-      for (let i = 1; i <= 6; i++) {
+      await waitForCaret(getValue, {index: 0, offset: 0});
+      let positions = [
+        {index: 0, offset: 1},
+        {index: 0, offset: 2},
+        {index: 2, offset: 0},
+        {index: 2, offset: 1},
+        {index: 2, offset: 2}
+      ];
+      for (let position of positions) {
         await userEvent.keyboard('{ArrowRight}');
-        await expect.poll(() => offsets[offsets.length - 1]).toBe(i);
+        await waitForSelection(textbox, position);
+        await waitForCaret(getValue, position);
       }
-      expect(offsets).toEqual([1, 2, 3, 4, 5, 6]);
+      for (let position of positions.slice(0, -1).reverse()) {
+        await userEvent.keyboard('{ArrowLeft}');
+        await waitForSelection(textbox, position);
+        await waitForCaret(getValue, position);
+      }
     });
 
     it('skips over token with ArrowRight from end of preceding text', async () => {
