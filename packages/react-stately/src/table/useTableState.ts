@@ -122,7 +122,12 @@ const OPPOSITE_SORT_DIRECTION = {
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
   let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
-  let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons, treeColumn = null} = props;
+  let {
+    selectionMode = 'none',
+    showSelectionCheckboxes = false,
+    showDragButtons,
+    treeColumn = null
+  } = props;
 
   let context = useMemo(
     () => ({
@@ -148,31 +153,34 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
   });
 
   let [expandedKeys, setExpandedKeys] = useControlledState(
-    props.expandedKeys ? new Set(props.expandedKeys) : undefined,
-    props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
+    useMemo(
+      () => (props.expandedKeys ? new Set(props.expandedKeys) : undefined),
+      [props.expandedKeys]
+    ),
+    useMemo(
+      () => (props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set()),
+      [props.defaultExpandedKeys]
+    ),
     props.onExpandedChange
   );
 
-  return {
-    collection,
-    disabledKeys,
-    selectionManager,
-    showSelectionCheckboxes: props.showSelectionCheckboxes || false,
-    sortDescriptor: props.sortDescriptor ?? null,
-    isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
-    setKeyboardNavigationDisabled,
-    sort(columnKey: Key, direction?: 'ascending' | 'descending') {
-      props.onSortChange?.({
+  let {onSortChange, sortDescriptor} = props;
+  let sort = useCallback(
+    (columnKey: Key, direction?: 'ascending' | 'descending') => {
+      onSortChange?.({
         column: columnKey,
         direction:
           direction ??
-          (props.sortDescriptor?.column === columnKey
-            ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
+          (sortDescriptor?.column === columnKey
+            ? OPPOSITE_SORT_DIRECTION[sortDescriptor.direction]
             : 'ascending')
       });
     },
-    expandedKeys,
-    toggleKey(key) {
+    [onSortChange, sortDescriptor]
+  );
+
+  let toggleKey = useCallback(
+    (key: Key) => {
       setExpandedKeys(keys => {
         let newKeys = new Set(keys);
         if (newKeys.has(key)) {
@@ -184,8 +192,40 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
         return newKeys;
       });
     },
-    treeColumn
-  };
+    [setExpandedKeys]
+  );
+
+  let sortDescriptorProp = props.sortDescriptor ?? null;
+  let isKeyboardNavDisabled = collection.size === 0 || isKeyboardNavigationDisabled;
+
+  return useMemo(
+    () => ({
+      collection,
+      disabledKeys,
+      selectionManager,
+      showSelectionCheckboxes,
+      sortDescriptor: sortDescriptorProp,
+      isKeyboardNavigationDisabled: isKeyboardNavDisabled,
+      setKeyboardNavigationDisabled,
+      sort,
+      expandedKeys,
+      toggleKey,
+      treeColumn
+    }),
+    [
+      collection,
+      disabledKeys,
+      selectionManager,
+      showSelectionCheckboxes,
+      sortDescriptorProp,
+      isKeyboardNavDisabled,
+      setKeyboardNavigationDisabled,
+      sort,
+      expandedKeys,
+      toggleKey,
+      treeColumn
+    ]
+  );
 }
 
 /**
@@ -199,12 +239,23 @@ export function UNSTABLE_useFilteredTableState<T extends object>(
     () => (filterFn ? state.collection.filter!(filterFn) : state.collection),
     [state.collection, filterFn]
   ) as ITableCollection<T>;
-  let selectionManager = state.selectionManager.withCollection(collection);
+  let selectionManager = useMemo(
+    () =>
+      collection === state.collection
+        ? state.selectionManager
+        : state.selectionManager.withCollection(collection),
+    [state.selectionManager, collection, state.collection]
+  );
   // TODO: handle focus key reset? That logic is in useGridState
 
-  return {
-    ...state,
-    collection,
-    selectionManager
-  };
+  return useMemo(() => {
+    if (collection === state.collection && selectionManager === state.selectionManager) {
+      return state;
+    }
+    return {
+      ...state,
+      collection,
+      selectionManager
+    };
+  }, [state, collection, selectionManager]);
 }

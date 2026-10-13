@@ -34,6 +34,7 @@ import {
   TableFooter,
   TableHeader,
   TableLoadMoreItem,
+  TableStateContext,
   useTableOptions
 } from '../src/Table';
 
@@ -45,7 +46,7 @@ import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {Label} from '../src/Label';
 import {Modal} from '../src/Modal';
-import React, {useMemo, useState} from 'react';
+import React, {useContext, useMemo, useState} from 'react';
 import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import * as stories from '../stories/Table.stories';
@@ -2197,6 +2198,155 @@ describe('Table', () => {
       let {getAllByTestId} = render(<ControlledResizableTable />);
       let resizers = getAllByTestId('resizer');
       expect(resizers).toHaveLength(5);
+    });
+
+    it('does not re-render cells when container width changes', () => {
+      let cellRenderCount = 0;
+      function CountingCell({children, ...props}) {
+        cellRenderCount++;
+        return <Cell {...props}>{children}</Cell>;
+      }
+
+      let clientWidth = jest
+        .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+        .mockImplementation(() => 900);
+
+      let rows = [{id: '1', name: 'Charizard', type: 'Fire'}];
+      let cols = [
+        {name: 'Name', uid: 'name', width: '1fr'},
+        {name: 'Type', uid: 'type', width: '1fr'}
+      ];
+
+      render(
+        <ResizableTableContainer>
+          <Table aria-label="Table">
+            <MyTableHeader columns={cols}>
+              {column => (
+                <MyColumn id={column.uid} isRowHeader={column.uid === 'name'}>
+                  {column.name}
+                </MyColumn>
+              )}
+            </MyTableHeader>
+            <TableBody items={rows}>
+              {item => (
+                <MyRow columns={cols}>
+                  {column => <CountingCell>{item[column.uid]}</CountingCell>}
+                </MyRow>
+              )}
+            </TableBody>
+          </Table>
+        </ResizableTableContainer>
+      );
+
+      let initialRenderCount = cellRenderCount;
+      expect(initialRenderCount).toBeGreaterThan(0);
+
+      resizeTable(clientWidth, 1000);
+
+      expect(cellRenderCount).toBe(initialRenderCount);
+      clientWidth.mockRestore();
+    });
+
+    it('does not re-render cells when container width changes with controlled expandedKeys', () => {
+      let cellRenderCount = 0;
+      function CountingCell({children, ...props}) {
+        cellRenderCount++;
+        return <Cell {...props}>{children}</Cell>;
+      }
+
+      let clientWidth = jest
+        .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+        .mockImplementation(() => 900);
+
+      let rows = [{id: '1', name: 'Charizard', type: 'Fire'}];
+      let cols = [
+        {name: 'Name', uid: 'name', width: '1fr'},
+        {name: 'Type', uid: 'type', width: '1fr'}
+      ];
+      let expandedKeys = new Set(['1']);
+
+      render(
+        <ResizableTableContainer>
+          <Table aria-label="Table" expandedKeys={expandedKeys}>
+            <MyTableHeader columns={cols}>
+              {column => (
+                <MyColumn id={column.uid} isRowHeader={column.uid === 'name'}>
+                  {column.name}
+                </MyColumn>
+              )}
+            </MyTableHeader>
+            <TableBody items={rows}>
+              {item => (
+                <MyRow columns={cols}>
+                  {column => <CountingCell>{item[column.uid]}</CountingCell>}
+                </MyRow>
+              )}
+            </TableBody>
+          </Table>
+        </ResizableTableContainer>
+      );
+
+      let initialRenderCount = cellRenderCount;
+      expect(initialRenderCount).toBeGreaterThan(0);
+
+      resizeTable(clientWidth, 1000);
+
+      expect(cellRenderCount).toBe(initialRenderCount);
+      clientWidth.mockRestore();
+    });
+
+    it('preserves TableStateContext identity when container width changes', () => {
+      let states = [];
+      function StateSpy() {
+        let state = useContext(TableStateContext);
+        states.push(state);
+        return null;
+      }
+
+      let clientWidth = jest
+        .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+        .mockImplementation(() => 900);
+
+      let rows = [{id: '1', name: 'Charizard', type: 'Fire'}];
+      let cols = [
+        {name: 'Name', uid: 'name', width: '1fr'},
+        {name: 'Type', uid: 'type', width: '1fr'}
+      ];
+
+      render(
+        <ResizableTableContainer>
+          <Table aria-label="Table">
+            <MyTableHeader columns={cols}>
+              {column => (
+                <MyColumn id={column.uid} isRowHeader={column.uid === 'name'}>
+                  {column.name}
+                </MyColumn>
+              )}
+            </MyTableHeader>
+            <TableBody items={rows}>
+              {item => (
+                <MyRow columns={cols}>
+                  {column => (
+                    <Cell>
+                      {item[column.uid]}
+                      <StateSpy />
+                    </Cell>
+                  )}
+                </MyRow>
+              )}
+            </TableBody>
+          </Table>
+        </ResizableTableContainer>
+      );
+
+      expect(states.length).toBeGreaterThan(0);
+      let firstState = states[0];
+
+      resizeTable(clientWidth, 1000);
+
+      expect(states.length).toBe(cols.length * rows.length);
+      expect(states.every(s => s === firstState)).toBe(true);
+      clientWidth.mockRestore();
     });
   });
 
