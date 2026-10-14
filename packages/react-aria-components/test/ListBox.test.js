@@ -766,9 +766,6 @@ describe('ListBox', () => {
 
         expect(onSelectionChange).toHaveBeenCalledTimes(0);
         let option2 = options[2];
-        if (type === 'keyboard') {
-          await user.tab();
-        }
         await listboxTester.toggleOptionSelection({
           option: 'Kangaroo',
           selectionBehavior: 'replace'
@@ -827,9 +824,6 @@ describe('ListBox', () => {
         let options = listboxTester.getOptions();
 
         let option2 = options[2];
-        if (type === 'keyboard') {
-          await user.tab();
-        }
         await listboxTester.toggleOptionSelection({
           option: 'Kangaroo',
           selectionBehavior: 'replace'

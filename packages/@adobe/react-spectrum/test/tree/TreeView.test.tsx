@@ -820,9 +820,6 @@ describe('Tree', () => {
           }
 
           let row2 = rows[2];
-          if (type === 'keyboard') {
-            await user.tab();
-          }
           await treeTester.toggleRowSelection({row: 'Projects-1', selectionBehavior: 'replace'});
           expect(row2).toHaveAttribute('aria-selected', 'true');
           expect(row2).toHaveAttribute('data-selected', 'true');
@@ -885,9 +882,6 @@ describe('Tree', () => {
           }
 
           let row2 = rows[2];
-          if (type === 'keyboard') {
-            await user.tab();
-          }
           await treeTester.toggleRowSelection({row: 'Projects-1', selectionBehavior: 'replace'});
           expect(row2).toHaveAttribute('aria-selected', 'true');
           expect(row2).toHaveAttribute('data-selected', 'true');

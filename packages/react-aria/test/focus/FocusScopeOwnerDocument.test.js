@@ -12,13 +12,22 @@
 
 import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {createPortal} from 'react-dom';
-import {FocusScope, useFocusManager} from '../../src/focus/FocusScope';
+import {
+  FocusScope,
+  isFocusContainmentRestoration,
+  useFocusManager
+} from '../../src/focus/FocusScope';
+import {
+  getInteractionModality,
+  setInteractionModality
+} from '../../src/interactions/useFocusVisible';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('FocusScope', function () {
   let iframe;
   let iframeRoot;
+  let previousModality;
 
   let user;
 
@@ -31,6 +40,7 @@ describe('FocusScope', function () {
   });
 
   beforeEach(async () => {
+    previousModality = getInteractionModality();
     // Iframe setup
     iframe = document.createElement('iframe');
     window.document.body.appendChild(iframe);
@@ -47,9 +57,56 @@ describe('FocusScope', function () {
 
     // Iframe teardown
     iframe.remove();
+    setInteractionModality(previousModality);
   });
 
   describe('focus containment', function () {
+    it.each([
+      ['pointer', false],
+      ['pointer', true],
+      ['virtual', false],
+      ['virtual', true]
+    ])('scopes restoration to its iframe target (%s, reentrant: %s)', (modality, reenter) => {
+      setInteractionModality(modality);
+      let states = [];
+      let nested = false;
+      let outside;
+      let separateRoot = render(<input aria-label="Separate root" />);
+      let other = separateRoot.getByRole('textbox');
+      render(
+        <IframeExample>
+          <FocusScope contain>
+            <input
+              data-testid="restore-target"
+              onFocus={e => {
+                let target = e.currentTarget;
+                let restoring = isFocusContainmentRestoration(target);
+                states.push(restoring);
+                expect(isFocusContainmentRestoration(other)).toBe(false);
+                if (restoring && reenter && !nested) {
+                  nested = true;
+                  outside.focus();
+                  expect(isFocusContainmentRestoration(target)).toBe(true);
+                }
+              }}
+            />
+          </FocusScope>
+          <input data-testid="outside-scope" />
+        </IframeExample>
+      );
+      let target = iframe.contentDocument.querySelector('[data-testid="restore-target"]');
+      outside = iframe.contentDocument.querySelector('[data-testid="outside-scope"]');
+      act(() => {
+        target.focus();
+        outside.focus();
+        jest.runAllTimers();
+      });
+      expect(iframe.contentDocument.activeElement).toBe(target);
+      expect(states).toEqual(reenter ? [false, true, true] : [false, true]);
+      expect(isFocusContainmentRestoration(target)).toBe(false);
+      expect(isFocusContainmentRestoration(other)).toBe(false);
+    });
+
     it('should contain focus within the scope', async function () {
       render(
         <IframeExample>

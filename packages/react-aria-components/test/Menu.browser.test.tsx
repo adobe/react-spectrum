@@ -13,11 +13,11 @@
 import {Button} from '../src/Button';
 import {commands, page, userEvent} from 'vitest/browser';
 import {expect, it, vi} from 'vitest';
+import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Popover} from '../src/Popover';
 import React from 'react';
 import {render} from 'vitest-browser-react';
-import {setInteractionModality} from 'react-aria';
 
 function MenuExample({onAction}) {
   return (
@@ -38,33 +38,25 @@ it('does not highlight a menu item while pressing outside a mouse-opened menu', 
   let onAction = vi.fn();
   await render(<MenuExample onAction={onAction} />);
 
-  let restorePointerModality = () => setInteractionModality('pointer');
-  document.addEventListener('click', restorePointerModality, true);
+  await userEvent.click(page.getByRole('button', {name: 'Actions'}));
+  let menu = page.getByRole('menu');
+  await expect.element(menu).toBeInTheDocument();
 
+  // Keep the native press held while containment restores focus on the next frame.
+  await commands.mouseDownOnElement('[data-testid="underlay"]', 5);
   try {
-    await userEvent.click(page.getByRole('button', {name: 'Actions'}));
-    let menu = page.getByRole('menu');
-    await expect.element(menu).toBeInTheDocument();
-
-    // Use a native press on the underlay so the browser moves focus out of the menu.
-    // Keep the button held while FocusScope restores focus on the next animation frame.
-    await commands.mouseDownOnElement('[data-testid="underlay"]', 5);
-    try {
-      await new Promise(resolve =>
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve(null)))
-      );
-
-      expect(menu.element().querySelector('[data-focused]')).toBeNull();
-      expect(onAction).not.toHaveBeenCalled();
-    } finally {
-      await commands.mouseUp();
-    }
-
-    await expect.element(menu).not.toBeInTheDocument();
+    await new Promise(resolve =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve(null)))
+    );
+    expect(menu.element().querySelector('[data-focused]')).toBeNull();
+    await expect.element(menu).toHaveFocus();
     expect(onAction).not.toHaveBeenCalled();
   } finally {
-    document.removeEventListener('click', restorePointerModality, true);
+    await commands.mouseUp();
   }
+
+  await expect.element(menu).not.toBeInTheDocument();
+  expect(onAction).not.toHaveBeenCalled();
 });
 
 it.each([
@@ -81,4 +73,40 @@ it.each([
 
   await userEvent.keyboard('{Escape}');
   await expect.element(page.getByRole('menu')).not.toBeInTheDocument();
+});
+
+it('focuses the first item when opening with a virtual click', async () => {
+  await render(<MenuExample onAction={vi.fn()} />);
+  (page.getByRole('button', {name: 'Actions'}).element() as HTMLElement).click();
+  expect(getInteractionModality()).toBe('virtual');
+  await expect.element(page.getByRole('menuitem', {name: 'Open'})).toHaveAttribute('data-focused');
+  await expect
+    .element(page.getByRole('menuitem', {name: 'Open'}))
+    .toHaveAttribute('data-focus-visible');
+});
+
+it('restores the menu without highlighting an item after virtual focus is lost', async () => {
+  await render(
+    <>
+      <Button>Outside</Button>
+      <MenuExample onAction={vi.fn()} />
+    </>
+  );
+  await userEvent.click(page.getByRole('button', {name: 'Actions'}));
+  let menu = page.getByRole('menu');
+  await expect.element(menu).toHaveFocus();
+
+  // A virtual click changes modality without moving focus out of the menu.
+  (page.getByRole('button', {name: 'Outside'}).element() as HTMLElement).click();
+  expect(getInteractionModality()).toBe('virtual');
+  let restored = new Promise<void>(resolve => {
+    menu.element().addEventListener('focusin', () => resolve(), {once: true});
+  });
+  // Browser tests await DOM assertions rather than React act().
+  // oxlint-disable-next-line rsp-rules/act-events-test
+  (menu.element() as HTMLElement).blur();
+  await restored;
+  await new Promise(resolve => requestAnimationFrame(() => resolve(null)));
+  await expect.element(menu).toHaveFocus();
+  expect(menu.element().querySelector('[data-focused]')).toBeNull();
 });
