@@ -14,7 +14,7 @@ import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
 import {baseColor, css, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
-import {centerBaseline} from './CenterBaseline';
+import {centerBaseline, CenterBaseline} from './CenterBaseline';
 import {
   centerPadding,
   getAllowedOverrides,
@@ -179,7 +179,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   } = props;
 
   let domRef = useDOMRef(ref);
-  let {isCollapsed} = useContext(SideNavPanelContext) ?? {};
+  let {isCollapsed, setCollapsed} = useContext(SideNavPanelContext) ?? {};
   let isInSideNavPanel = isCollapsed !== undefined;
 
   let [expandedKeys, setExpandedKeys] = useControlledState(
@@ -197,6 +197,11 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   // Expanding or collapsing an item moves every row below it and mounts or unmounts its children.
   // Scheduling that as a transition causes the <ViewTransition> around each row to animate.
   let toggleExpandedKeys = (keys: Set<Key>) => {
+    // A collapsed panel has no room to show an item's children, so activating an item that isn't a
+    // link expands the panel to reveal them rather than silently expanding behind the rail.
+    if (isCollapsed) {
+      setCollapsed?.(false);
+    }
     startTransition(() => {
       addTransitionType(
         keys.size > visibleExpandedKeys.size ? ITEM_EXPAND_TRANSITION : ITEM_COLLAPSE_TRANSITION
@@ -498,8 +503,11 @@ const SideNavItemContentInner = props => {
             [
               IconContext,
               {
-                render: centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})}),
-                styles: style({size: '1lh', flexShrink: 0})
+                render: (icon: ReactNode) => (
+                  <CenterBaseline data-do-not-hide slot="icon" styles={treeIcon({isCollapsed})}>
+                    {icon}
+                  </CenterBaseline>
+                )
               }
             ],
             [ActionButtonGroupContext, {styles: treeActions, isDisabled, size: 'S'}],
