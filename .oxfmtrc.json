@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "ignorePatterns": [
+    "perf/.local/**",
     "**/*.mdx",
     "**/*.md",
     "packages/dev/codemods/src/s1-to-s2/__testfixtures__/**"

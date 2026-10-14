@@ -1,0 +1,210 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ */
+
+export interface Condition {
+  selector: string;
+  count?: number;
+  attribute?: string;
+  value?: string;
+  text?: string;
+  focused?: boolean;
+  scrollTop?: number;
+}
+
+interface EventEntry extends PerformanceEntry {
+  interactionId: number;
+  processingStart: number;
+  processingEnd: number;
+}
+
+interface ArmOptions {
+  event: 'pointerdown' | 'keydown' | 'wheel';
+  target: string;
+  key?: string;
+  conditions: Condition[];
+  frames?: boolean;
+}
+
+export interface Sample {
+  start: number;
+  semanticReady: number;
+  renderingOpportunity: number;
+  frameIntervals: number[];
+  events: Array<{
+    name: string;
+    startTime: number;
+    duration: number;
+    interactionId: number;
+    inputDelay: number;
+    processing: number;
+  }>;
+  eventTimingSupported: boolean;
+  visibility: DocumentVisibilityState;
+}
+
+let events: Sample['events'] = [];
+let observer: PerformanceObserver | undefined;
+let armed: ArmOptions | undefined;
+let sample: Sample | undefined;
+let lastFrame: number | undefined;
+let frame = 0;
+let finishing = false;
+
+const eventTimingSupported = PerformanceObserver.supportedEntryTypes.includes('event');
+if (eventTimingSupported) {
+  observer = new PerformanceObserver(list => collect(list.getEntries() as EventEntry[]));
+  observer.observe({
+    type: 'event',
+    buffered: true,
+    durationThreshold: 16
+  } as PerformanceObserverInit);
+}
+
+function collect(entries: EventEntry[]) {
+  for (let entry of entries) {
+    if (entry.interactionId > 0) {
+      events.push({
+        name: entry.name,
+        startTime: entry.startTime,
+        duration: entry.duration,
+        interactionId: entry.interactionId,
+        inputDelay: entry.processingStart - entry.startTime,
+        processing: entry.processingEnd - entry.processingStart
+      });
+    }
+  }
+}
+
+function matches(conditions: Condition[]) {
+  return conditions.every(condition => {
+    let nodes = document.querySelectorAll<HTMLElement>(condition.selector);
+    if (condition.count !== undefined && nodes.length !== condition.count) {
+      return false;
+    }
+    let node = nodes[0];
+    if (!node) {
+      return condition.count === 0;
+    }
+    return (
+      (!condition.attribute || node.getAttribute(condition.attribute) === condition.value) &&
+      (condition.text === undefined || node.textContent === condition.text) &&
+      // Fixtures live in the top-level document, with no shadow roots.
+      // oxlint-disable-next-line rsp-rules/shadow-safe-active-element
+      (!condition.focused || node === document.activeElement) &&
+      (condition.scrollTop === undefined || node.scrollTop >= condition.scrollTop)
+    );
+  });
+}
+
+function check() {
+  if (!sample || !armed || finishing || !matches(armed.conditions)) {
+    return;
+  }
+  finishing = true;
+  sample.semanticReady = performance.now();
+  // This is a rendering-opportunity proxy, not a claim about presented pixels.
+  // Waiting two frames also keeps a commit observed inside rAF from ending early.
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      if (sample) {
+        sample.renderingOpportunity = performance.now();
+        cancelAnimationFrame(frame);
+      }
+    })
+  );
+}
+
+new MutationObserver(check).observe(document.documentElement, {
+  subtree: true,
+  childList: true,
+  attributes: true,
+  characterData: true
+});
+document.addEventListener('focusin', () => queueMicrotask(check), true);
+document.addEventListener('visibilitychange', () => {
+  if (sample && document.hidden) {
+    sample.visibility = 'hidden';
+  }
+});
+
+function tick(now: number) {
+  if (!sample || !armed) {
+    return;
+  }
+  if (armed.frames && lastFrame !== undefined) {
+    sample.frameIntervals.push(now - lastFrame);
+  }
+  lastFrame = now;
+  check();
+  if (!sample.renderingOpportunity) {
+    frame = requestAnimationFrame(tick);
+  }
+}
+
+function start(event: Event) {
+  if (!armed || sample || event.type !== armed.event || !event.isTrusted) {
+    return;
+  }
+  let target = event.composedPath()[0];
+  if (!(target instanceof Element) || !target.closest(armed.target)) {
+    return;
+  }
+  if (armed.key && (event as KeyboardEvent).key !== armed.key) {
+    return;
+  }
+  sample = {
+    start: event.timeStamp,
+    semanticReady: 0,
+    renderingOpportunity: 0,
+    frameIntervals: [],
+    events: [],
+    eventTimingSupported,
+    visibility: document.visibilityState
+  };
+  frame = requestAnimationFrame(tick);
+}
+
+for (let event of ['pointerdown', 'keydown', 'wheel']) {
+  document.addEventListener(event, start, {capture: true, passive: true});
+}
+
+export const measurement = {
+  arm(options: ArmOptions) {
+    if (matches(options.conditions)) {
+      throw new Error('Completion condition already holds before the action');
+    }
+    measurement.clear();
+    armed = options;
+  },
+  clear() {
+    cancelAnimationFrame(frame);
+    observer?.takeRecords();
+    events = [];
+    armed = undefined;
+    sample = undefined;
+    lastFrame = undefined;
+    finishing = false;
+  },
+  done() {
+    return !!sample?.renderingOpportunity;
+  },
+  read(): Sample {
+    if (!sample?.renderingOpportunity) {
+      throw new Error('Measurement did not complete');
+    }
+    if (!armed || !matches(armed.conditions)) {
+      throw new Error('The expected result did not remain correct after completion');
+    }
+    collect((observer?.takeRecords() ?? []) as EventEntry[]);
+    return {
+      ...sample,
+      events: events.filter(
+        event => event.startTime >= sample!.start && event.startTime <= sample!.renderingOpportunity
+      )
+    };
+  }
+};
