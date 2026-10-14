@@ -1375,6 +1375,15 @@ describe('DatePicker', function () {
             {upKey: 'End', downKey: 'Home'}
           );
         });
+
+        it('should keep the wall-clock time when the month crosses a DST transition', async function () {
+          await testArrows(
+            'month,',
+            parseZonedDateTime('2026-10-14T09:44[Europe/Lisbon]'),
+            parseZonedDateTime('2026-11-14T09:44[Europe/Lisbon]'),
+            parseZonedDateTime('2026-09-14T09:44[Europe/Lisbon]')
+          );
+        });
       });
 
       describe('day', function () {
@@ -1419,6 +1428,15 @@ describe('DatePicker', function () {
             new CalendarDate(2019, 8, 31),
             new CalendarDate(2019, 8, 1),
             {upKey: 'End', downKey: 'Home'}
+          );
+        });
+
+        it('should keep the wall-clock time when the day crosses a DST transition', async function () {
+          await testArrows(
+            'day,',
+            parseZonedDateTime('2026-10-24T09:33[Europe/Lisbon]'),
+            parseZonedDateTime('2026-10-25T09:33[Europe/Lisbon]'),
+            parseZonedDateTime('2026-10-23T09:33[Europe/Lisbon]')
           );
         });
       });
