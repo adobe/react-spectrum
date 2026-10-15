@@ -42,7 +42,3 @@ parser.getNumberingSystem('١٢') // -> 'arabic'
 ## NumberFormatter
 
 The `NumberFormatter` class is a wrapper around [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) providing additional options, polyfills, and caching for performance. It provides the exact same interface as Intl.NumberFormat, so it is a drop-in replacement. Please see the MDN docs linked above for more details.
-
-We currently polyfill the following features:
-
-* The `unit` style, currently only for the `degree` unit in the `narrow` style
