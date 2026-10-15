@@ -71,7 +71,7 @@ If a dependency or benchmark change is necessary, rebuild **both** snapshots und
 | Resizable table | 500 nonvirtualized records × six flexible columns | Mount, narrow the container from 960 to 660 px as when opening a side panel |
 | Form and dialog | 30 mixed text fields, checkboxes, and switches | Mount, controlled field keypress, dialog opening and autofocus |
 
-The table retains unchanged record identities on a one-record update. The suite verifies virtualization and checks that scrolling exposes the expected row. Every measured action has an explicit semantic completion condition; failures/timeouts invalidate the run rather than being discarded as outliers. Browser runtime/console errors also fail the run.
+The table retains unchanged record identities on a one-record update. The suite verifies virtualization and checks that scrolling exposes the expected row. Both scroll scenarios require all twelve trusted wheel events and at least ten frame intervals. Every measured action has an explicit semantic completion condition; failures/timeouts invalidate the run rather than being discarded as outliers. Browser runtime/console errors also fail the run.
 
 The resizable table keeps its data and table element stable while its container narrows, exercising the browser's ResizeObserver and React Aria's column layout updates. Completion waits for the column width styles to update; assertions then verify all six columns' actual widths and that the rows remain present.
 
@@ -94,6 +94,10 @@ The variable-height resize starts at the top and preserves the first record whil
 Each scenario gets a new browser context and page in each block. Before every trial, the fixture is unmounted and recreated in the same document; setup, fonts, and prerequisite interactions settle outside the measurement window. Default warmups exercise the same action and are discarded. These are **warm browser/module-cache measurements on fresh component instances**. There is no claim that a component's first-ever execution is represented. Datasets and all fixture modules are already loaded, local, and deterministic. The filtering, data update, React work, and browser work caused by the action are included.
 
 The basic styling intentionally includes real layout and focus/selection styles without animations or remote fonts. It is not a Spectrum design-system benchmark. Hydration, network loading, memory retention, and cross-browser timing are future additions, not covered by these results.
+
+## Adding a scenario
+
+List the action in `scenarios.mjs` (ID, fixture, label, and optional metric), then add its driver in `drivers.mjs` under the fixture's `actions`. A driver declares an optional unmeasured `prepare`, the `spec` armed in the page (input event, target, key, wheel input, and completion conditions), and an optional `verify` that runs after measurement. The runner sends the measured input described by `spec`; use `input` only when an action needs a custom input sequence. `yarn test:perf` checks that every scenario has a driver and that each spec is serializable.
 
 ## What the numbers mean
 

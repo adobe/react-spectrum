@@ -45,6 +45,7 @@ export async function harnessHash() {
       '.parcelrc',
       'package.json',
       'scenarios.mjs',
+      'drivers.mjs',
       'runner.mjs',
       'report.mjs',
       'build.mjs',
