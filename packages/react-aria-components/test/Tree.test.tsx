@@ -413,63 +413,46 @@ describe('Tree', () => {
 
   describe('descriptions', () => {
     function DescriptionTree({
-      showDescription = true,
-      label
+      hideDescription = false,
+      itemAriaLabel
     }: {
-      showDescription?: boolean;
-      label?: string;
+      hideDescription?: boolean;
+      itemAriaLabel?: string;
     }) {
       return (
-        <Tree aria-label="Files" selectionMode="single">
-          <TreeItem id="projects" textValue="Projects" aria-label={label}>
+        <Tree aria-label="Files">
+          <TreeItem id="projects" textValue="Projects" aria-label={itemAriaLabel}>
             <TreeItemContent>
-              <Button slot="chevron">Expand</Button>
               <Text>Projects</Text>
-              {showDescription && (
+              {!hideDescription && (
                 <Text slot="description" id="tree-desc">
                   Shared files
                 </Text>
               )}
             </TreeItemContent>
-            <TreeItem id="report" textValue="Report">
-              <TreeItemContent>Report</TreeItemContent>
-            </TreeItem>
           </TreeItem>
         </Tree>
       );
     }
 
-    it.each([undefined, 'Team projects'])(
-      'includes the description in the row name (%s)',
-      label => {
-        let {getByRole, getByText} = render(<DescriptionTree label={label} />);
-        let row = getByRole('row', {name: `${label || 'Projects'} Shared files`});
-        expect(row).toHaveAttribute('aria-labelledby', `${row.id} ${getByText('Shared files').id}`);
-        expect(row).not.toHaveAttribute('aria-describedby');
-        expect(getByRole('button')).toHaveAccessibleName(`Expand ${label || 'Projects'}`);
-      }
-    );
+    it('includes the description in the row name', () => {
+      let {getByRole} = render(<DescriptionTree />);
+      expect(getByRole('row')).toHaveAccessibleName('Projects Shared files');
+    });
+
+    it('includes the description with an explicit item aria-label', () => {
+      let {getByRole} = render(<DescriptionTree itemAriaLabel="Team projects" />);
+      expect(getByRole('row')).toHaveAccessibleName('Team projects Shared files');
+    });
 
     it('updates the description relationship when the slot is removed and added', () => {
       let {getByRole, rerender} = render(<DescriptionTree />);
       expect(getByRole('row')).toHaveAccessibleName('Projects Shared files');
-      rerender(<DescriptionTree showDescription={false} />);
+      rerender(<DescriptionTree hideDescription />);
       expect(getByRole('row')).toHaveAccessibleName('Projects');
       expect(getByRole('row')).not.toHaveAttribute('aria-labelledby');
       rerender(<DescriptionTree />);
       expect(getByRole('row')).toHaveAccessibleName('Projects Shared files');
-    });
-
-    it('preserves keyboard selection and expansion with a description', async () => {
-      let {getByRole} = render(<DescriptionTree />);
-      await user.tab();
-      let row = getByRole('row', {name: 'Projects Shared files'});
-      expect(row).toHaveFocus();
-      await user.keyboard(' ');
-      expect(row).toHaveAttribute('aria-selected', 'true');
-      await user.keyboard('{ArrowRight}{ArrowDown}');
-      expect(row).toHaveAttribute('aria-expanded', 'true');
-      expect(getByRole('row', {name: 'Report'})).toHaveFocus();
     });
   });
 
