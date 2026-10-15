@@ -135,13 +135,13 @@ function useAnimation(
         return;
       }
 
-      Promise.all([startPromise, ...animations.map(a => a.finished)])
-        .then(() => {
-          flushSync(() => {
-            onEnd();
-          });
-        })
-        .catch(() => {});
+      // Cancelled animations reject their finished promise, so wait for every promise to settle
+      // rather than resolve. Otherwise onEnd never runs and an exiting overlay never unmounts.
+      Promise.allSettled([startPromise, ...animations.map(a => a.finished)]).then(() => {
+        flushSync(() => {
+          onEnd();
+        });
+      });
     }
 
     isActiveRef.current = isActive;
