@@ -8,7 +8,7 @@
 import {build} from './build.mjs';
 import {confirm} from './confirm.mjs';
 import {parseArgs} from 'node:util';
-import {run, validate} from './runner.mjs';
+import {run, smoke, validate} from './runner.mjs';
 import {scenarios} from './scenarios.mjs';
 
 const help = `React Aria local production benchmarks
@@ -20,13 +20,14 @@ const help = `React Aria local production benchmarks
   yarn perf calibrate --build candidate
   yarn perf validate --build candidate --runs 20
   yarn perf confirm --results <results id> --runs 2
+  yarn perf smoke [--build candidate]
   yarn perf list
 
 Options:
   --scenario listbox.focus,table   Run named actions or entire fixtures
-  --blocks 8                      Independent browser launches (even when comparing)
-  --samples 5                     Measured trials per arm/scenario/block
-  --warmup 2                      Discarded trials per arm/scenario/block
+  --blocks 8                      Independent browser launches (even when comparing; smoke: 2)
+  --samples 5                     Measured trials per arm/scenario/block (smoke: 1)
+  --warmup 2                      Discarded trials per arm/scenario/block (smoke: 1)
   --scale 1                       Integer workload multiplier (1–10)
   --cpu 1                         CPU slowdown factor (1–20); not a device model
   --seed 2026                     Reproducible scenario order, arm order, and gaps
@@ -52,9 +53,9 @@ try {
       candidate: {type: 'string'},
       build: {type: 'string'},
       scenario: {type: 'string'},
-      blocks: {type: 'string', default: '8'},
-      samples: {type: 'string', default: '5'},
-      warmup: {type: 'string', default: '2'},
+      blocks: {type: 'string'},
+      samples: {type: 'string'},
+      warmup: {type: 'string'},
       scale: {type: 'string', default: '1'},
       cpu: {type: 'string', default: '1'},
       seed: {type: 'string', default: '2026'},
@@ -106,7 +107,13 @@ try {
       throw new Error('build requires --name.');
     }
     await build(values.name);
-  } else if (['run', 'compare', 'calibrate', 'validate'].includes(command)) {
+  } else if (['run', 'compare', 'calibrate', 'validate', 'smoke'].includes(command)) {
+    // A smoke test checks that everything runs, so it uses the fewest trials that still
+    // cover both leading arms and a reset between trials.
+    let smoking = command === 'smoke';
+    values.blocks ??= smoking ? '2' : '8';
+    values.samples ??= smoking ? '1' : '5';
+    values.warmup ??= smoking ? '1' : '2';
     let options = {
       base: command === 'compare' ? values.base : values.build,
       candidate: command === 'compare' ? values.candidate : undefined,
@@ -125,7 +132,7 @@ try {
       delay: 0,
       delayMode: 'sync'
     };
-    if (!options.base || (command === 'compare' && !options.candidate)) {
+    if ((!options.base && !smoking) || (command === 'compare' && !options.candidate)) {
       throw new Error(
         command === 'compare'
           ? 'compare requires --base and --candidate.'
@@ -136,7 +143,9 @@ try {
     if (command !== 'run' && options.blocks % 2) {
       throw new Error('Comparisons need an even --blocks so each arm leads equally often.');
     }
-    if (command === 'validate') {
+    if (smoking) {
+      await smoke(options);
+    } else if (command === 'validate') {
       values.runs ??= '20';
       await validate({...options, runs: number('runs', 1, 100)});
     } else if (command === 'calibrate') {

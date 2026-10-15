@@ -10,11 +10,10 @@ Use the repository's installed dependencies. Install the matching full Chromium 
 
 ```sh
 yarn playwright install chromium
-yarn perf build --name baseline
-yarn perf run --build baseline --scenario listbox --blocks 2 --samples 1 --warmup 0
+yarn perf smoke
 ```
 
-The short run just verifies the setup. For a normal run, omit the sample overrides. `yarn perf list` lists all actions and `yarn perf --help` lists options.
+`yarn perf smoke` checks the setup and the whole suite: it builds a throwaway production snapshot of the working tree, runs every scenario once as an A/A comparison (2 browser launches, 1 warmup and 1 measured trial per arm), and removes the snapshot afterward. It passes only if every action reaches its completion condition, its assertions hold, and the report is generated; the results directory is kept. It takes a few minutes. Pass `--build <name>` to check an existing snapshot instead, or `--scenario` to check only some scenarios. Smoke results are far too small to compare anything. `yarn perf list` lists all actions and `yarn perf --help` lists options.
 
 ## Comparing a change
 
@@ -98,7 +97,7 @@ The basic styling intentionally includes real layout and focus/selection styles 
 
 ## Adding a scenario
 
-List the action in `scenarios.mjs` (ID, fixture, label, and optional metric), then add its driver in `drivers.mjs` under the fixture's `actions`. A driver declares an optional unmeasured `prepare`, the `spec` armed in the page (input event, target, key, scroll distance and speed, and completion conditions), and an optional `verify` that runs after measurement. The runner sends the measured input described by `spec`; use `input` only when an action needs a custom input sequence. `yarn test:perf` checks that every scenario has a driver and that each spec is serializable.
+List the action in `scenarios.mjs` (ID, fixture, label, and optional metric), then add its driver in `drivers.mjs` under the fixture's `actions`. A driver declares an optional unmeasured `prepare`, the `spec` armed in the page (input event, target, key, scroll distance and speed, and completion conditions), and an optional `verify` that runs after measurement. The runner sends the measured input described by `spec`; use `input` only when an action needs a custom input sequence. `yarn test:perf` checks that every scenario has a driver and that each spec is serializable. Then run `yarn perf smoke --scenario <id>` to check the new scenario in the browser.
 
 ## What the numbers mean
 
@@ -132,6 +131,7 @@ Use the same machine and power settings, close heavy workloads, and avoid runnin
 ```sh
 yarn test:perf
 yarn tsc --project perf/tsconfig.json --noEmit
+yarn perf smoke
 yarn perf calibrate --build baseline
 yarn perf validate --build baseline --runs 20 --scenario listbox,table.scroll
 ```

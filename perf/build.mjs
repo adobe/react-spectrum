@@ -164,7 +164,17 @@ export async function build(name) {
 
 export async function loadBuild(name) {
   let dir = buildPath(name);
-  let manifest = JSON.parse(await fs.readFile(path.join(dir, 'manifest.json'), 'utf8'));
+  let manifest;
+  try {
+    manifest = JSON.parse(await fs.readFile(path.join(dir, 'manifest.json'), 'utf8'));
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      throw new Error(
+        `No snapshot named ${name}. Create it with \`yarn perf build --name ${name}\`.`
+      );
+    }
+    throw error;
+  }
   if (
     manifest.schema !== 1 ||
     !manifest.production ||

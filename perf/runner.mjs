@@ -6,7 +6,7 @@
  */
 
 import {binomialTail, metrics, random, report, shuffled} from './report.mjs';
-import {buildPath, loadBuild, local} from './build.mjs';
+import {build, buildPath, loadBuild, local} from './build.mjs';
 import {chromium} from 'playwright';
 import {driver, pause} from './drivers.mjs';
 import fs from 'node:fs/promises';
@@ -433,7 +433,10 @@ export async function run(options) {
     await server.close();
     result.finished = new Date().toISOString();
     let markdown = await persist();
-    console.log(`\n${markdown}\nSaved ${dir}`);
+    // Quiet runs print the full report only when something went wrong.
+    console.log(
+      options.quiet && result.status === 'complete' ? `Saved ${dir}` : `\n${markdown}\nSaved ${dir}`
+    );
   }
   if (result.status !== 'complete') {
     throw new Error(`Benchmark failed; partial results saved in ${dir}\n${result.error}`);
@@ -494,4 +497,29 @@ export async function validate(options) {
   await fs.writeFile(path.join(dir, 'summary.md'), markdown);
   console.log(`\n${markdown}\nSaved ${dir}`);
   return {intervals, excluded: excluded.length, expected, tail, dir};
+}
+
+// Runs every selected scenario through the full comparison path, as an A/A compare,
+// to check that each action, completion condition, and report section still works.
+// Without --build it builds a throwaway snapshot of the working tree and removes it
+// afterward; the results directory is kept either way.
+export async function smoke(options) {
+  let begin = Date.now();
+  let name = options.base;
+  let temporary = !name;
+  if (temporary) {
+    name = `smoke-${new Date().toISOString().replaceAll(/[:.]/g, '-')}`;
+    await build(name);
+  }
+  try {
+    let {result, dir} = await run({...options, base: name, candidate: name, quiet: true});
+    let count = result.scenarios.length;
+    console.log(
+      `\nSmoke test passed: ${count} scenario${count === 1 ? '' : 's'}, ${options.blocks} launches, ${Math.round((Date.now() - begin) / 1000)} s. Report: ${path.join(dir, 'report.md')}`
+    );
+  } finally {
+    if (temporary) {
+      await fs.rm(buildPath(name), {recursive: true, force: true});
+    }
+  }
 }
