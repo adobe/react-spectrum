@@ -125,6 +125,26 @@ output {
 [role='row'][aria-selected='true'] {
   background: #c4ddfb;
 }
+.resize-container {
+  margin-top: 12px;
+  height: 400px;
+  overflow: auto;
+}
+.resizable-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.resizable-table th,
+.resizable-table td {
+  padding: 9px 12px;
+  height: 40px;
+  border-bottom: 1px solid #e6eaf0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
+}
 .form-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;

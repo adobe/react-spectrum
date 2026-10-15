@@ -79,6 +79,12 @@ async function prepare(page, scenario) {
     await page.locator('[data-record="item-0"]').waitFor();
     await page.locator('[data-bench="records-table"]').hover();
   }
+  if (scenario.fixture === 'resize' && !scenario.id.endsWith('.mount')) {
+    await page.waitForFunction(() => {
+      let columns = [...document.querySelectorAll('.resizable-table th')];
+      return columns.length === 6 && columns.every(column => column.style.width === '160px');
+    });
+  }
   await page.evaluate(async () => {
     await document.fonts.ready;
     await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -106,6 +112,19 @@ function actionSpec(scenario, size) {
         target: '.list',
         conditions: [condition('[data-record="item-1"]', {focused: true})]
       };
+      break;
+    case 'resize.mount':
+      options.conditions = [
+        condition('.resizable-table [data-record]', {count: size}),
+        condition('.resizable-table th', {count: 6, style: {property: 'width', value: '160px'}})
+      ];
+      break;
+    case 'resize.container':
+      options.target = '#resize-container';
+      options.conditions = [
+        condition('.resizable-table [data-record]', {count: size}),
+        condition('.resizable-table th', {count: 6, style: {property: 'width', value: '110px'}})
+      ];
       break;
     case 'listbox.select':
       options.target = '[data-record="item-2"]';
@@ -216,6 +235,24 @@ async function action(page, scenario, size) {
     if (!visible || sample.frameIntervals.length < 10) {
       throw new Error('Scroll did not expose the expected row or collect enough frame intervals.');
     }
+  }
+  if (scenario.fixture === 'resize') {
+    let expectedWidth = scenario.id.endsWith('.mount') ? 160 : 110;
+    let widths = await page.locator('.resizable-table th').evaluateAll(columns =>
+      columns.map(column => ({
+        style: parseFloat(column.style.width),
+        actual: column.getBoundingClientRect().width
+      }))
+    );
+    if (
+      widths.length !== 6 ||
+      widths.some(
+        width => width.style !== expectedWidth || Math.abs(width.actual - expectedWidth) > 1
+      )
+    ) {
+      throw new Error('The table columns did not finish resizing to the expected width.');
+    }
+    await page.getByRole('rowheader', {name: `Record ${size - 1}`, exact: true}).waitFor();
   }
   return sample;
 }

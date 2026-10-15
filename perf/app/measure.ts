@@ -13,6 +13,7 @@ export interface Condition {
   text?: string;
   focused?: boolean;
   scrollTop?: number;
+  style?: {property: string; value: string};
 }
 
 interface EventEntry extends PerformanceEntry {
@@ -92,6 +93,8 @@ function matches(conditions: Condition[]) {
     return (
       (!condition.attribute || node.getAttribute(condition.attribute) === condition.value) &&
       (condition.text === undefined || node.textContent === condition.text) &&
+      (!condition.style ||
+        node.style.getPropertyValue(condition.style.property) === condition.style.value) &&
       // Fixtures live in the top-level document, with no shadow roots.
       // oxlint-disable-next-line rsp-rules/shadow-safe-active-element
       (!condition.focused || node === document.activeElement) &&

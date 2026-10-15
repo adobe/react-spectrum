@@ -21,9 +21,11 @@ export const scenarios = [
     metric: 'frameP95'
   },
   {id: 'table.update', fixture: 'table', label: 'Update one visible table record'},
+  {id: 'resize.mount', fixture: 'resize', label: 'Mount a nonvirtualized 500-row table'},
+  {id: 'resize.container', fixture: 'resize', label: 'Narrow a 500-row table for a side panel'},
   {id: 'form.mount', fixture: 'form', label: 'Mount 30 mixed form controls'},
   {id: 'form.type', fixture: 'form', label: 'Type into a controlled form field'},
   {id: 'form.dialog', fixture: 'form', label: 'Open a dialog and move focus'}
 ];
 
-export const sizes = {listbox: 100, combobox: 500, table: 10000, form: 30};
+export const sizes = {listbox: 100, combobox: 500, table: 10000, resize: 500, form: 30};

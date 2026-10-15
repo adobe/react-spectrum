@@ -21,6 +21,7 @@ import {
   Modal,
   ModalOverlay,
   Popover,
+  ResizableTableContainer,
   Row,
   Switch,
   Table,
@@ -223,6 +224,46 @@ function FormFixture() {
   );
 }
 
+// Keep the table element stable so resizing exercises the container's ResizeObserver
+// and context updates, without also replacing the table's children from its parent.
+const resizableTable = (
+  <Table aria-label="Resizable records" className="resizable-table" selectionMode="multiple">
+    <TableHeader>
+      {['name', 'owner', 'status', 'amount', 'date', 'category'].map(key => (
+        <Column key={key} id={key} isRowHeader={key === 'name'} width="1fr" minWidth={0}>
+          {key}
+        </Column>
+      ))}
+    </TableHeader>
+    <TableBody items={items}>
+      {row => (
+        <Row id={row.id} data-record={row.id}>
+          <Cell>{row.name}</Cell>
+          <Cell>{row.owner}</Cell>
+          <Cell>{row.status}</Cell>
+          <Cell>{row.amount}</Cell>
+          <Cell>{row.date}</Cell>
+          <Cell>{row.category}</Cell>
+        </Row>
+      )}
+    </TableBody>
+  </Table>
+);
+
+function ResizeFixture() {
+  let [narrow, setNarrow] = useState(false);
+  return (
+    <>
+      <Button id="resize-container" onPress={() => setNarrow(true)}>
+        Open side panel
+      </Button>
+      <ResizableTableContainer className="resize-container" style={{width: narrow ? 660 : 960}}>
+        {resizableTable}
+      </ResizableTableContainer>
+    </>
+  );
+}
+
 function App() {
   let [mounted, setMounted] = useState(false);
   return (
@@ -245,6 +286,8 @@ function App() {
             <ComboFixture />
           ) : fixture === 'table' ? (
             <TableFixture />
+          ) : fixture === 'resize' ? (
+            <ResizeFixture />
           ) : (
             <FormFixture />
           ))}
