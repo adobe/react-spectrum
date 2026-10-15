@@ -13,14 +13,22 @@
 import {Button} from '../src/Button';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {expect, it} from 'vitest';
+import {FocusScope} from 'react-aria/FocusScope';
 import {ListBox, ListBoxItem} from '../src/ListBox';
+import {Modal} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {Select, SelectValue} from '../src/Select';
 import {userEvent} from 'vitest/browser';
 
-function Example({type, defaultOpen = true}: {type: 'dialog' | 'select'; defaultOpen?: boolean}) {
+function Example({
+  type,
+  defaultOpen = true
+}: {
+  type: 'dialog' | 'select' | 'modal';
+  defaultOpen?: boolean;
+}) {
   if (type === 'select') {
     return (
       <Select aria-label="Animal" defaultOpen={defaultOpen}>
@@ -37,37 +45,41 @@ function Example({type, defaultOpen = true}: {type: 'dialog' | 'select'; default
     );
   }
 
+  let Overlay = type === 'modal' ? Modal : Popover;
   return (
     <DialogTrigger defaultOpen={defaultOpen}>
       <Button>Open dialog</Button>
-      <Popover>
+      <Overlay>
         <Dialog aria-label="Example">
           <Button slot="close">Close</Button>
         </Dialog>
-      </Popover>
+      </Overlay>
     </DialogTrigger>
   );
 }
 
-it.each(['dialog', 'select'] as const)('restores a default-open %s to its trigger', async type => {
-  let {container, getByRole} = await render(<Example type={type} />);
-  let trigger = container.querySelector('button')!;
-  let overlay = getByRole(type === 'dialog' ? 'dialog' : 'listbox');
-  await expect.element(overlay).toBeVisible();
-  await expect.poll(() => overlay.element().contains(document.activeElement)).toBe(true);
+it.each(['dialog', 'select', 'modal'] as const)(
+  'restores a default-open %s to its trigger',
+  async type => {
+    let {container, getByRole} = await render(<Example type={type} />);
+    let trigger = container.querySelector('button')!;
+    let overlay = getByRole(type === 'select' ? 'listbox' : 'dialog');
+    await expect.element(overlay).toBeVisible();
+    await expect.poll(() => overlay.element().contains(document.activeElement)).toBe(true);
 
-  await userEvent.keyboard('{Escape}');
-  await expect.element(trigger).toHaveFocus();
-  await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.keyboard('{Escape}');
+    await expect.element(trigger).toHaveFocus();
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
 
-  await userEvent.click(trigger);
-  await expect.element(overlay).toBeVisible();
-  await expect.poll(() => overlay.element().contains(document.activeElement)).toBe(true);
-  await userEvent.keyboard('{Escape}');
-  await expect.element(trigger).toHaveFocus();
-});
+    await userEvent.click(trigger);
+    await expect.element(overlay).toBeVisible();
+    await expect.poll(() => overlay.element().contains(document.activeElement)).toBe(true);
+    await userEvent.keyboard('{Escape}');
+    await expect.element(trigger).toHaveFocus();
+  }
+);
 
-it.each(['dialog', 'select'] as const)(
+it.each(['dialog', 'select', 'modal'] as const)(
   'preserves an existing restore target for a %s',
   async type => {
     function Test() {
@@ -85,10 +97,29 @@ it.each(['dialog', 'select'] as const)(
     let opener = getByRole('button', {name: 'Mount overlay'});
     await expect.element(opener).toHaveFocus();
     await userEvent.keyboard('{Enter}');
-    let overlay = getByRole(type === 'dialog' ? 'dialog' : 'listbox');
+    let overlay = getByRole(type === 'select' ? 'listbox' : 'dialog');
     await expect.element(overlay).toBeVisible();
     await expect.poll(() => overlay.element().contains(document.activeElement)).toBe(true);
     await userEvent.keyboard('{Escape}');
     await expect.element(opener).toHaveFocus();
   }
 );
+
+it('restores only its own overlay within a parent focus scope', async () => {
+  let {container, getByRole} = await render(
+    <FocusScope restoreFocus>
+      <DialogTrigger>
+        <Button>Other trigger</Button>
+        <Popover>
+          <Dialog aria-label="Other">Other content</Dialog>
+        </Popover>
+      </DialogTrigger>
+      <Example type="dialog" />
+    </FocusScope>
+  );
+  let trigger = container.querySelector<HTMLButtonElement>('[aria-expanded="true"]')!;
+  let dialog = getByRole('dialog', {name: 'Example'});
+  await expect.poll(() => dialog.element().contains(document.activeElement)).toBe(true);
+  await userEvent.keyboard('{Escape}');
+  await expect.element(trigger).toHaveFocus();
+});

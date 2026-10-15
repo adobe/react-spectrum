@@ -12,11 +12,10 @@
 
 import {ariaHideOutside, keepVisible} from './ariaHideOutside';
 import {AriaPositionProps, PlacementAxis, useOverlayPosition} from './useOverlayPosition';
-import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {FocusWithinProps, useFocusWithin} from '../interactions/useFocusWithin';
 import {mergeProps} from '../utils/mergeProps';
 import {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
-import {setFocusScopeRestoreTarget} from '../focus/FocusScope';
 import {useEffect} from 'react';
 import {useOverlay} from './useOverlay';
 import {usePreventScroll} from './usePreventScroll';
@@ -129,12 +128,6 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   usePreventScroll({
     isDisabled: isNonModal || !state.isOpen
   });
-
-  useEffect(() => {
-    if (state.isOpen && popoverRef.current && triggerRef.current) {
-      setFocusScopeRestoreTarget(popoverRef.current, triggerRef.current as FocusableElement);
-    }
-  }, [state.isOpen, popoverRef, triggerRef]);
 
   useEffect(() => {
     if (state.isOpen && popoverRef.current) {
