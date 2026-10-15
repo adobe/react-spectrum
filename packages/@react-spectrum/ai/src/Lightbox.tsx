@@ -34,7 +34,7 @@ export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
 export type LightboxPickerProps<T> = Omit<TabListProps<T>, 'className'>;
 export type LightboxPickerItemProps = Omit<TabProps, 'className' | 'children'>;
 export interface LightboxItemsProps<T> extends Omit<TabPanelsProps<T>, 'className'> {
-  children: ReactNode
+  children: ReactNode[]
 }
 export type LightboxItemProps = Omit<TabPanelProps, 'className'>;
 
@@ -92,7 +92,8 @@ const itemsStyles = style({
   minWidth: 0,
   width: 'full',
   display: 'flex',
-  overflow: 'auto',
+  overflowX: 'auto',
+  overflowY: 'hidden',
   scrollbarWidth: 'none',
   scrollSnapType: 'x mandatory',
   scrollBehavior: 'smooth'
@@ -140,57 +141,20 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
   // let ref = useRef<HTMLDivElement | null>(null);
   let {isInfinite} = useContext(LightBoxCarouselContext);
-  // let isProgrammaticScroll = useRef(false);
 
-  // do we want to disable the prev/next button if you are at the start/end?
+  let selectedKey = state?.selectedKey;
+  let selectedItem = selectedKey != null
+    ? state?.collection.getItem(selectedKey)
+    : null;
 
-  // let selectedKey = state?.selectedKey;
-  // let selectedItem = selectedKey != null
-  //   ? state?.collection.getItem(selectedKey)
-  //   : null;
+  if (selectedItem == null) {
+    return null;
+}
 
-  // let selectedIndex = selectedItem != null ? selectedItem.index : null
-
-
-  let prevItem = () => {
-    let key = state.selectedKey;
-    let isFirstKey = state.collection.getFirstKey() === key
-    if (isInfinite) {
-      if (isFirstKey) {
-        state.setSelectedKey(state.collection.getLastKey());
-        // Check case where there is only one item...
-        return;
-      }
-    }
-
-    let prevKey = key ? state.collection.getKeyBefore(key) : null;
-    if (isFirstKey) {
-      prevKey = state.collection.getFirstKey();
-    }
-    state.setSelectedKey(prevKey);
-  };
-
-  let nextItem = () => {
-    let key = state.selectedKey;
-    let isLastKey = state.collection.getLastKey() === key;
-    if (isInfinite) {
-      if (isLastKey) {
-        state.setSelectedKey(state.collection.getFirstKey());
-        // Check case where there is only one item...
-        return;
-      }
-    }
-
-    let nextKey = key ? state.collection.getKeyAfter(key) : null;
-    if (isLastKey) {
-      nextKey = key;
-    }
-    state.setSelectedKey(nextKey);
-  };
 
   let wrapper: ReactNode = isInfinite ? (
     <InfiniteLightboxItems>
-      {props.children}
+      {(index) => props.children?.at(index % state.collection.size)}
     </InfiniteLightboxItems>
   ) : (
     <FiniteLightboxItems>
@@ -200,9 +164,7 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
 
   return (
     <div className={style({display: 'flex'})}>
-      <Button onPress={prevItem}>Prev</Button>
-        {wrapper}
-      <Button onPress={nextItem}>Next</Button>
+      {wrapper}
     </div>
   );
 }
@@ -222,9 +184,11 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     ? state?.collection.getItem(selectedKey)
     : null;
 
-  let selectedIndex = selectedItem != null ? selectedItem.index : null
+  let selectedIndex = selectedItem != null ? selectedItem.index : null;
   
   useLayoutEffect(() => {
+    // When a user clicks prev/next, that changes the selected tab but not the scroll position
+    // Check if the scroll position doesn't match the selected tab and adjust accordingly
     let el = ref.current;
     let currentIndex = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0;
     if (selectedIndex != currentIndex ) {
@@ -233,10 +197,32 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     }
   }, [selectedKey]);
 
+      let prevItem = () => {
+    let key = state.selectedKey;
+    let isFirstKey = state.collection.getFirstKey() === key
+
+    let prevKey = key ? state.collection.getKeyBefore(key) : null;
+    if (isFirstKey) {
+      prevKey = state.collection.getFirstKey();
+    }
+    state.setSelectedKey(prevKey);
+  };
+
+  let nextItem = () => {
+    let key = state.selectedKey;
+    let isLastKey = state.collection.getLastKey() === key;
+    let nextKey = key ? state.collection.getKeyAfter(key) : null;
+    if (isLastKey) {
+      nextKey = key;
+    }
+    state.setSelectedKey(nextKey);
+  };
 
   let onScroll = () => {
     let el = ref.current;
     let currentIndex = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0;
+
+    // Update the selected tab when scrolling (but do not update when the scrolling is coming from next/prev buttons)
     if (selectedIndex !== currentIndex && !isProgrammaticScroll.current) {
       let key = [...state.collection].at(currentIndex)?.key;
       if (key) {
@@ -250,9 +236,13 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   }
 
   return (
-    <div ref={ref} {...props} className={itemsStyles} onScroll={onScroll} onScrollEnd={onScrollEnd}>
-      {props.children}
-    </div>
+    <>
+      <Button onPress={prevItem}>Prev</Button>
+        <div ref={ref} {...props} className={itemsStyles} onScroll={onScroll} onScrollEnd={onScrollEnd}>
+          {props.children}
+        </div>
+      <Button onPress={nextItem}>Next</Button>
+    </>
   )
 }
 
@@ -288,69 +278,132 @@ function reducer(state: CarouselState, action: Action) {
   }
 }
 
-
-interface InfiniteLightboxItemsProps<T> extends LightboxItemsProps<T> {
+interface InfiniteLightboxItemsProps<T> extends Omit<LightboxItemsProps<T>, 'children'> {
+  children: (page: number) => ReactNode,
   viewportRef?: RefObject<HTMLDivElement | null>
 }
 
 function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
+  let {children: renderPage} = props;
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
-  let {isInfinite} = useContext(LightBoxCarouselContext);
-  let isProgrammaticScroll = useRef(false);
+  let isProgrammaticScrolling = useRef<boolean>(false);
 
-  // do we want to disable the prev/next button if you are at the start/end?
 
   let selectedKey = state?.selectedKey;
   let selectedItem = selectedKey != null
     ? state?.collection.getItem(selectedKey)
     : null;
 
-  let selectedIndex = selectedItem != null ? selectedItem.index : null
-  
-  // FOR INFINITE CAROUSEL //
+  let selectedIndex = selectedItem != null ? selectedItem.index : null; 
+
+  if (!state || selectedIndex == null || state.collection.size === 0) {
+    return null;
+  }
+
+
   let [{centerPage, currentPage}, dispatch] = useReducer(reducer, null, () => ({centerPage: selectedIndex ?? 0, currentPage: PAGES}))
 
-  if (isInfinite && selectedIndex != null && currentPage === PAGES && selectedIndex !== centerPage) {
+  // if the selected tab changes (like if you were to click one), update the centered page
+  if (selectedIndex != null && currentPage === PAGES && selectedIndex !== centerPage) {
+    // console.log(selectedIndex);
     dispatch({
       type: 'SET_CENTER_PAGE',
       page: selectedIndex
     })
   }
-  // ------------------------------------ //
 
+  // when the center page changes, reset the scroll position
   useLayoutEffect(() => {
-    let el = ref.current;
-    let currentIndex = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0;
-    if (selectedIndex != currentIndex ) {
-      isProgrammaticScroll.current = true;
-      ref.current!.scrollLeft = ref.current!.offsetWidth * (selectedIndex ?? 0);
+    if (!ref.current) {
+      return;
     }
-  }, [selectedKey]);
 
+    console.log('layout');
+    
+    // ref.current!.scrollLeft = ref.current!.offsetWidth * PAGES;
 
+    ref.current.scrollTo({
+      left: ref.current.offsetWidth * PAGES,
+      behavior: 'instant'
+    });
+  }, [centerPage]);
+
+  let prevItem = () => {
+    if (!ref.current) {
+      return;
+    }
+
+    ref.current!.scrollLeft = ref.current!.offsetWidth * (PAGES - 1);
+  }
+
+  let nextItem = () => {
+    if (!ref.current) {
+      return;
+    }
+    
+    ref.current!.scrollLeft = ref.current!.offsetWidth * (PAGES + 1);
+  }
+
+  // update selected tab while scrolling
   let onScroll = () => {
     let el = ref.current;
-    let currentIndex = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0;
-    if (selectedIndex !== currentIndex && !isProgrammaticScroll.current) {
-      let key = [...state.collection].at(currentIndex)?.key;
+    let index = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0; // this is not the collection index, this is the pages index 
+    let collectionIndex = centerPage + index - PAGES; // this is the actual collection index
+    if (currentPage !== index) {
+      // actually update the selected key (so that the tabs actually reflect what is in the viewport)
+      let key = [...state.collection].at(collectionIndex % state.collection.size)?.key;
       if (key) {
-        state.setSelectedKey(key)
+        state.setSelectedKey(key);
       }
+      // keeps track of how much we have scrolled from the center page
+      dispatch({
+        type: 'SCROLL',
+        page: index
+      })
     }
+    console.log('onscroll');
+  }
 
-    if (isInfinite && currentPage !== currentIndex) {
-        dispatch({
-          type: 'SCROLL',
-          page: currentIndex
-        })
-    }
+  let onScrollEnd = () => {
+    console.log('scrollend')
+    // update the centered page once scrolling is done
+    dispatch({type: 'SCROLL_END'});
   }
 
   return (
-    <div ref={ref}>
-      {props.children}
-    </div>
+    <>
+      <Button onPress={prevItem}>Prev</Button>
+      <div ref={ref} onScroll={onScroll} onScrollEnd={onScrollEnd} className={itemsStyles}>
+        {/* Placeholder to hold space in the scroll width for more pages. */}
+        <div
+          style={{
+            width: (currentPage - 1) * 100 + '%',
+            flexShrink: 0,
+            contain: 'strict',
+          }}
+        />
+        {/* contain: 'inline-size' makes these extra pages not affect the width of the parent */}
+        <div inert style={{width: '100%', flexShrink: 0, contain: 'inline-size', scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
+          {renderPage(selectedIndex - 1)}
+        </div>
+        {/* Center (visible) page */}
+        <div style={{width: '100%', flexShrink: 0, scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
+          {renderPage(selectedIndex )}
+        </div>
+        <div inert style={{width: '100%', flexShrink: 0, contain: 'inline-size', scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
+          {renderPage(selectedIndex + 1)}
+        </div>
+        <div
+          style={{
+            width: (PAGES * 2 - currentPage - 1) * 100 + '%',
+            flexShrink: 0,
+            contain: 'strict',
+          }}
+        />
+      </div>
+      <Button onPress={nextItem}>Next</Button>
+    </>
   )
 }
 
