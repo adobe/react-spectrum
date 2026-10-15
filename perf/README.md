@@ -110,7 +110,7 @@ Use `run` to observe one build without a comparison verdict:
 yarn perf run --build candidate --scenario table-data,table-cells
 ```
 
-`--scale` multiplies record/control counts, not the viewport dimensions. For example, `--scale 5` gives the two 100-row table fixtures 500 rows. For trees it increases files per project; collection deletion stays at five records. `--cpu` applies browser CPU throttling as a separate experiment; it does not emulate mobile hardware.
+`--scale` multiplies record/control counts, not the viewport dimensions. For example, `--scale 5` gives the two 100-row table fixtures 500 rows. For trees it increases files per project; collection deletion stays at five records. `--cpu` applies browser CPU throttling ([`Emulation.setCPUThrottlingRate`](https://chromedevtools.github.io/devtools-protocol/tot/Emulation/#method-setCPUThrottlingRate)) as a separate experiment; it does not emulate mobile hardware.
 
 ```sh
 yarn perf compare --base baseline --candidate candidate --scenario table-data --scale 5
@@ -168,9 +168,9 @@ For diagnostic detail, add `--trace` to a comparison:
 yarn perf compare --base baseline --candidate candidate --scenario table.scroll --trace
 ```
 
-Traces run separately after all measured trials, following the same warmups, and are excluded from comparison scores. Open the JSON files in Chrome DevTools Performance. User Timing measures mark `bench:ready` (input to semantic readiness) and `bench:window` (input to rendering opportunity).
+Traces run separately after all measured trials, following the same warmups, and are excluded from comparison scores. Open the JSON files in the [Chrome DevTools Performance panel](https://developer.chrome.com/docs/devtools/performance/reference). [User Timing](https://developer.mozilla.org/en-US/docs/Web/API/Performance_API/User_timing) measures mark `bench:ready` (input to semantic readiness) and `bench:window` (input to rendering opportunity).
 
-The report's **Diagnostic traces** table divides renderer main-thread time inside `bench:window` into script, style, layout, paint, GC, and other work. It attributes time to the innermost trace event and reports forced style/layout as a subset of style/layout time. Use it with DOM mutation counts and long-frame attribution to understand why work changed even if the primary score did not.
+The report's **Diagnostic traces** table divides renderer main-thread time inside `bench:window` into script, style, layout, paint, GC, and other work. It attributes time to the innermost trace event and reports [forced style/layout](https://web.dev/articles/avoid-large-complex-layouts-and-layout-thrashing) as a subset of style/layout time. Use it with DOM mutation counts and long-frame attribution to understand why work changed even if the primary score did not.
 
 ### Common problems
 
@@ -224,7 +224,7 @@ Each block launches a new Chromium process. Each scenario gets a fresh context a
 
 Before every trial, the fixture is unmounted and recreated in the same document. Fonts, setup, and prerequisite interactions settle outside the timing window. Warmups exercise the same action and are discarded. These are **warm browser/module-cache measurements on fresh component instances**; datasets and fixture modules are already loaded. They do not represent a component's first-ever execution.
 
-The independent observations are browser launches. For each launch, the candidate's median trial is compared with the base's median trial. The reported change is the Hodges–Lehmann estimate (median of pairwise averages) of those launch-level changes. Its Wilcoxon signed-rank interval uses the smallest achievable confidence at or above 95%: 96.1% with the default eight blocks. There is no p95 interaction-latency verdict.
+The independent observations are browser launches. For each launch, the candidate's median trial is compared with the base's median trial. The reported change is the [Hodges–Lehmann estimate](https://en.wikipedia.org/wiki/Hodges%E2%80%93Lehmann_estimator) (median of pairwise averages) of those launch-level changes. Its [Wilcoxon signed-rank](https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test) interval uses the smallest achievable confidence at or above 95%: 96.1% with the default eight blocks. There is no p95 interaction-latency verdict.
 
 ### Timing boundaries and supporting measurements
 
@@ -233,8 +233,8 @@ Timing begins at the trusted browser event timestamp, excluding Playwright's loc
 | Measurement | Interpretation |
 | --- | --- |
 | Semantic readiness (`ready`) | First observation of the expected DOM/focus state, through mutation/focus observation or the frame loop. Layout-dependent conditions run in the frame loop rather than mutation callbacks. This is not React render duration or paint time. |
-| Event Timing | Browser-reported event durations, input delays, processing times, and interaction IDs. Entries are grouped by interaction ID for observed maxima. Durations are quantized and short entries may be absent; missing entries are not zeros. These scripted interactions do not measure field INP. |
-| Long animation frames (LoAF) | Frames of at least 50 ms overlapping the window, with blocking duration, script, style/layout, and forced style/layout attribution. Scripts are listed only when they take at least 5 ms. A trial with no long frame has no attribution, not zero cost. Raw entries are retained; sources are minified production code. |
+| [Event Timing](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceEventTiming) | Browser-reported event durations, input delays, processing times, and interaction IDs. Entries are grouped by interaction ID for observed maxima. Durations are quantized and short entries may be absent; missing entries are not zeros. These scripted interactions do not measure field [INP](https://web.dev/articles/inp). |
+| [Long animation frames (LoAF)](https://developer.chrome.com/docs/web-platform/long-animation-frames) | Frames of at least 50 ms overlapping the window, with blocking duration, script, style/layout, and forced style/layout attribution. Scripts are listed only when they take at least 5 ms. A trial with no long frame has no attribution, not zero cost. Raw entries are retained; sources are minified production code. |
 | rAF interval p95 and maximum | Supporting per-trial frame-interval statistics. The report shows the median p95 and worst interval. Intervals cluster around whole frame periods, making the tail percentile less stable than the mean for comparisons. |
 | Missed frames | Estimated from intervals spanning multiple periods, using the trial's median interval as the period. This assumes fewer than half the callbacks are late and does not count compositor-dropped frames. |
 | DOM mutations | Mutation records and nodes added/removed from input to rendering opportunity. Helps identify changed DOM work even when timing is noisy; does not capture re-renders that leave the DOM unchanged. |
