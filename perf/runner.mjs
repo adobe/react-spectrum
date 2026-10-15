@@ -676,9 +676,12 @@ async function measureTrials(current, scenario, arm, block, options, samples) {
   }
 }
 
-async function diagnose(browser, server, result, dir) {
+async function diagnose(browser, server, result, dir, isInterrupted) {
   for (let scenario of result.scenarios) {
     for (let arm of Object.keys(result.builds)) {
+      if (isInterrupted()) {
+        return;
+      }
       let file = `${scenario.id}-${arm}.trace.json`;
       let current;
       try {
@@ -766,7 +769,15 @@ export async function run(options) {
     diagnostics: []
   };
   let persist = async () => {
-    let markdown = report(result);
+    let markdown;
+    try {
+      markdown = report(result);
+    } catch (error) {
+      delete result.comparisons;
+      result.status = 'failed';
+      result.error = `Report generation failed: ${error.stack ?? error}`;
+      markdown = report(result);
+    }
     await fs.writeFile(path.join(dir, 'results.json'), JSON.stringify(result, null, 2) + '\n');
     await fs.writeFile(path.join(dir, 'report.md'), markdown);
     return markdown;
@@ -820,10 +831,18 @@ export async function run(options) {
     checkInterrupted();
     result.status = 'complete';
     if (options.trace) {
-      browser = await launch(options);
-      await diagnose(browser, server, result, dir);
+      // Traces are separate diagnostic reruns, so their failure or interruption is
+      // reported without invalidating the completed measurements.
+      try {
+        browser = await launch(options);
+        await diagnose(browser, server, result, dir, () => interrupted);
+      } catch (error) {
+        result.diagnosticsError = error.message;
+      }
+      if (interrupted) {
+        result.diagnosticsError = 'Tracing was interrupted.';
+      }
     }
-    checkInterrupted();
   } catch (error) {
     result.status = 'failed';
     result.error = error.stack ?? String(error);

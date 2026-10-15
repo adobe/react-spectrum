@@ -118,3 +118,44 @@ test('failed runs expose their error and never present partial samples as a win'
   assert.match(text, /no comparison verdicts/);
   assert.equal(result.comparisons, undefined);
 });
+
+function completed(overrides = {}) {
+  return {
+    status: 'complete',
+    started: 'test',
+    environment: {browser: 'test'},
+    builds: {
+      base: {name: 'base', versions: {react: 'test'}, source: {sha: '1234567890'}},
+      candidate: {name: 'candidate', versions: {react: 'test'}, source: {sha: '0987654321'}}
+    },
+    options: {blocks: 1, samples: 1, warmup: 0},
+    samples: paired([0], [5]).map(sample => ({
+      ...sample,
+      scenario: 'listbox.mount',
+      metrics: {...sample.metrics, ready: 0, reportedInteractionMax: null, frameMax: null}
+    })),
+    scenarios: [{id: 'listbox.mount'}],
+    diagnostics: [],
+    ...overrides
+  };
+}
+
+test('runs in progress are reported as incomplete, not failed', () => {
+  let result = completed({status: 'running', options: {blocks: 8, samples: 1, warmup: 0}});
+  let text = report(result);
+  assert.match(text, /IN PROGRESS \/ INCOMPLETE: 1 of 8 blocks saved/);
+  assert.doesNotMatch(text, /FAILED/);
+  assert.equal(result.comparisons, undefined);
+});
+
+test('a zero base median reports the relative change as unavailable', () => {
+  let text = report(completed());
+  assert.match(text, /\(n\/a\)/);
+  assert.doesNotMatch(text, /undefined/);
+});
+
+test('trace failures are listed without invalidating a completed comparison', () => {
+  let text = report(completed({diagnosticsError: 'Tracing was interrupted.'}));
+  assert.match(text, /Traces incomplete: Tracing was interrupted\./);
+  assert.doesNotMatch(text, /FAILED \/ INCOMPLETE/);
+});

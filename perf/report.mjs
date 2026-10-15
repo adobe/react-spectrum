@@ -129,6 +129,16 @@ export function report(result) {
       ''
     );
   }
+  if (result.status === 'running') {
+    let completed = new Set(result.samples.map(sample => sample.block)).size;
+    lines.push(
+      `**IN PROGRESS / INCOMPLETE: ${completed} of ${result.options.blocks} blocks saved.**`,
+      '',
+      'Partial samples are retained; comparison verdicts are produced only when the run completes.',
+      ''
+    );
+    return lines.join('\n');
+  }
   if (result.status !== 'complete') {
     lines.push(
       `**FAILED / INCOMPLETE: ${result.error ?? 'run interrupted'}**`,
@@ -154,7 +164,7 @@ export function report(result) {
       });
       result.comparisons[scenario.id] = comparison;
       lines.push(
-        `| ${scenario.id} | ${metric} | ${ms(comparison.base)} | ${ms(comparison.candidate)} | ${ms(comparison.delta)} (${comparison.percent?.toFixed(1)}%) | ${comparison.interval ? comparison.interval.map(ms).join(' to ') : 'insufficient blocks'} | ${comparison.verdict} |`
+        `| ${scenario.id} | ${metric} | ${ms(comparison.base)} | ${ms(comparison.candidate)} | ${ms(comparison.delta)} (${comparison.percent === null ? 'n/a' : `${comparison.percent.toFixed(1)}%`}) | ${comparison.interval ? comparison.interval.map(ms).join(' to ') : 'insufficient blocks'} | ${comparison.verdict} |`
       );
     } else {
       lines.push(
@@ -205,6 +215,9 @@ export function report(result) {
       `Trace ${diagnostic.scenario} / ${diagnostic.arm}: ${diagnostic.error ? `FAILED: ${diagnostic.error}` : diagnostic.file}`,
       ''
     );
+  }
+  if (result.diagnosticsError) {
+    lines.push(`Traces incomplete: ${result.diagnosticsError}`, '');
   }
   return lines.join('\n');
 }

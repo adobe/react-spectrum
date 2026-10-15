@@ -26,7 +26,7 @@ Options:
   --warmup 2                      Discarded trials per arm/scenario/block
   --scale 1                       Integer workload multiplier (1–10)
   --cpu 1                         CPU slowdown factor (1–20); not a device model
-  --seed 2026                     Reproducible order/gap seed
+  --seed 2026                     Reproducible base/candidate order and gap seed
   --absolute-threshold 8          Exploratory completion threshold in milliseconds
   --relative-threshold 0.05       Exploratory fractional threshold
   --frame-threshold 2             Exploratory rAF interval threshold in milliseconds

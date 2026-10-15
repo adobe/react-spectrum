@@ -64,6 +64,9 @@ let frame = 0;
 let finishing = false;
 let previousLayout: string | undefined;
 let stableLayoutFrames = 0;
+// Conditions that read layout (scroll position, geometry) are only evaluated from
+// the frame loop, so DOM mutations inside the window never force synchronous layout.
+let frameOnly = false;
 
 const eventTimingSupported = PerformanceObserver.supportedEntryTypes.includes('event');
 if (eventTimingSupported) {
@@ -150,13 +153,19 @@ function check(layoutReady = false) {
   );
 }
 
-new MutationObserver(() => check()).observe(document.documentElement, {
+function observe() {
+  if (!frameOnly) {
+    check();
+  }
+}
+
+new MutationObserver(observe).observe(document.documentElement, {
   subtree: true,
   childList: true,
   attributes: true,
   characterData: true
 });
-document.addEventListener('focusin', () => queueMicrotask(check), true);
+document.addEventListener('focusin', () => queueMicrotask(observe), true);
 document.addEventListener('visibilitychange', () => {
   if (sample && document.hidden) {
     sample.visibility = 'hidden';
@@ -237,6 +246,8 @@ export const measurement = {
     }
     measurement.clear();
     armed = options;
+    frameOnly =
+      !!options.layout || options.conditions.some(condition => condition.scrollTop !== undefined);
   },
   clear() {
     cancelAnimationFrame(frame);
@@ -248,6 +259,7 @@ export const measurement = {
     finishing = false;
     previousLayout = undefined;
     stableLayoutFrames = 0;
+    frameOnly = false;
   },
   done() {
     return !!sample?.renderingOpportunity;
