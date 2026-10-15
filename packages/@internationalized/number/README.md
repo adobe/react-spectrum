@@ -45,5 +45,4 @@ The `NumberFormatter` class is a wrapper around [Intl.NumberFormat](https://deve
 
 We currently polyfill the following features:
 
-* The `signDisplay` option
 * The `unit` style, currently only for the `degree` unit in the `narrow` style
