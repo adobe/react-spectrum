@@ -201,6 +201,8 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
     // link expands the panel to reveal them rather than silently expanding behind the rail.
     if (isCollapsed) {
       setCollapsed?.(false);
+      setExpandedKeys(keys);
+      return;
     }
     startTransition(() => {
       addTransitionType(
