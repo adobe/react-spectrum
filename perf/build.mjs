@@ -46,6 +46,7 @@ export async function harnessHash() {
       'package.json',
       'scenarios.mjs',
       'drivers.mjs',
+      'confirm.mjs',
       'runner.mjs',
       'report.mjs',
       'build.mjs',

@@ -14,6 +14,7 @@ import {
   percentile,
   random,
   report,
+  shuffled,
   signedRankInterval
 } from '../report.mjs';
 import {test} from 'node:test';
@@ -347,4 +348,66 @@ test('reports show the achieved interval confidence', () => {
     })
   );
   assert.match(text, /40\.00 ms to 40\.00 ms \(96\.1%\) \| regression detected/);
+});
+
+test('seeded shuffles are reproducible permutations that vary between launches', () => {
+  let items = Array.from({length: 36}, (_, i) => i);
+  let rng = random(2026);
+  let first = shuffled(items, rng);
+  let second = shuffled(items, rng);
+  assert.deepEqual(
+    [...first].sort((a, b) => a - b),
+    items
+  );
+  assert.notDeepEqual(first, second);
+  assert.deepEqual(shuffled(items, random(2026)), first);
+  assert.deepEqual(
+    items,
+    Array.from({length: 36}, (_, i) => i)
+  );
+});
+
+test('reports show each launch’s paired change, leading arm, and start time', () => {
+  // Launches led by the base are 2 ms slower for the candidate; candidate-led ones 1 ms.
+  let samples = [0, 1, 2, 3].flatMap(block =>
+    ['base', 'candidate'].map(arm => ({
+      scenario: 'listbox.mount',
+      block,
+      arm,
+      metrics: {
+        opportunity: 20 + (arm === 'candidate' ? (block % 2 ? 1 : 2) : 0),
+        ready: 0,
+        reportedInteractionMax: null,
+        frameMax: null
+      }
+    }))
+  );
+  let text = report(
+    completed({
+      options: {blocks: 4, samples: 1, warmup: 0},
+      samples,
+      order: [0, 1, 2, 3].map(block => ({
+        block,
+        scenario: 'listbox.mount',
+        arms: block % 2 ? ['candidate', 'base'] : ['base', 'candidate'],
+        position: 0,
+        started: block * 90000
+      }))
+    })
+  );
+  assert.match(text, /## Changes by browser launch/);
+  assert.match(text, /Launch start times, in minutes into the run: 0\.0, 1\.5, 3\.0, 4\.5\./);
+  assert.match(
+    text,
+    /\| listbox\.mount \| \+2\.00 B \| \+1\.00 C \| \+2\.00 B \| \+1\.00 C \| \+2\.00 \| \+1\.00 \|/
+  );
+});
+
+test('observation-only runs have no per-launch changes', () => {
+  let text = report(
+    completed({
+      builds: {base: {name: 'base', versions: {react: 'test'}, source: {sha: '1234567890'}}}
+    })
+  );
+  assert.doesNotMatch(text, /Changes by browser launch/);
 });

@@ -120,6 +120,16 @@ export function random(seed) {
   };
 }
 
+// A seeded Fisher–Yates shuffle, leaving the input unchanged.
+export function shuffled(items, rng) {
+  let result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    let j = Math.floor(rng() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 // Exact null distribution of the Wilcoxon signed-rank statistic for n pairs:
 // cdf[k] is the probability that the positive-rank sum is at most k.
 function signedRankCdf(n) {
@@ -230,6 +240,86 @@ export function compare(samples, metric, options = {}) {
   };
 }
 
+// Per-launch paired changes, for inspecting drift over a run and order effects.
+function launchSection(result) {
+  let blocks = [...new Set(result.samples.map(sample => sample.block))].sort((a, b) => a - b);
+  if (!result.builds.candidate || !blocks.length) {
+    return [];
+  }
+  let signed = value => {
+    let digits = Math.abs(value).toFixed(2);
+    // Values that round to zero get no minus sign.
+    return `${value < 0 && digits !== '0.00' ? '−' : '+'}${digits}`;
+  };
+  let lines = [
+    '',
+    '## Changes by browser launch',
+    '',
+    'Each cell is one launch’s paired change in milliseconds (candidate median minus base median), marked B or C for the arm that led that launch’s ABBA trials. The last two columns are medians over launches led by each arm; a consistent gap between them suggests an order effect. A trend across launches suggests drift during the run.',
+    ''
+  ];
+  let starts = blocks.map(block =>
+    Math.min(
+      ...(result.order ?? [])
+        .filter(entry => entry.block === block && entry.started !== undefined)
+        .map(entry => entry.started)
+    )
+  );
+  if (starts.every(Number.isFinite)) {
+    lines.push(
+      `Launch start times, in minutes into the run: ${starts.map(start => (start / 60000).toFixed(1)).join(', ')}.`,
+      ''
+    );
+  }
+  lines.push(
+    `| Scenario | ${blocks.map(block => `L${block + 1}`).join(' | ')} | Base led | Candidate led |`,
+    `|---|${blocks.map(() => '---:').join('|')}|---:|---:|`
+  );
+  for (let scenario of result.scenarios) {
+    let metric = scenario.metric ?? 'opportunity';
+    let cells = blocks.map(block => {
+      let median = arm =>
+        percentile(
+          result.samples
+            .filter(
+              sample =>
+                sample.scenario === scenario.id && sample.block === block && sample.arm === arm
+            )
+            .map(sample => sample.metrics[metric]),
+          0.5
+        );
+      let base = median('base');
+      let candidate = median('candidate');
+      return {
+        delta: base === null || candidate === null ? null : candidate - base,
+        led: result.order?.find(entry => entry.block === block && entry.scenario === scenario.id)
+          ?.arms[0]
+      };
+    });
+    let byLead = arm => {
+      let deltas = cells.filter(cell => cell.led === arm && cell.delta !== null);
+      return deltas.length
+        ? signed(
+            percentile(
+              deltas.map(cell => cell.delta),
+              0.5
+            )
+          )
+        : '—';
+    };
+    lines.push(
+      `| ${scenario.id} | ${cells
+        .map(cell =>
+          cell.delta === null
+            ? '—'
+            : `${signed(cell.delta)}${cell.led ? ` ${cell.led === 'base' ? 'B' : 'C'}` : ''}`
+        )
+        .join(' | ')} | ${byLead('base')} | ${byLead('candidate')} |`
+    );
+  }
+  return lines;
+}
+
 const ms = value => (value === null ? 'unavailable' : `${value.toFixed(2)} ms`);
 
 export function report(result) {
@@ -304,6 +394,7 @@ export function report(result) {
     }
   }
   lines.push(
+    ...launchSection(result),
     '',
     '## Supporting measurements',
     '',

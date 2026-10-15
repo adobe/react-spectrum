@@ -6,6 +6,7 @@
  */
 
 import {build} from './build.mjs';
+import {confirm} from './confirm.mjs';
 import {parseArgs} from 'node:util';
 import {run, validate} from './runner.mjs';
 import {scenarios} from './scenarios.mjs';
@@ -18,6 +19,7 @@ const help = `React Aria local production benchmarks
   yarn perf run --build candidate
   yarn perf calibrate --build candidate
   yarn perf validate --build candidate --runs 20
+  yarn perf confirm --results <results id> --runs 2
   yarn perf list
 
 Options:
@@ -27,8 +29,9 @@ Options:
   --warmup 2                      Discarded trials per arm/scenario/block
   --scale 1                       Integer workload multiplier (1–10)
   --cpu 1                         CPU slowdown factor (1–20); not a device model
-  --seed 2026                     Reproducible base/candidate order and gap seed
-  --runs 20                       A/A comparisons for validate (1–100)
+  --seed 2026                     Reproducible scenario order, arm order, and gaps
+  --runs 20                       Runs for validate (A/A, default 20) or confirm (default 1)
+  --results <id>                  Completed compare run for confirm to repeat
   --absolute-threshold 8          Exploratory completion threshold in milliseconds
   --relative-threshold 0.05       Exploratory fractional threshold
   --frame-threshold 0.25          Scroll mean rAF interval threshold floor in milliseconds
@@ -55,7 +58,8 @@ try {
       scale: {type: 'string', default: '1'},
       cpu: {type: 'string', default: '1'},
       seed: {type: 'string', default: '2026'},
-      runs: {type: 'string', default: '20'},
+      runs: {type: 'string'},
+      results: {type: 'string'},
       'absolute-threshold': {type: 'string', default: '8'},
       'relative-threshold': {type: 'string', default: '0.05'},
       'frame-threshold': {type: 'string', default: '0.25'},
@@ -83,6 +87,16 @@ try {
   };
   if (!command || values.help) {
     console.log(help);
+  } else if (command === 'confirm') {
+    if (!values.results) {
+      throw new Error('confirm requires --results with a completed compare run.');
+    }
+    values.runs ??= '1';
+    await confirm({
+      results: values.results,
+      scenario: values.scenario,
+      runs: number('runs', 1, 20)
+    });
   } else if (command === 'list') {
     for (let scenario of scenarios) {
       console.log(`${scenario.id.padEnd(20)} ${scenario.label}`);
@@ -123,6 +137,7 @@ try {
       throw new Error('Comparisons need an even --blocks so each arm leads equally often.');
     }
     if (command === 'validate') {
+      values.runs ??= '20';
       await validate({...options, runs: number('runs', 1, 100)});
     } else if (command === 'calibrate') {
       console.log(

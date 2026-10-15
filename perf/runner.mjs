@@ -5,7 +5,7 @@
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import {binomialTail, metrics, random, report} from './report.mjs';
+import {binomialTail, metrics, random, report, shuffled} from './report.mjs';
 import {buildPath, loadBuild, local} from './build.mjs';
 import {chromium} from 'playwright';
 import {driver, pause} from './drivers.mjs';
@@ -351,22 +351,27 @@ export async function run(options) {
   process.once('SIGTERM', interrupt);
   try {
     let rng = random(options.seed);
+    let begin = Date.now();
     for (let block = 0; block < options.blocks; block++) {
       checkInterrupted();
       browser = await launch(options);
       checkInterrupted();
       result.environment.browser = browser.version();
-      // Rotate scenario order, and alternate which arm leads each block's ABBA trials.
-      let ordered = [
-        ...selected.slice(block % selected.length),
-        ...selected.slice(0, block % selected.length)
-      ];
-      for (let scenario of ordered) {
+      // A seeded shuffle spreads every scenario across early and late positions in a
+      // launch; which arm leads each scenario's ABBA trials alternates between launches.
+      for (let [position, scenario] of shuffled(selected, rng).entries()) {
         let arms = Object.keys(builds);
         if ((block + selected.indexOf(scenario) + (options.seed % 2)) % 2) {
           arms.reverse();
         }
-        result.order.push({block, scenario: scenario.id, arms});
+        result.order.push({
+          block,
+          scenario: scenario.id,
+          arms,
+          position,
+          // Milliseconds since the first launch, for spotting drift over a run.
+          started: Date.now() - begin
+        });
         console.log(`Block ${block + 1}/${options.blocks} · ${scenario.id} · ${arms.join('/')}`);
         for (let arm of arms) {
           pages[arm] = await openPage(browser, server, scenario, arm, options, builds[arm]);
