@@ -14,7 +14,7 @@ import {Button} from '../src/Button';
 
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {OverlayArrow} from '../src/OverlayArrow';
-import React, {JSX} from 'react';
+import React, {JSX, useState} from 'react';
 import styles from './styles.css';
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 
@@ -392,3 +392,72 @@ export const TooltipContainerPaddingExample: StoryObj<typeof Tooltip> = {
     containerPadding: 10
   }
 };
+
+export function TooltipPressWhileWarmingUp() {
+  let style = {
+    background: 'Canvas',
+    color: 'CanvasText',
+    border: '1px solid gray',
+    padding: 5,
+    borderRadius: 4
+  };
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>Tab to "Bold", press Enter and wait a second</li>
+        <li>Hover "Italic", then press Enter before its tooltip appears</li>
+        <li>The "Italic" tooltip should still appear</li>
+      </ol>
+      <TooltipTrigger>
+        <Button>Bold</Button>
+        <Tooltip offset={5} style={style}>
+          Make text bold
+        </Tooltip>
+      </TooltipTrigger>{' '}
+      <TooltipTrigger>
+        <Button>Italic</Button>
+        <Tooltip offset={5} style={style}>
+          Make text italic
+        </Tooltip>
+      </TooltipTrigger>
+    </div>
+  );
+}
+
+export function TooltipTriggerRemovedWhileWarmingUp() {
+  let [isArchiveVisible, setArchiveVisible] = useState(true);
+  let style = {
+    background: 'Canvas',
+    color: 'CanvasText',
+    border: '1px solid gray',
+    padding: 5,
+    borderRadius: 4
+  };
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>Hover "Archive" and keep the mouse still. It's removed after 1 second.</li>
+        <li>Wait a second, then hover "Reply"</li>
+        <li>Its tooltip should appear after the usual delay, not right away</li>
+      </ol>
+      <TooltipTrigger>
+        <Button>Reply</Button>
+        <Tooltip offset={5} style={style}>
+          Reply to message
+        </Tooltip>
+      </TooltipTrigger>{' '}
+      {isArchiveVisible && (
+        <TooltipTrigger>
+          <Button onHoverStart={() => setTimeout(() => setArchiveVisible(false), 1000)}>
+            Archive
+          </Button>
+          <Tooltip offset={5} style={style}>
+            Archive message
+          </Tooltip>
+        </TooltipTrigger>
+      )}
+    </div>
+  );
+}

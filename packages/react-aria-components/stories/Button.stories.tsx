@@ -202,6 +202,63 @@ export const ButtonPerformance: ButtonStory = {
   }
 };
 
+export function PointerPressReleasedByKeyboard() {
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>In Chrome or Safari, hold the mouse button down on "Press me"</li>
+        <li>Press and release Space, then move the pointer off the button and back on</li>
+        <li>The button should not say "Pressed"</li>
+      </ol>
+      <Button>{({isPressed}) => (isPressed ? 'Pressed' : 'Press me')}</Button>
+    </div>
+  );
+}
+
+export function PressAfterEnabling() {
+  let [isDisabled, setDisabled] = useState(true);
+  let [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>In Safari on iOS, tap "Save" while it's disabled</li>
+        <li>Tap "Enable Save", then tap "Save" once</li>
+        <li>Presses should be 1</li>
+      </ol>
+      <button onClick={() => setDisabled(false)}>Enable Save</button>{' '}
+      <Button isDisabled={isDisabled} onPress={() => setCount(c => c + 1)}>
+        Save
+      </Button>
+      <p>Presses: {count}</p>
+    </div>
+  );
+}
+
+export function PressWithChangingContent() {
+  let [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>In Chrome or Safari, press "Save" with the mouse near its right edge</li>
+        <li>As you release, quickly move the mouse off, back on and off again within 80ms</li>
+        <li>Presses should be 1</li>
+      </ol>
+      <Button style={{padding: 0}} onPress={() => setCount(c => c + 1)}>
+        {({isPressed}) => {
+          if (isPressed) {
+            return <b style={{display: 'block', padding: '4px 12px'}}>Save</b>;
+          } else {
+            return <span style={{display: 'block', padding: '4px 12px'}}>Save</span>;
+          }
+        }}
+      </Button>
+      <p>Presses: {count}</p>
+    </div>
+  );
+}
+
 export const ButtonRender: ButtonStory = {
   render: args => (
     <Button {...args} render={props => <CustomButton {...props} />}>

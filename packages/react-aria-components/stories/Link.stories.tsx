@@ -33,3 +33,18 @@ export const LinkExample: LinkStory = () => {
     </Link>
   );
 };
+
+export function LinkPressedAfterNewTab() {
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>Tab to the link and press Enter, it opens in a new tab</li>
+        <li>Switch back to this tab</li>
+        <li>The link should not say "Pressed"</li>
+      </ol>
+      <Link href="https://react-spectrum.adobe.com/" target="_blank">
+        {({isPressed}) => (isPressed ? 'Pressed' : 'Open in new tab')}
+      </Link>
+    </div>
+  );
+}

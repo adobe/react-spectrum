@@ -15,9 +15,10 @@ import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {mergeProps} from '../utils/mergeProps';
 import {useDescription} from '../utils/useDescription';
+import {useEffect, useRef} from 'react';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
 import {usePress} from './usePress';
-import {useRef} from 'react';
 
 export interface LongPressProps {
   /** Whether long press events should be disabled. */
@@ -72,7 +73,23 @@ export function useLongPress(props: LongPressProps): LongPressResult {
   } = props;
 
   const timeRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const removeTimeRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeRef.current);
+      clearTimeout(removeTimeRef.current);
+    };
+  }, []);
+
+  let triggerLongPress = useEffectEvent((e: LongPressEvent) => {
+    if (onLongPress && !isDisabled) {
+      onLongPress(e);
+    }
+  });
+
   let isAcceptedPointerType = (e: PressEvent) =>
     pointerType
       ? e.pointerType === pointerType
@@ -83,6 +100,9 @@ export function useLongPress(props: LongPressProps): LongPressResult {
     onPressStart(e) {
       e.continuePropagation();
       if (isAcceptedPointerType(e)) {
+        clearTimeout(removeTimeRef.current);
+        removeAllGlobalListeners();
+
         if (onLongPressStart) {
           onLongPressStart({
             ...e,
@@ -102,18 +122,28 @@ export function useLongPress(props: LongPressProps): LongPressResult {
             focusWithoutScrolling(e.target as FocusableElement);
           }
 
-          if (onLongPress) {
-            onLongPress({
-              ...e,
-              type: 'longpress'
-            });
-          }
+          triggerLongPress({
+            ...e,
+            type: 'longpress'
+          });
           timeRef.current = undefined;
         }, threshold);
 
         // Prevent context menu, which may be opened on long press on touch devices
         if (e.pointerType === 'touch') {
           addGlobalListener(e.target, 'contextmenu', e => e.preventDefault(), {once: true});
+
+          addGlobalListener(
+            getOwnerWindow(e.target),
+            'pointerdown',
+            (e: PointerEvent) => {
+              if (e.pointerType === 'touch') {
+                clearTimeout(timeRef.current);
+                timeRef.current = undefined;
+              }
+            },
+            {capture: true}
+          );
         }
 
         let ownerWindow = getOwnerWindow(e.target);
@@ -123,7 +153,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
           () => {
             // If no contextmenu/click event is fired quickly after pointerup, remove the handler
             // so future events outside a long press are not prevented.
-            setTimeout(() => {
+            removeTimeRef.current = setTimeout(() => {
               removeAllGlobalListeners();
             }, 100);
           },

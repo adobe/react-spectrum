@@ -13,6 +13,7 @@
 import {act, fireEvent, installPointerEvent, render} from '@react-spectrum/test-utils-internal';
 import {mergeProps} from '../../src/utils/mergeProps';
 import React from 'react';
+import {useLayoutEffect} from '../../src/utils/useLayoutEffect';
 import {useLongPress} from '../../src/interactions/useLongPress';
 import {usePress} from '../../src/interactions/usePress';
 
@@ -492,5 +493,77 @@ describe('useLongPress', function () {
     fireEvent.keyUp(el, {key: ' '});
 
     expect(events).toHaveLength(0);
+  });
+
+  describe('supports unmounting during a long press', function () {
+    it('should not call onLongPress after the element unmounts', function () {
+      let onLongPress = jest.fn();
+      let res = render(<Example onLongPress={onLongPress} />);
+      let el = res.getByText('test');
+
+      fireEvent.pointerDown(el, {pointerType: 'touch'});
+      res.unmount();
+      act(() => jest.advanceTimersByTime(600));
+
+      expect(onLongPress.mock.calls).toEqual([]);
+    });
+  });
+
+  describe('supports disabling during a long press', function () {
+    it('should not call onLongPress when the button is disabled before the timer fires', function () {
+      // When a non-urgent update (e.g. a transition) disables the button, React commits it but
+      // runs passive effects later, so the long press timer can fire before the effect that
+      // cancels the press. That scheduling is hard to simulate, since act() flushes passive
+      // effects before returning. A layout effect runs after the commit but before passive
+      // effects, so advancing the timer from one lands it in the same window.
+      function Button({isDisabled, onLongPress}) {
+        let {longPressProps} = useLongPress({isDisabled, onLongPress});
+        useLayoutEffect(() => {
+          if (isDisabled) {
+            // This already runs inside the rerender's act().
+            // oxlint-disable-next-line rsp-rules/act-events-test
+            jest.advanceTimersByTime(600);
+          }
+        }, [isDisabled]);
+        return <button {...longPressProps}>Save</button>;
+      }
+
+      let onLongPress = jest.fn();
+      let {getByRole, rerender} = render(<Button onLongPress={onLongPress} />);
+
+      fireEvent.pointerDown(getByRole('button'), {pointerType: 'touch'});
+      rerender(<Button onLongPress={onLongPress} isDisabled />);
+
+      expect(onLongPress.mock.calls).toEqual([]);
+    });
+  });
+
+  describe('supports multiple touches', function () {
+    it('should not perform a long press when another touch starts', function () {
+      let onLongPress = jest.fn();
+      let res = render(<Example onLongPress={onLongPress} />);
+      let el = res.getByText('test');
+
+      fireEvent.pointerDown(el, {pointerType: 'touch', pointerId: 1});
+      fireEvent.pointerDown(document.body, {pointerType: 'touch', pointerId: 2});
+      act(() => jest.advanceTimersByTime(600));
+
+      expect(onLongPress.mock.calls).toEqual([]);
+    });
+
+    it('should not perform a long press when another touch starts shortly after a previous press', function () {
+      let onLongPress = jest.fn();
+      let res = render(<Example onLongPress={onLongPress} />);
+      let el = res.getByText('test');
+
+      fireEvent.pointerDown(el, {pointerType: 'touch', pointerId: 1});
+      fireEvent.pointerUp(document.body, {pointerType: 'touch', pointerId: 1});
+      fireEvent.pointerDown(el, {pointerType: 'touch', pointerId: 2});
+      act(() => jest.advanceTimersByTime(100));
+      fireEvent.pointerDown(document.body, {pointerType: 'touch', pointerId: 3});
+      act(() => jest.advanceTimersByTime(500));
+
+      expect(onLongPress.mock.calls).toEqual([]);
+    });
   });
 });

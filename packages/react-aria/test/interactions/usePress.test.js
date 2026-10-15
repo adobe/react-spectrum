@@ -24,9 +24,10 @@ import {Dialog} from '@adobe/react-spectrum/Dialog';
 import {DialogTrigger} from '@adobe/react-spectrum/DialogTrigger';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {Provider} from '@adobe/react-spectrum/Provider';
-import React from 'react';
+import React, {useRef} from 'react';
 import ReactDOM, {createPortal} from 'react-dom';
 import {defaultTheme as theme} from '@adobe/react-spectrum/defaultTheme';
+import {useLayoutEffect} from '../../src/utils/useLayoutEffect';
 import {usePress} from '../../src/interactions/usePress';
 
 function Example(props) {
@@ -5285,6 +5286,179 @@ describe('usePress', function () {
       fireEvent.click(el);
       // checking toHaveStyle leads to a cache issue in jsdom 26, https://github.com/testing-library/jest-dom/issues/673
       expect(el).not.toHaveAttribute('style', 'user-select: none');
+    });
+  });
+
+  describe('supports disabling during a press', function () {
+    installPointerEvent();
+
+    it('should not call onClick when the button is disabled before keyup is handled', function () {
+      // When a non-urgent update (e.g. a transition) disables the button, React commits it but
+      // runs passive effects later, so a queued keyup can be handled before the effect that
+      // cancels the press. That scheduling is hard to simulate, since act() flushes passive
+      // effects before returning. A layout effect runs after the commit but before passive
+      // effects, so dispatching the keyup from one lands it in the same window.
+      function Button({isDisabled, onClick}) {
+        let ref = useRef(null);
+        let {pressProps} = usePress({isDisabled, onClick});
+        useLayoutEffect(() => {
+          if (isDisabled) {
+            let keyUp = new KeyboardEvent('keyup', {key: 'Enter', bubbles: true});
+            ref.current.dispatchEvent(keyUp);
+          }
+        }, [isDisabled]);
+        return (
+          <button {...pressProps} ref={ref}>
+            Save
+          </button>
+        );
+      }
+
+      let onClick = jest.fn();
+      let {getByRole, rerender} = render(<Button onClick={onClick} />);
+
+      fireEvent.keyDown(getByRole('button'), {key: 'Enter'});
+      rerender(<Button onClick={onClick} isDisabled />);
+
+      expect(onClick.mock.calls).toEqual([]);
+    });
+
+    it('should respond to the first press after a disabled button is enabled', function () {
+      function Button({isDisabled, onPress}) {
+        let {pressProps} = usePress({isDisabled, onPress});
+        return (
+          <button {...pressProps} disabled={isDisabled}>
+            Save
+          </button>
+        );
+      }
+
+      let onPress = jest.fn();
+      let {getByRole, rerender} = render(<Button onPress={onPress} isDisabled />);
+      let button = getByRole('button');
+
+      fireEvent(button, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(button, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
+      act(() => jest.advanceTimersByTime(100));
+      rerender(<Button onPress={onPress} />);
+      fireEvent(button, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(button, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent.click(button, {detail: 1});
+
+      expect(onPress.mock.calls).toEqual([[expect.objectContaining({pointerType: 'mouse'})]]);
+    });
+  });
+
+  describe('supports pointer presses without a click', function () {
+    installPointerEvent();
+
+    it('should end a pointer press when a keyboard press releases it', function () {
+      let onPressChange = jest.fn();
+      let res = render(<Example onPressChange={onPressChange} />);
+      let el = res.getByText('test');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent.keyDown(el, {key: ' '});
+      fireEvent.keyUp(el, {key: ' '});
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse'}));
+
+      expect(onPressChange.mock.calls).toEqual([[true], [false]]);
+    });
+
+    it('should not focus the element with preventFocusOnPress when the click never arrives', function () {
+      let res = render(<Example preventFocusOnPress />);
+      let el = res.getByText('test');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      act(() => jest.advanceTimersByTime(100));
+
+      expect(document.activeElement).toBe(document.body);
+    });
+
+    it('should fire onPress when the pointer hovers out and back in before the delayed click', function () {
+      let onPress = jest.fn();
+      let res = render(<Example onPress={onPress} />);
+      let el = res.getByText('test');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse'}));
+      act(() => jest.advanceTimersByTime(100));
+
+      expect(onPress.mock.calls).toEqual([[expect.objectContaining({pointerType: 'mouse'})]]);
+    });
+  });
+
+  describe('supports nested pressables', function () {
+    installPointerEvent();
+
+    it('should not treat a mouse click on a card as virtual after a screen reader press', function () {
+      let onPress = jest.fn();
+      let res = render(
+        <Example onPress={onPress}>
+          card
+          <Example>button</Example>
+        </Example>
+      );
+      let card = res.getByText('card');
+      let button = res.getByText('button');
+
+      fireEvent(
+        card,
+        pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch', width: 0, height: 0})
+      );
+      fireEvent(
+        card,
+        pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch', width: 0, height: 0})
+      );
+      fireEvent.click(card, {detail: 0});
+      fireEvent(button, pointerEvent('pointerdown', {pointerId: 2, pointerType: 'mouse'}));
+      fireEvent(card, pointerEvent('pointerup', {pointerId: 2, pointerType: 'mouse'}));
+      fireEvent.click(card, {detail: 1});
+
+      expect(onPress.mock.calls).toEqual([[expect.objectContaining({pointerType: 'virtual'})]]);
+    });
+  });
+
+  describe('supports cancelling a press when its release is lost', function () {
+    it('should cancel a keyboard press when the window loses focus', function () {
+      let onPressChange = jest.fn();
+      let res = render(<Example onPressChange={onPressChange} />);
+      let el = res.getByText('test');
+
+      fireEvent.keyDown(el, {key: 'Enter'});
+      fireEvent(window, new Event('blur'));
+
+      expect(onPressChange.mock.calls).toEqual([[true], [false]]);
+    });
+  });
+
+  describe('supports moving focus during a press', function () {
+    it('should not activate the element that onPressStart focuses with Enter on macOS', function () {
+      let onPress = jest.fn();
+      let button;
+      let res = render(
+        <>
+          <Example onPressStart={() => act(() => button.focus())}>option</Example>
+          <Example elementType="button" onPress={onPress}>
+            continue
+          </Example>
+        </>
+      );
+      let option = res.getByText('option');
+      button = res.getByText('continue');
+
+      using spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+      if (fireEvent.keyDown(option, {key: 'Enter'})) {
+        fireEvent.click(button, {detail: 0});
+      }
+      spy.mockRestore();
+
+      expect(onPress.mock.calls).toEqual([]);
     });
   });
 });

@@ -144,3 +144,23 @@ export const NestedTabs: TabsStory = () => (
     <TabPanel id="bar">Bar</TabPanel>
   </Tabs>
 );
+
+export function TabsAlertOnSelection() {
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>Click "Two", then close the alert</li>
+        <li>Move the pointer off "Two" and back on</li>
+        <li>The alert should not open again</li>
+      </ol>
+      <Tabs defaultSelectedKey="one" onSelectionChange={key => alert(`Selected ${key}`)}>
+        <TabList aria-label="Tabs" style={{display: 'flex', gap: 8}}>
+          <Tab id="one">One</Tab>
+          <Tab id="two">Two</Tab>
+        </TabList>
+        <TabPanel id="one">One</TabPanel>
+        <TabPanel id="two">Two</TabPanel>
+      </Tabs>
+    </div>
+  );
+}

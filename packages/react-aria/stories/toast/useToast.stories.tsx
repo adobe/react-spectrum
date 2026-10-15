@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {JSX} from 'react';
-import {StoryFn} from '@storybook/react';
+import React, {JSX, useRef, useState} from 'react';
 import {ToastContainer} from './Example';
-import {ToastStateProps} from 'react-stately/useToastState';
+import {ToastState, ToastStateProps} from 'react-stately/useToastState';
 
 export default {
   title: 'useToast',
@@ -31,16 +30,72 @@ export default {
 
 let count = 0;
 
-let ToastStory = (props: ToastStateProps & {timeout?: number}): JSX.Element => (
-  <ToastContainer {...props}>
-    {state => (
-      <>
-        <button onClick={() => state.add('Mmmmm toast ' + ++count, {timeout: props.timeout})}>
-          Add toast
-        </button>
-      </>
-    )}
-  </ToastContainer>
-);
+interface DefaultProps extends ToastStateProps {
+  timeout?: number;
+}
 
-export const Default: StoryFn<typeof ToastStory> = args => <ToastStory {...args} />;
+export function Default(props: DefaultProps): JSX.Element {
+  let {timeout, ...otherProps} = props;
+
+  let ref = useRef<ToastState<string>>(null);
+
+  return (
+    <div>
+      <button onClick={() => ref.current!.add('Mmmmm toast ' + ++count, {timeout})}>
+        Add toast
+      </button>
+      <ToastContainer {...otherProps} ref={ref} />
+    </div>
+  );
+}
+
+export function ToastShownAgainWhileExiting(): JSX.Element {
+  let ref = useRef<ToastState<string>>(null);
+  let [archived, setArchived] = useState<string | null>(null);
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>Press "Save", then press Tab to focus "Archive"</li>
+        <li>Move the mouse onto the "Saved" toast and press Enter. "Archived" replaces it.</li>
+        <li>Move the mouse away and press Enter again while "Saved" is still fading out</li>
+        <li>"Saved" should close after 5 seconds</li>
+      </ol>
+      <button onClick={() => ref.current!.add('Saved', {timeout: 5000})}>Save</button>{' '}
+      <button
+        onClick={() => {
+          if (archived) {
+            ref.current!.close(archived);
+          } else {
+            setArchived(
+              ref.current!.add('Archived', {timeout: 5000, onClose: () => setArchived(null)})
+            );
+          }
+        }}>
+        {archived ? 'Undo' : 'Archive'}
+      </button>
+      <ToastContainer maxVisibleToasts={1} isAnimated ref={ref} />
+    </div>
+  );
+}
+
+export function ToastExitingWithFocus(): JSX.Element {
+  let ref = useRef<ToastState<string>>(null);
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>Press "Add toast" twice</li>
+        <li>Press Tab twice to reach the newest toast's ×, then press Enter</li>
+        <li>Focus should move to the other toast while the closed one fades out</li>
+      </ol>
+      <button
+        onClick={() =>
+          ref.current!.add(ref.current!.visibleToasts.length ? 'Second toast' : 'First toast')
+        }>
+        Add toast
+      </button>
+      <ToastContainer maxVisibleToasts={5} isAnimated ref={ref} />
+    </div>
+  );
+}

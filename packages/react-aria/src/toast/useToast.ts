@@ -16,6 +16,7 @@ import {filterDOMProps} from '../utils/filterDOMProps';
 import intlMessages from '../../intl/toast/*.json';
 import {QueuedToast, ToastState} from 'react-stately/useToastState';
 import {useEffect, useState} from 'react';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useId, useSlotId} from '../utils/useId';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
@@ -49,6 +50,7 @@ export function useToast<T>(
   ref: RefObject<FocusableElement | null>
 ): ToastAria {
   let {key, timer, timeout} = props.toast;
+  let isPaused = useEffectEvent(() => state.isPaused);
 
   useEffect(() => {
     if (timer == null || timeout == null) {
@@ -56,6 +58,10 @@ export function useToast<T>(
     }
 
     timer.reset(timeout);
+    if (isPaused()) {
+      timer.pause();
+    }
+
     return () => {
       timer.pause();
     };
@@ -74,6 +80,7 @@ export function useToast<T>(
   }, []);
 
   let toastProps = filterDOMProps(props, {labelable: true});
+  toastProps['data-key'] = key;
 
   return {
     toastProps: {

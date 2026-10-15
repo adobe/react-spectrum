@@ -142,6 +142,10 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
       }, closeDelay);
     }
 
+    if (!tooltips[id]) {
+      return;
+    }
+
     if (globalWarmUpTimeout) {
       clearTimeout(globalWarmUpTimeout);
       globalWarmUpTimeout = null;
@@ -193,6 +197,10 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
       let tooltip = tooltips[id];
       if (tooltip) {
         delete tooltips[id];
+        if (globalWarmUpTimeout) {
+          clearTimeout(globalWarmUpTimeout);
+          globalWarmUpTimeout = null;
+        }
       }
     };
   }, [id]);
