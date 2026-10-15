@@ -225,6 +225,12 @@ export class IncompleteDate {
         break;
     }
 
+    // clear offset when a date field or day period changes since it may no longer be valid.
+    // hour cycling computes its own offset, and minutes/seconds cannot cross a DST transition.
+    if (field !== 'hour' && field !== 'minute' && field !== 'second') {
+      res.offset = null;
+    }
+
     return res;
   }
 
