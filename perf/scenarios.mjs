@@ -54,6 +54,32 @@ export const scenarios = [
     metric: 'frameP95'
   },
   {id: 'table.update', fixture: 'table', label: 'Update one visible table record'},
+  {id: 'variable.mount', fixture: 'variable', label: 'Mount a variable-height virtualized list'},
+  {
+    id: 'variable.scroll',
+    fixture: 'variable',
+    label: 'Scroll through measured, wrapping rows',
+    metric: 'frameP95'
+  },
+  {
+    id: 'variable.resize',
+    fixture: 'variable',
+    label: 'Narrow the list and remeasure wrapping rows'
+  },
+  {id: 'collection.append', fixture: 'collection', label: 'Append a page of 50 records'},
+  {
+    id: 'collection.remove',
+    fixture: 'collection',
+    label: 'Delete five selected records and retain focus'
+  },
+  {
+    id: 'collection.replace',
+    fixture: 'collection',
+    label: 'Switch to a different 100-record dataset'
+  },
+  {id: 'tree.expand', fixture: 'tree', label: 'Expand a project containing 50 files'},
+  {id: 'tree.navigate', fixture: 'tree', label: 'Move keyboard focus into an expanded project'},
+  {id: 'tree.collapse', fixture: 'tree', label: 'Collapse a project containing 50 files'},
   {id: 'resize.mount', fixture: 'resize', label: 'Mount a nonvirtualized 500-row table'},
   {id: 'resize.container', fixture: 'resize', label: 'Narrow a 500-row table for a side panel'},
   {id: 'form.mount', fixture: 'form', label: 'Mount 30 mixed form controls'},
@@ -68,6 +94,9 @@ export const sizes = {
   'table-data': 100,
   'table-cells': 100,
   table: 10000,
+  variable: 10000,
+  collection: 100,
+  tree: 1000,
   resize: 500,
   form: 30
 };

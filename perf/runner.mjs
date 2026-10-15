@@ -76,7 +76,24 @@ function expectedRecords(scenario, size) {
   return records;
 }
 
-async function prepare(page, scenario) {
+function variableLayout(size, narrow = false, atTop = true) {
+  return {viewport: '#variable-list', width: narrow ? 360 : 600, total: size, atTop};
+}
+
+function collectionRecords(scenario, size) {
+  return Array.from({length: scenario.id.endsWith('.append') ? size * 1.5 : size}, (_, i) =>
+    scenario.id.endsWith('.replace') ? `replacement-${i}` : `item-${i}`
+  ).filter((_, i) => !scenario.id.endsWith('.remove') || i >= 5);
+}
+
+function treeRecords(size, expanded) {
+  let roots = Array.from({length: 20}, (_, i) => `project-${i}`);
+  return expanded
+    ? [roots[0], ...Array.from({length: size / 20}, (_, i) => `file-0-${i}`), ...roots.slice(1)]
+    : roots;
+}
+
+async function prepare(page, scenario, size) {
   await page.evaluate(() => window.__bench.reset());
   if (!scenario.id.endsWith('.mount')) {
     await page.locator('#mount').click();
@@ -133,6 +150,34 @@ async function prepare(page, scenario) {
       return columns.length === 6 && columns.every(column => column.style.width === '160px');
     });
   }
+  if (scenario.fixture === 'variable' && !scenario.id.endsWith('.mount')) {
+    await page.evaluate(expected => window.__bench.settleLayout(expected), variableLayout(size));
+    if (scenario.id.endsWith('.scroll')) {
+      await page.locator('#variable-list').hover();
+    }
+  }
+  if (scenario.fixture === 'collection') {
+    let count = scenario.id.endsWith('.remove') ? 5 : 1;
+    for (let i = 0; i < count; i++) {
+      await page.locator(`.mutation-list [data-record="item-${i}"] .react-aria-Checkbox`).click();
+    }
+    if (scenario.id.endsWith('.remove')) {
+      await page.locator('.mutation-list [data-record="item-4"]').focus();
+    }
+    await page.waitForFunction(
+      count =>
+        document.querySelectorAll('.mutation-list [data-record][aria-selected="true"]').length ===
+        count,
+      count
+    );
+  }
+  if (scenario.fixture === 'tree') {
+    await page.locator('.project-tree [data-record="project-0"]').focus();
+    if (scenario.id !== 'tree.expand') {
+      await page.keyboard.press('ArrowRight');
+      await page.locator('.project-tree [data-record="file-0-0"]').waitFor();
+    }
+  }
   await page.evaluate(async () => {
     await document.fonts.ready;
     await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -141,6 +186,86 @@ async function prepare(page, scenario) {
 
 function actionSpec(scenario, size) {
   let options = {event: 'pointerdown', target: '#mount', conditions: []};
+  if (scenario.fixture === 'variable') {
+    return {
+      event: scenario.id.endsWith('.scroll') ? 'wheel' : 'pointerdown',
+      target: scenario.id.endsWith('.scroll')
+        ? '#variable-list'
+        : scenario.id.endsWith('.resize')
+          ? '#variable-resize'
+          : '#mount',
+      frames: scenario.id.endsWith('.scroll'),
+      eventCount: scenario.id.endsWith('.scroll') ? 12 : 1,
+      conditions: [
+        condition(
+          '#variable-list',
+          scenario.id.endsWith('.scroll')
+            ? {scrollTop: 1900}
+            : {
+                style: {
+                  property: 'width',
+                  value: scenario.id.endsWith('.resize') ? '360px' : '600px'
+                }
+              }
+        )
+      ],
+      layout: variableLayout(
+        size,
+        scenario.id.endsWith('.resize'),
+        !scenario.id.endsWith('.scroll')
+      )
+    };
+  }
+  if (scenario.fixture === 'collection') {
+    let removing = scenario.id.endsWith('.remove');
+    let replacing = scenario.id.endsWith('.replace');
+    return {
+      event: removing ? 'keydown' : 'pointerdown',
+      key: removing ? 'Delete' : undefined,
+      target: removing
+        ? '.mutation-list'
+        : replacing
+          ? '#collection-replace'
+          : '#collection-append',
+      conditions: [
+        condition('.mutation-list [data-record]', {
+          orderedValues: {attribute: 'data-record', values: collectionRecords(scenario, size)}
+        }),
+        condition('.mutation-list [data-record][aria-selected="true"]', {
+          count: removing || replacing ? 0 : 1
+        }),
+        removing || replacing
+          ? condition(removing ? '.mutation-list [data-record="item-5"]' : '#collection-replace', {
+              focused: true
+            })
+          : condition('.mutation-list [data-record="item-0"]', {
+              attribute: 'aria-selected',
+              value: 'true'
+            })
+      ]
+    };
+  }
+  if (scenario.fixture === 'tree') {
+    let expanded = scenario.id !== 'tree.collapse';
+    return {
+      event: 'keydown',
+      key: scenario.id === 'tree.navigate' ? 'ArrowDown' : expanded ? 'ArrowRight' : 'ArrowLeft',
+      target: '.project-tree',
+      conditions: [
+        condition('.project-tree [data-record]', {
+          orderedValues: {attribute: 'data-record', values: treeRecords(size, expanded)}
+        }),
+        condition('.project-tree [data-record="project-0"]', {
+          attribute: 'aria-expanded',
+          value: String(expanded)
+        }),
+        condition(
+          `.project-tree [data-record="${scenario.id === 'tree.navigate' ? 'file-0-0' : 'project-0'}"]`,
+          {focused: true}
+        )
+      ]
+    };
+  }
   if (isNavigation(scenario)) {
     let target = '[role="option"][data-record="item-1"]';
     return {
@@ -338,7 +463,7 @@ async function action(page, scenario, size) {
     throw new Error('The navigation target is not visible.');
   }
   await page.evaluate(spec => window.__bench.arm(spec), spec);
-  if (scenario.id === 'table.scroll') {
+  if (scenario.id === 'table.scroll' || scenario.id === 'variable.scroll') {
     // Fixed wheel distances and cadence; scroll completion itself is not the score.
     for (let i = 0; i < 12; i++) {
       await page.mouse.wheel(0, 160);
@@ -416,6 +541,56 @@ async function action(page, scenario, size) {
       throw new Error('The table did not retain the expected row order and content.');
     }
   }
+  if (
+    scenario.id === 'variable.scroll' &&
+    (sample.inputEvents !== 12 ||
+      sample.frameIntervals.length < 10 ||
+      !sample.layout.rows.some(
+        row => row.index > 0 && row.top < sample.layout.height && row.top + row.height > 0
+      ))
+  ) {
+    throw new Error(
+      'Variable-height scrolling did not traverse records with all twelve wheel events and enough frame samples.'
+    );
+  }
+  if (scenario.fixture === 'collection') {
+    let labels = await page
+      .locator('.mutation-list [data-record] [data-record-label]')
+      .allTextContents();
+    let expected = collectionRecords(scenario, size).map(id =>
+      id.startsWith('replacement-') ? `New record ${id.slice(12)}` : `Record ${id.slice(5)}`
+    );
+    if (JSON.stringify(labels) !== JSON.stringify(expected)) {
+      throw new Error('Collection records did not retain their expected labels after the update.');
+    }
+  }
+  if (scenario.fixture === 'variable' || scenario.fixture === 'tree') {
+    let selector = scenario.fixture === 'variable' ? '#variable-list' : '.project-tree';
+    let rows = await page.locator(`${selector} [data-record]`).evaluateAll(nodes =>
+      nodes.map(node => ({
+        id: node.getAttribute('data-record'),
+        label: node.querySelector('[slot="label"]')?.textContent,
+        level: node.getAttribute('aria-level')
+      }))
+    );
+    if (
+      rows.some(row => {
+        let root = row.id.startsWith('project-');
+        let expected =
+          scenario.fixture === 'variable'
+            ? `Record ${row.id.slice(5)}`
+            : root
+              ? `Project ${row.id.slice(8)}`
+              : `File ${row.id.slice(5)}`;
+        return (
+          row.label !== expected ||
+          (scenario.fixture === 'tree' && row.level !== (root ? '1' : '2'))
+        );
+      })
+    ) {
+      throw new Error('Visible collection records have incorrect labels or hierarchy levels.');
+    }
+  }
   return sample;
 }
 
@@ -490,7 +665,7 @@ async function saveTrace(session, file, operation) {
 
 async function measureTrials(current, scenario, arm, block, options, samples) {
   for (let trial = -options.warmup; trial < options.samples; trial++) {
-    await prepare(current.page, scenario);
+    await prepare(current.page, scenario, current.size);
     let sample = await action(current.page, scenario, current.size);
     if (current.errors.length) {
       throw new Error(current.errors.join('\n'));
@@ -515,7 +690,7 @@ async function diagnose(browser, server, result, dir) {
           result.options,
           result.builds[arm]
         );
-        await prepare(current.page, scenario);
+        await prepare(current.page, scenario, current.size);
         await saveTrace(current.session, path.join(dir, file), () =>
           action(current.page, scenario, current.size)
         );
@@ -652,6 +827,9 @@ export async function run(options) {
   } catch (error) {
     result.status = 'failed';
     result.error = error.stack ?? String(error);
+    if (current?.errors.length) {
+      result.error += `\nBrowser errors:\n${current.errors.join('\n')}`;
+    }
     if (current) {
       await current.page.screenshot({path: path.join(dir, 'failure.png')}).catch(() => {});
     }

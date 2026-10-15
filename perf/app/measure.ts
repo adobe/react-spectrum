@@ -5,6 +5,8 @@
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import {layoutSignature, readLayout, settleLayout} from './layout.mjs';
+
 export interface Condition {
   selector: string;
   count?: number;
@@ -30,6 +32,8 @@ interface ArmOptions {
   key?: string;
   conditions: Condition[];
   frames?: boolean;
+  eventCount?: number;
+  layout?: {viewport: string; width: number; total: number; atTop?: boolean};
 }
 
 export interface Sample {
@@ -47,6 +51,8 @@ export interface Sample {
   }>;
   eventTimingSupported: boolean;
   visibility: DocumentVisibilityState;
+  inputEvents: number;
+  layout?: ReturnType<typeof readLayout>;
 }
 
 let events: Sample['events'] = [];
@@ -56,6 +62,8 @@ let sample: Sample | undefined;
 let lastFrame: number | undefined;
 let frame = 0;
 let finishing = false;
+let previousLayout: string | undefined;
+let stableLayoutFrames = 0;
 
 const eventTimingSupported = PerformanceObserver.supportedEntryTypes.includes('event');
 if (eventTimingSupported) {
@@ -117,8 +125,15 @@ function matches(conditions: Condition[]) {
   });
 }
 
-function check() {
-  if (!sample || !armed || finishing || !matches(armed.conditions)) {
+function check(layoutReady = false) {
+  if (
+    !sample ||
+    !armed ||
+    finishing ||
+    sample.inputEvents < (armed.eventCount ?? 1) ||
+    (armed.layout && !layoutReady) ||
+    !matches(armed.conditions)
+  ) {
     return;
   }
   finishing = true;
@@ -135,7 +150,7 @@ function check() {
   );
 }
 
-new MutationObserver(check).observe(document.documentElement, {
+new MutationObserver(() => check()).observe(document.documentElement, {
   subtree: true,
   childList: true,
   attributes: true,
@@ -156,14 +171,34 @@ function tick(now: number) {
     sample.frameIntervals.push(now - lastFrame);
   }
   lastFrame = now;
-  check();
+  if (
+    armed.layout &&
+    !finishing &&
+    sample.inputEvents >= (armed.eventCount ?? 1) &&
+    matches(armed.conditions)
+  ) {
+    let layout = readLayout(armed.layout);
+    let signature = layout ? layoutSignature(layout) : undefined;
+    stableLayoutFrames = signature && signature === previousLayout ? stableLayoutFrames + 1 : 1;
+    previousLayout = signature;
+    if (layout && stableLayoutFrames >= 3) {
+      sample.layout = layout;
+      check(true);
+    }
+  } else {
+    if (armed.layout && !finishing) {
+      previousLayout = undefined;
+      stableLayoutFrames = 0;
+    }
+    check();
+  }
   if (!sample.renderingOpportunity) {
     frame = requestAnimationFrame(tick);
   }
 }
 
 function start(event: Event) {
-  if (!armed || sample || event.type !== armed.event || !event.isTrusted) {
+  if (!armed || event.type !== armed.event || !event.isTrusted) {
     return;
   }
   let target = event.composedPath()[0];
@@ -173,6 +208,10 @@ function start(event: Event) {
   if (armed.key && (event as KeyboardEvent).key !== armed.key) {
     return;
   }
+  if (sample) {
+    sample.inputEvents++;
+    return;
+  }
   sample = {
     start: event.timeStamp,
     semanticReady: 0,
@@ -180,7 +219,8 @@ function start(event: Event) {
     frameIntervals: [],
     events: [],
     eventTimingSupported,
-    visibility: document.visibilityState
+    visibility: document.visibilityState,
+    inputEvents: 1
   };
   frame = requestAnimationFrame(tick);
 }
@@ -190,6 +230,7 @@ for (let event of ['pointerdown', 'pointerover', 'keydown', 'wheel']) {
 }
 
 export const measurement = {
+  settleLayout,
   arm(options: ArmOptions) {
     if (matches(options.conditions)) {
       throw new Error('Completion condition already holds before the action');
@@ -205,6 +246,8 @@ export const measurement = {
     sample = undefined;
     lastFrame = undefined;
     finishing = false;
+    previousLayout = undefined;
+    stableLayoutFrames = 0;
   },
   done() {
     return !!sample?.renderingOpportunity;
@@ -215,6 +258,12 @@ export const measurement = {
     }
     if (!armed || !matches(armed.conditions)) {
       throw new Error('The expected result did not remain correct after completion');
+    }
+    if (armed.layout) {
+      let layout = readLayout(armed.layout);
+      if (!layout || layoutSignature(layout) !== layoutSignature(sample.layout)) {
+        throw new Error('The variable-height layout changed after completion.');
+      }
     }
     collect((observer?.takeRecords() ?? []) as EventEntry[]);
     return {

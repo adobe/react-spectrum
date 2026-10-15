@@ -34,6 +34,7 @@ import {
 import {CellTableFixture, DataTableFixture, OptionContent, SelectFixture} from './collections';
 import {createRoot} from 'react-dom/client';
 import {measurement} from './measure';
+import {MutationFixture, ProjectNode, TreeFixture, VariableFixture} from './advanced-collections';
 import React, {useState} from 'react';
 import {sizes} from '../scenarios.mjs';
 import './styles.css';
@@ -53,6 +54,47 @@ const items = Array.from({length: size}, (_, i) => ({
   date: 'Oct 14, 2026',
   category: `Category ${i % 8}`
 }));
+
+// Local payloads are prepared before mounting, as if the data has already arrived.
+const projectRecords = ['variable', 'collection'].includes(fixture)
+  ? items.map(item => ({
+      id: item.id,
+      name: item.name,
+      description:
+        fixture === 'variable'
+          ? 'Review the project requirements, coordinate with the design team, and prepare the next release. '
+              .repeat(1 + (item.index % 3))
+              .trim()
+          : `${item.owner} · ${item.status}`
+    }))
+  : [];
+const nextPage =
+  fixture === 'collection'
+    ? Array.from({length: size / 2}, (_, i) => ({
+        id: `item-${size + i}`,
+        name: `Record ${size + i}`,
+        description: 'Next page · Active'
+      }))
+    : [];
+const replacement =
+  fixture === 'collection'
+    ? projectRecords.map((item, i) => ({
+        ...item,
+        id: `replacement-${i}`,
+        name: `New record ${i}`
+      }))
+    : [];
+const projects: ProjectNode[] =
+  fixture === 'tree'
+    ? Array.from({length: 20}, (_, i) => ({
+        id: `project-${i}`,
+        name: `Project ${i}`,
+        children: Array.from({length: size / 20}, (_, j) => ({
+          id: `file-${i}-${j}`,
+          name: `File ${i}-${j}`
+        }))
+      }))
+    : [];
 
 function withCalibration(update: () => void) {
   if (delayMode === 'deferred' && delay > 0) {
@@ -292,6 +334,12 @@ function App() {
             <DataTableFixture items={items} />
           ) : fixture === 'table-cells' ? (
             <CellTableFixture items={items} />
+          ) : fixture === 'variable' ? (
+            <VariableFixture items={projectRecords} />
+          ) : fixture === 'collection' ? (
+            <MutationFixture items={projectRecords} nextPage={nextPage} replacement={replacement} />
+          ) : fixture === 'tree' ? (
+            <TreeFixture items={projects} />
           ) : fixture === 'table' ? (
             <TableFixture />
           ) : fixture === 'resize' ? (

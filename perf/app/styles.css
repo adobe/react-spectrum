@@ -245,3 +245,61 @@ output {
   left: -1000px;
   height: 40px;
 }
+.variable-list {
+  height: 400px;
+  overflow: auto;
+  border: 1px solid #bcc6d3;
+  margin-top: 12px;
+}
+.variable-list [slot='label'] {
+  color: #20242b;
+  font-size: 14px;
+  font-weight: 600;
+}
+.variable-list [slot='description'] {
+  font-size: 14px;
+  line-height: 20px;
+  white-space: normal;
+}
+.collection-toolbar {
+  display: flex;
+  gap: 8px;
+}
+.mutation-list,
+.project-tree {
+  width: 700px;
+  height: 400px;
+  overflow: auto;
+  border: 1px solid #bcc6d3;
+  margin-top: 12px;
+}
+.mutation-list [data-record] {
+  height: auto;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e6eaf0;
+}
+.mutation-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+  border: 0;
+}
+.mutation-content [data-record-label] {
+  min-width: 100px;
+}
+.mutation-content [slot='description'] {
+  color: #545f70;
+}
+.project-tree [data-record] {
+  height: auto;
+}
+.tree-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+}
+.tree-content button {
+  padding: 2px 8px;
+}
