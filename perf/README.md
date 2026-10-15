@@ -29,6 +29,12 @@ Builds are immutable named snapshots. Choose a new name for another investigatio
 # Focus on a particular PR's affected operations.
 yarn perf compare --base baseline --candidate candidate --scenario listbox.focus,table
 
+# Collection data changes, controls in table cells, and popup navigation.
+yarn perf run --build candidate --scenario table-data,table-cells,combobox.keyboard,combobox.hover,select
+
+# Exercise the two new table fixtures with 500 rows instead of 100.
+yarn perf run --build candidate --scenario table-data,table-cells --scale 5
+
 # Compare a build with itself to inspect noise.
 yarn perf compare --base baseline --candidate baseline
 
@@ -51,7 +57,10 @@ If a dependency or benchmark change is necessary, rebuild **both** snapshots und
 | Fixture | Default data | Measured actions |
 | --- | --- | --- |
 | ListBox | 100 items with labels, team, and status | Mount, arrow-key focus, selection, unrelated parent update |
-| ComboBox | 500 local options | First open per component instance; type `99` with a 75 ms pause between keys |
+| ComboBox | 500 local options with an inline icon, label, and description | First open per component instance; type `99` with a 75 ms pause between keys; arrow-key and pointer navigation |
+| Select | Same 500 rich options as ComboBox | Arrow-key and pointer navigation in an open popup |
+| Sortable/filterable table | 100 nonvirtualized records × six columns | Reverse the numeric name sort; type `9` to filter; clear with Backspace to restore all rows |
+| Interactive table | 100 nonvirtualized records × six columns, with selection checkboxes, menus, and dialogs | Select one/all rows; open and dismiss a cell menu; open and close a cell dialog |
 | Virtualized table | 10,000 records × six columns, fixed 40 px rows | Mount, 12 wheel steps of 160 px with 32 ms pauses, update one visible record |
 | Resizable table | 500 nonvirtualized records × six flexible columns | Mount, narrow the container from 960 to 660 px as when opening a side panel |
 | Form and dialog | 30 mixed text fields, checkboxes, and switches | Mount, controlled field keypress, dialog opening and autofocus |
@@ -59,6 +68,14 @@ If a dependency or benchmark change is necessary, rebuild **both** snapshots und
 The table retains unchanged record identities on a one-record update. The suite verifies virtualization and checks that scrolling exposes the expected row. Every measured action has an explicit semantic completion condition; failures/timeouts invalidate the run rather than being discarded as outliers. Browser runtime/console errors also fail the run.
 
 The resizable table keeps its data and table element stable while its container narrows, exercising the browser's ResizeObserver and React Aria's column layout updates. Completion waits for the column width styles to update; assertions then verify all six columns' actual widths and that the rows remain present.
+
+`table-data.sort`, `.filter`, and `.clear` operate on an already-mounted table. Sorting and filtering retain the original record objects. Completion requires the entire expected sequence of row IDs and the correct sort direction, with row text checked afterward. Clearing starts from the filtered view and measures restoring the full collection. The application-side filter/sort work is included; these cases do not replace records with fresh objects.
+
+`table-cells.select` and `.select-all` wait for both row selection and checkbox state. `.menu` and `.dialog` wait for focus inside the overlay, while `.menu-close` (Escape) and `.dialog-close` (Close button) wait for overlay removal and focus restoration to the originating cell button. The full table remains mounted behind the overlay.
+
+`combobox.keyboard`, `combobox.hover`, `select.keyboard`, and `select.hover` start with an open popup and its first option focused. Each trial measures one move to the second option. Completion requires the new focus styling and either the ComboBox input's matching `aria-activedescendant` or actual DOM focus for Select. Pointer navigation starts at the trusted `pointerover` timestamp; target coordinates are resolved before timing. Hover is not an Event Timing interaction and is not included in interaction/INP claims. These are discrete option transitions, not a continuous pointer-sweep score.
+
+The ComboBox now shares the richer option content with Select, including for its existing open/filter scenarios. Rebuild both snapshots when comparing with this version of the harness.
 
 Each scenario gets a new browser context and page in each block. Before every trial, the fixture is unmounted and recreated in the same document; setup, fonts, and prerequisite interactions settle outside the measurement window. Default warmups exercise the same action and are discarded. These are **warm browser/module-cache measurements on fresh component instances**. There is no claim that a component's first-ever execution is represented. Datasets and all fixture modules are already loaded, local, and deterministic. The filtering, data update, React work, and browser work caused by the action are included.
 

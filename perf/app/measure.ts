@@ -12,8 +12,10 @@ export interface Condition {
   value?: string;
   text?: string;
   focused?: boolean;
+  activeDescendant?: string;
   scrollTop?: number;
   style?: {property: string; value: string};
+  orderedValues?: {attribute: string; values: string[]};
 }
 
 interface EventEntry extends PerformanceEntry {
@@ -23,7 +25,7 @@ interface EventEntry extends PerformanceEntry {
 }
 
 interface ArmOptions {
-  event: 'pointerdown' | 'keydown' | 'wheel';
+  event: 'pointerdown' | 'pointerover' | 'keydown' | 'wheel';
   target: string;
   key?: string;
   conditions: Condition[];
@@ -86,6 +88,15 @@ function matches(conditions: Condition[]) {
     if (condition.count !== undefined && nodes.length !== condition.count) {
       return false;
     }
+    if (condition.orderedValues) {
+      let {attribute, values} = condition.orderedValues;
+      if (
+        nodes.length !== values.length ||
+        [...nodes].some((node, i) => node.getAttribute(attribute) !== values[i])
+      ) {
+        return false;
+      }
+    }
     let node = nodes[0];
     if (!node) {
       return condition.count === 0;
@@ -98,6 +109,9 @@ function matches(conditions: Condition[]) {
       // Fixtures live in the top-level document, with no shadow roots.
       // oxlint-disable-next-line rsp-rules/shadow-safe-active-element
       (!condition.focused || node === document.activeElement) &&
+      (!condition.activeDescendant ||
+        node.getAttribute('aria-activedescendant') ===
+          document.querySelector(condition.activeDescendant)?.id) &&
       (condition.scrollTop === undefined || node.scrollTop >= condition.scrollTop)
     );
   });
@@ -171,7 +185,7 @@ function start(event: Event) {
   frame = requestAnimationFrame(tick);
 }
 
-for (let event of ['pointerdown', 'keydown', 'wheel']) {
+for (let event of ['pointerdown', 'pointerover', 'keydown', 'wheel']) {
   document.addEventListener(event, start, {capture: true, passive: true});
 }
 

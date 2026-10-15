@@ -13,6 +13,39 @@ export const scenarios = [
   {id: 'listbox.parent', fixture: 'listbox', label: 'Update unrelated parent state'},
   {id: 'combobox.open', fixture: 'combobox', label: 'Open a 500-option ComboBox'},
   {id: 'combobox.filter', fixture: 'combobox', label: 'Type 99 and filter 500 options'},
+  {
+    id: 'combobox.keyboard',
+    fixture: 'combobox',
+    label: 'Move ComboBox option focus with ArrowDown'
+  },
+  {id: 'combobox.hover', fixture: 'combobox', label: 'Move ComboBox option focus with the pointer'},
+  {id: 'select.keyboard', fixture: 'select', label: 'Move Select option focus with ArrowDown'},
+  {id: 'select.hover', fixture: 'select', label: 'Move Select option focus with the pointer'},
+  {id: 'table-data.sort', fixture: 'table-data', label: 'Reverse the sort of 100 table rows'},
+  {id: 'table-data.filter', fixture: 'table-data', label: 'Filter 100 table rows by typing 9'},
+  {id: 'table-data.clear', fixture: 'table-data', label: 'Restore 100 table rows with Backspace'},
+  {id: 'table-cells.select', fixture: 'table-cells', label: 'Select a row with its checkbox'},
+  {id: 'table-cells.select-all', fixture: 'table-cells', label: 'Select all 100 table rows'},
+  {
+    id: 'table-cells.menu',
+    fixture: 'table-cells',
+    label: 'Open a table cell menu and focus its first item'
+  },
+  {
+    id: 'table-cells.menu-close',
+    fixture: 'table-cells',
+    label: 'Dismiss a cell menu and restore focus'
+  },
+  {
+    id: 'table-cells.dialog',
+    fixture: 'table-cells',
+    label: 'Open a table cell dialog and autofocus'
+  },
+  {
+    id: 'table-cells.dialog-close',
+    fixture: 'table-cells',
+    label: 'Close a cell dialog and restore focus'
+  },
   {id: 'table.mount', fixture: 'table', label: 'Mount a virtualized 10,000-row table'},
   {
     id: 'table.scroll',
@@ -28,4 +61,13 @@ export const scenarios = [
   {id: 'form.dialog', fixture: 'form', label: 'Open a dialog and move focus'}
 ];
 
-export const sizes = {listbox: 100, combobox: 500, table: 10000, resize: 500, form: 30};
+export const sizes = {
+  listbox: 100,
+  combobox: 500,
+  select: 500,
+  'table-data': 100,
+  'table-cells': 100,
+  table: 10000,
+  resize: 500,
+  form: 30
+};

@@ -99,6 +99,55 @@ output {
 .combo-popover .list {
   margin: 0;
 }
+.option-content {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.option-content [slot='label'] {
+  font-size: 14px;
+  font-weight: 600;
+  color: #20242b;
+}
+.data-table-container {
+  height: 420px;
+  overflow: auto;
+  margin-top: 12px;
+}
+.data-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.data-table th,
+.data-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #e6eaf0;
+  text-align: left;
+}
+.data-table th {
+  background: #edf1f6;
+}
+.data-table [data-allows-sorting] {
+  cursor: pointer;
+}
+.data-table tr[data-selected] {
+  background: #c4ddfb;
+}
+.action-popover {
+  min-width: 180px;
+  padding: 4px;
+  background: white;
+  border: 1px solid #bcc6d3;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px #0002;
+}
+.action-popover [role='menuitem'] {
+  padding: 8px 12px;
+}
+.action-popover [data-focused] {
+  background: #e7f0fc;
+}
 .table {
   width: 800px;
   height: 400px;

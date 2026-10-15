@@ -31,6 +31,7 @@ import {
   TextField,
   Virtualizer
 } from 'react-aria-components';
+import {CellTableFixture, DataTableFixture, OptionContent, SelectFixture} from './collections';
 import {createRoot} from 'react-dom/client';
 import {measurement} from './measure';
 import React, {useState} from 'react';
@@ -44,6 +45,7 @@ const delay = Number(params.get('delay') ?? 0);
 const delayMode = params.get('delayMode') ?? 'sync';
 const items = Array.from({length: size}, (_, i) => ({
   id: `item-${i}`,
+  index: i,
   name: `Record ${i}`,
   owner: `Team ${i % 12}`,
   status: i % 3 === 0 ? 'Review' : 'Active',
@@ -111,8 +113,8 @@ function ComboFixture() {
       <Popover className="combo-popover">
         <ListBox aria-label="Matching records" className="list">
           {(item: (typeof items)[number]) => (
-            <ListBoxItem id={item.id} textValue={item.name}>
-              {item.name}
+            <ListBoxItem id={item.id} data-record={item.id} textValue={item.name}>
+              <OptionContent item={item} />
             </ListBoxItem>
           )}
         </ListBox>
@@ -284,6 +286,12 @@ function App() {
             <ListFixture />
           ) : fixture === 'combobox' ? (
             <ComboFixture />
+          ) : fixture === 'select' ? (
+            <SelectFixture items={items} />
+          ) : fixture === 'table-data' ? (
+            <DataTableFixture items={items} />
+          ) : fixture === 'table-cells' ? (
+            <CellTableFixture items={items} />
           ) : fixture === 'table' ? (
             <TableFixture />
           ) : fixture === 'resize' ? (

@@ -59,6 +59,23 @@ function condition(selector, rest = {}) {
   return {selector, ...rest};
 }
 
+function isNavigation(scenario) {
+  return (
+    ['combobox', 'select'].includes(scenario.fixture) &&
+    ['keyboard', 'hover'].some(action => scenario.id.endsWith(`.${action}`))
+  );
+}
+
+function expectedRecords(scenario, size) {
+  let records = Array.from({length: size}, (_, i) => `item-${i}`);
+  if (scenario.id === 'table-data.sort') {
+    records.reverse();
+  } else if (scenario.id === 'table-data.filter') {
+    records = records.filter(id => id.includes('9'));
+  }
+  return records;
+}
+
 async function prepare(page, scenario) {
   await page.evaluate(() => window.__bench.reset());
   if (!scenario.id.endsWith('.mount')) {
@@ -79,6 +96,37 @@ async function prepare(page, scenario) {
     await page.locator('[data-record="item-0"]').waitFor();
     await page.locator('[data-bench="records-table"]').hover();
   }
+  if (scenario.fixture === 'table-data' || scenario.fixture === 'table-cells') {
+    await page.locator('.data-table [data-record]').last().waitFor();
+  }
+  if (scenario.id === 'table-data.filter' || scenario.id === 'table-data.clear') {
+    await page.locator('#table-filter').focus();
+    if (scenario.id === 'table-data.clear') {
+      await page.keyboard.press('9');
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll('.data-table [data-record]')].every(row =>
+          row.getAttribute('data-record').includes('9')
+        )
+      );
+    }
+  }
+  if (scenario.id === 'table-cells.menu-close') {
+    await page.locator('#menu-item-2').click();
+    await page.locator('[role="menuitem"][data-action="edit"]').waitFor();
+  } else if (scenario.id === 'table-cells.dialog-close') {
+    await page.locator('#dialog-item-2').click();
+    await page.locator('#note-item-2').waitFor();
+  }
+  if (isNavigation(scenario)) {
+    await page.locator(scenario.fixture === 'combobox' ? '#combo-open' : '#select-open').click();
+    await page.getByRole('option').last().waitFor();
+    if (scenario.id.endsWith('.keyboard')) {
+      await page.keyboard.press('Home');
+    } else {
+      await page.locator('[role="option"][data-record="item-0"]').hover();
+    }
+    await page.locator('[role="option"][data-record="item-0"][data-focused]').waitFor();
+  }
   if (scenario.fixture === 'resize' && !scenario.id.endsWith('.mount')) {
     await page.waitForFunction(() => {
       let columns = [...document.querySelectorAll('.resizable-table th')];
@@ -93,7 +141,97 @@ async function prepare(page, scenario) {
 
 function actionSpec(scenario, size) {
   let options = {event: 'pointerdown', target: '#mount', conditions: []};
+  if (isNavigation(scenario)) {
+    let target = '[role="option"][data-record="item-1"]';
+    return {
+      event: scenario.id.endsWith('.hover') ? 'pointerover' : 'keydown',
+      key: scenario.id.endsWith('.keyboard') ? 'ArrowDown' : undefined,
+      target: scenario.id.endsWith('.hover')
+        ? target
+        : scenario.fixture === 'combobox'
+          ? '#combo-input'
+          : '.list',
+      conditions: [
+        condition('[role="option"]', {count: size}),
+        condition('[role="option"][data-focused]', {
+          count: 1,
+          attribute: 'data-record',
+          value: 'item-1'
+        }),
+        scenario.fixture === 'combobox'
+          ? condition('#combo-input', {focused: true, activeDescendant: target})
+          : condition(target, {focused: true})
+      ]
+    };
+  }
+  if (scenario.fixture === 'table-data') {
+    return {
+      event: scenario.id.endsWith('.sort') ? 'pointerdown' : 'keydown',
+      target: scenario.id.endsWith('.sort') ? '[data-bench="sort-name"]' : '#table-filter',
+      key: scenario.id.endsWith('.filter')
+        ? '9'
+        : scenario.id.endsWith('.clear')
+          ? 'Backspace'
+          : undefined,
+      conditions: [
+        condition('.data-table [data-record]', {
+          orderedValues: {attribute: 'data-record', values: expectedRecords(scenario, size)}
+        }),
+        condition('[data-bench="sort-name"]', {
+          attribute: 'aria-sort',
+          value: scenario.id.endsWith('.sort') ? 'descending' : 'ascending'
+        })
+      ]
+    };
+  }
   switch (scenario.id) {
+    case 'table-cells.select':
+      options.target = '[data-record="item-2"] .react-aria-Checkbox';
+      options.conditions = [
+        condition('.data-table [data-record][aria-selected="true"]', {
+          count: 1,
+          attribute: 'data-record',
+          value: 'item-2'
+        }),
+        condition('[data-record="item-2"] input:checked', {count: 1})
+      ];
+      break;
+    case 'table-cells.select-all':
+      options.target = '.data-table thead .react-aria-Checkbox';
+      options.conditions = [
+        condition('.data-table [data-record][aria-selected="true"]', {count: size}),
+        condition('.data-table input:checked', {count: size + 1})
+      ];
+      break;
+    case 'table-cells.menu':
+      options.target = '#menu-item-2';
+      options.conditions = [condition('[role="menuitem"][data-action="edit"]', {focused: true})];
+      break;
+    case 'table-cells.menu-close':
+      options = {
+        event: 'keydown',
+        key: 'Escape',
+        target: '[role="menu"]',
+        conditions: [
+          condition('[role="menu"]', {count: 0}),
+          condition('#menu-item-2', {focused: true})
+        ]
+      };
+      break;
+    case 'table-cells.dialog':
+      options.target = '#dialog-item-2';
+      options.conditions = [
+        condition('[role="dialog"]'),
+        condition('#note-item-2', {focused: true})
+      ];
+      break;
+    case 'table-cells.dialog-close':
+      options.target = '#close-item-2';
+      options.conditions = [
+        condition('[role="dialog"]', {count: 0}),
+        condition('#dialog-item-2', {focused: true})
+      ];
+      break;
     case 'listbox.mount':
       options.conditions = [condition('.list [role="option"]', {count: size})];
       break;
@@ -192,6 +330,13 @@ function actionSpec(scenario, size) {
 
 async function action(page, scenario, size) {
   let spec = actionSpec(scenario, size);
+  // Resolve hover coordinates before arming, so pointerover timestamps are the
+  // measurement boundary and locator polling/layout reads cannot enter the score.
+  let hoverBox =
+    spec.event === 'pointerover' ? await page.locator(spec.target).boundingBox() : undefined;
+  if (spec.event === 'pointerover' && !hoverBox) {
+    throw new Error('The navigation target is not visible.');
+  }
   await page.evaluate(spec => window.__bench.arm(spec), spec);
   if (scenario.id === 'table.scroll') {
     // Fixed wheel distances and cadence; scroll completion itself is not the score.
@@ -205,6 +350,8 @@ async function action(page, scenario, size) {
     await page.keyboard.press('9');
   } else if (spec.event === 'keydown') {
     await page.keyboard.press(spec.key);
+  } else if (spec.event === 'pointerover') {
+    await page.mouse.move(hoverBox.x + hoverBox.width / 2, hoverBox.y + hoverBox.height / 2);
   } else {
     await page.locator(spec.target).click();
   }
@@ -253,6 +400,21 @@ async function action(page, scenario, size) {
       throw new Error('The table columns did not finish resizing to the expected width.');
     }
     await page.getByRole('rowheader', {name: `Record ${size - 1}`, exact: true}).waitFor();
+  }
+  if (scenario.fixture === 'table-data' || scenario.fixture === 'table-cells') {
+    let expected = expectedRecords(scenario, size);
+    let rows = await page.locator('.data-table [data-record]').evaluateAll(rows =>
+      rows.map(row => ({
+        id: row.getAttribute('data-record'),
+        name: row.querySelector('[role="rowheader"]')?.textContent
+      }))
+    );
+    if (
+      rows.length !== expected.length ||
+      rows.some((row, i) => row.id !== expected[i] || row.name !== `Record ${expected[i].slice(5)}`)
+    ) {
+      throw new Error('The table did not retain the expected row order and content.');
+    }
   }
   return sample;
 }
