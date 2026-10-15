@@ -23,14 +23,70 @@ export function metrics(sample) {
       Math.max(interactions.get(event.interactionId) ?? 0, event.duration)
     );
   }
+  // Without a long frame there is nothing to attribute; that is missing, not zero.
+  let longFrames = sample.longFrames ?? [];
+  let scripts = longFrames.flatMap(frame => frame.scripts);
+  let total = values => (longFrames.length ? values.reduce((sum, value) => sum + value, 0) : null);
   return {
     ready: sample.semanticReady - sample.start,
     opportunity: sample.renderingOpportunity - sample.start,
     frameP95: percentile(sample.frameIntervals, 0.95),
     frameMax: sample.frameIntervals.length ? Math.max(...sample.frameIntervals) : null,
     reportedInteractionMax: interactions.size ? Math.max(...interactions.values()) : null,
-    reportedInteractions: interactions.size
+    reportedInteractions: interactions.size,
+    longFrames: longFrames.length,
+    longFrameMax: longFrames.length ? Math.max(...longFrames.map(frame => frame.duration)) : null,
+    longFrameBlocking: total(longFrames.map(frame => frame.blockingDuration)),
+    longFrameScript: total(scripts.map(script => script.duration)),
+    longFrameStyleLayout: total(
+      longFrames.map(frame =>
+        frame.styleAndLayoutStart ? frame.startTime + frame.duration - frame.styleAndLayoutStart : 0
+      )
+    ),
+    longFrameForcedLayout: total(scripts.map(script => script.forcedStyleAndLayoutDuration))
   };
+}
+
+function topInvoker(samples) {
+  let totals = new Map();
+  for (let script of samples.flatMap(sample => sample.longFrames.flatMap(frame => frame.scripts))) {
+    totals.set(script.invoker, (totals.get(script.invoker) ?? 0) + script.duration);
+  }
+  let [invoker] = [...totals].sort((a, b) => b[1] - a[1])[0] ?? [];
+  if (!invoker) {
+    return '—';
+  }
+  let text = invoker.length > 60 ? `${invoker.slice(0, 59)}…` : invoker;
+  return `\`${text.replaceAll('|', '\\|').replaceAll('`', "'")}\``;
+}
+
+function longFrameRows(result) {
+  let rows = [];
+  for (let scenario of result.scenarios) {
+    for (let arm of Object.keys(result.builds)) {
+      let samples = result.samples.filter(
+        sample => sample.scenario === scenario.id && sample.arm === arm
+      );
+      if (samples.some(sample => sample.longFramesSupported === false)) {
+        rows.push(`| ${scenario.id} / ${arm} | unsupported | — | — | — | — | — | — |`);
+        continue;
+      }
+      let observed = samples.filter(sample => sample.metrics.longFrames);
+      let median = metric =>
+        observed.length
+          ? ms(
+              percentile(
+                observed.map(sample => sample.metrics[metric]),
+                0.5
+              )
+            )
+          : '—';
+      rows.push(
+        `| ${scenario.id} / ${arm} | ${observed.length}/${samples.length} | ${observed.length ? ms(Math.max(...observed.map(sample => sample.metrics.longFrameMax))) : 'none reported'} | ${median('longFrameBlocking')} | ${median('longFrameScript')} | ${median('longFrameStyleLayout')} | ${median('longFrameForcedLayout')} | ${topInvoker(observed)} |`
+      );
+    }
+  }
+  return rows;
 }
 
 export function random(seed) {
@@ -207,7 +263,15 @@ export function report(result) {
     '',
     '*Event Timing omits ordinary entries below its reporting threshold and rounds durations. These maxima describe only observed entries; missing entries are not zeros. No interaction percentile or INP is inferred from this censored sample.',
     '',
-    'Raw timestamps, event entries, frame intervals, ordering, build fingerprints, and machine metadata are in results.json. Full Chrome traces, when requested, are separate diagnostic reruns and excluded from comparisons.',
+    '## Long animation frames',
+    '',
+    '| Scenario / arm | Trials with long frames† | Longest frame | Blocking | Script | Style and layout | Forced style and layout | Top script invoker |',
+    '|---|---:|---:|---:|---:|---:|---:|---|',
+    ...longFrameRows(result),
+    '',
+    '†Long Animation Frames (LoAF) reports only frames of at least 50 ms, and lists scripts only when they run for at least 5 ms. Except for the longest frame, columns are medians over trials with long frames, summed across each trial’s long frames that overlap its measurement window. Trials without entries had no long frame; that is not a zero cost. Blocking is each frame’s time beyond 50 ms. Invokers name the event, callback, or timer that ran the script; script sources are minified production code.',
+    '',
+    'Raw timestamps, event entries, long animation frames, frame intervals, ordering, build fingerprints, and machine metadata are in results.json. Full Chrome traces, when requested, are separate diagnostic reruns and excluded from comparisons.',
     ''
   );
   for (let diagnostic of result.diagnostics ?? []) {

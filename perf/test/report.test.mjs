@@ -159,3 +159,84 @@ test('trace failures are listed without invalidating a completed comparison', ()
   assert.match(text, /Traces incomplete: Tracing was interrupted\./);
   assert.doesNotMatch(text, /FAILED \/ INCOMPLETE/);
 });
+
+function longFrame(startTime, duration, rest = {}) {
+  return {
+    startTime,
+    duration,
+    blockingDuration: Math.max(0, duration - 50),
+    renderStart: startTime + duration - 20,
+    styleAndLayoutStart: startTime + duration - 12,
+    scripts: [],
+    ...rest
+  };
+}
+
+test('long animation frames stay missing without entries and are summed when present', () => {
+  let sample = {
+    start: 0,
+    semanticReady: 10,
+    renderingOpportunity: 20,
+    frameIntervals: [],
+    events: [],
+    longFrames: []
+  };
+  assert.equal(metrics(sample).longFrames, 0);
+  assert.equal(metrics(sample).longFrameMax, null);
+  assert.equal(metrics(sample).longFrameScript, null);
+  sample.longFrames = [
+    longFrame(0, 80, {
+      scripts: [
+        {invoker: 'BUTTON#mount.onclick', duration: 40, forcedStyleAndLayoutDuration: 6},
+        {invoker: 'FrameRequestCallback', duration: 10, forcedStyleAndLayoutDuration: 0}
+      ]
+    }),
+    longFrame(100, 60)
+  ];
+  let result = metrics(sample);
+  assert.equal(result.longFrames, 2);
+  assert.equal(result.longFrameMax, 80);
+  assert.equal(result.longFrameBlocking, 40);
+  assert.equal(result.longFrameScript, 50);
+  assert.equal(result.longFrameStyleLayout, 24);
+  assert.equal(result.longFrameForcedLayout, 6);
+});
+
+test('the report attributes long frames and counts trials without them', () => {
+  let slow = {
+    scenario: 'listbox.mount',
+    arm: 'base',
+    block: 0,
+    longFramesSupported: true,
+    longFrames: [
+      longFrame(0, 90, {
+        scripts: [
+          {invoker: 'DIV#root.onpointerdown', duration: 60, forcedStyleAndLayoutDuration: 0}
+        ]
+      })
+    ]
+  };
+  let fast = {...slow, block: 1, longFrames: []};
+  let samples = [slow, fast].map(sample => ({
+    ...sample,
+    metrics: {
+      ...metrics({
+        start: 0,
+        semanticReady: 0,
+        renderingOpportunity: 0,
+        frameIntervals: [],
+        events: [],
+        ...sample
+      }),
+      opportunity: 1
+    }
+  }));
+  let text = report(
+    completed({
+      builds: {base: {name: 'base', versions: {react: 'test'}, source: {sha: '1234567890'}}},
+      samples
+    })
+  );
+  assert.match(text, /\| listbox\.mount \/ base \| 1\/2 \| 90\.00 ms \| 40\.00 ms \| 60\.00 ms \|/);
+  assert.match(text, /`DIV#root\.onpointerdown`/);
+});

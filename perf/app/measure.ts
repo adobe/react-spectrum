@@ -26,6 +26,22 @@ interface EventEntry extends PerformanceEntry {
   processingEnd: number;
 }
 
+interface ScriptEntry {
+  invoker: string;
+  invokerType: string;
+  sourceURL: string;
+  sourceFunctionName: string;
+  duration: number;
+  forcedStyleAndLayoutDuration: number;
+}
+
+interface LongFrameEntry extends PerformanceEntry {
+  blockingDuration: number;
+  renderStart: number;
+  styleAndLayoutStart: number;
+  scripts: ScriptEntry[];
+}
+
 interface ArmOptions {
   event: 'pointerdown' | 'pointerover' | 'keydown' | 'wheel';
   target: string;
@@ -50,6 +66,15 @@ export interface Sample {
     processing: number;
   }>;
   eventTimingSupported: boolean;
+  longFrames: Array<{
+    startTime: number;
+    duration: number;
+    blockingDuration: number;
+    renderStart: number;
+    styleAndLayoutStart: number;
+    scripts: ScriptEntry[];
+  }>;
+  longFramesSupported: boolean;
   visibility: DocumentVisibilityState;
   inputEvents: number;
   layout?: ReturnType<typeof readLayout>;
@@ -57,6 +82,8 @@ export interface Sample {
 
 let events: Sample['events'] = [];
 let observer: PerformanceObserver | undefined;
+let longFrames: Sample['longFrames'] = [];
+let frameObserver: PerformanceObserver | undefined;
 let armed: ArmOptions | undefined;
 let sample: Sample | undefined;
 let lastFrame: number | undefined;
@@ -90,6 +117,37 @@ function collect(entries: EventEntry[]) {
         processing: entry.processingEnd - entry.processingStart
       });
     }
+  }
+}
+
+// Long Animation Frames attribute slow frames to script, style/layout, and rendering.
+// The browser reports only frames of at least 50 ms, and scripts of at least 5 ms.
+const longFramesSupported =
+  PerformanceObserver.supportedEntryTypes.includes('long-animation-frame');
+if (longFramesSupported) {
+  frameObserver = new PerformanceObserver(list =>
+    collectFrames(list.getEntries() as LongFrameEntry[])
+  );
+  frameObserver.observe({type: 'long-animation-frame', buffered: true});
+}
+
+function collectFrames(entries: LongFrameEntry[]) {
+  for (let entry of entries) {
+    longFrames.push({
+      startTime: entry.startTime,
+      duration: entry.duration,
+      blockingDuration: entry.blockingDuration,
+      renderStart: entry.renderStart,
+      styleAndLayoutStart: entry.styleAndLayoutStart,
+      scripts: entry.scripts.map(script => ({
+        invoker: script.invoker,
+        invokerType: script.invokerType,
+        sourceURL: script.sourceURL,
+        sourceFunctionName: script.sourceFunctionName,
+        duration: script.duration,
+        forcedStyleAndLayoutDuration: script.forcedStyleAndLayoutDuration
+      }))
+    });
   }
 }
 
@@ -228,6 +286,8 @@ function start(event: Event) {
     frameIntervals: [],
     events: [],
     eventTimingSupported,
+    longFrames: [],
+    longFramesSupported,
     visibility: document.visibilityState,
     inputEvents: 1
   };
@@ -252,7 +312,9 @@ export const measurement = {
   clear() {
     cancelAnimationFrame(frame);
     observer?.takeRecords();
+    frameObserver?.takeRecords();
     events = [];
+    longFrames = [];
     armed = undefined;
     sample = undefined;
     lastFrame = undefined;
@@ -278,10 +340,17 @@ export const measurement = {
       }
     }
     collect((observer?.takeRecords() ?? []) as EventEntry[]);
+    collectFrames((frameObserver?.takeRecords() ?? []) as LongFrameEntry[]);
     return {
       ...sample,
       events: events.filter(
         event => event.startTime >= sample!.start && event.startTime <= sample!.renderingOpportunity
+      ),
+      // A frame that began before the input event can still contain its handling.
+      longFrames: longFrames.filter(
+        frame =>
+          frame.startTime + frame.duration >= sample!.start &&
+          frame.startTime <= sample!.renderingOpportunity
       )
     };
   }
