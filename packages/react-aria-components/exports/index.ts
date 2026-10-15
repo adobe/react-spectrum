@@ -100,7 +100,7 @@ export {
   DatePickerStateContext,
   DateRangePickerStateContext
 } from '../src/DatePicker';
-export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from '../src/Dialog';
+export {DialogTrigger, Dialog, DialogContext} from '../src/Dialog';
 export {
   Disclosure,
   DisclosureGroup,
@@ -160,6 +160,7 @@ export {Meter, MeterContext} from '../src/Meter';
 export {Modal, ModalOverlay, ModalContext} from '../src/Modal';
 export {NumberField, NumberFieldContext, NumberFieldStateContext} from '../src/NumberField';
 export {OverlayArrow} from '../src/OverlayArrow';
+export {OverlayTriggerStateContext} from '../src/OverlayTriggerStateContext';
 export {Popover, PopoverContext} from '../src/Popover';
 export {ProgressBar, ProgressBarContext} from '../src/ProgressBar';
 export {

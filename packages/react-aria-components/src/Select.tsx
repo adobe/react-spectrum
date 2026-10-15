@@ -39,7 +39,7 @@ import {ItemRenderProps} from './Collection';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {mergeProps} from 'react-aria/mergeProps';
-import {OverlayTriggerStateContext} from './Dialog';
+import {OverlayTriggerStateContext} from './OverlayTriggerStateContext';
 import {PopoverContext} from './Popover';
 import React, {
   createContext,

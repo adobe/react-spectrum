@@ -14,7 +14,8 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from '../src/Dialog';
+export {DialogTrigger, Dialog, DialogContext} from '../src/Dialog';
+export {OverlayTriggerStateContext} from '../src/OverlayTriggerStateContext';
 export type {DialogProps, DialogTriggerProps, DialogRenderProps} from '../src/Dialog';
 export type {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 

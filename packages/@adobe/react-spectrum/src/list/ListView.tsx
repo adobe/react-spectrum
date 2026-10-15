@@ -96,8 +96,6 @@ export interface SpectrumListViewProps<T>
   dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>['dragAndDropHooks'];
 }
 
-export {ListViewContext};
-
 const ROW_HEIGHTS = {
   compact: {
     medium: 32,

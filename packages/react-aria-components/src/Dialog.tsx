@@ -74,7 +74,6 @@ export interface DialogProps
 }
 
 export const DialogContext = createContext<ContextValue<DialogProps, HTMLElement>>(null);
-export {OverlayTriggerStateContext};
 
 /**
  * A DialogTrigger opens a dialog when a trigger element is pressed.

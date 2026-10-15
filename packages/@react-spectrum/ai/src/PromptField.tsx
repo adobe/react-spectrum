@@ -33,7 +33,6 @@ import {
 } from 'react';
 import {FocusableRef} from '@react-types/shared';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
-import {getMimeTypeLabel, matchMimeType} from './mimeTypes';
 import {IconContext, MenuTriggerProps} from '@react-spectrum/s2';
 import {InternalChatContext, PromptFocusContext} from './Chat';
 // @ts-ignore
@@ -41,6 +40,7 @@ import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
+import {matchMimeType} from './mimeTypes';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Microphone from '@react-spectrum/s2/icons/Microphone';
@@ -261,8 +261,6 @@ const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
 // need this so we can replace the inline filter text rather than inserting it at the current caret
 // aka the difference between a slash command and using the + menu which won't have filter text
 const PromptCompletionAnchorContext = createContext<Position | null>(null);
-
-export {getMimeTypeLabel, matchMimeType};
 
 /**
  * A PromptField allows users to compose and submit prompts containing text, tokens, and

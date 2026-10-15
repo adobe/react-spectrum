@@ -74,12 +74,7 @@ import {SpectrumTableProps} from './TableView';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {ITableCollection as TableCollection} from 'react-stately/private/table/TableCollection';
-import {
-  TableContext,
-  useTableContext,
-  useVirtualizerContext,
-  VirtualizerContext
-} from './TableContext';
+import {TableContext, useTableContext, VirtualizerContext} from './TableContext';
 import {TableState, useTableColumnResizeState} from 'react-stately/useTableState';
 import {TableViewLayout} from './TableViewLayout';
 import {Tooltip} from '../tooltip/Tooltip';
@@ -146,9 +141,6 @@ const LEVEL_OFFSET_WIDTH = {
   medium: 16,
   large: 20
 };
-
-export {TableContext, useTableContext, useVirtualizerContext, VirtualizerContext};
-export type {TableContextValue} from './TableContext';
 
 interface TableBaseProps<T> extends SpectrumTableProps<T> {
   state: TableState<T> | TreeGridState<T>;
