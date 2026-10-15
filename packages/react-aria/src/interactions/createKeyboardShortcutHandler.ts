@@ -201,16 +201,19 @@ export function createKeyboardShortcutHandler(
   return (e: KeyboardEvent) => {
     let canonical = keyboardEventToCanonicalShortcut(e);
     let action = map.get(canonical);
-    let result = action?.(e);
-    if (result === undefined && action !== undefined) {
-      result = {shouldContinuePropagation: false, shouldPreventDefault: true};
-    } else if (typeof result === 'boolean') {
+    if (!action) {
+      e.continuePropagation();
+      return;
+    }
+    let result = action(e);
+    if (typeof result === 'boolean') {
       result = {shouldContinuePropagation: !result, shouldPreventDefault: result};
     }
-    if (result?.shouldPreventDefault) {
+    // Fields omitted from the result keep the handled defaults: prevent default, stop propagation.
+    if (result?.shouldPreventDefault !== false) {
       e.preventDefault();
     }
-    if (!action || result?.shouldContinuePropagation) {
+    if (result?.shouldContinuePropagation) {
       e.continuePropagation();
     }
   };
