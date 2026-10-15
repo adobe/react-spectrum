@@ -6,7 +6,8 @@
  */
 
 import fs from 'node:fs/promises';
-import {local} from './build.mjs';
+import {isDeepStrictEqual} from 'node:util';
+import {loadBuild, local} from './build.mjs';
 import path from 'node:path';
 import {run} from './runner.mjs';
 
@@ -33,6 +34,18 @@ export async function confirm({results, scenario, runs}) {
         ? `None of those scenarios were in that run. It measured: ${available.join(', ')}.`
         : 'No scenario in that run reported an improvement or regression. Pass --scenario to choose which to repeat.'
     );
+  }
+  for (let arm of ['base', 'candidate']) {
+    let current = await loadBuild(original.options[arm]);
+    let expected = original.builds[arm];
+    if (
+      ['artifactHash', 'harnessHash', 'lockHash'].some(key => current[key] !== expected[key]) ||
+      !isDeepStrictEqual(current.versions, expected.versions)
+    ) {
+      throw new Error(
+        `Snapshot ${current.name} no longer matches the ${arm} build in the original comparison. Start a new comparison instead of confirming these results.`
+      );
+    }
   }
   let experiments = [];
   for (let i = 0; i < runs; i++) {
