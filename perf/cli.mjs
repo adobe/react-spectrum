@@ -7,7 +7,7 @@
 
 import {build} from './build.mjs';
 import {parseArgs} from 'node:util';
-import {run} from './runner.mjs';
+import {run, validate} from './runner.mjs';
 import {scenarios} from './scenarios.mjs';
 
 const help = `React Aria local production benchmarks
@@ -17,16 +17,18 @@ const help = `React Aria local production benchmarks
   yarn perf compare --base baseline --candidate candidate
   yarn perf run --build candidate
   yarn perf calibrate --build candidate
+  yarn perf validate --build candidate --runs 20
   yarn perf list
 
 Options:
   --scenario listbox.focus,table   Run named actions or entire fixtures
-  --blocks 8                      Independent browser launches (paired in compare)
+  --blocks 8                      Independent browser launches (even when comparing)
   --samples 5                     Measured trials per arm/scenario/block
   --warmup 2                      Discarded trials per arm/scenario/block
   --scale 1                       Integer workload multiplier (1–10)
   --cpu 1                         CPU slowdown factor (1–20); not a device model
   --seed 2026                     Reproducible base/candidate order and gap seed
+  --runs 20                       A/A comparisons for validate (1–100)
   --absolute-threshold 8          Exploratory completion threshold in milliseconds
   --relative-threshold 0.05       Exploratory fractional threshold
   --frame-threshold 0.25          Scroll mean rAF interval threshold floor in milliseconds
@@ -53,6 +55,7 @@ try {
       scale: {type: 'string', default: '1'},
       cpu: {type: 'string', default: '1'},
       seed: {type: 'string', default: '2026'},
+      runs: {type: 'string', default: '20'},
       'absolute-threshold': {type: 'string', default: '8'},
       'relative-threshold': {type: 'string', default: '0.05'},
       'frame-threshold': {type: 'string', default: '0.25'},
@@ -89,7 +92,7 @@ try {
       throw new Error('build requires --name.');
     }
     await build(values.name);
-  } else if (['run', 'compare', 'calibrate'].includes(command)) {
+  } else if (['run', 'compare', 'calibrate', 'validate'].includes(command)) {
     let options = {
       base: command === 'compare' ? values.base : values.build,
       candidate: command === 'compare' ? values.candidate : undefined,
@@ -115,7 +118,13 @@ try {
           : `${command} requires --build.`
       );
     }
-    if (command === 'calibrate') {
+    // Each block leads with one arm, so an odd count would favor one order.
+    if (command !== 'run' && options.blocks % 2) {
+      throw new Error('Comparisons need an even --blocks so each arm leads equally often.');
+    }
+    if (command === 'validate') {
+      await validate({...options, runs: number('runs', 1, 100)});
+    } else if (command === 'calibrate') {
       console.log(
         'Calibration: A/A, then 40 ms synchronous, deferred, and forced-layout mount delays.'
       );

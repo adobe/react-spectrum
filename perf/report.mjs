@@ -120,6 +120,58 @@ export function random(seed) {
   };
 }
 
+// Exact null distribution of the Wilcoxon signed-rank statistic for n pairs:
+// cdf[k] is the probability that the positive-rank sum is at most k.
+function signedRankCdf(n) {
+  let counts = [1];
+  for (let rank = 1; rank <= n; rank++) {
+    let next = Array(counts.length + rank).fill(0);
+    counts.forEach((count, sum) => {
+      next[sum] += count;
+      next[sum + rank] += count;
+    });
+    counts = next;
+  }
+  let cumulative = 0;
+  return counts.map(count => (cumulative += count) / 2 ** n);
+}
+
+// Hodges–Lehmann estimate and distribution-free confidence interval for a paired
+// shift, from the sorted Walsh averages of the per-block changes. The interval uses
+// the smallest exact confidence level at or above the requested one; fewer than six
+// blocks cannot reach 95%, so they get no interval.
+export function signedRankInterval(deltas, confidence = 0.95) {
+  let walsh = deltas.flatMap((a, i) => deltas.slice(i).map(b => (a + b) / 2));
+  let estimate = percentile(walsh, 0.5);
+  walsh.sort((a, b) => a - b);
+  let cdf = signedRankCdf(deltas.length);
+  let trim = 0;
+  while (cdf[trim] <= (1 - confidence) / 2) {
+    trim++;
+  }
+  if (!trim) {
+    return {estimate, interval: null, confidence: null};
+  }
+  return {
+    estimate,
+    interval: [walsh[trim - 1], walsh[walsh.length - trim]],
+    confidence: 1 - 2 * cdf[trim - 1]
+  };
+}
+
+// Probability of at least `observed` successes in `total` trials with success rate p.
+export function binomialTail(observed, total, p) {
+  let probability = (1 - p) ** total;
+  let tail = 0;
+  for (let k = 0; k <= total; k++) {
+    if (k >= observed) {
+      tail += probability;
+    }
+    probability *= ((total - k) / (k + 1)) * (p / (1 - p));
+  }
+  return Math.min(1, tail);
+}
+
 export function compare(samples, metric, options = {}) {
   if (!samples.length) {
     throw new Error('Comparison requires samples.');
@@ -142,25 +194,20 @@ export function compare(samples, metric, options = {}) {
   ) {
     throw new Error('Comparison requires complete, finite paired samples for every block.');
   }
-  let median = (pairs, arm) =>
-    percentile(
-      pairs.flatMap(pair => pair[arm]),
-      0.5
-    );
-  let base = median(pairs, 'base');
-  let candidate = median(pairs, 'candidate');
-  let delta = candidate - base;
+  let median = values => percentile(values, 0.5);
+  let base = median(pairs.flatMap(pair => pair.base));
+  let candidate = median(pairs.flatMap(pair => pair.candidate));
+  // Each browser launch is compared with itself, so drift between launches cancels;
+  // the blocks, not the trials within them, are the independent observations.
+  let deltas = pairs.map(pair => median(pair.candidate) - median(pair.base));
+  let {
+    estimate: delta,
+    interval,
+    confidence
+  } = signedRankInterval(deltas, options.confidence ?? 0.95);
   let threshold = Math.max(options.absolute ?? 8, base * (options.relative ?? 0.05));
-  let interval = null;
   let verdict = 'inconclusive';
-  // Resample whole paired browser-launch blocks, not individual keystrokes/trials.
-  if (pairs.length >= 6) {
-    let rng = random(2026);
-    let deltas = Array.from({length: 2000}, () => {
-      let resampled = pairs.map(() => pairs[Math.floor(rng() * pairs.length)]);
-      return median(resampled, 'candidate') - median(resampled, 'base');
-    });
-    interval = [percentile(deltas, 0.025), percentile(deltas, 0.975)];
+  if (interval) {
     if (interval[1] < -threshold) {
       verdict = 'improvement detected';
     } else if (interval[0] > threshold) {
@@ -174,7 +221,9 @@ export function compare(samples, metric, options = {}) {
     candidate,
     delta,
     percent: base ? (delta / base) * 100 : null,
+    deltas,
     interval,
+    confidence,
     threshold,
     verdict,
     blocks: blocks.length
@@ -197,7 +246,7 @@ export function report(result) {
     '',
     'Times below are medians. Completion uses a two-animation-frame rendering-opportunity proxy, not presented-pixel timing. Scroll uses the mean rAF interval within each trial, not compositor frame delivery.',
     '',
-    'Decision thresholds are exploratory defaults, not calibrated merge criteria. Intervals are paired block bootstrap estimates; fewer than six blocks are always inconclusive. Multiple scenarios are exploratory comparisons, not a family-wide significance test.',
+    'Decision thresholds are exploratory defaults, not calibrated merge criteria. Changes are Hodges–Lehmann estimates of the per-block paired change, with exact Wilcoxon signed-rank intervals at the smallest achievable confidence of at least 95%; fewer than six blocks cannot reach 95% and are always inconclusive. Multiple scenarios are exploratory comparisons, not a family-wide significance test.',
     ''
   ];
   if (result.options.delay) {
@@ -226,7 +275,7 @@ export function report(result) {
     return lines.join('\n');
   }
   lines.push(
-    '| Scenario | Metric | Base | Candidate | Change | 95% interval of change | Result |',
+    '| Scenario | Metric | Base | Candidate | Paired change | Interval of change (confidence) | Result |',
     '|---|---|---:|---:|---:|---|---|'
   );
   result.comparisons = {};
@@ -241,7 +290,7 @@ export function report(result) {
       });
       result.comparisons[scenario.id] = comparison;
       lines.push(
-        `| ${scenario.id} | ${metric} | ${ms(comparison.base)} | ${ms(comparison.candidate)} | ${ms(comparison.delta)} (${comparison.percent === null ? 'n/a' : `${comparison.percent.toFixed(1)}%`}) | ${comparison.interval ? comparison.interval.map(ms).join(' to ') : 'insufficient blocks'} | ${comparison.verdict} |`
+        `| ${scenario.id} | ${metric} | ${ms(comparison.base)} | ${ms(comparison.candidate)} | ${ms(comparison.delta)} (${comparison.percent === null ? 'n/a' : `${comparison.percent.toFixed(1)}%`}) | ${comparison.interval ? `${comparison.interval.map(ms).join(' to ')} (${(comparison.confidence * 100).toFixed(1)}%)` : 'insufficient blocks'} | ${comparison.verdict} |`
       );
     } else {
       lines.push(

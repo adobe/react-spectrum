@@ -5,12 +5,12 @@
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import {binomialTail, metrics, random, report} from './report.mjs';
 import {buildPath, loadBuild, local} from './build.mjs';
 import {chromium} from 'playwright';
 import {driver, pause} from './drivers.mjs';
 import fs from 'node:fs/promises';
 import http from 'node:http';
-import {metrics, random, report} from './report.mjs';
 import os from 'node:os';
 import path from 'node:path';
 import {scenarios, sizes} from './scenarios.mjs';
@@ -199,15 +199,33 @@ async function saveTrace(session, file, operation) {
   }
 }
 
-async function measureTrials(current, scenario, arm, block, options, samples) {
+// Base and candidate pages stay open side by side, and their trials alternate in
+// ABBA order so drift within a launch affects both arms alike. `onTrial` reports the
+// page being measured, for failure screenshots.
+async function measureTrials(pages, scenario, arms, block, options, samples, onTrial) {
   for (let trial = -options.warmup; trial < options.samples; trial++) {
-    await prepare(current.page, scenario, current.size);
-    let sample = await perform(current, scenario);
-    if (current.errors.length) {
-      throw new Error(current.errors.join('\n'));
-    }
-    if (trial >= 0) {
-      samples.push({scenario: scenario.id, arm, block, trial, ...sample, metrics: metrics(sample)});
+    let order = (trial + options.warmup) % 2 ? [...arms].reverse() : arms;
+    for (let [position, arm] of order.entries()) {
+      let current = pages[arm];
+      onTrial(current);
+      // Keep the measured page frontmost so headed windows are never occluded.
+      await current.page.bringToFront();
+      await prepare(current.page, scenario, current.size);
+      let sample = await perform(current, scenario);
+      if (current.errors.length) {
+        throw new Error(current.errors.join('\n'));
+      }
+      if (trial >= 0) {
+        samples.push({
+          scenario: scenario.id,
+          arm,
+          block,
+          trial,
+          position,
+          ...sample,
+          metrics: metrics(sample)
+        });
+      }
     }
   }
 }
@@ -280,7 +298,7 @@ export async function run(options) {
   await fs.mkdir(dir, {recursive: true});
   let server = await serve(builds);
   let result = {
-    schema: 1,
+    schema: 2,
     started: new Date().toISOString(),
     status: 'running',
     options,
@@ -318,6 +336,7 @@ export async function run(options) {
   };
   let browser;
   let current;
+  let pages = {};
   let interrupted = false;
   let interrupt = () => {
     interrupted = true;
@@ -337,7 +356,7 @@ export async function run(options) {
       browser = await launch(options);
       checkInterrupted();
       result.environment.browser = browser.version();
-      // Rotate scenario order and balance AB/BA order across browser launches.
+      // Rotate scenario order, and alternate which arm leads each block's ABBA trials.
       let ordered = [
         ...selected.slice(block % selected.length),
         ...selected.slice(0, block % selected.length)
@@ -348,13 +367,18 @@ export async function run(options) {
           arms.reverse();
         }
         result.order.push({block, scenario: scenario.id, arms});
+        console.log(`Block ${block + 1}/${options.blocks} · ${scenario.id} · ${arms.join('/')}`);
         for (let arm of arms) {
-          console.log(`Block ${block + 1}/${options.blocks} · ${scenario.id} · ${arm}`);
-          current = await openPage(browser, server, scenario, arm, options, builds[arm]);
-          await measureTrials(current, scenario, arm, block, options, result.samples);
-          await current.context.close();
-          current = undefined;
+          pages[arm] = await openPage(browser, server, scenario, arm, options, builds[arm]);
         }
+        await measureTrials(pages, scenario, arms, block, options, result.samples, page => {
+          current = page;
+        });
+        for (let page of Object.values(pages)) {
+          await page.context.close();
+        }
+        pages = {};
+        current = undefined;
       }
       await browser.close();
       browser = undefined;
@@ -399,4 +423,59 @@ export async function run(options) {
     throw new Error(`Benchmark failed; partial results saved in ${dir}\n${result.error}`);
   }
   return {result, dir};
+}
+
+// Repeated A/A comparisons check the intervals empirically on this machine: with no
+// real difference, an interval should exclude zero at most at its nominal error rate.
+export async function validate(options) {
+  if (options.blocks < 6) {
+    throw new Error('validate needs at least 6 blocks, the fewest that can form a 95% interval.');
+  }
+  let runs = [];
+  for (let i = 0; i < options.runs; i++) {
+    console.log(`\nA/A validation run ${i + 1}/${options.runs}`);
+    // A different seed per run varies the arm order and the gaps between launches.
+    let {result, dir} = await run({...options, candidate: options.base, seed: options.seed + i});
+    runs.push({dir, comparisons: result.comparisons});
+  }
+  let intervals = runs.flatMap(run =>
+    Object.entries(run.comparisons).map(([scenario, comparison]) => ({scenario, ...comparison}))
+  );
+  let excluded = intervals.filter(({interval}) => interval[0] > 0 || interval[1] < 0);
+  let expected =
+    intervals.reduce((total, {confidence}) => total + (1 - confidence), 0) / intervals.length;
+  let tail = binomialTail(excluded.length, intervals.length, expected);
+  let percent = value => `${(value * 100).toFixed(1)}%`;
+  let lines = [
+    '# A/A interval validation',
+    '',
+    `${options.runs} A/A runs of ${options.base} · ${options.blocks} blocks × ${options.samples} trials · ${options.cpu}× CPU · ${options.scale}× workload`,
+    '',
+    `Intervals excluding zero: ${excluded.length} of ${intervals.length} (${percent(excluded.length / intervals.length)}); expected at most ${percent(expected)}.`,
+    '',
+    `Probability of at least this many by chance: ${tail.toFixed(3)}. ${tail < 0.05 ? '**The intervals look too narrow on this machine; treat verdicts with caution and investigate order or position effects.**' : 'Consistent with the nominal error rate.'}`,
+    '',
+    'Scenarios in the same run share browser launches, so they are not fully independent and the probability is approximate.',
+    '',
+    '| Scenario | Excluded zero | Within threshold | Inconclusive | Improvement | Regression |',
+    '|---|---:|---:|---:|---:|---:|'
+  ];
+  for (let scenario of [...new Set(intervals.map(({scenario}) => scenario))]) {
+    let rows = intervals.filter(row => row.scenario === scenario);
+    let count = verdict => rows.filter(row => row.verdict === verdict).length;
+    lines.push(
+      `| ${scenario} | ${excluded.filter(row => row.scenario === scenario).length}/${rows.length} | ${count('within practical threshold')} | ${count('inconclusive')} | ${count('improvement detected')} | ${count('regression detected')} |`
+    );
+  }
+  lines.push('', 'Runs:', '', ...runs.map(run => `- ${run.dir}`), '');
+  let dir = path.join(
+    local,
+    'results',
+    `validation-${new Date().toISOString().replaceAll(/[:.]/g, '-')}`
+  );
+  await fs.mkdir(dir, {recursive: true});
+  let markdown = lines.join('\n');
+  await fs.writeFile(path.join(dir, 'summary.md'), markdown);
+  console.log(`\n${markdown}\nSaved ${dir}`);
+  return {intervals, excluded: excluded.length, expected, tail, dir};
 }

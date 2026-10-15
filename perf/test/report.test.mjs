@@ -6,7 +6,16 @@
  */
 
 import assert from 'node:assert/strict';
-import {compare, metrics, missedFrames, percentile, report} from '../report.mjs';
+import {
+  binomialTail,
+  compare,
+  metrics,
+  missedFrames,
+  percentile,
+  random,
+  report,
+  signedRankInterval
+} from '../report.mjs';
 import {test} from 'node:test';
 
 function paired(base, candidate) {
@@ -277,4 +286,65 @@ test('scroll comparisons use the mean frame interval and the frame threshold', (
   // The relative threshold (5% of 8.4 ms) exceeds the 0.3 ms frame threshold.
   assert.ok(Math.abs(result.comparisons['table.scroll'].threshold - 0.42) < 1e-9);
   assert.match(text, /\| table\.scroll \| frameMean \|/);
+});
+
+test('signed-rank intervals use exact Walsh-average ranks for the block count', () => {
+  let deltas = [1, 2, 3, 4, 5, 6, 7, 8];
+  let {estimate, interval, confidence} = signedRankInterval(deltas);
+  assert.equal(estimate, 4.5);
+  // For 8 blocks, 95% trims 3 of 36 Walsh averages from each end (exact 96.1%).
+  assert.deepEqual(interval, [2, 7]);
+  assert.equal(confidence, 1 - 10 / 256);
+  assert.deepEqual(signedRankInterval([1, 2, 3, 4, 5, 6]).interval, [1, 6]);
+  assert.equal(signedRankInterval([1, 2, 3, 4, 5]).interval, null);
+});
+
+test('paired changes cancel drift between launches and keep A/A error near nominal', () => {
+  let rng = random(11);
+  let normal = () => Math.sqrt(-2 * Math.log(rng() || 1e-12)) * Math.cos(2 * Math.PI * rng());
+  for (let drift of [0, 3]) {
+    let excluded = 0;
+    let runs = 300;
+    for (let run = 0; run < runs; run++) {
+      let samples = Array.from({length: 8}, (_, block) => {
+        let shift = drift * normal();
+        return ['base', 'candidate'].flatMap(arm =>
+          Array.from({length: 5}, () => ({
+            block,
+            arm,
+            // Mostly normal noise with occasional large stalls.
+            metrics: {opportunity: 50 + shift + normal() + (rng() < 0.08 ? 20 * rng() : 0)}
+          }))
+        );
+      }).flat();
+      let {interval} = compare(samples, 'opportunity');
+      excluded += interval[0] > 0 || interval[1] < 0;
+    }
+    // The exact 8-block interval has a 3.9% nominal error rate.
+    assert.ok(excluded / runs < 0.07, `drift ${drift}: ${excluded}/${runs} excluded zero`);
+  }
+});
+
+test('binomial tails give the chance of at least that many excluded intervals', () => {
+  assert.equal(binomialTail(0, 10, 0.1), 1);
+  assert.ok(Math.abs(binomialTail(10, 10, 0.5) - 1 / 1024) < 1e-12);
+  assert.ok(Math.abs(binomialTail(2, 3, 0.5) - 0.5) < 1e-12);
+});
+
+test('reports show the achieved interval confidence', () => {
+  let base = [40, 60, 80, 100, 120, 140, 160, 180];
+  let text = report(
+    completed({
+      options: {blocks: 8, samples: 1, warmup: 0},
+      samples: paired(
+        base,
+        base.map(value => value + 40)
+      ).map(sample => ({
+        ...sample,
+        scenario: 'listbox.mount',
+        metrics: {...sample.metrics, ready: 0, reportedInteractionMax: null, frameMax: null}
+      }))
+    })
+  );
+  assert.match(text, /40\.00 ms to 40\.00 ms \(96\.1%\) \| regression detected/);
 });
