@@ -411,3 +411,45 @@ test('observation-only runs have no per-launch changes', () => {
   );
   assert.doesNotMatch(text, /Changes by browser launch/);
 });
+
+test('reports break down diagnostic traces and keep failures visible', () => {
+  let text = report(
+    completed({
+      diagnostics: [
+        {
+          scenario: 'listbox.mount',
+          arm: 'base',
+          file: 'listbox.mount-base.trace.json',
+          summary: {
+            window: 30,
+            busy: 25,
+            idle: 5,
+            script: 18,
+            style: 2,
+            layout: 3,
+            forcedStyleLayout: 4,
+            paint: 1,
+            gc: 1,
+            other: 0
+          }
+        },
+        {scenario: 'listbox.mount', arm: 'candidate', error: 'Target closed'}
+      ]
+    })
+  );
+  assert.match(text, /## Diagnostic traces/);
+  assert.match(
+    text,
+    /\| listbox\.mount \/ base \| 30\.00 ms \| 25\.00 ms \| 18\.00 ms \| 2\.00 ms \| 3\.00 ms \| 4\.00 ms \| 1\.00 ms \| 1\.00 ms \| 0\.00 ms \| listbox\.mount-base\.trace\.json \|/
+  );
+  assert.match(text, /listbox\.mount \/ candidate \| FAILED: Target closed/);
+});
+
+test('DOM mutation counts appear beside the other supporting measurements', () => {
+  let result = completed();
+  result.samples = result.samples.map(sample => ({
+    ...sample,
+    metrics: {...sample.metrics, mutations: 12, nodesChanged: 30}
+  }));
+  assert.match(report(result), /\| 12 \(30 nodes\) \|/);
+});

@@ -14,6 +14,7 @@ import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import {scenarios, sizes} from './scenarios.mjs';
+import {summarizeTrace} from './trace.mjs';
 
 async function serve(builds) {
   let server = http.createServer(async (request, response) => {
@@ -140,7 +141,7 @@ async function launch(options) {
   });
 }
 
-async function openPage(browser, server, scenario, arm, options, expected) {
+async function openPage(browser, server, scenario, arm, options, expected, trace = false) {
   let context = await browser.newContext({
     viewport: {width: 1280, height: 900},
     deviceScaleFactor: 1,
@@ -164,6 +165,7 @@ async function openPage(browser, server, scenario, arm, options, expected) {
   let params = new URLSearchParams({
     fixture: scenario.fixture,
     size: String(size),
+    ...(trace && {trace: '1'}),
     delay: String(arm === 'candidate' ? options.delay : 0),
     delayMode: options.delayMode
   });
@@ -178,7 +180,9 @@ async function openPage(browser, server, scenario, arm, options, expected) {
 
 async function saveTrace(session, file, operation) {
   await session.send('Tracing.start', {
-    categories: 'devtools.timeline,blink.user_timing,disabled-by-default-devtools.timeline.frame',
+    // toplevel adds task boundaries, so scheduling overhead shows as other work.
+    categories:
+      'toplevel,devtools.timeline,blink.user_timing,disabled-by-default-devtools.timeline.frame',
     transferMode: 'ReturnAsStream'
   });
   await operation();
@@ -245,14 +249,21 @@ async function diagnose(browser, server, result, dir, isInterrupted) {
           scenario,
           arm,
           result.options,
-          result.builds[arm]
+          result.builds[arm],
+          true
         );
+        // Match the measured trials' warm state before the traced trial.
+        for (let warmup = 0; warmup < result.options.warmup; warmup++) {
+          await prepare(current.page, scenario, current.size);
+          await perform(current, scenario);
+        }
         await prepare(current.page, scenario, current.size);
         await saveTrace(current.session, path.join(dir, file), () => perform(current, scenario));
         if (current.errors.length) {
           throw new Error(current.errors.join('\n'));
         }
-        result.diagnostics.push({scenario: scenario.id, arm, file});
+        let summary = summarizeTrace(JSON.parse(await fs.readFile(path.join(dir, file), 'utf8')));
+        result.diagnostics.push({scenario: scenario.id, arm, file, summary});
       } catch (error) {
         result.diagnostics.push({scenario: scenario.id, arm, error: error.message});
       } finally {

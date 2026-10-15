@@ -53,6 +53,8 @@ export function metrics(sample) {
     frameP95: percentile(sample.frameIntervals, 0.95),
     frameMax: sample.frameIntervals.length ? Math.max(...sample.frameIntervals) : null,
     missedFrames: missedFrames(sample.frameIntervals),
+    mutations: sample.mutations ?? null,
+    nodesChanged: sample.nodesAdded === undefined ? null : sample.nodesAdded + sample.nodesRemoved,
     reportedInteractionMax: interactions.size ? Math.max(...interactions.values()) : null,
     reportedInteractions: interactions.size,
     longFrames: longFrames.length,
@@ -320,6 +322,50 @@ function launchSection(result) {
   return lines;
 }
 
+// Main-thread breakdowns of the diagnostic trace reruns, within the measured window.
+function traceSection(diagnostics) {
+  if (!diagnostics.length) {
+    return [];
+  }
+  let lines = [
+    '## Diagnostic traces',
+    '',
+    'Each trace is a separate rerun after the same warmups as the measured trials, excluded from comparisons. Times cover the renderer main thread inside the measured window (input to rendering opportunity), attributing each moment to its innermost trace event. Forced style and layout is the part of style and layout that script triggered synchronously; it is already included in those columns.',
+    '',
+    '| Scenario / arm | Window | Main thread busy | Script | Style | Layout | Forced style and layout | Paint | GC | Other | Trace |',
+    '|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|'
+  ];
+  for (let diagnostic of diagnostics) {
+    let {summary} = diagnostic;
+    let label = `${diagnostic.scenario} / ${diagnostic.arm}`;
+    if (diagnostic.error) {
+      lines.push(
+        `| ${label} | FAILED: ${diagnostic.error.replaceAll('|', '\\|').split('\n')[0]} |||||||||| |`
+      );
+    } else if (!summary) {
+      lines.push(`| ${label} | no measurement window in trace |||||||||| ${diagnostic.file} |`);
+    } else {
+      lines.push(
+        `| ${label} | ${[
+          summary.window,
+          summary.busy,
+          summary.script,
+          summary.style,
+          summary.layout,
+          summary.forcedStyleLayout,
+          summary.paint,
+          summary.gc,
+          summary.other
+        ]
+          .map(ms)
+          .join(' | ')} | ${diagnostic.file} |`
+      );
+    }
+  }
+  lines.push('');
+  return lines;
+}
+
 const ms = value => (value === null ? 'unavailable' : `${value.toFixed(2)} ms`);
 
 export function report(result) {
@@ -398,8 +444,8 @@ export function report(result) {
     '',
     '## Supporting measurements',
     '',
-    '| Scenario / arm | Semantic ready median | Trials with Event Timing entries | Observed interaction max* | rAF interval p95 median | Worst rAF interval | Missed frames median |',
-    '|---|---:|---:|---:|---:|---:|---:|'
+    '| Scenario / arm | Semantic ready median | Trials with Event Timing entries | Observed interaction max* | rAF interval p95 median | Worst rAF interval | Missed frames median | DOM mutations median‡ |',
+    '|---|---:|---:|---:|---:|---:|---:|---:|'
   );
   for (let scenario of result.scenarios) {
     for (let arm of Object.keys(result.builds)) {
@@ -411,6 +457,10 @@ export function report(result) {
         .filter(value => value !== null);
       let frames = samples.map(sample => sample.metrics.frameMax).filter(value => value !== null);
       let p95s = samples.map(sample => sample.metrics.frameP95).filter(value => value != null);
+      let median = metric => {
+        let values = samples.map(sample => sample.metrics[metric]).filter(value => value != null);
+        return values.length ? percentile(values, 0.5) : null;
+      };
       let missed = samples
         .map(sample => sample.metrics.missedFrames)
         .filter(value => value != null);
@@ -420,13 +470,15 @@ export function report(result) {
             samples.map(sample => sample.metrics.ready),
             0.5
           )
-        )} | ${entries.length}/${samples.length} | ${entries.length ? ms(Math.max(...entries)) : 'none reported'} | ${p95s.length ? ms(percentile(p95s, 0.5)) : '—'} | ${frames.length ? ms(Math.max(...frames)) : '—'} | ${missed.length ? percentile(missed, 0.5) : '—'} |`
+        )} | ${entries.length}/${samples.length} | ${entries.length ? ms(Math.max(...entries)) : 'none reported'} | ${p95s.length ? ms(percentile(p95s, 0.5)) : '—'} | ${frames.length ? ms(Math.max(...frames)) : '—'} | ${missed.length ? percentile(missed, 0.5) : '—'} | ${median('mutations') === null ? '—' : `${median('mutations')} (${median('nodesChanged')} nodes)`} |`
       );
     }
   }
   lines.push(
     '',
     '*Event Timing omits ordinary entries below its reporting threshold and rounds durations. These maxima describe only observed entries; missing entries are not zeros. No interaction percentile or INP is inferred from this censored sample.',
+    '',
+    '‡Mutation records observed from the input until the rendering opportunity, with nodes added plus removed in parentheses. Counts barely vary between trials, so a difference between arms means the DOM work changed even when times are within noise.',
     '',
     '## Long animation frames',
     '',
@@ -439,12 +491,7 @@ export function report(result) {
     'Raw timestamps, event entries, long animation frames, frame intervals, ordering, build fingerprints, and machine metadata are in results.json. Full Chrome traces, when requested, are separate diagnostic reruns and excluded from comparisons.',
     ''
   );
-  for (let diagnostic of result.diagnostics ?? []) {
-    lines.push(
-      `Trace ${diagnostic.scenario} / ${diagnostic.arm}: ${diagnostic.error ? `FAILED: ${diagnostic.error}` : diagnostic.file}`,
-      ''
-    );
-  }
+  lines.push(...traceSection(result.diagnostics ?? []));
   if (result.diagnosticsError) {
     lines.push(`Traces incomplete: ${result.diagnosticsError}`, '');
   }

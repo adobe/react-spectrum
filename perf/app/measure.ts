@@ -76,6 +76,11 @@ export interface Sample {
   longFramesSupported: boolean;
   visibility: DocumentVisibilityState;
   inputEvents: number;
+  // DOM work the action caused before the rendering opportunity: mutation records,
+  // plus nodes added and removed. Unlike times, these barely vary between trials.
+  mutations: number;
+  nodesAdded: number;
+  nodesRemoved: number;
   layout?: ReturnType<typeof readLayout>;
 }
 
@@ -93,6 +98,9 @@ let stableLayoutFrames = 0;
 // Conditions that read layout (scroll position, geometry) are only evaluated from
 // the frame loop, so DOM mutations inside the window never force synchronous layout.
 let frameOnly = false;
+// Diagnostic trace reruns mark the measurement window with User Timing measures, so
+// traces show exactly what the score covered. Measured trials never add them.
+const marking = new URLSearchParams(location.search).has('trace');
 
 const eventTimingSupported = PerformanceObserver.supportedEntryTypes.includes('event');
 if (eventTimingSupported) {
@@ -204,12 +212,26 @@ function check(layoutReady = false) {
       if (sample) {
         sample.renderingOpportunity = performance.now();
         cancelAnimationFrame(frame);
+        if (marking) {
+          performance.measure('bench:ready', {start: sample.start, end: sample.semanticReady});
+          performance.measure('bench:window', {
+            start: sample.start,
+            end: sample.renderingOpportunity
+          });
+        }
       }
     })
   );
 }
 
-function observe() {
+function observe(records: MutationRecord[] = []) {
+  if (sample && !sample.renderingOpportunity) {
+    sample.mutations += records.length;
+    for (let record of records) {
+      sample.nodesAdded += record.addedNodes.length;
+      sample.nodesRemoved += record.removedNodes.length;
+    }
+  }
   if (!frameOnly) {
     check();
   }
@@ -221,7 +243,7 @@ new MutationObserver(observe).observe(document.documentElement, {
   attributes: true,
   characterData: true
 });
-document.addEventListener('focusin', () => queueMicrotask(observe), true);
+document.addEventListener('focusin', () => queueMicrotask(() => observe()), true);
 document.addEventListener('visibilitychange', () => {
   if (sample && document.hidden) {
     sample.visibility = 'hidden';
@@ -282,7 +304,10 @@ function start(event: Event) {
     longFrames: [],
     longFramesSupported,
     visibility: document.visibilityState,
-    inputEvents: 1
+    inputEvents: 1,
+    mutations: 0,
+    nodesAdded: 0,
+    nodesRemoved: 0
   };
   frame = requestAnimationFrame(tick);
 }
@@ -315,6 +340,9 @@ export const measurement = {
     previousLayout = undefined;
     stableLayoutFrames = 0;
     frameOnly = false;
+    if (marking) {
+      performance.clearMeasures();
+    }
   },
   done() {
     return !!sample?.renderingOpportunity;
