@@ -15,6 +15,20 @@ export function percentile(values, fraction) {
   return sorted[low] + (sorted[Math.ceil(position)] - sorted[low]) * (position - low);
 }
 
+// Estimates frames the main thread missed: an interval spanning n frame periods
+// skipped n - 1 frames. The period is the trial's median interval, so it adapts to
+// the display rate and holds while fewer than half the frames are late.
+export function missedFrames(intervals) {
+  if (!intervals.length) {
+    return null;
+  }
+  let period = percentile(intervals, 0.5);
+  return intervals.reduce(
+    (missed, interval) => missed + Math.max(0, Math.round(interval / period) - 1),
+    0
+  );
+}
+
 export function metrics(sample) {
   let interactions = new Map();
   for (let event of sample.events) {
@@ -30,8 +44,15 @@ export function metrics(sample) {
   return {
     ready: sample.semanticReady - sample.start,
     opportunity: sample.renderingOpportunity - sample.start,
+    // Mean interval is the scroll's elapsed time per frame callback, so each late
+    // frame raises it in proportion to the time it lost.
+    frameMean: sample.frameIntervals.length
+      ? sample.frameIntervals.reduce((total, interval) => total + interval, 0) /
+        sample.frameIntervals.length
+      : null,
     frameP95: percentile(sample.frameIntervals, 0.95),
     frameMax: sample.frameIntervals.length ? Math.max(...sample.frameIntervals) : null,
+    missedFrames: missedFrames(sample.frameIntervals),
     reportedInteractionMax: interactions.size ? Math.max(...interactions.values()) : null,
     reportedInteractions: interactions.size,
     longFrames: longFrames.length,
@@ -174,7 +195,7 @@ export function report(result) {
     '',
     `${result.options.blocks} browser-launch blocks × ${result.options.samples} measured trials per arm; ${result.options.warmup} discarded warmups per scenario/arm/block.`,
     '',
-    'Times below are medians. Completion uses a two-animation-frame rendering-opportunity proxy, not presented-pixel timing. Scroll uses p95 rAF intervals within each trial, not compositor frame delivery.',
+    'Times below are medians. Completion uses a two-animation-frame rendering-opportunity proxy, not presented-pixel timing. Scroll uses the mean rAF interval within each trial, not compositor frame delivery.',
     '',
     'Decision thresholds are exploratory defaults, not calibrated merge criteria. Intervals are paired block bootstrap estimates; fewer than six blocks are always inconclusive. Multiple scenarios are exploratory comparisons, not a family-wide significance test.',
     ''
@@ -215,7 +236,7 @@ export function report(result) {
     if (result.builds.candidate) {
       let comparison = compare(samples, metric, {
         absolute:
-          metric === 'frameP95' ? result.options.frameThreshold : result.options.absoluteThreshold,
+          metric === 'frameMean' ? result.options.frameThreshold : result.options.absoluteThreshold,
         relative: result.options.relativeThreshold
       });
       result.comparisons[scenario.id] = comparison;
@@ -237,8 +258,8 @@ export function report(result) {
     '',
     '## Supporting measurements',
     '',
-    '| Scenario / arm | Semantic ready median | Trials with Event Timing entries | Observed interaction max* | Worst rAF interval |',
-    '|---|---:|---:|---:|---:|'
+    '| Scenario / arm | Semantic ready median | Trials with Event Timing entries | Observed interaction max* | rAF interval p95 median | Worst rAF interval | Missed frames median |',
+    '|---|---:|---:|---:|---:|---:|---:|'
   );
   for (let scenario of result.scenarios) {
     for (let arm of Object.keys(result.builds)) {
@@ -249,13 +270,17 @@ export function report(result) {
         .map(sample => sample.metrics.reportedInteractionMax)
         .filter(value => value !== null);
       let frames = samples.map(sample => sample.metrics.frameMax).filter(value => value !== null);
+      let p95s = samples.map(sample => sample.metrics.frameP95).filter(value => value != null);
+      let missed = samples
+        .map(sample => sample.metrics.missedFrames)
+        .filter(value => value != null);
       lines.push(
         `| ${scenario.id} / ${arm} | ${ms(
           percentile(
             samples.map(sample => sample.metrics.ready),
             0.5
           )
-        )} | ${entries.length}/${samples.length} | ${entries.length ? ms(Math.max(...entries)) : 'none reported'} | ${frames.length ? ms(Math.max(...frames)) : '—'} |`
+        )} | ${entries.length}/${samples.length} | ${entries.length ? ms(Math.max(...entries)) : 'none reported'} | ${p95s.length ? ms(percentile(p95s, 0.5)) : '—'} | ${frames.length ? ms(Math.max(...frames)) : '—'} | ${missed.length ? percentile(missed, 0.5) : '—'} |`
       );
     }
   }

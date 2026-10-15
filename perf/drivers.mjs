@@ -11,8 +11,8 @@
 // - fixture.prepare runs after the fixture mounts, for every action except `mount`.
 // - action.prepare runs next. Neither is measured.
 // - action.spec(size) is armed in the page (see app/measure.ts), so it must be plain
-//   data. Its event, target, key, and eventCount also drive the measured input,
-//   unless action.input replaces that input.
+//   data. Its event, target, key, and scroll distance/speed also drive the measured
+//   input, unless action.input replaces that input.
 // - fixture.verify and action.verify assert the result after the measurement window.
 //
 // Hooks receive {page, size, action} and, when verifying, the measured sample.
@@ -22,15 +22,16 @@ export const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 const condition = (selector, rest = {}) => ({selector, ...rest});
 const click = (target, conditions) => ({event: 'pointerdown', target, conditions});
 const press = (key, target, conditions) => ({event: 'keydown', key, target, conditions});
-// Fixed wheel distances and cadence; scroll completion itself is not the score.
+// A browser-generated wheel scroll of fixed distance and speed. The long, steady scroll
+// gives each trial hundreds of frame intervals; completion itself is not the score.
+const scrollDistance = 4000;
 const scroll = (target, conditions, rest = {}) => ({
   event: 'wheel',
   target,
   frames: true,
-  eventCount: 12,
-  deltaY: 160,
-  interval: 32,
-  conditions,
+  distance: scrollDistance,
+  speed: 2000,
+  conditions: [condition(target, {scrollTop: scrollDistance - 1}), ...conditions],
   ...rest
 });
 
@@ -322,17 +323,13 @@ export const drivers = {
           await page.locator('[data-record="item-0"]').waitFor();
           await page.locator('[data-bench="records-table"]').hover();
         },
-        spec: () =>
-          scroll('[data-bench="records-table"]', [
-            condition('[data-bench="records-table"]', {scrollTop: 1900}),
-            condition('[data-record="item-50"]')
-          ]),
+        spec: () => scroll('[data-bench="records-table"]', [condition('[data-record="item-100"]')]),
         verify: async ({page}) => {
           let visible = await page.evaluate(() => {
             let viewport = document
               .querySelector('[data-bench="records-table"]')
               .getBoundingClientRect();
-            let row = document.querySelector('[data-record="item-50"]').getBoundingClientRect();
+            let row = document.querySelector('[data-record="item-100"]').getBoundingClientRect();
             return row.bottom > viewport.top && row.top < viewport.bottom;
           });
           if (!visible) {
@@ -363,10 +360,7 @@ export const drivers = {
       },
       scroll: {
         prepare: ({page}) => page.locator('#variable-list').hover(),
-        spec: size =>
-          scroll('#variable-list', [condition('#variable-list', {scrollTop: 1900})], {
-            layout: variableLayout(size, false, false)
-          }),
+        spec: size => scroll('#variable-list', [], {layout: variableLayout(size, false, false)}),
         verify: ({sample}) => {
           if (
             !sample.layout.rows.some(

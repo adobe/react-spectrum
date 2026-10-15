@@ -35,10 +35,10 @@ test('armed specs are serializable and describe their measured input', () => {
         assert.ok(spec.key, `${scenario.id} has no key`);
       }
       if (spec.event === 'wheel') {
-        assert.ok(spec.eventCount > 0 && spec.deltaY > 0, `${scenario.id} has no wheel input`);
+        assert.ok(spec.distance > 0 && spec.speed > 0, `${scenario.id} has no scroll gesture`);
       }
       // Scroll scenarios are scored on frame cadence, so they must collect frames.
-      assert.equal(!!spec.frames, scenario.metric === 'frameP95', scenario.id);
+      assert.equal(!!spec.frames, scenario.metric === 'frameMean', scenario.id);
     }
   }
 });

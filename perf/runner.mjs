@@ -73,28 +73,35 @@ async function prepare(page, scenario, size) {
   });
 }
 
-async function perform(page, scenario, size) {
+async function perform({page, session, size}, scenario) {
   let {fixture, action} = driver(scenario);
   let spec = action.spec(size);
-  // Resolve hover coordinates before arming, so pointerover timestamps are the
+  // Resolve pointer coordinates before arming, so input timestamps are the
   // measurement boundary and locator polling/layout reads cannot enter the score.
-  let hoverBox =
-    spec.event === 'pointerover' ? await page.locator(spec.target).boundingBox() : undefined;
-  if (spec.event === 'pointerover' && !hoverBox) {
-    throw new Error('The navigation target is not visible.');
+  let box = ['pointerover', 'wheel'].includes(spec.event)
+    ? await page.locator(spec.target).boundingBox()
+    : undefined;
+  if (box === null) {
+    throw new Error(`The ${spec.event} target is not visible.`);
   }
+  let center = box && {x: box.x + box.width / 2, y: box.y + box.height / 2};
   await page.evaluate(spec => window.__bench.arm(spec), spec);
   if (action.input) {
     await action.input(page);
   } else if (spec.event === 'wheel') {
-    for (let i = 0; i < spec.eventCount; i++) {
-      await page.mouse.wheel(0, spec.deltaY);
-      await pause(spec.interval);
-    }
+    // Chromium generates the wheel stream at its own frame cadence, so Node timers and
+    // protocol round trips don't shape the input. The call resolves when it finishes.
+    await session.send('Input.synthesizeScrollGesture', {
+      ...center,
+      yDistance: -spec.distance,
+      speed: spec.speed,
+      gestureSourceType: 'mouse',
+      preventFling: true
+    });
   } else if (spec.event === 'keydown') {
     await page.keyboard.press(spec.key);
   } else if (spec.event === 'pointerover') {
-    await page.mouse.move(hoverBox.x + hoverBox.width / 2, hoverBox.y + hoverBox.height / 2);
+    await page.mouse.move(center.x, center.y);
   } else {
     await page.locator(spec.target).click();
   }
@@ -110,13 +117,12 @@ async function perform(page, scenario, size) {
       'The benchmark page became hidden. Keep the browser visible during headed runs.'
     );
   }
-  if (
-    spec.event === 'wheel' &&
-    (sample.inputEvents !== spec.eventCount || sample.frameIntervals.length < 10)
-  ) {
-    throw new Error(
-      `Scrolling did not receive all ${spec.eventCount} wheel events or collect enough frame intervals.`
-    );
+  if (spec.event === 'wheel') {
+    // Frame intervals must span the gesture, however many long frames it contained.
+    let elapsed = sample.frameIntervals.reduce((total, interval) => total + interval, 0);
+    if (sample.inputEvents < 10 || elapsed < 0.9 * (spec.distance / spec.speed) * 1000) {
+      throw new Error('Scrolling did not receive a wheel stream or span the whole gesture.');
+    }
   }
   let context = {page, size, action, sample};
   await fixture.verify?.(context);
@@ -196,7 +202,7 @@ async function saveTrace(session, file, operation) {
 async function measureTrials(current, scenario, arm, block, options, samples) {
   for (let trial = -options.warmup; trial < options.samples; trial++) {
     await prepare(current.page, scenario, current.size);
-    let sample = await perform(current.page, scenario, current.size);
+    let sample = await perform(current, scenario);
     if (current.errors.length) {
       throw new Error(current.errors.join('\n'));
     }
@@ -224,9 +230,7 @@ async function diagnose(browser, server, result, dir, isInterrupted) {
           result.builds[arm]
         );
         await prepare(current.page, scenario, current.size);
-        await saveTrace(current.session, path.join(dir, file), () =>
-          perform(current.page, scenario, current.size)
-        );
+        await saveTrace(current.session, path.join(dir, file), () => perform(current, scenario));
         if (current.errors.length) {
           throw new Error(current.errors.join('\n'));
         }

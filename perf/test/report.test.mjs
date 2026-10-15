@@ -6,7 +6,7 @@
  */
 
 import assert from 'node:assert/strict';
-import {compare, metrics, percentile, report} from '../report.mjs';
+import {compare, metrics, missedFrames, percentile, report} from '../report.mjs';
 import {test} from 'node:test';
 
 function paired(base, candidate) {
@@ -26,6 +26,7 @@ test('missing Event Timing stays missing and events from one interaction are gro
   };
   assert.equal(metrics(sample).reportedInteractionMax, null);
   assert.equal(metrics(sample).frameP95, null);
+  assert.equal(metrics(sample).frameMean, null);
   assert.equal(metrics(sample).ready, 10);
   assert.equal(metrics(sample).opportunity, 32);
   sample.events = [
@@ -239,4 +240,41 @@ test('the report attributes long frames and counts trials without them', () => {
   );
   assert.match(text, /\| listbox\.mount \/ base \| 1\/2 \| 90\.00 ms \| 40\.00 ms \| 60\.00 ms \|/);
   assert.match(text, /`DIV#root\.onpointerdown`/);
+});
+
+test('missed frames count the periods each late interval skipped', () => {
+  assert.equal(missedFrames([]), null);
+  assert.equal(missedFrames([8.3, 8.4, 8.3, 8.2]), 0);
+  // One interval spans three periods (two missed), another spans two (one missed).
+  assert.equal(missedFrames([8.3, 8.3, 25, 8.4, 16.6, 8.3, 8.3]), 3);
+});
+
+test('scroll comparisons use the mean frame interval and the frame threshold', () => {
+  let sample = {start: 0, semanticReady: 0, renderingOpportunity: 0, events: []};
+  assert.equal(metrics({...sample, frameIntervals: [8, 8, 8, 16]}).frameMean, 10);
+  let result = completed({
+    options: {
+      blocks: 1,
+      samples: 1,
+      warmup: 0,
+      absoluteThreshold: 8,
+      frameThreshold: 0.3,
+      relativeThreshold: 0.05
+    },
+    scenarios: [{id: 'table.scroll', metric: 'frameMean'}],
+    samples: paired([8.4], [8.6]).map(sample => ({
+      ...sample,
+      scenario: 'table.scroll',
+      metrics: {
+        frameMean: sample.metrics.opportunity,
+        ready: 0,
+        reportedInteractionMax: null,
+        frameMax: null
+      }
+    }))
+  });
+  let text = report(result);
+  // The relative threshold (5% of 8.4 ms) exceeds the 0.3 ms frame threshold.
+  assert.ok(Math.abs(result.comparisons['table.scroll'].threshold - 0.42) < 1e-9);
+  assert.match(text, /\| table\.scroll \| frameMean \|/);
 });

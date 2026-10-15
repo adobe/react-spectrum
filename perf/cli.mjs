@@ -29,7 +29,7 @@ Options:
   --seed 2026                     Reproducible base/candidate order and gap seed
   --absolute-threshold 8          Exploratory completion threshold in milliseconds
   --relative-threshold 0.05       Exploratory fractional threshold
-  --frame-threshold 2             Exploratory rAF interval threshold in milliseconds
+  --frame-threshold 0.25          Scroll mean rAF interval threshold floor in milliseconds
   --headed                        Show Chromium (keep it foreground)
   --trace                         Save separate diagnostic Chrome trace reruns
 
@@ -55,7 +55,7 @@ try {
       seed: {type: 'string', default: '2026'},
       'absolute-threshold': {type: 'string', default: '8'},
       'relative-threshold': {type: 'string', default: '0.05'},
-      'frame-threshold': {type: 'string', default: '2'},
+      'frame-threshold': {type: 'string', default: '0.25'},
       headed: {type: 'boolean', default: false},
       trace: {type: 'boolean', default: false}
     }

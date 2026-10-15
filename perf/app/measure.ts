@@ -48,7 +48,6 @@ interface ArmOptions {
   key?: string;
   conditions: Condition[];
   frames?: boolean;
-  eventCount?: number;
   layout?: {viewport: string; width: number; total: number; atTop?: boolean};
 }
 
@@ -191,7 +190,6 @@ function check(layoutReady = false) {
     !sample ||
     !armed ||
     finishing ||
-    sample.inputEvents < (armed.eventCount ?? 1) ||
     (armed.layout && !layoutReady) ||
     !matches(armed.conditions)
   ) {
@@ -238,12 +236,7 @@ function tick(now: number) {
     sample.frameIntervals.push(now - lastFrame);
   }
   lastFrame = now;
-  if (
-    armed.layout &&
-    !finishing &&
-    sample.inputEvents >= (armed.eventCount ?? 1) &&
-    matches(armed.conditions)
-  ) {
+  if (armed.layout && !finishing && matches(armed.conditions)) {
     let layout = readLayout(armed.layout);
     let signature = layout ? layoutSignature(layout) : undefined;
     stableLayoutFrames = signature && signature === previousLayout ? stableLayoutFrames + 1 : 1;

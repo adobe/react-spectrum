@@ -51,7 +51,7 @@ export const scenarios = [
     id: 'table.scroll',
     fixture: 'table',
     label: 'Scroll through virtualized rows',
-    metric: 'frameP95'
+    metric: 'frameMean'
   },
   {id: 'table.update', fixture: 'table', label: 'Update one visible table record'},
   {id: 'variable.mount', fixture: 'variable', label: 'Mount a variable-height virtualized list'},
@@ -59,7 +59,7 @@ export const scenarios = [
     id: 'variable.scroll',
     fixture: 'variable',
     label: 'Scroll through measured, wrapping rows',
-    metric: 'frameP95'
+    metric: 'frameMean'
   },
   {
     id: 'variable.resize',
