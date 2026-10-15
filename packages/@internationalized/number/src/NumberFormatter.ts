@@ -18,7 +18,7 @@ export interface NumberFormatOptions extends Intl.NumberFormatOptions {
 }
 
 /**
- * A wrapper around Intl.NumberFormat providing additional options, polyfills, and caching for
+ * A wrapper around Intl.NumberFormat providing additional options and caching for
  * performance.
  */
 export class NumberFormatter implements Intl.NumberFormat {
