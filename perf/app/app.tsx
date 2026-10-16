@@ -26,9 +26,16 @@ import {
   TextField,
   Virtualizer
 } from 'react-aria-components';
-import {CellTableFixture, DataTableFixture, OptionContent, SelectFixture} from './collections';
+import {
+  CellTableFixture,
+  DataTableFixture,
+  OptionContent,
+  OptionList,
+  SelectFixture
+} from './collections';
 import {createRoot} from 'react-dom/client';
 import {DndFixture} from './dnd';
+import {InfiniteTableFixture, ReorderFixture} from './workflows';
 import {measurement} from './measure';
 import {MeasuredTableFixture} from './measured-table';
 import {MutationFixture, ProjectNode, TreeFixture, VariableFixture} from './advanced-collections';
@@ -143,7 +150,7 @@ function ListFixture() {
   );
 }
 
-function ComboFixture() {
+function ComboFixture({virtualized = false}: {virtualized?: boolean}) {
   let [query, setQuery] = useState('');
   let filtered = items.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
   return (
@@ -155,13 +162,15 @@ function ComboFixture() {
       </div>
       <output id="query">{query}</output>
       <Popover className="combo-popover">
-        <ListBox aria-label="Matching records" className="list">
-          {(item: (typeof items)[number]) => (
-            <ListBoxItem id={item.id} data-record={item.id} textValue={item.name}>
-              <OptionContent item={item} />
-            </ListBoxItem>
-          )}
-        </ListBox>
+        <OptionList virtualized={virtualized}>
+          <ListBox aria-label="Matching records" className="list">
+            {(item: (typeof items)[number]) => (
+              <ListBoxItem id={item.id} data-record={item.id} textValue={item.name}>
+                <OptionContent item={item} />
+              </ListBoxItem>
+            )}
+          </ListBox>
+        </OptionList>
       </Popover>
     </ComboBox>
   );
@@ -169,6 +178,7 @@ function ComboFixture() {
 
 function TableFixture() {
   let [rows, setRows] = useState(items);
+  let [selected, setSelected] = useState('0');
   return (
     <>
       <Button
@@ -178,11 +188,13 @@ function TableFixture() {
         }>
         Update third record
       </Button>
+      <output id="selection-count">{selected}</output>
       <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 40, headingHeight: 40}}>
         <Table
           aria-label="Records"
           className="table"
           selectionMode="multiple"
+          onSelectionChange={keys => setSelected(keys === 'all' ? 'all' : String(keys.size))}
           data-bench="records-table">
           <TableHeader>
             <Column id="name" isRowHeader width={190}>
@@ -314,8 +326,12 @@ function App() {
             <ListFixture />
           ) : fixture === 'combobox' ? (
             <ComboFixture />
+          ) : fixture === 'combobox-virtual' ? (
+            <ComboFixture virtualized />
           ) : fixture === 'select' ? (
             <SelectFixture items={items} />
+          ) : fixture === 'select-virtual' ? (
+            <SelectFixture items={items} virtualized />
           ) : fixture === 'table-data' ? (
             <DataTableFixture items={items} />
           ) : fixture === 'table-cells' ? (
@@ -334,6 +350,10 @@ function App() {
             <ResizeFixture />
           ) : fixture === 'dnd' ? (
             <DndFixture items={items} />
+          ) : fixture === 'reorder' ? (
+            <ReorderFixture items={items} />
+          ) : fixture === 'infinite' ? (
+            <InfiniteTableFixture items={items} />
           ) : (
             <FormFixture />
           ))}

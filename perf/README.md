@@ -17,7 +17,7 @@ The suite builds production React and React Aria with Parcel and runs evaluation
 
 Use the suite to investigate a performance regression, evaluate an optimization, or check changes to shared rendering, interaction, collection, or virtualization code. Choose scenarios that exercise the affected behavior; add a representative scenario when coverage is missing.
 
-The fixtures cover mounting, keyboard and pointer interactions, collection updates, scrolling, and resizing. They include application logic, React work, and browser rendering work. Hydration, network loading, memory retention, and other browsers are outside the current coverage.
+The fixtures cover mounting, keyboard and pointer interactions, selection, drag and drop, collection updates, incremental loading, scrolling, and resizing. They include application logic, React work, and browser rendering work. Hydration, network loading, memory retention, and other browsers are outside the current coverage.
 
 ## Quick start
 
@@ -95,15 +95,19 @@ A filter accepts an exact scenario ID or a whole fixture, separated by commas. F
 | `listbox` | 100 items with labels, team, and status | Mount, focus, select, unrelated parent update |
 | `combobox` | 500 options with an icon, label, and description | Open, type `9` to filter, type a second `9` to narrow, keyboard and pointer navigation |
 | `select` | 500 rich options in a controlled Select | Pointer navigation in an open popup, choose an option and close the popup |
+| `combobox-virtual` | 10,000 rich options in a virtualized popup, fixed 52 px rows | Open, type `9` to filter, keyboard navigation |
+| `select-virtual` | 10,000 rich options in a virtualized, controlled Select | Open, choose an option and close the popup |
 | `table-data` | 100 nonvirtualized rows × six columns | Sort, filter by `9`, clear the filter, move cell focus without selection |
-| `table-cells` | 100 nonvirtualized rows × six columns with controls | Select one/all rows, open/close a menu or dialog |
-| `table` | 10,000 virtualized rows × six columns, fixed 40 px rows | Mount, scroll 4,000 px near the top or after traversing 4,000 rows, update one visible record |
-| `table-measured` | 1,000 virtualized rows × eight columns, measured heights and wrapping labels | Mount, narrow/widen labels, resize another column, narrow or continuously animate the container with fitted labels |
+| `table-cells` | 100 nonvirtualized rows × six columns with controls | Mount, select one/all rows, open/close a menu or dialog |
+| `table` | 10,000 virtualized rows × six columns, fixed 40 px rows | Mount, scroll 4,000 px near the top or after traversing 4,000 rows, update one visible record, select all rows, shift-click a 4,001-row range |
+| `infinite` | A virtualized table that loads 50-row pages from 500 prepared records | Scroll 4,000 px while two more pages load |
+| `table-measured` | 1,000 virtualized rows × eight columns, measured heights and wrapping labels | Mount, drag the labels resizer, narrow/widen labels, resize another column, narrow or continuously animate the container with fitted labels |
 | `variable` | 10,000 virtualized items with wrapping descriptions | Mount, scroll 4,000 px near the top or after traversing 160,000 px, narrow from 600 to 360 px |
 | `collection` | 100 GridList records, a prepared 50-record page, and a replacement dataset | Append, delete five selected records, replace the dataset |
 | `tree` | 20 projects with 50 files each | Expand, navigate into a project, collapse |
 | `resize` | 500 nonvirtualized rows × six flexible columns | Mount, narrow the container from 960 to 660 px |
 | `form` | 30 mixed text fields, checkboxes, and switches | Mount, type in a controlled field |
+| `reorder` | 200 GridList items with drag buttons and `useDragAndDrop` reordering | Start a keyboard drag, move the drop target, drop |
 | `dnd` | 200 draggable cards beside an independently controlled text field | Type after pointer input, plus a baseline that types while already in keyboard mode |
 
 `table-measured` uses `estimatedRowHeight: 32` and rows containing two, four, or six wrapping labels. Its discrete actions change the labels column from 300 to 100 px, widen it back, resize another column from 150 to 170 px while labels remain narrow, or narrow the container from 1,000 to 800 px. Container actions first fit the labels column, so it shares the flexible width equally with the review column: 199 px each at 1,000 px and 99 px each at 800 px. Narrowing the container therefore rewraps labels and changes row heights, as a sidebar opening beside a wrapping column would. `table-measured.resize-animation` starts from the same fitted layout and animates container width between 1,000 and 800 px over five 600 ms legs, ending at 800 px. This exercises repeated ResizeObserver, table context updates, and row remeasurement during a sidebar animation; it does not drive a column resize handle. Completion requires the animation to end, three stable layout frames, the requested column widths, natural content heights, and contiguous rows filling the viewport.
@@ -113,7 +117,7 @@ A filter accepts an exact scenario ID or a whole fixture, separated by commas. F
 To check the new interaction workloads together:
 
 ```sh
-yarn perf smoke --scenario select.choose,combobox.narrow,variable.scroll-deep,table-measured.container,table-measured.resize-animation,dnd
+yarn perf smoke --scenario combobox-virtual,select-virtual,infinite,reorder,table.select-range,table-measured.resize-drag
 ```
 
 Use `run` to observe one build without a comparison verdict:
@@ -149,7 +153,7 @@ Lower values are better for both primary metrics:
 | Metric | Used for | Meaning |
 | --- | --- | --- |
 | `opportunity` | Discrete actions | Time from the initiating trusted event to two animation-frame callbacks after the expected DOM/focus state is observed. A rendering-opportunity proxy, not proof that pixels were presented. |
-| `frameMean` | `table.scroll`, `table.scroll-deep`, `variable.scroll`, `variable.scroll-deep`, `table-measured.resize-animation` | Mean animation-frame callback interval within a trial. Measures main-thread callback cadence, not compositor frame delivery. The action's total duration is not the score. |
+| `frameMean` | `table.scroll`, `table.scroll-deep`, `variable.scroll`, `variable.scroll-deep`, `infinite.scroll`, `table-measured.resize-drag`, `table-measured.resize-animation` | Mean animation-frame callback interval within a trial. Measures main-thread callback cadence, not compositor frame delivery. The action's total duration is not the score. |
 
 Base and candidate columns show medians of trial values. **Paired change** is estimated from each launch's candidate median minus its base median, so it may differ from subtracting the two displayed columns. Negative changes favor the candidate. The interval describes uncertainty in that paired change.
 
@@ -212,7 +216,7 @@ For fixture or driver changes, also run `yarn perf smoke --scenario <filter>`. F
 
 1. Reuse a fixture or add one under [`app/`](app/), registering new fixtures in [`app/app.tsx`](app/app.tsx).
 2. Add the action's ID, fixture, label, and optional primary metric in [`scenarios.mjs`](scenarios.mjs). Add a default `sizes` entry for a new fixture.
-3. Add its action under the fixture in [`drivers.mjs`](drivers.mjs). Use `prepare` for unmeasured prerequisites, `spec` for serializable input and completion conditions, and `verify` for post-measurement assertions. The runner sends the input described by `spec`; use `input` only for custom sequences.
+3. Add its action under the fixture in [`drivers.mjs`](drivers.mjs). Use `prepare` for unmeasured prerequisites, `spec` for serializable input and completion conditions, `verify` for post-measurement assertions, and `cleanup` to undo state that outlives the fixture, such as an active drag. The runner sends the input described by `spec`; use `input` only for custom sequences.
 4. Run the unit tests, type-check, and `yarn perf smoke --scenario <id>`.
 
 Completion conditions should describe the actual requested result, including focus or layout settling when relevant. Prepare deterministic data outside the measurement window, while keeping the application work caused by the action inside it. Rebuild both snapshots before comparing with a changed fixture or driver.
@@ -267,16 +271,21 @@ Long-frame summary columns are medians over trials with entries, summed across e
 ### Fixture completion checks
 
 - **Fixed-height scrolling:** Chromium synthesizes a trusted mouse-wheel stream at its own cadence for 4,000 px at 2,000 px/s. Completion requires reaching the distance and exposing the expected row. Frame intervals must span at least 90% of the two-second gesture, however many frames were missed. The table must render a virtualized subset; updating one record retains the other record objects.
+- **Incremental loading:** The table starts with 50 rows and appends the next prepared 50-row page synchronously when `TableLoadMoreItem` comes within one viewport of view. Pages stay 50 rows as `--scale` grows. The scroll matches fixed-height scrolling; assertions require exactly 150 loaded rows and correct labels.
 - **Variable-height lists:** `ListLayout` observes actual heights from wrapping descriptions. Readiness requires three consecutive frames with stable visible geometry: rows fill the viewport in order without gaps or overlap, fit their wrappers and width, and have different heights. DOM ordering and offscreen recycling do not affect the comparison. Resize preserves the first record at the top. Geometry checks and settling are included in the score; the layout is checked again when collecting results.
 - **Resizable tables:** Data and the table element remain stable as the container narrows, exercising ResizeObserver and column layout updates. Completion waits for width styles; assertions verify all six actual column widths and retained rows.
 - **Sorting/filtering tables:** Actions operate on an already-mounted table and retain record identities. Completion checks the full expected row-ID sequence and sort direction; assertions check labels. Clearing measures restoration of all rows. Application filter/sort work is included.
 - **Table focus:** ArrowDown moves from the first row's first data cell to the same column in the second row. Selection is disabled. Completion requires actual DOM focus on the destination and no selection; assertions verify all row identities, labels, and ordering.
+- **Column resize drag:** The pointer presses the labels column's `ColumnResizer` and moves 200 px left in 100 steps paced 10 ms apart by the runner, then releases. Controlled widths update through `onResize`. Completion requires a 100 px labels column and the same settled layout as `table-measured.narrow`. Frame samples must span at least one second. Unlike wheel scrolling, the pointer stream is paced by Node timers.
 - **Continuous table resizing:** A three-second CSS width animation drives five narrow/wide legs without a parent React update on every frame. The score includes the animation and final layout settling. Frame samples must span at least 2.8 seconds, so an abbreviated run cannot pass as a fast result.
 - **DnD modality:** The text field owns its state separately from the draggable cards, so typing does not re-render their parent. Preparation verifies pointer-mode drag instructions for `dnd.modality-type`; `dnd.type` first uses ArrowLeft to establish keyboard mode, so it is a baseline for the same keystroke without the modality change. Both measure typing one `a`, require the updated field and retained focus, and verify every card's identity, label, draggable state, and keyboard instructions afterward. Locale is fixed to `en-US` by the runner.
+- **Large selections:** Select-all presses Ctrl/Cmd+A with focus on the first row. Range selection starts with the first row selected and scrolled to row 4,000, then shift-clicks it. Completion checks the selection size the table reports through `onSelectionChange` and the visible rows' selection state.
+- **Keyboard reordering:** Enter on the first item's drag button starts a drag; completion requires a drop indicator for every gap and focus on the first one. Moving presses ArrowDown to the next gap. Dropping presses Enter there and requires the new order, removed indicators, and focus on the moved item. Assertions check every label in order. Trials that leave a drag active cancel it with Escape afterward, because drag state is global and survives the fixture remount. Pointer drags are not covered: Playwright emulates native HTML drag events, so their timing would describe the emulation.
 - **Table controls:** Selection waits for both row and checkbox state. Opening menus/dialogs waits for focus inside; closing waits for removal and focus restoration to the originating button. The table remains mounted behind overlays.
 - **Popup navigation:** ComboBox and Select start open with the first option focused and measure one move to the second. Completion checks focus styling plus ComboBox `aria-activedescendant` or Select DOM focus. Pointer timing begins at `pointerover`; coordinates are resolved beforehand. Hover does not generate an Event Timing interaction and does not measure a continuous pointer sweep.
 - **ComboBox filtering:** Each action measures one keystroke. Filtering types `9` into an empty query; narrowing types a second `9` after the first filter has settled. Completion checks the query and the exact option count. Application filter work is included.
 - **Select choice:** Enter on the focused first option sets the controlled value, removes every option, and returns focus to the trigger. Assertions check the trigger's label.
+- **Virtualized popups:** Fixtures must render fewer options than they hold. Opening waits for the first option, and for Select, focus on the listbox. Filtering requires the query, no `Record 0`, and the first matches `Record 9` and `Record 19`; it cannot check the full count. Keyboard navigation uses the same checks as the nonvirtualized ComboBox, without the option count.
 - **Collection mutations:** Append preserves objects and selection. Delete starts with five selected records and focus on the fifth, then requires their removal, cleared selection, and focus on the next survivor. Replace uses new keys, clears selection, and keeps focus on the switch button. Complete item order and labels are checked. Payloads are prepared before mounting.
 - **Trees:** ArrowRight expands the first project, ArrowDown enters its first file, and ArrowLeft collapses it. Completion checks all exposed rows in order, expansion state, and focus; assertions check labels and hierarchy levels. All data is available and the tree is nonvirtualized.
 

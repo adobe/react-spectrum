@@ -14,6 +14,7 @@
 //   data. Its event, target, key, and scroll distance/speed also drive the measured
 //   input, unless action.input replaces that input.
 // - fixture.verify and action.verify assert the result after the measurement window.
+// - action.cleanup undoes state that outlives the fixture, such as an active drag.
 //
 // Hooks receive {page, size, action} and, when verifying, the measured sample.
 
@@ -59,16 +60,18 @@ function invalidRows() {
 // the second option with the keyboard or pointer.
 const option = id => `[role="option"][data-record="${id}"]`;
 async function openPopup(page, fixture, focusFirst) {
-  await page.locator(fixture === 'combobox' ? '#combo-open' : '#select-open').click();
+  await page.locator(fixture.startsWith('combobox') ? '#combo-open' : '#select-open').click();
   await page.getByRole('option').last().waitFor();
   await focusFirst();
   await page.locator(`${option('item-0')}[data-focused]`).waitFor();
 }
 
+// Virtualized popups render only the visible options, so they cannot check the count.
 function navigation(fixture) {
-  let combobox = fixture === 'combobox';
+  let combobox = fixture.startsWith('combobox');
+  let virtualized = fixture.endsWith('-virtual');
   let conditions = size => [
-    condition('[role="option"]', {count: size}),
+    ...(virtualized ? [] : [condition('[role="option"]', {count: size})]),
     condition('[role="option"][data-focused]', {
       count: 1,
       attribute: 'data-record',
@@ -101,6 +104,61 @@ const comboMatches = (size, query) => [
     count: Array.from({length: size}, (_, i) => String(i)).filter(i => i.includes(query)).length
   })
 ];
+
+// The first matches for `9` replace the first records, wherever they render.
+const virtualMatches = () => [
+  condition('#query', {text: '9'}),
+  condition(option('item-0'), {count: 0}),
+  condition(option('item-9')),
+  condition(option('item-19'))
+];
+async function verifyVirtualized({page, size}) {
+  if ((await page.locator('[role="option"]').count()) >= size) {
+    throw new Error('Expected a virtualized popup, not every option in the DOM.');
+  }
+}
+
+// Choosing commits the value, unmounts the popup's options, and restores focus.
+const chooseOption = fixture => ({
+  prepare: ({page}) => openPopup(page, fixture, () => page.keyboard.press('Home')),
+  spec: () =>
+    press('Enter', '.list', [
+      condition('#select-value', {text: 'item-0'}),
+      condition('[role="option"]', {count: 0}),
+      condition('#select-open', {focused: true})
+    ]),
+  verify: async ({page}) => {
+    let label = await page.locator('#select-open [slot="label"]').textContent();
+    if (label !== 'Record 0') {
+      throw new Error('The Select trigger does not show the chosen record.');
+    }
+  }
+});
+
+// Keyboard drag starts from Record 0's drag button and targets drop indicators by label.
+const insertBetween = (a, b) => `[aria-label="Insert between Record ${a} and Record ${b}"]`;
+const waitForFocus = (page, selector) =>
+  page.waitForFunction(
+    // Fixtures live in the top-level document, with no shadow roots.
+    // oxlint-disable-next-line rsp-rules/shadow-safe-active-element
+    selector => document.activeElement === document.querySelector(selector),
+    selector
+  );
+async function startReorder({page}) {
+  await page.locator('[data-record="item-0"] [slot="drag"]').focus();
+  await page.keyboard.press('Enter');
+  await page.locator(insertBetween(0, 1)).waitFor({state: 'attached'});
+  await waitForFocus(page, insertBetween(0, 1));
+}
+// Drag state is global, so it survives remounting the fixture for the next trial.
+async function cancelReorder({page}) {
+  await page.keyboard.press('Escape');
+  await page
+    .locator('.reorder-list .react-aria-DropIndicator')
+    .first()
+    .waitFor({state: 'detached'});
+}
+const reordered = size => ['item-1', 'item-0', ...records(size).slice(2)];
 
 async function waitForTableRows({page}) {
   await page.locator('.data-table [data-record]').last().waitFor();
@@ -251,6 +309,7 @@ async function resizeMeasuredTable({page, size}, button, labels) {
 }
 const narrowMeasuredTable = context => resizeMeasuredTable(context, '#table-narrow', 100);
 const fitMeasuredTable = context => resizeMeasuredTable(context, '#table-fit', 'fit');
+const resizer = '.measured-table [data-column="labels"] .react-aria-ColumnResizer';
 const containerResized = () => [
   condition('.measured-table-container', {style: {property: 'width', value: '800px'}}),
   labelsWidth(99)
@@ -323,25 +382,26 @@ export const drivers = {
       ...navigation('combobox')
     }
   },
-  select: {
+  select: {actions: {hover: navigation('select').hover, choose: chooseOption('select')}},
+  'combobox-virtual': {
+    verify: verifyVirtualized,
     actions: {
-      hover: navigation('select').hover,
-      // Choosing commits the value, unmounts the 500-option popover, and restores focus.
-      choose: {
-        prepare: ({page}) => openPopup(page, 'select', () => page.keyboard.press('Home')),
+      open: {spec: () => click('#combo-open', [condition(option('item-0'))])},
+      filter: {
+        prepare: openComboFilter,
+        spec: () => press('9', '#combo-input', virtualMatches())
+      },
+      keyboard: navigation('combobox-virtual').keyboard
+    }
+  },
+  'select-virtual': {
+    verify: verifyVirtualized,
+    actions: {
+      open: {
         spec: () =>
-          press('Enter', '.list', [
-            condition('#select-value', {text: 'item-0'}),
-            condition('[role="option"]', {count: 0}),
-            condition('#select-open', {focused: true})
-          ]),
-        verify: async ({page}) => {
-          let label = await page.locator('#select-open [slot="label"]').textContent();
-          if (label !== 'Record 0') {
-            throw new Error('The Select trigger does not show the chosen record.');
-          }
-        }
-      }
+          click('#select-open', [condition(option('item-0')), condition('.list', {focused: true})])
+      },
+      choose: chooseOption('select-virtual')
     }
   },
   'table-data': {
@@ -384,6 +444,13 @@ export const drivers = {
     prepare: waitForTableRows,
     verify: verifyTableRows,
     actions: {
+      mount: {
+        spec: size =>
+          click('#mount', [
+            condition('.data-table [data-record]', {count: size}),
+            condition(`#dialog-item-${size - 1}`)
+          ])
+      },
       select: {
         spec: () =>
           click('[data-record="item-2"] .react-aria-Checkbox', [
@@ -499,6 +566,35 @@ export const drivers = {
           }
         }
       },
+      'select-all': {
+        prepare: ({page}) => page.locator('[data-record="item-0"]').focus(),
+        spec: () =>
+          press('a', '[data-bench="records-table"]', [
+            condition('#selection-count', {text: 'all'}),
+            condition('[data-bench="records-table"] [data-record][aria-selected="false"]', {
+              count: 0
+            })
+          ]),
+        input: page => page.keyboard.press('ControlOrMeta+a')
+      },
+      // Shift-click 4,000 rows below a selected anchor, as after scrolling a long table.
+      'select-range': {
+        prepare: async ({page}) => {
+          await page.locator('[data-record="item-0"] [role="rowheader"]').click();
+          await page.locator('#selection-count').filter({hasText: /^1$/}).waitFor();
+          await page.evaluate(() => {
+            document.querySelector('[data-bench="records-table"]').scrollTop = 3995 * 40;
+          });
+          await page.locator('[data-record="item-4000"]').waitFor();
+        },
+        spec: () =>
+          click('[data-record="item-4000"] [role="rowheader"]', [
+            condition('#selection-count', {text: '4001'}),
+            condition('[data-record="item-4000"]', {attribute: 'aria-selected', value: 'true'})
+          ]),
+        input: page =>
+          page.locator('[data-record="item-4000"] [role="rowheader"]').click({modifiers: ['Shift']})
+      },
       update: {
         spec: () =>
           click('#edit-record', [
@@ -544,6 +640,34 @@ export const drivers = {
       },
       mount: {
         spec: size => ({...click('#mount', [labelsWidth(300)]), layout: measuredTableLayout(size)})
+      },
+      // Drags the labels resizer 200 px left in 2 px steps, narrowing labels to 100 px.
+      'resize-drag': {
+        spec: size => ({
+          event: 'pointerdown',
+          target: resizer,
+          conditions: [labelsWidth(100)],
+          frames: true,
+          layout: measuredTableLayout(size, 100)
+        }),
+        input: async page => {
+          let box = await page.locator(resizer).boundingBox();
+          let x = box.x + box.width / 2;
+          let y = box.y + box.height / 2;
+          await page.mouse.move(x, y);
+          await page.mouse.down();
+          for (let step = 1; step <= 100; step++) {
+            await pause(10);
+            await page.mouse.move(x - 2 * step, y);
+          }
+          await page.mouse.up();
+        },
+        verify: ({sample}) => {
+          let elapsed = sample.frameIntervals.reduce((total, interval) => total + interval, 0);
+          if (elapsed < 1000) {
+            throw new Error('Frame measurements did not span the column resize drag.');
+          }
+        }
       },
       narrow: {
         spec: size => ({
@@ -747,6 +871,79 @@ export const drivers = {
       container: {
         spec: size => click('#resize-container', resizedRows(size, 110)),
         verify: context => verifyColumns(context, 110)
+      }
+    }
+  },
+  reorder: {
+    prepare: ({page}) => page.locator('.reorder-list [data-record]').last().waitFor(),
+    verify: async ({page, action, size}) => {
+      let labels = await page
+        .locator('.reorder-list [data-record] [data-record-label]')
+        .allTextContents();
+      let expected = (action.expected ?? records)(size).map(recordLabel);
+      if (JSON.stringify(labels) !== JSON.stringify(expected)) {
+        throw new Error('Reordering did not retain the expected records and order.');
+      }
+    },
+    actions: {
+      'drag-start': {
+        prepare: ({page}) => page.locator('[data-record="item-0"] [slot="drag"]').focus(),
+        spec: size =>
+          press('Enter', '[data-record="item-0"] [slot="drag"]', [
+            condition('.reorder-list .react-aria-DropIndicator', {count: size + 1}),
+            condition(insertBetween(0, 1), {focused: true})
+          ]),
+        cleanup: cancelReorder
+      },
+      'drag-move': {
+        prepare: startReorder,
+        spec: () =>
+          press('ArrowDown', '.reorder-list', [
+            condition(insertBetween(1, 2), {focused: true}),
+            condition('.reorder-list [data-drop-target]', {count: 1})
+          ]),
+        cleanup: cancelReorder
+      },
+      drop: {
+        expected: reordered,
+        prepare: async context => {
+          await startReorder(context);
+          await context.page.keyboard.press('ArrowDown');
+          await waitForFocus(context.page, insertBetween(1, 2));
+        },
+        spec: size =>
+          press('Enter', '.reorder-list', [
+            ordered('.reorder-list [data-record]', reordered(size)),
+            condition('.reorder-list .react-aria-DropIndicator', {count: 0}),
+            condition('.reorder-list [data-record="item-0"]', {focused: true})
+          ])
+      }
+    }
+  },
+  infinite: {
+    verify: async ({page}) => {
+      if ((await page.locator('#loaded-count').textContent()) !== '150') {
+        throw new Error('Scrolling 4,000 px did not load exactly two more pages.');
+      }
+      let rows = await page
+        .locator('[data-bench="infinite-table"] [data-record]')
+        .evaluateAll(rows =>
+          rows.map(row => ({
+            id: row.getAttribute('data-record'),
+            name: row.querySelector('[role="rowheader"]')?.textContent
+          }))
+        );
+      if (rows.some(row => row.name !== recordLabel(row.id))) {
+        invalidRows();
+      }
+    },
+    actions: {
+      scroll: {
+        prepare: async ({page}) => {
+          await page.locator('[data-record="item-0"]').waitFor();
+          await page.locator('[data-bench="infinite-table"]').hover();
+        },
+        spec: () => scroll('[data-bench="infinite-table"]', [condition('[data-record="item-100"]')])
       }
     }
   },

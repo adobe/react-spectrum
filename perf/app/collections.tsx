@@ -18,6 +18,7 @@ import {
   Label,
   ListBox,
   ListBoxItem,
+  ListLayout,
   Menu,
   MenuItem,
   MenuTrigger,
@@ -32,9 +33,10 @@ import {
   TableBody,
   TableHeader,
   Text,
-  TextField
+  TextField,
+  Virtualizer
 } from 'react-aria-components';
-import React, {useMemo, useState} from 'react';
+import React, {ReactNode, useMemo, useState} from 'react';
 
 interface RecordItem {
   id: string;
@@ -63,7 +65,24 @@ export function OptionContent({item}: {item: RecordItem}) {
   );
 }
 
-export function SelectFixture({items}: {items: RecordItem[]}) {
+// Large option lists are virtualized with fixed-height rows, as applications would.
+export function OptionList({virtualized, children}: {virtualized: boolean; children: ReactNode}) {
+  return virtualized ? (
+    <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 52}}>
+      {children}
+    </Virtualizer>
+  ) : (
+    children
+  );
+}
+
+export function SelectFixture({
+  items,
+  virtualized = false
+}: {
+  items: RecordItem[];
+  virtualized?: boolean;
+}) {
   // Controlled, as an application form would be, so choosing re-renders the owner.
   let [value, setValue] = useState<Key | null>(null);
   return (
@@ -74,13 +93,15 @@ export function SelectFixture({items}: {items: RecordItem[]}) {
       </Button>
       <output id="select-value">{value}</output>
       <Popover className="combo-popover">
-        <ListBox aria-label="Available records" className="list" items={items}>
-          {item => (
-            <ListBoxItem id={item.id} data-record={item.id} textValue={item.name}>
-              <OptionContent item={item} />
-            </ListBoxItem>
-          )}
-        </ListBox>
+        <OptionList virtualized={virtualized}>
+          <ListBox aria-label="Available records" className="list" items={items}>
+            {item => (
+              <ListBoxItem id={item.id} data-record={item.id} textValue={item.name}>
+                <OptionContent item={item} />
+              </ListBoxItem>
+            )}
+          </ListBox>
+        </OptionList>
       </Popover>
     </Select>
   );

@@ -9,6 +9,7 @@ import {
   Button,
   Cell,
   Column,
+  ColumnResizer,
   ResizableTableContainer,
   Row,
   Table,
@@ -62,6 +63,13 @@ export function MeasuredTableFixture({items}: {items: RecordItem[]}) {
         className="measured-table-container"
         style={{width}}
         data-resize-animation={animation}
+        // Widths are controlled, so dragging the resizer updates the labels column here.
+        onResize={widths => {
+          let width = widths.get('labels');
+          if (typeof width === 'number') {
+            setLabelsWidth(width);
+          }
+        }}
         onAnimationEnd={event => {
           if (event.target === event.currentTarget && event.animationName === 'benchmark-resize') {
             setWidth(800);
@@ -79,6 +87,7 @@ export function MeasuredTableFixture({items}: {items: RecordItem[]}) {
               </Column>
               <Column id="labels" data-column="labels" width={labelsWidth}>
                 Labels
+                <ColumnResizer aria-label="Resize labels" />
               </Column>
               <Column id="owner" width={90}>
                 Team

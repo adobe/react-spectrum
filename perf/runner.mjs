@@ -128,6 +128,7 @@ async function perform({page, session, size}, scenario) {
   let context = {page, size, action, sample};
   await fixture.verify?.(context);
   await action.verify?.(context);
+  await action.cleanup?.(context);
   return sample;
 }
 

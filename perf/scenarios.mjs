@@ -22,10 +22,40 @@ export const scenarios = [
   {id: 'combobox.hover', fixture: 'combobox', label: 'Move ComboBox option focus with the pointer'},
   {id: 'select.hover', fixture: 'select', label: 'Move Select option focus with the pointer'},
   {id: 'select.choose', fixture: 'select', label: 'Choose a Select option and close its popup'},
+  {
+    id: 'combobox-virtual.open',
+    fixture: 'combobox-virtual',
+    label: 'Open a virtualized 10,000-option ComboBox'
+  },
+  {
+    id: 'combobox-virtual.filter',
+    fixture: 'combobox-virtual',
+    label: 'Type 9 and filter 10,000 virtualized options'
+  },
+  {
+    id: 'combobox-virtual.keyboard',
+    fixture: 'combobox-virtual',
+    label: 'Move virtualized ComboBox focus with ArrowDown'
+  },
+  {
+    id: 'select-virtual.open',
+    fixture: 'select-virtual',
+    label: 'Open a virtualized 10,000-option Select'
+  },
+  {
+    id: 'select-virtual.choose',
+    fixture: 'select-virtual',
+    label: 'Choose a virtualized Select option and close its popup'
+  },
   {id: 'table-data.sort', fixture: 'table-data', label: 'Reverse the sort of 100 table rows'},
   {id: 'table-data.filter', fixture: 'table-data', label: 'Filter 100 table rows by typing 9'},
   {id: 'table-data.clear', fixture: 'table-data', label: 'Restore 100 table rows with Backspace'},
   {id: 'table-data.focus', fixture: 'table-data', label: 'Move table cell focus without selection'},
+  {
+    id: 'table-cells.mount',
+    fixture: 'table-cells',
+    label: 'Mount 100 table rows with checkboxes, menus, and dialogs'
+  },
   {id: 'table-cells.select', fixture: 'table-cells', label: 'Select a row with its checkbox'},
   {id: 'table-cells.select-all', fixture: 'table-cells', label: 'Select all 100 table rows'},
   {
@@ -56,6 +86,18 @@ export const scenarios = [
     metric: 'frameMean'
   },
   {id: 'table.update', fixture: 'table', label: 'Update one visible table record'},
+  {id: 'table.select-all', fixture: 'table', label: 'Select all 10,000 rows with Ctrl/Cmd+A'},
+  {
+    id: 'table.select-range',
+    fixture: 'table',
+    label: 'Shift-click to select a 4,001-row range'
+  },
+  {
+    id: 'infinite.scroll',
+    fixture: 'infinite',
+    label: 'Scroll a virtualized table that loads more rows',
+    metric: 'frameMean'
+  },
   {
     id: 'table.scroll-deep',
     fixture: 'table',
@@ -66,6 +108,12 @@ export const scenarios = [
     id: 'table-measured.mount',
     fixture: 'table-measured',
     label: 'Mount a measured-height 1,000-row table'
+  },
+  {
+    id: 'table-measured.resize-drag',
+    fixture: 'table-measured',
+    label: 'Drag the labels column resizer 200 px narrower',
+    metric: 'frameMean'
   },
   {
     id: 'table-measured.narrow',
@@ -130,6 +178,17 @@ export const scenarios = [
   {id: 'form.mount', fixture: 'form', label: 'Mount 30 mixed form controls'},
   {id: 'form.type', fixture: 'form', label: 'Type into a controlled form field'},
   {
+    id: 'reorder.drag-start',
+    fixture: 'reorder',
+    label: 'Start a keyboard drag in a 200-item reorderable list'
+  },
+  {
+    id: 'reorder.drag-move',
+    fixture: 'reorder',
+    label: 'Move the keyboard drop target to the next gap'
+  },
+  {id: 'reorder.drop', fixture: 'reorder', label: 'Drop a dragged item and reorder the list'},
+  {
     id: 'dnd.modality-type',
     fixture: 'dnd',
     label: 'Type after pointer input beside 200 draggables'
@@ -145,7 +204,9 @@ export const scenarios = [
 export const sizes = {
   listbox: 100,
   combobox: 500,
+  'combobox-virtual': 10000,
   select: 500,
+  'select-virtual': 10000,
   'table-data': 100,
   'table-cells': 100,
   table: 10000,
@@ -155,5 +216,7 @@ export const sizes = {
   tree: 1000,
   resize: 500,
   form: 30,
-  dnd: 200
+  dnd: 200,
+  reorder: 200,
+  infinite: 500
 };

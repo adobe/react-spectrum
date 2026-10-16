@@ -364,3 +364,38 @@ output {
 .draggable-card span {
   display: block;
 }
+.reorder-list {
+  width: 520px;
+  height: 400px;
+  overflow: auto;
+  border: 1px solid #bcc6d3;
+  margin-top: 12px;
+}
+.reorder-list [data-record] {
+  height: auto;
+  border-bottom: 1px solid #e6eaf0;
+}
+.reorder-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+}
+.reorder-content [slot='description'] {
+  color: #545f70;
+}
+.reorder-list .react-aria-DropIndicator[data-drop-target] {
+  outline: 1px solid #126fe0;
+}
+.measured-table [data-column='labels'] {
+  position: relative;
+}
+.measured-table .react-aria-ColumnResizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+}
