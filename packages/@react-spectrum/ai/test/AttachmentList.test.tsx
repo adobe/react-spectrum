@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Attachment, AttachmentList} from '@react-spectrum/ai';
+import {Attachment, AttachmentList, AttachmentPreview} from '@react-spectrum/ai';
 import {Image} from '@react-spectrum/s2/Image';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
@@ -54,5 +54,82 @@ describeOrSkip('AttachmentList', () => {
 
     offsetWidthSpy.mockRestore();
     scrollWidthSpy.mockRestore();
+  });
+
+  it('should automatically show a mime-type badge on large thumbnail variants', () => {
+    let {getAllByText} = render(
+      <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="Demo file.pdf" size="L">
+          <AttachmentPreview
+            mimeType="application/pdf"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
+        <Attachment aria-label="Another file.pdf" size="XL">
+          <AttachmentPreview
+            mimeType="application/pdf"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
+      </AttachmentList>
+    );
+    expect(getAllByText('PDF')).toHaveLength(2);
+  });
+
+  it('should not show a badge for other sizes or when no thumbnail image is provided', () => {
+    let {queryByText, rerender} = render(
+      <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="Demo file.pdf" size="M">
+          <AttachmentPreview
+            mimeType="application/pdf"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
+      </AttachmentList>
+    );
+    expect(queryByText('PDF')).not.toBeInTheDocument();
+
+    rerender(
+      <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="report.pdf" size="L">
+          <AttachmentPreview mimeType="application/pdf" />
+        </Attachment>
+      </AttachmentList>
+    );
+    expect(queryByText('PDF')).not.toBeInTheDocument();
+  });
+
+  it('should map common mime types and derive fallback labels for other subtypes', () => {
+    let {getByText} = render(
+      <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="brief.docx" size="L">
+          <AttachmentPreview
+            mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
+        <Attachment aria-label="vector.svg" size="L">
+          <AttachmentPreview
+            mimeType="image/svg+xml"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
+        <Attachment aria-label="clip.mp4" size="L">
+          <AttachmentPreview
+            mimeType="video/mp4"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
+      </AttachmentList>
+    );
+    expect(getByText('DOCX')).toBeInTheDocument();
+    expect(getByText('SVG')).toBeInTheDocument();
+    expect(getByText('MP4')).toBeInTheDocument();
   });
 });

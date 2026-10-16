@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg   xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <circle cx="9.97886" cy="10" r="1.5" fill="var(--iconPrimary, #222)"/>
+  <circle cx="9.97886" cy="4" r="1.5" fill="var(--iconPrimary, #222)"/>
+  <circle cx="9.97886" cy="16" r="1.5" fill="var(--iconPrimary, #222)"/>
+</svg>
