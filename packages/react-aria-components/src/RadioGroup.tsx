@@ -35,6 +35,7 @@ import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {getAnchorStyles, getHiddenInputStyles} from './hiddenInputAnchor';
 import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
@@ -46,6 +47,7 @@ import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useId} from 'react-aria/useId';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
@@ -364,7 +366,11 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
 
   return (
     <InternalRadioContext.Provider
-      value={{...aria, inputRef, defaultClassName: 'react-aria-Radio'}}>
+      value={{
+        ...aria,
+        inputRef,
+        defaultClassName: 'react-aria-Radio'
+      }}>
       <RadioButton {...props} ref={ref} />
     </InternalRadioContext.Provider>
   );
@@ -469,6 +475,10 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
+  // The anchor name identifies this radio in the document, so it has to be unique per
+  // instance: a shared name resolves to a single anchor, not one per component.
+  let anchorName = `--react-aria-radio-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+
   let {hoverProps, isHovered} = useHover({
     ...props,
     isDisabled: interactionDisabled
@@ -498,6 +508,7 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     <dom.label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       ref={ref}
+      style={{...renderProps.style, ...getAnchorStyles(anchorName, renderProps.style)}}
       data-selected={isSelected || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
@@ -508,7 +519,11 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       data-invalid={state.isInvalid || undefined}
       data-required={state.isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
+        <input
+          {...mergeProps(inputProps, focusProps)}
+          ref={inputRef}
+          style={getHiddenInputStyles(anchorName, renderProps.style)}
+        />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>
