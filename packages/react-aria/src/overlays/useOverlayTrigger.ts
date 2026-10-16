@@ -11,7 +11,10 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-import {DOMProps, RefObject} from '@react-types/shared';
+import {DOMProps, FocusableElement, RefObject} from '@react-types/shared';
+import {focusSafely} from '../interactions/focusSafely';
+import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getOwnerDocument} from '../utils/domHelpers';
 import {onCloseMap} from './useCloseOnScroll';
 import {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {useEffect} from 'react';
@@ -62,6 +65,41 @@ export function useOverlayTrigger(
   }
 
   let overlayId = useId();
+
+  // Restoration runs after the overlay unmounts, so listen for the trigger's lifetime.
+  useEffect(() => {
+    if (!ref) {
+      return;
+    }
+
+    let ownerDocument = getOwnerDocument(ref.current);
+    let onRestoreFocus = (event: Event) => {
+      let scope = (event as CustomEvent<{scope: Element[] | null}>).detail?.scope;
+      if (
+        event.defaultPrevented ||
+        getEventTarget(event) !== ownerDocument.body ||
+        !ref.current?.isConnected ||
+        !scope ||
+        scope.some(node => nodeContains(node, ref.current))
+      ) {
+        return;
+      }
+
+      // Only handle restoration from this trigger's overlay, including after it unmounts.
+      if (
+        scope.some(
+          node => node.id === overlayId || node.querySelector?.(`#${CSS.escape(overlayId)}`)
+        )
+      ) {
+        event.preventDefault();
+        focusSafely(ref.current as FocusableElement);
+      }
+    };
+
+    ownerDocument.addEventListener('react-aria-focus-scope-restore', onRestoreFocus);
+    return () =>
+      ownerDocument.removeEventListener('react-aria-focus-scope-restore', onRestoreFocus);
+  }, [ref, overlayId]);
   return {
     triggerProps: {
       'aria-haspopup': ariaHasPopup,

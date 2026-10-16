@@ -786,6 +786,9 @@ function useRestoreFocus(
       ) {
         // freeze the focusScopeTree so it persists after the raf, otherwise during unmount nodes are removed from it
         let clonedTree = focusScopeTree.clone();
+        // Scope contents may have changed since this effect mounted.
+        // oxlint-disable-next-line react-hooks/exhaustive-deps
+        let scope = scopeRef.current;
         requestAnimationFrame(() => {
           // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
           if (ownerDocument.activeElement === ownerDocument.body) {
@@ -793,7 +796,7 @@ function useRestoreFocus(
             let treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
               if (treeNode.nodeToRestore && treeNode.nodeToRestore.isConnected) {
-                restoreFocusToElement(treeNode.nodeToRestore);
+                restoreFocusToElement(treeNode.nodeToRestore, scope);
                 return;
               }
               treeNode = treeNode.parent;
@@ -815,7 +818,7 @@ function useRestoreFocus(
                 // The scope may have nothing focusable in it, e.g. if its focusable
                 // content was removed or hidden. Keep walking up in that case.
                 if (node) {
-                  restoreFocusToElement(node);
+                  restoreFocusToElement(node, scope);
                   return;
                 }
               }
@@ -828,11 +831,15 @@ function useRestoreFocus(
   }, [scopeRef, restoreFocus]);
 }
 
-function restoreFocusToElement(node: FocusableElement) {
+function restoreFocusToElement(node: FocusableElement, scope: Element[] | null) {
   // Dispatch a custom event that parent elements can intercept to customize focus restoration.
   // For example, virtualized collection components reuse DOM elements, so the original element
   // might still exist in the DOM but representing a different item.
-  if (node.dispatchEvent(new CustomEvent(RESTORE_FOCUS_EVENT, {bubbles: true, cancelable: true}))) {
+  if (
+    node.dispatchEvent(
+      new CustomEvent(RESTORE_FOCUS_EVENT, {bubbles: true, cancelable: true, detail: {scope}})
+    )
+  ) {
     focusElement(node);
   }
 }
