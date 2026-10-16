@@ -106,6 +106,52 @@ function DraggableCOMPONENT() {
 
 </ExampleSwitcher>
 
+## Drag handle
+
+By default, mouse and touch users can start a drag from anywhere within an item, and the drag handle is only shown to keyboard users. When items contain interactive elements such as text fields, set `pointerDragSource` to `"handle"` to restrict mouse dragging to the drag handle. In this mode, the drag handle is shown when an item is selected, hovered, or has keyboard focus within it. On touch devices, dragging can always start from anywhere within an item. Keyboard and screen reader drag and drop is unaffected.
+
+<ExampleSwitcher type="component" examples={['ListView', 'TreeView', 'TableView']}>
+
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/EditableCOMPONENT.tsx']}
+"use client";
+import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
+import {useTreeData} from '@react-spectrum/s2/useTreeData';
+import {EditableCOMPONENT, FileItem, defaultItems} from './EditableCOMPONENT';
+
+function DraggableCOMPONENT() {
+  let tree = useTreeData({initialItems: defaultItems});
+
+  let {dragAndDropHooks} = useDragAndDrop<FileItem>({
+    ///- begin collapse -///
+    getItems(keys, items: FileItem[]) {
+      return items.map(item => ({
+        'text/plain': item.name
+      }));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      }
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    pointerDragSource: 'handle'
+    ///- end highlight -///
+  });
+
+  let processItem = item => ({
+    ...item.value,
+    children: item.children.map(processItem)
+  });
+
+  return <EditableCOMPONENT items={tree.items.map(processItem)} dragAndDropHooks={dragAndDropHooks} />;
+}
+```
+
+</ExampleSwitcher>
+
 ## Drop items
 
 Users can drop one or more **drop items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
@@ -881,6 +927,7 @@ Note that because mouse and touch drag and drop interactions utilize the native 
     'Drag source': [
       'getItems',
       'renderDragPreview',
+      'pointerDragSource',
       'getAllowedDropOperations',
       'onDragStart',
       'onDragMove',
