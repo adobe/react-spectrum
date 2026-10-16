@@ -326,9 +326,8 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
   });
   let open = (focusStrategy: FocusStrategy | null = null, trigger?: MenuTriggerAction) => {
     let displayAllItems = trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus');
-    // Prevent open operations from triggering if there is nothing to display
-    // Also prevent open operations from triggering if items are uncontrolled but defaultItems is empty, even if displayAllItems is true.
-    // This is to prevent comboboxes with empty defaultItems from opening but allow controlled items comboboxes to open even if the inital list is empty (assumption is user will provide swap the empty list with a base list via onOpenChange returning `menuTrigger` manual)
+    // Only open if there are items to display, unless empty collections are allowed or items are controlled.
+    // Controlled items may initially be empty and populated by the application in onOpenChange.
     if (
       allowsEmptyCollection ||
       filteredCollection.size > 0 ||
@@ -336,7 +335,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
       props.items
     ) {
       if (displayAllItems && !triggerState.isOpen && props.items === undefined) {
-        // Show all items if menu is manually opened. Only care about this if items are undefined
+        // Show all items when opening manually or on focus, unless items are controlled.
         setShowAllItems(true);
       }
 
@@ -346,51 +345,20 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     }
   };
 
-  let toggle = (focusStrategy: FocusStrategy | null = null, trigger?: MenuTriggerAction) => {
-    let displayAllItems = trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus');
-    // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
-    if (
-      !(
-        allowsEmptyCollection ||
-        filteredCollection.size > 0 ||
-        (displayAllItems && originalCollection.size > 0) ||
-        props.items
-      ) &&
-      !triggerState.isOpen
-    ) {
-      return;
-    }
-
-    if (displayAllItems && !triggerState.isOpen && props.items === undefined) {
-      // Show all items if menu is toggled open. Only care about this if items are undefined
-      setShowAllItems(true);
-    }
-
-    // Only update the menuOpenTrigger if menu is currently closed
-    if (!triggerState.isOpen) {
-      menuOpenTrigger.current = trigger;
-    }
-
-    toggleMenu(focusStrategy);
-  };
-
+  // Save the current collection before closing so the menu contents stay frozen as the popover closes.
   let updateLastCollection = useCallback(() => {
     setLastCollection(showAllItems ? originalCollection : filteredCollection);
   }, [showAllItems, originalCollection, filteredCollection]);
 
-  // If menu is going to close, save the current collection so we can freeze the displayed collection when the
-  // user clicks outside the popover to close the menu. Prevents the menu contents from updating as the menu closes.
-  let toggleMenu = useCallback(
-    (focusStrategy: FocusStrategy | null = null) => {
-      if (triggerState.isOpen) {
-        updateLastCollection();
-      }
-
+  let toggle = (focusStrategy: FocusStrategy | null = null, trigger?: MenuTriggerAction) => {
+    if (!triggerState.isOpen) {
+      open(focusStrategy, trigger);
+    } else {
+      updateLastCollection();
       setFocusStrategy(focusStrategy);
       triggerState.toggle();
-    },
-    [triggerState, updateLastCollection]
-  );
+    }
+  };
 
   let closeMenu = useCallback(() => {
     if (triggerState.isOpen) {
