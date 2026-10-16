@@ -629,6 +629,18 @@ describe('Select', () => {
     expect(document.activeElement).toBe(trigger);
   });
 
+  it('should show the focus ring on the trigger when clicking the label', async () => {
+    let {getByTestId, getByText} = render(<TestSelect />);
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
+    });
+    let trigger = selectTester.getTrigger();
+
+    await user.click(getByText('Favorite Animal'));
+    expect(document.activeElement).toBe(trigger);
+    expect(trigger).toHaveAttribute('data-focus-visible', 'true');
+  });
+
   it('should clear contexts inside popover', async () => {
     let {getByTestId} = render(
       <Select data-testid="select" defaultSelectedKey="cat">
