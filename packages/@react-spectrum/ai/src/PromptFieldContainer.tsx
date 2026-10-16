@@ -7,6 +7,7 @@ import {
   stops,
   token
 } from './tokens.macro' with {type: 'macro'};
+import {Button} from 'react-aria-components/Button';
 import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
@@ -356,10 +357,17 @@ interface PropFieldContainerProps extends Omit<GroupProps, 'children'> {
   size?: 'S' | 'M';
   /** Single-line pill layout (Figma "Initial state=Collapsed"). */
   isCollapsed?: boolean;
+  /** Icon-only circle; pressing it calls onExpand. */
+  isMinimized?: boolean;
+  onExpand?: () => void;
+  minimizedLabel?: string;
 }
 
 // Collapsed pill radii from Figma: inner container 28px, outer border +6px.
 const COLLAPSED_RADIUS = {M: 28, S: 24};
+// Minimized circle matches the collapsed pill height.
+const MINIMIZED_SIZE = {M: 40, S: 36};
+const MINIMIZED_RING = 4;
 const COLLAPSE_EASING = 'cubic-bezier(0.45, 0, 0.2, 1)';
 const COLLAPSE_DURATION = 800;
 
@@ -379,6 +387,28 @@ const collapsedContent = css(`
     }
   }
 
+  & [data-pf-input] > :not(:first-child),
+  & [data-pf-toolbar] {
+    transition: opacity 350ms ease-out 450ms, visibility 350ms 450ms;
+  }
+
+  & [data-pf-input] > :first-child {
+    transition: translate ${COLLAPSE_DURATION}ms ${COLLAPSE_EASING};
+  }
+
+  /* Minimized: only the input's leading pixel icon stays visible. */
+  &[data-minimized] {
+    & [data-pf-input] > :first-child {
+      translate: var(--pf-icon-dx, 0) var(--pf-icon-dy, 0);
+    }
+
+    & [data-pf-input] > :not(:first-child),
+    & [data-pf-toolbar] {
+      opacity: 0;
+      visibility: hidden;
+      transition-delay: 0s;
+    }
+  }
 `);
 
 interface Box {
@@ -392,11 +422,12 @@ interface Box {
  * animates between the two layouts.
  */
 function useCollapseAnimation(
-  isCollapsed: boolean,
+  mode: string,
+  groupRef: React.RefObject<HTMLDivElement | null>,
   bgRef: React.RefObject<HTMLDivElement | null>,
   contentRef: React.RefObject<HTMLDivElement | null>
 ) {
-  let last = useRef<{isCollapsed: boolean; height: number; boxes: Map<string, Box>} | null>(null);
+  let last = useRef<{mode: string; width: number; height: number; boxes: Map<string, Box>} | null>(null);
   let animatingUntil = useRef(0);
 
   useLayoutEffect(() => {
@@ -423,11 +454,11 @@ function useCollapseAnimation(
           boxes.set(key, {x: r.left - origin.left, y: r.top - origin.top});
         }
       }
-      return {isCollapsed, height: bg.offsetHeight, boxes};
+      return {mode, width: groupRef.current?.offsetWidth ?? 0, height: bg.offsetHeight, boxes};
     };
 
     let prev = last.current;
-    if (prev && prev.isCollapsed !== isCollapsed) {
+    if (prev && prev.mode !== mode) {
       let next = measure();
       // Skip in reduced motion and in environments without Web Animations (e.g. jsdom).
       let canAnimate =
@@ -436,6 +467,12 @@ function useCollapseAnimation(
       if (canAnimate) {
         let options = {duration: COLLAPSE_DURATION, easing: COLLAPSE_EASING};
         bg.animate([{height: `${prev.height}px`}, {height: `${next.height}px`}], options);
+        if (groupRef.current && prev.width !== next.width) {
+          groupRef.current.animate(
+            [{width: `${prev.width}px`}, {width: `${next.width}px`}],
+            options
+          );
+        }
         for (let [key, el] of Object.entries(targets)) {
           let from = prev.boxes.get(key);
           let to = next.boxes.get(key);
@@ -455,6 +492,41 @@ function useCollapseAnimation(
   });
 }
 
+/**
+ * Centers the input's leading pixel icon in the minimized circle. Uses layout offsets
+ * (not rects) so in-flight FLIP/width animations don't skew the measurement.
+ */
+function useCenterMinimizedIcon(
+  isMinimized: boolean,
+  circleSize: number,
+  bgRef: React.RefObject<HTMLDivElement | null>,
+  contentRef: React.RefObject<HTMLDivElement | null>
+) {
+  useLayoutEffect(() => {
+    let bg = bgRef.current;
+    let content = contentRef.current;
+    let icon = content?.querySelector<HTMLElement>('[data-pf-input] > :first-child');
+    if (!bg || !content || !icon) {
+      return;
+    }
+    if (!isMinimized) {
+      content.style.removeProperty('--pf-icon-dx');
+      content.style.removeProperty('--pf-icon-dy');
+      return;
+    }
+    let x = 0;
+    let y = 0;
+    let el: HTMLElement | null = icon;
+    while (el && el !== bg) {
+      x += el.offsetLeft;
+      y += el.offsetTop;
+      el = el.offsetParent as HTMLElement | null;
+    }
+    content.style.setProperty('--pf-icon-dx', `${circleSize / 2 - (x + icon.offsetWidth / 2)}px`);
+    content.style.setProperty('--pf-icon-dy', `${circleSize / 2 - (y + icon.offsetHeight / 2)}px`);
+  }, [isMinimized, circleSize, bgRef, contentRef]);
+}
+
 export function PromptFieldContainer(props: PropFieldContainerProps) {
   let {
     variant,
@@ -465,28 +537,44 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
     brandColor,
     size = 'M',
     isCollapsed = false,
+    isMinimized = false,
+    onExpand,
+    minimizedLabel = 'Open prompt',
     ...otherProps
   } = props;
   let [isFocused, setFocused] = useState(false);
+  let groupRef = useRef<HTMLDivElement>(null);
   let bgRef = useRef<HTMLDivElement>(null);
   let contentRef = useRef<HTMLDivElement>(null);
-  useCollapseAnimation(isCollapsed, bgRef, contentRef);
+  let collapsed = isCollapsed || isMinimized;
+  let mode = isMinimized ? 'minimized' : collapsed ? 'collapsed' : 'expanded';
+  // Must run before useCollapseAnimation starts its width animation, so the icon is
+  // measured in the final minimized layout.
+  useCenterMinimizedIcon(isMinimized, MINIMIZED_SIZE[size], bgRef, contentRef);
+  useCollapseAnimation(mode, groupRef, bgRef, contentRef);
+  let minimizedSize = MINIMIZED_SIZE[size] + (size === 'M' ? MINIMIZED_RING * 2 : 0);
 
   return (
     <Group
       {...otherProps}
+      ref={groupRef}
       role="group"
       data-variant={variant}
       data-state={isGenerating ? 'generating' : 'idle'}
       data-focused={isFocused || undefined}
-      data-collapsed={isCollapsed || undefined}
+      data-collapsed={collapsed || undefined}
       className={
         (size === 'M' ? outerBorder : '') +
         style({containerType: 'inline-size', flexGrow: 1, display: 'flex'})
       }
       style={{
         ...props.style,
-        ...(isCollapsed && size === 'M' ? {borderRadius: COLLAPSED_RADIUS.M + 6} : null),
+        ...(collapsed && size === 'M' ? {borderRadius: COLLAPSED_RADIUS.M + 6} : null),
+        // Anchored to the end edge so expanding from minimized grows toward the start.
+        width: isMinimized ? minimizedSize : '100%',
+        ...(isMinimized && size === 'M' ? {padding: MINIMIZED_RING} : null),
+        alignSelf: 'flex-end',
+        boxSizing: 'border-box',
         // @ts-ignore
         '--brand': brandColor
       }}
@@ -520,7 +608,11 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
           data-variant={variant}
           data-state={isGenerating ? 'generating' : 'idle'}
           data-size={size}
-          style={{borderRadius: isCollapsed ? COLLAPSED_RADIUS[size] : undefined}}
+          style={{
+            borderRadius: collapsed ? COLLAPSED_RADIUS[size] : undefined,
+            // Hidden content still wraps at the circle's width; clip it to a circle.
+            height: isMinimized ? MINIMIZED_SIZE[size] : undefined
+          }}
           className={
             ' ' +
             containerBackground +
@@ -609,9 +701,13 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
           )}
           <div
             ref={contentRef}
-            data-collapsed={isCollapsed || undefined}
-            // Collapsed padding is L20/R12/Y12 per Figma.
-            style={{padding: isCollapsed ? '12px 12px 12px 20px' : '16px'}}
+            inert={isMinimized || undefined}
+            data-collapsed={collapsed || undefined}
+            data-minimized={isMinimized || undefined}
+            style={{
+              // Collapsed: L20/R12/Y12 per Figma. Minimized: centers the 21px pixel icon.
+              padding: isMinimized ? '12px' : collapsed ? '12px 12px 12px 20px' : '16px'
+            }}
             className={
               collapsedContent +
               style({
@@ -627,6 +723,25 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
             }>
             {props.children}
           </div>
+          {isMinimized && (
+            <Button
+              aria-label={minimizedLabel}
+              onPress={onExpand}
+              className={renderProps => style({
+                position: 'absolute',
+                inset: 0,
+                padding: 0,
+                borderWidth: 0,
+                borderRadius: 'full',
+                backgroundColor: 'transparent',
+                cursor: 'pointer',
+                outlineStyle: {default: 'none', isFocusVisible: 'solid'},
+                outlineColor: 'focus-ring',
+                outlineWidth: 2,
+                outlineOffset: -2
+              })(renderProps)}
+            />
+          )}
         </div>
       )}
     </Group>

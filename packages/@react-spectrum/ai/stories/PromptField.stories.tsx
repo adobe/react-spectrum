@@ -56,7 +56,7 @@ import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
 import {TokenFieldValue} from 'react-aria-components';
 import {TokenSegment} from 'react-stately';
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
 
 const events = ['onSubmit', 'onStop', 'onAddAttachments', 'onRemoveAttachments'];
@@ -733,5 +733,87 @@ export const Collapsed: StoryObj<typeof CollapsedRender> = {
   },
   argTypes: {
     expandOn: {control: 'radio', options: ['input', 'focus']}
+  }
+};
+
+type MinimizableMode = 'minimized' | 'collapsed' | 'expanded';
+
+function MinimizableRender(args: any) {
+  let [mode, setMode] = useState<MinimizableMode>('minimized');
+  let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
+  let fieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
+  let rootRef = useRef<HTMLDivElement>(null);
+
+  // One click anywhere outside (capture phase, since usePress stops propagation) or Escape
+  // minimizes, whether or not the input currently has focus.
+  useEffect(() => {
+    if (mode === 'minimized') {
+      return;
+    }
+    let onPointerDown = (e: PointerEvent) => {
+      let target = e.target as Element;
+      // Ignore clicks inside the field or its popovers (menus render in a portal).
+      if (!rootRef.current?.contains(target) && !target.closest?.('[data-testid="popover"], [role="dialog"], [role="menu"]')) {
+        setMode('minimized');
+      }
+    };
+    let onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMode('minimized');
+      }
+    };
+    document.addEventListener('pointerdown', onPointerDown, true);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown, true);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [mode]);
+
+  return (
+    <div ref={rootRef} style={{width: 540, display: 'flex', flexDirection: 'column', alignItems: 'end'}}>
+      <PromptField
+        {...args}
+        ref={fieldRef}
+        styles={style({width: 'full'})}
+        value={value}
+        onChange={(v: TokenFieldValue) => {
+          setValue(v);
+          if (v.segments.length > 0) {
+            setMode('expanded');
+          }
+        }}
+        isMinimized={mode === 'minimized'}
+        isCollapsed={mode === 'collapsed'}
+        onExpand={() => {
+          setMode('collapsed');
+          requestAnimationFrame(() => fieldRef.current?.focus());
+        }}
+        onSubmit={(v: PromptFieldValue) => {
+          action('onSubmit')(v);
+          setValue(new PromptFieldValue([]));
+          setMode('minimized');
+        }}>
+        <PromptTokenField placeholder="Ask a question, share an idea, or add a task" />
+        <PromptFieldToolbar>
+          <InsertMenuButton>
+            <Menu>
+              <AttachFileMenuItem />
+            </Menu>
+          </InsertMenuButton>
+          <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+            <PromptFieldVoiceButton onToggle={action('onToggle')} />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptFieldToolbar>
+      </PromptField>
+    </div>
+  );
+}
+
+export const Minimizable: Story = {
+  render: args => <MinimizableRender {...args} />,
+  args: {
+    variant: 'prominent'
   }
 };

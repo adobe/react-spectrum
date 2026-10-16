@@ -590,6 +590,41 @@ describeOrSkip('PromptField', () => {
     });
   });
 
+  describe('minimized', () => {
+    function MinimizedField(props: {isMinimized: boolean; onExpand?: () => void}) {
+      return (
+        <PromptField
+          isMinimized={props.isMinimized}
+          onExpand={props.onExpand}
+          minimizedLabel="Open Coworker">
+          <PromptTokenField />
+          <PromptFieldToolbar>
+            <PromptFieldSubmitButton />
+          </PromptFieldToolbar>
+        </PromptField>
+      );
+    }
+
+    it('renders a labeled button that calls onExpand', async () => {
+      let onExpand = jest.fn();
+      render(<MinimizedField isMinimized onExpand={onExpand} />);
+      await user.click(screen.getByRole('button', {name: 'Open Coworker'}));
+      expect(onExpand).toHaveBeenCalledTimes(1);
+    });
+
+    it('hides the field contents and AI disclaimer while minimized', () => {
+      let {rerender} = render(<MinimizedField isMinimized />);
+      // jsdom doesn't apply inert to the accessibility tree, so check the attribute.
+      expect(screen.getByRole('textbox', {name: 'AI Prompt'}).closest('[inert]')).not.toBeNull();
+      expect(screen.queryByRole('link')).not.toBeInTheDocument();
+
+      rerender(<MinimizedField isMinimized={false} />);
+      expect(screen.queryByRole('button', {name: 'Open Coworker'})).not.toBeInTheDocument();
+      expect(screen.getByRole('textbox', {name: 'AI Prompt'}).closest('[inert]')).toBeNull();
+      expect(screen.getByRole('link')).toBeInTheDocument();
+    });
+  });
+
   describe('InsertMenuButton', () => {
     it('calls onOpenChange when the menu is opened', async () => {
       let onOpenChange = jest.fn();

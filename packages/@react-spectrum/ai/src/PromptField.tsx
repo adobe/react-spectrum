@@ -118,6 +118,14 @@ export interface PromptFieldProps {
    * attachments are hidden until isCollapsed is false, which animates to the full field.
    */
   isCollapsed?: boolean;
+  /**
+   * Renders an icon-only circle showing just the pixel logo. Pressing it calls onExpand;
+   * set isMinimized to false (and isCollapsed to true) to animate into the collapsed pill.
+   */
+  isMinimized?: boolean;
+  onExpand?: () => void;
+  /** Accessible label for the minimized circle. */
+  minimizedLabel?: string;
   /** Called when focus enters or leaves the field. Use it to expand a collapsed field. */
   onFocusChange?: (isFocused: boolean) => void;
 }
@@ -344,8 +352,12 @@ export const PromptField = forwardRef(function PromptField(
     variant = 'balanced',
     brandColor,
     size = 'M',
-    isCollapsed = false
+    isCollapsed: isCollapsedProp = false,
+    isMinimized = false,
+    onExpand,
+    minimizedLabel
   } = props;
+  let isCollapsed = isCollapsedProp || isMinimized;
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
   let inputRef = useRef<HTMLDivElement>(null);
@@ -456,9 +468,13 @@ export const PromptField = forwardRef(function PromptField(
             isGenerating={isGenerating ?? false}
             isDropTarget={isDropTarget}
             inputRef={inputRef}
-            isCollapsed={isCollapsed}>
+            isCollapsed={isCollapsed}
+            isMinimized={isMinimized}
+            onExpand={onExpand}
+            minimizedLabel={minimizedLabel}>
             {children}
           </PromptFieldContainer>
+          {!isMinimized && (
           <p className={style({font: 'ui-sm', color: 'gray-600', textAlign: 'center'})}>
             {props.aiDisclaimer ?? (
               <>
@@ -475,6 +491,7 @@ export const PromptField = forwardRef(function PromptField(
               </>
             )}
           </p>
+          )}
         </div>
       </Provider>
     </PromptFieldContext.Provider>
