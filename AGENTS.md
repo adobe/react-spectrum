@@ -65,6 +65,7 @@ This repository uses GitHub issue **forms** defined in [`.github/ISSUE_TEMPLATE/
 Read the relevant file before starting that kind of work (other agents: read the file directly; Claude will surface it):
 
 - Writing or running tests → [`docs/contributing/testing.md`](docs/contributing/testing.md)
+- Performance-sensitive changes, performance investigations, or benchmark harness updates → [`perf/README.md`](perf/README.md)
 - Tooling details (format/lint/type-check/build, Storybook, workspaces) → [`docs/contributing/tooling.md`](docs/contributing/tooling.md)
 - Styling S2 components → [`docs/contributing/s2-styling.md`](docs/contributing/s2-styling.md)
 - Adding user-facing strings → [`docs/contributing/i18n-strings.md`](docs/contributing/i18n-strings.md)
