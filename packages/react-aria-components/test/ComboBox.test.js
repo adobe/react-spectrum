@@ -124,6 +124,47 @@ describe('ComboBox', () => {
     expect(field).toHaveAttribute('data-custom', 'true');
   });
 
+  it('should show the defaultSelectedKey text when autoFocused', () => {
+    let {getByRole} = render(
+      <TestComboBox defaultInputValue={undefined} defaultSelectedKey="2" autoFocus />
+    );
+    let combobox = getByRole('combobox');
+    expect(combobox).toHaveFocus();
+    expect(combobox).toHaveValue('Dog');
+  });
+
+  it('should not overwrite user input when the selected item loads while focused', async () => {
+    let {getByRole, rerender} = render(
+      <ComboBox defaultSelectedKey="2" autoFocus>
+        <Label>Favorite Animal</Label>
+        <Input />
+        <Popover>
+          <ListBox>
+            <ListBoxItem id="1">Cat</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+    let combobox = getByRole('combobox');
+    expect(combobox).toHaveValue('');
+    await user.keyboard('Ca');
+    expect(combobox).toHaveValue('Ca');
+
+    rerender(
+      <ComboBox defaultSelectedKey="2" autoFocus>
+        <Label>Favorite Animal</Label>
+        <Input />
+        <Popover>
+          <ListBox>
+            <ListBoxItem id="1">Cat</ListBoxItem>
+            <ListBoxItem id="2">Dog</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+    expect(combobox).toHaveValue('Ca');
+  });
+
   it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestComboBox />);
     let button = getByRole('button');
