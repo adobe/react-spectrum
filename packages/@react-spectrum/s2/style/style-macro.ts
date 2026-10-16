@@ -27,7 +27,7 @@ import type {
   Value
 } from './types';
 import fs from 'fs';
-import * as propertyInfo from './properties.json';
+import propertyInfo from './properties.json';
 
 // Postfix all class names with version for now.
 const json = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
