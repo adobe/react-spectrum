@@ -392,13 +392,10 @@ export function VirtualizedStreamingChat() {
       (timestamp += toolCallDuration)
     );
     addTimeout(() => completeGroup(), (timestamp += 200));
-    addTimeout(
-      () =>
-        streamText(
-          'I found some relevant assets that match your request. Let me pull up the details.'
-        ),
-      (timestamp += 500)
-    );
+    let firstStreamContent =
+      'I found some relevant assets that match your request. Let me pull up the details.';
+    addTimeout(() => streamText(firstStreamContent), (timestamp += 500));
+    timestamp += (firstStreamContent.split(' ').length - 1) * 80;
 
     // then does searching, streaming more text, returning a card and sources
     addTimeout(() => startToolGroup('Searching'), (timestamp += 1000));
