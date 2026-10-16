@@ -10,9 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {LightboxCarousel, LightboxItem, LightboxPicker, LightboxPickerItem, LightboxItems} from '../src/Lightbox';
+import {Attachment, AttachmentList, AttachmentPreview} from '../src/AttachmentList';
+import {Button as AriaButton} from 'react-aria-components/Button';
+import {Button} from '@react-spectrum/s2/Button';
+import {Content} from '@react-spectrum/s2/Content';
+import {Dialog} from 'react-aria-components/Dialog';
+import {Heading} from 'react-aria-components/Heading';
+import {
+  LightboxCarousel,
+  LightboxItem,
+  LightboxItems,
+  LightboxPicker,
+  LightboxPickerItem,
+  LightboxTrigger
+} from '../src/Lightbox';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Text} from '@react-spectrum/s2/Text';
+import {useState} from 'react';
 
 const meta: Meta<typeof LightboxCarousel> = {
   title: 'AI/Lightbox',
@@ -26,11 +42,12 @@ export default meta;
 
 type Story = StoryObj<typeof LightboxCarousel>;
 
+// TODO: how to style the images so they all have the same aspect ratio, should probably be built in. Look at how Cards handles it?
 const imageStyles = style({
   display: 'block',
-  width: 'full',
-  aspectRatio: '4/3',
-  objectFit: 'contain'
+  width: 'full'
+  // aspectRatio: '4/3',
+  // objectFit: 'contain'
 });
 
 export const Basic: Story = {
@@ -75,4 +92,64 @@ export const Basic: Story = {
   args: {
     defaultSelectedKey: 'amsterdam'
   }
+};
+
+function AttachmentDialogExample() {
+
+  return (
+    <LightboxTrigger>
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 16, width: 400})}>
+        <AttachmentList aria-label="Attachments">
+          <Attachment id="photo" textValue="photo.png">
+            <AttachmentPreview
+              mimeType="image/jpg"
+              slot="thumbnail"
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/amsterdamslide__800x600.jpg"
+            />
+          </Attachment>
+          <Attachment id="report" textValue="report.pdf">
+            <AttachmentPreview 
+              mimeType="image/jpg" 
+              slot="thumbnail"
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/lands-endslide__800x600.jpg" />
+          </Attachment>
+        </AttachmentList>
+        
+      </div>
+      <LightboxCarousel >
+        <LightboxPicker aria-label="Choose photo">
+          <LightboxPickerItem id="amsterdam" aria-label="Amsterdam" />
+          <LightboxPickerItem id="lands-end" aria-label="Land's End" />
+          <LightboxPickerItem id="trust" aria-label="Trust" />
+        </LightboxPicker>
+        <LightboxItems>
+          <LightboxItem id="amsterdam">
+            <img
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/amsterdamslide__800x600.jpg"
+              alt="Amsterdam canal"
+              className={imageStyles}
+            />
+          </LightboxItem>
+          <LightboxItem id="lands-end">
+            <img
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/lands-endslide__800x600.jpg"
+              alt="Land's End coastal landscape"
+              className={imageStyles}
+            />
+          </LightboxItem>
+          <LightboxItem id="trust">
+            <img
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/trustslide-2__800x600.jpg"
+              alt="Trust television series promotion"
+              className={imageStyles}
+            />
+          </LightboxItem>
+        </LightboxItems>
+      </LightboxCarousel>
+    </LightboxTrigger>
+  );
+}
+
+export const AttachmentDialog: Story = {
+  render: () => <AttachmentDialogExample />
 };

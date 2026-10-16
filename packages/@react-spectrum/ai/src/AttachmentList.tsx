@@ -42,6 +42,7 @@ import {getMimeTypeLabel, matchMimeType} from './PromptField';
 import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {keyframes, scrollFade} from './style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
@@ -61,6 +62,8 @@ import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+
+import {LightboxTriggerContext} from './Lightbox';
 
 /** Whether an attachment is still uploading, shared by Attachment and AttachmentGridItem. */
 export function isAttachmentLoading(uploadProgress?: number): boolean {
@@ -344,7 +347,7 @@ export interface AttachmentListProps<T>
       | 'escapeKeyBehavior'
       | 'onSelectionChange'
       | 'shouldSelectOnPressUp'
-      | 'onAction'
+      // | 'onAction'
       | 'render'
       | 'style'
       | 'className'
@@ -496,6 +499,8 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   let domRef = useDOMRef(ref);
   let scrollRef = useRef<HTMLDivElement>(null);
   let {direction} = useLocale();
+  let ctx = useContext(LightboxTriggerContext);
+
   let scroll = (dir: 1 | -1) => {
     let el = scrollRef.current;
     if (!el) {
@@ -519,6 +524,7 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   return (
     <TagGroup
       {...otherProps}
+      onAction={ctx?.onAction}
       className={mergeStyles(style({...flexRow, gap: 8, position: 'relative'}), styles)}
       style={
         {

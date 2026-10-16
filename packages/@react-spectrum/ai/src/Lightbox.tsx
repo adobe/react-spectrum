@@ -22,10 +22,12 @@ import {
   TabPanelsProps,
   TabProps,
   TabsProps,
-  TabListStateContext
+  TabListStateContext,
 } from 'react-aria-components/Tabs';
 import {Button} from 'react-aria-components/Button';
 import {createContext, useContext, useLayoutEffect, useState, useRef, useReducer, ReactNode, RefObject} from 'react';
+import {Key} from '@react-types/shared';
+import { ModalOverlay, Modal, Dialog} from 'react-aria-components/Modal';
 
 export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
   isInfinite?: boolean;
@@ -118,6 +120,63 @@ interface LightboxCarouselContextProps {
 let LightBoxCarouselContext = createContext<LightboxCarouselContextProps>({});
 
 export function LightboxCarousel(props: LightboxCarouselProps) {
+
+  let ctx = useContext(LightboxTriggerContext);
+
+  if (ctx) {
+    return (
+      <ModalOverlay
+          isOpen={ctx.isOpen}
+          onOpenChange={ctx.setIsOpen}
+          isDismissable
+          className={style({
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            backgroundColor: 'black/90'
+          })}>
+          <Modal className={style({width: 'full', height: 'full'})}>
+            <Dialog
+              className={style({
+                display: 'grid',
+                gridTemplateRows: ['auto', 'minmax(0, 1fr)'],
+                gap: 24,
+                boxSizing: 'border-box',
+                height: 'full',
+                padding: 24,
+                color: 'white'
+              })}>
+              {({close}) => (
+                <>
+                  <Button
+                    onPress={close}
+                    className={style({
+                      backgroundColor: 'transparent',
+                      color: 'white',
+                      borderWidth: 1,
+                      borderStyle: 'solid',
+                      borderColor: 'white',
+                      borderRadius: 'full',
+                      paddingX: 16,
+                      paddingY: 8,
+                      font: 'body'
+                    })}>
+                    Close
+                  </Button>
+                  <div>
+                    <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
+                      <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
+                    </LightBoxCarouselContext.Provider>
+                  </div>
+                </>
+              )}
+            </Dialog>
+          </Modal>
+        </ModalOverlay>
+    )
+  }
+
+  // maybe if there is a lightbox trigger context, then we render it as a modal, but otherwise, we just render the tabs?
   return (
     <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
       <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
@@ -411,4 +470,34 @@ export function LightboxItem(props: LightboxItemProps) {
   return (
     <RACTabPanel {...props} shouldForceMount className={renderProps => itemStyles(renderProps)} />
   );
+}
+
+export interface LightboxTriggerContextProps {
+  onAction?: (key: Key) => void;
+  isOpen?: boolean;
+  setIsOpen?: (boolean) => void;
+}
+
+export const LightboxTriggerContext = createContext<LightboxTriggerContextProps | null>(null);
+
+interface LightboxTrigger {
+  children: ReactNode
+};
+
+export function LightboxTrigger(props: LightboxTrigger) {
+  let [isOpen, setIsOpen] = useState<boolean>(false);
+  
+  let onAction = () => {
+    setIsOpen(true);
+  }
+
+  // and then i pass onAction to the attachment
+  // and then set isOpen back to false when it is dismissed?
+  return (
+    <LightboxTriggerContext.Provider value={{isOpen, setIsOpen, onAction}}>
+      <div {...props}>
+        {props.children}
+      </div>
+    </LightboxTriggerContext.Provider>
+  )
 }
