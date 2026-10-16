@@ -152,4 +152,37 @@ describeOrSkip('TokenField scrolling', () => {
       scroller.getBoundingClientRect().bottom + 1
     );
   });
+
+  it('keeps the caret in view when it moves before a trailing line break', async () => {
+    let value = new TokenFieldValue([]);
+    let screen = await render(
+      <div data-testid="scroller" style={{height: 20, overflow: 'auto', marginTop: 200}}>
+        <TokenField
+          aria-label="Message"
+          allowsNewlines
+          defaultValue={value}
+          onChange={newValue => {
+            value = newValue;
+          }}>
+          <TokenInput style={{minHeight: 20, lineHeight: '20px'}}>
+            {segment => <Token>{segment.text}</Token>}
+          </TokenInput>
+        </TokenField>
+      </div>
+    );
+    let scroller = screen.getByTestId('scroller').element();
+    let input = screen.getByRole('textbox', {name: 'Message'});
+    await userEvent.click(input);
+    await userEvent.keyboard('abc{Shift>}{Enter}{/Shift}{ArrowLeft}d');
+    await expect.poll(() => value.toString()).toBe('abcd\n');
+
+    await userEvent.keyboard('{ArrowRight}');
+    await expect.poll(() => value.caretPosition).toEqual({index: 1, offset: 0});
+    await expect.element(input).toHaveFocus();
+
+    let lineBreak = input.element().querySelector('br')!.getBoundingClientRect();
+    let viewport = scroller.getBoundingClientRect();
+    expect(lineBreak.top).toBeGreaterThanOrEqual(viewport.top - 1);
+    expect(lineBreak.bottom).toBeLessThanOrEqual(viewport.bottom + 1);
+  });
 });
