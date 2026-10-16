@@ -225,6 +225,11 @@ export class IncompleteDate {
         break;
     }
 
+    // clear offset when a date field changes since it may no longer be valid
+    if (field === 'era' || field === 'year' || field === 'month' || field === 'day') {
+      res.offset = null;
+    }
+
     return res;
   }
 
