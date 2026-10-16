@@ -35,7 +35,7 @@ Options:
   --results <id>                  Completed compare run for confirm to repeat
   --absolute-threshold 8          Exploratory completion threshold in milliseconds
   --relative-threshold 0.05       Exploratory fractional threshold
-  --frame-threshold 0.25          Scroll mean rAF interval threshold floor in milliseconds
+  --frame-threshold 0.25          Mean rAF interval threshold floor in milliseconds
   --headed                        Show Chromium (keep it foreground)
   --trace                         Save separate diagnostic Chrome trace reruns
 

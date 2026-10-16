@@ -44,7 +44,7 @@ export function metrics(sample) {
   return {
     ready: sample.semanticReady - sample.start,
     opportunity: sample.renderingOpportunity - sample.start,
-    // Mean interval is the scroll's elapsed time per frame callback, so each late
+    // Mean interval is the action's elapsed time per frame callback, so each late
     // frame raises it in proportion to the time it lost.
     frameMean: sample.frameIntervals.length
       ? sample.frameIntervals.reduce((total, interval) => total + interval, 0) /
@@ -380,7 +380,7 @@ export function report(result) {
     '',
     `${result.options.blocks} browser-launch blocks × ${result.options.samples} measured trials per arm; ${result.options.warmup} discarded warmups per scenario/arm/block.`,
     '',
-    'Times below are medians. Completion uses a two-animation-frame rendering-opportunity proxy, not presented-pixel timing. Scroll uses the mean rAF interval within each trial, not compositor frame delivery.',
+    'Times below are medians. Completion uses a two-animation-frame rendering-opportunity proxy, not presented-pixel timing. Scrolling and continuous resizing use the mean rAF interval within each trial, not compositor frame delivery.',
     '',
     'Decision thresholds are exploratory defaults, not calibrated merge criteria. Changes are Hodges–Lehmann estimates of the per-block paired change, with exact Wilcoxon signed-rank intervals at the smallest achievable confidence of at least 95%; fewer than six blocks cannot reach 95% and are always inconclusive. Multiple scenarios are exploratory comparisons, not a family-wide significance test.',
     ''

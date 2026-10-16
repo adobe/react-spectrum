@@ -24,6 +24,7 @@ export const scenarios = [
   {id: 'table-data.sort', fixture: 'table-data', label: 'Reverse the sort of 100 table rows'},
   {id: 'table-data.filter', fixture: 'table-data', label: 'Filter 100 table rows by typing 9'},
   {id: 'table-data.clear', fixture: 'table-data', label: 'Restore 100 table rows with Backspace'},
+  {id: 'table-data.focus', fixture: 'table-data', label: 'Move table cell focus without selection'},
   {id: 'table-cells.select', fixture: 'table-cells', label: 'Select a row with its checkbox'},
   {id: 'table-cells.select-all', fixture: 'table-cells', label: 'Select all 100 table rows'},
   {
@@ -54,6 +55,43 @@ export const scenarios = [
     metric: 'frameMean'
   },
   {id: 'table.update', fixture: 'table', label: 'Update one visible table record'},
+  {
+    id: 'table.scroll-deep',
+    fixture: 'table',
+    label: 'Scroll after traversing 4,000 table rows',
+    metric: 'frameMean'
+  },
+  {
+    id: 'table-measured.mount',
+    fixture: 'table-measured',
+    label: 'Mount a measured-height 1,000-row table'
+  },
+  {
+    id: 'table-measured.narrow',
+    fixture: 'table-measured',
+    label: 'Narrow the wrapping labels column'
+  },
+  {
+    id: 'table-measured.widen',
+    fixture: 'table-measured',
+    label: 'Widen labels and shrink measured rows'
+  },
+  {
+    id: 'table-measured.other-column',
+    fixture: 'table-measured',
+    label: 'Resize another column with tall measured rows'
+  },
+  {
+    id: 'table-measured.container',
+    fixture: 'table-measured',
+    label: 'Resize a measured-height table container'
+  },
+  {
+    id: 'table-measured.resize-animation',
+    fixture: 'table-measured',
+    label: 'Continuously resize a measured-height table',
+    metric: 'frameMean'
+  },
   {id: 'variable.mount', fixture: 'variable', label: 'Mount a variable-height virtualized list'},
   {
     id: 'variable.scroll',
@@ -84,7 +122,13 @@ export const scenarios = [
   {id: 'resize.container', fixture: 'resize', label: 'Narrow a 500-row table for a side panel'},
   {id: 'form.mount', fixture: 'form', label: 'Mount 30 mixed form controls'},
   {id: 'form.type', fixture: 'form', label: 'Type into a controlled form field'},
-  {id: 'form.dialog', fixture: 'form', label: 'Open a dialog and move focus'}
+  {id: 'form.dialog', fixture: 'form', label: 'Open a dialog and move focus'},
+  {
+    id: 'dnd.modality-type',
+    fixture: 'dnd',
+    label: 'Type after pointer input beside 200 draggables'
+  },
+  {id: 'dnd.type', fixture: 'dnd', label: 'Type in keyboard mode beside 200 draggables'}
 ];
 
 export const sizes = {
@@ -94,9 +138,11 @@ export const sizes = {
   'table-data': 100,
   'table-cells': 100,
   table: 10000,
+  'table-measured': 1000,
   variable: 10000,
   collection: 100,
   tree: 1000,
   resize: 500,
-  form: 30
+  form: 30,
+  dnd: 200
 };

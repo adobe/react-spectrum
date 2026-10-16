@@ -37,8 +37,22 @@ test('armed specs are serializable and describe their measured input', () => {
       if (spec.event === 'wheel') {
         assert.ok(spec.distance > 0 && spec.speed > 0, `${scenario.id} has no scroll gesture`);
       }
-      // Scroll scenarios are scored on frame cadence, so they must collect frames.
+      // Continuous actions scored on frame cadence must collect frames.
       assert.equal(!!spec.frames, scenario.metric === 'frameMean', scenario.id);
     }
   }
+});
+
+test('deep scrolling measures the same distance and speed after building scroll history', () => {
+  let shallow = drivers.table.actions.scroll.spec();
+  let deep = drivers.table.actions['scroll-deep'].spec();
+  assert.equal(deep.distance, shallow.distance);
+  assert.equal(deep.speed, shallow.speed);
+  assert.equal(deep.conditions[0].scrollTop - shallow.conditions[0].scrollTop, 4000 * 40);
+});
+
+test('resize animation rejects a frame sample that ends before the animation', () => {
+  let {verify} = drivers['table-measured'].actions['resize-animation'];
+  assert.throws(() => verify({sample: {frameIntervals: [16, 16, 16]}}), /span the three-second/);
+  assert.doesNotThrow(() => verify({sample: {frameIntervals: Array(180).fill(1000 / 60)}}));
 });

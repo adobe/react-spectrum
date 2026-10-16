@@ -303,3 +303,64 @@ output {
 .tree-content button {
   padding: 2px 8px;
 }
+.measured-table-container {
+  margin-top: 12px;
+}
+.measured-table {
+  width: 100%;
+  height: 400px;
+  overflow: auto;
+  border: 1px solid #bcc6d3;
+}
+.measured-table [role='row'] {
+  height: auto;
+}
+.measured-table [role='gridcell'],
+.measured-table [role='rowheader'],
+.measured-table [role='columnheader'] {
+  padding: 4px 8px;
+  border: 0;
+  line-height: 20px;
+}
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.tag-list span {
+  flex: 0 0 64px;
+  background: #e7f0fc;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.measured-table-container[data-resize-animation='running'] {
+  animation: benchmark-resize 3s linear forwards;
+}
+@keyframes benchmark-resize {
+  0%,
+  40%,
+  80% {
+    width: 1000px;
+  }
+  20%,
+  60%,
+  100% {
+    width: 800px;
+  }
+}
+.draggable-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  height: 400px;
+  overflow: auto;
+}
+.draggable-card {
+  padding: 12px;
+  border: 1px solid #bcc6d3;
+  border-radius: 5px;
+}
+.draggable-card span {
+  display: block;
+}

@@ -25,6 +25,7 @@ const press = (key, target, conditions) => ({event: 'keydown', key, target, cond
 // A browser-generated wheel scroll of fixed distance and speed. The long, steady scroll
 // gives each trial hundreds of frame intervals; completion itself is not the score.
 const scrollDistance = 4000;
+const deepScrollStart = 4000 * 40;
 const scroll = (target, conditions, rest = {}) => ({
   event: 'wheel',
   target,
@@ -92,6 +93,60 @@ async function waitForTableRows({page}) {
   await page.locator('.data-table [data-record]').last().waitFor();
 }
 
+async function prepareDeepScroll({page}) {
+  let table = page.locator('[data-bench="records-table"]');
+  await page.locator('[data-record="item-0"]').waitFor();
+  await table.hover();
+  let box = await table.boundingBox();
+  let session = await page.context().newCDPSession(page);
+  try {
+    // Traverse the rows in this mounted instance so layout history accumulates.
+    // A direct scrollTop assignment would skip the workload this scenario targets.
+    await session.send('Input.synthesizeScrollGesture', {
+      x: box.x + box.width / 2,
+      y: box.y + box.height / 2,
+      yDistance: -deepScrollStart,
+      speed: 40000,
+      gestureSourceType: 'mouse',
+      preventFling: true
+    });
+  } finally {
+    await session.detach();
+  }
+  await page.waitForFunction(start => {
+    let viewport = document.querySelector('[data-bench="records-table"]');
+    return (
+      Math.abs(viewport.scrollTop - start) <= 1 &&
+      !!viewport.querySelector('[data-record="item-4000"]')
+    );
+  }, deepScrollStart);
+}
+
+async function prepareDndInput({page}, keyboard = false) {
+  await page.locator('.draggable-card').last().waitFor();
+  await page.locator('#dnd-notes').click();
+  if (keyboard) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await page.waitForFunction(keyboard => {
+    let cards = [...document.querySelectorAll('.draggable-card')];
+    let expected = keyboard ? 'Press Enter to start dragging.' : 'Click to start dragging.';
+    return (
+      cards.length > 0 &&
+      cards.every(
+        card =>
+          document.getElementById(card.getAttribute('aria-describedby'))?.textContent === expected
+      )
+    );
+  }, keyboard);
+}
+
+const dndInput = () =>
+  press('a', '#dnd-notes', [
+    condition('#dnd-value', {text: 'a'}),
+    condition('#dnd-notes', {focused: true})
+  ]);
+
 async function verifyTableRows({page, size, action}) {
   let expected = (action.expected ?? records)(size);
   let rows = await page.locator('.data-table [data-record]').evaluateAll(rows =>
@@ -145,6 +200,25 @@ const variableLayout = (size, narrow = false, atTop = true) => ({
 });
 const variableWidth = width =>
   condition('#variable-list', {style: {property: 'width', value: `${width}px`}});
+
+const measuredTableLayout = (size, labels = 300, name = 150, width = 1000) => ({
+  viewport: '.measured-table',
+  width,
+  total: size,
+  atTop: true,
+  columns: [name, labels, 90, 90, 90, 90, 90, width - 2 - name - labels - 450]
+});
+const labelsWidth = width =>
+  condition('.measured-table [data-column="labels"]', {
+    style: {property: 'width', value: `${width}px`}
+  });
+async function narrowMeasuredTable({page, size}) {
+  await page.locator('#table-narrow').click();
+  await page.evaluate(
+    expected => window.__bench.settleLayout(expected),
+    measuredTableLayout(size, 100)
+  );
+}
 
 const collectionRows = (expected, selected, final) => [
   ordered('.mutation-list [data-record]', expected),
@@ -221,6 +295,14 @@ export const drivers = {
     prepare: waitForTableRows,
     verify: verifyTableRows,
     actions: {
+      focus: {
+        prepare: ({page}) => page.locator('.data-table [data-record="item-0"] td').first().focus(),
+        spec: () =>
+          press('ArrowDown', '.data-table', [
+            condition('.data-table [data-record="item-1"] td:first-of-type', {focused: true}),
+            condition('.data-table [aria-selected="true"]', {count: 0})
+          ])
+      },
       sort: {
         expected: size => records(size).reverse(),
         spec: size =>
@@ -312,6 +394,33 @@ export const drivers = {
       }
     },
     actions: {
+      'scroll-deep': {
+        prepare: prepareDeepScroll,
+        spec: () =>
+          scroll('[data-bench="records-table"]', [], {
+            conditions: [
+              condition('[data-bench="records-table"]', {
+                scrollTop: deepScrollStart + scrollDistance - 1
+              }),
+              condition('[data-record="item-4100"] [role="rowheader"]', {text: 'Record 4100'})
+            ]
+          }),
+        verify: async ({page}) => {
+          let correct = await page.evaluate(expected => {
+            let table = document.querySelector('[data-bench="records-table"]');
+            let viewport = table.getBoundingClientRect();
+            let row = table.querySelector('[data-record="item-4100"]').getBoundingClientRect();
+            return (
+              Math.abs(table.scrollTop - expected) <= 1 &&
+              row.bottom > viewport.top + 40 &&
+              row.top < viewport.bottom
+            );
+          }, deepScrollStart + scrollDistance);
+          if (!correct) {
+            throw new Error('Deep scrolling did not expose row 4,100 at the expected offset.');
+          }
+        }
+      },
       mount: {
         spec: () =>
           click('#mount', [
@@ -342,6 +451,79 @@ export const drivers = {
           click('#edit-record', [
             condition('[data-record="item-2"] [role="rowheader"]', {text: 'Updated record'})
           ])
+      }
+    }
+  },
+  'table-measured': {
+    prepare: ({page, size}) =>
+      page.evaluate(expected => window.__bench.settleLayout(expected), measuredTableLayout(size)),
+    verify: async ({page}) => {
+      let rows = await page.locator('.measured-table [data-record]').evaluateAll(rows =>
+        rows.map(row => ({
+          id: row.getAttribute('data-record'),
+          name: row.querySelector('[role="rowheader"]').textContent
+        }))
+      );
+      if (rows.some(row => row.name !== recordLabel(row.id))) {
+        invalidRows();
+      }
+    },
+    actions: {
+      'resize-animation': {
+        prepare: narrowMeasuredTable,
+        spec: size => ({
+          ...click('#table-animate', [
+            condition('.measured-table-container', {
+              attribute: 'data-resize-animation',
+              value: 'done'
+            }),
+            condition('.measured-table-container', {style: {property: 'width', value: '800px'}})
+          ]),
+          frames: true,
+          layout: measuredTableLayout(size, 100, 150, 800)
+        }),
+        verify: ({sample}) => {
+          let elapsed = sample.frameIntervals.reduce((total, interval) => total + interval, 0);
+          if (elapsed < 2800) {
+            throw new Error('Frame measurements did not span the three-second resize animation.');
+          }
+        }
+      },
+      mount: {
+        spec: size => ({...click('#mount', [labelsWidth(300)]), layout: measuredTableLayout(size)})
+      },
+      narrow: {
+        spec: size => ({
+          ...click('#table-narrow', [labelsWidth(100)]),
+          layout: measuredTableLayout(size, 100)
+        })
+      },
+      widen: {
+        prepare: narrowMeasuredTable,
+        spec: size => ({
+          ...click('#table-widen', [labelsWidth(300)]),
+          layout: measuredTableLayout(size)
+        })
+      },
+      'other-column': {
+        prepare: narrowMeasuredTable,
+        spec: size => ({
+          ...click('#table-name-resize', [
+            condition('.measured-table [data-column="name"]', {
+              style: {property: 'width', value: '170px'}
+            })
+          ]),
+          layout: measuredTableLayout(size, 100, 170)
+        })
+      },
+      container: {
+        prepare: narrowMeasuredTable,
+        spec: size => ({
+          ...click('#table-container-resize', [
+            condition('.measured-table-container', {style: {property: 'width', value: '800px'}})
+          ]),
+          layout: measuredTableLayout(size, 100, 150, 800)
+        })
       }
     }
   },
@@ -499,6 +681,39 @@ export const drivers = {
         spec: size => click('#resize-container', resizedRows(size, 110)),
         verify: context => verifyColumns(context, 110)
       }
+    }
+  },
+  dnd: {
+    verify: async ({page, size}) => {
+      let cards = await page.locator('.draggable-card').evaluateAll(cards =>
+        cards.map(card => ({
+          id: card.getAttribute('data-record'),
+          label: card.querySelector('strong').textContent,
+          draggable: card.getAttribute('draggable'),
+          dragging: card.hasAttribute('data-dragging'),
+          description: document.getElementById(card.getAttribute('aria-describedby'))?.textContent
+        }))
+      );
+      if (
+        cards.length !== size ||
+        cards.some(
+          (card, i) =>
+            card.id !== `item-${i}` ||
+            card.label !== `Record ${i}` ||
+            card.draggable !== 'true' ||
+            card.dragging ||
+            card.description !== 'Press Enter to start dragging.'
+        ) ||
+        (await page.locator('#dnd-notes').inputValue()) !== 'a'
+      ) {
+        throw new Error(
+          'Typing did not preserve the draggable cards and their keyboard instructions.'
+        );
+      }
+    },
+    actions: {
+      'modality-type': {prepare: context => prepareDndInput(context), spec: dndInput},
+      type: {prepare: context => prepareDndInput(context, true), spec: dndInput}
     }
   },
   form: {

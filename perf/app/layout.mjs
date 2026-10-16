@@ -36,6 +36,9 @@ export function validLayout(snapshot, expected) {
     return false;
   }
   return (
+    (!expected.columns ||
+      (snapshot.columns?.length === expected.columns.length &&
+        snapshot.columns.every((width, i) => Math.abs(width - expected.columns[i]) <= 1))) &&
     new Set(visible.map(row => Math.round(row.height))).size >= 2 &&
     visible.every(
       (row, i) =>
@@ -45,11 +48,24 @@ export function validLayout(snapshot, expected) {
         row.id === `item-${row.index}` &&
         row.height > 0 &&
         Math.abs(row.height - row.allocatedHeight) <= 1 &&
+        (!expected.columns || Math.abs(row.height - row.contentHeight) <= 1) &&
         Math.abs(row.width - snapshot.contentWidth) <= 1 &&
         (!i ||
           (row.index === visible[i - 1].index + 1 &&
             Math.abs(row.top - visible[i - 1].top - visible[i - 1].height) <= 1))
     )
+  );
+}
+
+function cellContentHeight(cell) {
+  let style = getComputedStyle(cell);
+  // Use the content's natural height rather than the stretched row allocation.
+  return (
+    cell.firstElementChild.getBoundingClientRect().height +
+    parseFloat(style.paddingTop) +
+    parseFloat(style.paddingBottom) +
+    parseFloat(style.borderTopWidth) +
+    parseFloat(style.borderBottomWidth)
   );
 }
 
@@ -61,21 +77,33 @@ export function readLayout(expected) {
     return null;
   }
   let bounds = viewport.getBoundingClientRect();
+  let columns = expected.columns && [...viewport.querySelectorAll('[role="columnheader"]')];
+  let headingHeight = columns?.length ? columns[0].parentElement.getBoundingClientRect().height : 0;
   let snapshot = {
     width: bounds.width,
-    contentWidth: viewport.clientWidth,
-    height: viewport.clientHeight,
+    contentWidth: columns
+      ? columns.reduce((total, column) => total + column.getBoundingClientRect().width, 0)
+      : viewport.clientWidth,
+    height: viewport.clientHeight - headingHeight,
     scrollTop: viewport.scrollTop,
-    rows: [...viewport.querySelectorAll('[role="option"][data-record]')].map(node => {
-      let rect = node.getBoundingClientRect();
+    ...(columns && {columns: columns.map(column => column.getBoundingClientRect().width)}),
+    rows: [...viewport.querySelectorAll('[data-record]')].map(node => {
+      let rect = (columns ? node.parentElement : node).getBoundingClientRect();
       let id = node.getAttribute('data-record');
       return {
         id,
         index: Number(id.slice(5)),
-        top: rect.top - bounds.top - viewport.clientTop,
+        top: rect.top - bounds.top - viewport.clientTop - headingHeight,
         height: rect.height,
         width: rect.width,
-        allocatedHeight: node.parentElement.getBoundingClientRect().height
+        allocatedHeight: node.parentElement.getBoundingClientRect().height,
+        ...(columns && {
+          contentHeight: Math.max(
+            ...[...node.querySelectorAll('[role="gridcell"], [role="rowheader"]')].map(
+              cellContentHeight
+            )
+          )
+        })
       };
     })
   };

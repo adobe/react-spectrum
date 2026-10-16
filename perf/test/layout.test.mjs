@@ -105,3 +105,16 @@ test('stable visible geometry ignores DOM ordering and offscreen recycling', () 
   s.rows[0].height += 10;
   assert.notEqual(layoutSignature(s), signature);
 });
+
+test('measured tables must resize columns and allocate each row its natural content height', () => {
+  let s = snapshot();
+  s.columns = [150, 100, 348];
+  s.rows.forEach(row => {
+    row.contentHeight = row.height;
+  });
+  let table = {...expected, columns: [150, 100, 348]};
+  assert.equal(validLayout(s, table), true);
+  assert.equal(validLayout(s, {...table, columns: [150, 300, 148]}), false);
+  s.rows[1].contentHeight -= 20;
+  assert.equal(validLayout(s, table), false);
+});

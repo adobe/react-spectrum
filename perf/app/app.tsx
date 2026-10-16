@@ -33,7 +33,9 @@ import {
 } from 'react-aria-components';
 import {CellTableFixture, DataTableFixture, OptionContent, SelectFixture} from './collections';
 import {createRoot} from 'react-dom/client';
+import {DndFixture} from './dnd';
 import {measurement} from './measure';
+import {MeasuredTableFixture} from './measured-table';
 import {MutationFixture, ProjectNode, TreeFixture, VariableFixture} from './advanced-collections';
 import React, {useState} from 'react';
 import {sizes} from '../scenarios.mjs';
@@ -334,6 +336,8 @@ function App() {
             <DataTableFixture items={items} />
           ) : fixture === 'table-cells' ? (
             <CellTableFixture items={items} />
+          ) : fixture === 'table-measured' ? (
+            <MeasuredTableFixture items={items} />
           ) : fixture === 'variable' ? (
             <VariableFixture items={projectRecords} />
           ) : fixture === 'collection' ? (
@@ -344,6 +348,8 @@ function App() {
             <TableFixture />
           ) : fixture === 'resize' ? (
             <ResizeFixture />
+          ) : fixture === 'dnd' ? (
+            <DndFixture items={items} />
           ) : (
             <FormFixture />
           ))}

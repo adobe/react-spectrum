@@ -48,7 +48,13 @@ interface ArmOptions {
   key?: string;
   conditions: Condition[];
   frames?: boolean;
-  layout?: {viewport: string; width: number; total: number; atTop?: boolean};
+  layout?: {
+    viewport: string;
+    width: number;
+    total: number;
+    atTop?: boolean;
+    columns?: number[];
+  };
 }
 
 export interface Sample {
