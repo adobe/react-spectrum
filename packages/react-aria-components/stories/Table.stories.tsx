@@ -2503,3 +2503,46 @@ export const TreeGridTableDnd: TableStory = () => {
     </Table>
   );
 };
+export const ReadOnlyPerformance: TableStory = () => {
+  const columns = Array.from({length: 10}, (_, i) => ({
+    id: `c${i}`
+  }));
+
+  const makeRows = (version: number) =>
+    Array.from({length: 200}, (_, i) => ({
+      id: `r${i}`,
+      values: columns.map((_, c) => `${i}.${c}.${version}`)
+    }));
+
+  const [rows, setRows] = useState(() => makeRows(0));
+
+  return (
+    <>
+      <button
+        id="update-rows"
+        onClick={() =>
+          setRows(previous => makeRows(Number(previous[0].values[0].split('.')[2]) + 1))
+        }>
+        Update all rows
+      </button>
+
+      <Table aria-label="Performance" selectionMode="none">
+        <TableHeader columns={columns}>
+          {column => (
+            <Column id={column.id} isRowHeader={column.id === 'c0'}>
+              {column.id}
+            </Column>
+          )}
+        </TableHeader>
+
+        <TableBody items={rows}>
+          {row => (
+            <Row id={row.id} columns={columns}>
+              {column => <Cell>{row.values[Number(column.id.slice(1))]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </>
+  );
+};
