@@ -449,7 +449,7 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
             [DropIndicatorContext, {render: GridListDropIndicatorWrapper}]
           ]}>
           {isListDroppable && <RootDropIndicator />}
-          <SharedElementTransition>
+          <SharedElementTransition containerRef={ref as RefObject<HTMLDivElement>}>
             <CollectionRoot
               collection={filteredState.collection}
               scrollRef={ref}
