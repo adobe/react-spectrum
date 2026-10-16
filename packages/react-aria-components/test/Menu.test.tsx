@@ -410,6 +410,38 @@ describe('Menu', () => {
     expect(getAllByRole('menuitem').map(it => it.textContent)).toEqual(['Cat', 'Dog']);
   });
 
+  it.each([true, 'first'])(
+    'restores the existing focus state when the browser window regains focus (autoFocus: %s)',
+    autoFocus => {
+      let {getByRole, getAllByRole} = renderMenu({autoFocus});
+      act(() => {
+        jest.runAllTimers();
+      });
+      let menu = getByRole('menu');
+      let item = getAllByRole('menuitem')[0];
+      let target = autoFocus === true ? menu : item;
+      expect(target).toHaveFocus();
+
+      // Firefox sends a blur/focus pair on window activation changes while
+      // document.activeElement remains the same. Reproduce that event sequence.
+      let hasFocus = jest.spyOn(document, 'hasFocus').mockReturnValue(false);
+      try {
+        fireEvent.focusOut(target, {relatedTarget: null});
+        expect(document.activeElement).toBe(target);
+        hasFocus.mockReturnValue(true);
+        fireEvent.focusIn(target, {relatedTarget: null});
+        expect(target).toHaveFocus();
+        if (autoFocus === true) {
+          expect(menu.querySelector('[data-focused]')).toBeNull();
+        } else {
+          expect(item).toHaveAttribute('data-focused');
+        }
+      } finally {
+        hasFocus.mockRestore();
+      }
+    }
+  );
+
   it('should support focus ring', async () => {
     let {getAllByRole} = renderMenu(
       {},

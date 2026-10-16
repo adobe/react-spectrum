@@ -20,8 +20,12 @@ import {runAfterTransition} from '../utils/runAfterTransition';
 /**
  * A utility function that focuses an element while avoiding undesired side effects such
  * as page scrolling and screen reader issues with CSS transitions.
+ * The optional callback wraps the actual focus operation, including when it is deferred.
  */
-export function focusSafely(element: FocusableElement): void {
+export function focusSafely(
+  element: FocusableElement,
+  focus: (element: FocusableElement) => void = focusWithoutScrolling
+): void {
   if (!element.isConnected) {
     return;
   }
@@ -41,10 +45,10 @@ export function focusSafely(element: FocusableElement): void {
         (activeElement === lastFocusedElement || activeElement === ownerDocument.body) &&
         element.isConnected
       ) {
-        focusWithoutScrolling(element);
+        focus(element);
       }
     });
   } else {
-    focusWithoutScrolling(element);
+    focus(element);
   }
 }

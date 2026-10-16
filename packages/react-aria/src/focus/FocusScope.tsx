@@ -14,6 +14,7 @@ import {createShadowTreeWalker, ShadowTreeWalker} from '../utils/shadowdom/Shado
 
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
+import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
@@ -410,7 +411,7 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
-          focusElement(focusedNode.current);
+          restoreFocusWithinScope(focusedNode.current);
         } else if (activeScope && activeScope.current) {
           focusFirstInScope(activeScope.current);
         }
@@ -444,7 +445,7 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
           let target = getEventTarget(e) as FocusableElement;
           if (target && target.isConnected) {
             focusedNode.current = target;
-            focusElement(focusedNode.current);
+            restoreFocusWithinScope(focusedNode.current);
           } else if (activeScope.current) {
             focusFirstInScope(activeScope.current);
           }
@@ -520,6 +521,32 @@ function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
     parent = parent.parent;
   }
   return false;
+}
+
+// Focus events are synchronous. Track only the element being restored during the
+// actual focus call; save and restore the previous target for reentrant restores.
+let containmentRestoreTarget: FocusableElement | null = null;
+
+export function isFocusContainmentRestoration(element: Element): boolean {
+  return containmentRestoreTarget === element;
+}
+
+function restoreFocusWithinScope(element: FocusableElement) {
+  try {
+    // focusSafely may defer virtual focus until transitions finish. Mark restoration
+    // inside the callback so it covers the actual focus event, including delayed focus.
+    focusSafely(element, target => {
+      let previousTarget = containmentRestoreTarget;
+      containmentRestoreTarget = target;
+      try {
+        focusWithoutScrolling(target);
+      } finally {
+        containmentRestoreTarget = previousTarget;
+      }
+    });
+  } catch {
+    // Match focusElement's handling of elements that cannot be focused.
+  }
 }
 
 function focusElement(element: FocusableElement | null, scroll = false) {
