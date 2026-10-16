@@ -49,6 +49,13 @@ test('deep scrolling measures the same distance and speed after building scroll 
   assert.equal(deep.distance, shallow.distance);
   assert.equal(deep.speed, shallow.speed);
   assert.equal(deep.conditions[0].scrollTop - shallow.conditions[0].scrollTop, 4000 * 40);
+
+  let shallowList = drivers.variable.actions.scroll.spec(10000);
+  let deepList = drivers.variable.actions['scroll-deep'].spec(10000);
+  assert.equal(deepList.distance, shallowList.distance);
+  assert.equal(deepList.speed, shallowList.speed);
+  assert.deepEqual(deepList.layout, shallowList.layout);
+  assert.equal(deepList.conditions[0].scrollTop - shallowList.conditions[0].scrollTop, 4000 * 40);
 });
 
 test('resize animation rejects a frame sample that ends before the animation', () => {

@@ -106,7 +106,20 @@ let stableLayoutFrames = 0;
 let frameOnly = false;
 // Diagnostic trace reruns mark the measurement window with User Timing measures, so
 // traces show exactly what the score covered. Measured trials never add them.
-const marking = new URLSearchParams(location.search).has('trace');
+const params = new URLSearchParams(location.search);
+const marking = params.has('trace');
+// Calibration injects synchronous work into the measured input's dispatch ('input') or
+// into every frame of the measurement window ('frame'), so `yarn perf calibrate` can
+// check whether each kind of scenario detects a known slowdown.
+const calibrationDelay = Number(params.get('delay') ?? 0);
+const calibrationMode = params.get('delayMode');
+
+function busy(ms: number) {
+  let end = performance.now() + ms;
+  while (performance.now() < end) {
+    // Deliberately block the main thread.
+  }
+}
 
 const eventTimingSupported = PerformanceObserver.supportedEntryTypes.includes('event');
 if (eventTimingSupported) {
@@ -264,6 +277,9 @@ function tick(now: number) {
     sample.frameIntervals.push(now - lastFrame);
   }
   lastFrame = now;
+  if (calibrationMode === 'frame' && !finishing) {
+    busy(calibrationDelay);
+  }
   if (armed.layout && !finishing && matches(armed.conditions)) {
     let layout = readLayout(armed.layout);
     let signature = layout ? layoutSignature(layout) : undefined;
@@ -316,6 +332,9 @@ function start(event: Event) {
     nodesRemoved: 0
   };
   frame = requestAnimationFrame(tick);
+  if (calibrationMode === 'input') {
+    busy(calibrationDelay);
+  }
 }
 
 for (let event of ['pointerdown', 'pointerover', 'keydown', 'wheel']) {

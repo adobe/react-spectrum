@@ -149,16 +149,31 @@ try {
       values.runs ??= '20';
       await validate({...options, runs: number('runs', 1, 100)});
     } else if (command === 'calibrate') {
+      // One representative scenario per input type: a click (mount), a keydown, a
+      // pointerover, and a wheel gesture scored on frame cadence.
+      let experiments = [
+        {
+          mode: 'aa',
+          scenario: 'listbox.mount,listbox.focus,select.hover,table.scroll,variable.scroll',
+          delay: 0
+        },
+        {mode: 'sync', scenario: 'listbox.mount', delay: 40},
+        {mode: 'deferred', scenario: 'listbox.mount', delay: 40},
+        {mode: 'layout', scenario: 'listbox.mount', delay: 40},
+        {mode: 'input', scenario: 'listbox.focus,select.hover', delay: 16},
+        {mode: 'frame', scenario: 'table.scroll,variable.scroll', delay: 4}
+      ];
       console.log(
-        'Calibration: A/A, then 40 ms synchronous, deferred, and forced-layout mount delays.'
+        'Calibration: A/A, then 40 ms synchronous, deferred, and forced-layout mount delays, ' +
+          '16 ms of input-handler work, and 4 ms of work in every scroll frame.'
       );
-      for (let mode of ['aa', 'sync', 'deferred', 'layout']) {
+      for (let {mode, scenario, delay} of experiments) {
         console.log(`\nCalibration ${mode}`);
         await run({
           ...options,
           candidate: options.base,
-          scenario: 'listbox.mount',
-          delay: mode === 'aa' ? 0 : 40,
+          scenario,
+          delay,
           delayMode: mode === 'aa' ? 'sync' : mode
         });
       }

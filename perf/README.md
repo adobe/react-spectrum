@@ -93,27 +93,27 @@ A filter accepts an exact scenario ID or a whole fixture, separated by commas. F
 | Fixture filter | Default workload | Actions |
 | --- | --- | --- |
 | `listbox` | 100 items with labels, team, and status | Mount, focus, select, unrelated parent update |
-| `combobox` | 500 options with an icon, label, and description | Open, type `99` to filter, keyboard and pointer navigation |
-| `select` | 500 rich options | Keyboard and pointer navigation in an open popup |
+| `combobox` | 500 options with an icon, label, and description | Open, type `9` to filter, type a second `9` to narrow, keyboard and pointer navigation |
+| `select` | 500 rich options in a controlled Select | Pointer navigation in an open popup, choose an option and close the popup |
 | `table-data` | 100 nonvirtualized rows × six columns | Sort, filter by `9`, clear the filter, move cell focus without selection |
 | `table-cells` | 100 nonvirtualized rows × six columns with controls | Select one/all rows, open/close a menu or dialog |
 | `table` | 10,000 virtualized rows × six columns, fixed 40 px rows | Mount, scroll 4,000 px near the top or after traversing 4,000 rows, update one visible record |
-| `table-measured` | 1,000 virtualized rows × eight columns, measured heights and wrapping labels | Mount, narrow/widen labels, resize another column, narrow or continuously animate the container |
-| `variable` | 10,000 virtualized items with wrapping descriptions | Mount, scroll 4,000 px, narrow from 600 to 360 px |
+| `table-measured` | 1,000 virtualized rows × eight columns, measured heights and wrapping labels | Mount, narrow/widen labels, resize another column, narrow or continuously animate the container with fitted labels |
+| `variable` | 10,000 virtualized items with wrapping descriptions | Mount, scroll 4,000 px near the top or after traversing 160,000 px, narrow from 600 to 360 px |
 | `collection` | 100 GridList records, a prepared 50-record page, and a replacement dataset | Append, delete five selected records, replace the dataset |
 | `tree` | 20 projects with 50 files each | Expand, navigate into a project, collapse |
 | `resize` | 500 nonvirtualized rows × six flexible columns | Mount, narrow the container from 960 to 660 px |
-| `form` | 30 mixed text fields, checkboxes, and switches | Mount, type in a controlled field, open a dialog and autofocus |
-| `dnd` | 200 draggable cards beside an independently controlled text field | Type after pointer input, type while already in keyboard mode |
+| `form` | 30 mixed text fields, checkboxes, and switches | Mount, type in a controlled field |
+| `dnd` | 200 draggable cards beside an independently controlled text field | Type after pointer input, plus a baseline that types while already in keyboard mode |
 
-`table-measured` uses `estimatedRowHeight: 32` and rows containing two, four, or six wrapping labels. Its discrete actions change the labels column from 300 to 100 px, widen it back, resize another column from 150 to 170 px while labels remain narrow, or narrow the container from 1,000 to 800 px. `table-measured.resize-animation` starts with narrow labels and animates container width between 1,000 and 800 px over five 600 ms legs, ending at 800 px. This exercises repeated ResizeObserver and table context updates during a sidebar animation; it does not drive a column resize handle. Completion requires the animation to end, three stable layout frames, the requested column widths, natural content heights, and contiguous rows filling the viewport.
+`table-measured` uses `estimatedRowHeight: 32` and rows containing two, four, or six wrapping labels. Its discrete actions change the labels column from 300 to 100 px, widen it back, resize another column from 150 to 170 px while labels remain narrow, or narrow the container from 1,000 to 800 px. Container actions first fit the labels column, so it shares the flexible width equally with the review column: 199 px each at 1,000 px and 99 px each at 800 px. Narrowing the container therefore rewraps labels and changes row heights, as a sidebar opening beside a wrapping column would. `table-measured.resize-animation` starts from the same fitted layout and animates container width between 1,000 and 800 px over five 600 ms legs, ending at 800 px. This exercises repeated ResizeObserver, table context updates, and row remeasurement during a sidebar animation; it does not drive a column resize handle. Completion requires the animation to end, three stable layout frames, the requested column widths, natural content heights, and contiguous rows filling the viewport.
 
-`table.scroll-deep` first traverses 160,000 px in the same mounted table using a browser-generated wheel gesture at 40,000 px/s. This preparation builds scroll history outside the measurement window. It then measures the same 4,000 px at 2,000 px/s as `table.scroll`, ending at row 4,100. The history distance is fixed as `--scale` increases the dataset. This action adds about four seconds of preparation per trial, plus rendering overhead.
+`table.scroll-deep` first traverses 160,000 px in the same mounted table using a browser-generated wheel gesture at 40,000 px/s. This preparation builds scroll history outside the measurement window. It then measures the same 4,000 px at 2,000 px/s as `table.scroll`, ending at row 4,100. `variable.scroll-deep` does the same in the variable-height list: rows skipped by the fast traversal keep their estimated heights, rows near the destination are measured as they render, and the measured scroll must settle to a valid layout beyond record 1,000. The history distance is fixed as `--scale` increases the dataset. Each deep action adds about four seconds of preparation per trial, plus rendering overhead.
 
 To check the new interaction workloads together:
 
 ```sh
-yarn perf smoke --scenario table-data.focus,table.scroll-deep,table-measured.resize-animation,dnd
+yarn perf smoke --scenario select.choose,combobox.narrow,variable.scroll-deep,table-measured.container,table-measured.resize-animation,dnd
 ```
 
 Use `run` to observe one build without a comparison verdict:
@@ -149,9 +149,11 @@ Lower values are better for both primary metrics:
 | Metric | Used for | Meaning |
 | --- | --- | --- |
 | `opportunity` | Discrete actions | Time from the initiating trusted event to two animation-frame callbacks after the expected DOM/focus state is observed. A rendering-opportunity proxy, not proof that pixels were presented. |
-| `frameMean` | `table.scroll`, `table.scroll-deep`, `variable.scroll`, `table-measured.resize-animation` | Mean animation-frame callback interval within a trial. Measures main-thread callback cadence, not compositor frame delivery. The action's total duration is not the score. |
+| `frameMean` | `table.scroll`, `table.scroll-deep`, `variable.scroll`, `variable.scroll-deep`, `table-measured.resize-animation` | Mean animation-frame callback interval within a trial. Measures main-thread callback cadence, not compositor frame delivery. The action's total duration is not the score. |
 
 Base and candidate columns show medians of trial values. **Paired change** is estimated from each launch's candidate median minus its base median, so it may differ from subtracting the two displayed columns. Negative changes favor the candidate. The interval describes uncertainty in that paired change.
+
+`frameMean` cannot fall below the display's refresh period, such as 8.33 ms at 120 Hz. When every frame's work fits in that budget, both arms score the refresh period and the comparison is within threshold however much the work changed. It detects only work that delays frames, so it cannot show an improvement in a scenario whose base already scores the refresh period. Compare base values with the refresh period before drawing conclusions; `--cpu` lifts some scenarios off it, by an amount that depends on the machine.
 
 The practical threshold is the larger of **8 ms or 5% of the base median** for `opportunity`, and **0.25 ms or 5%** for `frameMean`. These are exploratory defaults, not calibrated merge budgets. Override them with `--absolute-threshold`, `--relative-threshold`, and `--frame-threshold` after investigating noise on your machine.
 
@@ -224,7 +226,16 @@ yarn perf calibrate --build baseline
 yarn perf validate --build baseline --runs 20 --scenario listbox,table.scroll
 ```
 
-`calibrate` runs four paired ListBox-mount experiments: A/A, then a candidate with an added 40 ms of synchronous work, a deferred update, or forced-layout work. Check whether the injected effects are detected. Calibration does not automatically set thresholds or establish machine stability.
+`calibrate` runs paired experiments that each inject known work into the candidate:
+
+| Experiment | Scenarios | Injected work |
+| --- | --- | --- |
+| A/A | All of the scenarios below | None |
+| `sync`, `deferred`, `layout` | `listbox.mount` | 40 ms of synchronous work, a deferred update, or forced-layout work |
+| `input` | `listbox.focus`, `select.hover` | 16 ms of synchronous work while dispatching the measured keydown or pointerover |
+| `frame` | `table.scroll`, `variable.scroll` | 4 ms of synchronous work in every frame of the measurement window |
+
+Check whether the injected effects are detected. An undetected `frame` effect means the scenario's frames still fit within the refresh period. Calibration does not automatically set thresholds or establish machine stability.
 
 `validate` repeats A/A comparisons with different seeds and checks how often intervals exclude zero against their nominal error rate. Scenarios share browser launches, so its probability calculation is approximate. Each repeat costs a full comparison; a 20-run validation can take overnight. Its summary is saved under `perf/.local/results/validation-*/summary.md`.
 
@@ -240,7 +251,7 @@ The independent observations are browser launches. For each launch, the candidat
 
 ### Timing boundaries and supporting measurements
 
-Timing begins at the trusted browser event timestamp, excluding Playwright's locator/actionability polling. The ComboBox filter includes the deliberate 75 ms pause between its two keys. Assertions and result collection happen after the measurement window. Measured trials use neither traces nor React profiling builds.
+Timing begins at the trusted browser event timestamp, excluding Playwright's locator/actionability polling. Assertions and result collection happen after the measurement window. Measured trials use neither traces nor React profiling builds.
 
 | Measurement | Interpretation |
 | --- | --- |
@@ -261,9 +272,11 @@ Long-frame summary columns are medians over trials with entries, summed across e
 - **Sorting/filtering tables:** Actions operate on an already-mounted table and retain record identities. Completion checks the full expected row-ID sequence and sort direction; assertions check labels. Clearing measures restoration of all rows. Application filter/sort work is included.
 - **Table focus:** ArrowDown moves from the first row's first data cell to the same column in the second row. Selection is disabled. Completion requires actual DOM focus on the destination and no selection; assertions verify all row identities, labels, and ordering.
 - **Continuous table resizing:** A three-second CSS width animation drives five narrow/wide legs without a parent React update on every frame. The score includes the animation and final layout settling. Frame samples must span at least 2.8 seconds, so an abbreviated run cannot pass as a fast result.
-- **DnD modality:** The text field owns its state separately from the draggable cards, so typing does not re-render their parent. Preparation verifies pointer-mode drag instructions for `dnd.modality-type`; `dnd.type` first uses ArrowLeft to establish keyboard mode. Both measure typing one `a`, require the updated field and retained focus, and verify every card's identity, label, draggable state, and keyboard instructions afterward. Locale is fixed to `en-US` by the runner.
+- **DnD modality:** The text field owns its state separately from the draggable cards, so typing does not re-render their parent. Preparation verifies pointer-mode drag instructions for `dnd.modality-type`; `dnd.type` first uses ArrowLeft to establish keyboard mode, so it is a baseline for the same keystroke without the modality change. Both measure typing one `a`, require the updated field and retained focus, and verify every card's identity, label, draggable state, and keyboard instructions afterward. Locale is fixed to `en-US` by the runner.
 - **Table controls:** Selection waits for both row and checkbox state. Opening menus/dialogs waits for focus inside; closing waits for removal and focus restoration to the originating button. The table remains mounted behind overlays.
 - **Popup navigation:** ComboBox and Select start open with the first option focused and measure one move to the second. Completion checks focus styling plus ComboBox `aria-activedescendant` or Select DOM focus. Pointer timing begins at `pointerover`; coordinates are resolved beforehand. Hover does not generate an Event Timing interaction and does not measure a continuous pointer sweep.
+- **ComboBox filtering:** Each action measures one keystroke. Filtering types `9` into an empty query; narrowing types a second `9` after the first filter has settled. Completion checks the query and the exact option count. Application filter work is included.
+- **Select choice:** Enter on the focused first option sets the controlled value, removes every option, and returns focus to the trigger. Assertions check the trigger's label.
 - **Collection mutations:** Append preserves objects and selection. Delete starts with five selected records and focus on the fifth, then requires their removal, cleared selection, and focus on the next survivor. Replace uses new keys, clears selection, and keeps focus on the switch button. Complete item order and labels are checked. Payloads are prepared before mounting.
 - **Trees:** ArrowRight expands the first project, ArrowDown enters its first file, and ArrowLeft collapses it. Completion checks all exposed rows in order, expansion state, and focus; assertions check labels and hierarchy levels. All data is available and the tree is nonvirtualized.
 

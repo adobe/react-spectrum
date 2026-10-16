@@ -12,15 +12,16 @@ export const scenarios = [
   {id: 'listbox.select', fixture: 'listbox', label: 'Select a ListBox item'},
   {id: 'listbox.parent', fixture: 'listbox', label: 'Update unrelated parent state'},
   {id: 'combobox.open', fixture: 'combobox', label: 'Open a 500-option ComboBox'},
-  {id: 'combobox.filter', fixture: 'combobox', label: 'Type 99 and filter 500 options'},
+  {id: 'combobox.filter', fixture: 'combobox', label: 'Type 9 and filter 500 options'},
+  {id: 'combobox.narrow', fixture: 'combobox', label: 'Type a second 9 to narrow the filter'},
   {
     id: 'combobox.keyboard',
     fixture: 'combobox',
     label: 'Move ComboBox option focus with ArrowDown'
   },
   {id: 'combobox.hover', fixture: 'combobox', label: 'Move ComboBox option focus with the pointer'},
-  {id: 'select.keyboard', fixture: 'select', label: 'Move Select option focus with ArrowDown'},
   {id: 'select.hover', fixture: 'select', label: 'Move Select option focus with the pointer'},
+  {id: 'select.choose', fixture: 'select', label: 'Choose a Select option and close its popup'},
   {id: 'table-data.sort', fixture: 'table-data', label: 'Reverse the sort of 100 table rows'},
   {id: 'table-data.filter', fixture: 'table-data', label: 'Filter 100 table rows by typing 9'},
   {id: 'table-data.clear', fixture: 'table-data', label: 'Restore 100 table rows with Backspace'},
@@ -100,6 +101,12 @@ export const scenarios = [
     metric: 'frameMean'
   },
   {
+    id: 'variable.scroll-deep',
+    fixture: 'variable',
+    label: 'Scroll measured rows after traversing 160,000 px',
+    metric: 'frameMean'
+  },
+  {
     id: 'variable.resize',
     fixture: 'variable',
     label: 'Narrow the list and remeasure wrapping rows'
@@ -122,13 +129,17 @@ export const scenarios = [
   {id: 'resize.container', fixture: 'resize', label: 'Narrow a 500-row table for a side panel'},
   {id: 'form.mount', fixture: 'form', label: 'Mount 30 mixed form controls'},
   {id: 'form.type', fixture: 'form', label: 'Type into a controlled form field'},
-  {id: 'form.dialog', fixture: 'form', label: 'Open a dialog and move focus'},
   {
     id: 'dnd.modality-type',
     fixture: 'dnd',
     label: 'Type after pointer input beside 200 draggables'
   },
-  {id: 'dnd.type', fixture: 'dnd', label: 'Type in keyboard mode beside 200 draggables'}
+  // A control for dnd.modality-type: the same keystroke without a modality change.
+  {
+    id: 'dnd.type',
+    fixture: 'dnd',
+    label: 'Baseline: type in keyboard mode beside 200 draggables'
+  }
 ];
 
 export const sizes = {

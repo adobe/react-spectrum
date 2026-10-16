@@ -14,6 +14,7 @@ import {
   DialogTrigger,
   Heading,
   Input,
+  Key,
   Label,
   ListBox,
   ListBoxItem,
@@ -63,12 +64,15 @@ export function OptionContent({item}: {item: RecordItem}) {
 }
 
 export function SelectFixture({items}: {items: RecordItem[]}) {
+  // Controlled, as an application form would be, so choosing re-renders the owner.
+  let [value, setValue] = useState<Key | null>(null);
   return (
-    <Select placeholder="Choose a record">
+    <Select placeholder="Choose a record" value={value} onChange={setValue}>
       <Label>Choose a record</Label>
       <Button id="select-open">
         <SelectValue />
       </Button>
+      <output id="select-value">{value}</output>
       <Popover className="combo-popover">
         <ListBox aria-label="Available records" className="list" items={items}>
           {item => (

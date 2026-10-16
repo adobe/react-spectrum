@@ -31,7 +31,8 @@ interface RecordItem {
 }
 
 export function MeasuredTableFixture({items}: {items: RecordItem[]}) {
-  let [labelsWidth, setLabelsWidth] = useState(300);
+  // A fitted labels column shares the flexible width, so container resizes rewrap it.
+  let [labelsWidth, setLabelsWidth] = useState<number | '1fr'>(300);
   let [nameWidth, setNameWidth] = useState(150);
   let [width, setWidth] = useState(1000);
   let [animation, setAnimation] = useState('idle');
@@ -43,6 +44,9 @@ export function MeasuredTableFixture({items}: {items: RecordItem[]}) {
         </Button>
         <Button id="table-widen" onPress={() => setLabelsWidth(300)}>
           Widen labels
+        </Button>
+        <Button id="table-fit" onPress={() => setLabelsWidth('1fr')}>
+          Fit labels
         </Button>
         <Button id="table-name-resize" onPress={() => setNameWidth(170)}>
           Widen name

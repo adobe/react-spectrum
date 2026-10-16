@@ -386,8 +386,14 @@ export function report(result) {
     ''
   ];
   if (result.options.delay) {
+    let where = {
+      input: 'synchronous work to the measured input event',
+      frame: 'synchronous work to every frame of the measurement window'
+    }[result.options.delayMode];
     lines.push(
-      `Calibration: candidate mount adds ${result.options.delay} ms of ${result.options.delayMode} work.`,
+      where
+        ? `Calibration: candidate adds ${result.options.delay} ms of ${where}.`
+        : `Calibration: candidate mount adds ${result.options.delay} ms of ${result.options.delayMode} work.`,
       ''
     );
   }

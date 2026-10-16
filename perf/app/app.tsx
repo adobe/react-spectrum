@@ -11,15 +11,10 @@ import {
   Checkbox,
   Column,
   ComboBox,
-  Dialog,
-  DialogTrigger,
-  Heading,
   Input,
   Label,
   ListBox,
   ListBoxItem,
-  Modal,
-  ModalOverlay,
   Popover,
   ResizableTableContainer,
   Row,
@@ -98,7 +93,12 @@ const projects: ProjectNode[] =
       }))
     : [];
 
+// Mount calibration delays the update itself; other modes are injected by measure.ts.
 function withCalibration(update: () => void) {
+  if (!['sync', 'deferred', 'layout'].includes(delayMode)) {
+    update();
+    return;
+  }
   if (delayMode === 'deferred' && delay > 0) {
     setTimeout(update, delay);
     return;
@@ -250,22 +250,6 @@ function FormFixture() {
         )}
       </div>
       <output id="project-value">{name}</output>
-      <DialogTrigger>
-        <Button id="dialog-open">Review project</Button>
-        <ModalOverlay>
-          <Modal>
-            <Dialog>
-              <Heading slot="title">Review project</Heading>
-              <p>Confirm the project settings before continuing.</p>
-              <TextField autoFocus>
-                <Label>Review note</Label>
-                <Input id="review-note" />
-              </TextField>
-              <Button slot="close">Close</Button>
-            </Dialog>
-          </Modal>
-        </ModalOverlay>
-      </DialogTrigger>
     </>
   );
 }

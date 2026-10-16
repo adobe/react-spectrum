@@ -57,15 +57,16 @@ function invalidRows() {
 
 // ComboBox and Select popups start open with the first option focused, then move to
 // the second option with the keyboard or pointer.
+const option = id => `[role="option"][data-record="${id}"]`;
+async function openPopup(page, fixture, focusFirst) {
+  await page.locator(fixture === 'combobox' ? '#combo-open' : '#select-open').click();
+  await page.getByRole('option').last().waitFor();
+  await focusFirst();
+  await page.locator(`${option('item-0')}[data-focused]`).waitFor();
+}
+
 function navigation(fixture) {
   let combobox = fixture === 'combobox';
-  let option = id => `[role="option"][data-record="${id}"]`;
-  let open = async (page, focusFirst) => {
-    await page.locator(combobox ? '#combo-open' : '#select-open').click();
-    await page.getByRole('option').last().waitFor();
-    await focusFirst();
-    await page.locator(`${option('item-0')}[data-focused]`).waitFor();
-  };
   let conditions = size => [
     condition('[role="option"]', {count: size}),
     condition('[role="option"][data-focused]', {
@@ -79,29 +80,40 @@ function navigation(fixture) {
   ];
   return {
     keyboard: {
-      prepare: ({page}) => open(page, () => page.keyboard.press('Home')),
+      prepare: ({page}) => openPopup(page, fixture, () => page.keyboard.press('Home')),
       spec: size => press('ArrowDown', combobox ? '#combo-input' : '.list', conditions(size))
     },
     hover: {
-      prepare: ({page}) => open(page, () => page.locator(option('item-0')).hover()),
+      prepare: ({page}) => openPopup(page, fixture, () => page.locator(option('item-0')).hover()),
       spec: size => ({event: 'pointerover', target: option('item-1'), conditions: conditions(size)})
     }
   };
 }
 
+async function openComboFilter({page}) {
+  await page.locator('#combo-open').click();
+  await page.getByRole('option').last().waitFor();
+  await page.locator('#combo-input').focus();
+}
+const comboMatches = (size, query) => [
+  condition('#query', {text: query}),
+  condition('[role="option"]', {
+    count: Array.from({length: size}, (_, i) => String(i)).filter(i => i.includes(query)).length
+  })
+];
+
 async function waitForTableRows({page}) {
   await page.locator('.data-table [data-record]').last().waitFor();
 }
 
-async function prepareDeepScroll({page}) {
-  let table = page.locator('[data-bench="records-table"]');
-  await page.locator('[data-record="item-0"]').waitFor();
-  await table.hover();
-  let box = await table.boundingBox();
+// Traverses the collection in this mounted instance so layout history accumulates.
+// A direct scrollTop assignment would skip the workload these scenarios target.
+async function traverseDeep(page, viewport) {
+  let list = page.locator(viewport);
+  await list.hover();
+  let box = await list.boundingBox();
   let session = await page.context().newCDPSession(page);
   try {
-    // Traverse the rows in this mounted instance so layout history accumulates.
-    // A direct scrollTop assignment would skip the workload this scenario targets.
     await session.send('Input.synthesizeScrollGesture', {
       x: box.x + box.width / 2,
       y: box.y + box.height / 2,
@@ -113,13 +125,24 @@ async function prepareDeepScroll({page}) {
   } finally {
     await session.detach();
   }
-  await page.waitForFunction(start => {
-    let viewport = document.querySelector('[data-bench="records-table"]');
-    return (
-      Math.abs(viewport.scrollTop - start) <= 1 &&
-      !!viewport.querySelector('[data-record="item-4000"]')
-    );
-  }, deepScrollStart);
+  await page.waitForFunction(
+    ([viewport, start]) => Math.abs(document.querySelector(viewport).scrollTop - start) <= 1,
+    [viewport, deepScrollStart]
+  );
+}
+
+async function prepareDeepTable({page}) {
+  await page.locator('[data-record="item-0"]').waitFor();
+  await traverseDeep(page, '[data-bench="records-table"]');
+  await page.locator('[data-bench="records-table"] [data-record="item-4000"]').waitFor();
+}
+
+async function prepareDeepVariable({page, size}) {
+  await traverseDeep(page, '#variable-list');
+  await page.evaluate(
+    expected => window.__bench.settleLayout(expected),
+    variableLayout(size, false, false)
+  );
 }
 
 async function prepareDndInput({page}, keyboard = false) {
@@ -201,24 +224,37 @@ const variableLayout = (size, narrow = false, atTop = true) => ({
 const variableWidth = width =>
   condition('#variable-list', {style: {property: 'width', value: `${width}px`}});
 
-const measuredTableLayout = (size, labels = 300, name = 150, width = 1000) => ({
-  viewport: '.measured-table',
-  width,
-  total: size,
-  atTop: true,
-  columns: [name, labels, 90, 90, 90, 90, 90, width - 2 - name - labels - 450]
-});
+// `labels` is a pixel width, or 'fit' to share the flexible width equally with the
+// review column, so container resizes rewrap labels and change row heights.
+const measuredTableLayout = (size, labels = 300, name = 150, width = 1000) => {
+  let flexible = width - 2 - name - 450;
+  let [labelsWidth, review] =
+    labels === 'fit' ? [flexible / 2, flexible / 2] : [labels, flexible - labels];
+  return {
+    viewport: '.measured-table',
+    width,
+    total: size,
+    atTop: true,
+    columns: [name, labelsWidth, 90, 90, 90, 90, 90, review]
+  };
+};
 const labelsWidth = width =>
   condition('.measured-table [data-column="labels"]', {
     style: {property: 'width', value: `${width}px`}
   });
-async function narrowMeasuredTable({page, size}) {
-  await page.locator('#table-narrow').click();
+async function resizeMeasuredTable({page, size}, button, labels) {
+  await page.locator(button).click();
   await page.evaluate(
     expected => window.__bench.settleLayout(expected),
-    measuredTableLayout(size, 100)
+    measuredTableLayout(size, labels)
   );
 }
+const narrowMeasuredTable = context => resizeMeasuredTable(context, '#table-narrow', 100);
+const fitMeasuredTable = context => resizeMeasuredTable(context, '#table-fit', 'fit');
+const containerResized = () => [
+  condition('.measured-table-container', {style: {property: 'width', value: '800px'}}),
+  labelsWidth(99)
+];
 
 const collectionRows = (expected, selected, final) => [
   ordered('.mutation-list [data-record]', expected),
@@ -267,30 +303,47 @@ export const drivers = {
     actions: {
       open: {spec: size => click('#combo-open', [condition('[role="option"]', {count: size})])},
       filter: {
-        prepare: async ({page}) => {
-          await page.locator('#combo-open').click();
-          await page.getByRole('option').last().waitFor();
-          await page.locator('#combo-input').focus();
+        prepare: openComboFilter,
+        spec: size => press('9', '#combo-input', comboMatches(size, '9'))
+      },
+      // Narrows an existing filter with a second keystroke, after the first has settled.
+      narrow: {
+        prepare: async context => {
+          await openComboFilter(context);
+          await context.page.keyboard.press('9');
+          await context.page.waitForFunction(
+            count =>
+              document.querySelector('#query').textContent === '9' &&
+              document.querySelectorAll('[role="option"]').length === count,
+            comboMatches(context.size, '9')[1].count
+          );
         },
-        spec: size =>
-          press('9', '#combo-input', [
-            condition('#query', {text: '99'}),
-            condition('[role="option"]', {
-              count: Array.from({length: size}, (_, i) => String(i)).filter(i => i.includes('99'))
-                .length
-            })
-          ]),
-        // Type 99 with a fixed pause between keys; timing starts at the first keydown.
-        input: async page => {
-          await page.keyboard.press('9');
-          await pause(75);
-          await page.keyboard.press('9');
-        }
+        spec: size => press('9', '#combo-input', comboMatches(size, '99'))
       },
       ...navigation('combobox')
     }
   },
-  select: {actions: navigation('select')},
+  select: {
+    actions: {
+      hover: navigation('select').hover,
+      // Choosing commits the value, unmounts the 500-option popover, and restores focus.
+      choose: {
+        prepare: ({page}) => openPopup(page, 'select', () => page.keyboard.press('Home')),
+        spec: () =>
+          press('Enter', '.list', [
+            condition('#select-value', {text: 'item-0'}),
+            condition('[role="option"]', {count: 0}),
+            condition('#select-open', {focused: true})
+          ]),
+        verify: async ({page}) => {
+          let label = await page.locator('#select-open [slot="label"]').textContent();
+          if (label !== 'Record 0') {
+            throw new Error('The Select trigger does not show the chosen record.');
+          }
+        }
+      }
+    }
+  },
   'table-data': {
     prepare: waitForTableRows,
     verify: verifyTableRows,
@@ -395,7 +448,7 @@ export const drivers = {
     },
     actions: {
       'scroll-deep': {
-        prepare: prepareDeepScroll,
+        prepare: prepareDeepTable,
         spec: () =>
           scroll('[data-bench="records-table"]', [], {
             conditions: [
@@ -470,17 +523,17 @@ export const drivers = {
     },
     actions: {
       'resize-animation': {
-        prepare: narrowMeasuredTable,
+        prepare: fitMeasuredTable,
         spec: size => ({
           ...click('#table-animate', [
             condition('.measured-table-container', {
               attribute: 'data-resize-animation',
               value: 'done'
             }),
-            condition('.measured-table-container', {style: {property: 'width', value: '800px'}})
+            ...containerResized()
           ]),
           frames: true,
-          layout: measuredTableLayout(size, 100, 150, 800)
+          layout: measuredTableLayout(size, 'fit', 150, 800)
         }),
         verify: ({sample}) => {
           let elapsed = sample.frameIntervals.reduce((total, interval) => total + interval, 0);
@@ -517,12 +570,10 @@ export const drivers = {
         })
       },
       container: {
-        prepare: narrowMeasuredTable,
+        prepare: fitMeasuredTable,
         spec: size => ({
-          ...click('#table-container-resize', [
-            condition('.measured-table-container', {style: {property: 'width', value: '800px'}})
-          ]),
-          layout: measuredTableLayout(size, 100, 150, 800)
+          ...click('#table-container-resize', containerResized()),
+          layout: measuredTableLayout(size, 'fit', 150, 800)
         })
       }
     }
@@ -550,6 +601,22 @@ export const drivers = {
             )
           ) {
             throw new Error('Variable-height scrolling did not traverse records.');
+          }
+        }
+      },
+      'scroll-deep': {
+        prepare: prepareDeepVariable,
+        spec: size =>
+          scroll('#variable-list', [], {
+            conditions: [
+              condition('#variable-list', {scrollTop: deepScrollStart + scrollDistance - 1})
+            ],
+            layout: variableLayout(size, false, false)
+          }),
+        verify: ({sample}) => {
+          // Even at the tallest row height, 164,000 px spans more than 1,000 records.
+          if (!sample.layout.rows.every(row => row.index > 1000)) {
+            throw new Error('Deep scrolling did not traverse past the first 1,000 records.');
           }
         }
       },
@@ -722,13 +789,6 @@ export const drivers = {
       type: {
         prepare: ({page}) => page.locator('#project-name').focus(),
         spec: () => press('a', '#project-name', [condition('#project-value', {text: 'a'})])
-      },
-      dialog: {
-        spec: () =>
-          click('#dialog-open', [
-            condition('#review-note', {focused: true}),
-            condition('[role="dialog"]')
-          ])
       }
     }
   }
