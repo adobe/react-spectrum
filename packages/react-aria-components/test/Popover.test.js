@@ -83,6 +83,35 @@ describe('Popover', () => {
     expect(dialog).toHaveAttribute('id', button.getAttribute('aria-controls'));
   });
 
+  it('prefers aria-label over the trigger label on a standalone popover', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Open products menu</Button>
+        <Popover aria-label="Products menu">Popover content</Popover>
+      </DialogTrigger>
+    );
+
+    await user.click(getByRole('button'));
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-label', 'Products menu');
+    expect(dialog).not.toHaveAttribute('aria-labelledby');
+    expect(dialog).toHaveAccessibleName('Products menu');
+  });
+
+  it('labels a standalone popover by its trigger when no aria-label is provided', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Open products menu</Button>
+        <Popover>Popover content</Popover>
+      </DialogTrigger>
+    );
+
+    await user.click(getByRole('button'));
+
+    expect(getByRole('dialog')).toHaveAccessibleName('Open products menu');
+  });
+
   it('should handle focus', async () => {
     let {getByRole} = render(<TestPopover />);
 
