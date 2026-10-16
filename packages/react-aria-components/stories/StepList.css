@@ -1,0 +1,59 @@
+.react-aria-StepList {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 0 0 24px;
+  list-style: none;
+}
+
+.react-aria-StepListItem {
+  --marker-background: var(--spectrum-global-color-gray-200);
+  --marker-color: var(--spectrum-global-color-gray-700);
+  --label-color: var(--spectrum-global-color-gray-700);
+  --line: 2px dashed var(--spectrum-global-color-gray-400);
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &[data-current],
+  &[data-completed] {
+    --marker-background: var(--spectrum-global-color-gray-800);
+    --marker-color: var(--spectrum-global-color-gray-50);
+    --label-color: var(--spectrum-global-color-gray-900);
+  }
+
+  &[data-completed] {
+    --line: 2px solid var(--spectrum-global-color-gray-800);
+  }
+
+  /* The connector drawn between this step and the one after it. */
+  &:not(:last-child)::after {
+    content: '';
+    width: 96px;
+    border-top: var(--line);
+  }
+
+  .marker {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    background: var(--marker-background);
+    color: var(--marker-color);
+    font-size: 14px;
+  }
+
+  .label {
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--label-color);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+}
