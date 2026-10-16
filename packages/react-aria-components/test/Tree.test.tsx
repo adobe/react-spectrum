@@ -411,6 +411,51 @@ describe('Tree', () => {
     }
   });
 
+  describe('descriptions', () => {
+    function DescriptionTree({
+      hideDescription = false,
+      itemAriaLabel
+    }: {
+      hideDescription?: boolean;
+      itemAriaLabel?: string;
+    }) {
+      return (
+        <Tree aria-label="Files">
+          <TreeItem id="projects" textValue="Projects" aria-label={itemAriaLabel}>
+            <TreeItemContent>
+              <Text>Projects</Text>
+              {!hideDescription && (
+                <Text slot="description" id="tree-desc">
+                  Shared files
+                </Text>
+              )}
+            </TreeItemContent>
+          </TreeItem>
+        </Tree>
+      );
+    }
+
+    it('includes the description in the row name', () => {
+      let {getByRole} = render(<DescriptionTree />);
+      expect(getByRole('row')).toHaveAccessibleName('Projects Shared files');
+    });
+
+    it('includes the description with an explicit item aria-label', () => {
+      let {getByRole} = render(<DescriptionTree itemAriaLabel="Team projects" />);
+      expect(getByRole('row')).toHaveAccessibleName('Team projects Shared files');
+    });
+
+    it('updates the description relationship when the slot is removed and added', () => {
+      let {getByRole, rerender} = render(<DescriptionTree />);
+      expect(getByRole('row')).toHaveAccessibleName('Projects Shared files');
+      rerender(<DescriptionTree hideDescription />);
+      expect(getByRole('row')).toHaveAccessibleName('Projects');
+      expect(getByRole('row')).not.toHaveAttribute('aria-labelledby');
+      rerender(<DescriptionTree />);
+      expect(getByRole('row')).toHaveAccessibleName('Projects Shared files');
+    });
+  });
+
   it('should render a Tree with custom classes', () => {
     let {getByRole, getAllByRole} = render(
       <StaticTree treeProps={{className: 'test-tree'}} rowProps={{className: 'test-row'}} />
