@@ -2,7 +2,7 @@
 
 Good performance benchmarks for the web should measure things that actually affect the user's experience: how quickly components appear, how promptly interactions update the screen, and how smoothly collections scroll. Useful measurements require representative workloads in realistic environments.
 
-The suite builds production React and React Aria with Parcel and runs evaluations in Chromium through Playwright. It runs locally, with no CI integration Snapshots and results stay in the git-ignored `perf/.local/` directory.
+The suite builds production React and React Aria with Parcel and runs evaluations in Chromium through Playwright. It runs locally, with no CI integration. Snapshots and results stay in the git-ignored `perf/.local/` directory.
 
 - [When to use it](#when-to-use-it)
 - [Quick start](#quick-start)
@@ -141,7 +141,7 @@ Lower values are better for both primary metrics:
 
 Base and candidate columns show medians of trial values. **Paired change** is estimated from each launch's candidate median minus its base median, so it may differ from subtracting the two displayed columns. Negative changes favor the candidate. The interval describes uncertainty in that paired change.
 
-The practical threshold is the larger of **8 ms or 5% of the base median** for completion, and **0.25 ms or 5%** for scroll frame intervals. These are exploratory defaults, not calibrated merge budgets. Override them with `--absolute-threshold`, `--relative-threshold`, and `--frame-threshold` after investigating noise on your machine.
+The practical threshold is the larger of **8 ms or 5% of the base median** for `opportunity`, and **0.25 ms or 5%** for `frameMean`. These are exploratory defaults, not calibrated merge budgets. Override them with `--absolute-threshold`, `--relative-threshold`, and `--frame-threshold` after investigating noise on your machine.
 
 | Verdict | Meaning |
 | --- | --- |
@@ -168,7 +168,7 @@ For diagnostic detail, add `--trace` to a comparison:
 yarn perf compare --base baseline --candidate candidate --scenario table.scroll --trace
 ```
 
-Traces run separately after all measured trials, following the same warmups, and are excluded from comparison scores. Open the JSON files in the [Chrome DevTools Performance panel](https://developer.chrome.com/docs/devtools/performance/reference). [User Timing](https://developer.mozilla.org/en-US/docs/Web/API/Performance_API/User_timing) measures mark `bench:ready` (input to semantic readiness) and `bench:window` (input to rendering opportunity).
+Traces run separately after all measured trials, following the same warmups, and are excluded from comparison scores. Open the JSON files in the [Chrome DevTools Performance panel](https://developer.chrome.com/docs/devtools/performance/reference). [User Timing](https://developer.mozilla.org/en-US/docs/Web/API/Performance_API/User_timing) measures in each trace show `bench:ready` (input to semantic readiness) and `bench:window` (input to rendering opportunity).
 
 The report's **Diagnostic traces** table divides renderer main-thread time inside `bench:window` into script, style, layout, paint, GC, and other work. It attributes time to the innermost trace event and reports [forced style/layout](https://web.dev/articles/avoid-large-complex-layouts-and-layout-thrashing) as a subset of style/layout time. Use it with DOM mutation counts and long-frame attribution to understand why work changed even if the primary score did not.
 
