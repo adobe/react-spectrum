@@ -53,6 +53,26 @@ export const NumberFieldExample: NumberFieldStory = {
   )
 };
 
+export function NumberFieldLongPressStepper() {
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>On a phone, tap the input to focus it</li>
+        <li>Long-press "+" and release</li>
+        <li>The input should keep focus and the keyboard should stay open</li>
+      </ol>
+      <NumberField defaultValue={0}>
+        <Label>Count</Label>
+        <Group style={{display: 'flex'}}>
+          <Button slot="decrement">-</Button>
+          <Input />
+          <Button slot="increment">+</Button>
+        </Group>
+      </NumberField>
+    </div>
+  );
+}
+
 function NumberFieldControlled(props: NumberFieldProps) {
   const [value, setValue] = useState(props.defaultValue);
   return (

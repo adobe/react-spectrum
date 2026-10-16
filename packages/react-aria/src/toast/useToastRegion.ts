@@ -12,8 +12,9 @@
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
-import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality} from '../interactions/useFocusVisible';
+import {getOwnerDocument} from '../utils/domHelpers';
 import intlMessages from '../../intl/toast/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {ToastState} from 'react-stately/useToastState';
@@ -62,12 +63,16 @@ export function useToastRegion<T>(
   let isHovered = useRef(false);
   let isFocused = useRef(false);
   let updateTimers = useCallback(() => {
+    let ownerDocument = getOwnerDocument(ref.current);
+    let activeElement = getActiveElement(ownerDocument);
+    // React doesn't see a blur when the focused toast is removed, so check where focus is.
+    isFocused.current &&= nodeContains(ref.current, activeElement);
     if (isHovered.current || isFocused.current) {
       state.pauseAll();
     } else {
       state.resumeAll();
     }
-  }, [state]);
+  }, [state, ref]);
 
   let {hoverProps} = useHover({
     onHoverStart: () => {
@@ -80,81 +85,53 @@ export function useToastRegion<T>(
     }
   });
 
-  // Manage focus within the toast region.
-  // If a focused containing toast is removed, move focus to the next toast, or the previous toast if there is no next toast.
-  let toasts = useRef<FocusableElement[]>([]);
+  // Manage focus within the toast region. If the focused toast is removed, move focus to the
+  // nearest newer toast, the nearest older one, or the toast that replaced it.
   let prevVisibleToasts = useRef(state.visibleToasts);
-  let focusedToast = useRef<number | null>(null);
-  useLayoutEffect(() => {
-    // If no toast has focus, then don't do anything.
-    if (focusedToast.current === -1 || state.visibleToasts.length === 0 || !ref.current) {
-      toasts.current = [];
-      prevVisibleToasts.current = state.visibleToasts;
-      return;
-    }
-    toasts.current = [
-      ...ref.current.querySelectorAll('[role="alertdialog"]')
-    ] as FocusableElement[];
-    // If the visible toasts haven't changed, we don't need to do anything.
-    if (
-      prevVisibleToasts.current.length === state.visibleToasts.length &&
-      state.visibleToasts.every((t, i) => t.key === prevVisibleToasts.current[i].key)
-    ) {
-      prevVisibleToasts.current = state.visibleToasts;
-      return;
-    }
-    // Get a list of all toasts by index and add info if they are removed.
-    let allToasts = prevVisibleToasts.current.map((t, i) => ({
-      ...t,
-      i,
-      isRemoved: !state.visibleToasts.some(t2 => t.key === t2.key)
-    }));
+  let focusedToast = useRef<string>(null);
 
-    let removedFocusedToastIndex = allToasts.findIndex(
-      t => t.i === focusedToast.current && t.isRemoved
-    );
+  useLayoutEffect(() => {
+    let prev = prevVisibleToasts.current;
+    prevVisibleToasts.current = state.visibleToasts;
+
+    // If no toast has focus, or it is still visible, then don't do anything.
+    let index = prev.findIndex(toast => toast.key === focusedToast.current);
+    if (!isFocused.current || index < 0 || state.visibleToasts.includes(prev[index])) {
+      return;
+    }
 
     // If the focused toast was removed, focus the next or previous toast.
-    if (removedFocusedToastIndex > -1) {
-      // In pointer modality, move focus out of the toast region.
-      // Otherwise auto-dismiss timers will appear "stuck".
-      // oxlint-disable-next-line react/react-compiler
-      if (getInteractionModality() === 'pointer' && lastFocused.current?.isConnected) {
-        focusWithoutScrolling(lastFocused.current);
-      } else {
-        let i = 0;
-        let nextToast;
-        let prevToast;
-        while (i <= removedFocusedToastIndex) {
-          if (!allToasts[i].isRemoved) {
-            prevToast = Math.max(0, i - 1);
-          }
-          i++;
-        }
-        while (i < allToasts.length) {
-          if (!allToasts[i].isRemoved) {
-            nextToast = i - 1;
-            break;
-          }
-          i++;
-        }
-
-        // in the case where it's one toast at a time, both will be undefined, but we know the index must be 0
-        if (prevToast === undefined && nextToast === undefined) {
-          prevToast = 0;
-        }
-
-        // prioritize going to newer toasts
-        if (prevToast >= 0 && prevToast < toasts.current.length) {
-          focusWithoutScrolling(toasts.current[prevToast]);
-        } else if (nextToast >= 0 && nextToast < toasts.current.length) {
-          focusWithoutScrolling(toasts.current[nextToast]);
-        }
-      }
+    // In pointer modality, move focus out of the toast region.
+    // Otherwise auto-dismiss timers will appear "stuck".
+    // oxlint-disable-next-line react/react-compiler
+    if (getInteractionModality() === 'pointer' && lastFocused.current?.isConnected) {
+      focusWithoutScrolling(lastFocused.current);
+      return;
     }
 
-    prevVisibleToasts.current = state.visibleToasts;
+    // prioritize going to newer toasts
+    let newer = prev.slice(0, index).reverse();
+    let older = prev.slice(index + 1);
+    let target = [...newer, ...older].find(toast => state.visibleToasts.includes(toast));
+    // in the case where it's one toast at a time, both will be undefined, but we know the index must be 0
+    target ??= state.visibleToasts[0];
+    if (!target) {
+      return;
+    }
+
+    let selector = `[role="alertdialog"][data-key="${CSS.escape(target.key)}"]`;
+    let element = ref.current?.querySelector<FocusableElement>(selector);
+    if (element) {
+      focusWithoutScrolling(element);
+    }
   }, [state.visibleToasts, ref]);
+
+  // React doesn't see a blur when the focused toast is removed, so check where focus is now.
+  useLayoutEffect(() => {
+    if (isFocused.current) {
+      updateTimers();
+    }
+  }, [state.visibleToasts, updateTimers]);
 
   let lastFocused = useRef<FocusableElement | null>(null);
   let {focusWithinProps} = useFocusWithin({
@@ -216,10 +193,15 @@ export function useToastRegion<T>(
       // and we need to follow all focus changes
       onFocus: e => {
         let target = (getEventTarget(e) as Element).closest('[role="alertdialog"]');
-        focusedToast.current = toasts.current.findIndex(t => t === target);
+        focusedToast.current = target?.getAttribute('data-key') ?? null;
+        // useFocusWithin doesn't see focus return after it was lost without a blur event.
+        if (!isFocused.current) {
+          isFocused.current = true;
+          updateTimers();
+        }
       },
       onBlur: () => {
-        focusedToast.current = -1;
+        focusedToast.current = null;
       }
     })
   };

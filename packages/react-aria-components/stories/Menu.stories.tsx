@@ -755,3 +755,24 @@ export const AsyncMenu: StoryObj<typeof AsyncMenuRender> = {
     }
   }
 };
+
+export function MenuLongPressWithSecondTouch() {
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>On a touch device, hold "Save" with one finger</li>
+        <li>Before the menu opens, put a second finger anywhere on the page</li>
+        <li>The menu should not open</li>
+      </ol>
+      <MenuTrigger trigger="longPress">
+        <Button onPress={action('onPress')}>Save</Button>
+        <Popover>
+          <Menu className={styles.menu} onAction={action('onAction')}>
+            <MyMenuItem>Save as…</MyMenuItem>
+            <MyMenuItem>Save a copy</MyMenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    </div>
+  );
+}

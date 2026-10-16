@@ -344,3 +344,213 @@ Should be able to tab navigate from the first input to the last input.
     }
   }
 };
+
+export function ContainsAfterExitingSibling() {
+  let [isMenuOpen, setMenuOpen] = useState(false);
+  let [isDateOpen, setDateOpen] = useState(false);
+
+  let chooseDate = () => {
+    setDateOpen(true);
+    setTimeout(() => setMenuOpen(false), 350);
+  };
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>Press "Open menu", then "Choose date and time"</li>
+        <li>Wait for the menu to fade out, focus is on "September"</li>
+        <li>Press Shift+Tab, focus should wrap to "Next month" and stay in the date picker</li>
+      </ol>
+      <FocusScope contain restoreFocus>
+        <fieldset>
+          <legend>Dialog</legend>
+          <button onClick={() => setMenuOpen(true)}>Open menu</button>
+        </fieldset>
+        {isMenuOpen &&
+          ReactDOM.createPortal(
+            <FocusScope contain={!isDateOpen} restoreFocus autoFocus>
+              <fieldset style={{opacity: isDateOpen ? 0 : 1, transition: 'opacity 300ms'}}>
+                <legend>Menu</legend>
+                <button onClick={chooseDate}>Choose date and time</button>
+              </fieldset>
+            </FocusScope>,
+            document.getElementById(dialogsRoot)!
+          )}
+        {isDateOpen &&
+          ReactDOM.createPortal(
+            <FocusScope contain restoreFocus autoFocus>
+              <fieldset>
+                <legend>Date picker</legend>
+                <button>September</button> <button>2026</button> <button>Next month</button>
+              </fieldset>
+            </FocusScope>,
+            document.getElementById(dialogsRoot)!
+          )}
+      </FocusScope>
+      <div id={dialogsRoot} />
+    </div>
+  );
+}
+
+export function ContainsAfterRemovingFocusedElement() {
+  let [isShown, setShown] = useState(true);
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>In Firefox or Safari, click "Remove me" and press Enter</li>
+        <li>Click "Outside", focus should move back to "First"</li>
+      </ol>
+      <input aria-label="Outside" placeholder="Outside" />
+      <FocusScope contain>
+        <fieldset>
+          <legend>Dialog</legend>
+          <input aria-label="First" placeholder="First" />{' '}
+          {isShown && (
+            <input
+              aria-label="Remove me"
+              placeholder="Remove me"
+              onKeyDown={e => e.key === 'Enter' && setShown(false)}
+            />
+          )}
+        </fieldset>
+      </FocusScope>
+    </div>
+  );
+}
+
+export function ContainsWithoutFocusLoop() {
+  let [isShown, setShown] = useState(false);
+
+  return (
+    <div>
+      <p style={{background: 'lightyellow', color: 'black', padding: 8}}>
+        <strong>Warning:</strong> without the fix, step 2 freezes the tab in Chrome and throws
+        recursion errors in Firefox and Safari.
+      </p>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>Press "Show popover", focus moves to "First"</li>
+        <li>Click the dialog input, focus should stay there</li>
+      </ol>
+      <button onClick={() => setShown(true)}>Show popover</button>
+      <FocusScope contain>
+        <fieldset>
+          <legend>Dialog</legend>
+          <input aria-label="Dialog input" placeholder="Dialog input" />
+        </fieldset>
+      </FocusScope>
+      {isShown && (
+        <FocusScope autoFocus>
+          <fieldset>
+            <legend>Popover</legend>
+            <button>First</button>
+          </fieldset>
+          {ReactDOM.createPortal(
+            <FocusScope contain>
+              <fieldset>
+                <legend>Nested</legend>
+                <button>Nested</button>
+              </fieldset>
+            </FocusScope>,
+            document.getElementById(dialogsRoot)!
+          )}
+        </FocusScope>
+      )}
+      <div id={dialogsRoot} />
+    </div>
+  );
+}
+
+export function ContainsModalFromDialog() {
+  let [isModalOpen, setModalOpen] = useState(false);
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>Press "Open modal", focus moves to "Modal input"</li>
+        <li>Click "Inner", focus should move back to "Modal input"</li>
+      </ol>
+      <FocusScope contain>
+        <fieldset>
+          <legend>Dialog</legend>
+          <button onClick={() => setModalOpen(true)}>Open modal</button>{' '}
+          <FocusScope>
+            <input aria-label="Inner" placeholder="Inner" />
+          </FocusScope>
+        </fieldset>
+        {isModalOpen &&
+          ReactDOM.createPortal(
+            <FocusScope contain autoFocus>
+              <fieldset>
+                <legend>Modal</legend>
+                <input aria-label="Modal input" placeholder="Modal input" />
+              </fieldset>
+            </FocusScope>,
+            document.getElementById(dialogsRoot)!
+          )}
+      </FocusScope>
+      <div id={dialogsRoot} />
+    </div>
+  );
+}
+
+export function ContainsAfterLeavingEveryScope() {
+  let [isNestedOpen, setNestedOpen] = useState(true);
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>In Firefox or Safari, click "Nested" and press Enter</li>
+        <li>Click "Outside", focus should move to "First"</li>
+      </ol>
+      <input aria-label="Outside" placeholder="Outside" />
+      <FocusScope>
+        <fieldset>
+          <legend>Plain scope</legend>
+        </fieldset>
+      </FocusScope>
+      <FocusScope contain>
+        <fieldset>
+          <legend>Dialog</legend>
+          <input aria-label="First" placeholder="First" />{' '}
+          {isNestedOpen && (
+            <FocusScope contain autoFocus>
+              <input
+                aria-label="Nested"
+                placeholder="Nested"
+                onKeyDown={e => e.key === 'Enter' && setNestedOpen(false)}
+              />
+            </FocusScope>
+          )}
+        </fieldset>
+      </FocusScope>
+    </div>
+  );
+}
+
+export function TabIntoNestedScope() {
+  let [isNestedOpen, setNestedOpen] = useState(false);
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>Press "Show nested"</li>
+        <li>Press Tab, focus should move to "First" in the nested scope</li>
+      </ol>
+      <FocusScope contain>
+        <fieldset>
+          <legend>Dialog</legend>
+          <button onClick={() => setNestedOpen(true)}>Show nested</button>
+          {isNestedOpen && (
+            <FocusScope contain>
+              <fieldset>
+                <legend>Nested</legend>
+                <button>First</button> <button>Second</button>
+              </fieldset>
+            </FocusScope>
+          )}
+        </fieldset>
+      </FocusScope>
+    </div>
+  );
+}

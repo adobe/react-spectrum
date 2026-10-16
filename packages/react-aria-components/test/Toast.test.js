@@ -385,4 +385,272 @@ describe('Toast', () => {
 
     expect(within(getByTestId('custom-container')).getByRole('alertdialog')).toBeInTheDocument();
   });
+
+  describe('supports pausing a toast whose timeout is due', () => {
+    it('should time out the toast once the pointer leaves', async () => {
+      let {getByRole, queryByRole} = render(<Example timeout={5000} />);
+      await user.click(getByRole('button'));
+      let toast = getByRole('alertdialog');
+
+      jest.setSystemTime(Date.now() + 5000);
+      await user.hover(toast);
+      await user.unhover(toast);
+      act(() => jest.advanceTimersByTime(1000));
+
+      expect(queryByRole('alertdialog')).toBeNull();
+    });
+  });
+
+  describe('supports resuming the queue when adding a toast', () => {
+    it('should not time out a hovered toast that was resumed before it rendered', async () => {
+      let queue = new ToastQueue();
+      let {getByRole} = render(
+        <ToastRegion queue={queue}>
+          {({toast}) => (
+            <Toast toast={toast}>
+              <ToastContent>
+                <Text slot="title">{toast.content}</Text>
+              </ToastContent>
+            </Toast>
+          )}
+        </ToastRegion>
+      );
+
+      act(() => {
+        queue.add('Saved', {timeout: 5000});
+        queue.resumeAll();
+      });
+      await user.hover(getByRole('region'));
+      act(() => jest.advanceTimersByTime(6000));
+
+      expect(getByRole('alertdialog')).toBeInTheDocument();
+    });
+  });
+
+  describe('supports pausing the queue', () => {
+    it('should not time out a toast added while the queue is paused', () => {
+      let queue = new ToastQueue();
+      let {getByRole} = render(
+        <ToastRegion queue={queue}>
+          {({toast}) => (
+            <Toast toast={toast}>
+              <ToastContent>
+                <Text slot="title">{toast.content}</Text>
+              </ToastContent>
+            </Toast>
+          )}
+        </ToastRegion>
+      );
+
+      act(() => queue.pauseAll());
+      act(() => {
+        queue.add('Saved', {timeout: 5000});
+      });
+      act(() => jest.advanceTimersByTime(6000));
+
+      expect(getByRole('alertdialog')).toBeInTheDocument();
+    });
+
+    it('should pause a toast that is still shown while the queue update is pending', () => {
+      // When wrapUpdate defers an update (e.g. into a view transition), the queue changes before
+      // the update renders, so pausing in between can miss the toast it replaces, which is still
+      // shown. That scheduling is hard to simulate, since jsdom has no view transitions.
+      // Collecting the updates and flushing them manually holds the render back, so pausing
+      // before the flush lands in the same window.
+      let updates = [];
+      let queue = new ToastQueue({maxVisibleToasts: 1, wrapUpdate: fn => updates.push(fn)});
+      let flush = () => act(() => updates.splice(0).forEach(fn => fn()));
+      let {getByRole} = render(
+        <ToastRegion queue={queue}>
+          {({toast}) => (
+            <Toast toast={toast}>
+              <ToastContent>
+                <Text slot="title">{toast.content}</Text>
+              </ToastContent>
+            </Toast>
+          )}
+        </ToastRegion>
+      );
+
+      act(() => {
+        queue.add('Saved', {timeout: 5000});
+      });
+      flush();
+      let archived;
+      act(() => {
+        archived = queue.add('Archived', {timeout: 5000});
+      });
+      act(() => queue.pauseAll());
+      act(() => queue.close(archived));
+      flush();
+      act(() => jest.advanceTimersByTime(6000));
+      flush();
+
+      expect(getByRole('alertdialog')).toHaveTextContent('Saved');
+    });
+  });
+
+  describe('supports showing a toast again', () => {
+    it('should restart the timer of a toast that is shown again', () => {
+      let queue = new ToastQueue({maxVisibleToasts: 1});
+      let {getByRole} = render(
+        <ToastRegion queue={queue}>
+          {({toast}) => (
+            <Toast toast={toast}>
+              <ToastContent>
+                <Text slot="title">{toast.content}</Text>
+              </ToastContent>
+            </Toast>
+          )}
+        </ToastRegion>
+      );
+
+      act(() => {
+        queue.add('Saved', {timeout: 5000});
+      });
+      act(() => jest.advanceTimersByTime(3000));
+      let archived;
+      act(() => {
+        archived = queue.add('Archived', {timeout: 5000});
+      });
+      act(() => queue.close(archived));
+      act(() => jest.advanceTimersByTime(3000));
+
+      expect(getByRole('alertdialog')).toHaveTextContent('Saved');
+    });
+  });
+
+  describe('supports closing the focused toast', () => {
+    it('should move focus to the next toast after focus left the region and came back', async () => {
+      let queue = new ToastQueue();
+      let {getByRole} = render(
+        <>
+          <Button>Outside</Button>
+          <ToastRegion queue={queue}>
+            {({toast}) => (
+              <Toast toast={toast}>
+                <ToastContent>
+                  <Text slot="title">{toast.content}</Text>
+                </ToastContent>
+                <Button slot="close">x</Button>
+              </Toast>
+            )}
+          </ToastRegion>
+        </>
+      );
+
+      act(() => {
+        queue.add('Saved');
+      });
+      await user.tab();
+      await user.tab();
+      await user.tab({shift: true});
+      act(() => {
+        queue.add('Archived');
+      });
+      await user.tab();
+      await user.tab();
+      await user.keyboard('{Enter}');
+
+      expect(document.activeElement).toBe(getByRole('alertdialog', {name: 'Saved'}));
+    });
+
+    it('should move focus to the next toast after a toast was added in front of it', async () => {
+      let queue = new ToastQueue();
+      let {getByRole} = render(
+        <>
+          <Button>Outside</Button>
+          <ToastRegion queue={queue}>
+            {({toast}) => (
+              <Toast toast={toast}>
+                <ToastContent>
+                  <Text slot="title">{toast.content}</Text>
+                </ToastContent>
+                <Button slot="close">x</Button>
+              </Toast>
+            )}
+          </ToastRegion>
+        </>
+      );
+
+      act(() => {
+        queue.add('Saved');
+      });
+      await user.tab();
+      await user.tab();
+      await user.tab();
+      act(() => {
+        queue.add('Archived');
+      });
+      await user.keyboard('{Enter}');
+
+      expect(document.activeElement).toBe(getByRole('alertdialog', {name: 'Archived'}));
+    });
+
+    it('should time out the next toast after the last toast closed with focus in it', async () => {
+      let queue = new ToastQueue();
+      let {queryByRole} = render(
+        <ToastRegion queue={queue}>
+          {({toast}) => (
+            <Toast toast={toast}>
+              <ToastContent>
+                <Text slot="title">{toast.content}</Text>
+              </ToastContent>
+              <Button slot="close">x</Button>
+            </Toast>
+          )}
+        </ToastRegion>
+      );
+
+      act(() => {
+        queue.add('Saved');
+      });
+      await user.tab();
+      await user.tab();
+      await user.keyboard('{Enter}');
+      act(() => {
+        queue.add('Archived', {timeout: 5000});
+      });
+      act(() => jest.advanceTimersByTime(6000));
+
+      expect(queryByRole('alertdialog')).toBeNull();
+    });
+
+    it('should not move focus back into the region when a toast it left is hidden again', async () => {
+      let queue = new ToastQueue({maxVisibleToasts: 1});
+      let {getByRole} = render(
+        <>
+          <Button>Outside</Button>
+          <ToastRegion queue={queue}>
+            {({toast}) => (
+              <Toast toast={toast}>
+                <ToastContent>
+                  <Text slot="title">{toast.content}</Text>
+                </ToastContent>
+                <Button slot="close">x</Button>
+              </Toast>
+            )}
+          </ToastRegion>
+        </>
+      );
+
+      act(() => {
+        queue.add('Saved');
+      });
+      await user.click(getByRole('button', {name: 'Outside'}));
+      await user.click(getByRole('alertdialog'));
+      let archived;
+      act(() => {
+        archived = queue.add('Archived');
+      });
+      act(() => queue.close(archived));
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Outside'}));
+      await user.keyboard('{Shift}');
+      act(() => {
+        queue.add('Deleted');
+      });
+
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Outside'}));
+    });
+  });
 });

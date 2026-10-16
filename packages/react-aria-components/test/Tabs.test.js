@@ -13,6 +13,7 @@
 import {
   act,
   fireEvent,
+  installPointerEvent,
   pointerMap,
   render,
   waitFor,
@@ -1148,5 +1149,22 @@ describe('Tabs', () => {
 
     let dialog = tree.getByRole('dialog');
     expect(within(dialog).getAllByRole('menuitem')).toHaveLength(2);
+  });
+
+  describe('supports cancelling a press when the window loses focus', () => {
+    installPointerEvent();
+
+    it('should not select a tab again on hover after the window loses focus', async () => {
+      let onSelectionChange = jest.fn(() => fireEvent(window, new Event('blur')));
+      let {getAllByRole} = renderTabs({defaultSelectedKey: 'a', onSelectionChange});
+      let tab = getAllByRole('tab')[1];
+
+      await user.pointer({target: tab, keys: '[MouseLeft>]'});
+      await user.unhover(tab);
+      await user.hover(tab);
+      await user.pointer({keys: '[/MouseLeft]'});
+
+      expect(onSelectionChange.mock.calls).toEqual([['b']]);
+    });
   });
 });

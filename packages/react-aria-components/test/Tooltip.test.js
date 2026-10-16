@@ -381,4 +381,65 @@ describe('Tooltip', () => {
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
   });
+
+  describe('supports pressing a trigger while another tooltip warms up', () => {
+    it('should open the hovered tooltip after its delay', async () => {
+      let {getByRole} = render(
+        <>
+          <TooltipTrigger>
+            <Button>Bold</Button>
+            <Tooltip>Make text bold</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger>
+            <Button>Italic</Button>
+            <Tooltip>Make text italic</Tooltip>
+          </TooltipTrigger>
+        </>
+      );
+
+      await user.tab();
+      await user.keyboard('{Enter}');
+      act(() => jest.advanceTimersByTime(500));
+      fireEvent.mouseMove(document.body);
+      await user.hover(getByRole('button', {name: 'Italic'}));
+      await user.keyboard('{Enter}');
+      act(() => jest.advanceTimersByTime(1500));
+
+      expect(getByRole('tooltip')).toHaveTextContent('Make text italic');
+    });
+  });
+
+  describe('supports a trigger that unmounts while its tooltip warms up', () => {
+    it('should wait for the delay before showing the next tooltip', async () => {
+      function Toolbar({isArchiveVisible}) {
+        return (
+          <>
+            <TooltipTrigger>
+              <Button>Reply</Button>
+              <Tooltip>Reply to message</Tooltip>
+            </TooltipTrigger>
+            {isArchiveVisible && (
+              <TooltipTrigger>
+                <Button>Archive</Button>
+                <Tooltip>Archive message</Tooltip>
+              </TooltipTrigger>
+            )}
+          </>
+        );
+      }
+
+      let {getByRole, queryByRole, rerender} = render(<Toolbar isArchiveVisible />);
+      fireEvent.mouseMove(document.body);
+      await user.hover(getByRole('button', {name: 'Reply'}));
+      await user.unhover(getByRole('button', {name: 'Reply'}));
+      act(() => jest.runAllTimers());
+
+      await user.hover(getByRole('button', {name: 'Archive'}));
+      rerender(<Toolbar isArchiveVisible={false} />);
+      act(() => jest.advanceTimersByTime(1500));
+      await user.hover(getByRole('button', {name: 'Reply'}));
+
+      expect(queryByRole('tooltip')).toBeNull();
+    });
+  });
 });

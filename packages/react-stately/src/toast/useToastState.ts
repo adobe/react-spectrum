@@ -51,6 +51,8 @@ export interface ToastState<T> {
   resumeAll(): void;
   /** The visible toasts. */
   visibleToasts: QueuedToast<T>[];
+  /** Whether the toast timers are paused. */
+  isPaused: boolean;
 }
 
 /**
@@ -76,6 +78,9 @@ export function useToastQueue<T>(queue: ToastQueue<T>): ToastState<T> {
 
   return {
     visibleToasts,
+    get isPaused() {
+      return queue.isPaused;
+    },
     add: (content, options) => queue.add(content, options),
     close: key => queue.close(key),
     pauseAll: () => queue.pauseAll(),
@@ -91,8 +96,14 @@ export class ToastQueue<T> {
   private subscriptions: Set<() => void> = new Set();
   private maxVisibleToasts: number;
   private wrapUpdate?: (fn: () => void, action: ToastAction) => void;
+  private paused = false;
   /** The currently visible toasts. */
   visibleToasts: QueuedToast<T>[] = [];
+
+  /** Whether the toast timers are paused. */
+  get isPaused(): boolean {
+    return this.paused;
+  }
 
   constructor(options?: ToastStateProps) {
     this.maxVisibleToasts = options?.maxVisibleToasts ?? Infinity;
@@ -143,7 +154,24 @@ export class ToastQueue<T> {
   }
 
   private updateVisibleToasts(action: ToastAction) {
+    let prevVisibleToasts = this.visibleToasts;
     this.visibleToasts = this.queue.slice(0, this.maxVisibleToasts);
+
+    // This aligns exit timing behavior for animated and unanimated toasts.
+    // TODO: Discuss whether pausing the timer is what we want.
+    for (let toast of prevVisibleToasts) {
+      if (toast.timer && !this.visibleToasts.includes(toast)) {
+        toast.timer.pause();
+      }
+    }
+
+    if (!this.paused) {
+      for (let toast of this.visibleToasts) {
+        if (toast.timer && !prevVisibleToasts.includes(toast)) {
+          toast.timer.resume();
+        }
+      }
+    }
 
     this.runWithWrapUpdate(() => {
       for (let fn of this.subscriptions) {
@@ -154,6 +182,7 @@ export class ToastQueue<T> {
 
   /** Pauses the timers for all visible toasts. */
   pauseAll(): void {
+    this.paused = true;
     for (let toast of this.visibleToasts) {
       if (toast.timer) {
         toast.timer.pause();
@@ -163,6 +192,7 @@ export class ToastQueue<T> {
 
   /** Resumes the timers for all visible toasts. */
   resumeAll(): void {
+    this.paused = false;
     for (let toast of this.visibleToasts) {
       if (toast.timer) {
         toast.timer.resume();
@@ -188,6 +218,7 @@ class Timer {
   }
 
   reset(delay: number): void {
+    this.pause();
     this.remaining = delay;
     this.resume();
   }
@@ -199,11 +230,11 @@ class Timer {
 
     clearTimeout(this.timerId);
     this.timerId = null;
-    this.remaining -= Date.now() - this.startTime!;
+    this.remaining = Math.max(1, this.remaining - (Date.now() - this.startTime!));
   }
 
   resume(): void {
-    if (this.remaining <= 0) {
+    if (this.remaining <= 0 || this.timerId != null) {
       return;
     }
 
