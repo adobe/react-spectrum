@@ -262,6 +262,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     if (!this.requestedRect.containsRect(rect)) {
       this.requestedRect = this.requestedRect.union(rect);
       this.rootNodes = this.buildCollection();
+      // The nodes just built are up to date, so mark them valid. Otherwise the next
+      // rebuild lays out every item scrolled past since the last update again.
+      this.validRect = this.requestedRect.copy();
     }
 
     // Ensure all of the persisted keys are available.
