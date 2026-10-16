@@ -100,14 +100,14 @@ function AttachmentDialogExample() {
     <LightboxTrigger>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 16, width: 400})}>
         <AttachmentList aria-label="Attachments">
-          <Attachment id="photo" textValue="photo.png">
+          <Attachment id="amsterdam" textValue="photo.png">
             <AttachmentPreview
               mimeType="image/jpg"
               slot="thumbnail"
               src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/amsterdamslide__800x600.jpg"
             />
           </Attachment>
-          <Attachment id="report" textValue="report.pdf">
+          <Attachment id="lands-end" textValue="report.pdf">
             <AttachmentPreview 
               mimeType="image/jpg" 
               slot="thumbnail"
@@ -116,7 +116,7 @@ function AttachmentDialogExample() {
         </AttachmentList>
         
       </div>
-      <LightboxCarousel >
+      <LightboxCarousel isInfinite>
         <LightboxPicker aria-label="Choose photo">
           <LightboxPickerItem id="amsterdam" aria-label="Amsterdam" />
           <LightboxPickerItem id="lands-end" aria-label="Land's End" />
@@ -137,13 +137,13 @@ function AttachmentDialogExample() {
               className={imageStyles}
             />
           </LightboxItem>
-          <LightboxItem id="trust">
+          {/* <LightboxItem id="trust">
             <img
               src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/trustslide-2__800x600.jpg"
               alt="Trust television series promotion"
               className={imageStyles}
             />
-          </LightboxItem>
+          </LightboxItem> */}
         </LightboxItems>
       </LightboxCarousel>
     </LightboxTrigger>

@@ -28,6 +28,9 @@ import {Button} from 'react-aria-components/Button';
 import {createContext, useContext, useLayoutEffect, useState, useRef, useReducer, ReactNode, RefObject} from 'react';
 import {Key} from '@react-types/shared';
 import { ModalOverlay, Modal, Dialog} from 'react-aria-components/Modal';
+import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
+import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
+import {CloseButton} from '@react-spectrum/s2/CloseButton';
 
 export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
   isInfinite?: boolean;
@@ -113,6 +116,12 @@ const itemStyles = style({
   scrollSnapStop: 'always'
 });
 
+const buttonStyles = style({
+  size: 32,
+  borderRadius: 'full',
+  borderStyle: 'none',
+})
+
 interface LightboxCarouselContextProps {
   isInfinite?: boolean;
 }
@@ -148,24 +157,10 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
               })}>
               {({close}) => (
                 <>
-                  <Button
-                    onPress={close}
-                    className={style({
-                      backgroundColor: 'transparent',
-                      color: 'white',
-                      borderWidth: 1,
-                      borderStyle: 'solid',
-                      borderColor: 'white',
-                      borderRadius: 'full',
-                      paddingX: 16,
-                      paddingY: 8,
-                      font: 'body'
-                    })}>
-                    Close
-                  </Button>
+                <CloseButton staticColor="white" onPress={close} />
                   <div>
                     <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
-                      <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
+                      <RACTabs {...props} selectedKey={ctx?.activeKey} onSelectionChange={ctx?.setActiveKey} className={renderProps => carouselStyles(renderProps)} />
                     </LightBoxCarouselContext.Provider>
                   </div>
                 </>
@@ -222,7 +217,7 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   );
 
   return (
-    <div className={style({display: 'flex'})}>
+    <div className={style({display: 'flex', alignItems: 'center'})}>
       {wrapper}
     </div>
   );
@@ -296,11 +291,11 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
 
   return (
     <>
-      <Button onPress={prevItem}>Prev</Button>
+      <Button onPress={prevItem} className={buttonStyles}><ChevronLeft /></Button>
         <div ref={ref} {...props} className={itemsStyles} onScroll={onScroll} onScrollEnd={onScrollEnd}>
           {props.children}
         </div>
-      <Button onPress={nextItem}>Next</Button>
+      <Button onPress={nextItem} className={buttonStyles}><ChevronRight /></Button>
     </>
   )
 }
@@ -346,7 +341,6 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
   let {children: renderPage} = props;
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
-  let isProgrammaticScrolling = useRef<boolean>(false);
 
 
   let selectedKey = state?.selectedKey;
@@ -432,7 +426,7 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
 
   return (
     <>
-      <Button onPress={prevItem}>Prev</Button>
+      <Button onPress={prevItem}><ChevronLeft /></Button>
       <div ref={ref} onScroll={onScroll} onScrollEnd={onScrollEnd} className={itemsStyles}>
         {/* Placeholder to hold space in the scroll width for more pages. */}
         <div
@@ -461,7 +455,7 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
           }}
         />
       </div>
-      <Button onPress={nextItem}>Next</Button>
+      <Button onPress={nextItem}><ChevronRight /></Button>
     </>
   )
 }
@@ -476,6 +470,8 @@ export interface LightboxTriggerContextProps {
   onAction?: (key: Key) => void;
   isOpen?: boolean;
   setIsOpen?: (boolean) => void;
+  activeKey?: Key | undefined;
+  setActiveKey?: (key: Key) => void;
 }
 
 export const LightboxTriggerContext = createContext<LightboxTriggerContextProps | null>(null);
@@ -486,15 +482,15 @@ interface LightboxTrigger {
 
 export function LightboxTrigger(props: LightboxTrigger) {
   let [isOpen, setIsOpen] = useState<boolean>(false);
+  let [activeKey, setActiveKey] = useState<Key | undefined>(undefined);
   
-  let onAction = () => {
+  let onAction = (key: Key) => {
+    setActiveKey(key);
     setIsOpen(true);
   }
 
-  // and then i pass onAction to the attachment
-  // and then set isOpen back to false when it is dismissed?
   return (
-    <LightboxTriggerContext.Provider value={{isOpen, setIsOpen, onAction}}>
+    <LightboxTriggerContext.Provider value={{isOpen, setIsOpen, onAction, activeKey, setActiveKey}}>
       <div {...props}>
         {props.children}
       </div>
