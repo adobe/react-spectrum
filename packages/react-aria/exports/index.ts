@@ -85,7 +85,7 @@ export {useMove} from '../src/interactions/useMove';
 export {usePress} from '../src/interactions/usePress';
 export {useLongPress} from '../src/interactions/useLongPress';
 export {useContextMenu} from '../src/interactions/useContextMenu';
-export {useFocusable, Focusable} from '../src/interactions/useFocusable';
+export {useFocusable, Focusable, FocusableProvider} from '../src/interactions/useFocusable';
 export {Pressable} from '../src/interactions/Pressable';
 export {useField} from '../src/label/useField';
 export {useLabel} from '../src/label/useLabel';
@@ -275,6 +275,7 @@ export type {AriaFocusRingProps, FocusRingAria} from '../src/focus/useFocusRing'
 export type {
   FocusableAria,
   FocusableOptions,
+  FocusableProviderProps,
   FocusableComponentProps as FocusableProps
 } from '../src/interactions/useFocusable';
 export type {FocusManager, FocusManagerOptions, FocusScopeProps} from '../src/focus/FocusScope';
