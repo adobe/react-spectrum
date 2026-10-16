@@ -39,7 +39,7 @@ import {
   DateRangePickerStateOptions,
   useDateRangePickerState
 } from 'react-stately/useDateRangePickerState';
-import {DialogContext, OverlayTriggerStateContext} from './Dialog';
+import {DialogContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
@@ -48,6 +48,7 @@ import {GroupContext} from './Group';
 import {HiddenDateInput} from './HiddenDateInput';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
+import {OverlayTriggerStateContext} from './OverlayTriggerStateContext';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';

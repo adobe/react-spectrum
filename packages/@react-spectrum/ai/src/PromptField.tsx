@@ -40,6 +40,7 @@ import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
+import {matchMimeType} from './mimeTypes';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Microphone from '@react-spectrum/s2/icons/Microphone';
@@ -260,61 +261,6 @@ const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
 // need this so we can replace the inline filter text rather than inserting it at the current caret
 // aka the difference between a slash command and using the + menu which won't have filter text
 const PromptCompletionAnchorContext = createContext<Position | null>(null);
-
-export function matchMimeType(mimeType: string | undefined, acceptedMimeTypes: string[]): boolean {
-  if (!mimeType) {
-    return false;
-  }
-
-  return acceptedMimeTypes.some(type => {
-    if (type === '*/*') {
-      return true;
-    }
-    if (type.endsWith('/*')) {
-      return mimeType.startsWith(type.slice(0, -2));
-    }
-    return mimeType === type;
-  });
-}
-
-const MIME_TYPE_LABELS: Record<string, string> = {
-  'application/json': 'JSON',
-  'application/msword': 'DOC',
-  'application/pdf': 'PDF',
-  'application/vnd.ms-excel': 'XLS',
-  'application/vnd.ms-powerpoint': 'PPT',
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'PPTX',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'XLSX',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
-  'application/zip': 'ZIP',
-  'audio/mpeg': 'MP3',
-  'image/gif': 'GIF',
-  'image/jpeg': 'JPG',
-  'image/png': 'PNG',
-  'image/svg+xml': 'SVG',
-  'image/webp': 'WEBP',
-  'text/csv': 'CSV',
-  'text/plain': 'TXT'
-};
-
-export function getMimeTypeLabel(mimeType: string): string | null {
-  let mappedLabel = MIME_TYPE_LABELS[mimeType];
-  if (mappedLabel) {
-    return mappedLabel;
-  }
-
-  let subtype = mimeType.split('/')[1];
-  if (!subtype) {
-    return null;
-  }
-
-  subtype =
-    subtype
-      .replace(/^(x-|vnd\.)/, '')
-      .split(/[+.]/)
-      .pop() || subtype;
-  return subtype.slice(0, 4).toUpperCase();
-}
 
 /**
  * A PromptField allows users to compose and submit prompts containing text, tokens, and

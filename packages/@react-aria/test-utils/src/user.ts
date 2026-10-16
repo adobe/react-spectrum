@@ -30,7 +30,7 @@ import {DialogTester} from './dialog';
 import {GridListTester} from './gridlist';
 import {ListBoxTester} from './listbox';
 import {MenuTester} from './menu';
-import {pointerMap} from './';
+import {pointerMap} from './userEventMaps';
 import {RadioGroupTester} from './radiogroup';
 import {SelectTester} from './select';
 import {TableTester} from './table';
