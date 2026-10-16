@@ -1205,7 +1205,7 @@ export function SmallChat() {
   }
 
   return (
-    <Chat styles={style({width: 400})}>
+    <Chat styles={style({width: 'full', maxWidth: 400})}>
       <Thread items={messages} aria-label="Chat thread">
         {(msg: StreamingMessage) => {
           if (msg.type === 'user') {
