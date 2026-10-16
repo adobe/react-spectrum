@@ -2,9 +2,40 @@
 /* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target */
 
 import {EventTargetType} from '@react-types/shared';
-import {getOwnerWindow, isShadowRoot} from '../domHelpers';
+import {getOwnerWindow} from '../domHelpers';
+import {isElement, isShadowRoot} from '../typeHelpers';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 import type {SyntheticEvent} from 'react';
+
+/**
+ * ShadowDOM safe version of Node.parentNode.
+ */
+export function getParentNode(node: Node | Element | null | undefined): Node | null {
+  let currentNode: HTMLElement | Node | null | undefined = node;
+
+  if (!shadowDOM()) {
+    return currentNode?.parentNode ?? null;
+  }
+
+  if (!currentNode) {
+    return null;
+  }
+
+  if (
+    typeof (currentNode as HTMLSlotElement).assignedElements !== 'function' &&
+    (currentNode as HTMLSlotElement).assignedSlot?.parentNode
+  ) {
+    // Element is slotted
+    currentNode = (currentNode as HTMLSlotElement).assignedSlot!.parentNode;
+  } else if (isShadowRoot(currentNode)) {
+    // Element is in shadow root
+    currentNode = currentNode.host;
+  } else {
+    currentNode = currentNode.parentNode;
+  }
+
+  return currentNode;
+}
 
 /**
  * ShadowDOM safe version of Node.contains.
@@ -43,6 +74,19 @@ export function nodeContains(
   }
 
   return false;
+}
+
+/**
+ * ShadowDOM safe version of element.parentElement.
+ */
+export function getParentElement(node: Node): Element | null {
+  let parentNode = getParentNode(node);
+
+  while (parentNode != null && !isElement(parentNode)) {
+    parentNode = getParentNode(parentNode);
+  }
+
+  return parentNode;
 }
 
 /**
