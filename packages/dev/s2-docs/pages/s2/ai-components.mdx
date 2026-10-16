@@ -457,6 +457,55 @@ function PromptAttachments(props) {
 }
 ```
 
+### Collapsed
+
+Set `isCollapsed` to render a single-line pill with only the input and the toolbar's trailing actions. Attachments and leading toolbar items are hidden until the field expands, which animates to the full layout. Use `onFocusChange` or `onChange` to decide when to expand.
+
+```tsx render type="s2"
+"use client";
+import {useState} from 'react';
+import {
+  AttachFileMenuItem,
+  InsertMenuButton,
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldValue,
+  PromptFieldVoiceButton,
+  PromptTokenField
+} from '@react-spectrum/ai';
+
+function CollapsedPromptField() {
+  let [value, setValue] = useState(() => new PromptFieldValue([]));
+  let [isCollapsed, setCollapsed] = useState(true);
+
+  return (
+    <PromptField
+      value={value}
+      onChange={setValue}
+      /*- begin highlight -*/
+      isCollapsed={isCollapsed}
+      onFocusChange={isFocused => setCollapsed(!isFocused && value.segments.length === 0)}
+      /*- end highlight -*/
+      onSubmit={() => {
+        setValue(new PromptFieldValue([]));
+        setCollapsed(true);
+      }}>
+      <PromptTokenField placeholder="Ask a question, share an idea, or add a task" />
+      <PromptFieldToolbar>
+        <InsertMenuButton>
+          <AttachFileMenuItem />
+        </InsertMenuButton>
+        <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+          <PromptFieldVoiceButton />
+          <PromptFieldSubmitButton />
+        </div>
+      </PromptFieldToolbar>
+    </PromptField>
+  );
+}
+```
+
 ## Chat threads
 
 Compose a conversation from `Chat`, `Thread`, `ResponseStatus`, `Alert`, and message components. The thread can be driven by a collection as messages arrive from your application.
