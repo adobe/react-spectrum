@@ -20,6 +20,7 @@ export {
   SliderTrack,
   SliderThumb,
   SliderFill,
+  SliderMark,
   SliderContext,
   SliderOutputContext,
   SliderTrackContext,
@@ -35,7 +36,9 @@ export type {
   SliderTrackRenderProps,
   SliderThumbRenderProps,
   SliderFillProps,
-  SliderFillRenderProps
+  SliderFillRenderProps,
+  SliderMarkProps,
+  SliderMarkRenderProps
 } from '../src/Slider';
 export type {SliderState} from 'react-stately/useSliderState';
 

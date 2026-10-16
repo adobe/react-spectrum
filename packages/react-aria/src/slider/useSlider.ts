@@ -80,9 +80,6 @@ export function useSlider<T extends number | number[]>(
   const reverseX = direction === 'rtl';
   const currentPosition = useRef<number | null>(null);
   const {moveProps} = useMove({
-    onMoveStart() {
-      currentPosition.current = null;
-    },
     onMove({deltaX, deltaY}) {
       if (!trackRef.current) {
         return;
@@ -137,27 +134,7 @@ export function useSlider<T extends number | number[]>(
       if (direction === 'rtl' || isVertical) {
         percent = 1 - percent;
       }
-      let value = state.getPercentValue(percent);
-
-      // to find the closet thumb we split the array based on the first thumb position to the "right/end" of the click.
-      let closestThumb;
-      let split = state.values.findIndex(v => value - v < 0);
-      if (split === 0) {
-        // If the index is zero then the closetThumb is the first one
-        closestThumb = split;
-      } else if (split === -1) {
-        // If no index is found they've clicked past all the thumbs
-        closestThumb = state.values.length - 1;
-      } else {
-        let lastLeft = state.values[split - 1];
-        let firstRight = state.values[split];
-        // Pick the last left/start thumb, unless they are stacked on top of each other, then pick the right/end one
-        if (Math.abs(lastLeft - value) < Math.abs(firstRight - value)) {
-          closestThumb = split - 1;
-        } else {
-          closestThumb = split;
-        }
-      }
+      let closestThumb = state.getClosestThumbIndex(state.getPercentValue(percent));
 
       // Confirm that the found closest thumb is editable, not disabled, and move it
       if (closestThumb >= 0 && state.isThumbEditable(closestThumb)) {
@@ -167,15 +144,19 @@ export function useSlider<T extends number | number[]>(
         realTimeTrackDraggingIndex.current = closestThumb;
         state.setFocusedThumb(closestThumb);
         currentPointer.current = id;
+        // Track the pointer rather than the thumb, so that the rest of the drag stays under the
+        // cursor even when the value was adjusted to fit the step or a snap point.
+        currentPosition.current = clamp(percent, 0, 1) * size;
 
         state.setThumbDragging(realTimeTrackDraggingIndex.current!, true);
-        state.setThumbValue(closestThumb, value);
+        state.setThumbPercent(closestThumb, percent);
 
         addGlobalListener(window, 'mouseup', onUpTrack, false);
         addGlobalListener(window, 'touchend', onUpTrack, false);
         addGlobalListener(window, 'pointerup', onUpTrack, false);
       } else {
         realTimeTrackDraggingIndex.current = null;
+        currentPosition.current = null;
       }
     }
   };
