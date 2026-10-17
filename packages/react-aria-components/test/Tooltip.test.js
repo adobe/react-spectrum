@@ -381,4 +381,16 @@ describe('Tooltip', () => {
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
   });
+
+  it('hides unmeasured tooltips during exit animation', () => {
+    let {getByRole} = render(
+      <TooltipTrigger isOpen={false}>
+        <Button>Trigger</Button>
+        <Tooltip isExiting>Unmeasured tooltip</Tooltip>
+      </TooltipTrigger>
+    );
+
+    let tooltip = getByRole('tooltip', {hidden: true});
+    expect(tooltip).toHaveStyle('visibility: hidden');
+  });
 });
