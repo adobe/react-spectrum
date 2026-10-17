@@ -168,8 +168,9 @@ it('skips both automatic exit animations when shouldSkipAnimation is set', async
   let popover = page.getByRole('dialog').element();
   let overlay = page.getByTestId('backdrop').element();
   await userEvent.keyboard('{Escape}');
-  expect(popover).not.toBeInTheDocument();
-  expect(overlay).not.toBeInTheDocument();
+  await expect.element(popover, {timeout: 1000}).not.toBeInTheDocument();
+  await expect.element(overlay, {timeout: 1000}).not.toBeInTheDocument();
+  await expect.element(page.getByRole('button', {name: 'Open popover'})).toHaveFocus();
 });
 
 it('skips both automatic entry animations when shouldSkipAnimation is set', async () => {
