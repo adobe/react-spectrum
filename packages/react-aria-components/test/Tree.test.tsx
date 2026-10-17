@@ -1577,6 +1577,25 @@ describe('Tree', () => {
           new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
         );
       });
+
+      it('should expand a row with hasChildItems even if it has no child rows', async () => {
+        let {getByRole} = render(
+          <Tree aria-label="test tree" onExpandedChange={onExpandedChange}>
+            <StaticTreeItem id="folder" textValue="Folder" hasChildItems>
+              Folder
+            </StaticTreeItem>
+          </Tree>
+        );
+        let row = getByRole('row');
+        expect(row).toHaveAttribute('aria-expanded', 'false');
+
+        await user.tab();
+        let chevron = within(row).getAllByRole('button')[0];
+        await trigger(chevron);
+        expect(row).toHaveAttribute('aria-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['folder']));
+      });
     });
 
     it('should apply the proper attributes to the chevron', async () => {
