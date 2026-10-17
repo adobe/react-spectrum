@@ -113,7 +113,10 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
   let isDisabled = opts.isDisabled || state.isDisabled;
   let isVertical = orientation === 'vertical';
 
-  let {direction} = useLocale();
+  // A slider whose direction comes from its content rather than the reading order pins its own
+  // direction; otherwise the track mirrors the locale.
+  let {direction: localeDirection} = useLocale();
+  let direction = state.direction ?? localeDirection;
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let data = sliderData.get(state)!;

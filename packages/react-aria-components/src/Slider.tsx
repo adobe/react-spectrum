@@ -423,6 +423,14 @@ export const SliderFill = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   let endPercent = Math.max(start, end);
   let sizePercent = Math.max(0, endPercent - startPercent);
 
+  // The thumb is positioned with the physical `left` property, so a track that pins its own
+  // direction must anchor the fill physically too. `insetInlineStart` resolves against the
+  // document, which for a pinned track is the wrong edge and would put the fill and the thumb
+  // on opposite sides. When no direction is pinned the track follows the document, and
+  // `insetInlineStart` is exactly that.
+  let fillInset =
+    state.direction == null ? 'insetInlineStart' : state.direction === 'rtl' ? 'right' : 'left';
+
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-SliderFill',
@@ -436,7 +444,7 @@ export const SliderFill = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
           }
         : {
             position: 'absolute',
-            insetInlineStart: `${startPercent}%`,
+            [fillInset]: `${startPercent}%`,
             width: `${sizePercent}%`,
             height: '100%'
           },

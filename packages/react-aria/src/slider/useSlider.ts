@@ -67,7 +67,10 @@ export function useSlider<T extends number | number[]>(
     'aria-details': props['aria-details']
   });
 
-  let {direction} = useLocale();
+  // A slider whose direction comes from its content rather than the reading order pins its own
+  // direction; otherwise the track mirrors the locale.
+  let {direction: localeDirection} = useLocale();
+  let direction = state.direction ?? localeDirection;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
