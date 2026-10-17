@@ -12,6 +12,7 @@
 
 import {
   AriaLabelingProps,
+  DOMAttributes,
   forwardRefType,
   GlobalDOMAttributes,
   RefObject
@@ -23,6 +24,7 @@ import {
   dom,
   RenderProps,
   SlotProps,
+  StyleRenderProps,
   useContextProps,
   useRenderProps
 } from './utils';
@@ -45,6 +47,7 @@ import React, {
   createContext,
   ForwardedRef,
   forwardRef,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -57,6 +60,7 @@ import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/anim
 import {useIsHidden} from 'react-aria/private/collections/Hidden';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
+import {useObjectRef} from 'react-aria/useObjectRef';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
 export interface PopoverProps
@@ -146,6 +150,80 @@ export interface PopoverRenderProps {
   isExiting: boolean;
 }
 
+export interface PopoverOverlayProps
+  extends
+    OverlayTriggerProps,
+    StyleRenderProps<PopoverOverlayRenderProps>,
+    GlobalDOMAttributes<HTMLDivElement> {
+  /** The popover to display above the overlay. */
+  children?: ReactNode;
+  /**
+   * The CSS className for the overlay. A function may be provided to compute the class based on
+   * component state.
+   *
+   * @default 'react-aria-PopoverOverlay'
+   */
+  className?: ClassNameOrFunction<PopoverOverlayRenderProps>;
+  /** Whether the overlay is currently performing an entry animation. */
+  isEntering?: boolean;
+  /** Whether the overlay is currently performing an exit animation. */
+  isExiting?: boolean;
+}
+
+export interface PopoverOverlayRenderProps {
+  /**
+   * Whether the overlay is currently entering. Use this to apply animations.
+   *
+   * @selector [data-entering]
+   */
+  isEntering: boolean;
+  /**
+   * Whether the overlay is currently exiting. Use this to apply animations.
+   *
+   * @selector [data-exiting]
+   */
+  isExiting: boolean;
+  /** State of the popover. */
+  state: OverlayTriggerState;
+}
+
+interface InternalPopoverOverlayContextValue {
+  props: PopoverOverlayProps;
+  ref: RefObject<HTMLDivElement | null>;
+}
+
+const InternalPopoverOverlayContext = createContext<InternalPopoverOverlayContextValue | null>(
+  null
+);
+
+/**
+ * A PopoverOverlay is a wrapper for a Popover which allows customizing the backdrop element.
+ */
+export const PopoverOverlay = /*#__PURE__*/ (forwardRef as forwardRefType)(function PopoverOverlay(
+  props: PopoverOverlayProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  let objectRef = useObjectRef(ref);
+  let contextState = useContext(OverlayTriggerStateContext);
+  let localState = useOverlayTriggerState(props);
+  let state =
+    props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
+
+  if (process.env.NODE_ENV !== 'production' && state === contextState && props.onOpenChange) {
+    console.warn(
+      "This popover's state is controlled by a trigger, place onOpenChange on the trigger instead."
+    );
+  }
+
+  return (
+    <OverlayTriggerStateContext.Provider value={state}>
+      <InternalPopoverOverlayContext.Provider value={{props, ref: objectRef}}>
+        {props.children}
+      </InternalPopoverOverlayContext.Provider>
+    </OverlayTriggerStateContext.Provider>
+  );
+});
+
 interface PopoverContextValue extends PopoverProps {
   id?: string;
   /** Contexts to clear. */
@@ -169,10 +247,21 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   let localState = useOverlayTriggerState(props);
   let state =
     props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
+  let overlayContext = useContext(InternalPopoverOverlayContext);
+  let defaultOverlayRef = useRef<HTMLDivElement>(null);
+  let overlayRef = overlayContext?.ref ?? defaultOverlayRef;
+  let groupContext = useContext(PopoverGroupContext);
+  let hasCustomOverlay =
+    !!overlayContext && !props.isNonModal && !(groupContext && props.trigger === 'SubmenuTrigger');
+  let overlayExitAnimation = useExitAnimation(overlayRef, hasCustomOverlay && state.isOpen);
   // Skip the automatic exit animation when closing instantly (e.g. swapping between previews
   // during warmup). An explicitly provided isExiting prop still takes precedence.
   let exitAnimation = useExitAnimation(ref, state.isOpen);
-  let isExiting = props.isExiting || (!props.shouldSkipAnimation && exitAnimation) || false;
+  let isExiting =
+    props.isExiting ||
+    (hasCustomOverlay && overlayContext?.props.isExiting) ||
+    (!props.shouldSkipAnimation && (exitAnimation || (hasCustomOverlay && overlayExitAnimation))) ||
+    false;
   let isHidden = useIsHidden();
   let {direction} = useLocale();
 
@@ -232,6 +321,7 @@ function PopoverInner({
   let arrowRef = useRef<HTMLDivElement>(null);
   let containerRef = useRef<HTMLDivElement | null>(null);
   let groupCtx = useContext(PopoverGroupContext);
+  let overlayContext = useContext(InternalPopoverOverlayContext);
   let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
 
   let [isOpen, setIsOpen] = useState(false);
@@ -301,7 +391,7 @@ function PopoverInner({
 
   let children = useMemo(() => {
     let children = renderProps.children;
-    for (let Context of [PopoverContext, ...(clearContexts ?? [])]) {
+    for (let Context of [PopoverContext, InternalPopoverOverlayContext, ...(clearContexts ?? [])]) {
       children = <Context.Provider value={null}>{children}</Context.Provider>;
     }
     return children;
@@ -373,9 +463,26 @@ function PopoverInner({
         isExiting={isExiting}
         portalContainer={UNSTABLE_portalContainer}>
         {/* oxlint-disable-next-line react/react-compiler */}
-        {!props.isNonModal && state.isOpen && (
-          <div data-testid="underlay" {...underlayProps} style={{position: 'fixed', inset: 0}} />
-        )}
+        {!props.isNonModal &&
+          (overlayContext ? (
+            <PopoverUnderlay
+              {...overlayContext.props}
+              overlayRef={overlayContext.ref}
+              underlayProps={underlayProps}
+              state={state}
+              isReady={!!placement && isOpen}
+              isExiting={isExiting}
+              shouldSkipAnimation={props.shouldSkipAnimation}
+            />
+          ) : (
+            state.isOpen && (
+              <div
+                data-testid="underlay"
+                {...underlayProps}
+                style={{position: 'fixed', inset: 0}}
+              />
+            )
+          ))}
         <div ref={containerRef} style={{display: 'contents'}}>
           <PopoverGroupContext.Provider value={containerRef}>
             {overlay}
@@ -398,4 +505,43 @@ function PopoverInner({
     </Overlay>
   );
   // oxlint-enable react/react-compiler
+}
+
+interface PopoverUnderlayProps extends PopoverOverlayProps {
+  overlayRef: RefObject<HTMLDivElement | null>;
+  underlayProps: DOMAttributes;
+  state: OverlayTriggerState;
+  isReady: boolean;
+  isExiting: boolean;
+  shouldSkipAnimation?: boolean;
+}
+
+function PopoverUnderlay({
+  overlayRef,
+  underlayProps,
+  state,
+  isReady,
+  isExiting,
+  shouldSkipAnimation,
+  ...props
+}: PopoverUnderlayProps) {
+  let enterAnimation = useEnterAnimation(overlayRef, isReady);
+  let isEntering = props.isEntering || (!shouldSkipAnimation && enterAnimation) || false;
+  let renderProps = useRenderProps({
+    ...props,
+    children: null,
+    defaultClassName: 'react-aria-PopoverOverlay',
+    defaultStyle: {position: 'fixed', inset: 0},
+    values: {isEntering, isExiting, state}
+  });
+
+  return (
+    <dom.div
+      {...mergeProps(filterDOMProps(props, {global: true}), underlayProps)}
+      {...renderProps}
+      ref={overlayRef}
+      data-entering={isEntering || undefined}
+      data-exiting={isExiting || undefined}
+    />
+  );
 }
