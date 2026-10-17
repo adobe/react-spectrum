@@ -43,8 +43,13 @@ export {FieldError} from '../src/FieldError';
 export type {FieldErrorProps, FieldErrorRenderProps} from '../src/FieldError';
 export type {ValidationResult} from '@react-types/shared';
 
-export {Popover} from '../src/Popover';
-export type {PopoverProps, PopoverRenderProps} from '../src/Popover';
+export {Popover, PopoverOverlay} from '../src/Popover';
+export type {
+  PopoverProps,
+  PopoverRenderProps,
+  PopoverOverlayProps,
+  PopoverOverlayRenderProps
+} from '../src/Popover';
 
 export {ListBoxLoadMoreItem, ListBox, ListBoxItem, ListBoxSection} from '../src/ListBox';
 export {Collection, type CollectionProps} from 'react-aria/Collection';
