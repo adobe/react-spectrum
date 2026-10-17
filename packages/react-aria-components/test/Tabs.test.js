@@ -489,6 +489,41 @@ describe('Tabs', () => {
     expect(onSelectionChange).toHaveBeenCalledWith('b');
   });
 
+  it.each(['disabledKeys', 'isDisabled'])(
+    'preserves the selected tab while every tab is disabled via %s',
+    disableWith => {
+      let onSelectionChange = jest.fn();
+      function Example({disabled = false}) {
+        return (
+          <Tabs
+            defaultSelectedKey="b"
+            onSelectionChange={onSelectionChange}
+            disabledKeys={disableWith === 'disabledKeys' && disabled ? ['a', 'b'] : []}>
+            <TabList aria-label="Build">
+              <Tab id="a" isDisabled={disableWith === 'isDisabled' && disabled}>
+                Logs
+              </Tab>
+              <Tab id="b" isDisabled={disableWith === 'isDisabled' && disabled}>
+                Artifacts
+              </Tab>
+            </TabList>
+            <TabPanel id="a">Logs content</TabPanel>
+            <TabPanel id="b">Artifacts content</TabPanel>
+          </Tabs>
+        );
+      }
+      let {getAllByRole, rerender} = render(<Example />);
+      let tabs = getAllByRole('tab');
+      onSelectionChange.mockClear();
+      rerender(<Example disabled />);
+      expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      rerender(<Example />);
+      expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    }
+  );
+
   it('recovers when a newly selected tab is disabled immediately', async () => {
     let onSelectionChange = jest.fn();
     function Example() {

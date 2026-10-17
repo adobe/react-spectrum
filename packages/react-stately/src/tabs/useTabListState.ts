@@ -87,7 +87,15 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
         !collection.getItem(selectedKey) ||
         selectionManager.isDisabled(selectedKey))
     ) {
-      selectedKey = findDefaultSelectedKey(collection, state.disabledKeys);
+      let fallbackKey = findDefaultSelectedKey(collection, state.disabledKeys);
+      if (
+        fallbackKey != null &&
+        (currentSelectedKey == null ||
+          !collection.getItem(currentSelectedKey) ||
+          !selectionManager.isDisabled(fallbackKey))
+      ) {
+        selectedKey = fallbackKey;
+      }
       if (
         selectedKey != null &&
         selectedKey !== currentSelectedKey &&
