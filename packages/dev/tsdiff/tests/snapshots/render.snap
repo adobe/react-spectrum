@@ -1,0 +1,205 @@
+# Rendered api.json snapshots.
+# Regenerate with: UPDATE_SNAPSHOTS=1 cargo test --test render_snapshots
+
+=== optional-required-and-default ===
+Props {
+
+  falseDefault?: boolean = false
+  optional?: string
+  required: string
+  withDefault?: number = 42
+}
+
+=== private-and-protected-members-are-dropped ===
+Props {
+
+  publicProp: string
+}
+
+=== unusual-property-names ===
+Props {
+
+  $dollar?: string
+  0?: string
+  UPPER?: string
+  aria-label?: string
+  with space?: string
+}
+
+=== index-signature-interface ===
+baseStyleProps {
+
+  key: [StyleName, StyleHandler]
+}
+
+=== method-vs-function-valued-property ===
+Api {
+
+  asMethod: (number) => void
+  asProperty: (number) => void
+}
+
+=== parameter-modifiers-optional-and-rest ===
+fn {
+
+  opt?: number
+  required: string
+  rest: Array<string>
+  returnVal: void
+}
+
+=== empty-interface ===
+Empty {
+
+
+}
+
+=== interface-with-only-private-members ===
+AllPrivate {
+
+
+}
+
+=== empty-union-and-intersection ===
+Props {
+
+  emptyIntersection?: ()
+  emptyTuple?: []
+  emptyUnion?: 
+}
+
+=== object-with-null-properties ===
+Opaque {
+
+  Opaque: {}
+}
+
+=== multiple-extends-with-type-arguments ===
+Props <T> extends AriaLabelingProps, CollectionBase<T> {
+
+  id?: string
+}
+
+=== deeply-nested-generics ===
+Props <T> {
+
+  nested?: Map<string, Array<Node<T>>>
+}
+
+=== type-parameters-with-constraint-and-default ===
+Props <T extends object, E = 'div'> {
+
+  a?: T
+}
+
+=== overloaded-function-export ===
+useSSRSafeId {
+
+  useSSRSafeId: (string) => string | () => string
+}
+
+=== alias-chain-through-links ===
+Button {
+
+  isDisabled?: boolean
+}
+
+=== cyclic-props-link-terminates ===
+Cyclic {
+
+  toB?: B
+}
+
+=== self-referential-interface ===
+Node {
+
+  clone: () => this
+  parent?: Node
+}
+
+=== dangling-link-is-not-invented ===
+Props {
+
+  missing?: Gone
+}
+
+=== component-with-no-props-only-ref ===
+Divider {
+
+
+}
+
+=== component-with-generic-props-application ===
+ListBox {
+
+  items?: Iterable<T>
+}
+
+=== non-components-keep-their-function-shape ===
+NoParams {
+
+  returnVal: void
+}
+TwoParams {
+
+  a: A
+  b: B
+  returnVal: void
+}
+useThing {
+
+  props: P
+  returnVal: ThingState
+}
+
+=== unstable-prefixed-component ===
+UNSTABLE_Thing {
+
+  isOpen?: boolean
+}
+
+=== primitive-and-literal-const-exports ===
+aBoolean {
+
+  aBoolean: boolean
+}
+aLiteral {
+
+  aLiteral: 'focus-ring'
+}
+aNumber {
+
+  aNumber: 2
+}
+aString {
+
+  aString: string
+}
+aSymbol {
+
+  aSymbol: symbol
+}
+anArray {
+
+  anArray: Array<string>
+}
+
+=== nested-object-literal-export ===
+focusRing {
+
+  outlineStyle: {
+    default: 'none'
+    isFocusVisible: 'solid'
+  }
+  outlineWidth: 2
+}
+
+=== untagged-export-among-healthy-siblings ===
+Healthy {
+
+  a?: string
+}
+SegmentType {
+
+  UNTYPED
+}
