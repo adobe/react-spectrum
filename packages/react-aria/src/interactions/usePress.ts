@@ -383,9 +383,11 @@ export function usePress(props: PressHookProps): PressResult {
     [isDisabled, onClick]
   );
 
+  // oxlint-disable-next-line react/react-compiler
   let pressProps = useMemo(() => {
     let state = ref.current;
     let onBlur = () => {
+      // oxlint-disable-next-line react/react-compiler
       cancelEvent({
         currentTarget: state.target,
         shiftKey: false,
@@ -436,12 +438,7 @@ export function usePress(props: PressHookProps): PressResult {
             chain(pressUp, onKeyUp),
             true
           );
-          addGlobalListener(
-            getOwnerWindow(e.currentTarget),
-            'blur',
-            onBlur,
-            false
-          );
+          addGlobalListener(getOwnerWindow(e.currentTarget), 'blur', onBlur, false);
 
           if (shouldStopPropagation) {
             e.stopPropagation();
@@ -603,12 +600,7 @@ export function usePress(props: PressHookProps): PressResult {
             onPointerCancel,
             false
           );
-          addGlobalListener(
-            getOwnerWindow(e.currentTarget),
-            'blur',
-            onBlur,
-            false
-          );
+          addGlobalListener(getOwnerWindow(e.currentTarget), 'blur', onBlur, false);
         }
 
         if (shouldStopPropagation) {
@@ -785,12 +777,7 @@ export function usePress(props: PressHookProps): PressResult {
           }
         }
         addGlobalListener(getOwnerDocument(e.currentTarget), 'mouseup', onMouseUp, false);
-        addGlobalListener(
-          getOwnerWindow(e.currentTarget),
-          'blur',
-          onBlur,
-          false
-        );
+        addGlobalListener(getOwnerWindow(e.currentTarget), 'blur', onBlur, false);
       };
 
       pressProps.onMouseEnter = e => {
@@ -876,12 +863,7 @@ export function usePress(props: PressHookProps): PressResult {
           e.stopPropagation();
         }
         addGlobalListener(getOwnerWindow(e.currentTarget), 'scroll', onScroll, true);
-        addGlobalListener(
-          getOwnerWindow(e.currentTarget),
-          'blur',
-          onBlur,
-          false
-        );
+        addGlobalListener(getOwnerWindow(e.currentTarget), 'blur', onBlur, false);
       };
 
       pressProps.onTouchMove = e => {
