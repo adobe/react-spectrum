@@ -626,7 +626,13 @@ export const CustomOverlay: PopoverStory = args => (
         <Popover
           {...args}
           className={`${styles['popover-base']} ${styles.animation}`}
-          style={{background: 'Canvas', color: 'CanvasText', padding: 24, zIndex: 11}}>
+          style={({isExiting}) => ({
+            background: 'Canvas',
+            color: 'CanvasText',
+            padding: 24,
+            zIndex: 11,
+            animationFillMode: isExiting ? 'forwards' : undefined
+          })}>
           <Dialog>
             {({close}) => (
               <>

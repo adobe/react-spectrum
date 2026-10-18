@@ -127,7 +127,7 @@ import {Button} from 'vanilla-starter/Button';
 </DialogTrigger>
 ```
 
-The backdrop and popover are rendered as sibling elements in the same portal, so they can be animated independently. Both support the `data-entering` and `data-exiting` attributes, and remain mounted until both exit animations have completed. `PopoverOverlay` also supports `className` and `style` functions with `isEntering`, `isExiting`, and `state` render props.
+The backdrop and popover are rendered as sibling elements in the same portal, so they can be animated independently. Both support the `data-entering` and `data-exiting` attributes, and remain mounted until both exit animations have completed. When using CSS keyframe exit animations with different durations, set `animation-fill-mode: forwards` on the exit animations so an element keeps its final appearance while waiting for the other animation to finish. `PopoverOverlay` also supports `className` and `style` functions with `isEntering`, `isExiting`, and `state` render props.
 
 Keep positioning and dismissal options, such as `placement`, `triggerRef`, and `shouldCloseOnInteractOutside`, on `Popover`. Control the open state on the trigger, or use `isOpen`, `defaultOpen`, and `onOpenChange` on `PopoverOverlay` when used standalone. A custom overlay is not rendered for non-modal popovers, such as those used by `ComboBox`, or for submenus, which share their root popover's backdrop.
 
