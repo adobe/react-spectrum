@@ -731,6 +731,31 @@ export function usePress(props: PressHookProps): PressResult {
       // NOTE: this fallback branch is entirely used by unit tests.
       // All browsers now support pointer events, but JSDOM still does not.
 
+      let onMouseUp = (e: MouseEvent) => {
+        // Only handle left clicks
+        if (e.button !== 0) {
+          return;
+        }
+
+        if (state.ignoreEmulatedMouseEvents) {
+          state.ignoreEmulatedMouseEvents = false;
+          return;
+        }
+
+        if (
+          state.target &&
+          nodeContains(state.target, getEventTarget(e) as Element) &&
+          state.pointerType != null
+        ) {
+          // Wait for onClick to fire onPress. This avoids browser issues when the DOM
+          // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
+        } else {
+          cancelEvent(e);
+        }
+
+        state.isOverTarget = false;
+      };
+
       pressProps.onMouseDown = e => {
         // Only handle left clicks
         if (e.button !== 0 || !nodeContains(e.currentTarget, getEventTarget(e))) {
@@ -811,29 +836,16 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
-      let onMouseUp = (e: MouseEvent) => {
-        // Only handle left clicks
-        if (e.button !== 0) {
-          return;
+      let onScroll = (e: Event) => {
+        if (state.isPressed && nodeContains(getEventTarget(e) as Element, state.target)) {
+          cancelEvent({
+            currentTarget: state.target,
+            shiftKey: false,
+            ctrlKey: false,
+            metaKey: false,
+            altKey: false
+          });
         }
-
-        if (state.ignoreEmulatedMouseEvents) {
-          state.ignoreEmulatedMouseEvents = false;
-          return;
-        }
-
-        if (
-          state.target &&
-          nodeContains(state.target, getEventTarget(e) as Element) &&
-          state.pointerType != null
-        ) {
-          // Wait for onClick to fire onPress. This avoids browser issues when the DOM
-          // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
-        } else {
-          cancelEvent(e);
-        }
-
-        state.isOverTarget = false;
       };
 
       pressProps.onTouchStart = e => {
@@ -956,18 +968,6 @@ export function usePress(props: PressHookProps): PressResult {
         e.stopPropagation();
         if (state.isPressed) {
           cancelEvent(createTouchEvent(state.target!, e));
-        }
-      };
-
-      let onScroll = (e: Event) => {
-        if (state.isPressed && nodeContains(getEventTarget(e) as Element, state.target)) {
-          cancelEvent({
-            currentTarget: state.target,
-            shiftKey: false,
-            ctrlKey: false,
-            metaKey: false,
-            altKey: false
-          });
         }
       };
 
