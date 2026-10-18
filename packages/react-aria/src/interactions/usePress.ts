@@ -385,6 +385,9 @@ export function usePress(props: PressHookProps): PressResult {
 
   let pressProps = useMemo(() => {
     let state = ref.current;
+    let onBlur = (e: FocusEvent) => {
+      cancelEvent(e);
+    };
     let pressProps: DOMAttributes = {
       onKeyDown(e) {
         if (
@@ -426,6 +429,12 @@ export function usePress(props: PressHookProps): PressResult {
             'keyup',
             chain(pressUp, onKeyUp),
             true
+          );
+          addGlobalListener(
+            getOwnerWindow(e.currentTarget),
+            'blur',
+            onBlur,
+            false
           );
 
           if (shouldStopPropagation) {
@@ -588,6 +597,12 @@ export function usePress(props: PressHookProps): PressResult {
             onPointerCancel,
             false
           );
+          addGlobalListener(
+            getOwnerWindow(e.currentTarget),
+            'blur',
+            onBlur,
+            false
+          );
         }
 
         if (shouldStopPropagation) {
@@ -739,6 +754,12 @@ export function usePress(props: PressHookProps): PressResult {
           }
         }
         addGlobalListener(getOwnerDocument(e.currentTarget), 'mouseup', onMouseUp, false);
+        addGlobalListener(
+          getOwnerWindow(e.currentTarget),
+          'blur',
+          onBlur,
+          false
+        );
       };
 
       pressProps.onMouseEnter = e => {
@@ -837,6 +858,12 @@ export function usePress(props: PressHookProps): PressResult {
           e.stopPropagation();
         }
         addGlobalListener(getOwnerWindow(e.currentTarget), 'scroll', onScroll, true);
+        addGlobalListener(
+          getOwnerWindow(e.currentTarget),
+          'blur',
+          onBlur,
+          false
+        );
       };
 
       pressProps.onTouchMove = e => {
@@ -1077,16 +1104,19 @@ function createTouchEvent(target: FocusableElement, e: RTouchEvent<FocusableElem
 function createEvent(target: FocusableElement, e: EventBase): EventBase {
   let clientX = e.clientX;
   let clientY = e.clientY;
-  return {
+  let event: EventBase = {
     currentTarget: target,
-    shiftKey: e.shiftKey,
-    ctrlKey: e.ctrlKey,
-    metaKey: e.metaKey,
-    altKey: e.altKey,
+    shiftKey: e.shiftKey ?? false,
+    ctrlKey: e.ctrlKey ?? false,
+    metaKey: e.metaKey ?? false,
+    altKey: e.altKey ?? false,
     clientX,
-    clientY,
-    key: e.key
+    clientY
   };
+  if (e.key != null) {
+    event.key = e.key;
+  }
+  return event;
 }
 
 interface Rect {

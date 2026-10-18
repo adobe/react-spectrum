@@ -292,6 +292,69 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should cancel press when the window is blurred during press', function () {
+      let events = [];
+      let addEvent = e => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent}
+        />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(
+        el,
+        pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0})
+      );
+      fireEvent(
+        el,
+        pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0})
+      );
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 0,
+          y: 0
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        }
+      ]);
+
+      events = [];
+      fireEvent(window, new Event('blur'));
+
+      expect(events).toEqual([
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 0,
+          y: 0
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
+
     it('should fire press events on long press even if onClick is not fired by the browser', function () {
       let events = [];
       let addEvent = e => events.push(e);
