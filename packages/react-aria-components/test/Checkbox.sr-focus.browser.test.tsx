@@ -11,15 +11,9 @@
  * limitations under the License.
  */
 
-// Verifies in a real browser (not jsdom) that the hidden native input is
-// anchored to the component's outer element via CSS anchor positioning, so its
-// bounding box matches the visible component and the screen reader focus
-// indicator aligns with the visual one.
-//
-// This is a layout test: jsdom does no layout, so it cannot validate this.
-//
-// Browsers without CSS anchor positioning support keep the default 1x1px
-// VisuallyHidden behavior, in which case these tests are skipped.
+// Layout tests: jsdom does no layout, so these run in a real browser and
+// measure the input's box against the component's. Skipped where anchor
+// positioning is unsupported, since the input then keeps the 1x1px box.
 
 import {Checkbox} from '../src/Checkbox';
 import {expect, it} from 'vitest';

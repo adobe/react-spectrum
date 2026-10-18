@@ -508,8 +508,7 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
-  // The anchor name identifies this checkbox in the document, so it has to be unique per
-  // instance: a shared name resolves to a single anchor, not one per component.
+  // Unique per instance: a shared name resolves to a single anchor.
   let anchorName = `--react-aria-checkbox-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
   let {hoverProps, isHovered} = useHover({

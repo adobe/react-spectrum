@@ -475,8 +475,7 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
-  // The anchor name identifies this radio in the document, so it has to be unique per
-  // instance: a shared name resolves to a single anchor, not one per component.
+  // Unique per instance: a shared name resolves to a single anchor.
   let anchorName = `--react-aria-radio-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
   let {hoverProps, isHovered} = useHover({

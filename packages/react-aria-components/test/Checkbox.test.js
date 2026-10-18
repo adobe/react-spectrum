@@ -491,5 +491,3 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 });
-
-describe('CheckboxButton', function () {});
