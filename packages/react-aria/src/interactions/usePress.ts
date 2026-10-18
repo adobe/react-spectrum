@@ -385,8 +385,14 @@ export function usePress(props: PressHookProps): PressResult {
 
   let pressProps = useMemo(() => {
     let state = ref.current;
-    let onBlur = (e: FocusEvent) => {
-      cancelEvent(e);
+    let onBlur = () => {
+      cancelEvent({
+        currentTarget: state.target,
+        shiftKey: false,
+        ctrlKey: false,
+        metaKey: false,
+        altKey: false
+      });
     };
     let pressProps: DOMAttributes = {
       onKeyDown(e) {
