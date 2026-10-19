@@ -432,24 +432,20 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   });
 
-  // Prevent native dragging of the item on long press if we also select on long press.
-  // Descendant drag handles are independent of the item's long press.
+  // Prevent native drag and drop on long press if we also select on long press.
   // Once the user is in selection mode, they can long press again to drag.
   // Use a capturing listener to ensure this runs before useDrag, regardless of
   // the order the props get merged.
   let onDragStartCapture = e => {
-    // Dragging a text selection may target a Text node, which doesn't have closest().
-    let target = getEventTarget(e) as Node;
-    let element =
-      target.nodeType === Node.ELEMENT_NODE ? (target as Element) : target.parentElement;
-    let dragSource = element?.closest('[draggable="true"]');
-    if (
-      dragSource === e.currentTarget &&
-      modality.current === 'touch' &&
-      longPressEnabledOnPressStart.current
-    ) {
+    if (modality.current === 'touch' && longPressEnabledOnPressStart.current) {
       e.preventDefault();
     }
+  };
+
+  // Presses handled by a descendant (e.g. a drag handle button) don't reach onPressStart,
+  // so reset the long press state here to avoid reusing it from a previous press.
+  let onPointerDownCapture = () => {
+    longPressEnabledOnPressStart.current = false;
   };
 
   // Prevent default on link clicks so that we control exactly
@@ -469,7 +465,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled) ? pressProps : {},
     longPressEnabled ? longPressProps : {},
     // oxlint-disable-next-line react/react-compiler
-    {onDoubleClick, onDragStartCapture, onClick, id},
+    {onDoubleClick, onDragStartCapture, onPointerDownCapture, onClick, id},
     // Prevent DOM focus from moving on mouse down when using virtual focus
     shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined
   );

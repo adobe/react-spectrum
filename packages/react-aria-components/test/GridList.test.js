@@ -1411,6 +1411,42 @@ describe('GridList', () => {
             expect(onAction).not.toHaveBeenCalled();
           }
         );
+
+        it.each(['none', 'handle'])(
+          'should prevent native dragging of item content on touch when long press selects (dnd: %s)',
+          async mode => {
+            function SelectableGridList() {
+              let {dragAndDropHooks} = useDragAndDrop({
+                pointerDragSource: 'handle',
+                getItems: keys => [...keys].map(key => ({'text/plain': key}))
+              });
+              return (
+                <GridList
+                  aria-label="Test"
+                  selectionMode="multiple"
+                  onAction={() => {}}
+                  dragAndDropHooks={mode === 'handle' ? dragAndDropHooks : undefined}>
+                  <GridListItem id="cat" textValue="Cat">
+                    {mode === 'handle' && <Button slot="drag">≡</Button>}
+                    <img alt="Cat" />
+                  </GridListItem>
+                </GridList>
+              );
+            }
+
+            let {getByRole} = render(<SelectableGridList />);
+            let img = getByRole('img');
+            await user.pointer({target: img, keys: '[TouchA>]'});
+            let event = new DragEvent('dragstart', {
+              dataTransfer: new DataTransfer(),
+              clientX: 0,
+              clientY: 0
+            });
+            fireEvent(img, event);
+            expect(event.defaultPrevented).toBe(true);
+            await user.pointer({target: img, keys: '[/TouchA]'});
+          }
+        );
       });
 
       it('should allow dragging from anywhere on the item by default', () => {
