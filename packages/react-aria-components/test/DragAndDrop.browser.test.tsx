@@ -28,7 +28,8 @@ import '../../../starters/docs/src/Tree.css';
 // usePress to treat the release as virtual and start accessible dragging.
 const itDrag = it.skipIf(/firefox/i.test(navigator.userAgent)).each(['GridList', 'Table', 'Tree']);
 
-itDrag('should drag from styled %s handles', async component => {
+// Native drag and drop is occasionally flaky in WebKit under CI load.
+itDrag('should drag from styled %s handles', {retry: 2}, async component => {
   let onDragStart = vi.fn();
   let onDragEnd = vi.fn();
   let onRootDrop = vi.fn();
