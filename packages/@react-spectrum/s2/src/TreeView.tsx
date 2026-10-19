@@ -366,13 +366,6 @@ const treeRow = style<TreeItemRenderProps & {isLink?: boolean; isPreviousSelecte
       touch: 1
     }
   },
-  '--dragHandleCursor': {
-    type: 'cursor',
-    value: {
-      default: 'grab',
-      isDragging: 'grabbing'
-    }
-  },
   borderRadius: 'sm'
 });
 

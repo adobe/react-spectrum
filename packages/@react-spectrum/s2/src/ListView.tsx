@@ -524,13 +524,6 @@ const listitem = style<
     // Spans the start padding, drag handle, and gap before the checkbox
     value: 22
   },
-  '--dragHandleCursor': {
-    type: 'cursor',
-    value: {
-      default: 'grab',
-      isDragging: 'grabbing'
-    }
-  },
   forcedColorAdjust: 'none'
 });
 

@@ -139,7 +139,7 @@ export function Row<T>({id, columns, children, ...otherProps}: RowProps<T>) {
         <Cell>
           <Button
             slot="drag"
-            className="[&[draggable=true]]:cursor-grab [&[draggable=true]]:pressed:cursor-grabbing [&[draggable=true]]:group-dragging/row:cursor-grabbing [&[draggable=true]]:[-webkit-user-drag:element]">
+            className="[&[draggable=true]]:cursor-grab [&[draggable=true]]:pressed:cursor-grabbing [&[draggable=true]]:[-webkit-user-drag:element]">
             ≡
           </Button>
         </Cell>

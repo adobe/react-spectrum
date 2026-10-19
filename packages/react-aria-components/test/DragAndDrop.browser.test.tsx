@@ -124,7 +124,8 @@ itDrag('should drag from styled %s handles', {retry: 2}, async component => {
   expect(onDragStart).toHaveBeenCalledTimes(1);
   expect(onDragStart).toHaveBeenCalledWith(expect.objectContaining({keys: new Set(['cat'])}));
   await expect.poll(() => onRootDrop).toHaveBeenCalledTimes(1);
-  expect(onDropEnter).toHaveReturnedWith({cursor: 'grabbing', isPressed: false});
+  // During native dragging, the browser controls the cursor based on the drop effect.
+  expect(onDropEnter).toHaveReturnedWith({cursor: 'grab', isPressed: false});
   expect(await onRootDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('cat');
   await expect.poll(() => onDragEnd).toHaveBeenCalledTimes(1);
   expect(onDragEnd).toHaveBeenCalledWith(expect.objectContaining({dropOperation: 'copy'}));

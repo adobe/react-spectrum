@@ -103,7 +103,7 @@ let dragButton = style<{
   cursor: {
     default: 'default',
     isHandlePointerSource: {
-      default: '--dragHandleCursor',
+      default: 'grab',
       isPressed: 'grabbing'
     }
   },
