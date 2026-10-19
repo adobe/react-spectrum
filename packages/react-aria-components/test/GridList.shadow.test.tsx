@@ -44,32 +44,33 @@ function DraggableGridList({onDragStart}: {onDragStart: () => void}) {
   );
 }
 
-if (parseInt(React.version, 10) >= 17) {
-  describe('GridList shadow DOM', () => {
-    beforeAll(() => {
-      enableShadowDOM();
-    });
+// React 16 is not supported with shadow DOM.
+const describeOrSkip = parseInt(React.version, 10) < 17 ? describe.skip : describe;
 
-    it('should not throw when a text selection inside a shadow root is dragged', () => {
-      let onDragStart = jest.fn();
-      let errors: unknown[] = [];
-      let onError = (e: ErrorEvent) => {
-        errors.push(e.error);
-        e.preventDefault();
-      };
-      window.addEventListener('error', onError);
-
-      let {getByTestId} = render(<DraggableGridList onDragStart={onDragStart} />);
-      let textNode = getByTestId('shadow-host').shadowRoot!.firstChild!;
-      expect(textNode.nodeType).toBe(Node.TEXT_NODE);
-
-      let dataTransfer = new DataTransfer();
-      let event = new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0});
-      fireEvent(textNode, event);
-
-      window.removeEventListener('error', onError);
-      expect(errors).toEqual([]);
-      expect(onDragStart).not.toHaveBeenCalled();
-    });
+describeOrSkip('GridList shadow DOM', () => {
+  beforeAll(() => {
+    enableShadowDOM();
   });
-}
+
+  it('should not throw when a text selection inside a shadow root is dragged', () => {
+    let onDragStart = jest.fn();
+    let errors: unknown[] = [];
+    let onError = (e: ErrorEvent) => {
+      errors.push(e.error);
+      e.preventDefault();
+    };
+    window.addEventListener('error', onError);
+
+    let {getByTestId} = render(<DraggableGridList onDragStart={onDragStart} />);
+    let textNode = getByTestId('shadow-host').shadowRoot!.firstChild!;
+    expect(textNode.nodeType).toBe(Node.TEXT_NODE);
+
+    let dataTransfer = new DataTransfer();
+    let event = new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0});
+    fireEvent(textNode, event);
+
+    window.removeEventListener('error', onError);
+    expect(errors).toEqual([]);
+    expect(onDragStart).not.toHaveBeenCalled();
+  });
+});
