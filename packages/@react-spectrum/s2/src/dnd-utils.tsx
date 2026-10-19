@@ -96,18 +96,15 @@ let dragButton = style<{
   opacity: {
     default: 1,
     isHandlePointerSource: {
-      default: 0,
-      ':is([data-hovered] *)': 1,
-      ':is([data-selected] *)': 1,
+      default: '--dragHandleOpacity',
       isFocusVisibleWithin: 1
     }
   },
   cursor: {
     default: 'default',
     isHandlePointerSource: {
-      default: 'grab',
-      isPressed: 'grabbing',
-      ':is([data-dragging] *)': 'grabbing'
+      default: '--dragHandleCursor',
+      isPressed: 'grabbing'
     }
   },
   display: 'flex',

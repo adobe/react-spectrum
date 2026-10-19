@@ -510,6 +510,21 @@ const listitem = style<
     type: 'borderTopStartRadius',
     value: 'default'
   },
+  '--dragHandleOpacity': {
+    type: 'opacity',
+    value: {
+      default: 0,
+      isHovered: 1,
+      isSelected: 1
+    }
+  },
+  '--dragHandleCursor': {
+    type: 'cursor',
+    value: {
+      default: 'grab',
+      isDragging: 'grabbing'
+    }
+  },
   forcedColorAdjust: 'none'
 });
 

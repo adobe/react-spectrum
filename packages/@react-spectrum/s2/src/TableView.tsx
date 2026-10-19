@@ -1980,6 +1980,21 @@ const row = style<
     type: 'color',
     value: rowTextColor
   },
+  '--dragHandleOpacity': {
+    type: 'opacity',
+    value: {
+      default: 0,
+      isHovered: 1,
+      isSelected: 1
+    }
+  },
+  '--dragHandleCursor': {
+    type: 'cursor',
+    value: {
+      default: 'grab',
+      isDragging: 'grabbing'
+    }
+  },
   // TODO: outline here is to emulate v3 forcedColors experience but runs into the same problem where the sticky column covers the outline
   // This doesn't quite work because it gets cut off by the checkbox cell background masking element, figure out another way. Could shrink the checkbox cell's content even more
   // and offset it by margin top but that messes up the checkbox centering a bit

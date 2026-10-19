@@ -357,6 +357,21 @@ const treeRow = style<TreeItemRenderProps & {isLink?: boolean; isPreviousSelecte
     type: 'borderTopStartRadius',
     value: 'sm'
   },
+  '--dragHandleOpacity': {
+    type: 'opacity',
+    value: {
+      default: 0,
+      isHovered: 1,
+      isSelected: 1
+    }
+  },
+  '--dragHandleCursor': {
+    type: 'cursor',
+    value: {
+      default: 'grab',
+      isDragging: 'grabbing'
+    }
+  },
   borderRadius: 'sm'
 });
 
