@@ -438,7 +438,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Use a capturing listener to ensure this runs before useDrag, regardless of
   // the order the props get merged.
   let onDragStartCapture = e => {
-    let dragSource = (getEventTarget(e) as Element).closest('[draggable="true"]');
+    // Dragging a text selection may target a Text node, which doesn't have closest().
+    let target = getEventTarget(e) as Node;
+    let element =
+      target.nodeType === Node.ELEMENT_NODE ? (target as Element) : target.parentElement;
+    let dragSource = element?.closest('[draggable="true"]');
     if (
       dragSource === e.currentTarget &&
       modality.current === 'touch' &&
