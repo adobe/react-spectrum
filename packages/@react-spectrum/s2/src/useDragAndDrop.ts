@@ -15,6 +15,7 @@ import type {
   DragAndDropOptions as RACDragAndDropOptions
 } from 'react-aria-components/useDragAndDrop';
 import {useMediaQuery} from './useMediaQuery';
+import {useMemo} from 'react';
 import {useDragAndDrop as useRACDragAndDrop} from 'react-aria-components/useDragAndDrop';
 
 export type {DragAndDrop};
@@ -38,8 +39,12 @@ export interface DragAndDropOptions<T = object> extends Omit<
  */
 export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDrop<T> {
   let isTouchDevice = useMediaQuery('not ((hover: hover) and (pointer: fine))');
-  return useRACDragAndDrop({
-    ...options,
-    pointerDragSource: isTouchDevice ? 'item' : options.pointerDragSource
-  });
+  let racOptions = useMemo(
+    () => ({
+      ...options,
+      pointerDragSource: isTouchDevice ? 'item' : options.pointerDragSource
+    }),
+    [options, isTouchDevice]
+  );
+  return useRACDragAndDrop(racOptions);
 }
