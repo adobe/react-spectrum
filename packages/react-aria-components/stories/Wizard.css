@@ -1,0 +1,115 @@
+.wizard {
+  /* Width of the chevron notch cut into each end of a step. */
+  --arrow: 14px;
+  /* How far a step slides under the previous one so the chevrons interlock. */
+  --overlap: 12px;
+  --padding: 12px;
+
+  .react-aria-TabList {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 16px;
+    background: var(--spectrum-global-color-gray-300);
+  }
+
+  .react-aria-Tab {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 8px calc(var(--arrow) + var(--padding));
+    margin-left: calc(-1 * var(--overlap));
+    background: var(--spectrum-global-color-gray-200);
+    outline: none;
+    cursor: pointer;
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--arrow)) 0,
+      100% 50%,
+      calc(100% - var(--arrow)) 100%,
+      0 100%,
+      var(--arrow) 50%
+    );
+
+    &:first-child {
+      padding-left: var(--padding);
+      margin-left: 0;
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--arrow)) 0,
+        100% 50%,
+        calc(100% - var(--arrow)) 100%,
+        0 100%
+      );
+    }
+
+    &:last-child {
+      padding-right: var(--padding);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, var(--arrow) 50%);
+    }
+
+    &[data-selected],
+    &[data-hovered] {
+      background: var(--spectrum-global-color-gray-100);
+    }
+
+    /* Steps that are not navigable yet, or every step but the current one when read only. */
+    &[data-disabled] {
+      cursor: default;
+    }
+
+    &[data-focus-visible] .marker {
+      outline: 2px solid var(--spectrum-alias-focus-ring-color);
+      outline-offset: 2px;
+    }
+  }
+
+  .marker {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 9999px;
+    background: var(--spectrum-global-color-gray-400);
+    color: var(--spectrum-global-color-gray-800);
+    font-size: 14px;
+  }
+
+  [data-completed] .marker {
+    background: var(--spectrum-global-color-green-600);
+    color: var(--spectrum-global-color-gray-50);
+  }
+
+  [data-current] .marker {
+    background: var(--spectrum-global-color-blue-600);
+    color: var(--spectrum-global-color-gray-50);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .label,
+  .position {
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .label {
+    color: var(--spectrum-global-color-gray-800);
+  }
+
+  .position {
+    color: var(--spectrum-global-color-gray-700);
+  }
+}
