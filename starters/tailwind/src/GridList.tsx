@@ -55,16 +55,29 @@ const itemStyles = tv({
   }
 });
 
+const dragButtonStyles = tv({
+  base: '[&[draggable=true]]:cursor-grab [&[draggable=true]]:pressed:cursor-grabbing [&[draggable=true]]:[-webkit-user-drag:element]',
+  variants: {
+    isDragging: {
+      true: '[&[draggable=true]]:cursor-grabbing'
+    }
+  }
+});
+
 export function GridListItem({children, ...props}: GridListItemProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaGridListItem textValue={textValue} {...props} className={itemStyles}>
       {composeRenderProps(
         children,
-        (children, {selectionMode, selectionBehavior, allowsDragging}) => (
+        (children, {selectionMode, selectionBehavior, allowsDragging, isDragging}) => (
           <>
             {/* Add elements for drag and drop and selection. */}
-            {allowsDragging && <Button slot="drag">≡</Button>}
+            {allowsDragging && (
+              <Button slot="drag" className={dragButtonStyles({isDragging})}>
+                ≡
+              </Button>
+            )}
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               <Checkbox slot="selection" />
             )}

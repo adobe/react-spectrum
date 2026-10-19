@@ -137,7 +137,11 @@ export function Row<T>({id, columns, children, ...otherProps}: RowProps<T>) {
     <AriaRow id={id} {...otherProps} className={rowStyles}>
       {allowsDragging && (
         <Cell>
-          <Button slot="drag">≡</Button>
+          <Button
+            slot="drag"
+            className="[&[draggable=true]]:cursor-grab [&[draggable=true]]:pressed:cursor-grabbing [&[draggable=true]]:group-dragging/row:cursor-grabbing [&[draggable=true]]:[-webkit-user-drag:element]">
+            ≡
+          </Button>
         </Cell>
       )}
       {selectionBehavior === 'toggle' && (
