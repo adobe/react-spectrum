@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, ButtonContext} from '../src/Button';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {Heading} from '../src/Heading';
@@ -47,6 +47,32 @@ describe('Button', () => {
     let {getByRole} = render(<Button data-foo="bar">Test</Button>);
     let button = getByRole('button');
     expect(button).toHaveAttribute('data-foo', 'bar');
+  });
+
+  it('should not pass native drag props through from props', () => {
+    let onDragStart = jest.fn();
+    let {getByRole} = render(
+      <Button draggable onDragStart={onDragStart}>
+        Test
+      </Button>
+    );
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('draggable');
+    fireEvent.dragStart(button);
+    expect(onDragStart).not.toHaveBeenCalled();
+  });
+
+  it('should support native drag props from context', () => {
+    let onDragStart = jest.fn();
+    let {getByRole} = render(
+      <ButtonContext.Provider value={{nativeDragProps: {draggable: true, onDragStart}}}>
+        <Button>Test</Button>
+      </ButtonContext.Provider>
+    );
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('draggable', 'true');
+    fireEvent.dragStart(button);
+    expect(onDragStart).toHaveBeenCalledTimes(1);
   });
 
   it('should support custom render function', async () => {

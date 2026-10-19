@@ -11,6 +11,7 @@
  */
 import type {DropIndicatorProps as AriaDropIndicatorProps} from 'react-aria/useDroppableCollection';
 
+import type {ButtonNativeDragProps} from './Button';
 import type {ClassNameOrFunction, RenderProps} from './utils';
 import type {DragAndDropHooks} from './useDragAndDrop';
 import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
@@ -158,11 +159,10 @@ interface DraggableItemSlotProps {
   /** Props to merge onto the draggable item element. */
   itemProps: HTMLAttributes<HTMLElement> | undefined;
   /** Props to provide to the item's `<Button slot="drag">`. */
-  dragButtonProps: DraggableItemResult['dragButtonProps'] &
-    Pick<HTMLAttributes<HTMLElement>, 'draggable' | 'onDrag' | 'onDragEnd'> & {
-      onDragStart?: (e: DragEvent<HTMLElement>) => void;
-      style?: CSSProperties;
-    };
+  dragButtonProps: DraggableItemResult['dragButtonProps'] & {
+    nativeDragProps?: ButtonNativeDragProps;
+    style?: CSSProperties;
+  };
 }
 
 /**
@@ -193,21 +193,23 @@ export function getDraggableItemSlotProps(
     itemProps: undefined,
     dragButtonProps: {
       ...draggableItem?.dragButtonProps,
-      draggable,
-      onDrag,
-      onDragEnd,
-      onDragStart: onDragStart
-        ? (e: DragEvent<HTMLElement>) => {
-            onDragStart(e);
-            // Without a custom preview, the browser would only render the drag button under the pointer.
-            // Use the whole item instead, matching the default when dragging from anywhere on the item.
-            let item = itemRef.current;
-            if (!e.defaultPrevented && !dragAndDropHooks.renderDragPreview && item) {
-              let rect = item.getBoundingClientRect();
-              e.dataTransfer.setDragImage(item, e.clientX - rect.x, e.clientY - rect.y);
+      nativeDragProps: {
+        draggable,
+        onDrag,
+        onDragEnd,
+        onDragStart: onDragStart
+          ? (e: DragEvent<HTMLElement>) => {
+              onDragStart(e);
+              // Without a custom preview, the browser would only render the drag button under the pointer.
+              // Use the whole item instead, matching the default when dragging from anywhere on the item.
+              let item = itemRef.current;
+              if (!e.defaultPrevented && !dragAndDropHooks.renderDragPreview && item) {
+                let rect = item.getBoundingClientRect();
+                e.dataTransfer.setDragImage(item, e.clientX - rect.x, e.clientY - rect.y);
+              }
             }
-          }
-        : undefined
+          : undefined
+      }
     }
   };
 }
