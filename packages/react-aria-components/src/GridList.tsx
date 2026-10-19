@@ -539,7 +539,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,
-      shouldSelectOnPressUp: !!dragState,
+      shouldSelectOnPressUp: !!dragState && dragAndDropHooks?.pointerDragSource !== 'handle',
       isVirtualized,
       focusMode: props.focusMode,
       allowsArrowNavigation: props.allowsArrowNavigation

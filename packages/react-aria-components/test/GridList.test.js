@@ -1560,6 +1560,39 @@ describe('GridList', () => {
         expect(onDragEnd).not.toHaveBeenCalled();
       });
 
+      it.each([
+        ['item', 'false'],
+        ['handle', 'true']
+      ])(
+        'should select on mouse down only when pointerDragSource is "handle" (%s)',
+        async (pointerDragSource, selectedOnPressStart) => {
+          function SelectableGridList() {
+            let {dragAndDropHooks} = useDragAndDrop({
+              pointerDragSource,
+              getItems: keys => [...keys].map(key => ({'text/plain': key}))
+            });
+            return (
+              <GridList
+                aria-label="Test"
+                selectionMode="multiple"
+                dragAndDropHooks={dragAndDropHooks}>
+                <GridListItem id="cat" textValue="Cat">
+                  <Button slot="drag">≡</Button>
+                  Cat
+                </GridListItem>
+              </GridList>
+            );
+          }
+
+          let {getByRole, getByText} = render(<SelectableGridList />);
+          let row = getByRole('row');
+          await user.pointer({target: getByText('Cat'), keys: '[MouseLeft>]'});
+          expect(row).toHaveAttribute('aria-selected', selectedOnPressStart);
+          await user.pointer({target: getByText('Cat'), keys: '[/MouseLeft]'});
+          expect(row).toHaveAttribute('aria-selected', 'true');
+        }
+      );
+
       it('should support keyboard dragging via the drag button when set to "handle"', async () => {
         let onDragStart = jest.fn();
         let {getAllByRole} = render(
