@@ -17,6 +17,7 @@ import type {DragAndDropHooks} from './useDragAndDrop';
 import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
 import type {DraggableItemResult} from 'react-aria/useDraggableCollection';
 import type {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import type {ItemDropTarget, Key, RefObject} from '@react-types/shared';
 import type {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import React, {
@@ -173,7 +174,7 @@ interface DraggableItemSlotProps {
 export function getDraggableItemSlotProps(
   draggableItem: DraggableItemResult | null | undefined,
   dragAndDropHooks: DragAndDropHooks | undefined,
-  itemRef: RefObject<HTMLElement | null>
+  dragButtonRef: RefObject<HTMLElement | null>
 ): DraggableItemSlotProps {
   if (dragAndDropHooks?.pointerDragSource !== 'handle') {
     return {
@@ -188,28 +189,50 @@ export function getDraggableItemSlotProps(
   }
 
   // With hasDragButton, useDraggableItem only returns native drag props for the item element.
+  // Only the drag button is made draggable, but the drag event handlers stay on the item so that
+  // events bubbling from the button have the item as their currentTarget. This keeps the drag
+  // preview positioned relative to the item, matching the behavior when dragging from the item.
   let {draggable, onDragStart, onDrag, onDragEnd} = draggableItem?.dragProps ?? {};
+  let isFromDragButton = (e: DragEvent<HTMLElement>) =>
+    nodeContains(dragButtonRef.current, getEventTarget(e) as Element);
+
   return {
-    itemProps: undefined,
+    itemProps: {
+      onDragStart: onDragStart
+        ? (e: DragEvent<HTMLElement>) => {
+            // Ignore other native drags within the item, e.g. selected text or images.
+            if (!isFromDragButton(e)) {
+              return;
+            }
+
+            onDragStart(e);
+            // Without a custom preview, the browser would only render the drag button under the pointer.
+            // Use the whole item instead, matching the default when dragging from anywhere on the item.
+            if (!e.defaultPrevented && !dragAndDropHooks.renderDragPreview) {
+              let item = e.currentTarget;
+              let rect = item.getBoundingClientRect();
+              e.dataTransfer.setDragImage(item, e.clientX - rect.x, e.clientY - rect.y);
+            }
+          }
+        : undefined,
+      onDrag: onDrag
+        ? (e: DragEvent<HTMLElement>) => {
+            if (isFromDragButton(e)) {
+              onDrag(e);
+            }
+          }
+        : undefined,
+      onDragEnd: onDragEnd
+        ? (e: DragEvent<HTMLElement>) => {
+            if (isFromDragButton(e)) {
+              onDragEnd(e);
+            }
+          }
+        : undefined
+    },
     dragButtonProps: {
       ...draggableItem?.dragButtonProps,
-      nativeDragProps: {
-        draggable,
-        onDrag,
-        onDragEnd,
-        onDragStart: onDragStart
-          ? (e: DragEvent<HTMLElement>) => {
-              onDragStart(e);
-              // Without a custom preview, the browser would only render the drag button under the pointer.
-              // Use the whole item instead, matching the default when dragging from anywhere on the item.
-              let item = itemRef.current;
-              if (!e.defaultPrevented && !dragAndDropHooks.renderDragPreview && item) {
-                let rect = item.getBoundingClientRect();
-                e.dataTransfer.setDragImage(item, e.clientX - rect.x, e.clientY - rect.y);
-              }
-            }
-          : undefined
-      }
+      nativeDragProps: {draggable}
     }
   };
 }

@@ -93,16 +93,13 @@ export interface ButtonProps
   isPending?: boolean;
 }
 
-export type ButtonNativeDragProps = Pick<
-  HTMLAttributes<HTMLElement>,
-  'draggable' | 'onDragStart' | 'onDrag' | 'onDragEnd'
->;
+export type ButtonNativeDragProps = Pick<HTMLAttributes<HTMLElement>, 'draggable'>;
 
 interface ButtonContextValue extends ButtonProps {
   isPressed?: boolean;
   /**
    * Native drag props, only provided via context by collection items whose drag button is the
-   * native drag source (e.g. pointerDragSource="handle").
+   * native drag source (e.g. pointerDragSource="handle"). Drag event handlers remain on the item.
    */
   nativeDragProps?: ButtonNativeDragProps;
 }

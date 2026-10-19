@@ -631,7 +631,11 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
   delete DOMProps.onClick;
-  let draggableSlotProps = getDraggableItemSlotProps(draggableItem, dragAndDropHooks, ref);
+  let draggableSlotProps = getDraggableItemSlotProps(
+    draggableItem,
+    dragAndDropHooks,
+    dragButtonRef
+  );
 
   return (
     <>

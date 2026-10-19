@@ -1501,6 +1501,65 @@ describe('GridList', () => {
         expect(row).not.toHaveAttribute('data-dragging');
       });
 
+      it('should position custom drag previews relative to the item when set to "handle"', () => {
+        // Place the handle at the item's far edge (e.g. RTL) so item and handle offsets differ.
+        jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+          if (this.getAttribute('role') === 'row') {
+            return {x: 100, y: 50, width: 300, height: 40, top: 50, left: 100};
+          }
+          if (this.getAttribute('slot') === 'drag') {
+            return {x: 380, y: 60, width: 20, height: 20, top: 60, left: 380};
+          }
+          return {x: 0, y: 0, width: 300, height: 40, top: 0, left: 0};
+        });
+
+        try {
+          let {getAllByRole} = render(
+            <DraggableGridList
+              pointerDragSource="handle"
+              renderDragPreview={() => <div>Drag preview</div>}
+            />
+          );
+          let row = getAllByRole('row')[0];
+          let button = within(row).getAllByRole('button')[0];
+
+          let dataTransfer = new DataTransfer();
+          fireEvent(button, new DragEvent('dragstart', {dataTransfer, clientX: 390, clientY: 70}));
+          expect(dataTransfer._dragImage.node.textContent).toBe('Drag preview');
+          expect(dataTransfer._dragImage.x).toBe(290);
+          expect(dataTransfer._dragImage.y).toBe(20);
+
+          fireEvent(button, new DragEvent('dragend', {dataTransfer, clientX: 390, clientY: 70}));
+          act(() => jest.runAllTimers());
+        } finally {
+          jest.restoreAllMocks();
+        }
+      });
+
+      it('should ignore native drag events from item content when set to "handle"', () => {
+        let onDragStart = jest.fn();
+        let onDragEnd = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableGridList
+            pointerDragSource="handle"
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+          />
+        );
+        let row = getAllByRole('row')[0];
+        let content = within(row).getByText('Cat');
+        let dataTransfer = new DataTransfer();
+        let event = new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0});
+        fireEvent(content, event);
+        fireEvent(content, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(content, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+        act(() => jest.runAllTimers());
+        expect(event.defaultPrevented).toBe(false);
+        expect(dataTransfer._dragImage).toBeUndefined();
+        expect(onDragStart).not.toHaveBeenCalled();
+        expect(onDragEnd).not.toHaveBeenCalled();
+      });
+
       it('should support keyboard dragging via the drag button when set to "handle"', async () => {
         let onDragStart = jest.fn();
         let {getAllByRole} = render(
