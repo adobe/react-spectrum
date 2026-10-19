@@ -48,6 +48,7 @@ let {
   EmptyTreeStaticStory: EmptyLoadingTree,
   LoadingStoryDepOnTopStory: LoadingMoreTree,
   TreeWithDragAndDrop,
+  TreeWithLazyChildren,
   TreeWithTextFieldStory
 } = composeStories(stories);
 
@@ -1596,6 +1597,42 @@ describe('Tree', () => {
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
         expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['folder']));
       });
+    });
+
+    it('should render and navigate into children that are added to the collection on expand', async () => {
+      let {getAllByRole} = render(<TreeWithLazyChildren />);
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.keyboard('{ArrowRight}');
+      rows = getAllByRole('row');
+      expect(rows).toHaveLength(7);
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+      expect(document.activeElement).toBe(rows[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[1]);
+      expect(rows[1]).toHaveTextContent('Project 1');
+      expect(rows[1]).toHaveAttribute('aria-level', '2');
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[2]);
+      expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
+      await user.keyboard('{ArrowRight}');
+      rows = getAllByRole('row');
+      expect(rows).toHaveLength(10);
+      expect(document.activeElement).toBe(rows[2]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[3]);
+      expect(rows[3]).toHaveTextContent('Project 2A');
+      expect(rows[3]).toHaveAttribute('aria-level', '3');
+
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(rows[2]);
     });
 
     it('should apply the proper attributes to the chevron', async () => {
