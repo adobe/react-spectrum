@@ -1347,7 +1347,11 @@ const dragCellStyle = style({
   alignContent: 'center',
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
-  backgroundColor: '--rowBackgroundColor'
+  backgroundColor: '--rowBackgroundColor',
+  '--dragHandleHitAreaWidth': {
+    type: 'width',
+    value: 'full'
+  }
 });
 
 const cellContent = style({
@@ -1985,7 +1989,8 @@ const row = style<
     value: {
       default: 0,
       isHovered: 1,
-      isSelected: 1
+      isSelected: 1,
+      touch: 1
     }
   },
   '--dragHandleCursor': {

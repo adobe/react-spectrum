@@ -362,7 +362,8 @@ const treeRow = style<TreeItemRenderProps & {isLink?: boolean; isPreviousSelecte
     value: {
       default: 0,
       isHovered: 1,
-      isSelected: 1
+      isSelected: 1,
+      touch: 1
     }
   },
   '--dragHandleCursor': {
@@ -547,12 +548,21 @@ const treeActionMenu = style({
   gridArea: 'actionmenu'
 });
 
-const treeDragButtonContainer = style({
+const treeDragButtonContainer = style<{isCheckboxVisible: boolean}>({
   gridArea: 'drag-handle',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: 10
+  width: 10,
+  '--dragHandleHitAreaWidth': {
+    type: 'width',
+    value: {
+      // Spans the start padding and drag handle, stopping before the expand button.
+      default: 14,
+      // Also spans the checkbox's marginStart, which doesn't scale.
+      isCheckboxVisible: '[calc(0.875rem * var(--s2-scale) + 0.5rem)]'
+    }
+  }
 });
 
 let treeRowFocusRing = style({
@@ -643,6 +653,10 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
         allowsDragging,
         isDropTarget
       }) => {
+        let hasCheckbox =
+          selectionMode !== 'none' &&
+          selectionBehavior === 'toggle' &&
+          selectionStyle !== 'highlight';
         return (
           <div
             className={treeCellGrid({
@@ -674,24 +688,22 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
               />
             )}
             {allowsDragging && (
-              <div className={treeDragButtonContainer}>
+              <div className={treeDragButtonContainer({isCheckboxVisible: hasCheckbox})}>
                 {!isDisabled && <DragHandleButton isFocusVisibleWithin={isFocusVisibleWithin} />}
               </div>
             )}
-            {selectionMode !== 'none' &&
-              selectionBehavior === 'toggle' &&
-              selectionStyle !== 'highlight' && (
-                // TODO: add transition?
-                <div
-                  className={treeCheckbox({
-                    isDisabled:
-                      isDisabled ||
-                      !state.selectionManager.canSelectItem(id) ||
-                      state.disabledKeys.has(id)
-                  })}>
-                  <Checkbox slot="selection" />
-                </div>
-              )}
+            {hasCheckbox && (
+              // TODO: add transition?
+              <div
+                className={treeCheckbox({
+                  isDisabled:
+                    isDisabled ||
+                    !state.selectionManager.canSelectItem(id) ||
+                    state.disabledKeys.has(id)
+                })}>
+                <Checkbox slot="selection" />
+              </div>
+            )}
             <div
               className={style({
                 gridArea: 'level-padding',

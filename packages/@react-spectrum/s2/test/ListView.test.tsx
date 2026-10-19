@@ -83,16 +83,15 @@ describe('ListView', () => {
     });
 
     it.each(['coarse', 'fine'] as const)(
-      'should allow whole-item dragging without hover and with a %s pointer even when pointerDragSource is handle',
+      'should restrict dragging to the handle without hover and with a %s pointer',
       pointer => {
         setMedia({hover: 'none', pointer});
         let {getAllByRole} = render(<DraggableListView pointerDragSource="handle" />);
         let row = getAllByRole('row')[0];
         let dragButton = within(row).getByRole('button');
-        expect(row).toHaveAttribute('draggable', 'true');
-        expect(dragButton).not.toHaveAttribute('draggable');
-        expect(dragButton.style.position).toBe('absolute');
-        expect(dragButton.style.pointerEvents).toBe('none');
+        expect(row).not.toHaveAttribute('draggable');
+        expect(dragButton).toHaveAttribute('draggable', 'true');
+        expect(dragButton.style.pointerEvents).not.toBe('none');
       }
     );
   });

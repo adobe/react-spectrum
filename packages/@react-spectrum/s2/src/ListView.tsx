@@ -515,8 +515,14 @@ const listitem = style<
     value: {
       default: 0,
       isHovered: 1,
-      isSelected: 1
+      isSelected: 1,
+      touch: 1
     }
+  },
+  '--dragHandleHitAreaWidth': {
+    type: 'width',
+    // Spans the start padding, drag handle, and gap before the checkbox
+    value: 22
   },
   '--dragHandleCursor': {
     type: 'cursor',

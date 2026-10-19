@@ -11,11 +11,11 @@
  */
 
 import {Button} from 'react-aria-components/Button';
+import {css, style} from '../style' with {type: 'macro'};
 import {DragAndDropContext, DropIndicator} from 'react-aria-components/useDragAndDrop';
 import DragHandle from '../ui-icons/DragHandle';
 import {ItemDropTarget} from '@react-types/shared';
 import React, {useContext} from 'react';
-import {style} from '../style' with {type: 'macro'};
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 let insertionIndicatorWrapper = style<{isDropTarget?: boolean; isRoot?: boolean}>({
@@ -134,6 +134,22 @@ let dragButton = style<{
   }
 });
 
+// Expands the handle's touch target without affecting layout. The pseudo-element is positioned
+// relative to the item (or cell), spanning its full height from the start edge to
+// --dragHandleHitAreaWidth, so it doesn't overlap the selection checkbox.
+const dragHandleHitArea = css(`
+  @media not ((hover: hover) and (pointer: fine)) {
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      inset-inline-start: 0;
+      width: var(--dragHandleHitAreaWidth);
+    }
+  }
+`);
+
 export function DragHandleButton({isFocusVisibleWithin}: {isFocusVisibleWithin: boolean}) {
   let {visuallyHiddenProps} = useVisuallyHidden();
   let {dragAndDropHooks} = useContext(DragAndDropContext) ?? {};
@@ -144,7 +160,8 @@ export function DragHandleButton({isFocusVisibleWithin}: {isFocusVisibleWithin: 
       slot="drag"
       style={isHidden ? visuallyHiddenProps.style : {}}
       className={renderProps =>
-        dragButton({...renderProps, isHandlePointerSource, isFocusVisibleWithin})
+        dragButton({...renderProps, isHandlePointerSource, isFocusVisibleWithin}) +
+        (isHandlePointerSource ? ' ' + dragHandleHitArea : '')
       }>
       <DragHandle size="M" />
     </Button>

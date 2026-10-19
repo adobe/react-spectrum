@@ -471,15 +471,14 @@ describe('TableView', () => {
       expect(dragButton.style.pointerEvents).not.toBe('none');
     });
 
-    it('should allow whole-item dragging on touch devices even when pointerDragSource is handle', () => {
+    it('should restrict dragging to the handle on touch devices', () => {
       setMedia({hover: 'none', pointer: 'coarse'});
       let {getAllByRole} = render(<DraggableTable pointerDragSource="handle" />);
       let row = getAllByRole('row')[1];
       let dragButton = within(row).getByRole('button');
-      expect(row).toHaveAttribute('draggable', 'true');
-      expect(dragButton).not.toHaveAttribute('draggable');
-      expect(dragButton.style.position).toBe('absolute');
-      expect(dragButton.style.pointerEvents).toBe('none');
+      expect(row).not.toHaveAttribute('draggable');
+      expect(dragButton).toHaveAttribute('draggable', 'true');
+      expect(dragButton.style.pointerEvents).not.toBe('none');
     });
   });
 });
