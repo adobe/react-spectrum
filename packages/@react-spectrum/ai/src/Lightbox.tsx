@@ -11,6 +11,7 @@
  */
 
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ButtonProps} from 'react-aria-components/Button'
 import {
   Tab as RACTab,
   TabList as RACTabList,
@@ -24,20 +25,24 @@ import {
   TabsProps,
   TabListStateContext,
 } from 'react-aria-components/Tabs';
-import {Button} from 'react-aria-components/Button';
+// import {Button} from 'react-aria-components/Button';
+import {Button} from '@react-spectrum/s2/Button';
+import {FocusScope} from 'react-aria/FocusScope';
 import {createContext, useContext, useLayoutEffect, useState, useRef, useReducer, ReactNode, RefObject} from 'react';
 import {Key} from '@react-types/shared';
 import { ModalOverlay, Modal, Dialog} from 'react-aria-components/Modal';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
-
+import {ImageContext} from '@react-spectrum/s2/Image';
 export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
   isInfinite?: boolean;
 };
 
 export type LightboxPickerProps<T> = Omit<TabListProps<T>, 'className'>;
-export type LightboxPickerItemProps = Omit<TabProps, 'className' | 'children'>;
+export interface LightboxPickerItemProps extends Omit<TabProps, 'className' | 'children'>{
+  children: ReactNode;
+}
 export interface LightboxItemsProps<T> extends Omit<TabPanelsProps<T>, 'className'> {
   children: ReactNode[]
 }
@@ -53,6 +58,7 @@ const carouselStyles = style({
   },
   gap: 16,
   minWidth: 0,
+  minHeight: 0,
   width: 'full'
 });
 
@@ -66,6 +72,7 @@ const pickerStyles = style({
   },
   alignItems: 'center',
   justifyContent: 'center',
+  flexShrink: 0,
   gap: 4
 });
 
@@ -74,28 +81,23 @@ const pickerItemStyles = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  minWidth: 32,
-  minHeight: 32,
-  borderRadius: 'full',
-  cursor: 'default'
-});
-
-const pickerDotStyles = style({
-  size: 8,
-  flexShrink: 0,
-  borderRadius: 'full',
-  borderWidth: 1,
+  borderRadius: 'lg',
+  cursor: 'default',
+  boxSizing: 'border-box',
+  borderWidth: 2,
   borderStyle: 'solid',
-  borderColor: 'gray-600',
-  backgroundColor: {
-    default: 'gray-300',
-    isSelected: 'gray-900'
+  borderColor: {
+    default: 'transparent',
+    isSelected: 'gray-800'
   }
 });
 
 const itemsStyles = style({
   minWidth: 0,
+  minHeight: 0,
+  borderRadius: 'lg',
   width: 'full',
+  height: 'full',
   display: 'flex',
   overflowX: 'auto',
   overflowY: 'hidden',
@@ -110,7 +112,9 @@ const itemStyles = style({
   alignItems: 'center',
   justifyContent: 'center',
   minWidth: 0,
+  minHeight: 0,
   width: 'full',
+  height: 'full',
   flexShrink: 0,
   scrollSnapAlign: 'start',
   scrollSnapStop: 'always'
@@ -158,11 +162,9 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
               {({close}) => (
                 <>
                 <CloseButton staticColor="white" onPress={close} />
-                  <div>
                     <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
                       <RACTabs {...props} selectedKey={ctx?.activeKey} onSelectionChange={ctx?.setActiveKey} className={renderProps => carouselStyles(renderProps)} />
                     </LightBoxCarouselContext.Provider>
-                  </div>
                 </>
               )}
             </Dialog>
@@ -180,14 +182,34 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
 }
 
 export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
-  return <RACTabList {...props} className={renderProps => pickerStyles(renderProps)} />;
+  let ctx = useContext(LightboxTriggerContext);
+  let state = useContext(TabListStateContext);
+  let picker = <RACTabList {...props} className={renderProps => pickerStyles(renderProps)} />;
+
+  // Wait until tab state has initialized its focus target before running autofocus.
+  return state?.selectionManager.focusedKey != null ? (
+    <FocusScope autoFocus={ctx?.isOpen ?? false}>
+      {picker}
+    </FocusScope>
+  ) : picker;
 }
+
+
+const thumbnailStyles = style({
+  width: 64,
+  height: 64,
+  objectFit: 'cover',
+  borderRadius: 'lg',
+  opacity: .8
+})
 
 export function LightboxPickerItem(props: LightboxPickerItemProps) {
   return (
-    <RACTab {...props} className={renderProps => pickerItemStyles(renderProps)}>
-      {renderProps => <span aria-hidden="true" className={pickerDotStyles(renderProps)} />}
-    </RACTab>
+      <RACTab {...props} className={renderProps => pickerItemStyles(renderProps)}>
+        <ImageContext.Provider value={{styles: thumbnailStyles}}>
+          {props.children}
+        </ImageContext.Provider>
+      </RACTab>
   );
 }
 
@@ -217,7 +239,13 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   );
 
   return (
-    <div className={style({display: 'flex', alignItems: 'center'})}>
+    <div className={style({
+      display: 'flex',
+      alignItems: 'center',
+      flexGrow: 1,
+      minWidth: 0,
+      minHeight: 0
+    })}>
       {wrapper}
     </div>
   );
@@ -291,13 +319,41 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
 
   return (
     <>
-      <Button onPress={prevItem} className={buttonStyles}><ChevronLeft /></Button>
+      <CarouselNavButton onPress={prevItem} side="start" />
+      {/* <Button onPress={prevItem} className={buttonStyles}><ChevronLeft /></Button> */}
         <div ref={ref} {...props} className={itemsStyles} onScroll={onScroll} onScrollEnd={onScrollEnd}>
           {props.children}
         </div>
-      <Button onPress={nextItem} className={buttonStyles}><ChevronRight /></Button>
+      <CarouselNavButton onPress={nextItem} side="end" />
+      {/* <Button onPress={nextItem} className={buttonStyles}><ChevronRight /></Button> */}
     </>
   )
+}
+
+interface CarouselNavButtonProps extends ButtonProps {
+  side?: 'start' | 'end'
+}
+
+function CarouselNavButton(props: CarouselNavButtonProps) {
+  let {side, ...otherProps} = props; 
+  // let {direction} = useLocale();
+  // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+  let Icon = side === 'start' ? ChevronLeft : ChevronRight;
+  return (
+    <Button
+      {...otherProps}
+      variant="secondary"
+      // aria-label={stringFormatter.format(
+      //   side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
+      // )}
+      // style={pressScale(ref, {
+      //   animationTimeline: '--carousel-scroll',
+      //   animationRange: side === 'start' ? '0px 32px' : 'calc(100% - 32px) 100%'
+      // } as CSSProperties)}>
+      >
+      <Icon />
+    </Button>
+  );
 }
 
 interface CarouselState {
@@ -331,6 +387,16 @@ function reducer(state: CarouselState, action: Action) {
       }
   }
 }
+
+const imageStyles = style({
+  display: 'block',
+  width: 'auto',
+  height: 'auto',
+  maxWidth: 'full',
+  maxHeight: 'full',
+  objectFit: 'contain',
+  borderRadius: 'lg'
+});
 
 interface InfiniteLightboxItemsProps<T> extends Omit<LightboxItemsProps<T>, 'children'> {
   children: (page: number) => ReactNode,
@@ -370,11 +436,7 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
   useLayoutEffect(() => {
     if (!ref.current) {
       return;
-    }
-
-    console.log('layout');
-    
-    // ref.current!.scrollLeft = ref.current!.offsetWidth * PAGES;
+    }    
 
     ref.current.scrollTo({
       left: ref.current.offsetWidth * PAGES,
@@ -415,7 +477,6 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
         page: index
       })
     }
-    console.log('onscroll');
   }
 
   let onScrollEnd = () => {
@@ -426,36 +487,38 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
 
   return (
     <>
-      <Button onPress={prevItem}><ChevronLeft /></Button>
+      <CarouselNavButton onPress={prevItem} side="start" />
       <div ref={ref} onScroll={onScroll} onScrollEnd={onScrollEnd} className={itemsStyles}>
-        {/* Placeholder to hold space in the scroll width for more pages. */}
-        <div
-          style={{
-            width: (currentPage - 1) * 100 + '%',
-            flexShrink: 0,
-            contain: 'strict',
-          }}
-        />
-        {/* contain: 'inline-size' makes these extra pages not affect the width of the parent */}
-        <div inert style={{width: '100%', flexShrink: 0, contain: 'inline-size', scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
-          {renderPage(selectedIndex - 1)}
-        </div>
-        {/* Center (visible) page */}
-        <div style={{width: '100%', flexShrink: 0, scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
-          {renderPage(selectedIndex )}
-        </div>
-        <div inert style={{width: '100%', flexShrink: 0, contain: 'inline-size', scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
-          {renderPage(selectedIndex + 1)}
-        </div>
-        <div
-          style={{
-            width: (PAGES * 2 - currentPage - 1) * 100 + '%',
-            flexShrink: 0,
-            contain: 'strict',
-          }}
-        />
+        <ImageContext.Provider value={{styles: imageStyles}}>
+          {/* Placeholder to hold space in the scroll width for more pages. */}
+          <div
+            style={{
+              width: (currentPage - 1) * 100 + '%',
+              flexShrink: 0,
+              contain: 'strict',
+            }}
+          />
+          {/* contain: 'inline-size' makes these extra pages not affect the width of the parent */}
+          <div inert style={{width: '100%', height: '100%', flexShrink: 0, contain: 'inline-size', scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
+            {renderPage(selectedIndex - 1)}
+          </div>
+          {/* Center (visible) page */}
+          <div style={{width: '100%', height: '100%', flexShrink: 0, scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
+            {renderPage(selectedIndex )}
+          </div>
+          <div inert style={{width: '100%', height: '100%', flexShrink: 0, contain: 'inline-size', scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
+            {renderPage(selectedIndex + 1)}
+          </div>
+          <div
+            style={{
+              width: (PAGES * 2 - currentPage - 1) * 100 + '%',
+              flexShrink: 0,
+              contain: 'strict',
+            }}
+          />
+        </ImageContext.Provider>
       </div>
-      <Button onPress={nextItem}><ChevronRight /></Button>
+      <CarouselNavButton onPress={nextItem} side="end" />
     </>
   )
 }
