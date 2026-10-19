@@ -190,7 +190,7 @@ export function useClippedViewTransition(
   }, [transition, getBounds]);
 }
 
-export interface SidePanelProps extends AriaLabelingProps, UnsafeStyles {
+export interface SideNavPanelProps extends AriaLabelingProps, UnsafeStyles {
   /** The content of the side panel. */
   children?: ReactNode;
   /**
@@ -209,19 +209,21 @@ export interface SidePanelProps extends AriaLabelingProps, UnsafeStyles {
   styles?: StylesPropWithHeight;
 }
 
-interface SidePanelContextValue {
+interface SideNavPanelContextValue {
   /** Whether the side panel is currently collapsed. */
   isCollapsed?: boolean;
   /** Sets whether the side panel is collapsed. */
   setCollapsed?: (isCollapsed: boolean) => void;
 }
 
-export const SidePanelContext = createContext<SidePanelContextValue>({});
+export const SideNavPanelContext = createContext<SideNavPanelContextValue>({});
 
 /** The panel a SideNav is inside, which it clips its snapshots to while the width transitions. */
-export const SidePanelBoundsContext = createContext<RefObject<HTMLDivElement | null> | null>(null);
+export const SideNavPanelBoundsContext = createContext<RefObject<HTMLDivElement | null> | null>(
+  null
+);
 
-const sidePanelStyle = style(
+const sideNavPanelStyle = style(
   {
     height: 'full',
     minHeight: 0,
@@ -247,7 +249,7 @@ const sidePanelStyle = style(
 // The ViewTransition captured element. Its width snaps rather than transitioning. A CSS transition still reports
 // its starting width when the new state is captured, which would leave the snapshot at the old
 // width for the whole animation and then jump.
-const sidePanelContentStyle = style({
+const sideNavPanelContentStyle = style({
   display: 'flex',
   flexDirection: 'column',
   height: 'full',
@@ -255,11 +257,11 @@ const sidePanelContentStyle = style({
 });
 
 /**
- * A SidePanel contains a SideNav and other app chrome in a container that collapses to an icon
+ * A SideNavPanel contains a SideNav and other app chrome in a container that collapses to an icon
  * rail.
  */
-export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
-  props: SidePanelProps,
+export const SideNavPanel = /*#__PURE__*/ forwardRef(function SideNavPanel(
+  props: SideNavPanelProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {
@@ -320,8 +322,8 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
   // A labelled collapsible panel must have a role.
   let hasLabel = filteredProps['aria-label'] != null || filteredProps['aria-labelledby'] != null;
   return (
-    <SidePanelContext.Provider value={context}>
-      <SidePanelBoundsContext.Provider value={domRef}>
+    <SideNavPanelContext.Provider value={context}>
+      <SideNavPanelBoundsContext.Provider value={domRef}>
         <div
           {...filteredProps}
           role={hasLabel ? 'region' : undefined}
@@ -329,9 +331,9 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
           // Allow children to hide via CSS instead of waiting for another state render.
           data-side-panel-collapsed={renderedCollapsed || undefined}
           style={{...UNSAFE_style, width: panelWidth}}
-          className={UNSAFE_className + sidePanelStyle(null, styles)}>
+          className={UNSAFE_className + sideNavPanelStyle(null, styles)}>
           <ViewTransition {...viewTransition}>
-            <div className={sidePanelContentStyle} style={{width: panelWidth}}>
+            <div className={sideNavPanelContentStyle} style={{width: panelWidth}}>
               <div
                 className={style({
                   flexGrow: 1,
@@ -357,8 +359,8 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
             </div>
           </ViewTransition>
         </div>
-      </SidePanelBoundsContext.Provider>
-    </SidePanelContext.Provider>
+      </SideNavPanelBoundsContext.Provider>
+    </SideNavPanelContext.Provider>
   );
 });
 
