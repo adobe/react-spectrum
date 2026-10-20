@@ -12,6 +12,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@babel/generator": "^7.23.0",
     "@babel/parser": "^7.23.0",
     "@babel/types": "^7.23.0",
     "@parcel/plugin": "^2.16.3",

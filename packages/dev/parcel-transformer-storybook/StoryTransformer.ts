@@ -1,5 +1,7 @@
 import {Transformer} from '@parcel/plugin';
 import {enrichCsf, formatCsf, loadCsf} from 'storybook/internal/csf-tools';
+import {parse} from '@babel/parser';
+import generate, {type GeneratorOptions} from '@babel/generator';
 import * as t from '@babel/types';
 import path from 'path';
 import crypto from 'crypto';
@@ -7,7 +9,9 @@ import {getClient, getCacheDir} from './react-docgen-typescript';
 import {ComponentDoc} from 'react-docgen-typescript';
 import SourceMap from '@parcel/source-map';
 
-// There's a lot of 'any' in this file. This is because the types in storybook/core are a copy and derivative of the equivalent babel types.
+// Storybook parses the story file, adds its docs, and says where the stories and the meta are.
+// Everything else edits our own Babel parse: Storybook 10 exposes Babel nodes and Storybook 11
+// ESTree nodes, so only the offsets of Storybook's nodes are read, which mean the same in both.
 
 module.exports = new Transformer({
   async transform({asset, options}) {
@@ -18,11 +22,11 @@ module.exports = new Transformer({
     }
     let code = await asset.getCode();
     let name = options.hmrOptions ? `$parcel$ReactRefresh$${asset.id.slice(-4)}` : null;
-    let {code: compiledCode, rawMappings} = processCsf(code, asset.filePath, docs, name) as any;
+    let {code: compiledCode, map: compiledMap} = await processCsf(code, asset.filePath, docs, name);
 
     let map = new SourceMap(options.projectRoot);
-    if (rawMappings) {
-      map.addIndexedMappings(rawMappings);
+    if (compiledMap) {
+      map.addVLQMap(compiledMap);
     }
 
     // Invalidate the asset whenever any types change.
@@ -33,23 +37,72 @@ module.exports = new Transformer({
   }
 });
 
-function processCsf(
+async function processCsf(
   code: string,
   filePath: string,
   docs: ComponentDoc | null,
   refreshName: string | null
-) {
-  let csf = loadCsf(code, {
-    fileName: filePath,
-    makeTitle: title => title || 'default'
-  }).parse();
-  enrichCsf(csf, csf);
+): Promise<{code: string; map: any}> {
+  // Storybook 11 reads offsets in code whose line endings it normalized to \n, and Storybook 10 in
+  // the code as given; normalizing first makes them index the same text as our own parse.
+  code = code.replace(/\r\n?/g, '\n');
+  let makeTitle = (title: string) => title || 'default';
+  let csf = loadCsf(code, {fileName: filePath, makeTitle}).parse();
+
+  // Hash the args and parameters as written, before docs parameters are added.
+  let storyHashes: Record<string, string> = {};
+  for (let name in csf._storyExports) {
+    let annotations = csf._storyAnnotations[name];
+    if (annotations) {
+      let hash = crypto.createHash('md5');
+      // Storybook 11 keeps a legacy `Story.story = {parameters}` as `story`, where Storybook 10
+      // spread it into the other annotations.
+      for (let key of ['args', 'parameters', 'story']) {
+        let annotation = annotations[key];
+        if (annotation) {
+          hash.update(code.slice(annotation.start!, annotation.end!));
+        }
+      }
+      storyHashes[name] = hash.digest('hex');
+    }
+  }
+  let metaSource = csf._metaNode ? code.slice(csf._metaNode.start!, csf._metaNode.end!) : null;
+
+  await enrichCsf(csf, csf);
+  let enriched = formatCsf(csf, {
+    sourceFileName: filePath,
+    sourceMaps: true,
+    // Storybook 10 prints with Babel, which needs this to print import attributes.
+    importAttributesKeyword: 'with'
+  } as Parameters<typeof formatCsf>[1]) as {code: string; map: any};
+  if (!docs && !refreshName) {
+    return enriched;
+  }
+
+  // Storybook finds the stories and the meta in the enriched code, and we look up the Babel nodes
+  // at the same offsets in our own parse of it.
+  csf = loadCsf(enriched.code, {fileName: filePath, makeTitle}).parse();
+  let ast = parse(enriched.code, {
+    sourceType: 'module',
+    sourceFilename: filePath,
+    plugins: [
+      'jsx',
+      'decorators-legacy',
+      'classProperties',
+      /^\s*\/\/\s*@flow/.test(enriched.code) ? 'flow' : 'typescript'
+    ]
+  });
+  let nodes = nodesBySpan(ast.program);
+  let nodeAt = <T extends t.Node>(
+    span: {start?: number | null; end?: number | null} | undefined,
+    is: (node: t.Node) => node is T
+  ): T | undefined => nodes.get(`${span?.start}:${span?.end}`)?.find(is);
 
   // Extract story functions into separate components. This enables React Fast Refresh to work properly.
   let count = 0;
   let addComponent = (node: t.Function) => {
     let name = 'Story' + count++;
-    csf._ast.program.body.push(
+    ast.program.body.push(
       t.functionDeclaration(
         t.identifier(name),
         node.params.map(p => t.cloneNode(p)),
@@ -108,26 +161,18 @@ function processCsf(
 
   if (refreshName) {
     for (let name in csf._storyExports) {
-      let node = csf.getStoryExport(name);
+      let node = nodeAt(
+        csf.getStoryExport(name),
+        (n): n is t.Function | t.ObjectExpression => t.isFunction(n) || t.isObjectExpression(n)
+      );
 
-      // Generate a hash of the args and parameters. If this changes, we bail out of Fast Refresh.
-      let annotations = csf._storyAnnotations[name];
-      let storyHash = '';
-      if (annotations) {
-        let hash = crypto.createHash('md5');
-        if (annotations.args) {
-          hash.update(code.slice(annotations.args.start!, annotations.args.end!));
-        }
-        if (annotations.parameters) {
-          hash.update(code.slice(annotations.parameters.start!, annotations.parameters.end!));
-        }
-        storyHash = hash.digest('hex');
-      }
+      // A hash of the args and parameters. If this changes, we bail out of Fast Refresh.
+      let storyHash = storyHashes[name] ?? '';
 
-      if (t.isFunction(node as any)) {
+      if (t.isFunction(node)) {
         // CSF 2 style function story.
-        let c = addComponent(node as any);
-        csf._ast.program.body.push(
+        let c = addComponent(node);
+        ast.program.body.push(
           t.expressionStatement(
             t.assignmentExpression(
               '=',
@@ -138,7 +183,7 @@ function processCsf(
         );
 
         if (storyHash) {
-          csf._ast.program.body.push(
+          ast.program.body.push(
             t.expressionStatement(
               t.assignmentExpression(
                 '=',
@@ -148,21 +193,20 @@ function processCsf(
             ) as any
           );
         }
-      } else if (node.type === 'ObjectExpression') {
-        handleRenderProperty(node as any);
+      } else if (node) {
+        handleRenderProperty(node);
         if (storyHash) {
-          node.properties.push(
-            t.objectProperty(t.identifier('_hash'), t.stringLiteral(storyHash)) as any
-          );
+          node.properties.push(t.objectProperty(t.identifier('_hash'), t.stringLiteral(storyHash)));
         }
       }
     }
   }
 
   // Hash the default export to invalidate Fast Refresh.
-  if (csf._metaNode?.type === 'ObjectExpression') {
+  let metaNode = nodeAt(csf._metaNode, t.isObjectExpression);
+  if (metaNode) {
     if (docs) {
-      let component: any = csf._metaNode.properties.find(
+      let component: any = metaNode.properties.find(
         (p: any) => t.isObjectProperty(p) && t.isIdentifier(p.key) && p.key.name === 'component'
       );
       if (t.isObjectProperty(component) && t.isExpression(component.value)) {
@@ -178,28 +222,57 @@ function processCsf(
     }
 
     if (refreshName) {
-      handleRenderProperty(csf._metaNode as any);
+      handleRenderProperty(metaNode);
 
       let hash = crypto.createHash('md5');
-      hash.update(code.slice(csf._metaNode.start!, csf._metaNode.end!));
+      hash.update(metaSource ?? '');
       hash.update(JSON.stringify(docs));
       let metaHash = hash.digest('hex');
-      csf._metaNode.properties.push(
-        t.objectProperty(t.identifier('_hash'), t.stringLiteral(metaHash)) as any
-      );
+      metaNode.properties.push(t.objectProperty(t.identifier('_hash'), t.stringLiteral(metaHash)));
     }
   }
 
   if (refreshName) {
-    wrapRefresh(csf._ast.program as any, filePath, refreshName);
+    wrapRefresh(ast.program, filePath, refreshName);
   }
 
-  // @ts-ignore
-  return formatCsf(csf, {
+  // The generator chains its map onto Storybook's. Its types lack these two options.
+  let generatorOptions: GeneratorOptions & {
+    inputSourceMap: unknown;
+    importAttributesKeyword: 'with';
+  } = {
     sourceFileName: filePath,
     sourceMaps: true,
+    inputSourceMap: enriched.map,
     importAttributesKeyword: 'with'
-  });
+  };
+  let {code: compiledCode, map} = generate(ast, generatorOptions, enriched.code);
+  return {code: compiledCode, map};
+}
+
+// Every node of a tree by its offsets. Nodes that share their offsets with others, such as an
+// expression statement and its expression, are listed outermost first.
+function nodesBySpan(root: t.Node) {
+  let nodes = new Map<string, t.Node[]>();
+  let visit = (node: t.Node) => {
+    let key = `${node.start}:${node.end}`;
+    let list = nodes.get(key);
+    if (list) {
+      list.push(node);
+    } else {
+      nodes.set(key, [node]);
+    }
+    for (let field of t.VISITOR_KEYS[node.type] ?? []) {
+      let value = (node as any)[field];
+      for (let child of Array.isArray(value) ? value : [value]) {
+        if (child && typeof child.type === 'string') {
+          visit(child);
+        }
+      }
+    }
+  };
+  visit(root);
+  return nodes;
 }
 
 function wrapRefresh(program: t.Program, filePath: string, refreshName: string) {
