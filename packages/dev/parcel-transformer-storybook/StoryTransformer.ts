@@ -48,9 +48,9 @@ type AnyFunction = ESTree.Function | ESTree.ArrowFunctionExpression;
 
 // The edits are text edits on the file Storybook parsed, so code they do not touch keeps its
 // source map. Text inserted at an offset goes after what was inserted there before, so the edits
-// that wrap code go first. The edits that wrap the module for Fast Refresh come next: they remove
-// and overwrite text, which drops what had been inserted inside it, and they leave room for the
-// statements that `enrichCsf` and this transformer append.
+// that wrap code go first. The edits that wrap the module for Fast Refresh come next: removing or
+// overwriting text also drops what was inserted in it or at its edges, and none of the edits
+// before touch those ranges. Statements are appended last, after the statements that were removed.
 async function processCsf(
   code: string,
   filePath: string,
@@ -136,11 +136,7 @@ async function processCsf(
       components.set(fn, name);
       variables.push(name);
       let {params, element} = wrapperOf(fn, name);
-      editor.edits.overwrite(
-        render.key.start,
-        render.key.end,
-        `render: (${name} = function ${name}`
-      );
+      editor.edits.overwrite(render.start, fn.start, `render: (${name} = function ${name}`);
       editor.edits.appendLeft(render.end, `, (${params}) => ${element})`);
       members.push(`_internalComponent: ${name}`);
     } else if (isFunction(value)) {
@@ -162,7 +158,7 @@ async function processCsf(
       if (annotations) {
         let hash = crypto.createHash('md5');
         // Storybook 11 keeps a legacy `Story.story = {parameters}` as a `story` annotation, where
-        // Storybook 10 spread it into `parameters`.
+        // Storybook 10 spread its members into the other annotations.
         for (let key of ['args', 'parameters', 'story']) {
           let annotation = annotations[key];
           if (annotation) {
@@ -201,7 +197,10 @@ async function processCsf(
       );
       if (component) {
         let value = component.value as ESTreeNode;
-        let target = value.type === 'Identifier' ? textOf(value) : `(${textOf(value)})`;
+        let target =
+          value.type === 'Identifier' || (value.type === 'MemberExpression' && !value.optional)
+            ? textOf(value)
+            : `(${textOf(value)})`;
         statements.push(`${target}.__docgenInfo = ${JSON.stringify(docs)};`);
       }
     }
@@ -329,9 +328,11 @@ function wrapRefresh(csf: CsfFile, filePath: string, refreshName: string) {
   };
 }
 
-// Imports, re-exports and type-only exports, which have to stay outside the `try`.
+// Directives, imports, re-exports and type-only exports, which have to stay outside the `try`.
 function staysOnTop(statement: ESTreeNode) {
   switch (statement.type) {
+    case 'ExpressionStatement':
+      return !!(statement as {directive?: string}).directive;
     case 'ImportDeclaration':
     case 'ExportAllDeclaration':
     case 'TSImportEqualsDeclaration':
