@@ -47,10 +47,8 @@ module.exports = new Transformer({
 type AnyFunction = ESTree.Function | ESTree.ArrowFunctionExpression;
 
 // The edits are text edits on the file Storybook parsed, so code they do not touch keeps its
-// source map. Text inserted at an offset goes after what was inserted there before, so the edits
-// that wrap code go first. The edits that wrap the module for Fast Refresh come next: removing or
-// overwriting text also drops what was inserted in it or at its edges, and none of the edits
-// before touch those ranges. Statements are appended last, after the statements that were removed.
+// source map. The Fast Refresh wrapping goes first: it removes statements, which statements
+// appended later skip.
 async function processCsf(
   code: string,
   filePath: string,
@@ -62,6 +60,8 @@ async function processCsf(
     makeTitle: title => title || 'default'
   }).parse();
   let editor = csf._editor;
+  let closeRefresh = refreshName ? wrapRefresh(csf, filePath, refreshName) : null;
+  await enrichCsf(csf, csf);
 
   // The variables whose value is a function, which can be renamed in place.
   let declarators = new Map<ESTreeNode, ESTreeNode>();
@@ -102,13 +102,16 @@ async function processCsf(
         fn.start,
         `function ${fn.id.name}(${params}) {\n  return ${element};\n}\n`
       );
-      editor.edits.overwrite(fn.id.start, fn.id.end, name);
+      editor.edits.update(fn.id.start, fn.id.end, name);
     } else if (declarator) {
       // `const Primary = (args) => …` becomes
-      // `const Story0 = (args) => …, Primary = (args) => <Story0 {...args} />`.
+      // `const Primary = (args) => <Story0 {...args} />, Story0 = (args) => …`.
       let {id} = declarator as {id: ESTree.IdentifierName};
-      editor.edits.overwrite(id.start, id.start + id.name.length, name);
-      editor.edits.appendLeft(declarator.end, `, ${id.name} = (${params}) => ${element}`);
+      editor.edits.update(
+        id.start,
+        id.start + id.name.length,
+        `${id.name} = (${params}) => ${element}, ${name}`
+      );
     } else {
       // `render: (args) => …` becomes `render: (Story0 = (args) => …, (args) => <Story0 {...args} />)`.
       variables.push(name);
@@ -136,15 +139,15 @@ async function processCsf(
       components.set(fn, name);
       variables.push(name);
       let {params, element} = wrapperOf(fn, name);
-      editor.edits.overwrite(render.start, fn.start, `render: (${name} = function ${name}`);
-      editor.edits.appendLeft(render.end, `, (${params}) => ${element})`);
+      editor.edits.update(render.start, fn.start, `render: (${name} = function ${name}`);
+      wrapExpression(editor, fn, '', `, (${params}) => ${element})`);
       members.push(`_internalComponent: ${name}`);
     } else if (isFunction(value)) {
       members.push(`_internalComponent: ${addComponent(value)}`);
     } else if (value.type === 'Identifier') {
       let span = render.shorthand ? render : outerSpan(value);
       let key = render.shorthand ? 'render: ' : '';
-      editor.edits.overwrite(span.start, span.end, `${key}args => <${value.name} {...args} />`);
+      editor.edits.update(span.start, span.end, `${key}args => <${value.name} {...args} />`);
     }
   };
   let statements: string[] = [];
@@ -217,10 +220,6 @@ async function processCsf(
     }
   }
 
-  let closeRefresh = refreshName ? wrapRefresh(csf, filePath, refreshName) : null;
-
-  await enrichCsf(csf, csf);
-
   if (statements.length) {
     csf._appendStatement(statements.join('\n'));
   }
@@ -262,7 +261,7 @@ function wrapRefresh(csf: CsfFile, filePath: string, refreshName: string) {
     } else if (statement.type === 'ExportNamedDeclaration') {
       let {declaration} = statement;
       if (declaration) {
-        edits.remove(statement.start, declaration.start);
+        edits.update(statement.start, declaration.start, '');
         let assignments = bindingNames(declaration).map(id => `${exportVar(id)} = ${id};`);
         if (assignments.length) {
           edits.appendLeft(statement.end, `\n${assignments.join('\n')}`);
@@ -273,11 +272,7 @@ function wrapRefresh(csf: CsfFile, filePath: string, refreshName: string) {
           .map(
             specifier => `${exportVar(textOf(specifier.exported))} = ${textOf(specifier.local)};`
           );
-        if (assignments.length) {
-          edits.overwrite(statement.start, statement.end, assignments.join('\n'));
-        } else {
-          edits.remove(statement.start, statement.end);
-        }
+        edits.update(statement.start, statement.end, assignments.join('\n'));
       }
     } else if (statement.type === 'ExportDefaultDeclaration') {
       let declaration = statement.declaration as ESTreeNode;
@@ -286,10 +281,10 @@ function wrapRefresh(csf: CsfFile, filePath: string, refreshName: string) {
         (declaration.type === 'FunctionDeclaration' || declaration.type === 'ClassDeclaration') &&
         declaration.id
       ) {
-        edits.remove(statement.start, declaration.start);
+        edits.update(statement.start, declaration.start, '');
         edits.appendLeft(statement.end, `\n${variable} = ${declaration.id.name};`);
       } else {
-        edits.overwrite(statement.start, outerSpan(declaration).start, `${variable} = `);
+        edits.update(statement.start, outerSpan(declaration).start, `${variable} = `);
         if (code[statement.end - 1] !== ';') {
           edits.appendLeft(statement.end, ';');
         }
