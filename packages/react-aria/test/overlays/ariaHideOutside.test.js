@@ -924,3 +924,91 @@ describe('ariaHideOutside with shadow DOM', function () {
     });
   });
 });
+
+describe('ariaHideOutside with inert support', function () {
+  let ariaHideOutsideWithInert;
+  let outside, target;
+
+  beforeAll(() => {
+    // jsdom does not implement inert, so emulate it before loading the module,
+    // which checks for support when it is first evaluated.
+    Object.defineProperty(HTMLElement.prototype, 'inert', {
+      configurable: true,
+      get() {
+        return this.hasAttribute('inert');
+      },
+      set(value) {
+        this.toggleAttribute('inert', Boolean(value));
+      }
+    });
+    jest.isolateModules(() => {
+      ariaHideOutsideWithInert = require('../../src/overlays/ariaHideOutside').ariaHideOutside;
+    });
+  });
+
+  afterAll(() => {
+    delete HTMLElement.prototype.inert;
+  });
+
+  beforeEach(() => {
+    outside = document.createElement('div');
+    target = document.createElement('div');
+    document.body.append(outside, target);
+  });
+
+  afterEach(() => {
+    outside.remove();
+    target.remove();
+  });
+
+  it('should hide with inert when shouldUseInert is set', function () {
+    let restore = ariaHideOutsideWithInert([target], {shouldUseInert: true});
+    expect(outside.inert).toBe(true);
+    expect(outside).not.toHaveAttribute('aria-hidden');
+
+    restore();
+    expect(outside.inert).toBe(false);
+  });
+
+  it('should remove aria-hidden when an inert call is restored last', function () {
+    let restoreAttribute = ariaHideOutsideWithInert([target]);
+    let restoreInert = ariaHideOutsideWithInert([target], {shouldUseInert: true});
+    expect(outside).toHaveAttribute('aria-hidden', 'true');
+
+    restoreAttribute();
+    expect(outside).toHaveAttribute('aria-hidden', 'true');
+
+    restoreInert();
+    expect(outside).not.toHaveAttribute('aria-hidden');
+    expect(outside.inert).toBe(false);
+
+    // The element is tracked again by later calls.
+    let restore = ariaHideOutsideWithInert([target]);
+    expect(outside).toHaveAttribute('aria-hidden', 'true');
+    restore();
+    expect(outside).not.toHaveAttribute('aria-hidden');
+  });
+
+  it('should remove inert when an aria-hidden call is restored last', function () {
+    let restoreInert = ariaHideOutsideWithInert([target], {shouldUseInert: true});
+    let restoreAttribute = ariaHideOutsideWithInert([target]);
+    expect(outside.inert).toBe(true);
+
+    restoreInert();
+    expect(outside.inert).toBe(true);
+
+    restoreAttribute();
+    expect(outside.inert).toBe(false);
+    expect(outside).not.toHaveAttribute('aria-hidden');
+  });
+
+  it('should not remove aria-hidden that was already set by the app', function () {
+    outside.setAttribute('aria-hidden', 'true');
+    let restore = ariaHideOutsideWithInert([target], {shouldUseInert: true});
+    expect(outside.inert).toBe(true);
+
+    restore();
+    expect(outside.inert).toBe(false);
+    expect(outside).toHaveAttribute('aria-hidden', 'true');
+  });
+});

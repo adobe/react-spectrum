@@ -30,6 +30,9 @@ interface AriaHideOutsideOptions {
 // Keeps a ref count of all hidden elements. Added to when hiding an element, and
 // subtracted from when showing it again. When it reaches zero, aria-hidden is removed.
 let refCountMap = new WeakMap<Element, number>();
+// Records whether each hidden element was hidden with `inert` or `aria-hidden`, so the
+// last restore undoes that mark even when it comes from a call using the other one.
+let inertHiddenMap = new WeakMap<Element, boolean>();
 interface ObserverWrapper {
   visibleNodes: Set<Element>;
   hiddenNodes: Set<Element>;
@@ -62,10 +65,24 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
   };
 
   let setHidden = (element: Element, hidden: boolean) => {
-    if (shouldUseInert && element instanceof windowObj.HTMLElement) {
-      element.inert = hidden;
-    } else if (hidden) {
-      element.setAttribute('aria-hidden', 'true');
+    if (hidden) {
+      if (shouldUseInert && element instanceof windowObj.HTMLElement) {
+        element.inert = true;
+        inertHiddenMap.set(element, true);
+      } else {
+        element.setAttribute('aria-hidden', 'true');
+        inertHiddenMap.set(element, false);
+      }
+      return;
+    }
+
+    // Undo the mark that was applied when the element was first hidden. It may have come
+    // from another ariaHideOutside call using the other mechanism, e.g. useComboBox
+    // (aria-hidden) and usePopover (inert) overlapping on the same element.
+    let wasInertHidden = inertHiddenMap.get(element);
+    inertHiddenMap.delete(element);
+    if (wasInertHidden && element instanceof windowObj.HTMLElement) {
+      element.inert = false;
     } else {
       element.removeAttribute('aria-hidden');
       if (element instanceof windowObj.HTMLElement) {
