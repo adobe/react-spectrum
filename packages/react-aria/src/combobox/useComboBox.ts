@@ -52,6 +52,7 @@ import {mergeProps} from '../utils/mergeProps';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
+import {useGlobalListeners} from '../utils/useGlobalListeners';
 import {useId} from '../utils/useId';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
@@ -266,11 +267,16 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     allowRepeats: true
   });
 
-  // When the ComboBox is inside a FocusScope that contains focus (e.g. a modal Dialog), pressing outside of it:
-  //   1. blurs the input on pointerdown, which closes the menu,
-  //   2. then FocusScope moves focus back to the input in a requestAnimationFrame.
-  // That second focus is not a user action, so it should not reopen the menu when menuTrigger="focus".
-  let isBlurredByPointer = useRef(false);
+  // When the input is blurred by a press outside, focus may be moved back to it programmatically without any
+  // further user interaction (e.g. by a FocusScope that contains focus, such as a modal Dialog). That focus is
+  // not a user action, so it should not reopen the menu when menuTrigger="focus". Track whether the user has
+  // pressed or typed anywhere since the blur; if they haven't, the next focus didn't come from them.
+  let hasInteractedSinceBlur = useRef(true);
+  let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
+  let onInteractionAfterBlur = () => {
+    hasInteractedSinceBlur.current = true;
+    removeAllGlobalListeners();
+  };
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     let blurFromButton = nodeContains(buttonRef.current, e.relatedTarget as Element);
@@ -287,14 +293,13 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
 
     state.setFocused(false);
 
+    // The blur happens after the pointerdown that caused it has been dispatched, so these listeners only
+    // see interactions that come after it.
     if (getInteractionModality() === 'pointer') {
-      isBlurredByPointer.current = true;
-      // Reset the flag after FocusScope has had a chance to restore focus (its requestAnimationFrame was
-      // scheduled before this one). If focus was not moved back, e.g. outside a Dialog, the next focus
-      // will be from the user and should open the menu as usual.
-      requestAnimationFrame(() => {
-        isBlurredByPointer.current = false;
-      });
+      hasInteractedSinceBlur.current = false;
+      let ownerDocument = getOwnerDocument(inputRef.current);
+      addGlobalListener(ownerDocument, 'pointerdown', onInteractionAfterBlur, true);
+      addGlobalListener(ownerDocument, 'keydown', onInteractionAfterBlur, true);
     }
   };
 
@@ -308,7 +313,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     }
 
     // Don't open the menu if focus was moved back to the input after a press outside (see above).
-    state.setFocused(true, !isBlurredByPointer.current);
+    state.setFocused(true, hasInteractedSinceBlur.current);
+    onInteractionAfterBlur();
   };
 
   let valueId = useValueId([
