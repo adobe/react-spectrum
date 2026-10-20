@@ -89,6 +89,7 @@ async function processCsf(
       'jsx',
       'decorators-legacy',
       'classProperties',
+      'importAttributes',
       /^\s*\/\/\s*@flow/.test(enriched.code) ? 'flow' : 'typescript'
     ]
   });
@@ -236,7 +237,7 @@ async function processCsf(
     wrapRefresh(ast.program, filePath, refreshName);
   }
 
-  // The generator chains its map onto Storybook's. Its types lack these two options.
+  // Chains the map onto Storybook's. Older @types/babel__generator lack these options.
   let generatorOptions: GeneratorOptions & {
     inputSourceMap: unknown;
     importAttributesKeyword: 'with';
