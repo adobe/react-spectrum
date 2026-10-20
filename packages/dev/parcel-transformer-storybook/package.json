@@ -12,9 +12,6 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@babel/generator": "^7.23.0",
-    "@babel/parser": "^7.23.0",
-    "@babel/types": "^7.23.0",
     "@parcel/plugin": "^2.16.3",
     "@parcel/source-map": "^2.1.1",
     "react-docgen-typescript": "patch:react-docgen-typescript@npm%3A2.4.0#~/.yarn/patches/react-docgen-typescript-npm-2.4.0-9669bef2f0.patch",

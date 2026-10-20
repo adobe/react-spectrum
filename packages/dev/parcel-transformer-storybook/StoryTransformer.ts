@@ -1,17 +1,26 @@
 import {Transformer} from '@parcel/plugin';
-import {enrichCsf, formatCsf, loadCsf} from 'storybook/internal/csf-tools';
-import {parse} from '@babel/parser';
-import generate, {type GeneratorOptions} from '@babel/generator';
-import * as t from '@babel/types';
+import {
+  type CsfFile,
+  type ESTree,
+  type ESTreeNode,
+  appendToList,
+  enrichCsf,
+  formatCsf,
+  isFunction,
+  loadCsf,
+  objectList,
+  outerSpan,
+  removeStatement,
+  statementSpan,
+  staticKey,
+  textOf,
+  wrapExpression
+} from 'storybook/internal/csf-tools';
 import path from 'path';
 import crypto from 'crypto';
 import {getClient, getCacheDir} from './react-docgen-typescript';
 import {ComponentDoc} from 'react-docgen-typescript';
 import SourceMap from '@parcel/source-map';
-
-// Storybook parses the story file, adds its docs, and says where the stories and the meta are.
-// Everything else edits our own Babel parse: Storybook 10 exposes Babel nodes and Storybook 11
-// ESTree nodes, so only the offsets of Storybook's nodes are read, which mean the same in both.
 
 module.exports = new Transformer({
   async transform({asset, options}) {
@@ -25,9 +34,7 @@ module.exports = new Transformer({
     let {code: compiledCode, map: compiledMap} = await processCsf(code, asset.filePath, docs, name);
 
     let map = new SourceMap(options.projectRoot);
-    if (compiledMap) {
-      map.addVLQMap(compiledMap);
-    }
+    map.addVLQMap(compiledMap as Parameters<SourceMap['addVLQMap']>[0]);
 
     // Invalidate the asset whenever any types change.
     asset.invalidateOnFileChange(path.join(getCacheDir(options), 'sentinel'));
@@ -37,356 +44,343 @@ module.exports = new Transformer({
   }
 });
 
+type AnyFunction = ESTree.Function | ESTree.ArrowFunctionExpression;
+
+// The edits are text edits on the file Storybook parsed, so code they do not touch keeps its
+// source map. Text inserted at an offset goes after what was inserted there before, so the edits
+// that wrap code go first. The edits that wrap the module for Fast Refresh come next: they remove
+// and overwrite text, which drops what had been inserted inside it, and they leave room for the
+// statements that `enrichCsf` and this transformer append.
 async function processCsf(
   code: string,
   filePath: string,
   docs: ComponentDoc | null,
   refreshName: string | null
-): Promise<{code: string; map: any}> {
-  // Storybook 11 reads offsets in code whose line endings it normalized to \n, and Storybook 10 in
-  // the code as given; normalizing first makes them index the same text as our own parse.
-  code = code.replace(/\r\n?/g, '\n');
-  let makeTitle = (title: string) => title || 'default';
-  let csf = loadCsf(code, {fileName: filePath, makeTitle}).parse();
+) {
+  let csf = loadCsf(code, {
+    fileName: filePath,
+    makeTitle: title => title || 'default'
+  }).parse();
+  let editor = csf._editor;
 
-  // Hash the args and parameters as written, before docs parameters are added.
-  let storyHashes: Record<string, string> = {};
-  for (let name in csf._storyExports) {
-    let annotations = csf._storyAnnotations[name];
-    if (annotations) {
-      let hash = crypto.createHash('md5');
-      // Storybook 11 keeps a legacy `Story.story = {parameters}` as `story`, where Storybook 10
-      // spread it into the other annotations.
-      for (let key of ['args', 'parameters', 'story']) {
-        let annotation = annotations[key];
-        if (annotation) {
-          hash.update(code.slice(annotation.start!, annotation.end!));
+  // The variables whose value is a function, which can be renamed in place.
+  let declarators = new Map<ESTreeNode, ESTreeNode>();
+  for (let statement of csf._program.body) {
+    let declaration =
+      statement.type === 'ExportNamedDeclaration' ? statement.declaration : statement;
+    if (declaration?.type === 'VariableDeclaration') {
+      for (let declarator of declaration.declarations) {
+        if (declarator.id.type === 'Identifier' && declarator.init && isFunction(declarator.init)) {
+          declarators.set(declarator.init, declarator);
         }
       }
-      storyHashes[name] = hash.digest('hex');
     }
   }
-  let metaSource = csf._metaNode ? code.slice(csf._metaNode.start!, csf._metaNode.end!) : null;
-
-  await enrichCsf(csf, csf);
-  let enriched = formatCsf(csf, {
-    sourceFileName: filePath,
-    sourceMaps: true,
-    // Storybook 10 prints with Babel, which needs this to print import attributes.
-    importAttributesKeyword: 'with'
-  } as Parameters<typeof formatCsf>[1]) as {code: string; map: any};
-  if (!docs && !refreshName) {
-    return enriched;
-  }
-
-  // Storybook finds the stories and the meta in the enriched code, and we look up the Babel nodes
-  // at the same offsets in our own parse of it.
-  csf = loadCsf(enriched.code, {fileName: filePath, makeTitle}).parse();
-  let ast = parse(enriched.code, {
-    sourceType: 'module',
-    sourceFilename: filePath,
-    plugins: [
-      'jsx',
-      'decorators-legacy',
-      'classProperties',
-      'importAttributes',
-      /^\s*\/\/\s*@flow/.test(enriched.code) ? 'flow' : 'typescript'
-    ]
-  });
-  let nodes = nodesBySpan(ast.program);
-  let nodeAt = <T extends t.Node>(
-    span: {start?: number | null; end?: number | null} | undefined,
-    is: (node: t.Node) => node is T
-  ): T | undefined => nodes.get(`${span?.start}:${span?.end}`)?.find(is);
-
   // Extract story functions into separate components. This enables React Fast Refresh to work properly.
-  let count = 0;
-  let addComponent = (node: t.Function) => {
-    let name = 'Story' + count++;
-    ast.program.body.push(
-      t.functionDeclaration(
-        t.identifier(name),
-        node.params.map(p => t.cloneNode(p)),
-        t.isExpression(node.body) ? t.blockStatement([t.returnStatement(node.body)]) : node.body
-      ) as any
-    );
-    node.body = t.blockStatement([
-      t.returnStatement(
-        t.jsxElement(
-          t.jsxOpeningElement(
-            t.jsxIdentifier(name),
-            node.params.length && t.isIdentifier(node.params[0])
-              ? [t.jsxSpreadAttribute(t.cloneNode(node.params[0]))]
-              : [],
-            true
-          ),
-          null,
-          [],
-          true
-        )
-      )
-    ]);
+  let components = new Map<ESTreeNode, string>();
+  // Components extracted from expressions are assigned inside them, so they need variables.
+  let variables: string[] = [];
+  // The wrapper that renders a component with the props the story function got.
+  let wrapperOf = (fn: AnyFunction, name: string) => {
+    let [first] = fn.params;
+    let params = first ? csf._code.slice(first.start, fn.params.at(-1)!.end) : '';
+    let props = first?.type === 'Identifier' ? ` {...${first.name}}` : '';
+    return {params, element: `<${name}${props} />`};
+  };
+  let addComponent = (fn: AnyFunction) => {
+    let name = components.get(fn);
+    if (name) {
+      return name;
+    }
+    name = 'Story' + components.size;
+    components.set(fn, name);
+    let {params, element} = wrapperOf(fn, name);
+    let declarator = declarators.get(fn);
+    if (fn.type === 'FunctionDeclaration' && fn.id) {
+      // `function Primary(args) {…}` becomes a wrapper, followed by `function Story0(args) {…}`.
+      editor.edits.appendRight(
+        fn.start,
+        `function ${fn.id.name}(${params}) {\n  return ${element};\n}\n`
+      );
+      editor.edits.overwrite(fn.id.start, fn.id.end, name);
+    } else if (declarator) {
+      // `const Primary = (args) => …` becomes
+      // `const Story0 = (args) => …, Primary = (args) => <Story0 {...args} />`.
+      let {id} = declarator as {id: ESTree.IdentifierName};
+      editor.edits.overwrite(id.start, id.start + id.name.length, name);
+      editor.edits.appendLeft(declarator.end, `, ${id.name} = (${params}) => ${element}`);
+    } else {
+      // `render: (args) => …` becomes `render: (Story0 = (args) => …, (args) => <Story0 {...args} />)`.
+      variables.push(name);
+      wrapExpression(editor, fn, `(${name} = `, `, (${params}) => ${element})`);
+    }
     return name;
   };
 
-  let handleRenderProperty = (node: t.ObjectExpression) => {
+  let handleRenderProperty = (node: ESTree.ObjectExpression, members: string[]) => {
     // CSF 3 style object story. Extract render function into a component.
     let render = node.properties.find(
-      p =>
-        (t.isObjectProperty(p) || t.isObjectMethod(p)) &&
-        t.isIdentifier(p.key) &&
-        p.key.name === 'render'
+      (p): p is ESTree.ObjectProperty => p.type === 'Property' && staticKey(p) === 'render'
     );
-    if (render?.type === 'ObjectProperty' && t.isFunction(render.value)) {
-      let c = addComponent(render.value);
-      node.properties.push(t.objectProperty(t.identifier('_internalComponent'), t.identifier(c)));
-    } else if (render?.type === 'ObjectMethod') {
-      let c = addComponent(render);
-      node.properties.push(t.objectProperty(t.identifier('_internalComponent'), t.identifier(c)));
-    } else if (t.isObjectProperty(render) && render.value.type === 'Identifier') {
-      render.value = t.arrowFunctionExpression(
-        [t.identifier('args')],
-        t.jsxElement(
-          t.jsxOpeningElement(
-            t.jsxIdentifier(render.value.name),
-            [t.jsxSpreadAttribute(t.identifier('args'))],
-            true
-          ),
-          null,
-          [],
-          true
-        )
+    if (!render) {
+      return;
+    }
+    let value = render.value as ESTreeNode;
+    if (render.method) {
+      let fn = value as ESTree.Function;
+      if (render.kind !== 'init' || fn.async || fn.generator) {
+        return;
+      }
+      // `render(args) {…}` becomes `render: (Story0 = function Story0(args) {…}, …)`.
+      let name = 'Story' + components.size;
+      components.set(fn, name);
+      variables.push(name);
+      let {params, element} = wrapperOf(fn, name);
+      editor.edits.overwrite(
+        render.key.start,
+        render.key.end,
+        `render: (${name} = function ${name}`
       );
+      editor.edits.appendLeft(render.end, `, (${params}) => ${element})`);
+      members.push(`_internalComponent: ${name}`);
+    } else if (isFunction(value)) {
+      members.push(`_internalComponent: ${addComponent(value)}`);
+    } else if (value.type === 'Identifier') {
+      let span = render.shorthand ? render : outerSpan(value);
+      let key = render.shorthand ? 'render: ' : '';
+      editor.edits.overwrite(span.start, span.end, `${key}args => <${value.name} {...args} />`);
     }
   };
-
+  let statements: string[] = [];
   if (refreshName) {
     for (let name in csf._storyExports) {
-      let node = nodeAt(
-        csf.getStoryExport(name),
-        (n): n is t.Function | t.ObjectExpression => t.isFunction(n) || t.isObjectExpression(n)
-      );
+      let node = csf.getStoryExport(name);
 
-      // A hash of the args and parameters. If this changes, we bail out of Fast Refresh.
-      let storyHash = storyHashes[name] ?? '';
+      // Generate a hash of the args and parameters. If this changes, we bail out of Fast Refresh.
+      let annotations = csf._storyAnnotations[name];
+      let storyHash = '';
+      if (annotations) {
+        let hash = crypto.createHash('md5');
+        // Storybook 11 keeps a legacy `Story.story = {parameters}` as a `story` annotation, where
+        // Storybook 10 spread it into `parameters`.
+        for (let key of ['args', 'parameters', 'story']) {
+          let annotation = annotations[key];
+          if (annotation) {
+            hash.update(textOf(annotation));
+          }
+        }
+        storyHash = hash.digest('hex');
+      }
 
-      if (t.isFunction(node)) {
+      if (isFunction(node)) {
         // CSF 2 style function story.
         let c = addComponent(node);
-        ast.program.body.push(
-          t.expressionStatement(
-            t.assignmentExpression(
-              '=',
-              t.memberExpression(t.identifier(name), t.identifier('_internalComponent')),
-              t.identifier(c)
-            )
-          ) as any
-        );
-
+        statements.push(`${name}._internalComponent = ${c};`);
         if (storyHash) {
-          ast.program.body.push(
-            t.expressionStatement(
-              t.assignmentExpression(
-                '=',
-                t.memberExpression(t.identifier(name), t.identifier('_hash')),
-                t.stringLiteral(storyHash)
-              )
-            ) as any
-          );
+          statements.push(`${name}._hash = ${JSON.stringify(storyHash)};`);
         }
-      } else if (node) {
-        handleRenderProperty(node);
+      } else if (node?.type === 'ObjectExpression') {
+        let members: string[] = [];
+        handleRenderProperty(node, members);
         if (storyHash) {
-          node.properties.push(t.objectProperty(t.identifier('_hash'), t.stringLiteral(storyHash)));
+          members.push(`_hash: ${JSON.stringify(storyHash)}`);
+        }
+        if (members.length) {
+          appendToList(editor, objectList(editor, node), members);
         }
       }
     }
   }
 
-  // Hash the default export to invalidate Fast Refresh.
-  let metaNode = nodeAt(csf._metaNode, t.isObjectExpression);
-  if (metaNode) {
+  let meta = csf._metaNodeIsSynthetic ? undefined : csf._metaNode;
+  if (meta) {
     if (docs) {
-      let component: any = metaNode.properties.find(
-        (p: any) => t.isObjectProperty(p) && t.isIdentifier(p.key) && p.key.name === 'component'
+      let component = meta.properties.find(
+        (p): p is ESTree.ObjectProperty =>
+          p.type === 'Property' && !p.method && staticKey(p) === 'component'
       );
-      if (t.isObjectProperty(component) && t.isExpression(component.value)) {
-        component.value = t.sequenceExpression([
-          t.assignmentExpression(
-            '=',
-            t.memberExpression(component.value, t.identifier('__docgenInfo')),
-            t.valueToNode(docs)
-          ),
-          component.value
-        ]);
+      if (component) {
+        let value = component.value as ESTreeNode;
+        let target = value.type === 'Identifier' ? textOf(value) : `(${textOf(value)})`;
+        statements.push(`${target}.__docgenInfo = ${JSON.stringify(docs)};`);
       }
     }
 
     if (refreshName) {
-      handleRenderProperty(metaNode);
-
+      // Hash the default export to invalidate Fast Refresh.
+      let members: string[] = [];
+      handleRenderProperty(meta, members);
       let hash = crypto.createHash('md5');
-      hash.update(metaSource ?? '');
+      hash.update(textOf(meta));
       hash.update(JSON.stringify(docs));
-      let metaHash = hash.digest('hex');
-      metaNode.properties.push(t.objectProperty(t.identifier('_hash'), t.stringLiteral(metaHash)));
+      members.push(`_hash: ${JSON.stringify(hash.digest('hex'))}`);
+      appendToList(editor, objectList(editor, meta), members);
     }
   }
 
-  if (refreshName) {
-    wrapRefresh(ast.program, filePath, refreshName);
+  let closeRefresh = refreshName ? wrapRefresh(csf, filePath, refreshName) : null;
+
+  await enrichCsf(csf, csf);
+
+  if (statements.length) {
+    csf._appendStatement(statements.join('\n'));
   }
+  closeRefresh?.(variables);
 
-  // Chains the map onto Storybook's. Older @types/babel__generator lack these options.
-  let generatorOptions: GeneratorOptions & {
-    inputSourceMap: unknown;
-    importAttributesKeyword: 'with';
-  } = {
-    sourceFileName: filePath,
-    sourceMaps: true,
-    inputSourceMap: enriched.map,
-    importAttributesKeyword: 'with'
+  return formatCsf(csf, {sourceMaps: true, sourceFileName: filePath}) as {
+    code: string;
+    map: object;
   };
-  let {code: compiledCode, map} = generate(ast, generatorOptions, enriched.code);
-  return {code: compiledCode, map};
 }
 
-// Every node of a tree by its offsets. Nodes that share their offsets with others, such as an
-// expression statement and its expression, are listed outermost first.
-function nodesBySpan(root: t.Node) {
-  let nodes = new Map<string, t.Node[]>();
-  let visit = (node: t.Node) => {
-    let key = `${node.start}:${node.end}`;
-    let list = nodes.get(key);
-    if (list) {
-      list.push(node);
-    } else {
-      nodes.set(key, [node]);
-    }
-    for (let field of t.VISITOR_KEYS[node.type] ?? []) {
-      let value = (node as any)[field];
-      for (let child of Array.isArray(value) ? value : [value]) {
-        if (child && typeof child.type === 'string') {
-          visit(child);
-        }
-      }
-    }
-  };
-  visit(root);
-  return nodes;
-}
-
-function wrapRefresh(program: t.Program, filePath: string, refreshName: string) {
+// Wrap the module for React Fast Refresh: imports and re-exports stay on top, the rest runs in a
+// `try` between the refresh prelude and postlude, and every export goes through a variable that
+// a final `export {…}` exports.
+function wrapRefresh(csf: CsfFile, filePath: string, refreshName: string) {
+  let editor = csf._editor;
+  let {edits, code} = editor;
   let wrapperPath = `${path.relative(path.dirname(filePath), __dirname)}/csf-hmr.js`;
+  let helpers = `${refreshName}$Helpers`;
+  let exportVars: string[] = [];
+  let exports: string[] = [];
+  let exportVar = (exported: string) => {
+    let name = refreshName + '$Export' + exportVars.length;
+    exportVars.push(name);
+    exports.push(`${name} as ${exported}`);
+    return name;
+  };
 
-  // Group imports, exports, and body statements which will be wrapped in a try...catch.
-  let imports: (t.ImportDeclaration | t.ExportDeclaration)[] = [];
-  let statements: t.Statement[] = [];
-  let exportVars: t.VariableDeclarator[] = [];
-  let exports: t.ExportSpecifier[] = [];
-
-  for (let statement of program.body) {
-    if (t.isImportDeclaration(statement) || t.isExportAllDeclaration(statement)) {
-      imports.push(statement);
-    } else if (t.isExportNamedDeclaration(statement)) {
-      if (statement.exportKind === 'type' || statement.source) {
-        imports.push(statement);
-      } else if (statement.declaration) {
-        statements.push(statement.declaration);
-        for (let id in t.getOuterBindingIdentifiers(statement.declaration)) {
-          let name = refreshName + '$Export' + exportVars.length;
-          exportVars.push(t.variableDeclarator(t.identifier(name)));
-          exports.push(t.exportSpecifier(t.identifier(name), t.identifier(id)));
-          statements.push(
-            t.expressionStatement(t.assignmentExpression('=', t.identifier(name), t.identifier(id)))
-          );
-        }
-      } else if (statement.specifiers) {
-        for (let specifier of statement.specifiers) {
-          if (t.isExportSpecifier(specifier)) {
-            let name = refreshName + '$Export' + exportVars.length;
-            exportVars.push(t.variableDeclarator(t.identifier(name)));
-            exports.push(t.exportSpecifier(t.identifier(name), specifier.exported));
-            statements.push(
-              t.expressionStatement(
-                t.assignmentExpression('=', t.identifier(name), specifier.local)
-              )
-            );
-          }
-        }
+  let body = csf._program.body;
+  let first = body.findIndex(statement => !staysOnTop(statement));
+  let hoisted: string[] = [];
+  body.forEach((statement, index) => {
+    if (staysOnTop(statement)) {
+      // Imports cannot go inside the `try`, so the ones below other code move up.
+      if (first !== -1 && index > first) {
+        hoisted.push(editor.source(statement));
+        removeStatement(editor, statement);
       }
-    } else if (t.isExportDefaultDeclaration(statement)) {
-      if (t.isExpression(statement.declaration)) {
-        let name = refreshName + '$Export' + exportVars.length;
-        exportVars.push(t.variableDeclarator(t.identifier(name)));
-        exports.push(t.exportSpecifier(t.identifier(name), t.identifier('default')));
-        statements.push(
-          t.expressionStatement(
-            t.assignmentExpression('=', t.identifier(name), statement.declaration)
-          )
-        );
+    } else if (statement.type === 'ExportNamedDeclaration') {
+      let {declaration} = statement;
+      if (declaration) {
+        edits.remove(statement.start, declaration.start);
+        let assignments = bindingNames(declaration).map(id => `${exportVar(id)} = ${id};`);
+        if (assignments.length) {
+          edits.appendLeft(statement.end, `\n${assignments.join('\n')}`);
+        }
       } else {
-        statements.push(statement.declaration);
-        let name = refreshName + '$Export' + exportVars.length;
-        exportVars.push(t.variableDeclarator(t.identifier(name)));
-        exports.push(t.exportSpecifier(t.identifier(name), t.identifier('default')));
+        let assignments = statement.specifiers
+          .filter(specifier => specifier.exportKind !== 'type')
+          .map(
+            specifier => `${exportVar(textOf(specifier.exported))} = ${textOf(specifier.local)};`
+          );
+        if (assignments.length) {
+          edits.overwrite(statement.start, statement.end, assignments.join('\n'));
+        } else {
+          edits.remove(statement.start, statement.end);
+        }
       }
-    } else {
-      statements.push(statement);
+    } else if (statement.type === 'ExportDefaultDeclaration') {
+      let declaration = statement.declaration as ESTreeNode;
+      let variable = exportVar('default');
+      if (
+        (declaration.type === 'FunctionDeclaration' || declaration.type === 'ClassDeclaration') &&
+        declaration.id
+      ) {
+        edits.remove(statement.start, declaration.start);
+        edits.appendLeft(statement.end, `\n${variable} = ${declaration.id.name};`);
+      } else {
+        edits.overwrite(statement.start, outerSpan(declaration).start, `${variable} = `);
+        if (code[statement.end - 1] !== ';') {
+          edits.appendLeft(statement.end, ';');
+        }
+      }
     }
-  }
+  });
 
-  program.body = [
-    ...imports,
-    t.importDeclaration(
-      [t.importNamespaceSpecifier(t.identifier(refreshName + '$Helpers'))],
-      t.stringLiteral(wrapperPath)
-    ),
-    t.variableDeclaration('var', exportVars),
-    t.variableDeclaration('var', [
-      t.variableDeclarator(
-        t.identifier(refreshName + '$PrevRefreshReg'),
-        t.memberExpression(t.identifier('window'), t.identifier('$RefreshReg$'))
-      ),
-      t.variableDeclarator(
-        t.identifier(refreshName + '$PrevRefreshSig'),
-        t.memberExpression(t.identifier('window'), t.identifier('$RefreshSig$'))
-      )
-    ]),
-    t.expressionStatement(
-      t.callExpression(
-        t.memberExpression(t.identifier(refreshName + '$Helpers'), t.identifier('prelude')),
-        [t.identifier('module')]
-      )
-    ),
-    t.tryStatement(
-      t.blockStatement([
-        ...statements,
-        t.expressionStatement(
-          t.callExpression(
-            t.memberExpression(t.identifier(refreshName + '$Helpers'), t.identifier('postlude')),
-            [t.identifier('module')]
-          )
-        )
-      ]),
-      null,
-      t.blockStatement([
-        t.expressionStatement(
-          t.assignmentExpression(
-            '=',
-            t.memberExpression(t.identifier('window'), t.identifier('$RefreshReg$')),
-            t.identifier(refreshName + '$PrevRefreshReg')
-          )
-        ),
-        t.expressionStatement(
-          t.assignmentExpression(
-            '=',
-            t.memberExpression(t.identifier('window'), t.identifier('$RefreshSig$')),
-            t.identifier(refreshName + '$PrevRefreshSig')
-          )
-        )
-      ])
-    ),
-    t.exportNamedDeclaration(null, exports)
+  let start = first === -1 ? code.length : statementSpan(editor, body[first]).start;
+  let header = [
+    ...hoisted,
+    `import * as ${helpers} from ${JSON.stringify(wrapperPath)};`,
+    ...(exportVars.length ? [`var ${exportVars.join(', ')};`] : []),
+    `var ${refreshName}$PrevRefreshReg = window.$RefreshReg$, ${refreshName}$PrevRefreshSig = window.$RefreshSig$;`,
+    `${helpers}.prelude(module);`,
+    'try {'
   ];
+  edits.appendLeft(start, header.join('\n') + '\n');
+
+  // Close the `try`, once every other edit is made.
+  return (variables: string[]) => {
+    if (variables.length) {
+      edits.appendLeft(start, `var ${variables.join(', ')};\n`);
+    }
+    edits.append(
+      [
+        '',
+        `${helpers}.postlude(module);`,
+        '} finally {',
+        `  window.$RefreshReg$ = ${refreshName}$PrevRefreshReg;`,
+        `  window.$RefreshSig$ = ${refreshName}$PrevRefreshSig;`,
+        '}',
+        `export { ${exports.join(', ')} };`,
+        ''
+      ].join('\n')
+    );
+  };
+}
+
+// Imports, re-exports and type-only exports, which have to stay outside the `try`.
+function staysOnTop(statement: ESTreeNode) {
+  switch (statement.type) {
+    case 'ImportDeclaration':
+    case 'ExportAllDeclaration':
+    case 'TSImportEqualsDeclaration':
+      return true;
+    case 'ExportNamedDeclaration':
+      return (
+        statement.exportKind === 'type' ||
+        !!statement.source ||
+        !!(statement.declaration as {declare?: boolean} | null)?.declare ||
+        isTypeDeclaration(statement.declaration)
+      );
+    case 'ExportDefaultDeclaration':
+      return isTypeDeclaration(statement.declaration as ESTreeNode);
+    default:
+      return false;
+  }
+}
+
+function isTypeDeclaration(node: ESTreeNode | null | undefined) {
+  return (
+    node?.type === 'TSInterfaceDeclaration' ||
+    node?.type === 'TSTypeAliasDeclaration' ||
+    node?.type === 'TSModuleDeclaration' ||
+    node?.type === 'TSDeclareFunction'
+  );
+}
+
+// The names a declaration binds, such as `a` and `b` in `const {a, b: [b]} = value`.
+function bindingNames(node: ESTreeNode | null | undefined): string[] {
+  switch (node?.type) {
+    case 'VariableDeclaration':
+      return node.declarations.flatMap(declarator => bindingNames(declarator.id));
+    case 'FunctionDeclaration':
+    case 'ClassDeclaration':
+    case 'TSEnumDeclaration':
+      return node.id ? [node.id.name] : [];
+    case 'Identifier':
+      return [node.name];
+    case 'ObjectPattern':
+      return node.properties.flatMap(property =>
+        bindingNames(property.type === 'RestElement' ? property : property.value)
+      );
+    case 'ArrayPattern':
+      return node.elements.flatMap(element => bindingNames(element));
+    case 'AssignmentPattern':
+      return bindingNames(node.left);
+    case 'RestElement':
+      return bindingNames(node.argument);
+    default:
+      return [];
+  }
 }
