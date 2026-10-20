@@ -166,9 +166,9 @@ export interface ComboBoxState<T, M extends SelectionMode = 'single'>
   readonly isFocused: boolean;
   /**
    * Sets whether the select is focused. When `menuTrigger` is `'focus'`, gaining focus opens the
-   * menu unless `shouldOpenMenu` is `false`.
+   * menu unless `shouldOpenOnFocus` is `false`. Has no effect for other `menuTrigger` values.
    */
-  setFocused(isFocused: boolean, shouldOpenMenu?: boolean): void;
+  setFocused(isFocused: boolean, shouldOpenOnFocus?: boolean): void;
   /** Opens the menu. */
   open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void;
   /** Toggles the menu. */
@@ -598,10 +598,10 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
   };
 
   let valueOnFocus = useRef([inputValue, displayValue]);
-  let setFocused = (isFocused: boolean, shouldOpenMenu = true) => {
+  let setFocused = (isFocused: boolean, shouldOpenOnFocus = true) => {
     if (isFocused) {
       valueOnFocus.current = [inputValue, displayValue];
-      if (menuTrigger === 'focus' && !props.isReadOnly && shouldOpenMenu) {
+      if (menuTrigger === 'focus' && !props.isReadOnly && shouldOpenOnFocus) {
         open(null, 'focus');
       }
     } else {
