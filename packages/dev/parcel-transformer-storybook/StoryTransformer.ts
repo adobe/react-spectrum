@@ -1,8 +1,11 @@
 import {Transformer} from '@parcel/plugin';
 import {
-  type CsfFile,
+  type CsfSourceMap,
   type ESTree,
   type ESTreeNode,
+  type FunctionNode,
+  type SourceEditor,
+  appendStatement,
   appendToList,
   enrichCsf,
   formatCsf,
@@ -34,7 +37,7 @@ module.exports = new Transformer({
     let {code: compiledCode, map: compiledMap} = await processCsf(code, asset.filePath, docs, name);
 
     let map = new SourceMap(options.projectRoot);
-    map.addVLQMap(compiledMap as Parameters<SourceMap['addVLQMap']>[0]);
+    map.addVLQMap(compiledMap);
 
     // Invalidate the asset whenever any types change.
     asset.invalidateOnFileChange(path.join(getCacheDir(options), 'sentinel'));
@@ -44,11 +47,6 @@ module.exports = new Transformer({
   }
 });
 
-type AnyFunction = ESTree.Function | ESTree.ArrowFunctionExpression;
-
-// The edits are text edits on the file Storybook parsed, so code they do not touch keeps its
-// source map. The Fast Refresh wrapping goes first: it removes statements, which statements
-// appended later skip.
 async function processCsf(
   code: string,
   filePath: string,
@@ -60,42 +58,29 @@ async function processCsf(
     makeTitle: title => title || 'default'
   }).parse();
   let editor = csf._editor;
-  let closeRefresh = refreshName ? wrapRefresh(csf, filePath, refreshName) : null;
+  // The Fast Refresh wrapper goes first, so statements appended below land after the `;` it ends a
+  // default export with, and not after an import it moves up.
+  let closeRefresh = refreshName ? wrapRefresh(editor, filePath, refreshName) : null;
   await enrichCsf(csf, csf);
 
-  // The variables whose value is a function, which can be renamed in place.
-  let declarators = new Map<ESTreeNode, ESTreeNode>();
-  for (let statement of csf._program.body) {
-    let declaration =
-      statement.type === 'ExportNamedDeclaration' ? statement.declaration : statement;
-    if (declaration?.type === 'VariableDeclaration') {
-      for (let declarator of declaration.declarations) {
-        if (declarator.id.type === 'Identifier' && declarator.init && isFunction(declarator.init)) {
-          declarators.set(declarator.init, declarator);
-        }
-      }
-    }
-  }
-  // Extract story functions into separate components. This enables React Fast Refresh to work properly.
-  let components = new Map<ESTreeNode, string>();
-  // Components extracted from expressions are assigned inside them, so they need variables.
+  // Story functions become components, so that React Fast Refresh can update them. Their code stays
+  // where it is, and so does its source map.
+  let components = new Map<FunctionNode, string>();
+  // Components named inside an expression, which need a `var`.
   let variables: string[] = [];
-  // The wrapper that renders a component with the props the story function got.
-  let wrapperOf = (fn: AnyFunction, name: string) => {
-    let [first] = fn.params;
-    let params = first ? csf._code.slice(first.start, fn.params.at(-1)!.end) : '';
-    let props = first?.type === 'Identifier' ? ` {...${first.name}}` : '';
-    return {params, element: `<${name}${props} />`};
-  };
-  let addComponent = (fn: AnyFunction) => {
+  let addComponent = (fn: FunctionNode) => {
+    // A template bound by several stories becomes one component.
     let name = components.get(fn);
     if (name) {
       return name;
     }
     name = 'Story' + components.size;
     components.set(fn, name);
-    let {params, element} = wrapperOf(fn, name);
-    let declarator = declarators.get(fn);
+    let [first] = fn.params;
+    let params = first ? editor.code.slice(first.start, fn.params.at(-1)!.end) : '';
+    let props = first?.type === 'Identifier' ? ` {...${first.name}}` : '';
+    let element = `<${name}${props} />`;
+    let parent = editor.parentOf(fn);
     if (fn.type === 'FunctionDeclaration' && fn.id) {
       // `function Primary(args) {…}` becomes a wrapper, followed by `function Story0(args) {…}`.
       editor.edits.appendRight(
@@ -103,10 +88,10 @@ async function processCsf(
         `function ${fn.id.name}(${params}) {\n  return ${element};\n}\n`
       );
       editor.edits.update(fn.id.start, fn.id.end, name);
-    } else if (declarator) {
-      // `const Primary = (args) => …` becomes
-      // `const Primary = (args) => <Story0 {...args} />, Story0 = (args) => …`.
-      let {id} = declarator as {id: ESTree.IdentifierName};
+    } else if (parent?.type === 'VariableDeclarator' && parent.id.type === 'Identifier') {
+      // `const Primary: Story = (args) => …` becomes
+      // `const Primary = (args) => <Story0 {...args} />, Story0: Story = (args) => …`.
+      let {id} = parent;
       editor.edits.update(
         id.start,
         id.start + id.name.length,
@@ -120,122 +105,101 @@ async function processCsf(
     return name;
   };
 
-  let handleRenderProperty = (node: ESTree.ObjectExpression, members: string[]) => {
-    // CSF 3 style object story. Extract render function into a component.
-    let render = node.properties.find(
-      (p): p is ESTree.ObjectProperty => p.type === 'Property' && staticKey(p) === 'render'
-    );
+  // The component a CSF 3 `render` function becomes. `render: Button` becomes
+  // `render: args => <Button {...args} />`, so React renders `Button` instead of calling it.
+  let renderComponent = (object: ESTree.ObjectExpression) => {
+    let render = property(object, 'render');
     if (!render) {
       return;
     }
-    let value = render.value as ESTreeNode;
-    if (render.method) {
-      let fn = value as ESTree.Function;
-      if (render.kind !== 'init' || fn.async || fn.generator) {
-        return;
+    let {value} = render;
+    if (isFunction(value)) {
+      if (render.method) {
+        // `render(args) {…}` becomes `render: function (args) {…}`, which `addComponent` then
+        // wraps like any `render` function.
+        let keyword = `${value.async ? 'async ' : ''}function${value.generator ? '*' : ''} `;
+        editor.edits.update(render.start, value.start, 'render: ');
+        wrapExpression(editor, value, keyword, '');
       }
-      // `render(args) {…}` becomes `render: (Story0 = function Story0(args) {…}, …)`.
-      let name = 'Story' + components.size;
-      components.set(fn, name);
-      variables.push(name);
-      let {params, element} = wrapperOf(fn, name);
-      editor.edits.update(render.start, fn.start, `render: (${name} = function ${name}`);
-      wrapExpression(editor, fn, '', `, (${params}) => ${element})`);
-      members.push(`_internalComponent: ${name}`);
-    } else if (isFunction(value)) {
-      members.push(`_internalComponent: ${addComponent(value)}`);
-    } else if (value.type === 'Identifier') {
+      return addComponent(value);
+    }
+    if (value.type === 'Identifier') {
       let span = render.shorthand ? render : outerSpan(value);
       let key = render.shorthand ? 'render: ' : '';
       editor.edits.update(span.start, span.end, `${key}args => <${value.name} {...args} />`);
     }
   };
+
+  // Fast Refresh registers a story's `_internalComponent`, and bails out when its `_hash` changes.
+  let register = (object: ESTree.ObjectExpression, hash: string) => {
+    let component = renderComponent(object);
+    let members = component ? [`_internalComponent: ${component}`] : [];
+    appendToList(editor, objectList(editor, object), [...members, `_hash: "${hash}"`]);
+  };
+
+  let meta = csf._metaNodeIsSynthetic ? undefined : csf._metaNode;
   let statements: string[] = [];
   if (refreshName) {
     for (let name in csf._storyExports) {
       let node = csf.getStoryExport(name);
-
-      // Generate a hash of the args and parameters. If this changes, we bail out of Fast Refresh.
-      let annotations = csf._storyAnnotations[name];
-      let storyHash = '';
-      if (annotations) {
-        let hash = crypto.createHash('md5');
-        // Storybook 11 keeps a legacy `Story.story = {parameters}` as a `story` annotation, where
-        // Storybook 10 spread its members into the other annotations.
-        for (let key of ['args', 'parameters', 'story']) {
-          let annotation = annotations[key];
-          if (annotation) {
-            hash.update(textOf(annotation));
-          }
-        }
-        storyHash = hash.digest('hex');
-      }
-
+      // `story` is a legacy `Story.story = {…}`.
+      let {args, parameters, story} = csf._storyAnnotations[name];
+      let hash = md5(
+        ...[args, parameters, story].flatMap(annotation => (annotation ? textOf(annotation) : []))
+      );
       if (isFunction(node)) {
-        // CSF 2 style function story.
-        let c = addComponent(node);
-        statements.push(`${name}._internalComponent = ${c};`);
-        if (storyHash) {
-          statements.push(`${name}._hash = ${JSON.stringify(storyHash)};`);
-        }
+        // A CSF 2 function story.
+        statements.push(
+          `${name}._internalComponent = ${addComponent(node)};`,
+          `${name}._hash = "${hash}";`
+        );
       } else if (node?.type === 'ObjectExpression') {
-        let members: string[] = [];
-        handleRenderProperty(node, members);
-        if (storyHash) {
-          members.push(`_hash: ${JSON.stringify(storyHash)}`);
-        }
-        if (members.length) {
-          appendToList(editor, objectList(editor, node), members);
-        }
+        register(node, hash);
       }
+    }
+    if (meta) {
+      register(meta, md5(textOf(meta), JSON.stringify(docs)));
     }
   }
 
-  let meta = csf._metaNodeIsSynthetic ? undefined : csf._metaNode;
-  if (meta) {
-    if (docs) {
-      let component = meta.properties.find(
-        (p): p is ESTree.ObjectProperty =>
-          p.type === 'Property' && !p.method && staticKey(p) === 'component'
-      );
-      if (component) {
-        let value = component.value as ESTreeNode;
-        let target =
-          value.type === 'Identifier' || (value.type === 'MemberExpression' && !value.optional)
-            ? textOf(value)
-            : `(${textOf(value)})`;
-        statements.push(`${target}.__docgenInfo = ${JSON.stringify(docs)};`);
-      }
-    }
-
-    if (refreshName) {
-      // Hash the default export to invalidate Fast Refresh.
-      let members: string[] = [];
-      handleRenderProperty(meta, members);
-      let hash = crypto.createHash('md5');
-      hash.update(textOf(meta));
-      hash.update(JSON.stringify(docs));
-      members.push(`_hash: ${JSON.stringify(hash.digest('hex'))}`);
-      appendToList(editor, objectList(editor, meta), members);
-    }
+  let component = meta && property(meta, 'component');
+  if (docs && component && !component.method) {
+    let {value} = component;
+    let target = value.type === 'Identifier' ? value.name : `(${textOf(value)})`;
+    statements.push(`${target}.__docgenInfo = ${JSON.stringify(docs)};`);
   }
 
   if (statements.length) {
-    csf._appendStatement(statements.join('\n'));
+    appendStatement(editor, statements.join('\n'));
   }
   closeRefresh?.(variables);
 
-  return formatCsf(csf, {sourceMaps: true, sourceFileName: filePath}) as {
+  return formatCsf(csf, {sourceMaps: true}) as {
     code: string;
-    map: object;
+    map: CsfSourceMap;
   };
+}
+
+function property(object: ESTree.ObjectExpression, key: string) {
+  return object.properties.find(
+    (p): p is ESTree.ObjectProperty =>
+      p.type === 'Property' && p.kind === 'init' && staticKey(p) === key
+  );
+}
+
+function md5(...texts: string[]) {
+  let hash = crypto.createHash('md5');
+  for (let text of texts) {
+    hash.update(text);
+  }
+  return hash.digest('hex');
 }
 
 // Wrap the module for React Fast Refresh: imports and re-exports stay on top, the rest runs in a
 // `try` between the refresh prelude and postlude, and every export goes through a variable that
-// a final `export {…}` exports.
-function wrapRefresh(csf: CsfFile, filePath: string, refreshName: string) {
-  let editor = csf._editor;
+// a final `export {…}` exports. The function it returns closes the `try` once the other edits
+// are made, declaring the variables they assign.
+function wrapRefresh(editor: SourceEditor, filePath: string, refreshName: string) {
   let {edits, code} = editor;
   let wrapperPath = `${path.relative(path.dirname(filePath), __dirname)}/csf-hmr.js`;
   let helpers = `${refreshName}$Helpers`;
@@ -248,7 +212,7 @@ function wrapRefresh(csf: CsfFile, filePath: string, refreshName: string) {
     return name;
   };
 
-  let body = csf._program.body;
+  let body = editor.program.body;
   let first = body.findIndex(statement => !staysOnTop(statement));
   let hoisted: string[] = [];
   body.forEach((statement, index) => {
@@ -275,7 +239,7 @@ function wrapRefresh(csf: CsfFile, filePath: string, refreshName: string) {
         edits.update(statement.start, statement.end, assignments.join('\n'));
       }
     } else if (statement.type === 'ExportDefaultDeclaration') {
-      let declaration = statement.declaration as ESTreeNode;
+      let {declaration} = statement;
       let variable = exportVar('default');
       if (
         (declaration.type === 'FunctionDeclaration' || declaration.type === 'ClassDeclaration') &&
@@ -303,7 +267,6 @@ function wrapRefresh(csf: CsfFile, filePath: string, refreshName: string) {
   ];
   edits.appendLeft(start, header.join('\n') + '\n');
 
-  // Close the `try`, once every other edit is made.
   return (variables: string[]) => {
     if (variables.length) {
       edits.appendLeft(start, `var ${variables.join(', ')};\n`);
@@ -323,11 +286,11 @@ function wrapRefresh(csf: CsfFile, filePath: string, refreshName: string) {
   };
 }
 
-// Directives, imports, re-exports and type-only exports, which have to stay outside the `try`.
+// Directives, imports, re-exports and type declarations, which have to stay outside the `try`.
 function staysOnTop(statement: ESTreeNode) {
   switch (statement.type) {
     case 'ExpressionStatement':
-      return !!(statement as {directive?: string}).directive;
+      return !!statement.directive;
     case 'ImportDeclaration':
     case 'ExportAllDeclaration':
     case 'TSImportEqualsDeclaration':
@@ -336,23 +299,26 @@ function staysOnTop(statement: ESTreeNode) {
       return (
         statement.exportKind === 'type' ||
         !!statement.source ||
-        !!(statement.declaration as {declare?: boolean} | null)?.declare ||
-        isTypeDeclaration(statement.declaration)
+        declaresTypes(statement.declaration)
       );
     case 'ExportDefaultDeclaration':
-      return isTypeDeclaration(statement.declaration as ESTreeNode);
+      return declaresTypes(statement.declaration);
     default:
       return false;
   }
 }
 
-function isTypeDeclaration(node: ESTreeNode | null | undefined) {
-  return (
-    node?.type === 'TSInterfaceDeclaration' ||
-    node?.type === 'TSTypeAliasDeclaration' ||
-    node?.type === 'TSModuleDeclaration' ||
-    node?.type === 'TSDeclareFunction'
-  );
+// Types, `declare`s and namespaces.
+function declaresTypes(node: ESTreeNode | null) {
+  switch (node?.type) {
+    case 'TSInterfaceDeclaration':
+    case 'TSTypeAliasDeclaration':
+    case 'TSModuleDeclaration':
+    case 'TSDeclareFunction':
+      return true;
+    default:
+      return !!node && 'declare' in node && !!node.declare;
+  }
 }
 
 // The names a declaration binds, such as `a` and `b` in `const {a, b: [b]} = value`.
