@@ -7,6 +7,7 @@ import {
   PressEvents,
   RefObject
 } from '@react-types/shared';
+import {AriaTableProps} from 'react-aria/useTable';
 import {
   BaseCollection,
   CollectionNode,
@@ -89,6 +90,7 @@ import React, {
   ForwardedRef,
   forwardRef,
   JSX,
+  memo,
   ReactElement,
   ReactNode,
   useCallback,
@@ -112,8 +114,10 @@ import {TableColumnResizeState} from 'react-stately/useTableState';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 import {useControlledState} from 'react-stately/useControlledState';
+import {useDeepMemo} from 'react-aria/private/utils/useDeepMemo';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useLatestTableState} from 'react-aria/private/table/useLatestTableState';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
@@ -551,6 +555,9 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
 export const TableContext =
   createContext<ContextValue<TableProps, HTMLTableElement | HTMLDivElement>>(null);
 export const TableStateContext = createContext<TableState<any> | null>(null);
+const TableRowRenderContext = createContext<{state: TableState<any>; renderKey: unknown[]} | null>(
+  null
+);
 export const TableColumnResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(
   null
 );
@@ -739,6 +746,27 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     ref
   );
   let selectionManager = filteredState.selectionManager;
+  let latestState = useLatestTableState(filteredState);
+  let {onCellAction, shouldSelectOnPressUp, keyboardNavigationBehavior} = props as AriaTableProps;
+  // Rows and cells re-render when their own render key changes, or when this table-wide key does.
+  let renderKey = useDeepMemo(
+    [
+      selectionManager.selectionMode,
+      selectionManager.selectionBehavior,
+      selectionManager.isEmpty,
+      filteredState.collection.size === 0,
+      filteredState.collection.columns.map(column => column.key).join(),
+      [...filteredState.collection.rowHeaderColumnKeys].join(),
+      filteredState.collection.headerRows.length,
+      filteredState.treeColumn,
+      !!props.onRowAction,
+      !!onCellAction,
+      shouldSelectOnPressUp,
+      keyboardNavigationBehavior
+    ],
+    isRenderKeyEqual
+  );
+  let rowRenderContext = useMemo(() => ({state: latestState, renderKey}), [latestState, renderKey]);
   let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(hasDragHooks);
@@ -887,13 +915,18 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   }
 
   let DOMProps = filterDOMProps(props, {global: true});
+  let dragAndDropContext = useMemo(
+    () => ({dragAndDropHooks, dragState, dropState}),
+    [dragAndDropHooks, dragState, dropState]
+  );
 
   return (
     <Provider
       values={[
         [TableStateContext, filteredState],
+        [TableRowRenderContext, rowRenderContext],
         [TableColumnResizeStateContext, layoutState],
-        [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
+        [DragAndDropContext, dragAndDropContext],
         [DropIndicatorContext, {render: TableDropIndicatorWrapper}],
         [SelectableCollectionContext, null],
         [FieldInputContext, null]
@@ -1777,18 +1810,155 @@ let TableRowElementType = forwardRef(function TableRowElementType(
   return <dom.tr {...props} ref={ref} />;
 });
 
+function isRenderKeyEqual(a: unknown[], b: unknown[]) {
+  return a.length === b.length && a.every((value, i) => Object.is(value, b[i]));
+}
+
+function getLastChild(collection: ITableCollection<unknown>, node: Node<unknown> | null) {
+  let lastChildKey = (node as CollectionNode<unknown> | null)?.lastChildKey;
+  return lastChildKey != null ? collection.getItem(lastChildKey) : null;
+}
+
+// The table state a row renders, other than the table-wide values in TableRowRenderContext.
+// Rows and cells skip rendering unless their render key changes, so any table state read while
+// rendering the Row or Cell body must be included here, in getCellRenderKey, or in the table-wide
+// render key in TableInner. Otherwise the row will show stale output. State read only inside event
+// handlers does not need to be included, as the state reads the latest committed state by then.
+function getRowRenderKey(state: TableState<unknown>, item: GridNode<unknown>): unknown[] {
+  let {collection, selectionManager} = state;
+  let key = item.key;
+  let isFocused = selectionManager.focusedKey === key;
+  let renderKey: unknown[] = [
+    item,
+    selectionManager.isSelected(key),
+    selectionManager.isDisabled(key),
+    selectionManager.canSelectItem(key),
+    isFocused,
+    isFocused && selectionManager.isFocused,
+    isFocused ? selectionManager.childFocusStrategy : null,
+    state.expandedKeys.has(key),
+    getLastChild(collection, item)?.type
+  ];
+
+  // Updating a cell does not create a new row node.
+  for (let cell of collection.getChildren!(key)) {
+    renderKey.push(cell);
+  }
+
+  // aria-setsize depends on the last sibling row.
+  let parent = item.parentKey != null ? collection.getItem(item.parentKey) : null;
+  let lastSibling = getLastChild(collection, parent);
+  while (lastSibling && lastSibling.type !== 'item' && lastSibling.prevKey != null) {
+    lastSibling = collection.getItem(lastSibling.prevKey);
+  }
+  renderKey.push(lastSibling?.index);
+  return renderKey;
+}
+
+// The table state a cell renders, other than the table-wide values in TableRowRenderContext.
+function getCellRenderKey(state: TableState<unknown>, cell: GridNode<unknown>): unknown[] {
+  let {collection, selectionManager} = state;
+  let rowKey = cell.parentKey!;
+  let row = collection.getItem(rowKey);
+  let isFocused = selectionManager.focusedKey === cell.key;
+  return [
+    cell,
+    row,
+    getLastChild(collection, row)?.type,
+    selectionManager.isSelected(rowKey),
+    selectionManager.isDisabled(rowKey),
+    state.expandedKeys.has(rowKey),
+    selectionManager.isSelected(cell.key),
+    selectionManager.isDisabled(cell.key),
+    isFocused,
+    isFocused && selectionManager.isFocused,
+    isFocused ? selectionManager.childFocusStrategy : null
+  ];
+}
+
+type TableNodeRender<P, E extends Element> = (
+  props: P,
+  ref: ForwardedRef<E>,
+  node: GridNode<any>,
+  state: TableState<any>
+) => ReactElement | null;
+
+interface MemoizedTableNodeProps<P, E extends Element> {
+  props: P;
+  forwardedRef: ForwardedRef<E>;
+  node: GridNode<any>;
+  state: TableState<any>;
+  tableRenderKey: unknown[];
+  renderKey: unknown[];
+}
+
+// Rows and cells only re-render when their render key changes, so that updating one row does not
+// re-render the rest of the table. They render with the table state from TableRowRenderContext,
+// which reads the latest committed state once its render commits, so that the event handlers of
+// rows and cells that skipped later renders are never out of date.
+function memoizeTableNode<P, E extends Element>(
+  getRenderKey: (state: TableState<unknown>, node: GridNode<unknown>) => unknown[],
+  render: TableNodeRender<P, E>
+): (props: P, ref: ForwardedRef<E>, node: GridNode<any>) => ReactElement {
+  let Memoized = memo(
+    ({props, forwardedRef, node, state}: MemoizedTableNodeProps<P, E>) =>
+      render(props, forwardedRef, node, state),
+    (prev, next) =>
+      prev.props === next.props &&
+      prev.forwardedRef === next.forwardedRef &&
+      prev.tableRenderKey === next.tableRenderKey &&
+      isRenderKeyEqual(prev.renderKey, next.renderKey)
+  );
+  return (props, ref, node) => {
+    let state = useContext(TableStateContext)!;
+    let {state: latestState, renderKey} = useContext(TableRowRenderContext)!;
+    return (
+      <Memoized
+        props={props}
+        forwardedRef={ref}
+        node={node}
+        state={latestState}
+        tableRenderKey={renderKey}
+        renderKey={getRenderKey(state, node)}
+      />
+    );
+  };
+}
+
+function createTableBranchComponent<P extends {children?: any}, E extends Element>(
+  CollectionNodeClass: typeof CollectionNode<any>,
+  getRenderKey: (state: TableState<unknown>, node: GridNode<unknown>) => unknown[],
+  render: TableNodeRender<P, E>,
+  useChildren: (props: P) => ReactNode
+) {
+  return createBranchComponent(
+    CollectionNodeClass,
+    memoizeTableNode(getRenderKey, render),
+    useChildren
+  );
+}
+
+function createTableLeafComponent<P extends object, E extends Element>(
+  CollectionNodeClass: typeof CollectionNode<any>,
+  getRenderKey: (state: TableState<unknown>, node: GridNode<unknown>) => unknown[],
+  render: TableNodeRender<P, E>
+) {
+  return createLeafComponent(CollectionNodeClass, memoizeTableNode(getRenderKey, render));
+}
+
 /**
  * A row within a `<Table>`.
  */
-export const Row = /*#__PURE__*/ createBranchComponent(
+export const Row = /*#__PURE__*/ createTableBranchComponent(
   TableRowNode,
+  getRowRenderKey,
   <T extends any>(
     props: RowProps<T>,
     forwardedRef: ForwardedRef<HTMLTableRowElement | HTMLDivElement>,
-    item: GridNode<T>
+    item: GridNode<T>,
+    state: TableState<T>
   ) => {
     let ref = useObjectRef<HTMLTableRowElement | HTMLDivElement>(forwardedRef);
-    let state = useContext(TableStateContext)!;
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
     let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
     let isDraggable =
@@ -1883,6 +2053,10 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
+    let rowFocusContext = useMemo(
+      () => ({isFocusVisibleWithinRow: isFocusVisibleWithin}),
+      [isFocusVisibleWithin]
+    );
 
     return (
       <>
@@ -1966,7 +2140,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                 }
               ],
               [SelectionIndicatorContext, {isSelected: states.isSelected}],
-              [RowFocusContext, {isFocusVisibleWithinRow: isFocusVisibleWithin}]
+              [RowFocusContext, rowFocusContext]
             ]}>
             <CollectionBranch collection={state.collection} parent={item} />
           </Provider>
@@ -2115,15 +2289,16 @@ let TableCellElementType = forwardRef(function TableCellElementType(
 /**
  * A cell within a table row.
  */
-export const Cell = /*#__PURE__*/ createLeafComponent(
+export const Cell = /*#__PURE__*/ createTableLeafComponent(
   TableCellNode,
+  getCellRenderKey,
   (
     props: CellProps,
     forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>,
-    cell: GridNode<unknown>
+    cell: GridNode<unknown>,
+    state: TableState<unknown>
   ) => {
     let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
-    let state = useContext(TableStateContext)!;
     let {dragState} = useContext(DragAndDropContext);
     let {isVirtualized} = useContext(CollectionRendererContext);
 
