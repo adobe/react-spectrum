@@ -172,23 +172,25 @@ const InnerTabs = () => (
 );
 
 export const NestedTabsAnimated: TabsStory = () => (
-  <Tabs>
-    <TabList aria-label="Outer tabs" style={{display: 'flex', gap: 8}}>
-      <CustomTab id="foo">Foo</CustomTab>
-      <CustomTab id="bar">Bar</CustomTab>
-      <CustomTab id="baz">Baz</CustomTab>
-    </TabList>
-    <TabPanels style={animatedPanelsStyle}>
-      <TabPanel id="foo">
-        <p>Alea jacta est.</p>
-      </TabPanel>
-      <TabPanel id="bar">
-        <InnerTabs />
-      </TabPanel>
-      <TabPanel id="baz">
-        <p>Veni, vidi, vici.</p>
-        <InnerTabs />
-      </TabPanel>
-    </TabPanels>
-  </Tabs>
+  <div style={{height: '300px', width: '300px'}}>
+    <Tabs>
+      <TabList aria-label="Outer tabs" style={{display: 'flex', gap: 8}}>
+        <CustomTab id="foo">Foo</CustomTab>
+        <CustomTab id="bar">Bar</CustomTab>
+        <CustomTab id="baz">Baz</CustomTab>
+      </TabList>
+      <TabPanels style={animatedPanelsStyle}>
+        <TabPanel id="foo">
+          <p>Alea jacta est.</p>
+        </TabPanel>
+        <TabPanel id="bar">
+          <InnerTabs />
+        </TabPanel>
+        <TabPanel id="baz">
+          <p>Veni, vidi, vici.</p>
+          <InnerTabs />
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  </div>
 );
