@@ -23,20 +23,37 @@ import {
 } from './style-utils' with {type: 'macro'};
 import Chevron from '../ui-icons/Chevron';
 import {
+  ClipBounds,
+  intersect,
+  PANEL_TRANSITION,
+  Rect,
+  SideNavPanelBoundsContext,
+  SideNavPanelContext,
+  useClippedViewTransition,
+  useMovingClippedViewTransition
+} from './SideNavPanel';
+import {
+  ComponentProps,
   ComponentType,
   createContext,
   forwardRef,
   ReactNode,
+  RefObject,
+  useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
   ViewTransitionClass,
   ViewTransitionProps
 } from 'react';
+import {divider} from './Divider';
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
+import {mergeStyles} from '../style/runtime';
 import {
   NavigationTree,
   NavigationTreeHeader,
@@ -52,17 +69,12 @@ import {
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import React from 'react';
-import {
-  Rect,
-  SideNavPanelBoundsContext,
-  SideNavPanelContext,
-  useClippedViewTransition
-} from './SideNavPanel';
 import sideNavCss from './SideNav.module.css';
 import {Text, TextContext} from './Content';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
 import {useId} from 'react-aria/useId';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useMediaQuery} from './useMediaQuery';
 import {useScale} from './utils';
@@ -76,9 +88,10 @@ const startTransition: (scope: () => void) => void =
 
 // Transition types, we can easily turn off the animations.
 const SIDE_NAV_CLASS = sideNavCss['side-nav'];
+const SIDE_NAV_ICON_CLASS = sideNavCss['side-nav-icon'];
 const ITEM_TRANSITION = sideNavCss['side-nav-item'];
 
-// `default: 'none'` opts elements out of transitions they aren't part of. Rows and headers are
+// `default: 'none'` opts an element out of the transitions it isn't part of. Rows and headers are
 // already inside the panel's snapshot when it collapses, and capturing them again would lift them
 // out of it and let them animate past its edges.
 const itemViewTransition: ViewTransitionClass = {
@@ -86,31 +99,64 @@ const itemViewTransition: ViewTransitionClass = {
   [ITEM_TRANSITION]: SIDE_NAV_CLASS
 };
 
-function intersect(a: Rect, b: Rect): Rect {
-  return {
-    top: Math.max(a.top, b.top),
-    right: Math.min(a.right, b.right),
-    bottom: Math.min(a.bottom, b.bottom),
-    left: Math.max(a.left, b.left)
-  };
-}
+const iconViewTransition: ViewTransitionClass = {
+  default: 'none',
+  [PANEL_TRANSITION]: SIDE_NAV_ICON_CLASS
+};
 
 interface SideNavViewTransitionValue {
   /** The class applied to each row and header snapshot. */
   transition: ViewTransitionClass;
+  /** The class applied to each icon snapshot. */
+  iconTransition: ViewTransitionClass;
   /** Reads the bounds to clip snapshots to, as they are for the frame being drawn. */
   getClipBounds: () => Rect | null;
+  /** Reads the bounds to clip to at the start and at the end of the update being transitioned. */
+  getMovingClipBounds: () => ClipBounds;
 }
 
 const SideNavViewTransitionContext = createContext<SideNavViewTransitionValue>({
   transition: 'none',
-  getClipBounds: () => null
+  iconTransition: 'none',
+  getClipBounds: () => null,
+  getMovingClipBounds: () => [null, null]
 });
 
 /** Props for the `<ViewTransition>` around each row and header. */
 function useSideNavViewTransition(): Omit<ViewTransitionProps, 'children'> {
   let {transition, getClipBounds} = useContext(SideNavViewTransitionContext);
   return useClippedViewTransition(transition, getClipBounds);
+}
+
+// While a view transition runs, Safari hit tests the snapshots it paints rather than the live DOM,
+// so the pointer appears to move onto the document element and then back a frame or two after the
+// animation ends, leaving whatever it was resting on unhovered in between. Swallow the events it
+// moves with. A pointer that really moves enters the element it moved to, not the document
+// element, so it is left alone.
+function useViewTransitionHover(ref: RefObject<HTMLElement | null>): void {
+  useEffect(() => {
+    let view = ref.current?.ownerDocument.defaultView;
+    // Without this selector there is no way to tell these events apart from the pointer moving.
+    if (!view || !view.CSS.supports?.('selector(:active-view-transition)')) {
+      return;
+    }
+
+    let root = view.document.documentElement;
+    let onPointerEvent = (e: PointerEvent) => {
+      let entered = e.type === 'pointerover' ? getEventTarget(e) : e.relatedTarget;
+      if (entered === root && root.matches(':active-view-transition')) {
+        e.stopPropagation();
+      }
+    };
+
+    // Hover is tracked with listeners on the document, so these must be on the window to run first.
+    view.addEventListener('pointerover', onPointerEvent, true);
+    view.addEventListener('pointerout', onPointerEvent, true);
+    return () => {
+      view.removeEventListener('pointerover', onPointerEvent, true);
+      view.removeEventListener('pointerout', onPointerEvent, true);
+    };
+  }, [ref]);
 }
 
 export interface SideNavProps<T>
@@ -198,7 +244,8 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   } = props;
 
   let domRef = useDOMRef(ref);
-  let {isCollapsed} = useContext(SideNavPanelContext) ?? {};
+  useViewTransitionHover(domRef);
+  let {isCollapsed, targetCollapsed} = useContext(SideNavPanelContext) ?? {};
   let isInSideNavPanel = isCollapsed !== undefined;
   let panelRef = useContext(SideNavPanelBoundsContext);
 
@@ -225,24 +272,34 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
 
   let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
+  // Travelling snapshots are clipped to where the nav is drawn, which is somewhere between the
+  // bounds it had before the panel started resizing and the ones it ends up with.
+  let boundsBeforeResize = useRef<Rect | null>(null);
+  let getNavBounds = useCallback(() => domRef.current?.getBoundingClientRect() ?? null, [domRef]);
+
   let viewTransition = useMemo(
     (): SideNavViewTransitionValue => ({
       transition: reduceMotion ? 'none' : itemViewTransition,
+      iconTransition: reduceMotion ? 'none' : iconViewTransition,
       getClipBounds: () => {
-        let nav = domRef.current;
-        if (!nav) {
-          return null;
-        }
-
         // Rows stay within the nav, and within the panel while it is still widening or narrowing
         // around them, so they never reach the content beside it either.
-        let bounds = nav.getBoundingClientRect();
+        let bounds = getNavBounds();
         let panel = panelRef?.current;
-        return panel ? intersect(bounds, panel.getBoundingClientRect()) : bounds;
-      }
+        return bounds && panel ? intersect(bounds, panel.getBoundingClientRect()) : bounds;
+      },
+      // Unlike the panel, whose width is still transitioning around it, the nav's own width snaps,
+      // so by the time there is a transition to clip its bounds are already the final ones.
+      getMovingClipBounds: () => [boundsBeforeResize.current, getNavBounds()]
     }),
-    [reduceMotion, domRef, panelRef]
+    [reduceMotion, getNavBounds, panelRef]
   );
+
+  // The panel renders a collapse or expand one commit after it is asked for, so this still sees
+  // the bounds the transition is about to capture rather than the ones it animates to.
+  useLayoutEffect(() => {
+    boundsBeforeResize.current = getNavBounds();
+  }, [targetCollapsed, getNavBounds]);
 
   return (
     <SideNavViewTransitionContext.Provider value={viewTransition}>
@@ -334,6 +391,14 @@ const treeIcon = style({
     value: 'currentColor'
   }
 });
+
+/** Renders a row's icon inside its own `<ViewTransition>`, for `IconContext`. */
+function useSideNavIcon(isCollapsed: boolean): (icon: ReactNode) => ReactNode {
+  let {iconTransition, getMovingClipBounds} = useContext(SideNavViewTransitionContext);
+  let viewTransition = useMovingClippedViewTransition(iconTransition, getMovingClipBounds);
+  let render = centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})});
+  return (icon: ReactNode) => <ViewTransition {...viewTransition}>{render(icon)}</ViewTransition>;
+}
 
 const treeContent = style<{isCollapsed?: boolean}>({
   gridArea: 'content',
@@ -471,6 +536,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
 
 const SideNavItemContentInner = props => {
   let {isCollapsed = false} = useContext(SideNavPanelContext);
+  let renderIcon = useSideNavIcon(isCollapsed);
   let {
     isExpanded,
     hasChildItems,
@@ -534,7 +600,7 @@ const SideNavItemContentInner = props => {
             [
               IconContext,
               {
-                render: centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})}),
+                render: renderIcon,
                 styles: style({size: '1lh', flexShrink: 0})
               }
             ],
@@ -662,36 +728,67 @@ export interface SideNavHeaderProps extends Omit<
   'value' | 'render' | 'style' | 'className'
 > {}
 
-export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
+const sideNavHeader = style<{isCollapsed: boolean}>({
+  position: 'relative',
+  display: {
+    default: 'block',
+    // Lets the divider that takes the label's place center itself.
+    isCollapsed: 'flex'
+  },
+  font: 'ui-sm',
+  // Component/S/Medium for the font, doesn't appear to match our fonts
+  fontWeight: 'medium',
+  color: 'gray-600',
+  paddingStart: {
+    default: 'edge-to-text',
+    isCollapsed: 0
+  },
+  marginBottom: '[8px]',
+  height: 16
+});
+
+const sideNavHeaderDivider = style({
+  // The divider styles stretch it, which would pin it to the top of the header.
+  alignSelf: 'center',
+  width: 'full'
+});
+
+/**
+ * Renders the header's element, for `NavigationTreeHeader`'s `render` prop.
+ *
+ * Whether the panel is collapsed is read here rather than in SideNavHeader, because this runs as
+ * the tree renders, while what SideNavHeader returns is read back out of the collection, which is
+ * only rebuilt once the collapse or expand has finished. A header still showing its label until
+ * then leaves the rows below it to jump into place after the panel has settled.
+ */
+function SideNavHeaderElement(props: {domProps: ComponentProps<'div'>}): ReactNode {
   let viewTransition = useSideNavViewTransition();
-  // Hidden via state rather than a descendant selector so the header re-renders, which is what
-  // includes it in the view transition.
   let {isCollapsed = false} = useContext(SideNavPanelContext);
+  let {children, ...domProps} = props.domProps;
   return (
-    <NavigationTreeHeader
-      render={domProps => (
-        <ViewTransition {...viewTransition}>
-          <div {...domProps} />
-        </ViewTransition>
-      )}
-      className={style<{isCollapsed: boolean}>({
-        position: 'relative',
-        display: {
-          default: 'block',
-          isCollapsed: 'none'
-        },
-        font: 'ui-sm',
-        // Component/S/Medium for the font, doesn't appear to match our fonts
-        fontWeight: 'medium',
-        color: 'gray-600',
-        paddingStart: 'edge-to-text',
-        marginBottom: '[8px]',
-        height: 16
-      })({isCollapsed})}>
-      {props.children}
-    </NavigationTreeHeader>
+    <ViewTransition {...viewTransition}>
+      <div {...domProps} className={sideNavHeader({isCollapsed})}>
+        {isCollapsed ? (
+          <div
+            role="separator"
+            className={mergeStyles(
+              divider({size: 'M', orientation: 'horizontal', isStaticColor: false}),
+              sideNavHeaderDivider
+            )}
+          />
+        ) : (
+          children
+        )}
+      </div>
+    </ViewTransition>
   );
-};
+}
+
+export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => (
+  <NavigationTreeHeader render={domProps => <SideNavHeaderElement domProps={domProps} />}>
+    {props.children}
+  </NavigationTreeHeader>
+);
 
 export interface SideNavItemLinkProps {
   /** Rendered contents of the link. */
@@ -702,6 +799,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
   let {isCollapsed = false} = useContext(SideNavPanelContext);
+  let renderIcon = useSideNavIcon(isCollapsed);
   let textId = useId();
 
   return (
@@ -723,7 +821,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
           [
             IconContext,
             {
-              render: centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})}),
+              render: renderIcon,
               styles: style({size: '1lh', flexShrink: 0})
             }
           ]

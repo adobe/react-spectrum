@@ -4,7 +4,11 @@
  *
  * Expanding an item is a separate transition, where rows are captured individually instead. */
 
-::view-transition-group(.side-nav) {
+/* The icons are captured out of the rows while the panel collapses or expands, so the rows
+ * themselves only have to fade. Their timing has to match the panel's, because SideNavPanel clips
+ * them to where the nav is drawn, which is wherever the panel's own snapshot has reached. */
+::view-transition-group(.side-nav),
+::view-transition-group(.side-nav-icon) {
   /* Keep in sync with the transition on SideNavPanel in SideNavPanel.tsx. */
   animation-duration: 200ms;
   animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1);
@@ -29,13 +33,9 @@
   object-position: right top;
 }
 
-/* The page underneath is animating too, so show it live instead of cross fading the root. */
-:root:active-view-transition-type(side-panel, side-nav-item):global(::view-transition-old(root)) {
-  animation: none;
-  opacity: 0;
-}
-
-:root:active-view-transition-type(side-panel, side-nav-item):global(::view-transition-new(root)) {
-  animation: none;
-  mix-blend-mode: normal;
+/* The page underneath is animating too, so show it live instead of cross fading the root. It also
+ * keeps the root out of the overlay, which SideNavPanel clips to the nav: a root snapshot is the
+ * whole page, and clipping that to the nav would hide everything else until the transition ends. */
+:root:active-view-transition-type(side-panel, side-nav-item) {
+  view-transition-name: none;
 }
