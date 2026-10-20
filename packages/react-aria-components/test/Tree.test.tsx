@@ -412,6 +412,33 @@ describe('Tree', () => {
   });
 
   describe('descriptions', () => {
+    it('does not temporarily reference a missing description when only item props change', () => {
+      let children = (
+        <TreeItemContent>
+          <Text>Projects</Text>
+        </TreeItemContent>
+      );
+      function DescriptionTree({revision}: {revision: number}) {
+        return (
+          <Tree aria-label="Files">
+            <TreeItem id="projects" textValue="Projects" data-revision={revision}>
+              {children}
+            </TreeItem>
+          </Tree>
+        );
+      }
+
+      let {getByRole, rerender} = render(<DescriptionTree revision={0} />);
+      let row = getByRole('row');
+      let observer = new MutationObserver(() => {});
+      observer.observe(row, {attributes: true, attributeFilter: ['aria-labelledby']});
+      rerender(<DescriptionTree revision={1} />);
+      let mutations = observer.takeRecords();
+      observer.disconnect();
+      expect(mutations).toHaveLength(0);
+      expect(row).toHaveAccessibleName('Projects');
+    });
+
     function DescriptionTree({
       hideDescription = false,
       itemAriaLabel

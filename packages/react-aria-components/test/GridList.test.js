@@ -188,6 +188,29 @@ describe('GridList', () => {
     expect(getByRole('row')).toHaveAccessibleName('Projects Shared files');
   });
 
+  it('does not temporarily reference a missing description when only item props change', () => {
+    let children = <Text>Projects</Text>;
+    function DescriptionGridList({revision}) {
+      return (
+        <GridList aria-label="Files">
+          <GridListItem id="projects" textValue="Projects" data-revision={revision}>
+            {children}
+          </GridListItem>
+        </GridList>
+      );
+    }
+
+    let {getByRole, rerender} = render(<DescriptionGridList revision={0} />);
+    let row = getByRole('row');
+    let observer = new MutationObserver(() => {});
+    observer.observe(row, {attributes: true, attributeFilter: ['aria-labelledby']});
+    rerender(<DescriptionGridList revision={1} />);
+    let mutations = observer.takeRecords();
+    observer.disconnect();
+    expect(mutations).toHaveLength(0);
+    expect(row).toHaveAccessibleName('Projects');
+  });
+
   it('should render with custom classes', () => {
     let {getByRole, getAllByRole} = renderGridList({className: 'gridlist'}, {className: 'item'});
     let grid = getByRole('grid');
