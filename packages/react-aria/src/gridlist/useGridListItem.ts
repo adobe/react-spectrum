@@ -110,11 +110,14 @@ export function useGridListItem<T>(
     listMap.get(state)!;
   let descriptionId = useId();
   let [hasDescription, setHasDescription] = useState(true);
-  // Keep the id available while absent and recheck after every render because a
-  // stable render function can change its output. Equal state updates bail out.
+  // A stable render function can change its output, so recheck after every render.
+  // Avoid no-op state updates, which can interrupt focus restoration in React 18.
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
-    setHasDescription(!!getOwnerDocument(ref.current).getElementById(descriptionId));
+    let isRendered = !!getOwnerDocument(ref.current).getElementById(descriptionId);
+    if (isRendered !== hasDescription) {
+      setHasDescription(isRendered);
+    }
   });
 
   // We need to track the key of the item at the time it was last focused so that we force
