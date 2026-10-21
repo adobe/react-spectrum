@@ -412,31 +412,69 @@ describe('Tree', () => {
   });
 
   describe('descriptions', () => {
-    it('does not temporarily reference a missing description when only item props change', () => {
-      let children = (
-        <TreeItemContent>
-          <Text>Projects</Text>
-        </TreeItemContent>
-      );
-      function DescriptionTree({revision}: {revision: number}) {
-        return (
-          <Tree aria-label="Files">
-            <TreeItem id="projects" textValue="Projects" data-revision={revision}>
-              {children}
-            </TreeItem>
-          </Tree>
+    it.each(['stable children', 'inline children', 'inline render function'])(
+      'does not temporarily reference a missing description with %s',
+      childType => {
+        let children = (
+          <TreeItemContent>
+            <Text>Projects</Text>
+          </TreeItemContent>
         );
-      }
+        function DescriptionTree({revision}: {revision: number}) {
+          return (
+            <Tree aria-label="Files">
+              <TreeItem id="projects" textValue="Projects" data-revision={revision}>
+                {childType === 'stable children' ? (
+                  children
+                ) : (
+                  <TreeItemContent>
+                    {childType === 'inline children' ? (
+                      <Text>Projects</Text>
+                    ) : (
+                      () => <Text>Projects</Text>
+                    )}
+                  </TreeItemContent>
+                )}
+              </TreeItem>
+            </Tree>
+          );
+        }
 
-      let {getByRole, rerender} = render(<DescriptionTree revision={0} />);
+        let {getByRole, rerender} = render(<DescriptionTree revision={0} />);
+        let row = getByRole('row');
+        let observer = new MutationObserver(() => {});
+        observer.observe(row, {attributes: true, attributeFilter: ['aria-labelledby']});
+        rerender(<DescriptionTree revision={1} />);
+        let mutations = observer.takeRecords();
+        observer.disconnect();
+        expect(mutations).toHaveLength(0);
+        expect(row).toHaveAccessibleName('Projects');
+      }
+    );
+
+    it('updates descriptions from a stable render function when selection changes', async () => {
+      let children = ({isSelected}: {isSelected: boolean}) => (
+        <>
+          <Text>Projects</Text>
+          {isSelected && <Text slot="description">Shared files</Text>}
+        </>
+      );
+      let {getByRole} = render(
+        <Tree aria-label="Files" selectionMode="single" selectionBehavior="toggle">
+          <TreeItem id="projects" textValue="Projects">
+            <TreeItemContent>{children}</TreeItemContent>
+          </TreeItem>
+        </Tree>
+      );
       let row = getByRole('row');
-      let observer = new MutationObserver(() => {});
-      observer.observe(row, {attributes: true, attributeFilter: ['aria-labelledby']});
-      rerender(<DescriptionTree revision={1} />);
-      let mutations = observer.takeRecords();
-      observer.disconnect();
-      expect(mutations).toHaveLength(0);
       expect(row).toHaveAccessibleName('Projects');
+      await user.click(row);
+      expect(row).toHaveAttribute('aria-selected', 'true');
+      expect(row).toHaveAccessibleName('Projects Shared files');
+      await user.click(row);
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      expect(row).toHaveAccessibleName('Projects');
+      expect(row).not.toHaveAttribute('aria-labelledby');
     });
 
     function DescriptionTree({
