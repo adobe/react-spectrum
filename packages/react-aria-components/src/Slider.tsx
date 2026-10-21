@@ -47,6 +47,7 @@ import React, {
 import {SliderState, useSliderState} from 'react-stately/useSliderState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
@@ -423,13 +424,12 @@ export const SliderFill = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   let endPercent = Math.max(start, end);
   let sizePercent = Math.max(0, endPercent - startPercent);
 
-  // The thumb is positioned with the physical `left` property, so a track that pins its own
-  // direction must anchor the fill physically too. `insetInlineStart` resolves against the
-  // document, which for a pinned track is the wrong edge and would put the fill and the thumb
-  // on opposite sides. When no direction is pinned the track follows the document, and
-  // `insetInlineStart` is exactly that.
-  let fillInset =
-    state.direction == null ? 'insetInlineStart' : state.direction === 'rtl' ? 'right' : 'left';
+  // The thumb is positioned with the physical `left` property against the direction from
+  // `useLocale`, so the fill has to be anchored physically against the same direction.
+  // `insetInlineStart` resolves against the document instead, which disagrees whenever an
+  // `I18nProvider` overrides the direction, putting the fill and the thumb on opposite edges.
+  let {direction} = useLocale();
+  let fillInset = direction === 'rtl' ? 'right' : 'left';
 
   let renderProps = useRenderProps({
     ...props,

@@ -454,10 +454,10 @@ describe('useSlider', () => {
       return <div data-testid="track" ref={trackRef} {...trackProps} />;
     }
 
-    function clickTrackAt(locale, props, clientX) {
+    function clickTrackAt(locale, direction, clientX) {
       render(
-        <I18nProvider locale={locale}>
-          <Example aria-label="Slider" defaultValue={[0]} {...props} />
+        <I18nProvider locale={locale} direction={direction}>
+          <Example aria-label="Slider" defaultValue={[0]} />
         </I18nProvider>
       );
       let track = screen.getByTestId('track');
@@ -467,33 +467,33 @@ describe('useSlider', () => {
 
     // 25 is used rather than 50 so that the mirrored and non-mirrored results differ.
     it('mirrors a track click in an RTL locale by default', () => {
-      clickTrackAt('ar-AE', {}, 25);
+      clickTrackAt('ar-AE', undefined, 25);
       expect(stateRef.current.values).toEqual([75]);
     });
 
     it('does not mirror a track click in an LTR locale by default', () => {
-      clickTrackAt('en-US', {}, 25);
+      clickTrackAt('en-US', undefined, 25);
       expect(stateRef.current.values).toEqual([25]);
     });
 
-    it('does not mirror a track click in an RTL locale when direction is ltr', () => {
-      clickTrackAt('ar-AE', {direction: 'ltr'}, 25);
+    it('does not mirror a track click in an RTL locale under an ltr I18nProvider', () => {
+      clickTrackAt('ar-AE', 'ltr', 25);
       expect(stateRef.current.values).toEqual([25]);
     });
 
     // The case a boolean could not express: content that reads right to left inside an LTR UI.
-    it('mirrors a track click in an LTR locale when direction is rtl', () => {
-      clickTrackAt('en-US', {direction: 'rtl'}, 25);
+    it('mirrors a track click in an LTR locale under an rtl I18nProvider', () => {
+      clickTrackAt('en-US', 'rtl', 25);
       expect(stateRef.current.values).toEqual([75]);
     });
 
-    it('is a no-op when direction matches the locale', () => {
-      clickTrackAt('en-US', {direction: 'ltr'}, 25);
+    it('is a no-op when the override matches the locale', () => {
+      clickTrackAt('en-US', 'ltr', 25);
       expect(stateRef.current.values).toEqual([25]);
     });
 
-    it('is a no-op when direction matches an RTL locale', () => {
-      clickTrackAt('ar-AE', {direction: 'rtl'}, 25);
+    it('is a no-op when the override matches an RTL locale', () => {
+      clickTrackAt('ar-AE', 'rtl', 25);
       expect(stateRef.current.values).toEqual([75]);
     });
   });

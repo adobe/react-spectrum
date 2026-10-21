@@ -678,9 +678,9 @@ describe('useSliderThumb', () => {
       );
     }
 
-    function renderSlider(locale, props) {
+    function renderSlider(locale, direction, props) {
       return render(
-        <I18nProvider locale={locale}>
+        <I18nProvider locale={locale} direction={direction}>
           <Example aria-label="Slider" defaultValue={[25]} {...props} />
         </I18nProvider>
       );
@@ -699,30 +699,30 @@ describe('useSliderThumb', () => {
         expect(screen.getByTestId('thumb')).toHaveStyle({left: '25%'});
       });
 
-      it('does not mirror in an RTL locale when direction is ltr', () => {
-        renderSlider('ar-AE', {direction: 'ltr'});
+      it('does not mirror in an RTL locale under an ltr I18nProvider', () => {
+        renderSlider('ar-AE', 'ltr');
         expect(screen.getByTestId('thumb')).toHaveStyle({left: '25%'});
       });
 
       // The case a boolean could not express: content that reads right to left inside an LTR UI.
-      it('mirrors in an LTR locale when direction is rtl', () => {
-        renderSlider('en-US', {direction: 'rtl'});
+      it('mirrors in an LTR locale under an rtl I18nProvider', () => {
+        renderSlider('en-US', 'rtl');
         expect(screen.getByTestId('thumb')).toHaveStyle({left: '75%'});
       });
 
-      it('is a no-op when direction matches the locale', () => {
-        renderSlider('en-US', {direction: 'ltr'});
+      it('is a no-op when the override matches the locale', () => {
+        renderSlider('en-US', 'ltr');
         expect(screen.getByTestId('thumb')).toHaveStyle({left: '25%'});
       });
 
-      it('still runs bottom to top vertically when direction is ltr', () => {
-        renderSlider('ar-AE', {direction: 'ltr', orientation: 'vertical'});
+      it('still runs bottom to top vertically under an ltr I18nProvider', () => {
+        renderSlider('ar-AE', 'ltr', {orientation: 'vertical'});
         // Vertical sliders always run bottom to top, which direction must not change.
         expect(screen.getByTestId('thumb')).toHaveStyle({top: '75%'});
       });
 
-      it('still runs bottom to top vertically when direction is rtl', () => {
-        renderSlider('en-US', {direction: 'rtl', orientation: 'vertical'});
+      it('still runs bottom to top vertically under an rtl I18nProvider', () => {
+        renderSlider('en-US', 'rtl', {orientation: 'vertical'});
         expect(screen.getByTestId('thumb')).toHaveStyle({top: '75%'});
       });
     });
@@ -738,9 +738,9 @@ describe('useSliderThumb', () => {
         expect(stateRef.current.values).toEqual([25]);
       });
 
-      it('does not reverse arrow keys in an RTL locale when direction is ltr', async () => {
+      it('does not reverse arrow keys in an RTL locale under an ltr I18nProvider', async () => {
         let user = userEvent.setup({delay: null, pointerMap});
-        renderSlider('ar-AE', {direction: 'ltr'});
+        renderSlider('ar-AE', 'ltr');
         await user.tab();
         await user.keyboard('{ArrowRight}');
         expect(stateRef.current.values).toEqual([26]);
@@ -748,9 +748,9 @@ describe('useSliderThumb', () => {
         expect(stateRef.current.values).toEqual([25]);
       });
 
-      it('reverses arrow keys in an LTR locale when direction is rtl', async () => {
+      it('reverses arrow keys in an LTR locale under an rtl I18nProvider', async () => {
         let user = userEvent.setup({delay: null, pointerMap});
-        renderSlider('en-US', {direction: 'rtl'});
+        renderSlider('en-US', 'rtl');
         await user.tab();
         await user.keyboard('{ArrowRight}');
         expect(stateRef.current.values).toEqual([24]);
@@ -790,14 +790,14 @@ describe('useSliderThumb', () => {
         expect(stateRef.current.values).toEqual([35]);
       });
 
-      it('does not reverse drag in an RTL locale when direction is ltr', () => {
-        renderSlider('ar-AE', {direction: 'ltr'});
+      it('does not reverse drag in an RTL locale under an ltr I18nProvider', () => {
+        renderSlider('ar-AE', 'ltr');
         dragThumbRight();
         expect(stateRef.current.values).toEqual([35]);
       });
 
-      it('reverses drag in an LTR locale when direction is rtl', () => {
-        renderSlider('en-US', {direction: 'rtl'});
+      it('reverses drag in an LTR locale under an rtl I18nProvider', () => {
+        renderSlider('en-US', 'rtl');
         dragThumbRight();
         expect(stateRef.current.values).toEqual([15]);
       });

@@ -121,11 +121,12 @@ const CustomThumb = ({index, children}: {index: number; children: React.ReactNod
   );
 };
 
-export const SliderPinnedDirection: SliderStory = () => (
-  // A slider whose direction comes from its content rather than the reading order pins `direction`.
-  // Left: an RTL locale, where a playback bar stays left to right. Right: an LTR locale, where a
-  // manga page position bar runs right to left. Each is shown next to an unpinned control that
-  // follows the locale.
+export const SliderOverriddenDirection: SliderStory = () => (
+  // A control whose direction comes from its content rather than from the reading order is wrapped
+  // in an `I18nProvider` that overrides the direction. Left: an RTL locale, where a playback bar
+  // stays left to right. Right: an LTR locale, where a manga page position bar runs right to left.
+  // Each is shown next to a control that follows the locale. The wrapper also sets `dir`, so that
+  // CSS logical properties inside it resolve the same way the components do.
   <div style={{display: 'flex', gap: 48}}>
     <I18nProvider locale="ar-AE">
       <div dir="rtl" style={{display: 'flex', flexDirection: 'column', gap: 24}}>
@@ -139,16 +140,20 @@ export const SliderPinnedDirection: SliderStory = () => (
             <SliderThumb className={styles.thumb} />
           </SliderTrack>
         </Slider>
-        <Slider defaultValue={30} direction="ltr" className={styles.slider}>
-          <div className={styles.label}>
-            <Label>Playback progress (direction=&quot;ltr&quot;)</Label>
-            <SliderOutput />
+        <I18nProvider locale="ar-AE" direction="ltr">
+          <div dir="ltr">
+            <Slider defaultValue={30} className={styles.slider}>
+              <div className={styles.label}>
+                <Label>Playback progress (pinned ltr)</Label>
+                <SliderOutput />
+              </div>
+              <SliderTrack className={styles.track}>
+                <SliderFill />
+                <SliderThumb className={styles.thumb} />
+              </SliderTrack>
+            </Slider>
           </div>
-          <SliderTrack className={styles.track}>
-            <SliderFill />
-            <SliderThumb className={styles.thumb} />
-          </SliderTrack>
-        </Slider>
+        </I18nProvider>
       </div>
     </I18nProvider>
     <I18nProvider locale="en-US">
@@ -163,16 +168,20 @@ export const SliderPinnedDirection: SliderStory = () => (
             <SliderThumb className={styles.thumb} />
           </SliderTrack>
         </Slider>
-        <Slider defaultValue={30} direction="rtl" className={styles.slider}>
-          <div className={styles.label}>
-            <Label>Manga page position (direction=&quot;rtl&quot;)</Label>
-            <SliderOutput />
+        <I18nProvider locale="en-US" direction="rtl">
+          <div dir="rtl">
+            <Slider defaultValue={30} className={styles.slider}>
+              <div className={styles.label}>
+                <Label>Manga page position (pinned rtl)</Label>
+                <SliderOutput />
+              </div>
+              <SliderTrack className={styles.track}>
+                <SliderFill />
+                <SliderThumb className={styles.thumb} />
+              </SliderTrack>
+            </Slider>
           </div>
-          <SliderTrack className={styles.track}>
-            <SliderFill />
-            <SliderThumb className={styles.thumb} />
-          </SliderTrack>
-        </Slider>
+        </I18nProvider>
       </div>
     </I18nProvider>
   </div>
