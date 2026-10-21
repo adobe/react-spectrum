@@ -1947,7 +1947,11 @@ describe('GridList', () => {
         let onFocus = jest.fn();
         let onBlur = jest.fn();
         let onFocusChange = jest.fn();
-        let itemProps = {onFocus, onBlur, onFocusChange};
+        let itemProps = {
+          onFocus: e => onFocus(e.target),
+          onBlur: e => onBlur(e.target),
+          onFocusChange
+        };
         let {getAllByRole, getByRole} = render(
           <>
             <button>Before</button>
@@ -1973,7 +1977,7 @@ describe('GridList', () => {
         expect(document.activeElement).toBe(rows[0]);
         expect(rows[0]).toHaveAttribute('data-focused', 'true');
         expect(onFocus).toHaveBeenCalledTimes(1);
-        expect(onFocus).toHaveBeenLastCalledWith(expect.objectContaining({target: rows[0]}));
+        expect(onFocus).toHaveBeenLastCalledWith(rows[0]);
         expect(onBlur).not.toHaveBeenCalled();
         expect(onFocusChange.mock.calls).toEqual([[true]]);
 
@@ -1986,9 +1990,9 @@ describe('GridList', () => {
         }
         expect(document.activeElement).toBe(rows[1]);
         expect(onFocus).toHaveBeenCalledTimes(2);
-        expect(onFocus).toHaveBeenLastCalledWith(expect.objectContaining({target: rows[1]}));
+        expect(onFocus).toHaveBeenLastCalledWith(rows[1]);
         expect(onBlur).toHaveBeenCalledTimes(1);
-        expect(onBlur).toHaveBeenLastCalledWith(expect.objectContaining({target: rows[0]}));
+        expect(onBlur).toHaveBeenLastCalledWith(rows[0]);
         expect(onFocusChange.mock.calls).toEqual([[true], [false], [true]]);
 
         if (interactionType === 'keyboard') {
@@ -1998,7 +2002,7 @@ describe('GridList', () => {
         }
         expect(document.activeElement).toBe(getByRole('button', {name: 'After'}));
         expect(onBlur).toHaveBeenCalledTimes(2);
-        expect(onBlur).toHaveBeenLastCalledWith(expect.objectContaining({target: rows[1]}));
+        expect(onBlur).toHaveBeenLastCalledWith(rows[1]);
         expect(onFocusChange.mock.calls).toEqual([[true], [false], [true], [false]]);
       }
     );
