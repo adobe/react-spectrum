@@ -455,6 +455,69 @@ describe('Table', () => {
     jest.clearAllMocks();
   });
 
+  it('should restore focus to the associated dialog trigger inside a cell', async () => {
+    let tree = render(
+      <>
+        <button>Before</button>
+        <Table aria-label="Files" selectionMode="multiple">
+          <MyTableHeader>
+            <MyColumn id="name" isRowHeader>
+              Name
+            </MyColumn>
+            <MyColumn>Type</MyColumn>
+            <MyColumn>Date Modified</MyColumn>
+          </MyTableHeader>
+          <TableBody>
+            <MyRow id="1" textValue="Games">
+              <Cell>Games</Cell>
+              <Cell>File folder</Cell>
+              <Cell>
+                <DialogTrigger>
+                  <Button>Open 1</Button>
+                  <Modal>
+                    <Dialog>
+                      <Checkbox>
+                        <Label>Agree 1</Label>
+                      </Checkbox>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+                <DialogTrigger>
+                  <Button>Open 2</Button>
+                  <Modal>
+                    <Dialog>
+                      <Checkbox>
+                        <Label>Agree 2</Label>
+                      </Checkbox>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+                <DialogTrigger>
+                  <Button>Open 3</Button>
+                  <Modal>
+                    <Dialog>
+                      <Checkbox>
+                        <Label>Agree 3</Label>
+                      </Checkbox>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+              </Cell>
+            </MyRow>
+          </TableBody>
+        </Table>
+        <button>After</button>
+      </>
+    );
+    await user.click(tree.getByRole('button', {name: 'Open 2'}));
+    let dialog = tree.getByRole('dialog');
+    expect(document.activeElement).toBe(dialog);
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    expect(dialog).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(tree.getByRole('button', {name: 'Open 2'}));
+  });
+
   it('should render with default classes', () => {
     let {getByRole} = renderTable();
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
@@ -2361,6 +2424,37 @@ describe('Table', () => {
 
       expect(() => render(<StaticRowDynamicCell />)).toThrow(
         'No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.'
+      );
+    });
+
+    it('should throw an error if two rows share an id', () => {
+      function DuplicateRowIds() {
+        return (
+          <Table aria-label="Files">
+            <TableHeader>
+              <Column isRowHeader>Name</Column>
+              <Column>Type</Column>
+            </TableHeader>
+            <TableBody>
+              <Row id="1">
+                <Cell>Games</Cell>
+                <Cell>File folder</Cell>
+              </Row>
+              <Row id="1">
+                <Cell>Program Files</Cell>
+                <Cell>File folder</Cell>
+              </Row>
+              <Row id="2">
+                <Cell>bootmgr</Cell>
+                <Cell>System file</Cell>
+              </Row>
+            </TableBody>
+          </Table>
+        );
+      }
+
+      expect(() => render(<DuplicateRowIds />)).toThrow(
+        'Duplicate key "1" found in collection. Every item in a collection must have a unique key.'
       );
     });
   });

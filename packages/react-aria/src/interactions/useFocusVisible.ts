@@ -159,6 +159,18 @@ function handleWindowBlur() {
   hasBlurredWindowRecently = true;
 }
 
+function handleInvalidEvent(e: Event) {
+  let startingActiveElement = getActiveElement(getOwnerDocument(getEventTarget(e)));
+  queueMicrotask(() => {
+    // If focus was moved to a different element after the form became invalid,
+    // then it was likely a forms library that moved focus to the first invalid field.
+    // In this case, we want to set the modality to keyboard.
+    if (getActiveElement(getOwnerDocument(getEventTarget(e))) !== startingActiveElement) {
+      setInteractionModality('keyboard');
+    }
+  });
+}
+
 /**
  * Setup global event listeners to control when keyboard focus style should be visible.
  */
@@ -195,6 +207,8 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   documentObject.addEventListener('keydown', handleKeyboardEvent, true);
   documentObject.addEventListener('keyup', handleKeyboardEvent, true);
   documentObject.addEventListener('click', handleClickEvent, true);
+
+  documentObject.addEventListener('invalid', handleInvalidEvent, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
@@ -241,6 +255,8 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
   documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
   documentObject.removeEventListener('click', handleClickEvent, true);
+
+  documentObject.removeEventListener('invalid', handleInvalidEvent, true);
 
   windowObject.removeEventListener('focus', handleFocusEvent, true);
   windowObject.removeEventListener('blur', handleWindowBlur, false);

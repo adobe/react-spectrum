@@ -172,13 +172,7 @@ export interface NavigationTreeItemProps<T = object>
   extends
     Omit<
       TreeItemProps<T>,
-      | 'className'
-      | 'style'
-      | 'render'
-      | 'onAction'
-      | 'allowsArrowNavigation'
-      | 'focusMode'
-      | 'value'
+      'className' | 'style' | 'render' | 'onAction' | 'allowsArrowNavigation' | 'value'
     >,
     StyleRenderProps<NavigationTreeItemRenderProps> {
   /**
@@ -445,7 +439,7 @@ function NavigationTreeItemContentInner(props: NavigationTreeItemContentInnerPro
   // Provide onFocusChange so the link reports its focus up to NavigationTreeItem.
   let linkContextValue = {
     ...linkProps,
-    'aria-current': isCurrent ? 'page' : undefined,
+    'aria-current': isCurrent ? ('page' as const) : undefined,
     onFocusChange: setLinkFocused,
     onPress: linkProps.href == null && hasChildItems ? () => state.toggleKey(id) : undefined
   };

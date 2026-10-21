@@ -260,6 +260,19 @@ export function PixelLoader(props: PixelLoaderProps) {
   } = props;
   let isReducedMotion = useReducedMotion();
 
+  let ref = React.useRef<HTMLDivElement>(null);
+  let [isInView, setIsInView] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    let observer = new IntersectionObserver(([entry]) => setIsInView(entry.isIntersecting));
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
   // Normalize to a sequence.
   const sequence = React.useMemo(
     () => (Array.isArray(icon[0]) ? icon : [icon]) as Cell[][],
@@ -284,13 +297,14 @@ export function PixelLoader(props: PixelLoaderProps) {
 
   // Advance the sequence one icon per cycle while playing. Single-icon
   // loaders never start a timer — they're a pure infinite CSS loop.
+  let isAdvancing = isPlaying && isInView;
   React.useEffect(() => {
-    if (!isPlaying || !isSequence) {
+    if (!isAdvancing || !isSequence) {
       return undefined;
     }
     const id = setInterval(() => setTick(t => t + 1), duration);
     return () => clearInterval(id);
-  }, [isPlaying, isSequence, duration, sequence]);
+  }, [isAdvancing, isSequence, duration, sequence]);
 
   const animId = iconId(cells);
   const css = keyframesFor(cells, isReducedMotion);
@@ -314,6 +328,7 @@ export function PixelLoader(props: PixelLoaderProps) {
 
   return (
     <div
+      ref={ref}
       aria-hidden="true"
       className={className}
       style={{
@@ -326,7 +341,7 @@ export function PixelLoader(props: PixelLoaderProps) {
         forcedColorAdjust: 'none',
         willChange: 'opacity',
         ...(isPlaying && {
-          animation: `${animId}-group-o ${duration}ms linear ${iteration}`
+          animation: `${animId}-group-o ${duration}ms linear ${iteration} ${isInView ? 'running' : 'paused'}`
         })
       }}
       {...rest}>
@@ -368,8 +383,8 @@ export function PixelLoader(props: PixelLoaderProps) {
               ...(isPlaying &&
                 !isReducedMotion && {
                   animation:
-                    `${animId}-${i}-y ${duration}ms linear ${iteration}, ` +
-                    `${animId}-${i}-s ${duration}ms linear ${iteration}`,
+                    `${animId}-${i}-y ${duration}ms linear ${iteration} ${isInView ? 'running' : 'paused'}, ` +
+                    `${animId}-${i}-s ${duration}ms linear ${iteration} ${isInView ? 'running' : 'paused'}`,
                   willChange: 'transform'
                 })
             }}
