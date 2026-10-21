@@ -1,5 +1,6 @@
 import {Transformer} from '@parcel/plugin';
 import {
+  type CsfFile,
   type CsfSourceMap,
   type ESTree,
   type ESTreeNode,
@@ -12,10 +13,10 @@ import {
   isFunction,
   loadCsf,
   objectList,
+  objectProperty,
   outerSpan,
   removeStatement,
   statementSpan,
-  staticKey,
   textOf,
   wrapExpression
 } from 'storybook/internal/csf-tools';
@@ -57,7 +58,7 @@ async function processCsf(
     fileName: filePath,
     makeTitle: title => title || 'default'
   }).parse();
-  let editor = csf._editor;
+  let editor = csf.editor;
   // The Fast Refresh wrapper goes first, so statements appended below land after the `;` it ends a
   // default export with, and not after an import it moves up.
   let closeRefresh = refreshName ? wrapRefresh(editor, filePath, refreshName) : null;
@@ -108,8 +109,8 @@ async function processCsf(
   // The component a CSF 3 `render` function becomes. `render: Button` becomes
   // `render: args => <Button {...args} />`, so React renders `Button` instead of calling it.
   let renderComponent = (object: ESTree.ObjectExpression) => {
-    let render = property(object, 'render');
-    if (!render) {
+    let render = objectProperty(object, 'render');
+    if (render?.kind !== 'init') {
       return;
     }
     let {value} = render;
@@ -137,23 +138,23 @@ async function processCsf(
     appendToList(editor, objectList(editor, object), [...members, `_hash: "${hash}"`]);
   };
 
-  let meta = csf._metaNodeIsSynthetic ? undefined : csf._metaNode;
+  let meta = csf.objects({stories: false})[0]?.node;
   let statements: string[] = [];
   if (refreshName) {
-    for (let name in csf._storyExports) {
+    for (let {exportName: name} of csf.stories) {
       let node = csf.getStoryExport(name);
-      // `story` is a legacy `Story.story = {…}`.
-      let {args, parameters, story} = csf._storyAnnotations[name];
-      let hash = md5(
-        ...[args, parameters, story].flatMap(annotation => (annotation ? textOf(annotation) : []))
-      );
+      if (!isFunction(node) && node?.type !== 'ObjectExpression') {
+        continue;
+      }
+      // When a story's annotations cannot be read, any change to the file bails out.
+      let hash = md5(...(annotationTexts(csf, name) ?? [editor.code]));
       if (isFunction(node)) {
         // A CSF 2 function story.
         statements.push(
           `${name}._internalComponent = ${addComponent(node)};`,
           `${name}._hash = "${hash}";`
         );
-      } else if (node?.type === 'ObjectExpression') {
+      } else {
         register(node, hash);
       }
     }
@@ -162,8 +163,8 @@ async function processCsf(
     }
   }
 
-  let component = meta && property(meta, 'component');
-  if (docs && component && !component.method) {
+  let component = meta && objectProperty(meta, 'component');
+  if (docs && component?.kind === 'init' && !component.method) {
     let {value} = component;
     let target = value.type === 'Identifier' ? value.name : `(${textOf(value)})`;
     statements.push(`${target}.__docgenInfo = ${JSON.stringify(docs)};`);
@@ -180,11 +181,25 @@ async function processCsf(
   };
 }
 
-function property(object: ESTree.ObjectExpression, key: string) {
-  return object.properties.find(
-    (p): p is ESTree.ObjectProperty =>
-      p.type === 'Property' && p.kind === 'init' && staticKey(p) === key
-  );
+// The text of a story's `args`, `parameters` and legacy `Story.story = {…}`, or `undefined` when
+// csf-tools cannot read them: for a story other code uses, such as `...Primary` in another story,
+// or for `args` set both in the story's object and as `Primary.args = {…}`.
+function annotationTexts(csf: CsfFile, name: string) {
+  let found = csf.storyObject(name);
+  if (!found?.ok) {
+    return undefined;
+  }
+  let texts: string[] = [];
+  for (let key of ['args', 'parameters', 'story']) {
+    let field = found.object.inspect([key]);
+    if (field.kind === 'unreadable') {
+      return undefined;
+    }
+    if (field.kind === 'value') {
+      texts.push(textOf(field.node));
+    }
+  }
+  return texts;
 }
 
 function md5(...texts: string[]) {
