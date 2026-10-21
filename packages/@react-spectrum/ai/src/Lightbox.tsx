@@ -253,7 +253,7 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
       {index => props.children?.at(getWrappedIndex(index, state.collection.size))}
     </InfiniteLightboxItems>
   ) : (
-    <FiniteLightboxItems>{props.children}</FiniteLightboxItems>
+    <FiniteLightboxItems>{index => props.children?.at(index)}</FiniteLightboxItems>
   );
 
   return (
@@ -272,80 +272,111 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   );
 }
 
-interface FiniteLightboxItemsProps<T> extends LightboxItemsProps<T> {}
+interface FiniteLightboxItemsProps<T> extends Omit<LightboxItemsProps<T>, 'children'> {
+  children: (page: number) => ReactNode;
+}
 
 function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
+  let {children: renderPage, ...otherProps} = props;
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
-  let isProgrammaticScroll = useRef(false);
 
-  // do we want to disable the prev/next button if you are at the start/end?
   let selectedKey = state?.selectedKey;
   let selectedItem = selectedKey != null ? state?.collection.getItem(selectedKey) : null;
 
   let selectedIndex = selectedItem != null ? selectedItem.index : null;
 
   useLayoutEffect(() => {
-    // When a user clicks prev/next, that changes the selected tab but not the scroll position
-    // Check if the scroll position doesn't match the selected tab and adjust accordingly
     let el = ref.current;
-    let currentIndex = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0;
+    if (!el || selectedIndex == null) {
+      return;
+    }
+
+    let currentIndex = Math.round(el.scrollLeft / el.offsetWidth);
     if (selectedIndex !== currentIndex) {
-      isProgrammaticScroll.current = true;
-      ref.current!.scrollLeft = ref.current!.offsetWidth * (selectedIndex ?? 0);
+      // Jump directly because pages between distant selections may not be mounted.
+      el.scrollTo({
+        left: el.offsetWidth * selectedIndex,
+        behavior: 'instant'
+      });
     }
   }, [selectedIndex, selectedKey]);
 
-  let prevItem = () => {
-    let key = state.selectedKey;
-    let isFirstKey = state.collection.getFirstKey() === key;
+  if (selectedIndex == null || state.collection.size === 0) {
+    return null;
+  }
 
-    let prevKey = key ? state.collection.getKeyBefore(key) : null;
-    if (isFirstKey) {
-      prevKey = state.collection.getFirstKey();
+  let size = state.collection.size;
+  let pages = [selectedIndex - 1, selectedIndex, selectedIndex + 1].filter(
+    page => page >= 0 && page < size
+  );
+  let leadingPages = Math.max(0, selectedIndex - 1);
+  let trailingPages = Math.max(0, size - selectedIndex - 2);
+
+  let prevItem = () => {
+    let el = ref.current;
+    if (el && selectedIndex > 0) {
+      el.scrollLeft = el.offsetWidth * (selectedIndex - 1);
     }
-    state.setSelectedKey(prevKey);
   };
 
   let nextItem = () => {
-    let key = state.selectedKey;
-    let isLastKey = state.collection.getLastKey() === key;
-    let nextKey = key ? state.collection.getKeyAfter(key) : null;
-    if (isLastKey) {
-      nextKey = key;
+    let el = ref.current;
+    if (el && selectedIndex < size - 1) {
+      el.scrollLeft = el.offsetWidth * (selectedIndex + 1);
     }
-    state.setSelectedKey(nextKey);
   };
 
   let onScroll = () => {
     let el = ref.current;
-    let currentIndex = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0;
+    if (!el) {
+      return;
+    }
 
-    // Update the selected tab when scrolling (but do not update when the scrolling is coming from next/prev buttons)
-    if (selectedIndex !== currentIndex && !isProgrammaticScroll.current) {
+    let currentIndex = Math.max(0, Math.min(size - 1, Math.round(el.scrollLeft / el.offsetWidth)));
+    if (selectedIndex !== currentIndex) {
       let key = [...state.collection].at(currentIndex)?.key;
-      if (key) {
+      if (key != null) {
         state.setSelectedKey(key);
       }
     }
   };
 
-  let onScrollEnd = () => {
-    isProgrammaticScroll.current = false;
-  };
-
   return (
     <>
-      <CarouselNavButton onPress={prevItem} side="start" />
-      <div
-        ref={ref}
-        {...props}
-        className={itemsStyles}
-        onScroll={onScroll}
-        onScrollEnd={onScrollEnd}>
-        {props.children}
+      <CarouselNavButton onPress={prevItem} side="start" isDisabled={selectedIndex === 0} />
+      <div ref={ref} {...otherProps} className={itemsStyles} onScroll={onScroll}>
+        <div
+          style={{
+            width: leadingPages * 100 + '%',
+            flexShrink: 0,
+            contain: 'strict'
+          }}
+        />
+        {pages.map(page => (
+          <div
+            key={page}
+            inert={page !== selectedIndex}
+            style={{
+              width: '100%',
+              height: '100%',
+              flexShrink: 0,
+              contain: page !== selectedIndex ? 'inline-size' : undefined,
+              scrollSnapAlign: 'start',
+              scrollSnapStop: 'always'
+            }}>
+            {renderPage(page)}
+          </div>
+        ))}
+        <div
+          style={{
+            width: trailingPages * 100 + '%',
+            flexShrink: 0,
+            contain: 'strict'
+          }}
+        />
       </div>
-      <CarouselNavButton onPress={nextItem} side="end" />
+      <CarouselNavButton onPress={nextItem} side="end" isDisabled={selectedIndex === size - 1} />
     </>
   );
 }
