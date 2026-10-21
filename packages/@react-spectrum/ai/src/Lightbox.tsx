@@ -10,43 +10,46 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button, ButtonProps} from '@react-spectrum/s2/Button';
+import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
+import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
+import {CloseButton} from '@react-spectrum/s2/CloseButton';
+import {createContext, ReactNode, useContext, useReducer, useRef, useState} from 'react';
+import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {ButtonProps} from 'react-aria-components/Button'
+import {FocusScope} from 'react-aria/FocusScope';
+import {ImageContext} from '@react-spectrum/s2/Image';
+import {Key} from '@react-types/shared';
 import {
   Tab as RACTab,
   TabList as RACTabList,
   TabPanel as RACTabPanel,
-  TabPanels as RACTabPanels,
   Tabs as RACTabs,
   TabListProps,
+  TabListStateContext,
   TabPanelProps,
   TabPanelsProps,
   TabProps,
-  TabsProps,
-  TabListStateContext,
+  TabsProps
 } from 'react-aria-components/Tabs';
-// import {Button} from 'react-aria-components/Button';
-import {Button} from '@react-spectrum/s2/Button';
-import {FocusScope} from 'react-aria/FocusScope';
-import {createContext, useContext, useLayoutEffect, useState, useRef, useReducer, ReactNode, RefObject} from 'react';
-import {Key} from '@react-types/shared';
-import { ModalOverlay, Modal, Dialog} from 'react-aria-components/Modal';
-import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
-import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
-import {CloseButton} from '@react-spectrum/s2/CloseButton';
-import {ImageContext} from '@react-spectrum/s2/Image';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+
 export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
   isInfinite?: boolean;
-};
+}
 
-export type LightboxPickerProps<T> = Omit<TabListProps<T>, 'className'>;
-export interface LightboxPickerItemProps extends Omit<TabProps, 'className' | 'children'>{
+export interface LightboxPickerProps<T> extends Omit<TabListProps<T>, 'className'> {}
+export interface LightboxPickerItemProps extends Omit<TabProps, 'className' | 'children'> {
   children: ReactNode;
 }
 export interface LightboxItemsProps<T> extends Omit<TabPanelsProps<T>, 'className'> {
-  children: ReactNode[]
+  children: ReactNode[];
 }
-export type LightboxItemProps = Omit<TabPanelProps, 'className'>;
+export interface LightboxItemProps extends Omit<TabPanelProps, 'className'> {}
+
+export interface LightboxTrigger {
+  children: ReactNode;
+}
 
 const carouselStyles = style({
   display: 'flex',
@@ -59,7 +62,8 @@ const carouselStyles = style({
   gap: 16,
   minWidth: 0,
   minHeight: 0,
-  width: 'full'
+  width: 'full',
+  height: 'full'
 });
 
 const pickerStyles = style({
@@ -73,6 +77,7 @@ const pickerStyles = style({
   alignItems: 'center',
   justifyContent: 'center',
   flexShrink: 0,
+  order: 1,
   gap: 4
 });
 
@@ -88,7 +93,10 @@ const pickerItemStyles = style({
   borderStyle: 'solid',
   borderColor: {
     default: 'transparent',
-    isSelected: 'gray-800'
+    isSelected: {
+      default: 'gray-800',
+      isInModal: 'gray-100'
+    }
   }
 });
 
@@ -103,7 +111,10 @@ const itemsStyles = style({
   overflowY: 'hidden',
   scrollbarWidth: 'none',
   scrollSnapType: 'x mandatory',
-  scrollBehavior: 'smooth'
+  scrollBehavior: {
+    default: 'smooth',
+    '@media (prefers-reduced-motion: reduce)': 'auto'
+  }
 });
 
 const itemStyles = style({
@@ -117,14 +128,10 @@ const itemStyles = style({
   height: 'full',
   flexShrink: 0,
   scrollSnapAlign: 'start',
-  scrollSnapStop: 'always'
+  scrollSnapStop: 'always',
+  paddingX: 16,
+  boxSizing: 'border-box'
 });
-
-const buttonStyles = style({
-  size: 32,
-  borderRadius: 'full',
-  borderStyle: 'none',
-})
 
 interface LightboxCarouselContextProps {
   isInfinite?: boolean;
@@ -133,52 +140,68 @@ interface LightboxCarouselContextProps {
 let LightBoxCarouselContext = createContext<LightboxCarouselContextProps>({});
 
 export function LightboxCarousel(props: LightboxCarouselProps) {
-
   let ctx = useContext(LightboxTriggerContext);
 
+  // Only render Lightbox Carousel inside a modal if there is a trigger
   if (ctx) {
     return (
       <ModalOverlay
-          isOpen={ctx.isOpen}
-          onOpenChange={ctx.setIsOpen}
-          isDismissable
-          className={style({
+        isOpen={ctx.isOpen}
+        onOpenChange={ctx.setIsOpen}
+        isDismissable
+        className={renderProps =>
+          style({
             position: 'fixed',
             inset: 0,
             zIndex: 1000,
-            backgroundColor: 'black/90'
-          })}>
-          <Modal className={style({width: 'full', height: 'full'})}>
-            <Dialog
-              className={style({
-                display: 'grid',
-                gridTemplateRows: ['auto', 'minmax(0, 1fr)'],
-                gap: 24,
-                boxSizing: 'border-box',
-                height: 'full',
-                padding: 24,
-                color: 'white'
-              })}>
-              {({close}) => (
-                <>
+            backgroundColor: 'black/90',
+            opacity: {
+              default: 1,
+              isEntering: 0,
+              isExiting: 0
+            },
+            transition: 'opacity',
+            transitionDuration: {
+              default: 250,
+              isExiting: 130
+            }
+          })(renderProps)
+        }>
+        <Modal className={style({width: 'full', height: 'full'})}>
+          <Dialog
+            className={style({
+              display: 'grid',
+              gridTemplateRows: ['auto', 'minmax(0, 1fr)'],
+              gap: 24,
+              boxSizing: 'border-box',
+              height: 'full',
+              padding: 24,
+              color: 'white'
+            })}>
+            {({close}) => (
+              <>
                 <CloseButton staticColor="white" onPress={close} />
-                    <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
-                      <RACTabs {...props} selectedKey={ctx?.activeKey} onSelectionChange={ctx?.setActiveKey} className={renderProps => carouselStyles(renderProps)} />
-                    </LightBoxCarouselContext.Provider>
-                </>
-              )}
-            </Dialog>
-          </Modal>
-        </ModalOverlay>
-    )
+                <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
+                  <RACTabs
+                    {...props}
+                    selectedKey={ctx?.activeKey}
+                    onSelectionChange={ctx?.setActiveKey}
+                    className={renderProps => carouselStyles(renderProps)}
+                  />
+                </LightBoxCarouselContext.Provider>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    );
   }
 
-  // maybe if there is a lightbox trigger context, then we render it as a modal, but otherwise, we just render the tabs?
   return (
     <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
       <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
     </LightBoxCarouselContext.Provider>
-  )
+  );
 }
 
 export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
@@ -188,72 +211,68 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
 
   // Wait until tab state has initialized its focus target before running autofocus.
   return state?.selectionManager.focusedKey != null ? (
-    <FocusScope autoFocus={ctx?.isOpen ?? false}>
-      {picker}
-    </FocusScope>
-  ) : picker;
+    <FocusScope autoFocus={ctx?.isOpen ?? false}>{picker}</FocusScope>
+  ) : (
+    picker
+  );
 }
-
 
 const thumbnailStyles = style({
   width: 64,
   height: 64,
   objectFit: 'cover',
   borderRadius: 'lg',
-  opacity: .8
-})
+  opacity: 0.8
+});
 
 export function LightboxPickerItem(props: LightboxPickerItemProps) {
+  let isInModal = useContext(LightboxTriggerContext);
+
   return (
-      <RACTab {...props} className={renderProps => pickerItemStyles(renderProps)}>
-        <ImageContext.Provider value={{styles: thumbnailStyles}}>
-          {props.children}
-        </ImageContext.Provider>
-      </RACTab>
+    <RACTab {...props} className={renderProps => pickerItemStyles({...renderProps, isInModal})}>
+      <ImageContext.Provider value={{styles: thumbnailStyles}}>
+        {props.children}
+      </ImageContext.Provider>
+    </RACTab>
   );
 }
 
 export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
-  // let ref = useRef<HTMLDivElement | null>(null);
   let {isInfinite} = useContext(LightBoxCarouselContext);
 
   let selectedKey = state?.selectedKey;
-  let selectedItem = selectedKey != null
-    ? state?.collection.getItem(selectedKey)
-    : null;
+  let selectedItem = selectedKey != null ? state?.collection.getItem(selectedKey) : null;
 
   if (selectedItem == null) {
     return null;
-}
-
+  }
 
   let wrapper: ReactNode = isInfinite ? (
     <InfiniteLightboxItems>
-      {(index) => props.children?.at(index % state.collection.size)}
+      {index => props.children?.at(getWrappedIndex(index, state.collection.size))}
     </InfiniteLightboxItems>
   ) : (
-    <FiniteLightboxItems>
-      {props.children}
-    </FiniteLightboxItems>
+    <FiniteLightboxItems>{props.children}</FiniteLightboxItems>
   );
 
   return (
-    <div className={style({
-      display: 'flex',
-      alignItems: 'center',
-      flexGrow: 1,
-      minWidth: 0,
-      minHeight: 0
-    })}>
+    <div
+      className={style({
+        display: 'flex',
+        alignItems: 'center',
+        flexGrow: 1,
+        minWidth: 0,
+        minHeight: 0,
+        maxHeight: 'fit',
+        gap: 28
+      })}>
       {wrapper}
     </div>
   );
 }
 
-interface FiniteLightboxItemsProps<T> extends LightboxItemsProps<T> {
-  viewportRef?: RefObject<HTMLDivElement | null>
-}
+interface FiniteLightboxItemsProps<T> extends LightboxItemsProps<T> {}
 
 function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
@@ -262,26 +281,24 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
 
   // do we want to disable the prev/next button if you are at the start/end?
   let selectedKey = state?.selectedKey;
-  let selectedItem = selectedKey != null
-    ? state?.collection.getItem(selectedKey)
-    : null;
+  let selectedItem = selectedKey != null ? state?.collection.getItem(selectedKey) : null;
 
   let selectedIndex = selectedItem != null ? selectedItem.index : null;
-  
+
   useLayoutEffect(() => {
     // When a user clicks prev/next, that changes the selected tab but not the scroll position
     // Check if the scroll position doesn't match the selected tab and adjust accordingly
     let el = ref.current;
     let currentIndex = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0;
-    if (selectedIndex != currentIndex ) {
+    if (selectedIndex !== currentIndex) {
       isProgrammaticScroll.current = true;
       ref.current!.scrollLeft = ref.current!.offsetWidth * (selectedIndex ?? 0);
     }
-  }, [selectedKey]);
+  }, [selectedIndex, selectedKey]);
 
-      let prevItem = () => {
+  let prevItem = () => {
     let key = state.selectedKey;
-    let isFirstKey = state.collection.getFirstKey() === key
+    let isFirstKey = state.collection.getFirstKey() === key;
 
     let prevKey = key ? state.collection.getKeyBefore(key) : null;
     if (isFirstKey) {
@@ -308,34 +325,37 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     if (selectedIndex !== currentIndex && !isProgrammaticScroll.current) {
       let key = [...state.collection].at(currentIndex)?.key;
       if (key) {
-        state.setSelectedKey(key)
+        state.setSelectedKey(key);
       }
     }
-  }
+  };
 
   let onScrollEnd = () => {
     isProgrammaticScroll.current = false;
-  }
+  };
 
   return (
     <>
       <CarouselNavButton onPress={prevItem} side="start" />
-      {/* <Button onPress={prevItem} className={buttonStyles}><ChevronLeft /></Button> */}
-        <div ref={ref} {...props} className={itemsStyles} onScroll={onScroll} onScrollEnd={onScrollEnd}>
-          {props.children}
-        </div>
+      <div
+        ref={ref}
+        {...props}
+        className={itemsStyles}
+        onScroll={onScroll}
+        onScrollEnd={onScrollEnd}>
+        {props.children}
+      </div>
       <CarouselNavButton onPress={nextItem} side="end" />
-      {/* <Button onPress={nextItem} className={buttonStyles}><ChevronRight /></Button> */}
     </>
-  )
+  );
 }
 
-interface CarouselNavButtonProps extends ButtonProps {
-  side?: 'start' | 'end'
+interface CarouselNavButtonProps extends Omit<ButtonProps, 'children'> {
+  side?: 'start' | 'end';
 }
 
 function CarouselNavButton(props: CarouselNavButtonProps) {
-  let {side, ...otherProps} = props; 
+  let {side, ...otherProps} = props;
   // let {direction} = useLocale();
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let Icon = side === 'start' ? ChevronLeft : ChevronRight;
@@ -346,11 +366,7 @@ function CarouselNavButton(props: CarouselNavButtonProps) {
       // aria-label={stringFormatter.format(
       //   side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
       // )}
-      // style={pressScale(ref, {
-      //   animationTimeline: '--carousel-scroll',
-      //   animationRange: side === 'start' ? '0px 32px' : 'calc(100% - 32px) 100%'
-      // } as CSSProperties)}>
-      >
+    >
       <Icon />
     </Button>
   );
@@ -362,45 +378,48 @@ interface CarouselState {
 }
 
 type Action =
-  | { type: 'SCROLL'; page: number }
-  | { type: 'SCROLL_END' }
-  | { type: 'SET_CENTER_PAGE'; page: number };
+  | {type: 'SCROLL'; page: number}
+  | {type: 'SCROLL_END'}
+  | {type: 'SET_CENTER_PAGE'; page: number};
 
 const PAGES = 100;
+
+function getWrappedIndex(index: number, size: number): number {
+  return ((index % size) + size) % size;
+}
 
 function reducer(state: CarouselState, action: Action) {
   let {centerPage, currentPage} = state;
   switch (action.type) {
     case 'SET_CENTER_PAGE':
-      return {centerPage: action.page, currentPage: PAGES}
+      return {centerPage: action.page, currentPage: PAGES};
     case 'SCROLL':
       if (action.page === currentPage) {
         return state;
       }
-      return {centerPage, currentPage: action.page}
+      return {centerPage, currentPage: action.page};
     case 'SCROLL_END':
       if (currentPage === PAGES) {
         return state;
       }
       return {
-        centerPage: centerPage + currentPage - PAGES, currentPage: PAGES
-      }
+        centerPage: centerPage + currentPage - PAGES,
+        currentPage: PAGES
+      };
   }
 }
 
 const imageStyles = style({
   display: 'block',
-  width: 'auto',
-  height: 'auto',
-  maxWidth: 'full',
-  maxHeight: 'full',
+  width: 'fit',
+  height: 'full',
   objectFit: 'contain',
-  borderRadius: 'lg'
+  borderRadius: 'lg',
+  backgroundColor: 'transparent'
 });
 
 interface InfiniteLightboxItemsProps<T> extends Omit<LightboxItemsProps<T>, 'children'> {
-  children: (page: number) => ReactNode,
-  viewportRef?: RefObject<HTMLDivElement | null>
+  children: (page: number) => ReactNode;
 }
 
 function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
@@ -408,35 +427,33 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
 
-
   let selectedKey = state?.selectedKey;
-  let selectedItem = selectedKey != null
-    ? state?.collection.getItem(selectedKey)
-    : null;
+  let selectedItem = selectedKey != null ? state?.collection.getItem(selectedKey) : null;
 
-  let selectedIndex = selectedItem != null ? selectedItem.index : null; 
+  let selectedIndex = selectedItem != null ? selectedItem.index : null;
 
-  if (!state || selectedIndex == null || state.collection.size === 0) {
-    return null;
-  }
-
-
-  let [{centerPage, currentPage}, dispatch] = useReducer(reducer, null, () => ({centerPage: selectedIndex ?? 0, currentPage: PAGES}))
+  let [{centerPage, currentPage}, dispatch] = useReducer(reducer, null, () => ({
+    centerPage: selectedIndex ?? 0,
+    currentPage: PAGES
+  }));
 
   // if the selected tab changes (like if you were to click one), update the centered page
-  if (selectedIndex != null && currentPage === PAGES && selectedIndex !== centerPage) {
-    // console.log(selectedIndex);
+  if (
+    selectedIndex != null &&
+    currentPage === PAGES &&
+    selectedIndex !== getWrappedIndex(centerPage, state.collection.size)
+  ) {
     dispatch({
       type: 'SET_CENTER_PAGE',
       page: selectedIndex
-    })
+    });
   }
 
   // when the center page changes, reset the scroll position
   useLayoutEffect(() => {
     if (!ref.current) {
       return;
-    }    
+    }
 
     ref.current.scrollTo({
       left: ref.current.offsetWidth * PAGES,
@@ -444,88 +461,106 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
     });
   }, [centerPage]);
 
+  if (selectedIndex == null || state.collection.size === 0) {
+    return null;
+  }
+
+  let visiblePage = centerPage + currentPage - PAGES;
+  let pages = [visiblePage - 1, visiblePage, visiblePage + 1];
+
   let prevItem = () => {
     if (!ref.current) {
       return;
     }
 
     ref.current!.scrollLeft = ref.current!.offsetWidth * (PAGES - 1);
-  }
+  };
 
   let nextItem = () => {
     if (!ref.current) {
       return;
     }
-    
+
     ref.current!.scrollLeft = ref.current!.offsetWidth * (PAGES + 1);
-  }
+  };
 
   // update selected tab while scrolling
   let onScroll = () => {
     let el = ref.current;
-    let index = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0; // this is not the collection index, this is the pages index 
+    let index = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0; // this is not the collection index, this is the pages index
     let collectionIndex = centerPage + index - PAGES; // this is the actual collection index
     if (currentPage !== index) {
       // actually update the selected key (so that the tabs actually reflect what is in the viewport)
-      let key = [...state.collection].at(collectionIndex % state.collection.size)?.key;
-      if (key) {
+      let key = [...state.collection].at(
+        getWrappedIndex(collectionIndex, state.collection.size)
+      )?.key;
+      if (key != null) {
         state.setSelectedKey(key);
       }
       // keeps track of how much we have scrolled from the center page
       dispatch({
         type: 'SCROLL',
         page: index
-      })
+      });
     }
-  }
+  };
 
   let onScrollEnd = () => {
-    console.log('scrollend')
     // update the centered page once scrolling is done
     dispatch({type: 'SCROLL_END'});
-  }
+  };
 
   return (
     <>
       <CarouselNavButton onPress={prevItem} side="start" />
       <div ref={ref} onScroll={onScroll} onScrollEnd={onScrollEnd} className={itemsStyles}>
-        <ImageContext.Provider value={{styles: imageStyles}}>
-          {/* Placeholder to hold space in the scroll width for more pages. */}
+        {/* Placeholder to hold space in the scroll width for more pages. */}
+        <div
+          style={{
+            width: (currentPage - 1) * 100 + '%',
+            flexShrink: 0,
+            contain: 'strict'
+          }}
+        />
+        {pages.map(page => (
           <div
+            // Follow the page, not its position in the rendered window, so React keeps
+            // the incoming Image mounted as it becomes centered instead of restarting its loading state.
+            key={page}
+            inert={page !== visiblePage}
             style={{
-              width: (currentPage - 1) * 100 + '%',
+              width: '100%',
+              height: '100%',
               flexShrink: 0,
-              contain: 'strict',
-            }}
-          />
-          {/* contain: 'inline-size' makes these extra pages not affect the width of the parent */}
-          <div inert style={{width: '100%', height: '100%', flexShrink: 0, contain: 'inline-size', scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
-            {renderPage(selectedIndex - 1)}
+              contain: page !== visiblePage ? 'inline-size' : undefined,
+              scrollSnapAlign: 'start',
+              scrollSnapStop: 'always'
+            }}>
+            {renderPage(page)}
           </div>
-          {/* Center (visible) page */}
-          <div style={{width: '100%', height: '100%', flexShrink: 0, scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
-            {renderPage(selectedIndex )}
-          </div>
-          <div inert style={{width: '100%', height: '100%', flexShrink: 0, contain: 'inline-size', scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
-            {renderPage(selectedIndex + 1)}
-          </div>
-          <div
-            style={{
-              width: (PAGES * 2 - currentPage - 1) * 100 + '%',
-              flexShrink: 0,
-              contain: 'strict',
-            }}
-          />
-        </ImageContext.Provider>
+        ))}
+        <div
+          style={{
+            width: (PAGES * 2 - currentPage - 1) * 100 + '%',
+            flexShrink: 0,
+            contain: 'strict'
+          }}
+        />
       </div>
       <CarouselNavButton onPress={nextItem} side="end" />
     </>
-  )
+  );
 }
 
 export function LightboxItem(props: LightboxItemProps) {
   return (
-    <RACTabPanel {...props} shouldForceMount className={renderProps => itemStyles(renderProps)} />
+    <RACTabPanel {...props} shouldForceMount className={renderProps => itemStyles(renderProps)}>
+      {renderProps => (
+        <ImageContext.Provider value={{styles: imageStyles}}>
+          {typeof props.children === 'function' ? props.children(renderProps) : props.children}
+        </ImageContext.Provider>
+      )}
+    </RACTabPanel>
   );
 }
 
@@ -539,24 +574,18 @@ export interface LightboxTriggerContextProps {
 
 export const LightboxTriggerContext = createContext<LightboxTriggerContextProps | null>(null);
 
-interface LightboxTrigger {
-  children: ReactNode
-};
-
 export function LightboxTrigger(props: LightboxTrigger) {
   let [isOpen, setIsOpen] = useState<boolean>(false);
   let [activeKey, setActiveKey] = useState<Key | undefined>(undefined);
-  
+
   let onAction = (key: Key) => {
     setActiveKey(key);
     setIsOpen(true);
-  }
+  };
 
   return (
     <LightboxTriggerContext.Provider value={{isOpen, setIsOpen, onAction, activeKey, setActiveKey}}>
-      <div {...props}>
-        {props.children}
-      </div>
+      <div {...props}>{props.children}</div>
     </LightboxTriggerContext.Provider>
-  )
+  );
 }

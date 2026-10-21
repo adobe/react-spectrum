@@ -45,6 +45,7 @@ import ImageIcon from '@react-spectrum/s2/icons/Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {keyframes, scrollFade} from './style/style-macro' with {type: 'macro'};
+import {LightboxTriggerContext} from './Lightbox';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
@@ -62,8 +63,6 @@ import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-
-import {LightboxTriggerContext} from './Lightbox';
 
 /** Whether an attachment is still uploading, shared by Attachment and AttachmentGridItem. */
 export function isAttachmentLoading(uploadProgress?: number): boolean {
