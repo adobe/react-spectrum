@@ -814,9 +814,119 @@ export const WithLinks: StoryObj<typeof WithLinksRender> = {
   }
 };
 
+interface LazyChildrenTreeItemProps {
+  item: {id: string; name: string; childItems?: LazyChildrenTreeItemProps['item'][]};
+  expandedKeys: Set<Key>;
+}
+
+const LazyChildrenTreeItem = ({item, expandedKeys}: LazyChildrenTreeItemProps) => {
+  let childItems = item.childItems ?? [];
+
+  return (
+    <TreeItem
+      id={item.id}
+      textValue={item.name}
+      hasChildItems={childItems.length > 0}
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) =>
+        classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })
+      }>
+      <TreeItemContent>
+        {({isExpanded, hasChildItems, level}) => (
+          <div
+            className={styles['content-wrapper']}
+            style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
+            {hasChildItems && (
+              <Button className={styles.chevron} slot="chevron">
+                <div
+                  style={{
+                    transform: `rotate(${isExpanded ? 90 : 0}deg)`,
+                    width: '16px',
+                    height: '16px'
+                  }}>
+                  <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
+                    <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg>
+                </div>
+              </Button>
+            )}
+            <Text>{item.name}</Text>
+          </div>
+        )}
+      </TreeItemContent>
+      <Collection items={expandedKeys.has(item.id) ? childItems : []}>
+        {child => <LazyChildrenTreeItem item={child} expandedKeys={expandedKeys} />}
+      </Collection>
+    </TreeItem>
+  );
+};
+
+const LazyChildrenTreeRender = <T extends any>(args: TreeProps<T>): JSX.Element => {
+  let [expandedKeys, setExpandedKeys] = useState<Set<Key>>(new Set());
+
+  return (
+    <Tree
+      {...args}
+      className={styles.tree}
+      aria-label="test lazy children tree"
+      items={rows}
+      expandedKeys={expandedKeys}
+      onExpandedChange={keys => {
+        action('onExpandedChange')(keys);
+        setExpandedKeys(keys);
+      }}
+      dependencies={[expandedKeys]}>
+      {item => <LazyChildrenTreeItem item={item} expandedKeys={expandedKeys} />}
+    </Tree>
+  );
+};
+
+export const TreeWithLazyChildren: StoryObj<typeof LazyChildrenTreeRender> = {
+  render: args => <LazyChildrenTreeRender {...args} />,
+  name: 'Tree with lazily rendered children',
+  parameters: {
+    description: {
+      data: 'Child rows are only added to the collection once their parent is expanded. Rows with children use hasChildItems so they can be expanded before their children are rendered.'
+    }
+  }
+};
+
 function renderEmptyLoader({isLoading}) {
   return isLoading ? 'Root level loading spinner' : 'Nothing in tree';
 }
+
+export const PopulateFocusedEmptyTree = () => {
+  let [items, setItems] = useState<Array<{id: string; name: string}>>([]);
+
+  return (
+    <div
+      onKeyDownCapture={event => {
+        if (event.key === 'Enter' && items.length === 0) {
+          setItems([
+            {id: 'one', name: 'One'},
+            {id: 'two', name: 'Two'}
+          ]);
+        }
+      }}>
+      <p>Tab to the empty tree, press Enter to add items, then use the arrow keys to navigate.</p>
+      <Tree
+        aria-label="Files"
+        className={styles.tree}
+        items={items}
+        renderEmptyState={() => 'No files'}>
+        {item => (
+          <TreeItem id={item.id} textValue={item.name}>
+            <TreeItemContent>{item.name}</TreeItemContent>
+          </TreeItem>
+        )}
+      </Tree>
+    </div>
+  );
+};
 
 const EmptyTreeStatic = <T extends any>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element => (
   <Tree

@@ -339,7 +339,6 @@ export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps): Re
                 marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`
               }}
             />
-            {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
             {hasChildItems && (
               <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />
             )}

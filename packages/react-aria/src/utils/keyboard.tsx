@@ -102,6 +102,7 @@ if (
 if (
   process.env.NODE_ENV === 'test' &&
   typeof window !== 'undefined' &&
+  window.screen != null &&
   !Reflect.has(window.screen, 'orientation')
 ) {
   const orientation = Object.assign(new EventTarget(), {
