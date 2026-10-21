@@ -30,16 +30,15 @@ import {getFocusableTreeWalker} from '../focus/FocusScope';
 import {getOwnerDocument} from '../utils/domHelpers';
 import {getRowId, listMap} from './utils';
 import {getScrollParent} from '../utils/getScrollParent';
-import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef, useState} from 'react';
+import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {isFocusVisible} from '../interactions/useFocusVisible';
 import type {ListState} from 'react-stately/useListState';
 import {mergeProps} from '../utils/mergeProps';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {SelectableItemStates, useSelectableItem} from '../selection/useSelectableItem';
 import type {TreeState} from 'react-stately/useTreeState';
-import {useId} from '../utils/useId';
-import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
+import {useSlotId} from '../utils/useId';
 import {useSyntheticLinkProps} from '../utils/openLink';
 
 export interface AriaGridListItemOptions {
@@ -108,17 +107,7 @@ export function useGridListItem<T>(
   let {direction} = useLocale();
   let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp} =
     listMap.get(state)!;
-  let descriptionId = useId();
-  let [hasDescription, setHasDescription] = useState(true);
-  // A stable render function can change its output, so recheck after every render.
-  // Avoid no-op state updates, which can interrupt focus restoration in React 18.
-  // oxlint-disable-next-line react-hooks/exhaustive-deps
-  useLayoutEffect(() => {
-    let isRendered = !!getOwnerDocument(ref.current).getElementById(descriptionId);
-    if (isRendered !== hasDescription) {
-      setHasDescription(isRendered);
-    }
-  });
+  let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
@@ -438,7 +427,7 @@ export function useGridListItem<T>(
       : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
     'aria-labelledby':
-      hasDescription && (node['aria-label'] || node.textValue)
+      descriptionId && (node['aria-label'] || node.textValue)
         ? `${getRowId(state, node.key)} ${descriptionId}`
         : undefined,
     id: getRowId(state, node.key)

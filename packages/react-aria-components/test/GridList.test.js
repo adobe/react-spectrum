@@ -45,7 +45,6 @@ import {Popover} from '../src/Popover';
 import React from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
 import {Tag, TagGroup, TagList} from '../src/TagGroup';
-import {Text} from '../src/Text';
 import {Toolbar} from '../src/Toolbar';
 import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../src/Virtualizer';
@@ -161,88 +160,6 @@ describe('GridList', () => {
     for (let row of gridListTester.getRows()) {
       expect(row).toHaveAttribute('class', 'react-aria-GridListItem');
     }
-  });
-
-  it('updates the description relationship when the slot is removed and added', () => {
-    function DescriptionGridList({hideDescription = false}) {
-      return (
-        <GridList aria-label="Files">
-          <GridListItem id="projects" textValue="Projects">
-            <Text>Projects</Text>
-            {!hideDescription && (
-              <Text slot="description" id="grid-desc">
-                Shared files
-              </Text>
-            )}
-          </GridListItem>
-        </GridList>
-      );
-    }
-
-    let {getByRole, rerender} = render(<DescriptionGridList />);
-    expect(getByRole('row')).toHaveAccessibleName('Projects Shared files');
-    rerender(<DescriptionGridList hideDescription />);
-    expect(getByRole('row')).toHaveAccessibleName('Projects');
-    expect(getByRole('row')).not.toHaveAttribute('aria-labelledby');
-    rerender(<DescriptionGridList />);
-    expect(getByRole('row')).toHaveAccessibleName('Projects Shared files');
-  });
-
-  it.each(['stable children', 'inline children', 'inline render function'])(
-    'does not temporarily reference a missing description with %s',
-    childType => {
-      let children = <Text>Projects</Text>;
-      function DescriptionGridList({revision}) {
-        return (
-          <GridList aria-label="Files">
-            <GridListItem id="projects" textValue="Projects" data-revision={revision}>
-              {childType === 'stable children' ? (
-                children
-              ) : childType === 'inline children' ? (
-                <Text>Projects</Text>
-              ) : (
-                () => <Text>Projects</Text>
-              )}
-            </GridListItem>
-          </GridList>
-        );
-      }
-
-      let {getByRole, rerender} = render(<DescriptionGridList revision={0} />);
-      let row = getByRole('row');
-      let observer = new MutationObserver(() => {});
-      observer.observe(row, {attributes: true, attributeFilter: ['aria-labelledby']});
-      rerender(<DescriptionGridList revision={1} />);
-      let mutations = observer.takeRecords();
-      observer.disconnect();
-      expect(mutations).toHaveLength(0);
-      expect(row).toHaveAccessibleName('Projects');
-    }
-  );
-
-  it('updates descriptions from a stable render function when selection changes', async () => {
-    let children = ({isSelected}) => (
-      <>
-        <Text>Projects</Text>
-        {isSelected && <Text slot="description">Shared files</Text>}
-      </>
-    );
-    let {getByRole} = render(
-      <GridList aria-label="Files" selectionMode="single" selectionBehavior="toggle">
-        <GridListItem id="projects" textValue="Projects">
-          {children}
-        </GridListItem>
-      </GridList>
-    );
-    let row = getByRole('row');
-    expect(row).toHaveAccessibleName('Projects');
-    await user.click(row);
-    expect(row).toHaveAttribute('aria-selected', 'true');
-    expect(row).toHaveAccessibleName('Projects Shared files');
-    await user.click(row);
-    expect(row).toHaveAttribute('aria-selected', 'false');
-    expect(row).toHaveAccessibleName('Projects');
-    expect(row).not.toHaveAttribute('aria-labelledby');
   });
 
   it('should render with custom classes', () => {
