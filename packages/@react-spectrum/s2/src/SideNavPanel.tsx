@@ -463,7 +463,7 @@ export const SideNavPanel = /*#__PURE__*/ forwardRef(function SideNavPanel(
                 className={style({
                   flexGrow: 0,
                   flexShrink: 0,
-                  marginBottom: 4,
+                  marginBottom: 12,
                   marginTop: 4,
                   display: 'flex',
                   marginStart: 4
@@ -486,7 +486,7 @@ function ExpandButton(props: {isCollapsed: boolean; setCollapsed: (isCollapsed: 
   let {hoverProps} = useHover({onHoverChange: setHovered});
 
   return (
-    <div {...hoverProps} className={style({display: 'contents', marginBottom: 2})}>
+    <div {...hoverProps} className={style({display: 'contents'})}>
       <ActionButton
         {...otherProps}
         aria-label={label}
