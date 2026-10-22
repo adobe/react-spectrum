@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {addEvent, getPropagationTargets} from '@react-aria/utils';
 import {ClassNameOrFunction, RenderProps, useRenderProps} from './utils';
 import {Dialog, DialogProps, DialogTrigger, DialogTriggerProps} from './Dialog';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
@@ -445,11 +446,35 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
           // Dual direction: exit toward whichever edge is nearest the current position.
           target = current > (enteredScroll / 100) * vp ? maxScrollPx : 0;
         }
-        scrollAlongAxis(scroller, axis, target, true);
-
-        // The close event is dispatched on the overlay wrapper by the IntersectionObserver below.
+        // The IntersectionObserver can miss its final zero-ratio notification. Also finish
+        // once the exit scroll reaches its target so the overlay cannot remain mounted forever.
         return new Promise<void>(resolve => {
-          element.addEventListener('react-aria-sheet-close', () => resolve(), {once: true});
+          let done = false;
+          let removeScrollEnd = () => {};
+          let finish = () => {
+            if (done) {
+              return;
+            }
+            done = true;
+            element.removeEventListener('react-aria-sheet-close', finish);
+            removeScrollEnd();
+            resolve();
+          };
+          let onScrollEnd = () => {
+            let current = axis === 'y' ? scroller.scrollTop : scroller.scrollLeft;
+            if (Math.abs(current - target) < 1) {
+              finish();
+            }
+          };
+          element.addEventListener('react-aria-sheet-close', finish, {once: true});
+          removeScrollEnd = addEvent(getPropagationTargets(scroller), 'scrollend', onScrollEnd);
+
+          let current = axis === 'y' ? scroller.scrollTop : scroller.scrollLeft;
+          if (Math.abs(current - target) < 1) {
+            finish();
+          } else {
+            scrollAlongAxis(scroller, axis, target, true);
+          }
         });
       }}>
       {renderProps => (

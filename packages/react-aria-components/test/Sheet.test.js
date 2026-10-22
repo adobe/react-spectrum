@@ -514,6 +514,28 @@ describe('Sheet', () => {
       expect(tree.queryByRole('dialog')).toBeNull();
     });
 
+    it('finishes exiting when the final IntersectionObserver notification is missing', async () => {
+      let tree = render(<TestSheet />);
+      await open(tree);
+      let overlay = tree.getByTestId('overlay');
+      let scroller = overlay.querySelector('[data-sheet-scroll]');
+
+      // Complete entry, then mark the sheet visible. On exit, deliberately omit the observer's
+      // final intersectionRatio: 0 callback and rely on the scroll reaching its exit position.
+      await act(async () => {
+        scroller.dispatchEvent(new Event('scrollend'));
+      });
+      intersect(1);
+      await user.click(within(tree.getByRole('dialog')).getByRole('button', {name: 'Close'}));
+      expect(overlay).toHaveAttribute('data-exiting');
+
+      await act(async () => {
+        scroller.dispatchEvent(new Event('scrollend'));
+      });
+      act(() => jest.runAllTimers());
+      expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
     it('calls onOpenChange when a controlled sheet without a trigger is swiped out of view', async () => {
       let onOpenChange = jest.fn();
       let tree = render(<StandaloneSheet isOpen onOpenChange={onOpenChange} />);
