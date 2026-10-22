@@ -124,7 +124,7 @@ export function useSearchField(
       excludeFromTabOrder: true,
       preventFocusOnPress: true,
       isDisabled: isDisabled || isReadOnly,
-      onPress: onClearButtonClick,
+      onPress: onClearButtonClick
     },
     descriptionProps,
     errorMessageProps,

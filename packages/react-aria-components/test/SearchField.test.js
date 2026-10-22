@@ -62,6 +62,51 @@ describe('SearchField', () => {
     expect(button).toHaveAttribute('aria-label', 'Clear search');
   });
 
+  it.each(['MouseLeft', 'TouchA'])(
+    'clears an unfocused search field without focusing it with %s',
+    async pointer => {
+      let {getByRole} = render(
+        <>
+          <button>Other</button>
+          <TestSearchField />
+        </>
+      );
+
+      let input = getByRole('searchbox');
+      await user.tab();
+      expect(getByRole('button', {name: 'Other'})).toHaveFocus();
+      expect(input).toHaveValue('test');
+
+      await user.pointer({
+        target: getByRole('button', {name: 'Clear search'}),
+        keys: `[${pointer}]`
+      });
+
+      expect(input).toHaveValue('');
+      expect(input).not.toHaveFocus();
+    }
+  );
+
+  it.each(['MouseLeft', 'TouchA'])(
+    'clears a focused search field without moving focus with %s',
+    async pointer => {
+      let {getByRole} = render(<TestSearchField />);
+
+      let input = getByRole('searchbox');
+      await user.tab();
+      expect(input).toHaveFocus();
+      expect(input).toHaveValue('test');
+
+      await user.pointer({
+        target: getByRole('button', {name: 'Clear search'}),
+        keys: `[${pointer}]`
+      });
+
+      expect(input).toHaveValue('');
+      expect(input).toHaveFocus();
+    }
+  );
+
   it('should support slot', () => {
     let {getByRole} = render(
       <SearchFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>

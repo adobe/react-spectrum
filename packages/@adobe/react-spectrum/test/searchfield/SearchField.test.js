@@ -208,7 +208,7 @@ describe('Search', () => {
       expect(onChange).toHaveBeenLastCalledWith('');
 
       expect(input.value).toBe('');
-      expect(document.activeElement).toBe(input);
+      expect(document.activeElement).not.toBe(input);
 
       expect(onClear).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenLastCalledWith(expect.anything());
@@ -231,7 +231,7 @@ describe('Search', () => {
       expect(onChange).toHaveBeenLastCalledWith('');
 
       expect(input.value).toBe(inputText);
-      expect(document.activeElement).toBe(input);
+      expect(document.activeElement).not.toBe(input);
 
       expect(onClear).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenLastCalledWith(expect.anything());
