@@ -87,15 +87,6 @@ function SideNavPanelExample(
   );
 }
 
-// Expanding the panel animates its width first and only puts its contents back once that has
-// finished, so nothing is reflowing while the panel is still changing size. jsdom doesn't run CSS
-// transitions, so no transitionend ever arrives and SideNavPanel falls back to its timeout.
-function finishExpanding(): void {
-  act(() => {
-    jest.advanceTimersByTime(250);
-  });
-}
-
 describe('SideNavPanel', () => {
   let user: UserEvent;
 
@@ -138,10 +129,7 @@ describe('SideNavPanel', () => {
 
     await user.click(toggle);
     expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
-    // The toggle itself flips as soon as it is pressed, ahead of the contents coming back.
     expect(getByRole('button', {name: 'Collapse side panel'})).toBeInTheDocument();
-
-    finishExpanding();
     expect(getByRole('link', {name: 'Files'})).toBeInTheDocument();
     expect(getByRole('link', {name: 'Libraries'})).toBeInTheDocument();
   });
@@ -214,10 +202,6 @@ describe('SideNavPanel', () => {
 
     await user.click(getByRole('button', {name: 'Expand side panel'}));
     expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
-    // The contents only come back once the panel has finished widening.
-    expect(queryByRole('link', {name: 'Photos'})).toBeNull();
-
-    finishExpanding();
     expect(getByRole('row', {name: 'Libraries'})).toHaveAttribute('aria-expanded', 'true');
     expect(getByRole('link', {name: 'Photos'})).toBeInTheDocument();
   });

@@ -8,6 +8,14 @@
       "..."
     ],
     "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
+    "*.module.css": [
+      {
+        "plugin": "@parcel/transformer-css",
+        "config": {
+          "cssModules": true
+        }
+      }
+    ],
     "*.css": ["@parcel/transformer-css"],
     "raw:*": ["@parcel/transformer-raw"]
   },
