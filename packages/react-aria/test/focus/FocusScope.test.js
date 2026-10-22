@@ -2217,6 +2217,199 @@ describe('FocusScope', function () {
       expect(document.activeElement.textContent).toBe('Open Menu');
     });
   });
+
+  describe('supports contained focus', function () {
+    it('should contain focus after the focused element is removed', function () {
+      function Test({show}) {
+        return (
+          <>
+            <input data-testid="outside" />
+            <FocusScope contain>
+              <input data-testid="first" />
+              {show && <button data-testid="removed" />}
+            </FocusScope>
+          </>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test show />);
+      let first = getByTestId('first');
+      let outside = getByTestId('outside');
+
+      act(() => getByTestId('removed').focus());
+      rerender(<Test show={false} />);
+      act(() => outside.focus());
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(first);
+    });
+
+    it('should contain focus in a modal opened from a dialog', function () {
+      function Test({show}) {
+        return (
+          <FocusScope contain>
+            <input data-testid="dialog" />
+            <FocusScope>
+              <input data-testid="inner" />
+            </FocusScope>
+            {show &&
+              ReactDOM.createPortal(
+                <FocusScope contain autoFocus>
+                  <input data-testid="modal" />
+                </FocusScope>,
+                document.body
+              )}
+          </FocusScope>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test show={false} />);
+      act(() => getByTestId('dialog').focus());
+      rerender(<Test show />);
+      let modal = getByTestId('modal');
+      let inner = getByTestId('inner');
+
+      act(() => inner.focus());
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(modal);
+    });
+
+    it('should contain focus after a sibling scope unmounts', function () {
+      function Test({showMenu, showPopover}) {
+        return (
+          <FocusScope contain>
+            <input data-testid="dialog" />
+            {showMenu &&
+              ReactDOM.createPortal(
+                <FocusScope autoFocus>
+                  <input data-testid="menu" />
+                </FocusScope>,
+                document.body
+              )}
+            {showPopover &&
+              ReactDOM.createPortal(
+                <FocusScope contain autoFocus>
+                  <input data-testid="popover" />
+                </FocusScope>,
+                document.body
+              )}
+          </FocusScope>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test showMenu />);
+      rerender(<Test showMenu showPopover />);
+      rerender(<Test showPopover />);
+      let popover = getByTestId('popover');
+      let dialog = getByTestId('dialog');
+
+      act(() => dialog.focus());
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(popover);
+    });
+
+    it('should contain focus after focus leaves every scope', function () {
+      function Test({show, showNested}) {
+        return (
+          <>
+            <input data-testid="outside" />
+            <FocusScope />
+            {show && (
+              <FocusScope contain>
+                <input data-testid="first" />
+                {showNested && (
+                  <FocusScope contain autoFocus>
+                    <input data-testid="nested" />
+                  </FocusScope>
+                )}
+              </FocusScope>
+            )}
+          </>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+      rerender(<Test show showNested />);
+      rerender(<Test show />);
+      let first = getByTestId('first');
+      let outside = getByTestId('outside');
+
+      act(() => outside.focus());
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(first);
+    });
+
+    it('should not move focus back and forth between contain scopes', function () {
+      function Test({show}) {
+        return (
+          <>
+            <FocusScope contain>
+              <input data-testid="other" />
+            </FocusScope>
+            {show && (
+              <FocusScope autoFocus>
+                <input data-testid="first" />
+                {ReactDOM.createPortal(
+                  <FocusScope contain>
+                    <input data-testid="nested" />
+                  </FocusScope>,
+                  document.body
+                )}
+              </FocusScope>
+            )}
+          </>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test show={false} />);
+      rerender(<Test show />);
+      let other = getByTestId('other');
+      let onFocusIn = jest.fn();
+      let listener = e => {
+        onFocusIn(e.target.dataset.testid);
+        // Stop a focus loop so the test fails instead of hanging.
+        if (onFocusIn.mock.calls.length > 20) {
+          e.stopImmediatePropagation();
+        }
+      };
+
+      window.addEventListener('focusin', listener, true);
+      act(() => other.focus());
+      window.removeEventListener('focusin', listener, true);
+
+      expect(onFocusIn.mock.calls).toEqual([['other']]);
+    });
+  });
+
+  describe('supports nested contain scopes', function () {
+    it('should not skip an element when tabbing into a nested scope', async function () {
+      function Test({show}) {
+        return (
+          <FocusScope contain>
+            <input data-testid="first" />
+            {show && (
+              <FocusScope contain>
+                <input data-testid="nested1" />
+                <input data-testid="nested2" />
+              </FocusScope>
+            )}
+          </FocusScope>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test show={false} />);
+      act(() => getByTestId('first').focus());
+      rerender(<Test show />);
+      let nested1 = getByTestId('nested1');
+
+      await user.tab();
+
+      expect(document.activeElement).toBe(nested1);
+    });
+  });
 });
 
 if (parseInt(React.version, 10) >= 17) {

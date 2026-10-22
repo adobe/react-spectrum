@@ -11,6 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
+import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
 import {
   DragAndDropHooks,
@@ -24,7 +25,7 @@ import {ListBox, ListBoxItem, ListBoxProps, ListBoxSection} from '../src/ListBox
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyHeader, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
-import React, {JSX, useState} from 'react';
+import React, {JSX, useRef, useState} from 'react';
 import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
@@ -1146,3 +1147,30 @@ export const DropOntoRoot = () => (
     <DroppableListBox />
   </div>
 );
+
+export function ListBoxSelectionMovesFocus() {
+  let continueRef = useRef<HTMLButtonElement>(null);
+  let [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>On macOS, Tab to "Standard" and press Enter</li>
+        <li>Focus moves to "Continue"</li>
+        <li>Continue presses should be 0</li>
+      </ol>
+      <ListBox
+        className={styles.menu}
+        aria-label="Shipping"
+        selectionMode="single"
+        onSelectionChange={() => continueRef.current?.focus()}>
+        <MyListBoxItem id="standard">Standard</MyListBoxItem>
+        <MyListBoxItem id="express">Express</MyListBoxItem>
+      </ListBox>
+      <Button ref={continueRef} onPress={() => setCount(c => c + 1)}>
+        Continue
+      </Button>
+      <p>Continue presses: {count}</p>
+    </div>
+  );
+}

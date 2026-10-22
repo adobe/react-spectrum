@@ -609,3 +609,19 @@ export const ScrollingBoundaryContainer: StoryObj<typeof ScrollingBoundaryContai
     }
   }
 };
+
+export function PopoverOpenAtMount() {
+  return (
+    <DialogTrigger defaultOpen>
+      <Button>Trigger</Button>
+      <Popover>
+        <Dialog aria-label="Popover">
+          <ol>
+            <li>Click this text</li>
+            <li>Press Escape, focus should move to "Trigger"</li>
+          </ol>
+        </Dialog>
+      </Popover>
+    </DialogTrigger>
+  );
+}

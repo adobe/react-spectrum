@@ -10,31 +10,66 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {createContext, JSX, useContext, useRef} from 'react';
+import {AriaToastProps, useToast} from '../../src/toast/useToast';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  JSX,
+  useContext,
+  useImperativeHandle,
+  useRef,
+  useState
+} from 'react';
 import {ToastState, ToastStateProps, useToastState} from 'react-stately/useToastState';
 import {useButton} from '../../src/button/useButton';
-import {useToast} from '../../src/toast/useToast';
 import {useToastRegion} from '../../src/toast/useToastRegion';
+
+interface ToastContainerProps extends ToastStateProps {
+  isAnimated?: boolean;
+}
+
+interface ToastRegionProps {
+  isAnimated?: boolean;
+}
+
+interface AnimatePresenceProps {
+  children: JSX.Element[];
+}
 
 const ToastContext = createContext<ToastState<string> | null>(null);
 
-export function ToastContainer({
-  children,
-  ...otherProps
-}: ToastStateProps & {children: (state: ToastState<string>) => React.ReactNode}): JSX.Element {
+export const ToastContainer = forwardRef(function ToastContainer(
+  props: ToastContainerProps,
+  ref: ForwardedRef<ToastState<string>>
+) {
+  let {isAnimated, ...otherProps} = props;
+
   let state = useToastState<string>(otherProps);
+  useImperativeHandle(ref, () => state, [state]);
+
   return (
     <ToastContext.Provider value={state}>
-      {children(state)}
-      <ToastRegion />
+      <ToastRegion isAnimated={isAnimated} />
     </ToastContext.Provider>
   );
-}
+});
 
-function ToastRegion() {
+function ToastRegion(props: ToastRegionProps) {
+  let {isAnimated} = props;
+
   let state = useContext(ToastContext)!;
   let ref = useRef(null);
   let {regionProps} = useToastRegion({}, state, ref);
+
+  let children: JSX.Element | JSX.Element[] = state.visibleToasts.map(toast => (
+    <Toast key={toast.key} toast={toast} />
+  ));
+
+  if (isAnimated) {
+    children = <AnimatePresence>{children}</AnimatePresence>;
+  }
+
   return (
     <div
       {...regionProps}
@@ -47,14 +82,12 @@ function ToastRegion() {
         flexDirection: 'column',
         gap: 10
       }}>
-      {state.visibleToasts.map(toast => (
-        <Toast key={toast.key} toast={toast} />
-      ))}
+      {children}
     </div>
   );
 }
 
-function Toast(props) {
+function Toast(props: AriaToastProps<string>) {
   let state = useContext(ToastContext)!;
   let ref = useRef(null);
   let {toastProps, contentProps, titleProps, closeButtonProps} = useToast(props, state, ref);
@@ -71,4 +104,33 @@ function Toast(props) {
       </button>
     </div>
   );
+}
+
+// TODO: Okay to import motion/react here?
+function AnimatePresence({children}: AnimatePresenceProps) {
+  let [prevChildren, setPrevChildren] = useState(children);
+  let [exiting, setExiting] = useState<JSX.Element[]>([]);
+
+  if (children !== prevChildren) {
+    let keys = children.map(child => child.key);
+    let removed = [...exiting, ...prevChildren].filter(child => !keys.includes(child.key));
+    setPrevChildren(children);
+    setExiting(removed);
+  }
+
+  return [...exiting, ...children].map(child => {
+    let isExiting = exiting.includes(child);
+    return (
+      <div
+        key={child.key}
+        style={{opacity: isExiting ? 0 : 1, transition: 'opacity 3s'}}
+        onTransitionEnd={() => {
+          if (isExiting) {
+            setExiting(exiting => exiting.filter(c => c !== child));
+          }
+        }}>
+        {child}
+      </div>
+    );
+  });
 }

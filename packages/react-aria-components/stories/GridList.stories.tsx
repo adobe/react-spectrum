@@ -1214,3 +1214,38 @@ export const VirtualizedDisplayNoneToggle: StoryObj = {
     }
   }
 };
+
+export function GridListRemovedDuringLongPress() {
+  let [items, setItems] = useState([
+    {id: 'inbox', name: 'Inbox'},
+    {id: 'expiring', name: 'Expiring'},
+    {id: 'archive', name: 'Archive'}
+  ]);
+  let [opened, setOpened] = useState<Key | null>(null);
+
+  let onPointerDownCapture = (e: React.PointerEvent) => {
+    if ((e.target as Element).closest('[data-key="expiring"]')) {
+      setTimeout(() => setItems(items => items.filter(item => item.id !== 'expiring')), 300);
+    }
+  };
+
+  return (
+    <div onPointerDownCapture={onPointerDownCapture}>
+      <ol style={{padding: 0, listStylePosition: 'inside'}}>
+        <li>On a touch device, long press "Expiring". It's removed while you hold it.</li>
+        <li>Release, then tap "Inbox"</li>
+        <li>Inbox should open instead of being selected</li>
+      </ol>
+      <GridList
+        aria-label="Messages"
+        className={styles.menu}
+        items={items}
+        selectionMode="multiple"
+        selectionBehavior="replace"
+        onAction={setOpened}>
+        {item => <MyGridListItem>{item.name}</MyGridListItem>}
+      </GridList>
+      <p>Opened: {opened ?? 'none'}</p>
+    </div>
+  );
+}

@@ -10,11 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {addEvent, getOwnerDocument} from '../utils/domHelpers';
 import {AriaButtonProps} from '../button/useButton';
-import {DOMProps, RefObject} from '@react-types/shared';
+import {DOMProps, FocusableElement, RefObject} from '@react-types/shared';
+import {focusSafely} from '../interactions/focusSafely';
+import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {onCloseMap} from './useCloseOnScroll';
 import {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useId} from '../utils/useId';
 
 export interface OverlayTriggerProps {
@@ -62,6 +66,41 @@ export function useOverlayTrigger(
   }
 
   let overlayId = useId();
+  let overlayRef = useRef<Element | null>(null);
+
+  // An overlay that opened while nothing was focused (e.g. open at mount) has its
+  // FocusScope restore focus to the body. Redirect that restoration to the trigger.
+  let onRestoreFocus = useEffectEvent((e: Event) => {
+    if (!(e instanceof CustomEvent) || e.defaultPrevented) {
+      return;
+    }
+
+    let target = getEventTarget(e) as Element;
+    let scope: Element[] = e.detail?.scope ?? [];
+
+    let isBodyTarget = target === target.ownerDocument.body;
+    let isOverlayScope = scope.some(node => nodeContains(node, overlayRef.current));
+
+    if (isBodyTarget && isOverlayScope && ref?.current?.isConnected) {
+      e.preventDefault();
+      focusSafely(ref.current as FocusableElement);
+    }
+  });
+
+  useEffect(() => {
+    if (isOpen && ref?.current) {
+      let ownerDocument = getOwnerDocument(ref.current);
+      overlayRef.current = ownerDocument.getElementById(overlayId);
+    }
+  }, [isOpen, overlayId, ref]);
+
+  useEffect(() => {
+    if (ref?.current) {
+      let ownerDocument = getOwnerDocument(ref.current);
+      return addEvent(ownerDocument, 'react-aria-focus-scope-restore', onRestoreFocus);
+    }
+  }, [ref]);
+
   return {
     triggerProps: {
       'aria-haspopup': ariaHasPopup,

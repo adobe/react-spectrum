@@ -382,6 +382,7 @@ export function usePress(props: PressHookProps): PressResult {
     },
     [isDisabled, onClick]
   );
+  let triggerSyntheticClickEvent = useEffectEvent(triggerSyntheticClick);
 
   let pressProps = useMemo(() => {
     let state = ref.current;
@@ -391,7 +392,7 @@ export function usePress(props: PressHookProps): PressResult {
           isValidKeyboardEvent(e.nativeEvent, e.currentTarget as Element) &&
           nodeContains(e.currentTarget as Element, getEventTarget(e) as Element)
         ) {
-          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
+          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key, e.ctrlKey)) {
             e.preventDefault();
           }
 
@@ -403,6 +404,7 @@ export function usePress(props: PressHookProps): PressResult {
             state.target = e.currentTarget;
             state.isPressed = true;
             state.pointerType = 'keyboard';
+            addGlobalListener(getOwnerWindow(e.currentTarget), 'blur', cancelPress, {once: true});
             shouldStopPropagation = triggerPressStart(e, 'keyboard');
           }
 
@@ -497,7 +499,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && state.target && isValidKeyboardEvent(e, state.target)) {
-        if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
+        if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key, e.ctrlKey)) {
           e.preventDefault();
         }
 
@@ -505,9 +507,9 @@ export function usePress(props: PressHookProps): PressResult {
         let wasPressed = nodeContains(state.target, target as Element);
         triggerPressEndEvent(createEvent(state.target, e), 'keyboard', wasPressed);
         if (wasPressed) {
-          triggerSyntheticClick(e, state.target);
+          triggerSyntheticClickEvent(e, state.target);
         }
-        removeAllGlobalListeners();
+        cancelEvent(e);
 
         // If a link was triggered with a key other than Enter, open the URL ourselves.
         // This means the link has a role override, and the default browser behavior
@@ -524,7 +526,6 @@ export function usePress(props: PressHookProps): PressResult {
           openLink(state.target, e, false);
         }
 
-        state.isPressed = false;
         state.metaKeyEvents?.delete(e.key);
       } else if (e.key === 'Meta' && state.metaKeyEvents?.size) {
         // If we recorded keydown events that occurred while the Meta key was pressed,
@@ -538,7 +539,25 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
+    // The release never arrives if the window loses focus during a press,
+    // e.g. when Enter opens a link in a new tab or the press opens an alert.
+    let cancelPress = () => {
+      cancelEvent({
+        currentTarget: state.target,
+        shiftKey: false,
+        ctrlKey: false,
+        metaKey: false,
+        altKey: false
+      });
+    };
+
     if (typeof PointerEvent !== 'undefined') {
+      pressProps.onPointerDownCapture = () => {
+        if (!state.isPressed) {
+          state.pointerType = null;
+        }
+      };
+
       pressProps.onPointerDown = e => {
         // Only handle left clicks, and ignore events that bubbled through portals.
         if (e.button !== 0 || !nodeContains(e.currentTarget, getEventTarget(e))) {
@@ -567,6 +586,7 @@ export function usePress(props: PressHookProps): PressResult {
             disableTextSelection(state.target);
           }
 
+          addGlobalListener(getOwnerWindow(e.currentTarget), 'blur', cancelPress, {once: true});
           shouldStopPropagation = triggerPressStart(e, state.pointerType);
 
           // Release pointer capture so that touch interactions can leave the original target.
@@ -676,8 +696,13 @@ export function usePress(props: PressHookProps): PressResult {
                 if (clicked) {
                   cancelEvent(e);
                 } else {
-                  focusWithoutScrolling(state.target);
+                  if (!preventFocusOnPress) {
+                    focusWithoutScrolling(state.target);
+                  }
                   state.target.click();
+                  if (state.isPressed) {
+                    cancelEvent(e);
+                  }
                 }
               }
             }, 80);
@@ -691,6 +716,7 @@ export function usePress(props: PressHookProps): PressResult {
 
           // Ignore subsequent onPointerLeave event before onClick on touch devices.
           state.isOverTarget = false;
+          state.activePointerId = null;
         }
       };
 
@@ -1161,9 +1187,9 @@ function shouldPreventDefaultUp(target: Element) {
   return true;
 }
 
-function shouldPreventDefaultKeyboard(target: Element, key: string) {
+function shouldPreventDefaultKeyboard(target: Element, key: string, ctrlKey: boolean) {
   // Don't prevent the contextmenu shortcut on mac.
-  if (isMac() && key === 'Enter') {
+  if (isMac() && key === 'Enter' && ctrlKey) {
     return false;
   }
 

@@ -180,10 +180,7 @@ export function FocusScope(props: FocusScopeProps): JSX.Element {
       // Scope may have been re-parented.
       let parentScope = focusScopeTree.getTreeNode(scopeRef)?.parent?.scopeRef ?? null;
 
-      if (
-        (scopeRef === activeScope || isAncestorScope(scopeRef, activeScope)) &&
-        (!parentScope || focusScopeTree.getTreeNode(parentScope))
-      ) {
+      if (scopeRef === activeScope && (!parentScope || focusScopeTree.getTreeNode(parentScope))) {
         activeScope = parentScope;
       }
       focusScopeTree.removeTreeNode(scopeRef);
@@ -353,6 +350,7 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
     // Handle the Tab key to contain focus within the scope
     let onKeyDown = e => {
       if (
+        e.defaultPrevented ||
         e.key !== 'Tab' ||
         e.altKey ||
         e.ctrlKey ||
@@ -409,9 +407,15 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
       ) {
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
-        if (focusedNode.current) {
+        if (focusedNode.current?.isConnected) {
           focusElement(focusedNode.current);
-        } else if (activeScope && activeScope.current) {
+        } else if (focusedNode.current && scopeRef.current) {
+          focusFirstInScope(scopeRef.current);
+        } else if (
+          activeScope &&
+          activeScope.current &&
+          (scopeRef === activeScope || isAncestorScope(scopeRef, activeScope))
+        ) {
           focusFirstInScope(activeScope.current);
         }
       } else if (shouldContainFocus(scopeRef)) {
@@ -595,9 +599,19 @@ function useActiveScopeTracker(
 
     let onFocus = e => {
       let target = getEventTarget(e) as Element;
+      let containing = focusScopeTree.getTreeNode(activeScope);
+      while (containing && !containing.contain) {
+        containing = containing.parent;
+      }
       if (isElementInScope(target, scopeRef.current)) {
-        activeScope = scopeRef;
-      } else if (!isElementInAnyScope(target)) {
+        if (
+          !containing ||
+          containing.scopeRef === scopeRef ||
+          isAncestorScope(containing.scopeRef, scopeRef)
+        ) {
+          activeScope = scopeRef;
+        }
+      } else if (!containing && !isElementInAnyScope(target)) {
         activeScope = null;
       }
     };
@@ -682,6 +696,7 @@ function useRestoreFocus(
     // tabbing out of the overlay.
     let onKeyDown = (e: KeyboardEvent) => {
       if (
+        e.defaultPrevented ||
         e.key !== 'Tab' ||
         e.altKey ||
         e.ctrlKey ||
@@ -775,6 +790,8 @@ function useRestoreFocus(
         return;
       }
       let nodeToRestore = treeNode.nodeToRestore;
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
+      let scope = scopeRef.current;
 
       // if we already lost focus to the body and this was the active scope, then we should attempt to restore
       let activeElement = getActiveElement(ownerDocument);
@@ -793,7 +810,7 @@ function useRestoreFocus(
             let treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
               if (treeNode.nodeToRestore && treeNode.nodeToRestore.isConnected) {
-                restoreFocusToElement(treeNode.nodeToRestore);
+                restoreFocusToElement(treeNode.nodeToRestore, scope);
                 return;
               }
               treeNode = treeNode.parent;
@@ -815,7 +832,7 @@ function useRestoreFocus(
                 // The scope may have nothing focusable in it, e.g. if its focusable
                 // content was removed or hidden. Keep walking up in that case.
                 if (node) {
-                  restoreFocusToElement(node);
+                  restoreFocusToElement(node, scope);
                   return;
                 }
               }
@@ -828,11 +845,16 @@ function useRestoreFocus(
   }, [scopeRef, restoreFocus]);
 }
 
-function restoreFocusToElement(node: FocusableElement) {
+function restoreFocusToElement(node: FocusableElement, scope: Element[] | null) {
   // Dispatch a custom event that parent elements can intercept to customize focus restoration.
   // For example, virtualized collection components reuse DOM elements, so the original element
   // might still exist in the DOM but representing a different item.
-  if (node.dispatchEvent(new CustomEvent(RESTORE_FOCUS_EVENT, {bubbles: true, cancelable: true}))) {
+  let event = new CustomEvent(RESTORE_FOCUS_EVENT, {
+    bubbles: true,
+    cancelable: true,
+    detail: {scope}
+  });
+  if (node.dispatchEvent(event)) {
     focusElement(node);
   }
 }
