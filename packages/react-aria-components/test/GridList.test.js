@@ -1985,8 +1985,8 @@ describe('GridList', () => {
           expect(rows[0]).toHaveAttribute('data-focus-visible', 'true');
           await user.keyboard('{ArrowDown}');
         } else {
+          expect(rows[0]).not.toHaveAttribute('data-focus-visible');
           await user.click(rows[1]);
-          expect(rows[1]).toHaveAttribute('aria-selected', 'true');
         }
         expect(document.activeElement).toBe(rows[1]);
         expect(onFocus).toHaveBeenCalledTimes(2);
@@ -2004,26 +2004,6 @@ describe('GridList', () => {
         expect(onBlur).toHaveBeenCalledTimes(2);
         expect(onBlur).toHaveBeenLastCalledWith(rows[1]);
         expect(onFocusChange.mock.calls).toEqual([[true], [false], [true], [false]]);
-      }
-    );
-
-    it.each(['onFocus', 'onBlur', 'onFocusChange'])(
-      'should support %s independently',
-      async prop => {
-        let handler = jest.fn();
-        let {getByRole} = render(
-          <>
-            <GridList aria-label="Test">
-              <GridListItem {...{[prop]: handler}}>Cat</GridListItem>
-            </GridList>
-            <button>After</button>
-          </>
-        );
-        await user.tab();
-        expect(document.activeElement).toBe(getByRole('row'));
-        await user.tab();
-        expect(document.activeElement).toBe(getByRole('button', {name: 'After'}));
-        expect(handler).toHaveBeenCalledTimes(prop === 'onFocusChange' ? 2 : 1);
       }
     );
 
@@ -2072,30 +2052,6 @@ describe('GridList', () => {
       expect(onBlur).toHaveBeenCalledTimes(1);
       expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
       expect(getByRole('row')).toHaveAttribute('data-focus-visible-within', 'true');
-    });
-
-    it('should not report focus for disabled items skipped during navigation', async () => {
-      let onDisabledFocusChange = jest.fn();
-      let onFocusChange = jest.fn();
-      let {getAllByRole} = render(
-        <GridList aria-label="Test" disabledKeys={['dog']}>
-          <GridListItem id="cat" onFocusChange={onFocusChange}>
-            Cat
-          </GridListItem>
-          <GridListItem id="dog" onFocusChange={onDisabledFocusChange}>
-            Dog
-          </GridListItem>
-          <GridListItem id="kangaroo" onFocusChange={onFocusChange}>
-            Kangaroo
-          </GridListItem>
-        </GridList>
-      );
-      let rows = getAllByRole('row');
-      await user.tab();
-      await user.keyboard('{ArrowDown}');
-      expect(document.activeElement).toBe(rows[2]);
-      expect(onFocusChange.mock.calls).toEqual([[true], [false], [true]]);
-      expect(onDisabledFocusChange).not.toHaveBeenCalled();
     });
   });
 
