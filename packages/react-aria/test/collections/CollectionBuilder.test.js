@@ -5,42 +5,26 @@ import {
   createLeafComponent
 } from '../../src/collections/CollectionBuilder';
 import {CollectionNode} from '../../src/collections/BaseCollection';
-import React from 'react';
+import React, {createRef} from 'react';
 import {render} from '@testing-library/react';
 
 class ItemNode extends CollectionNode {
   static type = 'item';
 }
 
-const Item = createLeafComponent(ItemNode, () => {
-  return <div />;
+const Item = createLeafComponent(ItemNode, (props, ref) => {
+  return <div {...props} ref={ref} />;
 });
 
-const ItemsOld = createLeafComponent('item', () => {
-  return <div />;
+const ItemsOld = createLeafComponent('item', (props, ref) => {
+  return <div {...props} ref={ref} />;
 });
 
-const SectionOld = createBranchComponent('section', () => {
-  return <div />;
+const SectionOld = createBranchComponent('section', (props, ref) => {
+  return <div {...props} ref={ref} />;
 });
 
-const renderItems = (items, spyCollection) => (
-  <CollectionBuilder
-    content={
-      <Collection>
-        {items.map(item => (
-          <Item key={item} />
-        ))}
-      </Collection>
-    }>
-    {collection => {
-      spyCollection.current = collection;
-      return null;
-    }}
-  </CollectionBuilder>
-);
-
-const renderItemsWithIds = (items, spyCollection) => (
+const renderItems = (items, spyCollection, children = () => null) => (
   <CollectionBuilder
     content={
       <Collection>
@@ -51,12 +35,12 @@ const renderItemsWithIds = (items, spyCollection) => (
     }>
     {collection => {
       spyCollection.current = collection;
-      return null;
+      return children(collection);
     }}
   </CollectionBuilder>
 );
 
-const renderItemsOld = (items, spyCollection) => (
+const renderItemsOld = (items, spyCollection, children = () => null) => (
   <CollectionBuilder
     content={
       <Collection>
@@ -69,7 +53,7 @@ const renderItemsOld = (items, spyCollection) => (
     }>
     {collection => {
       spyCollection.current = collection;
-      return null;
+      return children(collection);
     }}
   </CollectionBuilder>
 );
@@ -83,7 +67,7 @@ describe('CollectionBuilder', () => {
 
   it('should have correct firstKey, lastKey and should be frozen after all items are deleted', () => {
     let spyCollection = {};
-    const {rerender} = render(renderItems(['a'], spyCollection));
+    const {rerender} = render(renderItems([{key: 1, id: 'a'}], spyCollection));
     rerender(renderItems([], spyCollection));
     expect(spyCollection.current.frozen).toBe(true);
     expect(spyCollection.current.firstKey).toBe(null);
@@ -97,7 +81,7 @@ describe('CollectionBuilder', () => {
       {key: 2, id: 'a'},
       {key: 3, id: 'b'}
     ];
-    expect(() => render(renderItemsWithIds(adjacent, spyCollection))).toThrow(
+    expect(() => render(renderItems(adjacent, spyCollection))).toThrow(
       'Duplicate key "a" found in collection. Every item in a collection must have a unique key.'
     );
 
@@ -106,7 +90,7 @@ describe('CollectionBuilder', () => {
       {key: 2, id: 'x'},
       {key: 3, id: 'a'}
     ];
-    expect(() => render(renderItemsWithIds(separated, spyCollection))).toThrow(
+    expect(() => render(renderItems(separated, spyCollection))).toThrow(
       'Duplicate key "a" found in collection.'
     );
   });
@@ -114,7 +98,7 @@ describe('CollectionBuilder', () => {
   it('should allow a new item to reuse the key of an item removed in the same render', () => {
     let spyCollection = {};
     const {rerender} = render(
-      renderItemsWithIds(
+      renderItems(
         [
           {key: 1, id: 'a'},
           {key: 2, id: 'b'}
@@ -125,7 +109,7 @@ describe('CollectionBuilder', () => {
     expect([...spyCollection.current.getKeys()]).toEqual(['a', 'b']);
 
     rerender(
-      renderItemsWithIds(
+      renderItems(
         [
           {key: 1, id: 'a'},
           {key: 3, id: 'c'},
@@ -136,7 +120,7 @@ describe('CollectionBuilder', () => {
     );
     expect([...spyCollection.current.getKeys()]).toEqual(['a', 'c', 'b']);
 
-    rerender(renderItemsWithIds([{key: 5, id: 'a'}], spyCollection));
+    rerender(renderItems([{key: 5, id: 'a'}], spyCollection));
     expect([...spyCollection.current.getKeys()]).toEqual(['a']);
   });
 
@@ -148,5 +132,17 @@ describe('CollectionBuilder', () => {
     expect(spyCollection.current.keyMap.get('react-aria-2').type).toBe('section');
     expect(spyCollection.current.keyMap.get('react-aria-2').firstChildKey).toBe('react-aria-1');
     expect(spyCollection.current.keyMap.get('react-aria-1').type).toBe('item');
+  });
+
+  it('should support ref attachment to a rendered node', () => {
+    let spyRef = createRef();
+    render(
+      renderItems([{key: 1, id: 'a'}], {}, collection =>
+        Array.from(collection).map(item => (
+          <React.Fragment key={item.key}>{item.render(item, spyRef)}</React.Fragment>
+        ))
+      )
+    );
+    expect(spyRef.current).toBeEmptyDOMElement();
   });
 });

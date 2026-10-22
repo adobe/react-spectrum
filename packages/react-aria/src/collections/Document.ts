@@ -339,7 +339,7 @@ export class ElementNode<T> extends BaseNode<T> {
     ref: ForwardedRef<E>,
     CollectionNodeClass: CollectionNodeClass<any>,
     rendered?: ReactNode,
-    render?: (node: Node<T>) => ReactElement
+    render?: (node: Node<T>, ref?: ForwardedRef<E>) => ReactElement
   ): void {
     let node;
     let {value, textValue, id, ...props} = obj;
