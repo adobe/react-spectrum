@@ -97,12 +97,6 @@ export function useSearchField(
     }
   };
 
-  let onPressStart = () => {
-    // this is in PressStart for mobile so that touching the clear button doesn't remove focus from
-    // the input and close the keyboard
-    inputRef.current?.focus();
-  };
-
   let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField(
     {
       ...props,
@@ -131,7 +125,6 @@ export function useSearchField(
       preventFocusOnPress: true,
       isDisabled: isDisabled || isReadOnly,
       onPress: onClearButtonClick,
-      onPressStart
     },
     descriptionProps,
     errorMessageProps,
