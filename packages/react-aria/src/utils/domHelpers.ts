@@ -67,6 +67,15 @@ export function isShadowRoot(value: unknown): value is ShadowRoot {
 }
 
 /**
+ * Type guard that checks if a value is an Element. Uses nodeType checks to distinguish Element
+ * from other values.
+ */
+export function isElement(value: unknown): value is Element {
+  // 1 = ELEMENT_NODE
+  return isNode(value) && value.nodeType === 1;
+}
+
+/**
  * Attaches an event listener on target(s) and returns a cleanup function.
  */
 export function addEvent<T extends EventTarget, K extends keyof EventMapType<Exclude<T, null>>>(
