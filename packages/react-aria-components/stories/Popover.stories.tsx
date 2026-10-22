@@ -629,6 +629,9 @@ export const CustomOverlay: PopoverStory = args => (
           style={({isExiting}) => ({
             background: 'Canvas',
             color: 'CanvasText',
+            boxSizing: 'border-box',
+            maxWidth: 'calc(100vw - 24px)',
+            overflow: 'auto',
             padding: 24,
             zIndex: 11,
             animationFillMode: isExiting ? 'forwards' : undefined
