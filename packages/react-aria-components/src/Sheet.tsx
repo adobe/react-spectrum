@@ -448,8 +448,28 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
         scrollAlongAxis(scroller, axis, target, true);
 
         // The close event is dispatched on the overlay wrapper by the IntersectionObserver below.
+        // Also finish once the scroll rests at the exit position, in case the observer's last report
+        // never arrives (seen on busy machines), so the overlay doesn't stay over the page.
         return new Promise<void>(resolve => {
-          element.addEventListener('react-aria-sheet-close', () => resolve(), {once: true});
+          let isAtTarget = () =>
+            Math.abs((axis === 'y' ? scroller.scrollTop : scroller.scrollLeft) - target) < 1;
+          let onScrollEnd = () => {
+            if (isAtTarget()) {
+              done();
+            }
+          };
+          let done = () => {
+            element.removeEventListener('react-aria-sheet-close', done);
+            scroller.removeEventListener('scrollend', onScrollEnd);
+            resolve();
+          };
+          element.addEventListener('react-aria-sheet-close', done);
+          // eslint-disable-next-line rsp-rules/no-non-composing-event-listener
+          scroller.addEventListener('scrollend', onScrollEnd);
+          // A scroll to the current position fires no scrollend.
+          if (isAtTarget()) {
+            done();
+          }
         });
       }}>
       {renderProps => (
