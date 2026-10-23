@@ -363,6 +363,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
       onEnter={element => {
         // The overlay is the document-anchored wrapper; the swipe gesture scrolls the inner container.
         let scroller = element.querySelector<HTMLElement>('[data-sheet-scroll]')!;
+        let content = element.querySelector<HTMLElement>('[data-sheet-content]');
         let vp =
           axis === 'y'
             ? window.innerHeight + parseFloat(calcToPx(viewportPadding(after, axis)))
@@ -377,18 +378,37 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
           }
         };
         if (enteredScroll === 0) {
-          // The rest position is at scroll 0, so the sheet mounts already entered. Jump to the exit
-          // first, then animate back in on the next frame — doing both in the same task can leave
-          // the browser stuck at the jumped-to position instead of running the smooth scroll.
+          // The rest position is at scroll 0, so the sheet mounts already entered. Jump to the exit first.
           scrollAlongAxis(scroller, axis, (maxScroll / 100) * vp);
-          requestAnimationFrame(() => scrollToRest(true));
-        } else {
-          scrollToRest(true);
         }
+        // Skip the part of the enter scroll where the sheet is still entirely off screen.
+        let snapType = scroller.style.scrollSnapType;
+        let skipped =
+          content != null && !reduceMotion() && skipOffscreenTravel(scroller, content, axis, vp);
 
         return new Promise<void>(resolve => {
-          // eslint-disable-next-line rsp-rules/no-non-composing-event-listener
-          scroller.addEventListener('scrollend', () => resolve(), {once: true});
+          let startEnterScroll = () => {
+            scrollToRest(true);
+            // Listen only once the smooth scroll has started, so the jump's own scrollend is ignored.
+            // eslint-disable-next-line rsp-rules/no-non-composing-event-listener
+            scroller.addEventListener(
+              'scrollend',
+              () => {
+                if (skipped) {
+                  scroller.style.scrollSnapType = snapType;
+                }
+                resolve();
+              },
+              {once: true}
+            );
+          };
+
+          // Jumping and smooth scrolling in the same task can leave the browser stuck at the jumped-to position.
+          if (enteredScroll === 0 || skipped) {
+            requestAnimationFrame(startEnterScroll);
+          } else {
+            startEnterScroll();
+          }
         });
       }}
       onExit={element => {
@@ -1111,6 +1131,26 @@ function reduceMotion() {
 function scrollAlongAxis(element: HTMLElement, axis: Axis, value: number, smooth = false) {
   let behavior: ScrollBehavior | undefined = smooth && !reduceMotion() ? 'smooth' : undefined;
   element.scrollTo(axis === 'y' ? {top: value, behavior} : {left: value, behavior});
+}
+
+// Moves the scroller so the sheet's leading edge sits at the viewport edge, with snapping
+// disabled so the browser doesn't pull it back to a snap point. Returns whether it moved.
+function skipOffscreenTravel(scroller: HTMLElement, content: HTMLElement, axis: Axis, vp: number) {
+  let rect = content.getBoundingClientRect();
+  let start = axis === 'y' ? rect.top : rect.left;
+  let end = axis === 'y' ? rect.bottom : rect.right;
+  let delta = start > vp ? start - vp : end < 0 ? end : 0;
+  if (delta === 0) {
+    return false;
+  }
+
+  scroller.style.scrollSnapType = 'none';
+  if (axis === 'y') {
+    scroller.scrollTop += delta;
+  } else {
+    scroller.scrollLeft += delta;
+  }
+  return true;
 }
 
 function scrollDetentIntoView(

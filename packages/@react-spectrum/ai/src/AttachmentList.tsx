@@ -119,6 +119,7 @@ const closeButton = style<{
   disableTapHighlight: true
 });
 
+const hasContent = ':has([data-slot=content])';
 const onlyPreview = ':not(:has([data-slot=content])):not(:has([data-slot=preview]))';
 
 const container = {
@@ -582,7 +583,10 @@ export interface AttachmentProps
 const tagStyles = style({
   flexShrink: 0,
   flexGrow: 0,
-  flexBasis: '0%',
+  flexBasis: {
+    default: '0%',
+    [hasContent]: 'auto'
+  },
   position: 'relative',
   ...focusRing(),
   borderRadius: 'lg',
