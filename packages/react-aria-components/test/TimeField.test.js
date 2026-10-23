@@ -12,6 +12,7 @@
 
 import {
   act,
+  fireEvent,
   installPointerEvent,
   pointerMap,
   render,
@@ -320,5 +321,68 @@ describe('TimeField', () => {
     await user.click(segments[0]);
     await user.keyboard('a');
     expect(segments[0]).toHaveTextContent('1');
+    twelveHour.unmount();
+
+    let onChange = jest.fn();
+    let typed = render(
+      <I18nProvider locale="fr-CM">
+        <TimeField onChange={onChange}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      </I18nProvider>
+    );
+    let typedSegments = typed.getAllByRole('spinbutton');
+    await user.click(typedSegments[0]);
+    await user.keyboard('1345');
+    expect(onChange).toHaveBeenCalledWith(new Time(13, 45));
+  });
+
+  it.each([
+    ['fr-FR', 'AM', 'p', 'PM', 'a', 'AM'],
+    ['de-DE', 'AM', 'p', 'PM', 'a', 'AM'],
+    ['ar-EG', 'ص', 'م', 'م', 'ص', 'ص'],
+    ['zh-TW', '上午', '下', '下午', '上', '上午'],
+    ['ja-JP', '午前', 'p', '午前', '午', '午前'],
+    ['ko-KR', '오전', 'p', '오전', '오', '오전']
+  ])('selects the day period in %s', async (locale, initial, toPm, pm, toAm, am) => {
+    let {getAllByRole} = render(
+      <I18nProvider locale={locale}>
+        <TimeField hourCycle={12} defaultValue={new Time(0, 0)}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      </I18nProvider>
+    );
+
+    let dayPeriod = getAllByRole('spinbutton').find(
+      segment => segment.getAttribute('data-type') === 'dayPeriod'
+    );
+    expect(dayPeriod).toHaveTextContent(initial);
+
+    await user.click(dayPeriod);
+    await user.keyboard(toPm);
+    expect(dayPeriod).toHaveTextContent(pm);
+
+    await user.click(dayPeriod);
+    await user.keyboard(toAm);
+    expect(dayPeriod).toHaveTextContent(am);
+  });
+
+  it('ignores an empty composition when matching a day period', () => {
+    let {getAllByRole} = render(
+      <TimeField defaultValue={new Time(13, 0)}>
+        <Label>Time</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </TimeField>
+    );
+
+    let dayPeriod = getAllByRole('spinbutton').find(
+      segment => segment.getAttribute('data-type') === 'dayPeriod'
+    );
+    expect(dayPeriod).toHaveTextContent('PM');
+
+    fireEvent.input(dayPeriod, {inputType: 'insertCompositionText', data: ''});
+    expect(dayPeriod).toHaveTextContent('PM');
   });
 });
