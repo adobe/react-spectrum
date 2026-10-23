@@ -453,15 +453,15 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
         return new Promise<void>(resolve => {
           let isAtTarget = () =>
             Math.abs((axis === 'y' ? scroller.scrollTop : scroller.scrollLeft) - target) < 1;
-          let onScrollEnd = () => {
-            if (isAtTarget()) {
-              done();
-            }
-          };
           let done = () => {
             element.removeEventListener('react-aria-sheet-close', done);
             scroller.removeEventListener('scrollend', onScrollEnd);
             resolve();
+          };
+          let onScrollEnd = () => {
+            if (isAtTarget()) {
+              done();
+            }
           };
           element.addEventListener('react-aria-sheet-close', done);
           // eslint-disable-next-line rsp-rules/no-non-composing-event-listener

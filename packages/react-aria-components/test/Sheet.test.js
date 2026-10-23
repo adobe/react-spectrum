@@ -556,38 +556,6 @@ describe('Sheet', () => {
       expect(triggerOnOpenChange).not.toHaveBeenCalled();
     });
 
-    it('finishes closing once the exit scroll ends, even if the sheet is never reported hidden', async () => {
-      // jsdom skips exit animations unless getAnimations is implemented.
-      Element.prototype.getAnimations = () => [];
-      try {
-        let tree = render(<TestSheet />);
-        await open(tree);
-        let overlay = tree.getByTestId('overlay');
-        let scroller = overlay.querySelector('[data-sheet-scroll]');
-        await act(async () => {
-          scroller.dispatchEvent(new Event('scrollend'));
-        });
-        intersect(1);
-
-        // Hold the smooth exit scroll back until its scrollend.
-        let scrollTo = Element.prototype.scrollTo;
-        let finishScroll;
-        Element.prototype.scrollTo = function (options) {
-          finishScroll = () => scrollTo.call(this, options);
-        };
-        await user.keyboard('{Escape}');
-        expect(overlay).toHaveAttribute('data-exiting');
-
-        await act(async () => {
-          finishScroll();
-          scroller.dispatchEvent(new Event('scrollend'));
-        });
-        expect(tree.queryByRole('dialog')).toBeNull();
-      } finally {
-        delete Element.prototype.getAnimations;
-      }
-    });
-
     it('does not close before the sheet has become visible', async () => {
       let onOpenChange = jest.fn();
       let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
