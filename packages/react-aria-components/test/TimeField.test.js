@@ -19,6 +19,7 @@ import {
 } from '@react-spectrum/test-utils-internal';
 import {DateInput, DateSegment, TimeField, TimeFieldContext} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
 import React from 'react';
 import {Text} from '../src/Text';
@@ -261,5 +262,63 @@ describe('TimeField', () => {
     await user.tab();
 
     expect(getDescription()).not.toContain('Constraints not satisfied');
+  });
+
+  it('selects AM or PM by typing the first letter', async () => {
+    let {getAllByRole} = render(
+      <TimeField defaultValue={new Time(0, 0)}>
+        <Label>Time</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </TimeField>
+    );
+
+    let dayPeriod = getAllByRole('spinbutton').find(
+      segment => segment.getAttribute('data-type') === 'dayPeriod'
+    );
+    expect(dayPeriod).toHaveTextContent('AM');
+
+    await user.click(dayPeriod);
+    await user.keyboard('p');
+    expect(dayPeriod).toHaveTextContent('PM');
+
+    await user.click(dayPeriod);
+    await user.keyboard('a');
+    expect(dayPeriod).toHaveTextContent('AM');
+  });
+
+  // fr-CM resolves a 12-hour clock to a pattern with no dayPeriod part, including when hourCycle
+  // forces 12-hour time. https://github.com/adobe/react-spectrum/issues/10833
+  it('does not crash for locales whose 12-hour time has no day period', async () => {
+    let {getByRole, getAllByRole, unmount} = render(
+      <I18nProvider locale="fr-CM">
+        <TimeField>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      </I18nProvider>
+    );
+
+    expect(getByRole('group').textContent.replace(/[\u2066-\u2069]/g, '')).toBe('––:––');
+    expect(getAllByRole('spinbutton').map(segment => segment.getAttribute('data-type'))).toEqual([
+      'hour',
+      'minute'
+    ]);
+    unmount();
+
+    let twelveHour = render(
+      <I18nProvider locale="fr-CM">
+        <TimeField hourCycle={12} defaultValue={new Time(13, 45)}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      </I18nProvider>
+    );
+    let segments = twelveHour.getAllByRole('spinbutton');
+    expect(segments.map(segment => segment.getAttribute('data-type'))).toEqual(['hour', 'minute']);
+    expect(twelveHour.getByRole('group').textContent.replace(/[\u2066-\u2069]/g, '')).toBe('1:45');
+
+    await user.click(segments[0]);
+    await user.keyboard('a');
+    expect(segments[0]).toHaveTextContent('1');
   });
 });
