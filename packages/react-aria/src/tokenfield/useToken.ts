@@ -10,6 +10,7 @@
  * governing
  */
 
+import {getParentElement} from '../utils/shadowdom/DOMFunctions';
 import {HTMLAttributes, RefObject, useRef, useState} from 'react';
 import {isVirtualClick} from '../utils/isVirtualEvent';
 import {useEvent} from '../utils/useEvent';
@@ -64,7 +65,7 @@ export function useToken(
           return;
         }
         let selection = window.getSelection();
-        let wrapper = ref.current?.parentElement;
+        let wrapper = getParentElement(ref.current);
         if (!selection || !wrapper) {
           return;
         }
