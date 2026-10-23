@@ -260,7 +260,7 @@ export class BaseNode<T> {
  * Collection Node which is copied on write.
  */
 export class ElementNode<T> extends BaseNode<T> {
-  nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
+  nodeType: number = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
@@ -415,10 +415,36 @@ export class ElementNode<T> extends BaseNode<T> {
     };
   }
 
+  remove(): void {
+    this.parentNode?.removeChild(this);
+  }
+
   hasAttribute(): void {}
   setAttribute(): void {}
   setAttributeNS(): void {}
   removeAttribute(): void {}
+}
+
+/**
+ * A text node in the fake DOM. Text is not part of the collection, so it is always hidden.
+ */
+export class TextNode<T> extends ElementNode<T> {
+  nodeType = 3; // TEXT_NODE
+  data: string;
+
+  constructor(data: string, ownerDocument: Document<T, any>) {
+    super('#text', ownerDocument);
+    this.data = data;
+    this.isHidden = true;
+  }
+
+  get nodeValue(): string {
+    return this.data;
+  }
+
+  set nodeValue(value: string) {
+    this.data = value;
+  }
 }
 
 /**
@@ -452,6 +478,18 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   createElement(type: string): ElementNode<T> {
     return new ElementNode(type, this);
+  }
+
+  // Preact creates every element with createElementNS, and skips sibling comment nodes when
+  // computing its insertion point, so these elements must not report COMMENT_NODE.
+  createElementNS(namespace: string | null, type: string): ElementNode<T> {
+    let element = this.createElement(type);
+    element.nodeType = 1; // ELEMENT_NODE
+    return element;
+  }
+
+  createTextNode(data: string): TextNode<T> {
+    return new TextNode(data, this);
   }
 
   private getMutableCollection() {
@@ -543,7 +581,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
           this.addNode(element);
         }
 
-        if (element.node) {
+        if (element.node || element instanceof TextNode) {
           this.dirtyNodes.delete(element);
         }
 
