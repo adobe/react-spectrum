@@ -12,7 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, color, colorMix, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, color, colorMix, focusRing, size, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
@@ -553,7 +553,7 @@ const treeDragButtonContainer = style<{isCheckboxVisible: boolean}>({
       // Spans the start padding and drag handle, stopping before the expand button.
       default: 14,
       // Also spans the checkbox's marginStart, which doesn't scale.
-      isCheckboxVisible: '[calc(0.875rem * var(--s2-scale) + 0.5rem)]'
+      isCheckboxVisible: `calc(${size(14)} + ${space(8)})`
     }
   }
 });
