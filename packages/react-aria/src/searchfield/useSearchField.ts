@@ -97,6 +97,13 @@ export function useSearchField(
     }
   };
 
+  let onPressStart: AriaButtonProps['onPressStart'] = e => {
+    // so that AT focus isn't lost after the button disappears
+    if (e.pointerType === 'virtual') {
+      inputRef.current?.focus();
+    }
+  };
+
   let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField(
     {
       ...props,
@@ -124,7 +131,8 @@ export function useSearchField(
       excludeFromTabOrder: true,
       preventFocusOnPress: true,
       isDisabled: isDisabled || isReadOnly,
-      onPress: onClearButtonClick
+      onPress: onClearButtonClick,
+      onPressStart
     },
     descriptionProps,
     errorMessageProps,

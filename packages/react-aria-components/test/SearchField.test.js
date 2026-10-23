@@ -107,6 +107,32 @@ describe('SearchField', () => {
     }
   );
 
+  it('focuses the input when a virtual click clears the field and removes the clear button', () => {
+    let {getByRole, queryByRole} = render(
+      <SearchField defaultValue="test">
+        {({isEmpty}) => (
+          <>
+            <Label>Test</Label>
+            <Input />
+            {!isEmpty && <Button>x</Button>}
+          </>
+        )}
+      </SearchField>
+    );
+
+    let input = getByRole('searchbox');
+    let clearButton = getByRole('button', {name: 'Clear search'});
+    act(() => clearButton.focus());
+    expect(clearButton).toHaveFocus();
+    expect(input).toHaveValue('test');
+
+    act(() => clearButton.click());
+
+    expect(input).toHaveValue('');
+    expect(queryByRole('button', {name: 'Clear search'})).not.toBeInTheDocument();
+    expect(input).toHaveFocus();
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <SearchFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
