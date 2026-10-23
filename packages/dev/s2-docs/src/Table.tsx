@@ -2,6 +2,7 @@
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import React, {
   HTMLAttributes,
+  Ref,
   TableHTMLAttributes,
   TdHTMLAttributes,
   ThHTMLAttributes
@@ -108,8 +109,12 @@ export function TableColumn(props: ThHTMLAttributes<HTMLTableHeaderCellElement>)
   return <th {...props} className={tableColumn} />;
 }
 
-export function TableBody(props: HTMLAttributes<HTMLTableSectionElement>) {
-  return <tbody {...props} className={tableBody} />;
+interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> {
+  ref?: Ref<HTMLTableSectionElement>;
+}
+
+export function TableBody({ref, ...props}: TableBodyProps) {
+  return <tbody {...props} ref={ref} className={tableBody} />;
 }
 
 export function TableRow(props: HTMLAttributes<HTMLTableRowElement>) {

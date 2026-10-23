@@ -67,25 +67,29 @@ const chevronStyles = iconStyle({
 
 export function DisclosureRow({title, children, defaultExpanded}) {
   let state = useDisclosureState({defaultExpanded});
-  let ref = useRef(null);
-  let {buttonProps} = useDisclosure({}, state, ref);
-  // oxlint-disable-next-line react/react-compiler
-  delete buttonProps['aria-controls']; // there is no panel element in this implementation
+  let ref = useRef<HTMLTableSectionElement>(null);
+  let {buttonProps, panelProps} = useDisclosure({}, state, ref);
 
   return (
-    <TableBody>
-      <TableRow>
-        <td colSpan={3} className={tableCell}>
-          <Button
-            {...buttonProps}
-            className={p => buttonStyles({...p, isExpanded: state.isExpanded})}>
-            {/* @ts-ignore */}
-            <Chevron styles={chevronStyles({isExpanded: state.isExpanded})} />
-            {title}
-          </Button>
-        </td>
-      </TableRow>
-      {state.isExpanded && children}
-    </TableBody>
+    <>
+      <TableBody>
+        <TableRow>
+          <td colSpan={3} className={tableCell}>
+            <Button
+              {...buttonProps}
+              className={p => buttonStyles({...p, isExpanded: state.isExpanded})}>
+              {/* @ts-ignore */}
+              <Chevron styles={chevronStyles({isExpanded: state.isExpanded})} />
+              {title}
+            </Button>
+          </td>
+        </TableRow>
+      </TableBody>
+      {/* Keep table rows searchable when collapsed. useDisclosure adds hidden="until-found"
+          to this tbody and expands it when the browser's find-in-page matches a prop. */}
+      <TableBody {...panelProps} ref={ref} role="rowgroup">
+        {children}
+      </TableBody>
+    </>
   );
 }
