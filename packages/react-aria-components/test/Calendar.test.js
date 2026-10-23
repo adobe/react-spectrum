@@ -996,4 +996,78 @@ describe('Calendar', () => {
         .map(o => o.textContent)
     ).toEqual(['2026']);
   });
+
+  it('should render the final supported year once', () => {
+    function YearPickerExample({calendarProps}) {
+      return (
+        <Calendar {...calendarProps} aria-label="Date">
+          <CalendarYearPicker>
+            {({items, value, onChange, 'aria-label': ariaLabel}) => (
+              <select aria-label={ariaLabel} value={value} onChange={e => onChange(e.target.value)}>
+                {items.map(item => (
+                  <option key={item.id} value={item.id} data-date={item.date.toString()}>
+                    {item.formatted}
+                  </option>
+                ))}
+              </select>
+            )}
+          </CalendarYearPicker>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+        </Calendar>
+      );
+    }
+
+    let tree = render(
+      <YearPickerExample calendarProps={{defaultFocusedValue: new CalendarDate(9999, 12, 1)}} />
+    );
+    let options = within(tree.getByLabelText('year')).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(
+      Array.from({length: 11}, (_, i) => String(9989 + i))
+    );
+    expect(tree.getByLabelText('year')).toHaveValue('10');
+    expect(options[options.length - 1]).toHaveAttribute('data-date', '9999-12-01');
+
+    tree.rerender(
+      <YearPickerExample
+        key="max-day"
+        calendarProps={{defaultFocusedValue: new CalendarDate(9999, 12, 31)}}
+      />
+    );
+    options = within(tree.getByLabelText('year')).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(
+      Array.from({length: 11}, (_, i) => String(9989 + i))
+    );
+    expect(options[options.length - 1]).toHaveAttribute('data-date', '9999-12-31');
+
+    tree.rerender(
+      <YearPickerExample
+        key="max-value"
+        calendarProps={{
+          maxValue: new CalendarDate(9999, 6, 1),
+          focusedValue: new CalendarDate(9999, 12, 1)
+        }}
+      />
+    );
+    options = within(tree.getByLabelText('year')).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(
+      Array.from({length: 20}, (_, i) => String(9980 + i))
+    );
+    expect(tree.getByLabelText('year')).toHaveValue('19');
+    expect(options[options.length - 1]).toHaveAttribute('data-date', '9999-06-01');
+
+    tree.rerender(
+      <YearPickerExample
+        key="cross-year-max"
+        calendarProps={{
+          minValue: new CalendarDate(9998, 8, 3),
+          maxValue: new CalendarDate(9999, 2, 3),
+          focusedValue: new CalendarDate(9999, 2, 1)
+        }}
+      />
+    );
+    options = within(tree.getByLabelText('year')).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(['9998', '9999']);
+    expect(tree.getByLabelText('year')).toHaveValue('1');
+    expect(options[1]).toHaveAttribute('data-date', '9999-02-03');
+  });
 });
