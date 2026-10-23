@@ -37,6 +37,23 @@ export const ButtonExample: ButtonStory = {
   )
 };
 
+export const ButtonTypeExample: ButtonStory = {
+  render: args => (
+    <Button {...args} onPress={action('onPress')} onClick={action('onClick')}>
+      Press me
+    </Button>
+  ),
+  args: {
+    type: 'submit'
+  },
+  argTypes: {
+    type: {
+      control: 'radio',
+      options: ['button', 'submit', 'reset']
+    }
+  }
+};
+
 export const PendingButton: ButtonStory = {
   render: args => <PendingButtonExample {...args} />,
   args: {
