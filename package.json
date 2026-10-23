@@ -297,7 +297,8 @@
         ".storybook-s2/**",
         "packages/dev/s2-docs/**",
         "starters/**",
-        "packages/react-aria-components/stories/Sheet.css"
+        "packages/react-aria-components/stories/Sheet.css",
+        "packages/react-aria-components/stories/StepList.css"
       ]
     },
     "drafts": {
