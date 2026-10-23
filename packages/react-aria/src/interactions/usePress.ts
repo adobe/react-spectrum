@@ -398,7 +398,7 @@ export function usePress(props: PressHookProps): PressResult {
           // Space does it on key up (see below).
           state.defaultKeyboardClickEvent = e.key === 'Enter' ? e.nativeEvent : null;
 
-          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
+          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e)) {
             e.preventDefault();
           }
 
@@ -512,7 +512,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && state.target && isValidKeyboardEvent(e, state.target)) {
-        if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
+        if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e)) {
           e.preventDefault();
         }
 
@@ -1181,9 +1181,13 @@ function shouldPreventDefaultUp(target: Element) {
   return true;
 }
 
-function shouldPreventDefaultKeyboard(target: Element, key: string) {
-  // Don't prevent the contextmenu shortcut on mac.
-  if (isMac() && key === 'Enter') {
+function shouldPreventDefaultKeyboard(
+  target: Element,
+  event: Pick<KeyboardEvent, 'key' | 'ctrlKey'>
+) {
+  let {key} = event;
+  // Don't prevent the contextmenu shortcut (Control + Enter) on mac.
+  if (isMac() && key === 'Enter' && event.ctrlKey) {
     return false;
   }
 
