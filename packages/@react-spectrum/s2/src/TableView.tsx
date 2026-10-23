@@ -80,7 +80,8 @@ import {
   ItemDropTarget,
   LinkDOMProps,
   LoadingState,
-  Node
+  Node,
+  ReactSubmitEventHandler
 } from '@react-types/shared';
 import {DragHandleButton, InsertionIndicator} from './dnd-utils';
 import {DragPreview} from './DragPreview';
@@ -107,7 +108,6 @@ import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {
   createContext,
   CSSProperties,
-  FormEvent,
   FormHTMLAttributes,
   ForwardedRef,
   forwardRef,
@@ -1589,7 +1589,7 @@ interface EditableCellProps extends Omit<CellProps, 'isSticky'> {
   /** Whether the cell is currently being saved. */
   isSaving?: boolean;
   /** Handler that is called when the value has been changed and is ready to be saved. */
-  onSubmit?: (e: FormEvent<HTMLFormElement>) => void;
+  onSubmit?: ReactSubmitEventHandler<HTMLFormElement>;
   /** Handler that is called when the user cancels the edit. */
   onCancel?: () => void;
   /** The action to submit the form to. Only available in React 19+. */
