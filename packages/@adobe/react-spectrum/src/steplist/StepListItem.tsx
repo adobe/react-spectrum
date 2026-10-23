@@ -11,19 +11,16 @@
  */
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '../utils/classNames';
-import {FocusRing} from 'react-aria/FocusRing';
 import intlMessages from '../../intl/steplist/*.json';
-import {mergeProps} from 'react-aria/mergeProps';
+import {Link} from 'react-aria-components/Link';
 import {Node} from '@react-types/shared';
 import React, {ReactNode, useContext, useRef} from 'react';
 import {StepListContext} from './StepListContext';
 import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
-import {useHover} from 'react-aria/useHover';
 import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useNumberFormatter} from 'react-aria/useNumberFormatter';
-import {useStepListItem} from 'react-aria/private/steplist/useStepListItem';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface SpectrumStepListItemProps<T> {
@@ -43,12 +40,9 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>): ReactNode 
   const isSelected = state.selectedKey === key;
   const isCompleted = state.isCompleted(key);
   const isItemDisabled = isDisabled || state.disabledKeys.has(key);
-  let {stepProps, stepStateProps} = useStepListItem({...props, key}, state, ref);
-
-  let {hoverProps, isHovered} = useHover({
-    ...props,
-    isDisabled: isItemDisabled || isSelected || props.isReadOnly
-  });
+  const isSelectable = state.isSelectable(key);
+  // Only selectable steps other than the current one are navigable links with an href.
+  const href = isSelectable && !isSelected ? (item.props as {href?: string})?.href : undefined;
 
   let stepStateText = '';
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/steplist');
@@ -68,52 +62,54 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>): ReactNode 
 
   return (
     <li className={classNames(styles, 'spectrum-Steplist-item')}>
-      <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
-        <a
-          {...mergeProps(hoverProps, stepProps)}
-          aria-labelledby={`${markerId} ${stateId} ${labelId}`}
-          ref={ref}
-          className={classNames(styles, 'spectrum-Steplist-link', {
+      <Link
+        ref={ref}
+        href={href}
+        isDisabled={!isSelectable}
+        onPress={() => state.setSelectedKey(key)}
+        aria-current={isSelected ? 'step' : undefined}
+        aria-labelledby={`${markerId} ${stateId} ${labelId}`}
+        className={({isHovered, isFocusVisible}) =>
+          classNames(styles, 'spectrum-Steplist-link', {
             'is-selected': isSelected && !isItemDisabled,
             'is-disabled': isItemDisabled,
             'is-hovered': isHovered,
             'is-completed': isCompleted,
-            'is-selectable': state.isSelectable(key) && !isSelected
+            'is-selectable': isSelectable && !isSelected,
+            'focus-ring': isFocusVisible
+          })
+        }>
+        <VisuallyHidden id={stateId}>{stepStateText}</VisuallyHidden>
+        <div
+          id={labelId}
+          aria-hidden="true"
+          className={classNames(styles, 'spectrum-Steplist-label')}>
+          {item.rendered}
+        </div>
+        <div
+          className={classNames(styles, 'spectrum-Steplist-segment', {
+            'is-completed': isCompleted
           })}>
-          <VisuallyHidden {...stepStateProps} id={stateId}>
-            {stepStateText}
-          </VisuallyHidden>
-          <div
-            id={labelId}
-            aria-hidden="true"
-            className={classNames(styles, 'spectrum-Steplist-label')}>
-            {item.rendered}
+          <svg
+            className={classNames(styles, 'spectrum-Steplist-segmentLine')}
+            xmlns="http://www.w3.org/2000/svg"
+            height="100%"
+            viewBox="0 0 2 8"
+            preserveAspectRatio="none">
+            <line x1="1" y1="0" x2="1" y2="8" vectorEffect="non-scaling-stroke" />
+          </svg>
+          <ChevronRightMedium
+            UNSAFE_className={classNames(styles, 'spectrum-Steplist-chevron', {
+              'is-reversed': direction === 'rtl'
+            })}
+          />
+        </div>
+        <div aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-markerWrapper')}>
+          <div id={markerId} className={classNames(styles, 'spectrum-Steplist-marker')}>
+            {numberFormatter.format((item.index || 0) + 1)}
           </div>
-          <div
-            className={classNames(styles, 'spectrum-Steplist-segment', {
-              'is-completed': isCompleted
-            })}>
-            <svg
-              className={classNames(styles, 'spectrum-Steplist-segmentLine')}
-              xmlns="http://www.w3.org/2000/svg"
-              height="100%"
-              viewBox="0 0 2 8"
-              preserveAspectRatio="none">
-              <line x1="1" y1="0" x2="1" y2="8" vectorEffect="non-scaling-stroke" />
-            </svg>
-            <ChevronRightMedium
-              UNSAFE_className={classNames(styles, 'spectrum-Steplist-chevron', {
-                'is-reversed': direction === 'rtl'
-              })}
-            />
-          </div>
-          <div aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-markerWrapper')}>
-            <div id={markerId} className={classNames(styles, 'spectrum-Steplist-marker')}>
-              {numberFormatter.format((item.index || 0) + 1)}
-            </div>
-          </div>
-        </a>
-      </FocusRing>
+        </div>
+      </Link>
     </li>
   );
 }
