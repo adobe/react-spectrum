@@ -24,7 +24,7 @@ import {Grid} from '../layout/Grid';
 import {isFocusVisible as isGlobalFocusVisible} from 'react-aria/private/interactions/useFocusVisible';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './styles.css';
-import {ListViewContext} from './ListView';
+import {ListViewContext} from './ListViewContext';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Provider} from '../provider/Provider';
 import React, {JSX, useContext, useRef} from 'react';

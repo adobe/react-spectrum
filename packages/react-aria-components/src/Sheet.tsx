@@ -22,7 +22,7 @@ import {
 } from './Modal';
 import {isIOS, isSafari} from 'react-aria/private/utils/platform';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import {OverlayTriggerStateContext} from './Dialog';
+import {OverlayTriggerStateContext} from './OverlayTriggerStateContext';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {
   createContext,

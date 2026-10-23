@@ -90,7 +90,7 @@ import {
 import {mergeProps} from 'react-aria/mergeProps';
 import {MultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import {Node} from '@react-types/shared';
-import {OverlayTriggerStateContext} from './Dialog';
+import {OverlayTriggerStateContext} from './OverlayTriggerStateContext';
 import {PopoverContext} from './Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {

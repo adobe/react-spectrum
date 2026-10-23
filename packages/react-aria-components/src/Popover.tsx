@@ -38,7 +38,7 @@ import {
   OverlayTriggerState,
   useOverlayTriggerState
 } from 'react-stately/useOverlayTriggerState';
-import {OverlayTriggerStateContext} from './Dialog';
+import {OverlayTriggerStateContext} from './OverlayTriggerStateContext';
 import {PlacementAxis, PositionProps} from 'react-aria/useOverlayPosition';
 import React, {
   Context,

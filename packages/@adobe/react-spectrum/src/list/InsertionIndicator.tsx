@@ -1,7 +1,7 @@
 import {classNames} from '../utils/classNames';
 import {ItemDropTarget} from '@react-types/shared';
 import listStyles from './styles.css';
-import {ListViewContext} from './ListView';
+import {ListViewContext} from './ListViewContext';
 import React, {JSX, useContext, useRef} from 'react';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
