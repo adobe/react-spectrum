@@ -790,7 +790,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
         node: item,
         shouldSelectOnPressUp: !!dragState && dragAndDropHooks?.pointerDragSource !== 'handle',
         focusMode: props.focusMode,
-        allowsArrowNavigation: props.allowsArrowNavigation
+        allowsArrowNavigation: props.allowsArrowNavigation,
+        hasChildItems: props.hasChildItems
       },
       state,
       ref
