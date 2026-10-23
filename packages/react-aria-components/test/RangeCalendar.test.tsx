@@ -626,6 +626,35 @@ describe('RangeCalendar', () => {
     expect(grid).toHaveAttribute('aria-label', 'Appointment date, June 2030');
   });
 
+  it('should render the final supported year once', async () => {
+    let tree = render(
+      <RangeCalendar aria-label="Trip dates" defaultFocusedValue={new CalendarDate(9999, 12, 1)}>
+        <CalendarYearPicker>
+          {({items, value, onChange, 'aria-label': ariaLabel}) => (
+            <select aria-label={ariaLabel} value={value} onChange={e => onChange(e.target.value)}>
+              {items.map(item => (
+                <option key={item.id} value={item.id} data-date={item.date.toString()}>
+                  {item.formatted}
+                </option>
+              ))}
+            </select>
+          )}
+        </CalendarYearPicker>
+        <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+      </RangeCalendar>
+    );
+
+    let options = within(tree.getByLabelText('year')).getAllByRole('option');
+    expect(options.map(option => option.textContent)).toEqual(
+      Array.from({length: 20}, (_, i) => String(9980 + i))
+    );
+    expect(tree.getByLabelText('year')).toHaveValue('19');
+    expect(options[options.length - 1]).toHaveAttribute('data-date', '9999-12-01');
+
+    await user.selectOptions(tree.getByLabelText('year'), '0');
+    expect(tree.getByRole('grid')).toHaveAttribute('aria-label', 'Trip dates, December 9980');
+  });
+
   it('should support weeksInMonth prop', async () => {
     let tree = render(
       <TestCalendar

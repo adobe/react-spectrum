@@ -11,6 +11,24 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  BuddhistCalendar,
+  CalendarDate,
+  CopticCalendar,
+  EthiopicAmeteAlemCalendar,
+  EthiopicCalendar,
+  getLocalTimeZone,
+  HebrewCalendar,
+  IndianCalendar,
+  IslamicCivilCalendar,
+  JapaneseCalendar,
+  PersianCalendar,
+  startOfMonth,
+  startOfWeek,
+  TaiwanCalendar,
+  today
+} from '@internationalized/date';
+
 import {Button, ButtonContext} from '../src/Button';
 
 import {
@@ -26,15 +44,8 @@ import {
   CalendarStateContext,
   CalendarYearPicker
 } from '../src/Calendar';
-
-import {
-  CalendarDate,
-  getLocalTimeZone,
-  startOfMonth,
-  startOfWeek,
-  today
-} from '@internationalized/date';
 import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Popover} from '../src/Popover';
 import React, {useContext, useState} from 'react';
@@ -996,4 +1007,219 @@ describe('Calendar', () => {
         .map(o => o.textContent)
     ).toEqual(['2026']);
   });
+
+  it('should render the final supported year once', async () => {
+    function YearPickerExample({calendarProps, yearPickerProps}) {
+      return (
+        <Calendar {...calendarProps} aria-label="Date">
+          <CalendarYearPicker {...yearPickerProps}>
+            {({items, value, onChange, 'aria-label': ariaLabel}) => (
+              <select aria-label={ariaLabel} value={value} onChange={e => onChange(e.target.value)}>
+                {items.map(item => (
+                  <option key={item.id} value={item.id} data-date={item.date.toString()}>
+                    {item.formatted}
+                  </option>
+                ))}
+              </select>
+            )}
+          </CalendarYearPicker>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+        </Calendar>
+      );
+    }
+
+    let tree = render(
+      <YearPickerExample calendarProps={{defaultFocusedValue: new CalendarDate(9999, 12, 1)}} />
+    );
+    let options = within(tree.getByLabelText('year')).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(
+      Array.from({length: 20}, (_, i) => String(9980 + i))
+    );
+    expect(tree.getByLabelText('year')).toHaveValue('19');
+    expect(options[options.length - 1]).toHaveAttribute('data-date', '9999-12-01');
+
+    await user.selectOptions(tree.getByLabelText('year'), '0');
+    expect(tree.getByRole('grid')).toHaveAttribute('aria-label', 'Date, December 9980');
+
+    tree.rerender(
+      <YearPickerExample
+        key="max-day"
+        calendarProps={{defaultFocusedValue: new CalendarDate(9999, 12, 31)}}
+      />
+    );
+    options = within(tree.getByLabelText('year')).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(
+      Array.from({length: 20}, (_, i) => String(9980 + i))
+    );
+    expect(options[options.length - 1]).toHaveAttribute('data-date', '9999-12-31');
+
+    tree.rerender(
+      <YearPickerExample
+        key="single-year"
+        calendarProps={{defaultFocusedValue: new CalendarDate(9999, 3, 1)}}
+        yearPickerProps={{visibleYears: 1}}
+      />
+    );
+    options = within(tree.getByLabelText('year')).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(['9999']);
+    expect(options[0]).toHaveAttribute('data-date', '9999-03-01');
+
+    tree.rerender(
+      <YearPickerExample
+        key="max-value"
+        calendarProps={{
+          maxValue: new CalendarDate(9999, 6, 1),
+          focusedValue: new CalendarDate(9999, 12, 1)
+        }}
+      />
+    );
+    options = within(tree.getByLabelText('year')).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(
+      Array.from({length: 20}, (_, i) => String(9980 + i))
+    );
+    expect(tree.getByLabelText('year')).toHaveValue('19');
+    expect(options[options.length - 1]).toHaveAttribute('data-date', '9999-06-01');
+
+    tree.rerender(
+      <YearPickerExample
+        key="cross-year-max"
+        calendarProps={{
+          minValue: new CalendarDate(9998, 8, 3),
+          maxValue: new CalendarDate(9999, 2, 3),
+          focusedValue: new CalendarDate(9999, 2, 1)
+        }}
+      />
+    );
+    options = within(tree.getByLabelText('year')).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(['9998', '9999']);
+    expect(tree.getByLabelText('year')).toHaveValue('1');
+    expect(options[1]).toHaveAttribute('data-date', '9999-02-03');
+  });
+
+  // Every supported calendar clamps arithmetic at its maximum year, and inverse eras
+  // clamp at their earliest year. Each of those boundaries has to stay finite, include
+  // the boundary year once, and still fill visibleYears.
+  it.each([
+    [
+      'th-TH Buddhist 9999',
+      'th-TH',
+      new CalendarDate(new BuddhistCalendar(), 9999, 12, 1),
+      'BE',
+      '9999'
+    ],
+    [
+      'ja-JP Reiwa 7981',
+      'ja-JP-u-ca-japanese',
+      new CalendarDate(new JapaneseCalendar(), 7981, 12, 1),
+      'reiwa',
+      '7981'
+    ],
+    [
+      'fa-IR Persian 9377',
+      'fa-IR',
+      new CalendarDate(new PersianCalendar(), 9377, 1, 1),
+      'AP',
+      '9377'
+    ],
+    [
+      'hi-IN Indian 9919',
+      'hi-IN-u-ca-indian',
+      new CalendarDate(new IndianCalendar(), 9919, 1, 1),
+      'saka',
+      '9919'
+    ],
+    [
+      'he-IL Hebrew 9999',
+      'he-IL-u-ca-hebrew',
+      new CalendarDate(new HebrewCalendar(), 9999, 1, 1),
+      'AM',
+      '9999'
+    ],
+    [
+      'ar-EG Islamic civil 9665',
+      'ar-EG-u-ca-islamic-civil',
+      new CalendarDate(new IslamicCivilCalendar(), 9665, 1, 1),
+      'AH',
+      '9665'
+    ],
+    [
+      'zh-TW Minguo 8088',
+      'zh-TW-u-ca-roc',
+      new CalendarDate(new TaiwanCalendar(), 8088, 6, 15),
+      'minguo',
+      '8088'
+    ],
+    [
+      'Coptic 9715',
+      'en-US-u-ca-coptic',
+      new CalendarDate(new CopticCalendar(), 9715, 1, 1),
+      'CE',
+      '9715'
+    ],
+    [
+      'Ethiopic 9991',
+      'en-US-u-ca-ethiopic',
+      new CalendarDate(new EthiopicCalendar(), 9991, 1, 1),
+      'AM',
+      '9991'
+    ],
+    [
+      'Ethioaa 9999',
+      'en-US-u-ca-ethioaa',
+      new CalendarDate(new EthiopicAmeteAlemCalendar(), 9999, 1, 1),
+      'AA',
+      '9999'
+    ],
+    ['ar-EG Gregorian 9999', 'ar-EG', new CalendarDate(9999, 6, 15), 'AD', '9999'],
+    ['Gregorian 9991', 'en-US', new CalendarDate(9991, 6, 15), 'AD', '9999'],
+    ['Gregorian 9989', 'en-US', new CalendarDate(9989, 6, 15), 'AD', '9998'],
+    ['Gregorian BC 9999', 'en-US', new CalendarDate('BC', 9999, 6, 15), 'BC', '9980'],
+    ['Gregorian year 1', 'en-US', new CalendarDate(1, 6, 15), 'AD', '10']
+  ])(
+    'fills the year list at the calendar boundary (%s)',
+    (_name, locale, focused, selectedEra, lastYear) => {
+      let tree = render(
+        <I18nProvider locale={locale}>
+          <Calendar aria-label="Date" defaultFocusedValue={focused}>
+            <CalendarYearPicker>
+              {({items, value, onChange, 'aria-label': ariaLabel}) => (
+                <select
+                  aria-label={ariaLabel}
+                  value={value}
+                  onChange={e => onChange(e.target.value)}>
+                  {items.map(item => (
+                    <option
+                      key={item.id}
+                      value={item.id}
+                      data-year={item.date.year}
+                      data-era={item.date.era}>
+                      {item.formatted}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </CalendarYearPicker>
+            <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          </Calendar>
+        </I18nProvider>
+      );
+
+      let picker = tree.getByRole('combobox');
+      let options = within(picker).getAllByRole('option');
+      let keys = options.map(
+        option => `${option.getAttribute('data-era')}:${option.getAttribute('data-year')}`
+      );
+      expect(new Set(keys).size).toBe(keys.length);
+      expect(options).toHaveLength(20);
+      expect(options[Number(picker.value)]).toHaveAttribute('data-era', focused.era);
+      expect(options[Number(picker.value)]).toHaveAttribute('data-year', String(focused.year));
+      expect(options[options.length - 1]).toHaveAttribute('data-era', selectedEra);
+      expect(options[options.length - 1]).toHaveAttribute('data-year', lastYear);
+      expect(options[options.length - 1].textContent).not.toBe('');
+
+      if (locale === 'ar-EG') {
+        expect(options[options.length - 1]).toHaveTextContent('٩٩٩٩');
+      }
+    }
+  );
 });
