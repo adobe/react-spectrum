@@ -13,7 +13,8 @@ import {Group, GroupProps} from 'react-aria-components/Group';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {keyframes} from './style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
-import {useState} from 'react';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useRef, useState} from 'react';
 
 const STATE_TRANSITION = '700ms cubic-bezier(0.32, 0.72, 0, 1)';
 
@@ -353,6 +354,105 @@ interface PropFieldContainerProps extends Omit<GroupProps, 'children'> {
   styles?: StyleString;
   inputRef: React.RefObject<HTMLDivElement | null>;
   size?: 'S' | 'M';
+  /** Single-line pill layout (Figma "Initial state=Collapsed"). */
+  isCollapsed?: boolean;
+}
+
+// Collapsed pill radii from Figma: inner container 28px, outer border +6px.
+const COLLAPSED_RADIUS = {M: 28, S: 24};
+const COLLAPSE_EASING = 'cubic-bezier(0.45, 0, 0.2, 1)';
+const COLLAPSE_DURATION = 800;
+
+// Collapsed: input and toolbar share one grid cell so the toolbar's trailing
+// buttons sit on the input line. The input reserves room for them via --pf-trailing-width.
+const collapsedContent = css(`
+  &[data-collapsed] {
+    display: grid;
+    align-items: center;
+
+    & > * {
+      grid-area: 1 / 1;
+    }
+
+    & [data-pf-input] {
+      padding-inline-end: calc(var(--pf-trailing-width, 32px) + 28px);
+    }
+  }
+
+`);
+
+interface Box {
+  x: number;
+  y: number;
+}
+
+/**
+ * FLIP animation between collapsed and expanded layouts. The input and the toolbar's
+ * trailing buttons stay mounted and slide to their new positions; the container height
+ * animates between the two layouts.
+ */
+function useCollapseAnimation(
+  isCollapsed: boolean,
+  bgRef: React.RefObject<HTMLDivElement | null>,
+  contentRef: React.RefObject<HTMLDivElement | null>
+) {
+  let last = useRef<{isCollapsed: boolean; height: number; boxes: Map<string, Box>} | null>(null);
+  let animatingUntil = useRef(0);
+
+  useLayoutEffect(() => {
+    let bg = bgRef.current;
+    let content = contentRef.current;
+    if (!bg || !content) {
+      return;
+    }
+
+    let targets: Record<string, HTMLElement | null> = {
+      input: content.querySelector<HTMLElement>('[data-pf-input]'),
+      trailing: content.querySelector<HTMLElement>('[data-pf-toolbar] > :last-child')
+    };
+    if (targets.trailing) {
+      content.style.setProperty('--pf-trailing-width', `${targets.trailing.offsetWidth}px`);
+    }
+
+    let measure = () => {
+      let boxes = new Map<string, Box>();
+      let origin = content.getBoundingClientRect();
+      for (let [key, el] of Object.entries(targets)) {
+        if (el) {
+          let r = el.getBoundingClientRect();
+          boxes.set(key, {x: r.left - origin.left, y: r.top - origin.top});
+        }
+      }
+      return {isCollapsed, height: bg.offsetHeight, boxes};
+    };
+
+    let prev = last.current;
+    if (prev && prev.isCollapsed !== isCollapsed) {
+      let next = measure();
+      // Skip in reduced motion and in environments without Web Animations (e.g. jsdom).
+      let canAnimate =
+        typeof bg.animate === 'function' &&
+        !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      if (canAnimate) {
+        let options = {duration: COLLAPSE_DURATION, easing: COLLAPSE_EASING};
+        bg.animate([{height: `${prev.height}px`}, {height: `${next.height}px`}], options);
+        for (let [key, el] of Object.entries(targets)) {
+          let from = prev.boxes.get(key);
+          let to = next.boxes.get(key);
+          if (el && from && to) {
+            el.animate(
+              [{translate: `${from.x - to.x}px ${from.y - to.y}px`}, {translate: '0 0'}],
+              options
+            );
+          }
+        }
+        animatingUntil.current = performance.now() + COLLAPSE_DURATION;
+      }
+      last.current = next;
+    } else if (performance.now() > animatingUntil.current) {
+      last.current = measure();
+    }
+  });
 }
 
 export function PromptFieldContainer(props: PropFieldContainerProps) {
@@ -364,9 +464,13 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
     inputRef,
     brandColor,
     size = 'M',
+    isCollapsed = false,
     ...otherProps
   } = props;
   let [isFocused, setFocused] = useState(false);
+  let bgRef = useRef<HTMLDivElement>(null);
+  let contentRef = useRef<HTMLDivElement>(null);
+  useCollapseAnimation(isCollapsed, bgRef, contentRef);
 
   return (
     <Group
@@ -375,12 +479,14 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       data-variant={variant}
       data-state={isGenerating ? 'generating' : 'idle'}
       data-focused={isFocused || undefined}
+      data-collapsed={isCollapsed || undefined}
       className={
         (size === 'M' ? outerBorder : '') +
         style({containerType: 'inline-size', flexGrow: 1, display: 'flex'})
       }
       style={{
         ...props.style,
+        ...(isCollapsed && size === 'M' ? {borderRadius: COLLAPSED_RADIUS.M + 6} : null),
         // @ts-ignore
         '--brand': brandColor
       }}
@@ -408,11 +514,13 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       }}>
       {({isHovered}) => (
         <div
+          ref={bgRef}
           data-hovered={isHovered || undefined}
           data-focused={isFocused || undefined}
           data-variant={variant}
           data-state={isGenerating ? 'generating' : 'idle'}
           data-size={size}
+          style={{borderRadius: isCollapsed ? COLLAPSED_RADIUS[size] : undefined}}
           className={
             ' ' +
             containerBackground +
@@ -500,17 +608,22 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
             />
           )}
           <div
+            ref={contentRef}
+            data-collapsed={isCollapsed || undefined}
+            // Collapsed padding is L20/R12/Y12 per Figma.
+            style={{padding: isCollapsed ? '12px 12px 12px 20px' : '16px'}}
             className={
+              collapsedContent +
               style({
                 position: 'relative',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 16,
-                padding: 16,
                 cursor: 'text',
                 height: 'full',
                 boxSizing: 'border-box'
-              }) + (props.className || '')
+              }) +
+              (props.className || '')
             }>
             {props.children}
           </div>

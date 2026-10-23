@@ -679,3 +679,59 @@ export const CustomAIDisclaimer: Story = {
     />
   )
 };
+
+function CollapsedRender({expandOn, ...args}: any) {
+  let [isCollapsed, setCollapsed] = useState(true);
+  let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
+  let isEmpty = value.segments.length === 0;
+
+  return (
+    <div style={{width: 540}}>
+      <PromptField
+        {...args}
+        value={value}
+        onChange={(v: TokenFieldValue) => {
+          setValue(v);
+          if (expandOn === 'input' && v.segments.length > 0) {
+            setCollapsed(false);
+          }
+        }}
+        isCollapsed={isCollapsed}
+        onFocusChange={(isFocused: boolean) => {
+          if (isFocused && expandOn === 'focus') {
+            setCollapsed(false);
+          } else if (!isFocused && isEmpty) {
+            setCollapsed(true);
+          }
+        }}
+        onSubmit={(v: PromptFieldValue) => {
+          action('onSubmit')(v);
+          setCollapsed(true);
+        }}>
+        <PromptTokenField placeholder="Ask a question, share an idea, or add a task" />
+        <PromptFieldToolbar>
+          <InsertMenuButton>
+            <Menu>
+              <AttachFileMenuItem />
+            </Menu>
+          </InsertMenuButton>
+          <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+            <PromptFieldVoiceButton onToggle={action('onToggle')} />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptFieldToolbar>
+      </PromptField>
+    </div>
+  );
+}
+
+export const Collapsed: StoryObj<typeof CollapsedRender> = {
+  render: args => <CollapsedRender {...args} />,
+  args: {
+    variant: 'prominent',
+    expandOn: 'input'
+  },
+  argTypes: {
+    expandOn: {control: 'radio', options: ['input', 'focus']}
+  }
+};
