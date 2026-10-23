@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, toCalendar} from '@internationalized/date';
+import {CalendarDate, DateFormatter, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from 'react-stately/useDateFieldState';
 import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getScrollParent} from '../utils/getScrollParent';
@@ -142,20 +142,13 @@ export function useDateSegment(
     allowRepeats: true
   });
 
-  // Safari dayPeriod option doesn't work...
+  // Safari dayPeriod option doesn't work, so read AM/PM from a 12-hour format instead.
+  // Locales such as fr-CM omit the dayPeriod part. A missing marker is an empty string so
+  // rendering does not throw, and that empty string is not treated as a typed match.
   let {startsWith} = useFilter({sensitivity: 'base'});
   let amPmFormatter = useDateFormatter({hour: 'numeric', hour12: true});
-  let am = useMemo(() => {
-    let date = new Date();
-    date.setHours(0);
-    return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod')!.value;
-  }, [amPmFormatter]);
-
-  let pm = useMemo(() => {
-    let date = new Date();
-    date.setHours(12);
-    return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod')!.value;
-  }, [amPmFormatter]);
+  let am = useMemo(() => dayPeriodString(amPmFormatter, 0), [amPmFormatter]);
+  let pm = useMemo(() => dayPeriodString(amPmFormatter, 12), [amPmFormatter]);
 
   // Get a list of formatted era names so users can type the first character to choose one.
   let eraFormatter = useDateFormatter({year: 'numeric', era: 'narrow', timeZone: 'UTC'});
@@ -196,9 +189,9 @@ export function useDateSegment(
 
     switch (segment.type) {
       case 'dayPeriod':
-        if (startsWith(am, key)) {
+        if (am !== '' && startsWith(am, key)) {
           state.setSegment('dayPeriod', 0);
-        } else if (startsWith(pm, key)) {
+        } else if (pm !== '' && startsWith(pm, key)) {
           state.setSegment('dayPeriod', 1);
         } else {
           break;
@@ -320,7 +313,10 @@ export function useDateSegment(
 
         // Android sometimes fires key presses of letters as composition events. Need to handle am/pm keys here too.
         // Can also happen e.g. with Pinyin keyboard on iOS.
-        if (data != null && (startsWith(am, data) || startsWith(pm, data))) {
+        if (
+          data != null &&
+          ((am !== '' && startsWith(am, data)) || (pm !== '' && startsWith(pm, data)))
+        ) {
           onInput(data);
         }
         break;
@@ -426,6 +422,12 @@ export function useDateSegment(
       }
     })
   };
+}
+
+function dayPeriodString(formatter: DateFormatter, hour: number): string {
+  let date = new Date();
+  date.setHours(hour);
+  return formatter.formatToParts(date).find(part => part.type === 'dayPeriod')?.value ?? '';
 }
 
 function commonPrefixLength(strings: string[]): number {

@@ -574,6 +574,44 @@ describe('DateField', () => {
     expect(eraSegment).toHaveTextContent('AM');
   });
 
+  // fr-CM's 12-hour pattern has no dayPeriod part. useDateSegment reads that part for every
+  // segment, so a date-only field used to throw during render.
+  // https://github.com/adobe/react-spectrum/issues/10833
+  it('does not crash for locales whose 12-hour time has no day period', async () => {
+    let {getByRole, getAllByRole, unmount} = render(
+      <I18nProvider locale="fr-CM">
+        <DateField>
+          <Label>Birthdate</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    let input = getByRole('group');
+    expect(input).toHaveTextContent('jj/mm/aaaa');
+    let segments = getAllByRole('spinbutton');
+    expect(segments.map(segment => segment.getAttribute('data-type'))).toEqual([
+      'day',
+      'month',
+      'year'
+    ]);
+
+    await user.click(segments[0]);
+    await user.keyboard('15');
+    expect(segments[0]).toHaveTextContent('15');
+    unmount();
+
+    let filled = render(
+      <I18nProvider locale="fr-CM">
+        <DateField defaultValue={new CalendarDate(2019, 2, 3)}>
+          <Label>Birthdate</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+    expect(filled.getByRole('group')).toHaveTextContent('03/02/2019');
+  });
+
   it('should support autofill', async () => {
     let {getByRole} = render(
       <DateField>
