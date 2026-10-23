@@ -57,3 +57,22 @@
     white-space: nowrap;
   }
 }
+
+.react-aria-StepListItemContent {
+  /* Stretch over the marker so links have a sensible hit area and focus ring. The label is
+     absolutely positioned against this element, which occupies the same box as the marker. */
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  color: inherit;
+  text-decoration: none;
+
+  &:is(a):hover .label {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--spectrum-alias-focus-ring-color);
+    outline-offset: 2px;
+  }
+}

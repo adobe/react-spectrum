@@ -16,19 +16,19 @@ import {StepList, StepListItem, StepListItemContent} from '../src/StepList';
 import './StepList.css';
 
 const steps = [
-  {id: 'domain', label: 'Domain/Sender details'},
-  {id: 'dns', label: 'Configure DNS'},
-  {id: 'advanced', label: 'Advanced settings'}
+  {id: 'domain', label: 'Domain/Sender details', href: '#domain'},
+  {id: 'dns', label: 'Configure DNS', href: '#dns'},
+  {id: 'advanced', label: 'Advanced settings', href: '#advanced'}
 ];
 
 export default {
   title: 'React Aria Components/StepList',
   component: StepList,
   args: {
-    selectedId: 'dns'
+    selectedKey: 'dns'
   },
   argTypes: {
-    selectedId: {
+    selectedKey: {
       control: 'radio',
       options: steps.map(step => step.id)
     }
@@ -56,15 +56,15 @@ export const StepListExample: StepListStory = {
     <div>
       <button>Focus landing point</button>
       <StepList {...args} aria-label="Email domain setup">
-        {steps.map((step, index) => (
+        {steps.map(step => (
           <StepListItem key={step.id} id={step.id}>
-            {({isCompleted}) => (
+            {({isCompleted, stepNumber}) => (
               <span className="marker" role="presentation">
                 {isCompleted ? (
                   <CheckIcon />
                 ) : (
                   <span role="presentation" aria-hidden="true">
-                    {index + 1}
+                    {stepNumber}
                   </span>
                 )}
                 <StepListItemContent>
@@ -74,6 +74,63 @@ export const StepListExample: StepListStory = {
             )}
           </StepListItem>
         ))}
+      </StepList>
+    </div>
+  )
+};
+
+export const StepListDynamic: StepListStory = {
+  render: (args: any) => (
+    <div>
+      <button>Focus landing point</button>
+      <StepList {...args} aria-label="Email domain setup" items={steps}>
+        {(step: (typeof steps)[number]) => (
+          <StepListItem>
+            {({isCompleted, stepNumber}) => (
+              <span className="marker" role="presentation">
+                {isCompleted ? (
+                  <CheckIcon />
+                ) : (
+                  <span role="presentation" aria-hidden="true">
+                    {stepNumber}
+                  </span>
+                )}
+                <StepListItemContent>
+                  <span className="label">{step.label}</span>
+                </StepListItemContent>
+              </span>
+            )}
+          </StepListItem>
+        )}
+      </StepList>
+    </div>
+  )
+};
+
+export const StepListLinks: StepListStory = {
+  render: (args: any) => (
+    <div>
+      <button>Focus landing point</button>
+      <StepList {...args} aria-label="Email domain setup" items={steps}>
+        {(step: (typeof steps)[number]) => (
+          <StepListItem>
+            {({isCompleted, stepNumber}) => (
+              <span className="marker" role="presentation">
+                {isCompleted ? (
+                  <CheckIcon />
+                ) : (
+                  <span role="presentation" aria-hidden="true">
+                    {stepNumber}
+                  </span>
+                )}
+                {/* Every step has an href, but only completed steps can be navigated back to. */}
+                <StepListItemContent href={isCompleted ? step.href : undefined}>
+                  <span className="label">{step.label}</span>
+                </StepListItemContent>
+              </span>
+            )}
+          </StepListItem>
+        )}
       </StepList>
     </div>
   )

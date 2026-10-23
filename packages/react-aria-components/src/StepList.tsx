@@ -10,63 +10,69 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  forwardRefType,
+  GlobalDOMAttributes,
+  Key,
+  LinkDOMProps,
+  Node
+} from '@react-types/shared';
 import {
   ClassNameOrFunction,
   ContextValue,
   dom,
   DOMProps,
+  DOMRenderProps,
   RenderProps,
   SlotProps,
+  StyleProps,
   useContextProps,
   useRenderProps
 } from './utils';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
+import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
+import {CollectionProps, CollectionRendererContext} from './Collection';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
-import React, {
-  createContext,
-  ForwardedRef,
-  forwardRef,
-  RefObject,
-  useContext,
-  useState
-} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {useId} from 'react-aria/useId';
-import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLink} from 'react-aria/useLink';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
-export interface StepListRenderProps {}
-
-export interface StepListProps
+export interface StepListProps<T>
   extends
+    Omit<CollectionProps<T>, 'disabledKeys'>,
+    StyleProps,
     SlotProps,
-    RenderProps<StepListRenderProps, 'ol'>,
-    GlobalDOMAttributes<HTMLOListElement>,
-    AriaLabelingProps {
+    AriaLabelingProps,
+    DOMRenderProps<'ol', undefined>,
+    GlobalDOMAttributes<HTMLOListElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
-   * element. A function may be provided to compute the class based on component state.
+   * element.
    *
    * @default 'react-aria-StepList'
    */
-  className?: ClassNameOrFunction<StepListRenderProps>;
+  className?: string;
   /**
-   * The `id` of the currently selected `StepListItem`. Steps rendered before it are marked as
-   * completed, and steps rendered after it are marked as not completed.
+   * The `id` of the currently selected `StepListItem`. Steps before it in the collection are marked
+   * as completed, and steps after it are marked as not completed.
    */
-  selectedId: string;
+  selectedKey: Key;
 }
 
-export const StepListContext = createContext<ContextValue<StepListProps, HTMLOListElement>>(null);
+export const StepListContext =
+  createContext<ContextValue<StepListProps<any>, HTMLOListElement>>(null);
 
 interface StepListState {
-  /** The `id` of the currently selected step. */
-  selectedId: string;
-  /** Identifies the steps belonging to this list so an item can locate its sibling steps. */
-  groupId: string;
+  /** The key of the currently selected step. */
+  selectedKey: Key;
+  /** The index of the currently selected step within the collection, or -1 if it isn't present. */
+  selectedIndex: number;
 }
 
 const InternalStepListContext = createContext<StepListState | null>(null);
@@ -74,32 +80,33 @@ const InternalStepListContext = createContext<StepListState | null>(null);
 /**
  * A StepList displays the steps of a multi step process, and which of them the user has completed.
  */
-export const StepList = /*#__PURE__*/ (forwardRef as forwardRefType)(function StepList(
-  props: StepListProps,
+export const StepList = /*#__PURE__*/ (forwardRef as forwardRefType)(function StepList<T>(
+  props: StepListProps<T>,
   ref: ForwardedRef<HTMLOListElement>
 ) {
   [props, ref] = useContextProps(props, ref, StepListContext);
-  let {selectedId} = props;
-  let groupId = useId();
-
-  let renderProps = useRenderProps({
-    ...props,
-    values: {},
-    defaultClassName: 'react-aria-StepList'
-  });
-
-  let DOMProps = filterDOMProps(props, {labelable: true});
+  let {CollectionRoot} = useContext(CollectionRendererContext);
+  let {selectedKey} = props;
+  let DOMProps = filterDOMProps(props, {global: true, labelable: true});
 
   return (
-    <InternalStepListContext.Provider value={{selectedId, groupId}}>
-      <dom.ol
-        {...mergeProps(DOMProps, renderProps)}
-        role="list"
-        ref={ref}
-        slot={props.slot || undefined}>
-        {renderProps.children}
-      </dom.ol>
-    </InternalStepListContext.Provider>
+    <CollectionBuilder content={<Collection {...props} />}>
+      {collection => (
+        <dom.ol
+          {...DOMProps}
+          render={props.render}
+          role="list"
+          ref={ref}
+          slot={props.slot || undefined}
+          style={props.style}
+          className={props.className ?? 'react-aria-StepList'}>
+          <InternalStepListContext.Provider
+            value={{selectedKey, selectedIndex: collection.getItem(selectedKey)?.index ?? -1}}>
+            <CollectionRoot collection={collection} />
+          </InternalStepListContext.Provider>
+        </dom.ol>
+      )}
+    </CollectionBuilder>
   );
 });
 
@@ -116,6 +123,8 @@ export interface StepListItemRenderProps {
    * @selector [data-completed]
    */
   isCompleted: boolean;
+  /** The position of the step within the `StepList`, starting from 1. */
+  stepNumber: number;
 }
 
 export interface StepListItemProps
@@ -130,114 +139,106 @@ export interface StepListItemProps
    * @default 'react-aria-StepListItem'
    */
   className?: ClassNameOrFunction<StepListItemRenderProps>;
-  /** A unique id for the step, which is compared against the `selectedId` of the `StepList`. */
-  id: string;
+  /** A unique id for the step, which is compared against the `selectedKey` of the `StepList`. */
+  id?: Key;
 }
 
-function useStepListItem(
-  props: StepListItemProps,
-  state: StepListState | null,
-  ref: RefObject<HTMLLIElement | null>
-) {
-  let {id} = props;
-  let groupId = state?.groupId;
-  let selectedId = state?.selectedId;
-  let isCurrent = id === selectedId;
-  // A step is completed if it is rendered before the current step. This can only be determined once
-  // all of the steps in the group have been rendered, so it is resolved against the DOM.
-  let [isCompleted, setCompleted] = useState(false);
-
-  useLayoutEffect(() => {
-    if (!ref.current || groupId == null || isCurrent) {
-      setCompleted(false);
-      return;
-    }
-
-    let currentItem = getOwnerDocument(ref.current).querySelector(
-      `[data-steplist-group-id="${groupId}"][data-current]`
-    );
-    setCompleted(
-      currentItem != null &&
-        (currentItem.compareDocumentPosition(ref.current) & Node.DOCUMENT_POSITION_PRECEDING) !== 0
-    );
-  }, [isCurrent, selectedId, groupId, ref]);
-
-  return {
-    itemProps: {
-      'aria-current': isCurrent ? ('step' as const) : undefined,
-      'data-steplist-group-id': groupId,
-      'data-current': isCurrent || undefined,
-      'data-completed': isCompleted || undefined
-    },
-    isCurrent,
-    isCompleted
-  };
+class StepListItemNode extends CollectionNode<unknown> {
+  static readonly type = 'item';
 }
 
 /**
  * A StepListItem represents an individual step within a `<StepList>`.
  */
-export const StepListItem = /*#__PURE__*/ (forwardRef as forwardRefType)(function StepListItem(
-  props: StepListItemProps,
-  ref: ForwardedRef<HTMLLIElement>
-) {
-  let objRef = useObjectRef(ref);
-  let state = useContext(InternalStepListContext);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
-  let {itemProps, isCurrent, isCompleted} = useStepListItem(props, state, objRef);
-  let hiddenId = useId();
+export const StepListItem = /*#__PURE__*/ createLeafComponent(
+  StepListItemNode,
+  function StepListItem(
+    props: StepListItemProps,
+    ref: ForwardedRef<HTMLLIElement>,
+    node: Node<unknown>
+  ) {
+    let state = useContext(InternalStepListContext);
+    let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
+    let hiddenId = useId();
 
-  let renderProps = useRenderProps({
-    ...props,
-    values: {isCurrent, isCompleted},
-    defaultClassName: 'react-aria-StepListItem'
-  });
+    let isCurrent = state != null && node.key === state.selectedKey;
+    // A step is completed if it comes before the current step in the collection.
+    let isCompleted = state != null && state.selectedIndex >= 0 && node.index < state.selectedIndex;
 
-  let DOMProps = filterDOMProps(props, {labelable: true});
-  // `id` identifies the step rather than the DOM element, so it is not forwarded to the DOM.
-  // TODO IS THIS WEIRD OR WRONG??
-  delete DOMProps.id;
+    let renderProps = useRenderProps({
+      ...node.props,
+      children: node.rendered,
+      values: {isCurrent, isCompleted, stepNumber: node.index + 1},
+      defaultClassName: 'react-aria-StepListItem'
+    });
 
-  let message = stringFormatter.format('stepListItemNotCompleted');
-  if (isCurrent) {
-    message = stringFormatter.format('stepListItemCurrent');
-  } else if (isCompleted) {
-    message = stringFormatter.format('stepListItemCompleted');
-  }
+    let DOMProps = filterDOMProps(props as any, {global: true, labelable: true});
+    // `id` identifies the step rather than the DOM element, so it is not forwarded to the DOM.
+    delete DOMProps.id;
 
-  return (
-    <StepListItemContext.Provider value={{hiddenId}}>
-      <dom.li {...mergeProps(DOMProps, renderProps, itemProps)} role="listitem" ref={objRef}>
-        <span hidden id={hiddenId}>
-          {message}
-        </span>
-        {renderProps.children}
-      </dom.li>
-    </StepListItemContext.Provider>
-  );
-});
-
-interface StepListItemContentProps extends DOMProps {}
-const StepListItemContext = createContext<{hiddenId: string | undefined} | undefined>(undefined);
-
-// Need this so I can get an id on the contents so that the announcement makes sense. It lands on this element, not the `li` itself.
-export const StepListItemContent = /*#__PURE__*/ (forwardRef as forwardRefType)(
-  function StepListItemContent(props: StepListItemContentProps, ref: ForwardedRef<HTMLDivElement>) {
-    let context = useContext(StepListItemContext);
-    let objRef = useObjectRef(ref);
-    let DOMProps = filterDOMProps(props, {labelable: true});
-    let id = useId();
+    let message = stringFormatter.format('stepListItemNotCompleted');
+    if (isCurrent) {
+      message = stringFormatter.format('stepListItemCurrent');
+    } else if (isCompleted) {
+      message = stringFormatter.format('stepListItemCompleted');
+    }
 
     return (
-      <dom.div
-        {...DOMProps}
+      <StepListItemContext.Provider value={{hiddenId}}>
+        <dom.li
+          {...mergeProps(DOMProps, renderProps)}
+          role="listitem"
+          ref={ref}
+          aria-current={isCurrent ? 'step' : undefined}
+          data-current={isCurrent || undefined}
+          data-completed={isCompleted || undefined}>
+          <span hidden id={hiddenId}>
+            {message}
+          </span>
+          {renderProps.children}
+        </dom.li>
+      </StepListItemContext.Provider>
+    );
+  }
+);
+
+export interface StepListItemContentProps
+  extends
+    DOMProps,
+    LinkDOMProps,
+    AriaLabelingProps,
+    Omit<GlobalDOMAttributes<HTMLElement>, 'onClick'> {}
+
+const StepListItemContext = createContext<{hiddenId: string | undefined} | undefined>(undefined);
+
+// Need this so I can get an id on the contents so that the announcement makes sense.
+// It lands on this element, not the `li` itself.
+export const StepListItemContent = /*#__PURE__*/ (forwardRef as forwardRefType)(
+  function StepListItemContent(
+    props: StepListItemContentProps,
+    ref: ForwardedRef<HTMLAnchorElement | HTMLDivElement>
+  ) {
+    let context = useContext(StepListItemContext);
+    let objRef = useObjectRef(ref);
+    let id = useId();
+    // A step is only navigable when it is given an `href`. Otherwise `role="img"` is applied to a
+    // non-focusable element purely so that screen readers treat the contents as a single unit.
+    let isLink = props.href != null;
+    let elementType = isLink ? 'a' : 'div';
+    let {linkProps} = useLink({...props, elementType}, objRef);
+    let ElementType = dom[elementType];
+    let DOMProps = filterDOMProps(props, {global: true, labelable: true, isLink});
+    delete DOMProps.id;
+
+    return (
+      <ElementType
+        {...mergeProps(DOMProps, isLink ? linkProps : {role: 'img'})}
         ref={objRef}
         id={id}
-        role="link" // No role === default group which means three arrow keys to get through each item
         className="react-aria-StepListItemContent"
         aria-labelledby={`${context?.hiddenId} ${id}`}>
         {props.children}
-      </dom.div>
+      </ElementType>
     );
   }
 );
