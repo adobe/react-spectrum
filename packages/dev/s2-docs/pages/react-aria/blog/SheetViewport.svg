@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="21 0 849 590">
+<g style="--fg: light-dark(#24292f, #e6edf3); --muted: light-dark(#57606a, #9198a1); --line: light-dark(#8c959f, #6e7681); --hatch-bg: light-dark(#f6f8fa, #161b22); --hatch-line: light-dark(#d0d7de, #30363d); --surface: light-dark(#ffffff, #21262d); --grabber: light-dark(#afb8c1, #6e7681); --stage: light-dark(#0969da, #4493f8); --stage-bg: light-dark(#ddf4ff, #0d2a4d); --viewport: light-dark(#bf5700, #f0883e); --marker: light-dark(#8250df, #ab7df8); --sans: var(--anatomy-font, system-ui), system-ui, sans-serif; --mono: ui-monospace, SFMono-Regular, Menlo, monospace; font-family: var(--sans)" fill="var(--fg)" font-size="13">
+  <defs>
+    <pattern id="sheet-viewport-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="var(--hatch-bg)"/>
+      <line x1="0" y1="0" x2="0" y2="8" stroke="var(--hatch-line)" stroke-width="2"/>
+    </pattern>
+    <filter id="sheet-viewport-shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/>
+    </filter>
+    <marker id="sheet-viewport-a-muted" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+    <marker id="sheet-viewport-a-mk" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--marker)"/></marker>
+    <marker id="sheet-viewport-a-stage" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--stage)"/></marker>
+  </defs>
+<clipPath id="sheet-viewport-clip-closed"><rect x="39" y="150" width="212" height="240"/></clipPath>
+<g opacity="0.35"><rect x="40" y="150" width="210" height="120" fill="url(#sheet-viewport-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/><rect x="40" y="270" width="210" height="120" fill="var(--stage-bg)" stroke="var(--stage)"/><text x="48" y="287" fill="var(--stage)" font-weight="600">stage</text><path d="M56,314 q0,-10 10,-10 h158 q10,0 10,10 v76 h-178 z" fill="var(--surface)" stroke="var(--fg)" filter="url(#sheet-viewport-shadow)"/><rect x="127.0" y="310" width="36" height="5" rx="2.5" fill="var(--grabber)"/><text x="145.0" y="342" font-weight="600" text-anchor="middle">Sheet</text><rect x="40" y="390" width="210" height="120" fill="url(#sheet-viewport-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/></g>
+<g clip-path="url(#sheet-viewport-clip-closed)"><rect x="40" y="150" width="210" height="120" fill="url(#sheet-viewport-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/><rect x="40" y="270" width="210" height="120" fill="var(--stage-bg)" stroke="var(--stage)"/><text x="48" y="287" fill="var(--stage)" font-weight="600">stage</text><path d="M56,314 q0,-10 10,-10 h158 q10,0 10,10 v76 h-178 z" fill="var(--surface)" stroke="var(--fg)" filter="url(#sheet-viewport-shadow)"/><rect x="127.0" y="310" width="36" height="5" rx="2.5" fill="var(--grabber)"/><text x="145.0" y="342" font-weight="600" text-anchor="middle">Sheet</text><rect x="40" y="390" width="210" height="120" fill="url(#sheet-viewport-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/></g>
+<text x="145.0" y="208.0" font-weight="600" text-anchor="middle">exit snap point</text><text x="145.0" y="226.0" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="middle">scroll-snap-align: start</text><text x="145.0" y="448.0" font-weight="600" text-anchor="middle">exit snap point</text><text x="145.0" y="466.0" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="middle">scroll-snap-align: end</text>
+<rect x="34" y="144" width="222" height="252" rx="4" fill="none" stroke="var(--line)" stroke-dasharray="4 4"/>
+<rect x="40" y="150" width="210" height="120" fill="none" stroke="var(--viewport)" stroke-width="2.5"/>
+<path d="M264,152 h8 v116 h-8" fill="none" stroke="var(--viewport)" stroke-width="2.5"/>
+<text x="280" y="206.0" fill="var(--viewport)" font-weight="600">window</text>
+<text x="280" y="222.0" fill="var(--muted)" font-size="12">(visible)</text>
+<path d="M264,272 h8 v116 h-8" fill="none" stroke="var(--line)" stroke-dasharray="4 4"/>
+<text x="280" y="326.0" fill="var(--muted)" font-weight="600">clipped</text>
+<text x="280" y="342.0" fill="var(--muted)" font-size="12">by overlay</text>
+<text x="145.0" y="555" font-size="15" font-weight="600" text-anchor="middle">Closed</text>
+<text x="145.0" y="575" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="middle">scrollTop = 0</text>
+<clipPath id="sheet-viewport-clip-open"><rect x="559" y="150" width="212" height="240"/></clipPath>
+<g opacity="0.35"><rect x="560" y="30" width="210" height="120" fill="url(#sheet-viewport-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/><rect x="560" y="150" width="210" height="120" fill="var(--stage-bg)" stroke="var(--stage)"/><text x="568" y="167" fill="var(--stage)" font-weight="600">stage</text><path d="M576,194 q0,-10 10,-10 h158 q10,0 10,10 v76 h-178 z" fill="var(--surface)" stroke="var(--fg)" filter="url(#sheet-viewport-shadow)"/><rect x="647.0" y="190" width="36" height="5" rx="2.5" fill="var(--grabber)"/><text x="665.0" y="222" font-weight="600" text-anchor="middle">Sheet</text><rect x="560" y="270" width="210" height="120" fill="url(#sheet-viewport-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/></g>
+<g clip-path="url(#sheet-viewport-clip-open)"><rect x="560" y="30" width="210" height="120" fill="url(#sheet-viewport-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/><rect x="560" y="150" width="210" height="120" fill="var(--stage-bg)" stroke="var(--stage)"/><text x="568" y="167" fill="var(--stage)" font-weight="600">stage</text><path d="M576,194 q0,-10 10,-10 h158 q10,0 10,10 v76 h-178 z" fill="var(--surface)" stroke="var(--fg)" filter="url(#sheet-viewport-shadow)"/><rect x="647.0" y="190" width="36" height="5" rx="2.5" fill="var(--grabber)"/><text x="665.0" y="222" font-weight="600" text-anchor="middle">Sheet</text><rect x="560" y="270" width="210" height="120" fill="url(#sheet-viewport-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/></g>
+<text x="665.0" y="88.0" font-weight="600" text-anchor="middle">exit snap point</text><text x="665.0" y="106.0" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="middle">scroll-snap-align: start</text><text x="665.0" y="328.0" font-weight="600" text-anchor="middle">exit snap point</text><text x="665.0" y="346.0" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="middle">scroll-snap-align: end</text>
+<rect x="554" y="144" width="222" height="252" rx="4" fill="none" stroke="var(--line)" stroke-dasharray="4 4"/>
+<rect x="560" y="150" width="210" height="120" fill="none" stroke="var(--viewport)" stroke-width="2.5"/>
+<path d="M784,152 h8 v116 h-8" fill="none" stroke="var(--viewport)" stroke-width="2.5"/>
+<text x="800" y="206.0" fill="var(--viewport)" font-weight="600">window</text>
+<text x="800" y="222.0" fill="var(--muted)" font-size="12">(visible)</text>
+<path d="M784,272 h8 v116 h-8" fill="none" stroke="var(--line)" stroke-dasharray="4 4"/>
+<text x="800" y="326.0" fill="var(--muted)" font-weight="600">clipped</text>
+<text x="800" y="342.0" fill="var(--muted)" font-size="12">by overlay</text>
+<text x="665.0" y="555" font-size="15" font-weight="600" text-anchor="middle">Open</text>
+<text x="665.0" y="575" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="middle">scrollTop = max</text>
+<line x1="365" y1="190" x2="525" y2="190" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#sheet-viewport-a-muted)"/>
+<text x="445.0" y="178" fill="var(--muted)" font-size="12" text-anchor="middle">open: smooth scroll</text>
+<text x="445.0" y="210" fill="var(--muted)" font-size="12" text-anchor="middle">sheet slides up</text>
+<line x1="525" y1="320" x2="365" y2="320" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#sheet-viewport-a-muted)"/>
+<text x="445.0" y="308" fill="var(--muted)" font-size="12" text-anchor="middle">swipe down: scroll to 0</text>
+<text x="445.0" y="340" fill="var(--muted)" font-size="12" text-anchor="middle">sheet unmounts</text>
+</g>
+</svg>

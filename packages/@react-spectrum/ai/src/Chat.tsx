@@ -34,12 +34,7 @@ import {
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {DOMRef, forwardRefType, Node} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {
-  focusRing,
-  scrollFade,
-  style,
-  StyleString
-} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {focusRing, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   GridList,
   GridListItem,
@@ -54,6 +49,7 @@ import {ListLayout} from './ListLayout';
 import {ListStateContext} from 'react-aria-components/ListBox';
 import {LoaderNode} from 'react-aria/private/collections/BaseCollection';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
+import {scrollFade} from './style/style-macro' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useFocusWithin} from 'react-aria/useFocusWithin';

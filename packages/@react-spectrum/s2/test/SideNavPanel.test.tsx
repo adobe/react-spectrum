@@ -11,6 +11,7 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {createIcon} from '../src/Icon';
 import React from 'react';
 import {RouterProvider} from 'react-aria-components';
 import {
@@ -18,26 +19,30 @@ import {
   SideNavItem,
   SideNavItemContent,
   SideNavItemLink,
-  SideNavProps,
-  SidePanel,
-  SidePanelProps
+  SideNavProps
 } from '../src/SideNav';
+import {SideNavPanel, SideNavPanelProps} from '../src/SideNavPanel';
 import {Text} from '../src/Content';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
+// Icons imported from s2wf-icons are mocked in jest, which skips createIcon and the slot wiring that
+// places an icon in a side nav row, so build a real one here instead.
+const TestIcon = createIcon(props => <svg {...props} data-testid="categories-icon" />);
+
 // "Files" is a top-level leaf (no children). "Libraries" is a parent with an href and a nested "Photos" leaf.
 // "Favorites" is a parent with no href but with a nested "Documents" leaf.
-// Items are always links. An item with an href navigates when it is activated, whether or not it has
-// children and whether or not the panel is collapsed. An item without one toggles its category instead.
-function SidePanelExample(
-  props: SidePanelProps &
+// "Categories" is a parent with neither an href nor a link, with a nested "Archive" leaf.
+// An item with an href navigates when it is activated, whether or not it has children and whether or
+// not the panel is collapsed. An item without one toggles its category instead.
+function SideNavPanelExample(
+  props: SideNavPanelProps &
     SideNavProps<any> & {
       navigate?: (path: string) => void;
     }
 ) {
   let {navigate, defaultExpandedKeys, ...panelProps} = props;
-  let sidePanel = (
-    <SidePanel aria-label="Side panel" {...panelProps}>
+  let sideNavPanel = (
+    <SideNavPanel aria-label="Side panel" {...panelProps}>
       <SideNav
         aria-label="Test sidenav"
         selectedRoute="/files"
@@ -77,23 +82,40 @@ function SidePanelExample(
             </SideNavItemContent>
           </SideNavItem>
         </SideNavItem>
+        <SideNavItem id="categories" textValue="Categories">
+          <SideNavItemContent>
+            <TestIcon />
+            <Text>Categories</Text>
+          </SideNavItemContent>
+          <SideNavItem id="archive" href="/archive" textValue="Archive">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Text>Archive</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
       </SideNav>
-    </SidePanel>
+    </SideNavPanel>
   );
 
-  return navigate ? <RouterProvider navigate={navigate}>{sidePanel}</RouterProvider> : sidePanel;
+  return navigate ? (
+    <RouterProvider navigate={navigate}>{sideNavPanel}</RouterProvider>
+  ) : (
+    sideNavPanel
+  );
 }
 
 // Expanding the panel animates its width first and only puts its contents back once that has
 // finished, so nothing is reflowing while the panel is still changing size. jsdom doesn't run CSS
-// transitions, so no transitionend ever arrives and SidePanel falls back to its timeout.
+// transitions, so no transitionend ever arrives and SideNavPanel falls back to its timeout.
 function finishExpanding(): void {
   act(() => {
     jest.advanceTimersByTime(250);
   });
 }
 
-describe('SidePanel', () => {
+describe('SideNavPanel', () => {
   let user: UserEvent;
 
   beforeAll(function () {
@@ -109,22 +131,22 @@ describe('SidePanel', () => {
   });
 
   it('exposes a labelled region when an aria-label is provided', () => {
-    let {getByRole} = render(<SidePanelExample />);
+    let {getByRole} = render(<SideNavPanelExample />);
 
-    // SidePanelExample passes aria-label="Side panel". The inner SideNav is labelled separately,
+    // SideNavPanelExample passes aria-label="Side panel". The inner SideNav is labelled separately,
     // so the panel should be its own labelled landmark rather than dropping the label.
     expect(getByRole('region', {name: 'Side panel'})).toBeInTheDocument();
   });
 
   it('stays a plain container when no label is provided', () => {
-    let {queryByRole} = render(<SidePanelExample aria-label={undefined} />);
+    let {queryByRole} = render(<SideNavPanelExample aria-label={undefined} />);
 
     expect(queryByRole('region')).toBeNull();
   });
 
   it('collapses and expands via the provided toggle button', async () => {
     let onCollapsedChange = jest.fn();
-    let {getByRole} = render(<SidePanelExample onCollapsedChange={onCollapsedChange} />);
+    let {getByRole} = render(<SideNavPanelExample onCollapsedChange={onCollapsedChange} />);
 
     let toggle = getByRole('button', {name: 'Collapse side panel'});
 
@@ -147,7 +169,7 @@ describe('SidePanel', () => {
     let navigate = jest.fn();
     let onCollapsedChange = jest.fn();
     let {getByRole} = render(
-      <SidePanelExample
+      <SideNavPanelExample
         defaultCollapsed
         navigate={navigate}
         onCollapsedChange={onCollapsedChange}
@@ -169,7 +191,7 @@ describe('SidePanel', () => {
     let navigate = jest.fn();
     let onCollapsedChange = jest.fn();
     let {getByRole} = render(
-      <SidePanelExample
+      <SideNavPanelExample
         defaultCollapsed
         navigate={navigate}
         onCollapsedChange={onCollapsedChange}
@@ -195,7 +217,10 @@ describe('SidePanel', () => {
   it('hides a nested child while collapsed and restores it when expanded again', async () => {
     let onCollapsedChange = jest.fn();
     let {getByRole, queryByRole} = render(
-      <SidePanelExample defaultExpandedKeys={['libraries']} onCollapsedChange={onCollapsedChange} />
+      <SideNavPanelExample
+        defaultExpandedKeys={['libraries']}
+        onCollapsedChange={onCollapsedChange}
+      />
     );
 
     expect(getByRole('row', {name: 'Libraries'})).toHaveAttribute('aria-expanded', 'true');
@@ -218,7 +243,7 @@ describe('SidePanel', () => {
 
   it('toggles the category instead of navigating when a parent with no href is clicked', async () => {
     let navigate = jest.fn();
-    let {getByRole, queryByRole} = render(<SidePanelExample navigate={navigate} />);
+    let {getByRole, queryByRole} = render(<SideNavPanelExample navigate={navigate} />);
 
     let favoritesLink = getByRole('link', {name: 'Favorites'});
     expect(favoritesLink).not.toHaveAttribute('href');
@@ -231,5 +256,62 @@ describe('SidePanel', () => {
     expect(favoritesRow).toHaveAttribute('aria-expanded', 'true');
     expect(getByRole('link', {name: 'Documents'})).toBeInTheDocument();
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('toggles the category when an item with neither an href nor a link is clicked', async () => {
+    let navigate = jest.fn();
+    let onCollapsedChange = jest.fn();
+    let {getByRole, queryByRole} = render(
+      <SideNavPanelExample navigate={navigate} onCollapsedChange={onCollapsedChange} />
+    );
+
+    let categoriesRow = getByRole('row', {name: 'Categories'});
+    expect(categoriesRow).toHaveAttribute('aria-expanded', 'false');
+    expect(queryByRole('link', {name: 'Archive'})).toBeNull();
+
+    await user.click(categoriesRow);
+
+    expect(categoriesRow).toHaveAttribute('aria-expanded', 'true');
+    expect(getByRole('link', {name: 'Archive'})).toBeInTheDocument();
+    expect(navigate).not.toHaveBeenCalled();
+    expect(onCollapsedChange).not.toHaveBeenCalled();
+  });
+
+  it('expands the panel when a collapsed item with no href is activated', async () => {
+    let navigate = jest.fn();
+    let onCollapsedChange = jest.fn();
+    let {getByRole, queryByRole} = render(
+      <SideNavPanelExample
+        defaultCollapsed
+        navigate={navigate}
+        onCollapsedChange={onCollapsedChange}
+      />
+    );
+
+    let categoriesRow = getByRole('row', {name: 'Categories'});
+    expect(categoriesRow).toHaveAttribute('aria-expanded', 'false');
+
+    await user.click(categoriesRow);
+    expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
+    expect(navigate).not.toHaveBeenCalled();
+    expect(queryByRole('link', {name: 'Archive'})).toBeNull();
+
+    finishExpanding();
+    expect(getByRole('row', {name: 'Categories'})).toHaveAttribute('aria-expanded', 'true');
+    expect(getByRole('link', {name: 'Archive'})).toBeInTheDocument();
+  });
+
+  it('expands the panel when a collapsed link with no href is activated', async () => {
+    let onCollapsedChange = jest.fn();
+    let {getByRole} = render(
+      <SideNavPanelExample defaultCollapsed onCollapsedChange={onCollapsedChange} />
+    );
+
+    await user.click(getByRole('link', {name: 'Favorites'}));
+    expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
+
+    finishExpanding();
+    expect(getByRole('row', {name: 'Favorites'})).toHaveAttribute('aria-expanded', 'true');
+    expect(getByRole('link', {name: 'Documents'})).toBeInTheDocument();
   });
 });
