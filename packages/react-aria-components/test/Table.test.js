@@ -3068,6 +3068,40 @@ describe('Table', () => {
   describe('with pointer events', () => {
     installPointerEvent();
 
+    it('should not select or perform an action after a cancelled touch long press', () => {
+      let onRowAction = jest.fn();
+      let {getAllByRole} = renderTable({
+        tableProps: {
+          selectionMode: 'multiple',
+          selectionBehavior: 'replace',
+          onRowAction
+        }
+      });
+
+      let row = getAllByRole('row')[1];
+
+      fireEvent.pointerDown(row, {
+        pointerType: 'touch',
+        pointerId: 1,
+        button: 0
+      });
+
+      act(() => jest.advanceTimersByTime(250));
+
+      fireEvent.pointerCancel(row, {
+        pointerType: 'touch',
+        pointerId: 1
+      });
+
+      act(() => jest.advanceTimersByTime(1000));
+
+      expect(row).not.toHaveAttribute('aria-selected', 'true');
+      expect(onRowAction).not.toHaveBeenCalled();
+
+      for (let row of getAllByRole('row')) {
+        expect(within(row).queryByRole('checkbox')).toBeNull();
+      }
+    });
     it('should show checkboxes on long press', async () => {
       let {getAllByRole} = renderTable({
         tableProps: {

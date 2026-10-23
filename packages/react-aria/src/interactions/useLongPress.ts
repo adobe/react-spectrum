@@ -14,9 +14,9 @@ import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@reac
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {mergeProps} from '../utils/mergeProps';
+import {PressHookProps, usePress} from './usePress';
 import {useDescription} from '../utils/useDescription';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
-import {usePress} from './usePress';
 import {useRef} from 'react';
 
 export interface LongPressProps {
@@ -61,14 +61,35 @@ const DEFAULT_THRESHOLD = 500;
  * threshold, accessibility description, and normalizes behavior across browsers and devices.
  */
 export function useLongPress(props: LongPressProps): LongPressResult {
+  let handlers = useLongPressHandlers(props);
+  let {pressProps} = usePress({
+    isDisabled: props.isDisabled,
+    onPressStart(e) {
+      e.continuePropagation();
+      handlers.onPressStart?.(e);
+    },
+    onPressEnd: handlers.onPressEnd
+  });
+  let descriptionProps = useDescription(
+    props.onLongPress && !props.isDisabled ? props.accessibilityDescription : undefined
+  );
+
+  return {
+    longPressProps: mergeProps(pressProps, descriptionProps)
+  };
+}
+
+// Internal press callbacks for consumers that already have a usePress instance.
+export function useLongPressHandlers(
+  props: LongPressProps
+): Pick<PressHookProps, 'onPressStart' | 'onPressEnd'> {
   let {
     isDisabled,
     pointerType,
     onLongPressStart,
     onLongPressEnd,
     onLongPress,
-    threshold = DEFAULT_THRESHOLD,
-    accessibilityDescription
+    threshold = DEFAULT_THRESHOLD
   } = props;
 
   const timeRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -78,10 +99,11 @@ export function useLongPress(props: LongPressProps): LongPressResult {
       ? e.pointerType === pointerType
       : e.pointerType === 'mouse' || e.pointerType === 'touch';
 
-  let {pressProps} = usePress({
-    isDisabled,
+  return {
     onPressStart(e) {
-      e.continuePropagation();
+      if (isDisabled) {
+        return;
+      }
       if (isAcceptedPointerType(e)) {
         if (onLongPressStart) {
           onLongPressStart({
@@ -143,13 +165,5 @@ export function useLongPress(props: LongPressProps): LongPressResult {
         });
       }
     }
-  });
-
-  let descriptionProps = useDescription(
-    onLongPress && !isDisabled ? accessibilityDescription : undefined
-  );
-
-  return {
-    longPressProps: mergeProps(pressProps, descriptionProps)
   };
 }
