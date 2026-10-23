@@ -612,6 +612,33 @@ describe('DateField', () => {
     expect(filled.getByRole('group')).toHaveTextContent('03/02/2019');
   });
 
+  it.each([['fr-FR'], ['de-DE'], ['ja-JP'], ['ar-EG'], ['th-TH']])(
+    'renders a date field in %s',
+    async locale => {
+      let {getAllByRole} = render(
+        <I18nProvider locale={locale}>
+          <DateField>
+            <Label>Birthdate</Label>
+            <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          </DateField>
+        </I18nProvider>
+      );
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments.map(segment => segment.getAttribute('data-type')).sort()).toEqual([
+        'day',
+        'month',
+        'year'
+      ]);
+
+      let day = segments.find(segment => segment.getAttribute('data-type') === 'day');
+      let before = day.textContent;
+      await user.click(day);
+      await user.keyboard('15');
+      expect(day.textContent).not.toBe(before);
+    }
+  );
+
   it('should support autofill', async () => {
     let {getByRole} = render(
       <DateField>

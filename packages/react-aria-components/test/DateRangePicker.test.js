@@ -20,6 +20,7 @@ import {Dialog} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {Group} from '../src/Group';
 import {Heading} from '../src/Heading';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
 import {Popover} from '../src/Popover';
 import React from 'react';
@@ -447,5 +448,32 @@ describe('DateRangePicker', () => {
 
     let text = popover.querySelector('.react-aria-Text');
     expect(text).not.toHaveAttribute('id');
+  });
+
+  it('does not crash for locales whose 12-hour time has no day period', async () => {
+    let {getAllByRole} = render(
+      <I18nProvider locale="fr-CM">
+        <DateRangePicker>
+          <Label>Trip dates</Label>
+          <Group>
+            <DateInput slot="start">{segment => <DateSegment segment={segment} />}</DateInput>
+            <span aria-hidden="true">–</span>
+            <DateInput slot="end">{segment => <DateSegment segment={segment} />}</DateInput>
+          </Group>
+        </DateRangePicker>
+      </I18nProvider>
+    );
+
+    let groups = getAllByRole('group');
+    expect(groups).toHaveLength(2);
+    for (let group of groups) {
+      expect(group).toHaveTextContent('jj/mm/aaaa');
+    }
+
+    let segments = getAllByRole('spinbutton');
+    expect(segments).toHaveLength(6);
+    await user.click(segments[0]);
+    await user.keyboard('15');
+    expect(segments[0]).toHaveTextContent('15');
   });
 });
