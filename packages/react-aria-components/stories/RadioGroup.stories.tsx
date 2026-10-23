@@ -39,8 +39,6 @@ export const RadioGroupExample: RadioGroupStoryObj = {
         <Radio
           onFocus={action('radio focus')}
           onBlur={action('radio blur')}
-          onPress={action('radio press')}
-          onClick={action('radio click')}
           className={styles.radio}
           value="dogs"
           data-testid="radio-dog">
@@ -49,8 +47,6 @@ export const RadioGroupExample: RadioGroupStoryObj = {
         <Radio
           onFocus={action('radio focus')}
           onBlur={action('radio blur')}
-          onPress={action('radio press')}
-          onClick={action('radio click')}
           className={styles.radio}
           value="cats">
           Cat
@@ -58,8 +54,6 @@ export const RadioGroupExample: RadioGroupStoryObj = {
         <Radio
           onFocus={action('radio focus')}
           onBlur={action('radio blur')}
-          onPress={action('radio press')}
-          onClick={action('radio click')}
           className={styles.radio}
           value="dragon">
           Dragon

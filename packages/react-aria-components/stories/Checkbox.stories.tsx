@@ -9,9 +9,7 @@ export default {
   component: Checkbox,
   args: {
     onFocus: action('onFocus'),
-    onBlur: action('onBlur'),
-    onPress: action('onPress'),
-    onClick: action('onClick')
+    onBlur: action('onBlur')
   }
 } as Meta<typeof Checkbox>;
 
