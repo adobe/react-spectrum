@@ -32,7 +32,7 @@ import {
   isFocusWithin,
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
-import {getFocusableTreeWalker} from '../focus/FocusScope';
+import {getFocusableTreeWalker, isFocusContainmentRestoration} from '../focus/FocusScope';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
 import {isCtrlKeyPressed} from '../utils/keyboard';
@@ -459,7 +459,10 @@ export function useSelectableCollection(
     };
   });
 
+  let windowBlurTarget = useRef<EventTarget | null>(null);
   let onFocus = (e: FocusEvent) => {
+    let isWindowFocusRestoration = windowBlurTarget.current === getEventTarget(e);
+    windowBlurTarget.current = null;
     if (manager.isFocused) {
       // If a focus event bubbled through a portal, reset focus state.
       if (!nodeContains(e.currentTarget, getEventTarget(e))) {
@@ -486,16 +489,23 @@ export function useSelectableCollection(
 
     // we need the "virtual" modality case checks here because shift tabbing from the prompt field's attachment card back into the
     // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the attachmentList aka TagGroup via a focus() call, hence the virtual modality)
-    if (UNSTABLE_focusOnEntry && (modality === 'keyboard' || modality === 'virtual')) {
+    let isRestoringFocus =
+      isWindowFocusRestoration || isFocusContainmentRestoration(getEventTarget(e) as Element);
+    if (
+      !isRestoringFocus &&
+      UNSTABLE_focusOnEntry &&
+      (modality === 'keyboard' || modality === 'virtual')
+    ) {
       // always go to the first item in the Thread when tabbing forwards/backwards into the collection
       // since it is probably more important to the user to see the new prompt reply rather than go to the last focused key
       navigateToKey(
         UNSTABLE_focusOnEntry === 'first' ? delegate.getFirstKey?.() : delegate.getLastKey?.()
       );
-    } else if (manager.focusedKey == null) {
+    } else if (manager.focusedKey == null && !isRestoringFocus) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
       // and either focus the first or last item accordingly.
+      // Containment restores the previous focus state rather than entering a new item.
       let relatedTarget = e.relatedTarget as Element;
       if (
         relatedTarget &&
@@ -527,9 +537,19 @@ export function useSelectableCollection(
     }
   };
 
-  let onBlur = e => {
+  let onBlur = (e: FocusEvent) => {
     // Don't set blurred and then focused again if moving focus within the collection.
     if (!nodeContains(e.currentTarget, e.relatedTarget as HTMLElement)) {
+      // Firefox sends blur/focus events when switching windows even though the
+      // document's active element does not change. Preserve normal blur state,
+      // but treat focus returning to that element as restoration rather than entry.
+      let ownerDocument = e.currentTarget.ownerDocument;
+      windowBlurTarget.current =
+        e.relatedTarget == null &&
+        !ownerDocument.hasFocus() &&
+        getActiveElement(ownerDocument) === getEventTarget(e)
+          ? getEventTarget(e)
+          : null;
       manager.setFocused(false);
     }
   };

@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button} from '../src/Button';
 import {expect, it} from 'vitest';
+import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {ListBox, ListBoxItem} from '../src/ListBox';
+import {page, userEvent} from 'vitest/browser';
 import React from 'react';
 import {render} from 'vitest-browser-react';
 import {User} from '@react-aria/test-utils';
@@ -67,3 +70,27 @@ it.each`
     expect(document.activeElement).toBe(options[8]);
   }
 );
+
+it('focuses and selects the first item when programmatically focused after pointer input', async () => {
+  await render(
+    <>
+      <Button>Outside</Button>
+      <Button>Move here</Button>
+      <ListBox aria-label="Animals" selectionMode="single" selectionBehavior="replace">
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+      </ListBox>
+    </>
+  );
+  await userEvent.click(page.getByRole('button', {name: 'Outside'}));
+  // A real pointer move also keeps this case in pointer modality on Firefox.
+  await userEvent.hover(page.getByRole('button', {name: 'Move here'}));
+  expect(getInteractionModality()).toBe('pointer');
+  // Browser tests await DOM assertions rather than React act().
+  // oxlint-disable-next-line rsp-rules/act-events-test
+  (page.getByRole('listbox').element() as HTMLElement).focus();
+  await expect.element(page.getByRole('option', {name: 'Cat'})).toHaveFocus();
+  await expect
+    .element(page.getByRole('option', {name: 'Cat'}))
+    .toHaveAttribute('aria-selected', 'true');
+});
