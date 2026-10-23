@@ -1,6 +1,7 @@
 'use client';
 import {
   Slider as AriaSlider,
+  SliderMark,
   SliderOutput,
   type SliderProps as AriaSliderProps,
   SliderThumb,
@@ -21,12 +22,15 @@ export interface SliderProps<T> extends AriaSliderProps<T> {
    * @default 0
    */
   fillOffset?: number;
+  /** Values to render tick marks at along the track. */
+  marks?: number[];
 }
 
 export function Slider<T extends number | number[]>({
   label,
   thumbLabels,
   fillOffset,
+  marks,
   ...props
 }: SliderProps<T>) {
   return (
@@ -39,6 +43,12 @@ export function Slider<T extends number | number[]>({
             <div className="track inset" data-disabled={isDisabled || undefined}>
               <SliderFill offset={fillOffset} />
             </div>
+            {marks?.map(value => (
+              <SliderMark key={value} value={value}>
+                <span className="tick" />
+                <span className="tick-label">{state.getFormattedValue(value)}</span>
+              </SliderMark>
+            ))}
             {state.values.map((_, i) => (
               <SliderThumb
                 key={i}

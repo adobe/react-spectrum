@@ -146,6 +146,27 @@ describe('useSlider', () => {
       expect(stateRef.current.values).toEqual([40, 80]);
     });
 
+    it('should snap to snapPoints when clicking and dragging on the track', () => {
+      let onChangeSpy = jest.fn();
+      render(
+        <Example onChange={onChangeSpy} aria-label="Slider" defaultValue={[10]} snapPoints={[50]} />
+      );
+
+      // The track is 100px wide, so the default threshold of 2% reaches roughly 2px either side.
+      let track = screen.getByTestId('track');
+      fireEvent.mouseDown(track, {clientX: 49, pageX: 49});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([50]);
+
+      fireEvent.mouseMove(track, {clientX: 51, pageX: 51});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([50]);
+
+      // Dragging out of range picks up where the pointer is, not where the snap left the thumb.
+      fireEvent.mouseMove(track, {clientX: 55, pageX: 55});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([55]);
+
+      fireEvent.mouseUp(track, {clientX: 55, pageX: 55});
+    });
+
     it('should not allow you to set value if disabled', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
