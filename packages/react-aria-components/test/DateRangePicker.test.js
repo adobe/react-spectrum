@@ -451,7 +451,7 @@ describe('DateRangePicker', () => {
   });
 
   it('does not crash for locales whose 12-hour time has no day period', async () => {
-    let {getAllByRole} = render(
+    let {getByRole, getAllByRole} = render(
       <I18nProvider locale="fr-CM">
         <DateRangePicker>
           <Label>Trip dates</Label>
@@ -464,11 +464,9 @@ describe('DateRangePicker', () => {
       </I18nProvider>
     );
 
-    let groups = getAllByRole('group');
-    expect(groups).toHaveLength(2);
-    for (let group of groups) {
-      expect(group).toHaveTextContent('jj/mm/aaaa');
-    }
+    expect(getByRole('group').textContent.replace(/[\u2066-\u2069]/g, '')).toBe(
+      'jj/mm/aaaa–jj/mm/aaaa'
+    );
 
     let segments = getAllByRole('spinbutton');
     expect(segments).toHaveLength(6);
