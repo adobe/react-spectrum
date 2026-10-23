@@ -525,6 +525,27 @@ describe('useKeyboard', function () {
         await user.keyboard('{Escape}');
         expect(fn).toHaveBeenCalledTimes(1);
       });
+
+      it('prevents default when only shouldContinuePropagation is returned', async () => {
+        let fn = jest.fn(() => {
+          return {shouldContinuePropagation: true};
+        });
+        let isDefaultPrevented;
+        let onWrapperKeyDown = jest.fn(e => {
+          isDefaultPrevented = e.isDefaultPrevented();
+        });
+        render(
+          <div onKeyDown={onWrapperKeyDown}>
+            <ExampleButton shortcuts={{Escape: fn}} />
+          </div>
+        );
+        await user.tab();
+        onWrapperKeyDown.mockClear();
+        await user.keyboard('{Escape}');
+        expect(fn).toHaveBeenCalledTimes(1);
+        expect(onWrapperKeyDown).toHaveBeenCalledTimes(1);
+        expect(isDefaultPrevented).toBe(true);
+      });
     });
 
     describe('Windows (Mod = Ctrl)', () => {
