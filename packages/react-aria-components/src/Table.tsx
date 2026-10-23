@@ -55,6 +55,7 @@ import {
   DragAndDropContext,
   DropIndicatorContext,
   DropIndicatorProps,
+  getDraggableItemSlotProps,
   useDndPersistedKeys,
   useRenderDropIndicator
 } from './DragAndDrop';
@@ -1796,7 +1797,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let {rowProps, expandButtonProps, ...states} = useTableRow(
       {
         node: item,
-        shouldSelectOnPressUp: !!dragState,
+        shouldSelectOnPressUp: !!dragState && dragAndDropHooks?.pointerDragSource !== 'handle',
         isVirtualized
       },
       state,
@@ -1883,6 +1884,11 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
+    let draggableSlotProps = getDraggableItemSlotProps(
+      draggableItem,
+      dragAndDropHooks,
+      dragButtonRef
+    );
 
     return (
       <>
@@ -1908,7 +1914,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
             rowProps,
             focusProps,
             hoverProps,
-            draggableItem?.dragProps,
+            draggableSlotProps.itemProps,
             focusWithinProps
           )}
           ref={ref as any}
@@ -1956,11 +1962,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                     [DEFAULT_SLOT]: {},
                     chevron: expandButtonProps,
                     drag: {
-                      ...draggableItem?.dragButtonProps,
-                      ref: dragButtonRef,
-                      style: {
-                        pointerEvents: 'none'
-                      }
+                      ...draggableSlotProps.dragButtonProps,
+                      ref: dragButtonRef
                     }
                   }
                 }
@@ -2124,7 +2127,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
   ) => {
     let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
     let state = useContext(TableStateContext)!;
-    let {dragState} = useContext(DragAndDropContext);
+    let {dragAndDropHooks, dragState} = useContext(DragAndDropContext);
     let {isVirtualized} = useContext(CollectionRendererContext);
 
     cell.column = state.collection.columns[cell.index];
@@ -2132,7 +2135,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
     let {gridCellProps, isPressed} = useTableCell(
       {
         node: cell,
-        shouldSelectOnPressUp: !!dragState,
+        shouldSelectOnPressUp: !!dragState && dragAndDropHooks?.pointerDragSource !== 'handle',
         isVirtualized,
         focusMode: props.focusMode,
         allowsArrowNavigation: props.allowsArrowNavigation

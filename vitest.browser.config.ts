@@ -321,11 +321,11 @@ export default defineConfig({
         mouseDownOnElement: async (
           {page, iframe}: any,
           selector: string,
-          offsetX: number = 5,
+          offsetX?: number,
           offsetY?: number
         ) => {
           const box = await iframe.locator(selector).boundingBox();
-          const x = box.x + offsetX;
+          const x = box.x + (offsetX ?? box.width / 2);
           const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY;
           await page.mouse.move(x, y);
           await page.mouse.down();

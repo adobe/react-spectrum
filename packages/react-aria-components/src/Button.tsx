@@ -28,7 +28,7 @@ import {GlobalDOMAttributes} from '@react-types/shared';
 import {HoverEvents} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, HTMLAttributes, useEffect, useRef} from 'react';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useId} from 'react-aria/useId';
@@ -93,8 +93,15 @@ export interface ButtonProps
   isPending?: boolean;
 }
 
+export type ButtonNativeDragProps = Pick<HTMLAttributes<HTMLElement>, 'draggable'>;
+
 interface ButtonContextValue extends ButtonProps {
   isPressed?: boolean;
+  /**
+   * Native drag props, only provided via context by collection items whose drag button is the
+   * native drag source (e.g. pointerDragSource="handle"). Drag event handlers remain on the item.
+   */
+  nativeDragProps?: ButtonNativeDragProps;
 }
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
@@ -161,7 +168,14 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(
 
   return (
     <dom.button
-      {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
+      {...mergeProps(
+        DOMProps,
+        ctx.nativeDragProps,
+        renderProps,
+        buttonProps,
+        focusProps,
+        hoverProps
+      )}
       // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
       // We do this by changing the button's type to button.
       type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
