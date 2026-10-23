@@ -38,6 +38,8 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
 import {useId} from 'react-aria/useId';
 import {useLink} from 'react-aria/useLink';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
@@ -227,16 +229,25 @@ export const StepListItemContent = /*#__PURE__*/ (forwardRef as forwardRefType)(
     let elementType = isLink ? 'a' : 'div';
     let {linkProps} = useLink({...props, elementType}, objRef);
     let ElementType = dom[elementType];
+    // Only a link is interactive, so a plain `div` never reports hover or focus.
+    let {hoverProps, isHovered} = useHover({isDisabled: !isLink});
+    let {focusProps, isFocusVisible} = useFocusRing();
     let DOMProps = filterDOMProps(props, {global: true, labelable: true, isLink});
     delete DOMProps.id;
 
     return (
       <ElementType
-        {...mergeProps(DOMProps, isLink ? linkProps : {role: 'img'})}
+        {...mergeProps(
+          DOMProps,
+          isLink ? mergeProps(linkProps, focusProps) : {role: 'img'},
+          hoverProps
+        )}
         ref={objRef}
         id={id}
         className="react-aria-StepListItemContent"
-        aria-labelledby={`${context?.hiddenId} ${id}`}>
+        aria-labelledby={`${context?.hiddenId} ${id}`}
+        data-hovered={isHovered || undefined}
+        data-focus-visible={isFocusVisible || undefined}>
         {props.children}
       </ElementType>
     );
