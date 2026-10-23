@@ -764,6 +764,10 @@ export const Reorderable: StoryObj<typeof ReorderExample> = {
     pointerDragSource: {
       control: 'radio',
       options: ['item', 'handle']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     }
   }
 };

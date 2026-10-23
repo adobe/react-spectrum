@@ -2398,6 +2398,10 @@ export const DragAndDropReorder: StoryObj<typeof ReorderableTableExample> = {
     pointerDragSource: {
       control: 'radio',
       options: ['item', 'handle']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     }
   }
 };
@@ -2468,6 +2472,10 @@ export const DragHandleWithTextFields: StoryObj<typeof DragHandleTableWithTextFi
     pointerDragSource: {
       control: 'radio',
       options: ['item', 'handle']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     }
   }
 };

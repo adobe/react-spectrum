@@ -1117,6 +1117,10 @@ export const Reorderable: StoryObj<typeof ReorderableTree> = {
     pointerDragSource: {
       control: 'radio',
       options: ['item', 'handle']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     }
   }
 };
