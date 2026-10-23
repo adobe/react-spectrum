@@ -382,7 +382,23 @@ describe('TimeField', () => {
     );
     expect(dayPeriod).toHaveTextContent('PM');
 
-    fireEvent.input(dayPeriod, {inputType: 'insertCompositionText', data: ''});
+    let composition = data => {
+      fireEvent(
+        dayPeriod,
+        new InputEvent('beforeinput', {
+          bubbles: true,
+          cancelable: false,
+          inputType: 'insertCompositionText',
+          data
+        })
+      );
+      fireEvent.input(dayPeriod, {inputType: 'insertCompositionText', data});
+    };
+
+    composition('');
     expect(dayPeriod).toHaveTextContent('PM');
+
+    composition('a');
+    expect(dayPeriod).toHaveTextContent('AM');
   });
 });
