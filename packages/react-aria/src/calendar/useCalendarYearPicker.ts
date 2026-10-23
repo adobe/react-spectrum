@@ -64,8 +64,10 @@ export function useCalendarYearPicker(
     timeZone: state.timeZone
   });
 
-  // Determine the minimum and maximum date. By default, show an equal number of years on each side of the current year.
-  // However, this can be constrained by the calendar's minimum and maximum date.
+  // Show an equal number of years on either side of the focused year. An explicit
+  // minValue or maxValue anchors the window to that edge. The calendar system also
+  // clamps (Gregorian year 9999, and the earliest year of an inverse era). When that
+  // cuts the centered window short, slide the free end so the list stays visibleYears long.
   let visibleYears = props.visibleYears || 20;
   let minDate = state.focusedDate.subtract({years: Math.floor(visibleYears / 2)});
   let maxDate = state.focusedDate.add({years: Math.ceil(visibleYears / 2) - 1});
@@ -77,6 +79,25 @@ export function useCalendarYearPicker(
   if (state.minValue && minDate.compare(state.minValue) < 0) {
     minDate = toCalendarDate(state.minValue);
     maxDate = minDate.add({years: visibleYears - 1});
+    if (state.maxValue && maxDate.compare(state.maxValue) > 0) {
+      maxDate = toCalendarDate(state.maxValue);
+    }
+  }
+
+  if (!state.maxValue && isSameYear(maxDate.add({years: 1}), maxDate)) {
+    maxDate = maxDate.set({month: state.focusedDate.month, day: state.focusedDate.day});
+    minDate = maxDate.subtract({years: visibleYears - 1});
+    if (state.minValue && minDate.compare(state.minValue) < 0) {
+      minDate = toCalendarDate(state.minValue);
+    }
+  }
+
+  if (!state.minValue && isSameYear(minDate.subtract({years: 1}), minDate)) {
+    minDate = minDate.set({month: state.focusedDate.month, day: state.focusedDate.day});
+    let shiftedMax = minDate.add({years: visibleYears - 1});
+    if (shiftedMax.compare(maxDate) > 0) {
+      maxDate = shiftedMax;
+    }
     if (state.maxValue && maxDate.compare(state.maxValue) > 0) {
       maxDate = toCalendarDate(state.maxValue);
     }
@@ -102,8 +123,8 @@ export function useCalendarYearPicker(
     });
 
     let nextDate = date.add({years: 1});
-    // Calendar systems clamp at their maximum date (Gregorian year 9999).
-    // Once that year is included, another step repeats it and never finishes.
+    // At the calendar maximum, adding a year repeats the year just added and the
+    // loop would never finish. The final year is already included.
     if (isSameYear(nextDate, itemDate)) {
       break;
     }
