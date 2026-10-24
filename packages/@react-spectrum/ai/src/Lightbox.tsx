@@ -19,6 +19,8 @@ import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {FocusScope} from 'react-aria/FocusScope';
 import {ImageContext} from '@react-spectrum/s2/Image';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import {
   Tab as RACTab,
@@ -33,6 +35,10 @@ import {
   TabsProps
 } from 'react-aria-components/Tabs';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+
+import {scrollFade} from './style/style-macro' with {type: 'macro'};
+
 
 export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
   isInfinite?: boolean;
@@ -68,17 +74,21 @@ const carouselStyles = style({
 
 const pickerStyles = style({
   display: 'flex',
+  maxWidth: 600,
+  overflowX: 'auto',
   flexDirection: {
     orientation: {
       horizontal: 'row',
       vertical: 'column'
     }
   },
-  alignItems: 'center',
-  justifyContent: 'center',
+  scrollbarWidth: 'none',
   flexShrink: 0,
   order: 1,
-  gap: 4
+  gap: 4,
+  boxSizing: 'border-box',
+  padding: 4,
+  scrollPadding: 4
 });
 
 const pickerItemStyles = style({
@@ -112,13 +122,12 @@ const itemsStyles = style({
   scrollbarWidth: 'none',
   scrollSnapType: 'x mandatory',
   scrollBehavior: {
-    default: 'smooth',
+    default: 'auto',
     '@media (prefers-reduced-motion: reduce)': 'auto'
   }
 });
 
 const itemStyles = style({
-  ...focusRing(),
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -130,7 +139,9 @@ const itemStyles = style({
   scrollSnapAlign: 'start',
   scrollSnapStop: 'always',
   paddingX: 16,
-  boxSizing: 'border-box'
+  paddingY: 4,
+  boxSizing: 'border-box',
+  outlineStyle: 'none'
 });
 
 interface LightboxCarouselContextProps {
@@ -207,7 +218,15 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
 export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
   let ctx = useContext(LightboxTriggerContext);
   let state = useContext(TabListStateContext);
-  let picker = <RACTabList {...props} className={renderProps => pickerStyles(renderProps)} />;
+  let picker = (
+    <div className={style({display: 'flex', justifyContent: 'center', order: 1})}>
+      <RACTabList
+        {...props}
+        className={renderProps =>
+          pickerStyles(renderProps) + ' ' + scrollFade({x: 16})
+        }
+      />
+    </div>);
 
   // Wait until tab state has initialized its focus target before running autofocus.
   return state?.selectionManager.focusedKey != null ? (
@@ -387,17 +406,17 @@ interface CarouselNavButtonProps extends Omit<ButtonProps, 'children'> {
 
 function CarouselNavButton(props: CarouselNavButtonProps) {
   let {side, ...otherProps} = props;
-  // let {direction} = useLocale();
-  // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+  let isInModal = useContext(LightboxTriggerContext) != null;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let Icon = side === 'start' ? ChevronLeft : ChevronRight;
   return (
     <Button
       {...otherProps}
       variant="secondary"
-      // aria-label={stringFormatter.format(
-      //   side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
-      // )}
-    >
+      staticColor={isInModal ? 'white' : undefined}
+      aria-label={stringFormatter.format(
+        side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
+      )}>
       <Icon />
     </Button>
   );
@@ -441,6 +460,7 @@ function reducer(state: CarouselState, action: Action) {
 }
 
 const imageStyles = style({
+  ...focusRing(),
   display: 'block',
   width: 'fit',
   height: 'full',
@@ -585,9 +605,9 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
 
 export function LightboxItem(props: LightboxItemProps) {
   return (
-    <RACTabPanel {...props} shouldForceMount className={renderProps => itemStyles(renderProps)}>
+    <RACTabPanel {...props} shouldForceMount className={itemStyles}>
       {renderProps => (
-        <ImageContext.Provider value={{styles: imageStyles}}>
+        <ImageContext.Provider value={{styles: imageStyles({...renderProps})}}>
           {typeof props.children === 'function' ? props.children(renderProps) : props.children}
         </ImageContext.Provider>
       )}
