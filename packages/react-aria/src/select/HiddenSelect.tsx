@@ -17,6 +17,7 @@ import {selectData} from './useSelect';
 import {SelectionMode, SelectState} from 'react-stately/useSelectState';
 import {useFormReset} from '../utils/useFormReset';
 import {useFormValidation} from '../form/useFormValidation';
+import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useVisuallyHidden} from '../visually-hidden/VisuallyHidden';
 
 export interface AriaHiddenSelectProps {
@@ -93,6 +94,19 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(
   });
 
   useFormReset(props.selectRef, state.defaultValue, state.setValue);
+
+  useLayoutEffect(() => {
+    let select = props.selectRef?.current;
+    if (select instanceof HTMLSelectElement) {
+      for (let option of select.options) {
+        if (option.defaultSelected !== option.selected) {
+          // oxlint-disable-next-line react/react-compiler
+          option.defaultSelected = option.selected;
+        }
+      }
+    }
+  });
+
   useFormValidation(
     {
       validationBehavior,
