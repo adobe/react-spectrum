@@ -104,7 +104,7 @@ export function useExitAnimation(
   return isExiting;
 }
 
-function useAnimation(
+export function useAnimation(
   ref: RefObject<HTMLElement | null>,
   isActive: boolean,
   onStart: ((element: HTMLElement) => void | Promise<void>) | undefined,
