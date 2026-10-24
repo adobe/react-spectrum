@@ -31,6 +31,7 @@ import React, {
   useState
 } from 'react';
 import {useIsSSR} from '../ssr/SSRProvider';
+import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 const ShallowRenderContext = createContext(false);
@@ -124,14 +125,7 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(
   );
   let subscribe = useCallback((fn: () => void) => document.subscribe(fn), [document]);
   let getSnapshot = useCallback(() => {
-    let collection = document.getCollection();
-    if (document.isSSR) {
-      // After SSR is complete, reset the document to empty so it is ready for React to render the portal into.
-      // We do this _after_ getting the collection above so that the collection still has content in it from SSR
-      // during the current render, before React has finished the client render.
-      document.resetAfterSSR();
-    }
-    return collection;
+    return document.getCollection();
   }, [document]);
   let getServerSnapshot = useCallback(() => {
     // oxlint-disable-next-line react/react-compiler
@@ -303,6 +297,17 @@ export function Collection<T>(props: CollectionProps<T>): JSX.Element {
 
 function CollectionRoot({children}) {
   let doc = useContext(CollectionDocumentContext);
+  let isSSR = useIsSSR();
+
+  // Preserve the server collection between the hydration commit and the client portal commit.
+  useLayoutEffect(() => {
+    if (isSSR) {
+      doc?.resetAfterSSR();
+    } else {
+      doc?.queueUpdateAfterSSR();
+    }
+  }, [doc, isSSR]);
+
   let wrappedChildren = useMemo(
     () => (
       <CollectionDocumentContext.Provider value={null}>
@@ -313,7 +318,7 @@ function CollectionRoot({children}) {
   );
   // During SSR, we render the content directly, and append nodes to the document during render.
   // The collection children return null so that nothing is actually rendered into the HTML.
-  return useIsSSR() ? (
+  return isSSR ? (
     <SSRContext.Provider value={doc}>{wrappedChildren}</SSRContext.Provider>
   ) : (
     createPortal(wrappedChildren, doc as unknown as Element)
