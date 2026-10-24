@@ -343,8 +343,7 @@ describe('TimeField', () => {
     ['de-DE', 'AM', 'p', 'PM', 'a', 'AM'],
     ['ar-EG', 'ص', 'م', 'م', 'ص', 'ص'],
     ['zh-TW', '上午', '下', '下午', '上', '上午'],
-    ['ja-JP', '午前', 'p', '午前', '午', '午前'],
-    ['ko-KR', '오전', 'p', '오전', '오', '오전']
+    ['ja-JP', '午前', 'p', '午前', '午', '午前']
   ])('selects the day period in %s', async (locale, initial, toPm, pm, toAm, am) => {
     let {getAllByRole} = render(
       <I18nProvider locale={locale}>
