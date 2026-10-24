@@ -915,7 +915,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           data-drop-target={isRootDropTarget || undefined}
           data-focused={isFocused || undefined}
           data-focus-visible={isFocusVisible || undefined}>
-          <SharedElementTransition>
+          <SharedElementTransition containerRef={ref}>
             <CollectionRoot
               collection={filteredState.collection}
               scrollRef={tableContainerContext?.scrollRef ?? ref}
