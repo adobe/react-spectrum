@@ -18,8 +18,9 @@ import {
   getParentElement,
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
-import {getOwnerWindow, isNode, isShadowRoot} from '../utils/domHelpers';
+import {getOwnerWindow} from '../utils/domHelpers';
 import {isFocusable} from '../utils/isFocusable';
+import {isNode, isShadowRoot} from '../utils/typeHelpers';
 import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 

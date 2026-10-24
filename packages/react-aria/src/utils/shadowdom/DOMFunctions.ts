@@ -2,7 +2,8 @@
 /* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target, rsp-rules/shadow-safe-parent-node */
 
 import {EventTargetType} from '@react-types/shared';
-import {getOwnerWindow, isElement, isShadowRoot} from '../domHelpers';
+import {getOwnerWindow} from '../domHelpers';
+import {isElement, isShadowRoot} from '../typeHelpers';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 import type {SyntheticEvent} from 'react';
 
