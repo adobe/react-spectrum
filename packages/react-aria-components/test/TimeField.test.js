@@ -12,6 +12,7 @@
 
 import {
   act,
+  fireEvent,
   installPointerEvent,
   pointerMap,
   render,
@@ -19,6 +20,7 @@ import {
 } from '@react-spectrum/test-utils-internal';
 import {DateInput, DateSegment, TimeField, TimeFieldContext} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
 import React from 'react';
 import {Text} from '../src/Text';
@@ -261,5 +263,141 @@ describe('TimeField', () => {
     await user.tab();
 
     expect(getDescription()).not.toContain('Constraints not satisfied');
+  });
+
+  it('selects AM or PM by typing the first letter', async () => {
+    let {getAllByRole} = render(
+      <TimeField defaultValue={new Time(0, 0)}>
+        <Label>Time</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </TimeField>
+    );
+
+    let dayPeriod = getAllByRole('spinbutton').find(
+      segment => segment.getAttribute('data-type') === 'dayPeriod'
+    );
+    expect(dayPeriod).toHaveTextContent('AM');
+
+    await user.click(dayPeriod);
+    await user.keyboard('p');
+    expect(dayPeriod).toHaveTextContent('PM');
+
+    await user.click(dayPeriod);
+    await user.keyboard('a');
+    expect(dayPeriod).toHaveTextContent('AM');
+  });
+
+  // fr-CM resolves a 12-hour clock to a pattern with no dayPeriod part, including when hourCycle
+  // forces 12-hour time. https://github.com/adobe/react-spectrum/issues/10833
+  it('does not crash for locales whose 12-hour time has no day period', async () => {
+    let {getByRole, getAllByRole, unmount} = render(
+      <I18nProvider locale="fr-CM">
+        <TimeField>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      </I18nProvider>
+    );
+
+    expect(getByRole('group').textContent.replace(/[\u2066-\u2069]/g, '')).toBe('––:––');
+    expect(getAllByRole('spinbutton').map(segment => segment.getAttribute('data-type'))).toEqual([
+      'hour',
+      'minute'
+    ]);
+    unmount();
+
+    let twelveHour = render(
+      <I18nProvider locale="fr-CM">
+        <TimeField hourCycle={12} defaultValue={new Time(13, 45)}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      </I18nProvider>
+    );
+    let segments = twelveHour.getAllByRole('spinbutton');
+    expect(segments.map(segment => segment.getAttribute('data-type'))).toEqual(['hour', 'minute']);
+    expect(twelveHour.getByRole('group').textContent.replace(/[\u2066-\u2069]/g, '')).toBe('1:45');
+
+    await user.click(segments[0]);
+    await user.keyboard('a');
+    expect(segments[0]).toHaveTextContent('1');
+    twelveHour.unmount();
+
+    let onChange = jest.fn();
+    let typed = render(
+      <I18nProvider locale="fr-CM">
+        <TimeField onChange={onChange}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      </I18nProvider>
+    );
+    let typedSegments = typed.getAllByRole('spinbutton');
+    await user.click(typedSegments[0]);
+    await user.keyboard('1345');
+    expect(onChange).toHaveBeenCalledWith(new Time(13, 45));
+  });
+
+  it.each([
+    ['fr-FR', 'AM', 'p', 'PM', 'a', 'AM'],
+    ['de-DE', 'AM', 'p', 'PM', 'a', 'AM'],
+    ['ar-EG', 'ص', 'م', 'م', 'ص', 'ص'],
+    ['zh-TW', '上午', '下', '下午', '上', '上午'],
+    ['ja-JP', '午前', 'p', '午前', '午', '午前']
+  ])('selects the day period in %s', async (locale, initial, toPm, pm, toAm, am) => {
+    let {getAllByRole} = render(
+      <I18nProvider locale={locale}>
+        <TimeField hourCycle={12} defaultValue={new Time(0, 0)}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      </I18nProvider>
+    );
+
+    let dayPeriod = getAllByRole('spinbutton').find(
+      segment => segment.getAttribute('data-type') === 'dayPeriod'
+    );
+    expect(dayPeriod).toHaveTextContent(initial);
+
+    await user.click(dayPeriod);
+    await user.keyboard(toPm);
+    expect(dayPeriod).toHaveTextContent(pm);
+
+    await user.click(dayPeriod);
+    await user.keyboard(toAm);
+    expect(dayPeriod).toHaveTextContent(am);
+  });
+
+  it('ignores an empty composition when matching a day period', () => {
+    let {getAllByRole} = render(
+      <TimeField defaultValue={new Time(13, 0)}>
+        <Label>Time</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </TimeField>
+    );
+
+    let dayPeriod = getAllByRole('spinbutton').find(
+      segment => segment.getAttribute('data-type') === 'dayPeriod'
+    );
+    expect(dayPeriod).toHaveTextContent('PM');
+
+    let composition = data => {
+      fireEvent(
+        dayPeriod,
+        new InputEvent('beforeinput', {
+          bubbles: true,
+          cancelable: false,
+          inputType: 'insertCompositionText',
+          data
+        })
+      );
+      fireEvent.input(dayPeriod, {inputType: 'insertCompositionText', data});
+    };
+
+    composition('');
+    expect(dayPeriod).toHaveTextContent('PM');
+
+    composition('a');
+    expect(dayPeriod).toHaveTextContent('AM');
   });
 });
