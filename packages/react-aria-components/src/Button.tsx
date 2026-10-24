@@ -91,6 +91,8 @@ export interface ButtonProps
    * while retaining focusability, and announces the pending state to screen readers.
    */
   isPending?: boolean;
+  /** Dummy prop. */
+  isFoo?: boolean;
 }
 
 interface ButtonContextValue extends ButtonProps {
