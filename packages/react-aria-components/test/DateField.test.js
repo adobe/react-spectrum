@@ -574,9 +574,6 @@ describe('DateField', () => {
     expect(eraSegment).toHaveTextContent('AM');
   });
 
-  // fr-CM's 12-hour pattern has no dayPeriod part. useDateSegment reads that part for every
-  // segment, so a date-only field used to throw during render.
-  // https://github.com/adobe/react-spectrum/issues/10833
   it('does not crash for locales whose 12-hour time has no day period', async () => {
     let {getByRole, getAllByRole, unmount} = render(
       <I18nProvider locale="fr-CM">

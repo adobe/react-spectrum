@@ -368,6 +368,46 @@ describe('TimeField', () => {
     expect(dayPeriod).toHaveTextContent(am);
   });
 
+  it('uses the runtime Korean day-period markers when typing', async () => {
+    let formatter = new Intl.DateTimeFormat('ko-KR', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    });
+    let getDayPeriod = hour => {
+      let part = formatter
+        .formatToParts(new Date(2000, 0, 1, hour))
+        .find(part => part.type === 'dayPeriod');
+      expect(part).toBeDefined();
+      return part.value;
+    };
+    let am = getDayPeriod(0);
+    let pm = getDayPeriod(12);
+
+    let {getAllByRole} = render(
+      <I18nProvider locale="ko-KR">
+        <TimeField hourCycle={12} defaultValue={new Time(0, 0)}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      </I18nProvider>
+    );
+
+    let dayPeriod = getAllByRole('spinbutton').find(
+      segment => segment.getAttribute('data-type') === 'dayPeriod'
+    );
+    expect(dayPeriod).toHaveTextContent(am);
+
+    await user.click(dayPeriod);
+    await user.keyboard(pm[0]);
+    // When both markers start with the same character, AM wins the first match.
+    expect(dayPeriod).toHaveTextContent(am[0] === pm[0] ? am : pm);
+
+    await user.click(dayPeriod);
+    await user.keyboard(am[0]);
+    expect(dayPeriod).toHaveTextContent(am);
+  });
+
   it('ignores an empty composition when matching a day period', () => {
     let {getAllByRole} = render(
       <TimeField defaultValue={new Time(13, 0)}>
