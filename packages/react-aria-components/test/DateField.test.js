@@ -612,6 +612,90 @@ describe('DateField', () => {
     expect(segements[2]).toHaveTextContent('yyyy');
   });
 
+  it.each`
+    keys        | expected
+    ${'532026'} | ${['5', '3', '2026']}
+    ${'13'}     | ${['1', '3', 'yyyy']}
+    ${'1132'}   | ${['11', '3', '2']}
+  `(
+    'moves an overflowing digit to the next segment when typing $keys',
+    async ({keys, expected}) => {
+      let {getAllByRole} = render(
+        <DateField>
+          <Label>Date</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      );
+
+      let segments = getAllByRole('spinbutton');
+      await user.click(segments[0]);
+      await user.keyboard(keys);
+      expect(segments.map(s => s.textContent)).toEqual(expected);
+    }
+  );
+
+  it('emits the full date after an overflowing digit moves to the next segment', async () => {
+    let onChange = jest.fn();
+    let {getAllByRole} = render(
+      <DateField onChange={onChange}>
+        <Label>Date</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </DateField>
+    );
+
+    await user.click(getAllByRole('spinbutton')[0]);
+    await user.keyboard('532026');
+    expect(onChange).toHaveBeenLastCalledWith(new CalendarDate(2026, 5, 3));
+  });
+
+  it('moves an overflowing digit to the next segment when editing an existing date', async () => {
+    let {getAllByRole} = render(
+      <DateField defaultValue={new CalendarDate(2020, 2, 15)}>
+        <Label>Date</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </DateField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[1]);
+    await user.keyboard('32024');
+    expect(segments.map(s => s.textContent)).toEqual(['2', '3', '2024']);
+    expect(segments[2]).toHaveFocus();
+  });
+
+  it('does not move to the next segment when the entered digits fit', async () => {
+    let {getAllByRole} = render(
+      <DateField>
+        <Label>Date</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </DateField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[1]);
+    await user.keyboard('31');
+    expect(segments[1]).toHaveTextContent('31');
+    expect(segments[2]).toHaveFocus();
+    expect(segments[2]).toHaveTextContent('yyyy');
+  });
+
+  it('replaces the value when the last segment overflows', async () => {
+    let {getAllByRole} = render(
+      <I18nProvider locale="ja-JP">
+        <DateField>
+          <Label>Date</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[0]);
+    await user.keyboard('2026532');
+    expect(segments.map(s => s.textContent)).toEqual(['2026', '5', '2']);
+    expect(segments[2]).toHaveFocus();
+  });
+
   // Regression test for #10259: in Firefox a stale selection anchor can remain inside a segment
   // after focus moves away, and the selectionchange handler would collapse onto it, stealing focus.
   it('does not collapse the selection onto a segment while another element is focused', () => {

@@ -12,6 +12,7 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from 'react-stately/useDateFieldState';
+import {FocusManager} from '../focus/FocusScope';
 import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getScrollParent} from '../utils/getScrollParent';
 import {hookData} from './useDateField';
@@ -36,6 +37,11 @@ export interface DateSegmentAria {
   /** Props for the segment element. */
   segmentProps: React.HTMLAttributes<HTMLDivElement>;
 }
+
+// A digit that overflowed the previous segment (e.g. the "2" in "32" for a day), to be entered
+// into the next segment when it receives focus. Set and consumed synchronously within focusNext().
+// Keyed by focus manager so it also crosses between the start and end fields of a date range picker.
+const pendingKeys = new WeakMap<FocusManager, string>();
 
 /**
  * Provides the behavior and accessibility implementation for a segment in a date field.
@@ -226,6 +232,17 @@ export function useDateSegment(
         let numberValue = parser.parse(newValue);
         let segmentValue = numberValue;
         if (segment.maxValue !== undefined && numberValue > segment.maxValue) {
+          // The previously entered digits are a complete value on their own, so keep them
+          // and enter the new digit into the next segment instead (e.g. typing "32" in a day).
+          if (enteredKeys.current !== '') {
+            enteredKeys.current = '';
+            pendingKeys.set(focusManager, key);
+            let next = focusManager.focusNext();
+            pendingKeys.delete(focusManager);
+            if (next) {
+              break;
+            }
+          }
           segmentValue = parser.parse(key);
         }
 
@@ -259,6 +276,12 @@ export function useDateSegment(
     // Collapse selection to start or Chrome won't fire input events.
     let selection = window.getSelection();
     selection?.collapse(ref.current);
+
+    let pendingKey = pendingKeys.get(focusManager);
+    if (pendingKey != null) {
+      pendingKeys.delete(focusManager);
+      onInput(pendingKey);
+    }
   };
 
   let documentRef = useRef(typeof document !== 'undefined' ? document : null);
