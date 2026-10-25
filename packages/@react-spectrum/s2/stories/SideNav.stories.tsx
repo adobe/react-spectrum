@@ -760,12 +760,10 @@ export const SideNavPanelExample2 = {
               </SideNavItemLink>
             </SideNavItemContent>
           </SideNavItem>
-          <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+          <SideNavItem id="your-libraries" textValue="Your Libraries">
             <SideNavItemContent>
-              <SideNavItemLink>
-                <CCLibrary />
-                <Text>Your Libraries</Text>
-              </SideNavItemLink>
+              <CCLibrary />
+              <Text>Your Libraries</Text>
             </SideNavItemContent>
             <SideNavItem id="photos" href="/photos" textValue="Photos">
               <SideNavItemContent>

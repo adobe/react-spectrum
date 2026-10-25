@@ -104,6 +104,31 @@ export const GridListExample: GridListStory = args => {
   );
 };
 
+export const ItemFocusEvents: GridListStory = args => (
+  <div>
+    <p>
+      Tab into the list, use the arrow keys, or click an item. Focus events appear in the Actions
+      panel.
+    </p>
+    <GridList {...args} aria-label="Item focus events" className={styles.menu} style={{width: 300}}>
+      {['Cat', 'Dog', 'Kangaroo'].map(name => (
+        <GridListItem
+          key={name}
+          id={name}
+          onFocus={action(name + ': onFocus')}
+          onBlur={action(name + ': onBlur')}
+          onFocusChange={action(name + ': onFocusChange')}
+          className={({isFocusVisible}) => classNames(styles, 'item', {focused: isFocusVisible})}>
+          {name}
+        </GridListItem>
+      ))}
+    </GridList>
+    <Button>After the list</Button>
+  </div>
+);
+
+ItemFocusEvents.args = {selectionMode: 'single'};
+
 export const MyGridListItem = (props: GridListItemProps) => {
   return (
     <GridListItem
