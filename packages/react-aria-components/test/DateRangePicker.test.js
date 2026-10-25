@@ -342,6 +342,52 @@ describe('DateRangePicker', () => {
     }
   );
 
+  it.each([
+    {description: 'cleared', value: null},
+    {
+      description: 'replaced',
+      value: {start: new CalendarDate(2026, 9, 10), end: new CalendarDate(2026, 9, 20)}
+    }
+  ])('should discard pending edits when the controlled value is $description', async ({value}) => {
+    let onChange = jest.fn();
+    let renderPicker = value => (
+      <I18nProvider locale="zh-TW">
+        <TestDateRangePicker
+          value={value}
+          onChange={onChange}
+          startName="start"
+          endName="end"
+          shouldForceLeadingZeros>
+          <button>Next</button>
+        </TestDateRangePicker>
+      </I18nProvider>
+    );
+    let {getAllByRole, getByRole, container, rerender} = render(
+      renderPicker({start: new CalendarDate(2026, 8, 15), end: new CalendarDate(2026, 8, 25)})
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[2]);
+    await user.keyboard('0');
+    expect(segments[2]).toHaveTextContent('00');
+    expect(onChange).not.toHaveBeenCalled();
+
+    rerender(renderPicker(value));
+    await user.click(getByRole('button', {name: 'Next'}));
+    expect(onChange).not.toHaveBeenCalled();
+    expect(container.querySelector('input[name=start]')).toHaveValue(value?.start.toString() ?? '');
+    expect(container.querySelector('input[name=end]')).toHaveValue(value?.end.toString() ?? '');
+    if (value) {
+      expect(segments.slice(0, 3).map(segment => segment.textContent)).toEqual(
+        value.start.toString().split('-')
+      );
+    } else {
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('data-placeholder', 'true');
+      }
+    }
+  });
+
   it('should render data- attributes only on the outer element', () => {
     let {getAllByTestId} = render(<TestDateRangePicker data-testid="date-picker" />);
     let outerEl = getAllByTestId('date-picker');

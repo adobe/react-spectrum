@@ -33,8 +33,7 @@ import {getPlaceholder} from './placeholders';
 import {IncompleteDate} from './IncompleteDate';
 import {NumberFormatter} from '@internationalized/number';
 import {useControlledState} from '../utils/useControlledState';
-import {useLayoutEffect} from '../utils/useLayoutEffect';
-import {useMemo, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export type DateSegmentType =
@@ -303,12 +302,10 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     setDisplayValueState(displayValue);
   }
 
-  // Entering the last digit of a segment moves focus to the next one. When that is in another
-  // field (e.g. in a date range picker), the field blurs and confirmPlaceholder runs in the same
-  // event, before the state update from the keystroke has rendered. Track the latest display
-  // value in a ref so it isn't read from a stale closure.
+  // Advancing to another field can trigger blur before the keystroke's state update renders.
+  // Track the latest display value so confirmPlaceholder doesn't read a stale closure.
   let displayValueRef = useRef(displayValue);
-  useLayoutEffect(() => {
+  useEffect(() => {
     displayValueRef.current = displayValue;
   }, [displayValue]);
   let setDisplayValue = (value: IncompleteDate) => {
