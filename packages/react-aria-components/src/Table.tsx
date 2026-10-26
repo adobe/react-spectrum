@@ -1,5 +1,6 @@
 import {
   AriaLabelingProps,
+  FocusEvents,
   GlobalDOMAttributes,
   HoverEvents,
   Key,
@@ -112,6 +113,7 @@ import {TableColumnResizeState} from 'react-stately/useTableState';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 import {useControlledState} from 'react-stately/useControlledState';
+import {useFocus} from 'react-aria/useFocus';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -1709,6 +1711,7 @@ export interface RowProps<T>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
+    FocusEvents<HTMLTableRowElement | HTMLDivElement>,
     Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -1802,6 +1805,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       state,
       ref
     );
+    let {focusProps: focusEventProps} = useFocus(props);
     let {isFocused, isFocusVisible, focusProps} = useFocusRing();
     let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
       within: true
@@ -1907,6 +1911,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
             renderProps,
             rowProps,
             focusProps,
+            focusEventProps,
             hoverProps,
             draggableItem?.dragProps,
             focusWithinProps
