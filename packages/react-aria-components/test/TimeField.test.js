@@ -287,8 +287,6 @@ describe('TimeField', () => {
     expect(dayPeriod).toHaveTextContent('AM');
   });
 
-  // fr-CM resolves a 12-hour clock to a pattern with no dayPeriod part, including when hourCycle
-  // forces 12-hour time. https://github.com/adobe/react-spectrum/issues/10833
   it('does not crash for locales whose 12-hour time has no day period', async () => {
     let {getByRole, getAllByRole, unmount} = render(
       <I18nProvider locale="fr-CM">
