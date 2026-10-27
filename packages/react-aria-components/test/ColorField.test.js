@@ -169,7 +169,6 @@ describe('ColorField', () => {
     expect(onKeyDown).toHaveBeenCalledTimes(1);
   });
 
-
   it('inherits validationBehavior from Form', () => {
     let {getByRole} = render(
       <Form validationBehavior="aria">
