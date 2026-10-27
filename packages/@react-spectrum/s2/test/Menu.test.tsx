@@ -231,6 +231,110 @@ describe('long press support', function () {
   });
 });
 
+describe('virtualized menu', function () {
+  let user;
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+    jest.restoreAllMocks();
+  });
+
+  it('sets aria-posinset and aria-setsize on menu items', async function () {
+    let virtualizedItems = Array.from({length: 50}, (_, index) => ({
+      id: index + 1,
+      name: `Item ${index + 1}`
+    }));
+    let {getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" items={virtualizedItems} isVirtualized>
+          {item => <MenuItem>{item.name}</MenuItem>}
+        </Menu>
+      </MenuTrigger>
+    );
+
+    await user.click(getByRole('button'));
+    act(() => jest.runAllTimers());
+
+    let menuItems = getAllByRole('menuitem');
+    expect(menuItems[0]).toHaveAttribute('aria-posinset', '1');
+    expect(menuItems[0]).toHaveAttribute('aria-setsize', '50');
+  });
+
+  it('supports submenus and virtualizes them by default', async function () {
+    let childItems = Array.from({length: 50}, (_, index) => ({
+      id: `child-${index + 1}`,
+      name: `Child ${index + 1}`
+    }));
+    let {getByRole} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" isVirtualized>
+          <MenuItem id="open">Open</MenuItem>
+          <SubmenuTrigger>
+            <MenuItem id="share">Share…</MenuItem>
+            <Menu aria-label="Share" items={childItems}>
+              {item => <MenuItem>{item.name}</MenuItem>}
+            </Menu>
+          </SubmenuTrigger>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await menuTester.open();
+
+    expect(menuTester.getOptions()).toHaveLength(2);
+    let submenuTriggers = menuTester.getSubmenuTriggers();
+    expect(submenuTriggers).toHaveLength(1);
+
+    let submenuTester = await menuTester.openSubmenu({submenuTrigger: submenuTriggers[0]});
+    let submenuItems = submenuTester.getOptions();
+    expect(submenuItems[0]).toHaveTextContent('Child 1');
+    expect(submenuItems[0]).toHaveAttribute('aria-setsize', '50');
+    expect(submenuItems.length).toBeLessThan(50);
+  });
+
+  it('allows submenus to opt out of virtualization', async function () {
+    let childItems = Array.from({length: 50}, (_, index) => ({
+      id: `child-${index + 1}`,
+      name: `Child ${index + 1}`
+    }));
+    let {getByRole} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" isVirtualized>
+          <MenuItem id="open">Open</MenuItem>
+          <SubmenuTrigger>
+            <MenuItem id="share">Share…</MenuItem>
+            <Menu aria-label="Share" items={childItems} isVirtualized={false}>
+              {item => <MenuItem>{item.name}</MenuItem>}
+            </Menu>
+          </SubmenuTrigger>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await menuTester.open();
+    let submenuTester = await menuTester.openSubmenu({submenuTrigger: 'Share…'});
+    expect(submenuTester.getOptions()).toHaveLength(50);
+  });
+});
+
 AriaMenuTests({
   prefix: 'spectrum2-static',
   renderers: {

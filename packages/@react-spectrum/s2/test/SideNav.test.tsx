@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -28,6 +28,7 @@ import {
 import {Text} from '../src/Content';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
+// two top level and two nested items in the second item
 function SideNavExample(props: Partial<SideNavProps<unknown>>) {
   let {selectedRoute = '/files', ...rest} = props;
   return (
@@ -65,8 +66,6 @@ function SideNavExample(props: Partial<SideNavProps<unknown>>) {
   );
 }
 
-// A controlled wrapper mirroring how SideNav is used with a router: activating a link is
-// intercepted by RouterProvider, and the navigated href becomes the controlled selectedRoute.
 function RoutedSideNavExample(props: Partial<SideNavProps<unknown>>) {
   let [selectedRoute, setSelectedRoute] = React.useState('/files');
   return (

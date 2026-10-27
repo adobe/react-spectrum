@@ -17,7 +17,7 @@ export const description = 'A GridList with Framer Motion swipe gestures and lay
 ```tsx render type="tailwind" expanded
 "use client";
 import type {Selection, SelectionMode} from 'react-aria-components/GridList';
-import type {CSSProperties} from 'react';
+import type {MotionStyle} from 'motion/react';
 import {Button, GridListItem, GridList} from 'react-aria-components/GridList';
 import {motion, animate, AnimatePresence, useMotionValue, useIsPresent, useMotionTemplate, useMotionValueEvent} from 'motion/react';
 import {useRef, useState} from 'react';
@@ -204,7 +204,7 @@ function ListItem({ id, children, textValue, onRemove }) {
         // Content of the item can be swiped to reveal the delete button, or fully swiped to delete.
         <motion.div
           ref={ref}
-          style={{ x, "--x": xPx } as CSSProperties}
+          style={{ x, "--x": xPx } as MotionStyle}
           className="flex items-center"
           drag={selectionMode === "none" ? "x" : undefined}
           dragConstraints={{ right: 0 }}

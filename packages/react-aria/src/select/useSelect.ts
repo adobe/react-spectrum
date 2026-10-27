@@ -39,7 +39,11 @@ import {useMenuTrigger} from '../menu/useMenuTrigger';
 import {useTypeSelect} from '../selection/useTypeSelect';
 
 export interface AriaSelectProps<T, M extends SelectionMode = 'single'>
-  extends SelectProps<T, M>, DOMProps, AriaLabelingProps, FocusableDOMProps {
+  extends
+    SelectProps<T, M>,
+    DOMProps,
+    AriaLabelingProps,
+    Omit<FocusableDOMProps, 'excludeFromTabOrder'> {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See
    * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
