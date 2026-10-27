@@ -20,7 +20,7 @@ import {
   useMemo,
   useRef
 } from 'react';
-import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getParentNode, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality, setInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
 import {getScrollParents} from '../utils/getScrollParents';
@@ -665,8 +665,8 @@ function getPosition(container: Element, node: Node, offset: number, isRangeEnd 
   }
 
   let originalNode = node;
-  while (node.parentNode !== container) {
-    node = node.parentNode!;
+  while (getParentNode(node) !== container) {
+    node = getParentNode(node)!;
   }
 
   let index = indexOfNode(node);
@@ -775,7 +775,7 @@ function scrollCaretIntoView(root: HTMLElement): void {
       // Otherwise find the next sibling element (e.g. trailing <br>) and use its rect in this case.
       let nextSibling = node === root ? null : node.nextSibling;
       while (node && node !== root && !nextSibling) {
-        node = node.parentNode as Node | null;
+        node = getParentNode(node);
         nextSibling = node && node !== root ? node.nextSibling : null;
       }
 
