@@ -177,9 +177,6 @@ it('scrolls focused drop indicators into view during keyboard reordering', async
     let gridRect = gridlist.getBoundingClientRect();
     let indicatorRect = indicatorRow.getBoundingClientRect();
 
-    // Assert the drop target structurally rather than by its localized label:
-    // this environment renders aria-labels as raw ICU templates
-    // ("Insert between {beforeItemText} and {afterItemText}").
     expect(dropIndicator).toHaveAttribute('role', 'button');
     expect(dropIndicator).toHaveAttribute('aria-roledescription', 'drop indicator');
     expect(indicatorRect.top).toBeGreaterThanOrEqual(gridRect.top);
