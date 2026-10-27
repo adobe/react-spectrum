@@ -16,6 +16,7 @@ import clsx from 'clsx';
 import {Context} from './context';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {getVersion} from './version-macro' with {type: 'macro'};
 import {I18nProvider, useLocale} from 'react-aria/I18nProvider';
 import {ModalProvider, useModalProvider} from 'react-aria/private/overlays/useModal';
@@ -181,7 +182,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(
   let hasWarned = useRef(false);
   useEffect(() => {
     if (direction && domRef.current) {
-      let closestDir = domRef.current?.parentElement?.closest('[dir]');
+      let closestDir = getParentElement(domRef.current)?.closest('[dir]');
       let dir = closestDir && closestDir.getAttribute('dir');
       if (dir && dir !== direction && !hasWarned.current && process.env.NODE_ENV !== 'production') {
         console.warn(`Language directions cannot be nested. ${direction} inside ${dir}.`);
