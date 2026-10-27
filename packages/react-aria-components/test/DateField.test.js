@@ -663,6 +663,21 @@ describe('DateField', () => {
     expect(segments[2]).toHaveFocus();
   });
 
+  it('replaces a pre-filled segment value with the first typed digit', async () => {
+    let {getAllByRole} = render(
+      <DateField defaultValue={new CalendarDate(2026, 5, 3)}>
+        <Label>Date</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </DateField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[1]);
+    await user.keyboard('2');
+    expect(segments.map(s => s.textContent)).toEqual(['5', '2', '2026']);
+    expect(segments[1]).toHaveFocus();
+  });
+
   it('does not move to the next segment when the entered digits fit', async () => {
     let {getAllByRole} = render(
       <DateField>
