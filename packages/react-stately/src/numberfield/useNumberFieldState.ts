@@ -245,12 +245,12 @@ export function useNumberFieldState(props: NumberFieldStateOptions): NumberField
   // so stepping must start from numberValue whenever the input still matches
   // the formatted committed value. Fall back to parsedValue only while the
   // user is mid-edit with a different string.
-  let stepBaseValue = () => {
+  let stepBaseValue = useCallback(() => {
     if (!isNaN(numberValue) && inputValue === format(numberValue)) {
       return numberValue;
     }
     return parsedValue;
-  };
+  }, [numberValue, inputValue, format, parsedValue]);
 
   let safeNextStep = (operation: '+' | '-', minMax: number = 0) => {
     let prev = stepBaseValue();
@@ -317,38 +317,31 @@ export function useNumberFieldState(props: NumberFieldStateOptions): NumberField
     }
   };
 
-  let canIncrement = useMemo(
-    () => {
-      let prev = stepBaseValue();
-      return (
-        !isDisabled &&
-        !isReadOnly &&
-        (isNaN(prev) ||
-          maxValue === undefined ||
-          isNaN(maxValue) ||
-          snapValueToStep(prev, minValue, maxValue, clampStep) > prev ||
-          handleDecimalOperation('+', prev, clampStep) <= maxValue)
-      );
-    },
-    // stepBaseValue closes over numberValue/inputValue/format/parsedValue
-    [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue, numberValue, inputValue, format]
-  );
+  let canIncrement = useMemo(() => {
+    let prev = stepBaseValue();
+    return (
+      !isDisabled &&
+      !isReadOnly &&
+      (isNaN(prev) ||
+        maxValue === undefined ||
+        isNaN(maxValue) ||
+        snapValueToStep(prev, minValue, maxValue, clampStep) > prev ||
+        handleDecimalOperation('+', prev, clampStep) <= maxValue)
+    );
+  }, [isDisabled, isReadOnly, minValue, maxValue, clampStep, stepBaseValue]);
 
-  let canDecrement = useMemo(
-    () => {
-      let prev = stepBaseValue();
-      return (
-        !isDisabled &&
-        !isReadOnly &&
-        (isNaN(prev) ||
-          minValue === undefined ||
-          isNaN(minValue) ||
-          snapValueToStep(prev, minValue, maxValue, clampStep) < prev ||
-          handleDecimalOperation('-', prev, clampStep) >= minValue)
-      );
-    },
-    [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue, numberValue, inputValue, format]
-  );
+  let canDecrement = useMemo(() => {
+    let prev = stepBaseValue();
+    return (
+      !isDisabled &&
+      !isReadOnly &&
+      (isNaN(prev) ||
+        minValue === undefined ||
+        isNaN(minValue) ||
+        snapValueToStep(prev, minValue, maxValue, clampStep) < prev ||
+        handleDecimalOperation('-', prev, clampStep) >= minValue)
+    );
+  }, [isDisabled, isReadOnly, minValue, maxValue, clampStep, stepBaseValue]);
 
   let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
 

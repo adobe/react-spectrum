@@ -81,26 +81,27 @@ describe('useNumberFieldState', () => {
   });
   describe('signDisplay never', () => {
     it('decrements through negative values when the formatted input has no minus sign', () => {
+      let onChange = jest.fn();
       let {result} = renderHook(() =>
         useNumberFieldState({
           defaultValue: 0,
           locale: 'en-US',
-          formatOptions: {signDisplay: 'never'}
+          formatOptions: {signDisplay: 'never'},
+          onChange
         })
       );
 
       act(() => {
         result.current.decrement();
       });
-      expect(result.current.numberValue).toBe(-1);
+      expect(onChange).toHaveBeenLastCalledWith(-1);
       expect(result.current.inputValue).toBe('1');
 
       act(() => {
         result.current.decrement();
       });
-      expect(result.current.numberValue).toBe(-2);
+      expect(onChange).toHaveBeenLastCalledWith(-2);
       expect(result.current.inputValue).toBe('2');
     });
   });
-
 });
