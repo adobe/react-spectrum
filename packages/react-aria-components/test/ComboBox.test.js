@@ -500,6 +500,30 @@ describe('ComboBox', () => {
     expect(queryByRole('listbox')).not.toBeInTheDocument();
   });
 
+  it('should not fire change events on blur when isReadOnly', async () => {
+    let onChange = jest.fn();
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <TestComboBox
+        isReadOnly
+        value="4"
+        inputValue="Finland"
+        onChange={onChange}
+        onSelectionChange={onSelectionChange}
+      />
+    );
+
+    onChange.mockClear();
+    onSelectionChange.mockClear();
+
+    let input = getByRole('combobox');
+    await user.click(input);
+    await user.tab();
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
   it('should support virtualizer', async () => {
     let items = [];
     for (let i = 0; i < 50; i++) {
