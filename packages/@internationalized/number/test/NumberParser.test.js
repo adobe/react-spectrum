@@ -931,6 +931,49 @@ describe('NumberParser', function () {
   });
 
   describe('getNumberingSystem', function () {
+    it.each([
+      ['en-US', 'latn'],
+      ['ar-EG', 'arab'],
+      ['en-US-u-nu-arab', 'arab'],
+      ['ar-EG-u-nu-latn', 'latn']
+    ])(
+      'should retain the default numbering system for integer separators in %s',
+      (locale, numberingSystem) => {
+        for (let options of [
+          {style: 'decimal'},
+          {style: 'unit', unit: 'percent'},
+          {style: 'percent'}
+        ]) {
+          let parser = new NumberParser(locale, {
+            ...options,
+            maximumFractionDigits: 0,
+            signDisplay: 'always'
+          });
+          for (let value of ['', ' ', '.', ',', '-', '-.', '+,']) {
+            expect(parser.getNumberingSystem(value)).toBe(numberingSystem);
+          }
+        }
+      }
+    );
+
+    it('should detect non-default numerals in integer fields', function () {
+      let parser = new NumberParser('en-US', {
+        style: 'unit',
+        unit: 'percent',
+        maximumFractionDigits: 0
+      });
+      for (let [value, numberingSystem] of [
+        ['12', 'latn'],
+        ['١٢', 'arab'],
+        ['一二', 'hanidec'],
+        ['१२', 'deva'],
+        ['১২', 'beng'],
+        ['１２', 'fullwide']
+      ]) {
+        expect(parser.getNumberingSystem(value)).toBe(numberingSystem);
+      }
+    });
+
     it('should return the default numbering system for a locale', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem(' ')).toBe('latn');
       expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('12')).toBe('latn');

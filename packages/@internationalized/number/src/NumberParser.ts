@@ -68,7 +68,18 @@ export class NumberParser {
    * locale is returned.
    */
   getNumberingSystem(value: string): string {
-    return getNumberParserImpl(this.locale, this.options, value).options.numberingSystem;
+    let parser = getNumberParserImpl(this.locale, this.options, value);
+    let sanitizedValue = parser.sanitize(value);
+
+    // Grouping separators and signs alone should not select a different numbering system.
+    if (
+      sanitizedValue.search(parser.symbols.numeral) === -1 &&
+      (!parser.symbols.decimal || !sanitizedValue.includes(parser.symbols.decimal))
+    ) {
+      return getCachedNumberParser(this.locale, this.options).options.numberingSystem;
+    }
+
+    return parser.options.numberingSystem;
   }
 }
 
