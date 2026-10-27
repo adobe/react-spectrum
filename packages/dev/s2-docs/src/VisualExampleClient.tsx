@@ -38,6 +38,7 @@ import {ExampleOutput} from './ExampleOutput';
 import {ExampleSwitcherContext} from './ExampleSwitcher';
 import {flushSync} from 'react-dom';
 import {getColorChannels, parseColor} from 'react-stately';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {ListBox, ListBoxItem, Size} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import {presetNames} from './PresetPicker';
@@ -154,7 +155,7 @@ export function VisualExampleClient({
       }
 
       // Move up to parent
-      node = node.parentElement;
+      node = getParentElement(node);
     }
 
     let id = node instanceof HTMLHeadingElement ? node.id : null;
