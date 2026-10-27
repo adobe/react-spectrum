@@ -47,6 +47,19 @@ if (document.activeElement) {
   console.log('active element');
 }`,
       output: `
+import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+if (getActiveElement()) {
+  console.log('active element');
+}`,
+      errors: 1
+    },
+    {
+      code: `
+import {getActiveElement} from '@react-aria/utils';
+if (document.activeElement) {
+  console.log('active element');
+}`,
+      output: `
 import {getActiveElement} from '@react-aria/utils';
 if (getActiveElement()) {
   console.log('active element');
