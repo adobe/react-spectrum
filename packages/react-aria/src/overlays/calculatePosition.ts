@@ -61,7 +61,7 @@ interface PositionOpts {
   crossOffset: number;
   maxHeight?: number;
   arrowBoundaryOffset?: number;
-  targetRect?: Offset | null | undefined;
+  targetRect?: Readonly<Offset> | null | undefined;
 }
 
 type HeightGrowthDirection = 'top' | 'bottom';
@@ -137,9 +137,10 @@ function getContainerDimensions(
     // The goal of the below is to get a top/left value that represents the top/left of the visual viewport with
     // respect to the layout viewport origin. This combined with the scrollTop/scrollLeft will allow us to calculate
     // coordinates/values with respect to the visual viewport or with respect to the layout viewport.
+    // Uses pageTop/pageLeft instead of offsetTop/offsetLeft because WebKit misreports those during pans.
     if (visualViewport) {
-      top = visualViewport.offsetTop;
-      left = visualViewport.offsetLeft;
+      top = Math.max(0, visualViewport.pageTop - (scroll.top ?? 0));
+      left = Math.max(0, visualViewport.pageLeft - (scroll.left ?? 0));
     }
   } else {
     ({width, height, top, left} = getOffset(containerNode, false));
@@ -762,7 +763,7 @@ export function getRect(node: Element, ignoreScale: boolean) {
 function getOffset(
   node: Element,
   ignoreScale: boolean,
-  overrideRect?: Offset | null | undefined
+  overrideRect?: Readonly<Offset> | null | undefined
 ): Offset {
   let {top, left, width, height} = overrideRect || getRect(node, ignoreScale);
   let {scrollTop, scrollLeft, clientTop, clientLeft} = document.documentElement;
@@ -778,12 +779,13 @@ function getPosition(
   node: Element,
   parent: Element,
   ignoreScale: boolean,
-  overrideRect?: Offset | null | undefined
+  overrideRect?: Readonly<Offset> | null | undefined
 ): Offset {
   let style = window.getComputedStyle(node);
   let offset: Offset;
   if (style.position === 'fixed') {
-    offset = overrideRect || getRect(node, ignoreScale);
+    let {top, left, width, height} = overrideRect || getRect(node, ignoreScale);
+    offset = {top, left, width, height};
   } else {
     offset = getOffset(node, ignoreScale, overrideRect);
     let parentOffset = getOffset(parent, ignoreScale);

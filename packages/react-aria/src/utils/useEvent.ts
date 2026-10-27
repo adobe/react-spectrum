@@ -10,28 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject} from '@react-types/shared';
+import {addEvent} from './domHelpers';
+import {EventMapType, RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
-export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
-  ref: RefObject<EventTarget | null>,
-  event: K | (string & {}),
-  handler?: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
+export function useEvent<T extends EventTarget, K extends keyof EventMapType<T>>(
+  ref: RefObject<T | null>,
+  event: Extract<K, string> | (string & {}),
+  listener?: (this: T, ev: EventMapType<Exclude<T, null>>[K]) => any,
   options?: boolean | AddEventListenerOptions
 ): void {
-  let handleEvent = useEffectEvent(handler);
-  let isDisabled = handler == null;
+  let handleEvent = useEffectEvent(listener);
+  let isDisabled = listener == null;
 
   useEffect(() => {
-    if (isDisabled || !ref.current) {
+    if (isDisabled || ref.current == null) {
       return;
     }
 
-    let element = ref.current;
-    element.addEventListener(event, handleEvent as EventListener, options);
-    return () => {
-      element.removeEventListener(event, handleEvent as EventListener, options);
-    };
+    return addEvent(ref.current, event, handleEvent, options);
   }, [ref, event, options, isDisabled]);
 }

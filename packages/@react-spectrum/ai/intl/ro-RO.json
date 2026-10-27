@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Informativ",
+  "alert.negative": "Negativ",
+  "alert.notice": "Aviz",
+  "alert.positive": "Pozitiv",
+  "attachmentlist.nextAttachments": "Afișați următoarele fișiere atașate",
+  "attachmentlist.previousAttachments": "Afișați fișierele atașate anterioare",
   "chat.newMessage": "Mesaj nou",
+  "chat.scrollToBottom": "Derulați până jos",
   "messagefeedback.thumbDown": "Răspuns greșit",
   "messagefeedback.thumbUp": "Răspuns bun",
-  "responsestatus.loading": "Se încarcă"
+  "promptfield.aiDisclaimer": "Răspunsurile sunt generate folosind IA și pot fi inexacte. Verificați înainte de a folosi.",
+  "promptfield.aiUserGuidlines": "Instrucțiuni pentru utilizatorul de IA",
+  "promptfield.attachments": "Fișiere atașate",
+  "promptfield.insertButton": "Adăugați",
+  "promptfield.label": "Indicație",
+  "promptfield.placeholder": "Sunteți gata să începeți? Puneți o întrebare, împărtășiți o idee sau adaugați o sarcină.",
+  "promptfield.placeholder.small": "Întrebați orice",
+  "promptfield.stopButton": "Stop",
+  "promptfield.submitButton": "Trimiteți",
+  "promptfield.uploading": "Se încarcă",
+  "responsestatus.loading": "Se încarcă",
+  "responsestatus.processing": "Se procesează...",
+  "voicebutton.startListening": "Începeți înregistrarea",
+  "voicebutton.stopListening": "Opriți înregistrarea"
 }

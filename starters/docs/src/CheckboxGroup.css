@@ -1,4 +1,5 @@
 @import './theme.css';
+@import './Form.css';
 
 .react-aria-CheckboxGroup {
   display: flex;

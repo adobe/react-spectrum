@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Informacyjny",
+  "alert.negative": "Negatywny",
+  "alert.notice": "Uwaga",
+  "alert.positive": "Pozytywny",
+  "attachmentlist.nextAttachments": "Pokaż następne załączniki",
+  "attachmentlist.previousAttachments": "Pokaż poprzednie załączniki",
   "chat.newMessage": "Nowa wiadomość",
+  "chat.scrollToBottom": "Przewiń na dół",
   "messagefeedback.thumbDown": "Zła odpowiedź",
   "messagefeedback.thumbUp": "Dobra odpowiedź",
-  "responsestatus.loading": "Wczytywanie"
+  "promptfield.aiDisclaimer": "Odpowiedzi są generowane przez SI i mogą być niedokładne. Sprawdź przed wykorzystaniem.",
+  "promptfield.aiUserGuidlines": "Wytyczne dla użytkowników SI",
+  "promptfield.attachments": "Załączniki",
+  "promptfield.insertButton": "Dodaj",
+  "promptfield.label": "Polecenie",
+  "promptfield.placeholder": "Zaczynamy? Zadaj pytanie, podziel się pomysłem lub dodaj zadanie.",
+  "promptfield.placeholder.small": "Zapytaj o cokolwiek",
+  "promptfield.stopButton": "Zatrzymaj",
+  "promptfield.submitButton": "Wyślij",
+  "promptfield.uploading": "Przesyłanie",
+  "responsestatus.loading": "Wczytywanie",
+  "responsestatus.processing": "Przetwarzanie...",
+  "voicebutton.startListening": "Rozpocznij nagrywanie",
+  "voicebutton.stopListening": "Zatrzymaj nagrywanie"
 }

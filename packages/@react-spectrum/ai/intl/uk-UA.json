@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Інформативний",
+  "alert.negative": "Негативно",
+  "alert.notice": "Сповіщення",
+  "alert.positive": "Позитивно",
+  "attachmentlist.nextAttachments": "Показати наступні вкладення",
+  "attachmentlist.previousAttachments": "Показати попередні вкладення",
   "chat.newMessage": "Нове повідомлення",
+  "chat.scrollToBottom": "Прокрутіть донизу",
   "messagefeedback.thumbDown": "Погана відповідь",
   "messagefeedback.thumbUp": "Гарна відповідь",
-  "responsestatus.loading": "Завантаження"
+  "promptfield.aiDisclaimer": "Відповіді створюються за допомогою ШІ та можуть містити неточності. Перед використанням перевіряйте їх.",
+  "promptfield.aiUserGuidlines": "Інструкції для користувачів ШІ",
+  "promptfield.attachments": "Вкладення",
+  "promptfield.insertButton": "Додати",
+  "promptfield.label": "Запит",
+  "promptfield.placeholder": "Готові розпочати? Задайте запитання, поділіться ідеєю або додайте завдання.",
+  "promptfield.placeholder.small": "Запитайте будь-що",
+  "promptfield.stopButton": "Зупинити",
+  "promptfield.submitButton": "Надіслати",
+  "promptfield.uploading": "Завантаження",
+  "responsestatus.loading": "Завантаження",
+  "responsestatus.processing": "Обробка...",
+  "voicebutton.startListening": "Почати запис",
+  "voicebutton.stopListening": "Зупинити запис"
 }

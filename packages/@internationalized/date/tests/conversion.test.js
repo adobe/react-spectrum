@@ -14,6 +14,7 @@ import {
   BuddhistCalendar,
   CalendarDate,
   CalendarDateTime,
+  CopticCalendar,
   EthiopicAmeteAlemCalendar,
   EthiopicCalendar,
   GregorianCalendar,
@@ -533,6 +534,50 @@ describe('CalendarDate conversion', function () {
           new CalendarDate(new EthiopicCalendar(), 'AA', 4294, 2, 13)
         );
       });
+
+      it('gregorian to ethiopic on new year', function () {
+        // 2022-09-11 is Ethiopian New Year (1 Meskerem 2015). See #10390.
+        let date = new CalendarDate(2022, 9, 10);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(
+          new CalendarDate(new EthiopicCalendar(), 'AM', 2014, 13, 5)
+        );
+
+        date = new CalendarDate(2022, 9, 11);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(
+          new CalendarDate(new EthiopicCalendar(), 'AM', 2015, 1, 1)
+        );
+
+        date = new CalendarDate(2022, 9, 12);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(
+          new CalendarDate(new EthiopicCalendar(), 'AM', 2015, 1, 2)
+        );
+
+        // 2015 is a leap year, so the following new year is one day later.
+        date = new CalendarDate(2023, 9, 11);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(
+          new CalendarDate(new EthiopicCalendar(), 'AM', 2015, 13, 6)
+        );
+
+        date = new CalendarDate(2023, 9, 12);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(
+          new CalendarDate(new EthiopicCalendar(), 'AM', 2016, 1, 1)
+        );
+
+        // Era boundary: first day of AM 1.
+        date = new CalendarDate(8, 8, 27);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(
+          new CalendarDate(new EthiopicCalendar(), 'AM', 1, 1, 1)
+        );
+      });
+
+      it('round trips between gregorian and ethiopic', function () {
+        let date = new CalendarDate(2020, 1, 1);
+        for (let i = 0; i < 365 * 8; i++) {
+          let ethiopic = toCalendar(date, new EthiopicCalendar());
+          expect(toCalendar(ethiopic, new GregorianCalendar())).toEqual(date);
+          date = date.add({days: 1});
+        }
+      });
     });
 
     describe('ethioaa', function () {
@@ -546,6 +591,37 @@ describe('CalendarDate conversion', function () {
         expect(toCalendar(date, new EthiopicAmeteAlemCalendar())).toEqual(
           new CalendarDate(new EthiopicAmeteAlemCalendar(), 9999, 13, 5)
         );
+      });
+
+      it('gregorian to ethioaa on new year', function () {
+        let date = new CalendarDate(2022, 9, 11);
+        expect(toCalendar(date, new EthiopicAmeteAlemCalendar())).toEqual(
+          new CalendarDate(new EthiopicAmeteAlemCalendar(), 7515, 1, 1)
+        );
+      });
+    });
+
+    describe('coptic', function () {
+      it('gregorian to coptic on new year', function () {
+        // 2022-09-11 is Coptic New Year (1 Thout 1739). See #10390.
+        let date = new CalendarDate(2022, 9, 10);
+        expect(toCalendar(date, new CopticCalendar())).toEqual(
+          new CalendarDate(new CopticCalendar(), 1738, 13, 5)
+        );
+
+        date = new CalendarDate(2022, 9, 11);
+        expect(toCalendar(date, new CopticCalendar())).toEqual(
+          new CalendarDate(new CopticCalendar(), 1739, 1, 1)
+        );
+      });
+
+      it('round trips between gregorian and coptic', function () {
+        let date = new CalendarDate(2020, 1, 1);
+        for (let i = 0; i < 365 * 8; i++) {
+          let coptic = toCalendar(date, new CopticCalendar());
+          expect(toCalendar(coptic, new GregorianCalendar())).toEqual(date);
+          date = date.add({days: 1});
+        }
       });
     });
 

@@ -301,6 +301,38 @@ describe('Toolbar', () => {
     expect(zoomOut).toHaveFocus();
   });
 
+  it('scrolls the newly focused item into view when navigating with arrow keys', async () => {
+    let scrollIntoView = jest.fn();
+    let originalScrollIntoView = window.HTMLElement.prototype.scrollIntoView;
+    window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(
+        <Toolbar aria-label="Tools">
+          <Button>First</Button>
+          <Button>Last</Button>
+        </Toolbar>
+      );
+      let first = screen.getByRole('button', {name: 'First'});
+      let last = screen.getByRole('button', {name: 'Last'});
+
+      await user.tab();
+      expect(first).toHaveFocus();
+
+      scrollIntoView.mockClear();
+      await user.keyboard('{ArrowRight}');
+      expect(last).toHaveFocus();
+      expect(scrollIntoView).toHaveBeenCalledWith({block: 'nearest'});
+      expect(scrollIntoView.mock.instances[0]).toBe(last);
+
+      scrollIntoView.mockClear();
+      await user.keyboard('{ArrowLeft}');
+      expect(first).toHaveFocus();
+      expect(scrollIntoView.mock.instances[0]).toBe(first);
+    } finally {
+      window.HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
+    }
+  });
+
   it('supports keyboard navigation with orientation vertical', async () => {
     render(
       <>
@@ -456,6 +488,51 @@ describe('Toolbar', () => {
     expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
     await user.keyboard('{ArrowDown}');
     expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
+  });
+
+  it('supports RTL with orientation vertical', async () => {
+    render(
+      <I18nProvider locale="he-IL">
+        <Button>Before</Button>
+        <Toolbar orientation="vertical" aria-label="Tools">
+          <Toolbar aria-label="Align text">
+            <Button key="alignleft">
+              <Text>Align left</Text>
+            </Button>
+            <Button key="aligncenter">
+              <Text>Align center</Text>
+            </Button>
+            <Button key="alignright">
+              <Text>Align right</Text>
+            </Button>
+          </Toolbar>
+          <hr />
+          <Toolbar aria-label="Zoom">
+            <Button key="zoomin">
+              <Text>Zoom in</Text>
+            </Button>
+            <Button key="zoomout">
+              <Text>Zoom out</Text>
+            </Button>
+          </Toolbar>
+        </Toolbar>
+        <Button>After</Button>
+      </I18nProvider>
+    );
+
+    await user.tab();
+    await user.tab();
+    expect(screen.getByRole('button', {name: 'Align left'})).toHaveFocus();
+
+    await user.keyboard('{ArrowDown}');
+    expect(screen.getByRole('button', {name: 'Align center'})).toHaveFocus();
+    await user.keyboard('{ArrowUp}');
+    expect(screen.getByRole('button', {name: 'Align left'})).toHaveFocus();
+
+    await user.keyboard('{ArrowLeft}');
+    expect(screen.getByRole('button', {name: 'Align left'})).toHaveFocus();
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByRole('button', {name: 'Align left'})).toHaveFocus();
   });
 
   it('supports all the aria example children', async () => {

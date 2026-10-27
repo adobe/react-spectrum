@@ -20,7 +20,8 @@ export default {
     localAddon('./custom-addons/descriptions'),
     localAddon('./custom-addons/theme'),
     localAddon('./custom-addons/strictmode'),
-    localAddon('./custom-addons/scrolling')
+    localAddon('./custom-addons/scrolling'),
+    localAddon('./custom-addons/shadowDOM')
   ],
 
   typescript: {

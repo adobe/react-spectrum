@@ -11,7 +11,7 @@
  */
 
 import {getScrollParents} from './getScrollParents';
-import {isIOS} from './platform';
+import {isIOS, isWebKit} from '../utils/platform';
 
 interface ScrollIntoViewOpts {
   /** The position to align items along the block axis in. */
@@ -35,16 +35,24 @@ export function scrollIntoView(
   element: HTMLElement,
   opts: ScrollIntoViewOpts = {}
 ): void {
-  let {block = 'nearest', inline = 'nearest'} = opts;
-
   if (scrollView === element) {
     return;
   }
 
+  let target = element.getBoundingClientRect();
+  scrollRectIntoView(scrollView, element, target, opts);
+}
+
+export function scrollRectIntoView(
+  scrollView: HTMLElement,
+  element: HTMLElement,
+  target: DOMRect,
+  opts: ScrollIntoViewOpts = {}
+) {
+  let {block = 'nearest', inline = 'nearest'} = opts;
   let y = scrollView.scrollTop;
   let x = scrollView.scrollLeft;
 
-  let target = element.getBoundingClientRect();
   let view = scrollView.getBoundingClientRect();
   let itemStyle = window.getComputedStyle(element);
   let viewStyle = window.getComputedStyle(scrollView);
@@ -89,11 +97,11 @@ export function scrollIntoView(
   let scrollPortLeft = viewLeft + (isRoot ? 0 : borderLeftWidth) + scrollPaddingLeft;
   let scrollPortRight = viewRight - (isRoot ? 0 : borderRightWidth) - scrollPaddingRight;
 
-  // IOS always positions the scrollbar on the right ¯\_(ツ)_/¯
-  if (viewStyle.direction === 'rtl' && !isIOS()) {
-    scrollPortLeft += scrollBarWidth;
-  } else {
+  // WebKit on iOS always positions the scrollbar on the right ¯\_(ツ)_/¯
+  if ((isIOS() && isWebKit()) || viewStyle.direction === 'ltr') {
     scrollPortRight -= scrollBarWidth;
+  } else if (viewStyle.direction === 'rtl') {
+    scrollPortLeft += scrollBarWidth;
   }
 
   let shouldScrollBlock = scrollAreaTop < scrollPortTop || scrollAreaBottom > scrollPortBottom;

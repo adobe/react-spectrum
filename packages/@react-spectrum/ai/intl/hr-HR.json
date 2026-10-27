@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Informativno",
+  "alert.negative": "Negativno",
+  "alert.notice": "Obavijest",
+  "alert.positive": "Pozitivno",
+  "attachmentlist.nextAttachments": "Pokaži sljedeće privitke",
+  "attachmentlist.previousAttachments": "Prikaži prethodne privitke",
   "chat.newMessage": "Nova poruka",
+  "chat.scrollToBottom": "Idi na dno stranice",
   "messagefeedback.thumbDown": "Odgovor nije dobar",
   "messagefeedback.thumbUp": "Dobar odgovor",
-  "responsestatus.loading": "Učitavanje"
+  "promptfield.aiDisclaimer": "Odgovore generira umjetna inteligencija i oni mogu biti netočni. Prije upotrebe provjerite njihovu točnost.",
+  "promptfield.aiUserGuidlines": "Smjernice za korisnike umjetne inteligencije",
+  "promptfield.attachments": "Privici",
+  "promptfield.insertButton": "Dodaj",
+  "promptfield.label": "Poticajna poruka",
+  "promptfield.placeholder": "Spremni za početak? Postavite pitanje, podijelite ideju ili dodajte zadatak.",
+  "promptfield.placeholder.small": "Pitajte bilo što",
+  "promptfield.stopButton": "Zaustavi",
+  "promptfield.submitButton": "Pošalji",
+  "promptfield.uploading": "Prijenos u tijeku",
+  "responsestatus.loading": "Učitavanje",
+  "responsestatus.processing": "Obrađujemo...",
+  "voicebutton.startListening": "Pokreni snimanje",
+  "voicebutton.stopListening": "Zaustavi snimanje"
 }

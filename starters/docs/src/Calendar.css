@@ -5,9 +5,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
-  overflow: auto;
-  width: 100%;
-  max-width: fit-content;
+  width: fit-content;
+  max-width: 100%;
   color: var(--text-color);
   font: var(--font-size) system-ui;
 
@@ -37,7 +36,15 @@
   }
 
   .react-aria-CalendarGrid {
+    border-collapse: collapse;
     border-spacing: 0;
+    width: 100%;
+    table-layout: fixed;
+
+    td,
+    th {
+      padding: 0;
+    }
   }
 
   [slot='errorMessage'] {

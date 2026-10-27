@@ -66,8 +66,8 @@ import {
   SelectableCollectionContextValue
 } from './Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {FocusScope} from 'react-aria/FocusScope';
 import {
+  FocusEvents,
   forwardRefType,
   GlobalDOMAttributes,
   HoverEvents,
@@ -77,6 +77,7 @@ import {
   PressEvents,
   RefObject
 } from '@react-types/shared';
+import {FocusScope} from 'react-aria/FocusScope';
 import {
   HeaderNode,
   ItemNode,
@@ -109,6 +110,7 @@ import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 import {useCollator} from 'react-aria/useCollator';
+import {useFocus} from 'react-aria/useFocus';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -486,6 +488,7 @@ export interface GridListItemProps<T = object>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
+    FocusEvents<HTMLDivElement>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -510,6 +513,17 @@ export interface GridListItemProps<T = object>
    * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
+  /**
+   * Whether the row or its first focusable child element should be focused when navigating
+   * to the row. Defaults to 'row'.
+   */
+  focusMode?: 'child' | 'row';
+  /**
+   * Whether the row should support arrow key navigation even when the containing collection uses
+   * tab keyboard navigation. Allows users to navigate between rows with arrow keys while
+   * focus is on an interactive child element within the row.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 /**
@@ -528,7 +542,9 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
     {
       node: item,
       shouldSelectOnPressUp: !!dragState,
-      isVirtualized
+      isVirtualized,
+      focusMode: props.focusMode,
+      allowsArrowNavigation: props.allowsArrowNavigation
     },
     state,
     ref
@@ -543,6 +559,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
     onHoverEnd: item.props.onHoverEnd
   });
 
+  let {focusProps: focusEventProps} = useFocus(props);
   let {isFocusVisible, focusProps} = useFocusRing();
   let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
     within: true
@@ -637,6 +654,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
           DOMProps,
           renderProps,
           rowProps,
+          focusEventProps,
           focusProps,
           focusWithinProps,
           hoverProps,
@@ -806,7 +824,7 @@ function RootDropIndicator() {
 
 export interface GridListLoadMoreItemProps
   extends
-    Omit<LoadMoreSentinelProps, 'collection'>,
+    Omit<LoadMoreSentinelProps, 'collection' | 'direction'>,
     StyleProps,
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
@@ -814,7 +832,7 @@ export interface GridListLoadMoreItemProps
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element.
    *
-   * @default 'react-aria-GridListLoadMoreItem'
+   * @default 'react-aria-GridListLoadingIndicator'
    */
   className?: string;
   /**
@@ -840,13 +858,8 @@ export const GridListLoadMoreItem = createLeafComponent(
 
     let sentinelRef = useRef(null);
     let memoedLoadMoreProps = useMemo(
-      () => ({
-        onLoadMore,
-        collection: state?.collection,
-        sentinelRef,
-        scrollOffset
-      }),
-      [onLoadMore, scrollOffset, state?.collection]
+      () => ({onLoadMore, collection: state?.collection, sentinelRef, scrollOffset}),
+      [onLoadMore, scrollOffset, sentinelRef, state?.collection]
     );
     useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 

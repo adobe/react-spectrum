@@ -11,16 +11,35 @@
  */
 
 import {styles as codeStyles} from './Code';
-import {Indent, JoinList, setLinks, Type, TypeParameters} from './types';
+import {Indent, JoinList, setLinks, TFunction, Type, TypeParameters} from './types';
+import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import React from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-export function FunctionAPI({function: func, links}) {
+const block = style({display: 'block', marginY: 32});
+
+const groupedBlock = style({display: 'block'});
+
+const group = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 16,
+  marginY: 32
+});
+
+export interface FunctionAPIProps {
+  function: TFunction;
+  links?: any;
+  grouped?: boolean;
+}
+
+export function FunctionAPI({function: func, links, grouped}: FunctionAPIProps) {
   let {name, parameters, return: returnType, typeParameters} = func;
   if (links) {
     setLinks(links);
   }
   return (
-    <code className={codeStyles.function}>
+    <code className={mergeStyles(codeStyles.function, grouped ? groupedBlock : block)}>
       <span className={codeStyles.attribute}>{name}</span>
       <TypeParameters typeParameters={typeParameters} />
       <Indent params={parameters} open="(" close=")">
@@ -29,5 +48,15 @@ export function FunctionAPI({function: func, links}) {
       <span className={codeStyles.string}>{': '}</span>
       <Type type={returnType} />
     </code>
+  );
+}
+
+export function FunctionAPIGroup({functions}: {functions: FunctionAPIProps[]}) {
+  return (
+    <div className={group}>
+      {functions.map((props, index) => (
+        <FunctionAPI key={props.function.name ?? index} {...props} grouped />
+      ))}
+    </div>
   );
 }

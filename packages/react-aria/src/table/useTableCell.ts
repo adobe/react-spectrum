@@ -33,6 +33,18 @@ export interface AriaTableCellProps {
    * @deprecated
    */
   onAction?: () => void;
+  /**
+   * Whether the cell or its first focusable child element should be focused when the cell is
+   * focused. Defaults to 'child' in arrow keyboard navigation mode and 'cell' in
+   * tab keyboard navigation mode.
+   */
+  focusMode?: 'child' | 'cell';
+  /**
+   * Whether the cell should support arrow key navigation even when the containing table uses
+   * tab keyboard navigation.Allows users to navigate between rows and cells with arrow keys while
+   * focus is on an interactive child element within the cell.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 export interface TableCellAria {

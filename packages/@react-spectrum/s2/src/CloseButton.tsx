@@ -76,7 +76,7 @@ const styles = style<
         default: baseColor('neutral'),
         isDisabled: 'disabled',
         isStaticColor: {
-          default: 'white',
+          default: 'transparent-overlay-1000',
           isDisabled: 'transparent-overlay-400'
         },
         forcedColors: {
@@ -123,7 +123,12 @@ export const CloseButton = forwardRef(function CloseButton(
       className={renderProps =>
         UNSAFE_className +
         styles(
-          {...renderProps, staticColor: props.staticColor, isStaticColor: !!props.staticColor},
+          {
+            ...renderProps,
+            size: props.size,
+            staticColor: props.staticColor,
+            isStaticColor: !!props.staticColor
+          },
           props.styles
         )
       }>

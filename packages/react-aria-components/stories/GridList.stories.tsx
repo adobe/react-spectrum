@@ -104,6 +104,31 @@ export const GridListExample: GridListStory = args => {
   );
 };
 
+export const ItemFocusEvents: GridListStory = args => (
+  <div>
+    <p>
+      Tab into the list, use the arrow keys, or click an item. Focus events appear in the Actions
+      panel.
+    </p>
+    <GridList {...args} aria-label="Item focus events" className={styles.menu} style={{width: 300}}>
+      {['Cat', 'Dog', 'Kangaroo'].map(name => (
+        <GridListItem
+          key={name}
+          id={name}
+          onFocus={action(name + ': onFocus')}
+          onBlur={action(name + ': onBlur')}
+          onFocusChange={action(name + ': onFocusChange')}
+          className={({isFocusVisible}) => classNames(styles, 'item', {focused: isFocusVisible})}>
+          {name}
+        </GridListItem>
+      ))}
+    </GridList>
+    <Button>After the list</Button>
+  </div>
+);
+
+ItemFocusEvents.args = {selectionMode: 'single'};
+
 export const MyGridListItem = (props: GridListItemProps) => {
   return (
     <GridListItem
@@ -975,15 +1000,26 @@ let comboboxEmptyState = () => {
   return <div style={{height: 30, width: '100%'}}>No results</div>;
 };
 
-export const GridListWithTextfield: GridListStory = args => {
+type GridListWithTextfieldArgs = GridListProps<any> & {autoFocusChildren?: boolean};
+
+const GridListWithTextfieldRender = (args: GridListWithTextfieldArgs) => {
   let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
+  let {autoFocusChildren, keyboardNavigationBehavior, ...otherArgs} = args;
+
+  let focusMode =
+    autoFocusChildren && keyboardNavigationBehavior === 'tab'
+      ? 'child'
+      : (undefined as 'child' | undefined);
+  let allowsArrowNavigation =
+    autoFocusChildren && keyboardNavigationBehavior === 'tab' ? true : undefined;
+
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
       <input aria-label="input before gridlist" />
       <GridList
         className={styles.menu}
         aria-label="gridlist with textfield"
-        keyboardNavigationBehavior="tab"
+        keyboardNavigationBehavior={keyboardNavigationBehavior}
         style={{
           width: isHorizontalStack ? undefined : 400,
           height: isHorizontalStack ? undefined : 400,
@@ -991,24 +1027,24 @@ export const GridListWithTextfield: GridListStory = args => {
           gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
           gridAutoFlow: args.orientation === 'horizontal' ? 'column' : 'row'
         }}
-        {...args}>
-        <MyGridListItem textValue="Rac TextField">
+        {...otherArgs}>
+        <MyGridListItem textValue="Rac TextField" focusMode={focusMode}>
           RAC TextField
           <TextField aria-label="Name">
             <Input />
           </TextField>
         </MyGridListItem>
-        <MyGridListItem textValue="Rac input">
+        <MyGridListItem textValue="Rac input" focusMode={focusMode}>
           Raw input <input aria-label="Raw text input" style={{marginLeft: 4}} />
         </MyGridListItem>
-        <MyGridListItem textValue="TextField + Button">
+        <MyGridListItem textValue="TextField + Button" focusMode={focusMode}>
           TextField + Button
           <TextField aria-label="Search">
             <Input />
           </TextField>{' '}
           <Button>Go</Button>
         </MyGridListItem>
-        <MyGridListItem textValue="Combobox">
+        <MyGridListItem textValue="Combobox" focusMode={focusMode}>
           ComboBox
           <ComboBox aria-label="combobox" allowsEmptyCollection>
             <div style={{display: 'flex'}}>
@@ -1033,7 +1069,7 @@ export const GridListWithTextfield: GridListStory = args => {
             </Popover>
           </ComboBox>
         </MyGridListItem>
-        <MyGridListItem textValue="Toolbar">
+        <MyGridListItem textValue="Toolbar" focusMode={focusMode}>
           Toolbar
           <Toolbar aria-label="Text formatting" style={{gap: 4}}>
             <Button onPress={action('Bold press')}>Bold</Button>
@@ -1041,7 +1077,10 @@ export const GridListWithTextfield: GridListStory = args => {
             <Button onPress={action('Underline press')}>Underline</Button>
           </Toolbar>
         </MyGridListItem>
-        <MyGridListItem textValue="Menu">
+        <MyGridListItem
+          textValue="Menu"
+          focusMode={focusMode}
+          allowsArrowNavigation={allowsArrowNavigation}>
           Menu
           {/* TODO: hitting escape to close the menu, returns focus to the row.
           Tabbing back from the external input also focuses the trggerbutton rather than the row. Tabbing back into the textfield row focuses the row  */}
@@ -1056,7 +1095,7 @@ export const GridListWithTextfield: GridListStory = args => {
             </Popover>
           </MenuTrigger>
         </MyGridListItem>
-        <MyGridListItem textValue="Radiogroup">
+        <MyGridListItem textValue="Radiogroup" focusMode={focusMode}>
           RadioGroup
           <RadioGroup
             aria-label="Radiogroup"
@@ -1073,7 +1112,7 @@ export const GridListWithTextfield: GridListStory = args => {
             </Radio>
           </RadioGroup>
         </MyGridListItem>
-        <MyGridListItem textValue="Checkboxgroup">
+        <MyGridListItem textValue="Checkboxgroup" focusMode={focusMode}>
           CheckboxGroup
           <CheckboxGroup aria-label="Checkboxgroup" style={{display: 'flex', flexDirection: 'row'}}>
             <Checkbox value="soccer">
@@ -1108,11 +1147,13 @@ export const GridListWithTextfield: GridListStory = args => {
   );
 };
 
-GridListWithTextfield.story = {
+export const GridListWithTextfield: StoryObj<typeof GridListWithTextfieldRender> = {
+  render: args => <GridListWithTextfieldRender {...args} />,
   args: {
     layout: 'stack',
     orientation: 'vertical',
-    escapeKeyBehavior: 'clearSelection'
+    escapeKeyBehavior: 'clearSelection',
+    keyboardNavigationBehavior: 'tab'
   },
   argTypes: {
     layout: {
@@ -1127,6 +1168,9 @@ GridListWithTextfield.story = {
       control: 'radio',
       options: ['arrow', 'tab']
     },
+    autoFocusChildren: {
+      control: 'boolean'
+    },
     selectionMode: {
       control: 'radio',
       options: ['none', 'single', 'multiple']
@@ -1138,6 +1182,11 @@ GridListWithTextfield.story = {
     escapeKeyBehavior: {
       control: 'radio',
       options: ['clearSelection', 'none']
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Note that toggling autoFocusChildren will make each row automatically focus its children. For the row with a menu, allowsArrowNavigation is also applied so that arrow keys can be used to move focus between rows still'
     }
   }
 };

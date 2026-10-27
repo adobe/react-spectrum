@@ -26,7 +26,7 @@ import {
   useSlot,
   useSlottedContext
 } from './utils';
-import {Collection, Node} from '@react-types/shared';
+import {Collection, FocusableElement, Node} from '@react-types/shared';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
 import {ComboBoxState, useComboBoxState} from 'react-stately/useComboBoxState';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
@@ -218,6 +218,8 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
   let listBoxRef = useRef<HTMLDivElement>(null);
   let popoverRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
+  let [labelElementType, setLabelElementType] = useState<'span' | 'label'>('label');
+
   let {
     buttonProps,
     inputProps,
@@ -236,7 +238,8 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
       listBoxRef,
       popoverRef,
       name: formValue === 'text' ? name : undefined,
-      validationBehavior
+      validationBehavior,
+      labelElementType
     },
     state
   );
@@ -307,14 +310,19 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
     <Provider
       values={[
         [ComboBoxStateContext, state],
-        [LabelContext, {...labelProps, ref: labelRef}],
+        [LabelContext, {...labelProps, elementType: labelElementType, ref: labelRef}],
         [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [
           FieldInputContext,
           {
             ...inputProps,
-            ref: inputRef,
+            ref: useCallback((el: FocusableElement) => {
+              inputRef.current = el as HTMLInputElement; // TODO: figure out how to fix non-input element types in useComboBox/useTextField
+              if (el) {
+                setLabelElementType(el.tagName.toLowerCase() === 'input' ? 'label' : 'span');
+              }
+            }, []),
             value: state.inputValue,
             onChange: v => state.setInputValue(v as string)
           } as any

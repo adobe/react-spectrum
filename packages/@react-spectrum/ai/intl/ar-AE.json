@@ -1,6 +1,26 @@
 {
+  "alert.informative": "إعلامي",
+  "alert.negative": "سلبي",
+  "alert.notice": "ملاحظة",
+  "alert.positive": "إيجابي",
+  "attachmentlist.nextAttachments": "عرض المرفقات التالية",
+  "attachmentlist.previousAttachments": "عرض المرفقات السابقة",
   "chat.newMessage": "رسالة جديدة",
+  "chat.scrollToBottom": "مرر لأسفل",
   "messagefeedback.thumbDown": "استجابة  سيئة",
   "messagefeedback.thumbUp": "استجابة جيدة",
-  "responsestatus.loading": "جارٍ التحميل"
+  "promptfield.aiDisclaimer": "تم توليد الاستجابات بواسطة الذكاء الاصطناعي، وقد تكون غير دقيقة. تحقق منها قبل استخدامها.",
+  "promptfield.aiUserGuidlines": "إرشادات مستخدم الذكاء الاصطناعي",
+  "promptfield.attachments": "مرفقات",
+  "promptfield.insertButton": "إضافة",
+  "promptfield.label": "مطالبة",
+  "promptfield.placeholder": "هل أنت مستعد للبدء؟ اطرح سؤالًا، أو شارك فكرة، أو أضف مهمة.",
+  "promptfield.placeholder.small": "اسأل عن أي شيء",
+  "promptfield.stopButton": "إيقاف",
+  "promptfield.submitButton": "إرسال",
+  "promptfield.uploading": "تحميل",
+  "responsestatus.loading": "جارٍ التحميل",
+  "responsestatus.processing": "جارٍ المعالجة...",
+  "voicebutton.startListening": "ابدأ التسجيل",
+  "voicebutton.stopListening": "أوقف التسجيل"
 }

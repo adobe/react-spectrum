@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Informativt",
+  "alert.negative": "Negativ",
+  "alert.notice": "Merk",
+  "alert.positive": "Positiv",
+  "attachmentlist.nextAttachments": "Vis de neste vedleggene",
+  "attachmentlist.previousAttachments": "Vis forrige vedlegg",
   "chat.newMessage": "Ny melding",
+  "chat.scrollToBottom": "Bla til bunnen",
   "messagefeedback.thumbDown": "Dårlig respons",
   "messagefeedback.thumbUp": "Bra respons",
-  "responsestatus.loading": "Laster inn"
+  "promptfield.aiDisclaimer": "Svarene genereres ved hjelp av KI og kan være unøyaktige. Kontroller svarene før bruk.",
+  "promptfield.aiUserGuidlines": "KI–brukerretningslinjer",
+  "promptfield.attachments": "Vedlegg",
+  "promptfield.insertButton": "Legg til",
+  "promptfield.label": "Ledetekst",
+  "promptfield.placeholder": "Klar til å komme i gang? Still et spørsmål, del en idé eller legg til en oppgave.",
+  "promptfield.placeholder.small": "Spør om hva som helst",
+  "promptfield.stopButton": "Stopp",
+  "promptfield.submitButton": "Send",
+  "promptfield.uploading": "Laster opp",
+  "responsestatus.loading": "Laster inn",
+  "responsestatus.processing": "Behandler…",
+  "voicebutton.startListening": "Start opptak",
+  "voicebutton.stopListening": "Stopp opptak"
 }

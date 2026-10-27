@@ -40,7 +40,7 @@ import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {RadioGroupState, useRadioGroupState} from 'react-stately/useRadioGroupState';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
@@ -89,7 +89,7 @@ export interface RadioProps
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: RefObject<HTMLInputElement | null>;
+  inputRef?: Ref<HTMLInputElement | null>;
 }
 
 export interface RadioFieldProps
@@ -108,7 +108,7 @@ export interface RadioFieldProps
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: RefObject<HTMLInputElement | null>;
+  inputRef?: Ref<HTMLInputElement | null>;
 }
 
 export interface RadioButtonProps

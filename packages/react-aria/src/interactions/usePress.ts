@@ -391,7 +391,7 @@ export function usePress(props: PressHookProps): PressResult {
           isValidKeyboardEvent(e.nativeEvent, e.currentTarget as Element) &&
           nodeContains(e.currentTarget as Element, getEventTarget(e) as Element)
         ) {
-          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
+          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e)) {
             e.preventDefault();
           }
 
@@ -497,7 +497,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && state.target && isValidKeyboardEvent(e, state.target)) {
-        if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
+        if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e)) {
           e.preventDefault();
         }
 
@@ -1161,7 +1161,16 @@ function shouldPreventDefaultUp(target: Element) {
   return true;
 }
 
-function shouldPreventDefaultKeyboard(target: Element, key: string) {
+function shouldPreventDefaultKeyboard(
+  target: Element,
+  event: Pick<KeyboardEvent, 'key' | 'ctrlKey'>
+) {
+  let {key} = event;
+  // Don't prevent the contextmenu shortcut (Control + Enter) on mac.
+  if (isMac() && key === 'Enter' && event.ctrlKey) {
+    return false;
+  }
+
   if (target instanceof HTMLInputElement) {
     if (key === 'Enter' && (target.type === 'checkbox' || target.type === 'radio')) {
       // Enter on a checkbox or radio should do an implicit form submission, but not toggle the input.

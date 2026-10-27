@@ -423,6 +423,15 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     expect(inputRef.current).toBe(getByRole('checkbox'));
   });
 
+  it('should support callback ref', () => {
+    let cleanup = jest.fn();
+    let onRef = jest.fn(() => cleanup);
+    let {getByRole, unmount} = render(<Checkbox inputRef={onRef}>Test</Checkbox>);
+    expect(onRef).toHaveBeenCalledWith(getByRole('checkbox'));
+    unmount();
+    expect(cleanup).toHaveBeenCalledTimes(1);
+  });
+
   it('should support and merge input ref on context', () => {
     let inputRef = React.createRef();
     let contextInputRef = React.createRef();

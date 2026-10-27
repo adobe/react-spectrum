@@ -22,6 +22,10 @@
   margin-bottom: 4px !important;
 }
 
+#api + svg text {
+  font-family: var(--anatomy-font);
+}
+
 #api + svg + pre {
   border-top-left-radius: 0;
   border-top-right-radius: 0;

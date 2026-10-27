@@ -1,6 +1,9 @@
 @import './theme.css';
 
 .react-aria-Menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   min-height: 0;
   max-height: inherit;
   box-sizing: border-box;
@@ -25,6 +28,14 @@
     font-style: italic;
     min-height: var(--spacing-8);
   }
+}
+
+.react-aria-MenuLoadingIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  grid-column: 1 / -1;
 }
 
 .react-aria-MenuItem {

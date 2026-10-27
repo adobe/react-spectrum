@@ -91,7 +91,9 @@ export function useActionGroup<T>(
   let {direction} = useLocale();
   // oxlint-disable-next-line react/react-compiler
   let focusManager = createFocusManager(ref);
-  let flipDirection = direction === 'rtl' && orientation === 'horizontal';
+  // ArrowLeft/ArrowRight follow the locale's text direction regardless of orientation, so
+  // ArrowLeft always moves to the next item in RTL. ArrowUp/ArrowDown are never flipped.
+  let flipDirection = direction === 'rtl';
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       ArrowRight: () => {
@@ -114,7 +116,8 @@ export function useActionGroup<T>(
       ArrowUp: () => {
         focusManager.focusPrevious({wrap: true});
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let role: string | undefined = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];

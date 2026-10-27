@@ -12,15 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {
-  baseColor,
-  color,
-  colorMix,
-  focusRing,
-  fontRelative,
-  space,
-  style
-} from '../style' with {type: 'macro'};
+import {baseColor, color, colorMix, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import {CheckboxContext} from 'react-aria-components/Checkbox';
@@ -235,7 +227,7 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean; isDropTarget?: 
     type: 'width',
     value: {
       default: 'auto',
-      [hasTrailingIconRows]: fontRelative(20)
+      [hasTrailingIconRows]: '1lh'
     }
   }
 });
@@ -304,7 +296,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
     renderEmptyState = () => (
       <div className={centeredWrapper}>
         <div className={loadingSpinnerWrapper}>
-          <ProgressCircle isIndeterminate aria-label={stringFormatter.format('table.loading')} />
+          <ProgressCircle isIndeterminate aria-label={stringFormatter.format('listview.loading')} />
         </div>
       </div>
     );
@@ -319,7 +311,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
         <div className={loadingSpinnerWrapper}>
           <ProgressCircle
             isIndeterminate
-            aria-label={stringFormatter.format('table.loadingMore')}
+            aria-label={stringFormatter.format('listview.loadingMore')}
           />
         </div>
       </div>
@@ -422,6 +414,7 @@ const listitem = style<
     isDropTarget?: boolean;
   }
 >({
+  font: controlFont(),
   outlineStyle: {
     default: 'none'
   },

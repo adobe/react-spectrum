@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Informatívne",
+  "alert.negative": "Negatívne",
+  "alert.notice": "Upozornenie",
+  "alert.positive": "Pozitívne",
+  "attachmentlist.nextAttachments": "Zobraziť ďalšie prílohy",
+  "attachmentlist.previousAttachments": "Zobraziť predchádzajúce prílohy",
   "chat.newMessage": "Nová správa",
+  "chat.scrollToBottom": "Prejsť nadol",
   "messagefeedback.thumbDown": "Zlá odozva",
   "messagefeedback.thumbUp": "Dobrá odozva",
-  "responsestatus.loading": "Načítava sa"
+  "promptfield.aiDisclaimer": "Odpovede vygenerovala AI a nemusia byť presné. Pred použitím ich overte.",
+  "promptfield.aiUserGuidlines": "Pravidlá používania AI pre používateľov",
+  "promptfield.attachments": "Prílohy",
+  "promptfield.insertButton": "Pridať",
+  "promptfield.label": "Výzva",
+  "promptfield.placeholder": "Ste pripravení začať? Položte otázku, podeľte sa o nápad alebo pridajte úlohu.",
+  "promptfield.placeholder.small": "Spýtajte sa čokoľvek",
+  "promptfield.stopButton": "Zastaviť",
+  "promptfield.submitButton": "Poslať",
+  "promptfield.uploading": "Nahrávanie",
+  "responsestatus.loading": "Načítava sa",
+  "responsestatus.processing": "Spracovanie...",
+  "voicebutton.startListening": "Spustiť záznam",
+  "voicebutton.stopListening": "Zastaviť záznam"
 }

@@ -1,31 +1,15 @@
 #!/usr/bin/env bash
 
-port=4000
-# usually defaults to https://registry.npmjs.com/
-original_registry=`npm get registry`
-registry="http://localhost:$port"
-output="output.out"
-touch $output
+# Builds all packages, bumps their versions, and writes them straight into a
+# Verdaccio local-storage folder
 
 set -e
 
-echo "Build and deploy to verdaccio"
+# Where the Verdaccio local-storage database is written. Must match the storage
+# path used by the downstream verdaccio-ci.sh / verdaccio-config.yaml jobs.
+storage_path="${VERDACCIO_STORAGE_PATH:-/tmp/verdaccio-workspace/storage}"
 
-# Wait for verdaccio to start
-grep -q 'http address' <(tail -f $output)
-
-if curl -sI http://localhost:4000/ >/dev/null; then
-    echo "Verdaccio is running on port 4000."
-else
-    echo "Verdaccio is NOT running on port 4000."
-fi
-
-yarn config set npmPublishRegistry $registry
-yarn config set npmRegistryServer $registry
-yarn config set npmAlwaysAuth false
-yarn config set npmAuthToken abc
-yarn config set unsafeHttpWhitelist localhost
-npm set registry $registry
+echo "Build and seed Verdaccio storage at $storage_path"
 
 git config --global user.email octobot@github.com
 git config --global user.name GitHub Actions
@@ -39,9 +23,6 @@ cat .yarn/versions/version.yml
 yarn version apply --all
 cat ./packages/react-aria-components/package.json
 
-# Publish packages to verdaccio
-yarn workspaces foreach --all --no-private -pt npm publish --tag latest
-
-curl -s http://localhost:4000/@adobe/react-spectrum
-
-netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill
+# Seed the packages directly into Verdaccio storage
+mkdir -p "$storage_path"
+yarn workspaces list --json --no-private | node ./scripts/verdaccio-seed.js "$storage_path"

@@ -2396,6 +2396,96 @@ describe('ListBox', () => {
       expect(queryAllByRole('option')).toHaveLength(0);
     });
   }
+
+  if (React.version.startsWith('19')) {
+    it('supports Activity into a portal', async () => {
+      let ReactCanaryContext = React.createContext(null);
+      let RouterContext = React.createContext(null);
+
+      function Page() {
+        let {mode} = React.useContext(ReactCanaryContext);
+        let {pathname} = React.useContext(RouterContext);
+
+        return (
+          <>
+            <ol>
+              <li>{pathname}</li>
+            </ol>
+            <ListBox aria-label="Activity Listbox">
+              {mode === 'visible' && <ListBoxItem>Item 1</ListBoxItem>}
+              {mode === 'visible' && <ListBoxItem>Item 2</ListBoxItem>}
+              {mode === 'visible' && <ListBoxItem>Item 3</ListBoxItem>}
+              {mode === 'visible' && <ListBoxItem>Item 4</ListBoxItem>}
+              {mode === 'visible' && <ListBoxItem>Item 5</ListBoxItem>}
+            </ListBox>
+          </>
+        );
+      }
+
+      function App({mode, pathname = '/', ready = false}) {
+        let react = React.useMemo(() => ({mode}), [mode]);
+        let router = React.useMemo(() => ({pathname, ready}), [pathname, ready]);
+
+        let route = React.useMemo(() => <Page />, []);
+
+        return (
+          <RouterContext.Provider value={router}>
+            <ReactCanaryContext.Provider value={react}>
+              <React.Activity mode={mode}>{route}</React.Activity>
+            </ReactCanaryContext.Provider>
+          </RouterContext.Provider>
+        );
+      }
+
+      let {rerender, queryAllByRole} = render(<App mode="visible" pathname="/" ready />);
+      expect(queryAllByRole('option')).toHaveLength(5);
+      rerender(<App mode="hidden" pathname="/other" />);
+      rerender(<App mode="hidden" pathname="/other" ready />);
+      rerender(<App mode="visible" pathname="/" ready />);
+      expect(queryAllByRole('option')).toHaveLength(5);
+    });
+
+    it('should only treat visible items as duplicate keys across Activity boundaries', () => {
+      function App({first}) {
+        return (
+          <ListBox aria-label="Test">
+            <React.Activity mode={first ? 'visible' : 'hidden'}>
+              <ListBoxItem id="a">First A</ListBoxItem>
+            </React.Activity>
+            <React.Activity mode={first ? 'hidden' : 'visible'}>
+              <ListBoxItem id="a">Second A</ListBoxItem>
+            </React.Activity>
+            <ListBoxItem id="b">B</ListBoxItem>
+          </ListBox>
+        );
+      }
+
+      let {getAllByRole, rerender, unmount} = render(<App first />);
+      expect(getAllByRole('option').map(o => o.textContent)).toEqual(['First A', 'B']);
+      rerender(<App first={false} />);
+      expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Second A', 'B']);
+      rerender(<App first />);
+      expect(getAllByRole('option').map(o => o.textContent)).toEqual(['First A', 'B']);
+      unmount();
+
+      function Reveal({mode}) {
+        return (
+          <ListBox aria-label="Test">
+            <React.Activity mode={mode}>
+              <ListBoxItem id="a">Hidden A</ListBoxItem>
+            </React.Activity>
+            <ListBoxItem id="a">Visible A</ListBoxItem>
+          </ListBox>
+        );
+      }
+
+      let revealed = render(<Reveal mode="hidden" />);
+      expect(revealed.getAllByRole('option').map(o => o.textContent)).toEqual(['Visible A']);
+      expect(() => revealed.rerender(<Reveal mode="visible" />)).toThrow(
+        'Duplicate key "a" found in collection.'
+      );
+    });
+  }
 });
 
 describe('keyboard modifier keys', () => {
@@ -2431,6 +2521,39 @@ describe('keyboard modifier keys', () => {
       expect(document.activeElement).toBe(options[1]);
       await user.keyboard('{Control>}{Home}{/Control}');
       expect(document.activeElement).toBe(options[1]);
+    });
+
+    it('does not activate an element focused during selection with Enter', async () => {
+      let onClick = jest.fn();
+      let triggerRef = React.createRef();
+      let {getByRole} = render(
+        <>
+          <button ref={triggerRef} onClick={onClick}>
+            Trigger
+          </button>
+          <ListBox
+            aria-label="Favorite Animal"
+            selectionMode="single"
+            onSelectionChange={() => {
+              // oxlint-disable-next-line rsp-rules/act-events-test
+              triggerRef.current.focus();
+            }}>
+            <ListBoxItem id="cat">Cat</ListBoxItem>
+            <ListBoxItem id="dog">Dog</ListBoxItem>
+          </ListBox>
+        </>
+      );
+
+      let options = within(getByRole('listbox')).getAllByRole('option');
+      act(() => options[0].focus());
+
+      // Selection moves focus to the trigger during keydown. Unless Enter's default is
+      // prevented, the browser dispatches the activation click to the newly focused
+      // element.
+      await user.keyboard('{Enter}');
+
+      expect(triggerRef.current).toHaveFocus();
+      expect(onClick).not.toHaveBeenCalled();
     });
 
     describe('multiple selection, replace behavior', () => {
@@ -2507,6 +2630,27 @@ describe('keyboard modifier keys', () => {
       expect(onSelectionChange).toHaveBeenLastCalledWith('all');
     });
 
+    it('extends selection with Meta+Shift+End and Meta+Shift+Home', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = renderListbox({
+        selectionMode: 'multiple',
+        defaultSelectedKeys: ['cat'],
+        onSelectionChange
+      });
+      let options = within(getByRole('listbox')).getAllByRole('option');
+      await user.tab();
+      await user.keyboard('{Meta>}{Shift>}{End}{/Shift}{/Meta}');
+      expect(document.activeElement).toBe(options[2]);
+      expect(onSelectionChange).toHaveBeenLastCalledWith(
+        new Selection(['cat', 'kangaroo'], 'kangaroo', 'kangaroo')
+      );
+      await user.keyboard('{Meta>}{Shift>}{Home}{/Shift}{/Meta}');
+      expect(document.activeElement).toBe(options[0]);
+      expect(onSelectionChange).toHaveBeenLastCalledWith(
+        new Selection(['cat', 'dog', 'kangaroo'], 'kangaroo', 'cat')
+      );
+    });
+
     it('does not select all with Mod+A when selection mode is single', async () => {
       let onSelectionChange = jest.fn();
       renderListbox({selectionMode: 'single', onSelectionChange});
@@ -2573,6 +2717,18 @@ describe('keyboard modifier keys', () => {
       await user.tab();
       await user.keyboard('{Control>}a{/Control}');
       expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+    });
+  });
+
+  describe('navigation keys prevent default without selecting', () => {
+    it.each(['Home', 'End', 'PageUp', 'PageDown'])('%s prevents the default', async key => {
+      renderListbox({selectionMode: 'multiple'});
+      await user.tab();
+      let event = new KeyboardEvent('keydown', {key, bubbles: true, cancelable: true});
+      act(() => {
+        document.activeElement.dispatchEvent(event);
+      });
+      expect(event.defaultPrevented).toBe(true);
     });
   });
 });

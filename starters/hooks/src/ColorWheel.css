@@ -1,0 +1,9 @@
+@import './theme.css';
+
+.react-aria-ColorWheel {
+  &[data-disabled] {
+    .react-aria-ColorWheelTrack {
+      background: gray !important;
+    }
+  }
+}

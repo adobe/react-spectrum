@@ -1,10 +1,11 @@
-.PHONY: clean test lint build
+.PHONY: clean test lint build sync-starter-css check-starter-css
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
 BRANCH := $(or $(CIRCLE_BRANCH),$(shell git rev-parse --abbrev-ref HEAD))
 BRANCH_TYPE := $(if $(filter $(BRANCH),main),main,pr)
 HASH := $(shell git rev-parse HEAD)
+BUILD_ENTRIES := packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum}
 
 all: node_modules
 
@@ -38,7 +39,7 @@ clean_dist:
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/i18n
 	rm -rf packages/@adobe/react-spectrum/i18n
 	rm -rf packages/@react-aria/i18n/server
-	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/page.css packages/@react-spectrum/s2/icons packages/@react-spectrum/s2/illustrations
+	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/icons packages/@react-spectrum/s2/illustrations
 	git clean -Xdf packages/{@adobe/react-spectrum,@react-spectrum/s2,react-aria,react-stately,react-aria-components}
 
 clean_parcel:
@@ -83,7 +84,18 @@ icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src 
 	@$(MAKE) illustrations
 
 storybook:
-	NODE_ENV=production yarn build:storybook
+	if [ -n "$$PARCEL_V3" ]; then \
+		yarn build:storybook-parcel3; \
+	else \
+		NODE_ENV=production yarn build:storybook; \
+	fi
+
+storybook-s2:
+	if [ -n "$$PARCEL_V3" ]; then \
+		yarn build:storybook-s2-parcel3; \
+	else \
+		yarn build:storybook-s2; \
+	fi
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
@@ -100,8 +112,13 @@ publish-nightly: build
 
 build:
 	mkdir -p dist
-	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
-	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config .parcelrc-build
+	yarn tsc --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
+	if [ -n "$$PARCEL_V3" ]; then \
+		node scripts/generateS2IconIndex.js; \
+		parcel3 build $(BUILD_ENTRIES) --no-optimize --config parcel-v3/.parcelrc-build; \
+	else \
+		parcel build $(BUILD_ENTRIES) --no-optimize --config .parcelrc-build; \
+	fi
 	yarn workspaces foreach --all -pt run prepublishOnly
 	node scripts/buildEsm.js
 	node scripts/buildI18n.js
@@ -121,15 +138,24 @@ website-production:
 	# $(MAKE) s2-docs-production
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
+	$(MAKE) hooks-starter
 	$(MAKE) s2-storybook-docs
 	mv starters/docs/storybook-static dist/production/docs/react-aria-starter
 	mv starters/docs/react-aria-starter.zip dist/production/docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
 	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
+	mv starters/hooks/storybook-static dist/production/docs/react-aria-hooks-starter
+	mv starters/hooks/react-aria-hooks-starter.zip dist/production/docs/react-aria-hooks-starter.$$(git rev-parse --short HEAD).zip
 
-check-examples:
+sync-starter-css:
+	yarn sync:starter-css
+
+check-starter-css:
+	yarn check:starter-css
+
+check-examples: check-starter-css
 	node scripts/extractExamplesS2.mjs
-	yarn tsgo --project dist/docs-examples/tsconfig.json
+	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:
 	cd starters/docs && yarn --no-immutable && yarn up react-aria-components && yarn tsc
@@ -145,6 +171,12 @@ tailwind-starter:
 
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	cd starters/tailwind && yarn build-storybook
+
+hooks-starter: sync-starter-css
+	cp LICENSE starters/hooks/.
+	cd starters/hooks && yarn --no-immutable && yarn up react-aria react-stately react-aria-components @internationalized/date && yarn tsc
+	cd starters/hooks && zip -r react-aria-hooks-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	cd starters/hooks && yarn build-storybook
 
 s2-storybook-docs:
 	yarn build:s2-storybook-docs -o dist/production/docs/s2
@@ -174,11 +206,11 @@ s2-docs-production:
 	cd starters/tailwind && yarn install --no-immutable && yarn up react-aria-components tailwindcss-react-aria-components
 	$(MAKE) build-starters
 
-build-s2-docs:
+build-s2-docs: check-starter-css
 	yarn workspace @react-spectrum/s2-docs generate:md
 	yarn workspace @react-spectrum/s2-docs generate:og
 	LIBRARY=react-aria node scripts/buildRegistry.mjs
-	yarn build:s2-docs
+	if [ -n "$$PARCEL_V3" ]; then yarn build:s2-docs-parcel3; else yarn build:s2-docs; fi
 	LIBRARY=react-aria node scripts/createFeedS2.mjs
 	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
 	mkdir -p dist/s2-docs/s2/$(PUBLIC_URL)
@@ -190,13 +222,15 @@ build-s2-docs:
 	# Build old docs pages, which get inter-mixed with the new pages
 	# TODO: We probably don't need to build this on every PR
 	yarn parcel build 'packages/@adobe/react-spectrum/docs/**/*.mdx' 'packages/dev/docs/pages/{react-spectrum,releases}/**/*.mdx' --dist-dir dist/s2-docs/s2/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
-	yarn parcel build 'packages/{react-aria,react-stately}/docs/**/*.mdx' --dist-dir dist/s2-docs/react-aria/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
 
 build-starters:
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
+	$(MAKE) hooks-starter
 	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
 	mv starters/docs/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-starter
 	mv starters/docs/react-aria-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-starter.$$(git rev-parse --short HEAD).zip
 	mv starters/tailwind/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-tailwind-starter
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
+	mv starters/hooks/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-hooks-starter
+	mv starters/hooks/react-aria-hooks-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-hooks-starter.$$(git rev-parse --short HEAD).zip

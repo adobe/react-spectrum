@@ -210,6 +210,7 @@ export function useSelectableCollection(
         manager.replaceSelection(key);
         return;
       }
+      return;
     }
     return false;
   };
@@ -265,6 +266,7 @@ export function useSelectableCollection(
           return;
         }
       }
+      return;
     }
     return false;
   };
@@ -325,6 +327,7 @@ export function useSelectableCollection(
           return;
         }
       }
+      return;
     }
     return false;
   };
@@ -431,6 +434,13 @@ export function useSelectableCollection(
     shortcuts: {
       ...withShiftSel('Home', home),
       ...withShiftSel('End', end),
+      // Home and End check isCtrlKeyPressed, which is Meta on Mac, both to jump to the start/end of
+      // the whole collection rather than the current row, and to extend the selection there.
+      // withShiftSel only registers the non-contiguous selection modifier, which is Alt on Mac.
+      [isMac() ? 'Home+Meta' : 'Home+Control']: home,
+      [isMac() ? 'End+Meta' : 'End+Control']: end,
+      [isMac() ? 'Home+Shift+Meta' : 'Home+Shift+Control']: home,
+      [isMac() ? 'End+Shift+Meta' : 'End+Shift+Control']: end,
       'Mod+A': aHandler,
       Escape: escape,
       Tab: tab,
@@ -475,7 +485,7 @@ export function useSelectableCollection(
     };
 
     // we need the "virtual" modality case checks here because shift tabbing from the prompt field's attachment card back into the
-    // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the AttachementList aka TagGroup via a focus() call, hence the virtual modality)
+    // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the attachmentList aka TagGroup via a focus() call, hence the virtual modality)
     if (UNSTABLE_focusOnEntry && (modality === 'keyboard' || modality === 'virtual')) {
       // always go to the first item in the Thread when tabbing forwards/backwards into the collection
       // since it is probably more important to the user to see the new prompt reply rather than go to the last focused key
@@ -624,6 +634,15 @@ export function useSelectableCollection(
 
       manager.setFocused(true);
       manager.setFocusedKey(focusedKey);
+
+      if (
+        focusedKey != null &&
+        selectOnFocus &&
+        !selectedKeys.size &&
+        manager.canSelectItem(focusedKey)
+      ) {
+        manager.replaceSelection(focusedKey);
+      }
 
       // If no default focus key is selected, focus the collection itself.
       if (focusedKey == null && !shouldUseVirtualFocus && ref.current) {

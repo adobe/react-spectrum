@@ -532,24 +532,27 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
         variant === 'quiet' ? UNSAFE_style : press(renderProps)
       }>
       {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
-        <InternalCardContext.Provider
-          value={{
-            size,
-            isQuiet,
-            isCheckboxSelection: selectionMode !== 'none' && selectionBehavior === 'toggle',
-            isHovered,
-            isFocusVisible,
-            isSelected,
-            isPressed
-          }}>
-          {/* Selection indicator and checkbox move inside the preview for quiet cards */}
-          {!isQuiet && <SelectionIndicator />}
-          {!isQuiet && selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-            <CardCheckbox />
-          )}
-          {/* this makes the :first-child selector work even with the checkbox */}
-          <div className={style({display: 'contents'})}>{children}</div>
-        </InternalCardContext.Provider>
+        /* reset the element type to avoid error on nested GridListItems */
+        <InternalCardViewContext.Provider value={{ElementType: 'div', layout}}>
+          <InternalCardContext.Provider
+            value={{
+              size,
+              isQuiet,
+              isCheckboxSelection: selectionMode !== 'none' && selectionBehavior === 'toggle',
+              isHovered,
+              isFocusVisible,
+              isSelected,
+              isPressed
+            }}>
+            {/* Selection indicator and checkbox move inside the preview for quiet cards */}
+            {!isQuiet && <SelectionIndicator />}
+            {!isQuiet && selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+              <CardCheckbox />
+            )}
+            {/* this makes the :first-child selector work even with the checkbox */}
+            <div className={style({display: 'contents'})}>{children}</div>
+          </InternalCardContext.Provider>
+        </InternalCardViewContext.Provider>
       )}
     </ElementType>
   );

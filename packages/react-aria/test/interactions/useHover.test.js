@@ -377,6 +377,106 @@ describe('useHover', function () {
         }
       ]);
     });
+
+    describe('mixed mouse and touch', function () {
+      function Item(props) {
+        let {hoverProps, isHovered} = useHover(props);
+        return (
+          <div {...hoverProps} data-testid={props.id} data-hovered={isHovered || undefined}>
+            {props.id}
+          </div>
+        );
+      }
+
+      afterEach(() => {
+        // Reset the global emulated mouse event suppression between tests.
+        act(() => {
+          jest.advanceTimersByTime(1000);
+        });
+      });
+
+      it('should end mouse hover after touching another element', function () {
+        let res = render(
+          <>
+            <Item id="a" />
+            <Item id="b" />
+          </>
+        );
+        let a = res.getByTestId('a');
+        let b = res.getByTestId('b');
+
+        fireEvent(a, pointerEvent('pointerover', {pointerType: 'mouse'}));
+        expect(a).toHaveAttribute('data-hovered', 'true');
+
+        fireEvent(b, pointerEvent('pointerover', {pointerType: 'touch'}));
+        fireEvent(b, pointerEvent('pointerout', {pointerType: 'touch'}));
+        expect(b).not.toHaveAttribute('data-hovered');
+
+        fireEvent(a, pointerEvent('pointerout', {pointerType: 'mouse', relatedTarget: b}));
+        fireEvent(b, pointerEvent('pointerover', {pointerType: 'mouse', relatedTarget: a}));
+        expect(a).not.toHaveAttribute('data-hovered');
+        expect(b).toHaveAttribute('data-hovered', 'true');
+      });
+
+      it('should end mouse hover after touching the hovered element', function () {
+        let res = render(<Item id="a" />);
+        let a = res.getByTestId('a');
+
+        fireEvent(a, pointerEvent('pointerover', {pointerType: 'mouse'}));
+        fireEvent(a, pointerEvent('pointerover', {pointerType: 'touch'}));
+        fireEvent(a, pointerEvent('pointerout', {pointerType: 'touch'}));
+        expect(a).toHaveAttribute('data-hovered', 'true');
+
+        fireEvent(a, pointerEvent('pointerout', {pointerType: 'mouse'}));
+        expect(a).not.toHaveAttribute('data-hovered');
+      });
+
+      it('should end mouse hover when disabled after a touch enters the hovered element', function () {
+        let events = [];
+        let addEvent = e => events.push(e);
+        let res = render(<Item id="a" onHoverEnd={addEvent} />);
+        let a = res.getByTestId('a');
+
+        fireEvent(a, pointerEvent('pointerover', {pointerType: 'mouse'}));
+        fireEvent(a, pointerEvent('pointerover', {pointerType: 'touch'}));
+
+        res.rerender(<Item id="a" isDisabled onHoverEnd={addEvent} />);
+        expect(a).not.toHaveAttribute('data-hovered');
+        expect(events).toEqual([
+          {
+            type: 'hoverend',
+            target: a,
+            pointerType: 'mouse'
+          }
+        ]);
+      });
+
+      it('should extend emulated mouse event suppression on repeated touches', function () {
+        let res = render(<Item id="a" />);
+        let a = res.getByTestId('a');
+
+        fireEvent(a, pointerEvent('pointerup', {pointerType: 'touch'}));
+        act(() => {
+          jest.advanceTimersByTime(400);
+        });
+        fireEvent(a, pointerEvent('pointerup', {pointerType: 'touch'}));
+        act(() => {
+          jest.advanceTimersByTime(200);
+        });
+
+        // 600ms after the first touch, but only 200ms after the second.
+        fireEvent(a, pointerEvent('pointerover', {pointerType: 'mouse'}));
+        expect(a).not.toHaveAttribute('data-hovered');
+        fireEvent(a, pointerEvent('pointerout', {pointerType: 'mouse'}));
+
+        act(() => {
+          jest.advanceTimersByTime(400);
+        });
+        fireEvent(a, pointerEvent('pointerover', {pointerType: 'mouse'}));
+        expect(a).toHaveAttribute('data-hovered', 'true');
+        fireEvent(a, pointerEvent('pointerout', {pointerType: 'mouse'}));
+      });
+    });
   });
 
   describe('mouse events', function () {

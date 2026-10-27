@@ -86,7 +86,8 @@ export function useColorWheel(
         state.decrement(state.pageStep);
         state.setDragging(false);
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let moveHandler = {
@@ -305,7 +306,7 @@ export function useColorWheel(
 
   let forcedColorAdjustNoneStyle = {
     forcedColorAdjust: 'none'
-  };
+  } as const;
 
   let {visuallyHiddenProps} = useVisuallyHidden({
     style: {

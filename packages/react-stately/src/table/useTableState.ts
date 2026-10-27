@@ -49,6 +49,13 @@ export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
   shouldSelectOnPressUp?: boolean;
   /** The id of the column that displays hierarchical data. */
   treeColumn?: Key;
+  /**
+   * Whether keyboard navigation to focusable elements within the cells is
+   * via the left/right arrow keys or the tab key.
+   *
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab';
 }
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {

@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Ενημερωτικό",
+  "alert.negative": "Αρνητικό",
+  "alert.notice": "Ειδοποίηση",
+  "alert.positive": "Θετικό",
+  "attachmentlist.nextAttachments": "Εμφάνιση επόμενων συνημμένων",
+  "attachmentlist.previousAttachments": "Εμφάνιση προηγούμενων συνημμένων",
   "chat.newMessage": "Νέο μήνυμα",
+  "chat.scrollToBottom": "Κύλιση στο κάτω μέρος",
   "messagefeedback.thumbDown": "Κακή απάντηση",
   "messagefeedback.thumbUp": "Καλή απάντηση",
-  "responsestatus.loading": "Φόρτωση"
+  "promptfield.aiDisclaimer": "Οι απαντήσεις δημιουργούνται μέσω τεχνητής νοημοσύνης και ενδέχεται να μην είναι ακριβείς. Ελέγξτε τες πριν τις χρησιμοποιήσετε.",
+  "promptfield.aiUserGuidlines": "Οδηγίες χρήσης της τεχνητής νοημοσύνης",
+  "promptfield.attachments": "Συνημμένα",
+  "promptfield.insertButton": "Προσθήκη",
+  "promptfield.label": "Προτροπή",
+  "promptfield.placeholder": "Είστε έτοιμοι να ξεκινήσετε; Υποβάλετε μια ερώτηση, μοιραστείτε μια ιδέα ή προσθέστε μια εργασία.",
+  "promptfield.placeholder.small": "Ρωτήστε οτιδήποτε",
+  "promptfield.stopButton": "Διακοπή",
+  "promptfield.submitButton": "Αποστολή",
+  "promptfield.uploading": "Μεταφόρτωση",
+  "responsestatus.loading": "Φόρτωση",
+  "responsestatus.processing": "Γίνεται επεξεργασία…",
+  "voicebutton.startListening": "Έναρξη εγγραφής",
+  "voicebutton.stopListening": "Διακοπή εγγραφής"
 }

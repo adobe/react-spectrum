@@ -1,3 +1,5 @@
+@import './theme.css';
+
 .react-aria-ColorArea {
   width: 100%;
   max-width: calc(var(--spacing) * 56);

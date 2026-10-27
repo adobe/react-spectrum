@@ -12,7 +12,7 @@ export function ShadcnCommand({
   component,
   preRef
 }: {
-  type?: 'vanilla' | 'tailwind';
+  type?: 'vanilla' | 'tailwind' | 'hooks';
   component?: string;
   preRef?: RefObject<HTMLPreElement | null>;
 }) {
@@ -29,7 +29,12 @@ export function ShadcnCommand({
   };
 
   let [storedType, setStoredType] = useLocalStorage('style', type || 'Vanilla CSS');
-  let shadcnType = type === 'vanilla' || storedType === 'Vanilla CSS' ? 'css' : 'tailwind';
+  let shadcnType =
+    type === 'hooks'
+      ? 'hooks'
+      : type === 'vanilla' || storedType === 'Vanilla CSS'
+        ? 'css'
+        : 'tailwind';
   let componentName = component ? '-' + component.toLowerCase() : '';
   let specifier =
     process.env.DOCS_ENV === 'prod'

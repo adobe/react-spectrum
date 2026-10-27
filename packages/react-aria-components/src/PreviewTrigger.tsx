@@ -23,6 +23,18 @@ import {useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 export interface PreviewTriggerProps extends AriaPreviewTriggerProps {
   /** The trigger and Popover that make up the preview trigger. */
   children: ReactNode;
+  /**
+   * The delay time in milliseconds before the preview opens.
+   *
+   * @default 600
+   */
+  delay?: number;
+  /**
+   * The delay time in milliseconds before the preview closes.
+   *
+   * @default 200
+   */
+  closeDelay?: number;
 }
 
 /**
@@ -47,7 +59,9 @@ export function PreviewTrigger(props: PreviewTriggerProps): JSX.Element {
       open: () => state.open(),
       close: () => state.close(),
       setOpen: isOpen => (isOpen ? state.open() : state.close()),
-      toggle: () => (state.isOpen ? state.close() : state.open())
+      toggle: () => (state.isOpen ? state.close() : state.open()),
+      point: null,
+      setPoint: () => {}
     }),
     [state]
   );

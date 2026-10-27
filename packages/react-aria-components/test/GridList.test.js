@@ -34,6 +34,7 @@ import {
   GridListSection
 } from '../src/GridList';
 import {GridListLoadMoreItem} from '../src/GridList';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Input} from '../src/Input';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Label} from '../src/Label';
@@ -86,15 +87,15 @@ let TestGridListSections = ({listBoxProps, itemProps}) => (
       </GridListItem>
     </GridListSection>
     <GridListSection aria-label="Favorite Ice Cream">
-      <GridListItem {...itemProps} id="cat" textValue="Vanilla">
+      <GridListItem {...itemProps} id="vanilla" textValue="Vanilla">
         <Checkbox slot="selection" />
         Vanilla
       </GridListItem>
-      <GridListItem {...itemProps} id="dog" textValue="Chocolate">
+      <GridListItem {...itemProps} id="chocolate" textValue="Chocolate">
         <Checkbox slot="selection" />
         Chocolate
       </GridListItem>
-      <GridListItem {...itemProps} id="kangaroo" textValue="Strawberry">
+      <GridListItem {...itemProps} id="strawberry" textValue="Strawberry">
         <Checkbox slot="selection" />
         Strawberry
       </GridListItem>
@@ -223,6 +224,51 @@ describe('GridList', () => {
     let gridList = getByRole('grid');
 
     expect(document.activeElement).toBe(gridList);
+  });
+
+  describe('autoFocus with selectOnFocus (selectionBehavior="replace")', () => {
+    it.each`
+      autoFocus  | index
+      ${'first'} | ${0}
+      ${'last'}  | ${2}
+    `(
+      'selects the autofocused row when selectOnFocus with autoFocus=$autoFocus',
+      ({autoFocus, index}) => {
+        let {getAllByRole} = renderGridList({
+          selectionMode: 'single',
+          selectionBehavior: 'replace',
+          autoFocus
+        });
+        let rows = getAllByRole('row');
+        expect(document.activeElement).toBe(rows[index]);
+        expect(rows[index]).toHaveAttribute('aria-selected', 'true');
+      }
+    );
+
+    it('does not select the autofocused row when selectionMode="none"', () => {
+      let {getAllByRole} = renderGridList({
+        selectionMode: 'none',
+        selectionBehavior: 'replace',
+        autoFocus: 'first'
+      });
+      let rows = getAllByRole('row');
+      expect(document.activeElement).toBe(rows[0]);
+      expect(rows[0]).not.toHaveAttribute('aria-selected');
+    });
+
+    it('does not change an existing "all" selection when autofocusing', () => {
+      let {getAllByRole} = renderGridList({
+        selectionMode: 'multiple',
+        selectionBehavior: 'replace',
+        defaultSelectedKeys: 'all',
+        autoFocus: 'first'
+      });
+      let rows = getAllByRole('row');
+      expect(document.activeElement).toBe(rows[0]);
+      for (let row of rows) {
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      }
+    });
   });
 
   it('should support hover', async () => {
@@ -466,6 +512,47 @@ describe('GridList', () => {
     expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
+  describe('items arriving after an empty list', () => {
+    function Example({items}) {
+      return (
+        <>
+          <GridList aria-label="Async list" items={items} renderEmptyState={() => 'No results'}>
+            {item => <GridListItem id={item.id}>{item.name}</GridListItem>}
+          </GridList>
+          <button>After</button>
+        </>
+      );
+    }
+
+    let items = [
+      {id: 'one', name: 'One'},
+      {id: 'two', name: 'Two'}
+    ];
+
+    it('should navigate to the new rows while the list is focused', async () => {
+      let {getByRole, getAllByRole, rerender} = render(<Example items={[]} />);
+      await user.tab();
+      expect(getByRole('grid')).toHaveFocus();
+
+      rerender(<Example items={items} />);
+      await user.keyboard('{ArrowDown}');
+      expect(getAllByRole('row')[0]).toHaveFocus();
+    });
+
+    it('should leave focus outside the list when items arrive after tabbing away', async () => {
+      let {getByRole, rerender} = render(<Example items={[]} />);
+      await user.tab();
+      expect(getByRole('grid')).toHaveFocus();
+      await user.tab();
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+
+      rerender(<Example items={items} />);
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+      await user.keyboard('{ArrowDown}');
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+    });
+  });
+
   it('should support empty state', () => {
     render(
       <GridList aria-label="Test" renderEmptyState={() => 'No results'}>
@@ -475,6 +562,49 @@ describe('GridList', () => {
     // JSDOM seems to pretend to be WebKit so uses role="group" instead of role="grid".
     let gridList = document.querySelector('.react-aria-GridList');
     expect(gridList).toHaveAttribute('data-empty', 'true');
+  });
+
+  it.each([false, true])('should tab through interactive empty state (shift=%s)', async shift => {
+    let {getByRole} = render(
+      <>
+        <button>Before</button>
+        <GridList
+          aria-label="Test"
+          renderEmptyState={() => (
+            <div>
+              <a href="/#">No results</a>
+              <a href="/#">Another link</a>
+            </div>
+          )}>
+          {[]}
+        </GridList>
+        <button>After</button>
+      </>
+    );
+
+    await user.click(getByRole('button', {name: shift ? 'After' : 'Before'}));
+    for (let name of shift ? ['Another link', 'No results'] : ['No results', 'Another link']) {
+      await user.tab({shift});
+      expect(getByRole('link', {name})).toHaveFocus();
+    }
+    await user.tab({shift});
+    expect(getByRole('button', {name: shift ? 'Before' : 'After'})).toHaveFocus();
+  });
+
+  it('should allow text selection in an empty state input', async () => {
+    let {getByRole} = render(
+      <GridList
+        aria-label="Test"
+        selectionMode="multiple"
+        renderEmptyState={() => <input aria-label="Search" defaultValue="hello" />}>
+        {[]}
+      </GridList>
+    );
+
+    let input = getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{Control>}a{/Control}x');
+    expect(input).toHaveValue('x');
   });
 
   it('should support dynamic collections', () => {
@@ -1810,6 +1940,121 @@ describe('GridList', () => {
     });
   });
 
+  describe('item focus events', () => {
+    it.each(['keyboard', 'mouse'])(
+      'should report item focus transitions using %s',
+      async interactionType => {
+        let onFocus = jest.fn();
+        let onBlur = jest.fn();
+        let onFocusChange = jest.fn();
+        let itemProps = {
+          onFocus: e => onFocus(e.target),
+          onBlur: e => onBlur(e.target),
+          onFocusChange
+        };
+        let {getAllByRole, getByRole} = render(
+          <>
+            <button>Before</button>
+            <GridList aria-label="Test" selectionMode="single">
+              <GridListItem id="cat" {...itemProps}>
+                Cat
+              </GridListItem>
+              <GridListItem id="dog" {...itemProps}>
+                Dog
+              </GridListItem>
+            </GridList>
+            <button>After</button>
+          </>
+        );
+        let rows = getAllByRole('row');
+
+        if (interactionType === 'keyboard') {
+          await user.tab();
+          await user.tab();
+        } else {
+          await user.click(rows[0]);
+        }
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('data-focused', 'true');
+        expect(onFocus).toHaveBeenCalledTimes(1);
+        expect(onFocus).toHaveBeenLastCalledWith(rows[0]);
+        expect(onBlur).not.toHaveBeenCalled();
+        expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+        if (interactionType === 'keyboard') {
+          expect(rows[0]).toHaveAttribute('data-focus-visible', 'true');
+          await user.keyboard('{ArrowDown}');
+        } else {
+          expect(rows[0]).not.toHaveAttribute('data-focus-visible');
+          await user.click(rows[1]);
+        }
+        expect(document.activeElement).toBe(rows[1]);
+        expect(onFocus).toHaveBeenCalledTimes(2);
+        expect(onFocus).toHaveBeenLastCalledWith(rows[1]);
+        expect(onBlur).toHaveBeenCalledTimes(1);
+        expect(onBlur).toHaveBeenLastCalledWith(rows[0]);
+        expect(onFocusChange.mock.calls).toEqual([[true], [false], [true]]);
+
+        if (interactionType === 'keyboard') {
+          await user.tab();
+        } else {
+          await user.click(getByRole('button', {name: 'After'}));
+        }
+        expect(document.activeElement).toBe(getByRole('button', {name: 'After'}));
+        expect(onBlur).toHaveBeenCalledTimes(2);
+        expect(onBlur).toHaveBeenLastCalledWith(rows[1]);
+        expect(onFocusChange.mock.calls).toEqual([[true], [false], [true], [false]]);
+      }
+    );
+
+    it('should not report focus changes when a focused item rerenders', async () => {
+      let onFocusChange = jest.fn();
+      let example = label => (
+        <GridList aria-label="Test">
+          <GridListItem id="cat" onFocusChange={onFocusChange}>
+            {label}
+          </GridListItem>
+        </GridList>
+      );
+      let {rerender, getByRole} = render(example('Cat'));
+      await user.tab();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+      rerender(example('Updated cat'));
+      expect(document.activeElement).toBe(getByRole('row'));
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+    });
+
+    it('should not report descendant focus as item focus', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let {getByRole} = render(
+        <GridList aria-label="Test">
+          <GridListItem
+            textValue="Cat"
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onFocusChange={onFocusChange}>
+            Cat <Button>First action</Button>
+            <Button>Second action</Button>
+          </GridListItem>
+        </GridList>
+      );
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('row'));
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'First action'}));
+      expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Second action'}));
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+      expect(getByRole('row')).toHaveAttribute('data-focus-visible-within', 'true');
+    });
+  });
+
   describe('press events', () => {
     it.each`
       interactionType
@@ -1949,6 +2194,24 @@ describe('GridList', () => {
       }
     );
 
+    it('should not trigger selection when clicking on a tabbable child in arrow navigation mode', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = render(
+        <GridList aria-label="Test" selectionMode="multiple" onSelectionChange={onSelectionChange}>
+          <GridListItem id="item1" textValue="Apple">
+            Apple <input aria-label="input 1" />
+          </GridListItem>
+          <GridListItem id="item2" textValue="Banana">
+            Banana
+          </GridListItem>
+        </GridList>
+      );
+      let input = getByRole('textbox');
+      await user.click(input);
+      expect(document.activeElement).toBe(input);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
     it.each([
       ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
       ['layout="grid"', {layout: 'grid'}]
@@ -2081,5 +2344,215 @@ describe('GridList', () => {
         expect(document.activeElement).toBe(afterInput);
       }
     );
+  });
+
+  describe('focusMode and allowsArrowNavigation', () => {
+    it('focusMode="child" auto-focuses first child when item receives focus', async () => {
+      let {getByRole} = render(
+        <GridList aria-label="Tab mode list" keyboardNavigationBehavior="tab">
+          <GridListItem id="1" textValue="Item 1" focusMode="child">
+            <button tabIndex={0} aria-label="Item 1 action">
+              Go
+            </button>
+          </GridListItem>
+          <GridListItem id="2" textValue="Item 2" focusMode="child">
+            <button tabIndex={0} aria-label="Item 2 action">
+              Go
+            </button>
+          </GridListItem>
+          <GridListItem id="3" textValue="Item 3" focusMode="child">
+            <button tabIndex={0} aria-label="Item 3 action">
+              Go
+            </button>
+          </GridListItem>
+        </GridList>
+      );
+
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+      await user.tab({shift: true});
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+    });
+
+    it('allowsArrowNavigation allows arrow key row navigation when focused on child', async () => {
+      let {getByRole} = render(
+        <GridList aria-label="Tab mode list" keyboardNavigationBehavior="tab">
+          <GridListItem id="1" textValue="Item 1" focusMode="child" allowsArrowNavigation>
+            <button tabIndex={0} aria-label="Item 1 action">
+              Go
+            </button>
+          </GridListItem>
+          <GridListItem id="2" textValue="Item 2" focusMode="child" allowsArrowNavigation>
+            <button tabIndex={0} aria-label="Item 2 action">
+              Go
+            </button>
+          </GridListItem>
+          <GridListItem id="3" textValue="Item 3" focusMode="child" allowsArrowNavigation>
+            <button tabIndex={0} aria-label="Item 3 action">
+              Go
+            </button>
+          </GridListItem>
+        </GridList>
+      );
+
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+    });
+
+    describe('focusMode="child" with default arrow navigation', () => {
+      it('ArrowDown from child navigates to first child of next item', async () => {
+        let {getByRole} = render(
+          <GridList aria-label="List">
+            <GridListItem id="1" textValue="Item 1" focusMode="child">
+              <button tabIndex={0} aria-label="Item 1 action">
+                Go
+              </button>
+              <input />
+            </GridListItem>
+            <GridListItem id="2" textValue="Item 2" focusMode="child">
+              <button tabIndex={0} aria-label="Item 2 action">
+                Go
+              </button>
+              <input />
+            </GridListItem>
+            <GridListItem id="3" textValue="Item 3" focusMode="child">
+              <button tabIndex={0} aria-label="Item 3 action">
+                Go
+              </button>
+              <input />
+            </GridListItem>
+          </GridList>
+        );
+        await user.tab();
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 3 action'}));
+      });
+
+      it('ArrowUp from child navigates to first child of previous item', async () => {
+        let {getByRole} = render(
+          <GridList aria-label="List">
+            <GridListItem id="1" textValue="Item 1" focusMode="child">
+              <button tabIndex={0} aria-label="Item 1 action">
+                Go
+              </button>
+              <input />
+            </GridListItem>
+            <GridListItem id="2" textValue="Item 2" focusMode="child">
+              <button tabIndex={0} aria-label="Item 2 action">
+                Go
+              </button>
+              <input />
+            </GridListItem>
+          </GridList>
+        );
+        await user.tab();
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+        await user.keyboard('{ArrowUp}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+      });
+
+      it('ArrowLeft/Right cycles through children and row element', async () => {
+        let {getByRole, getAllByRole} = render(
+          <GridList aria-label="List">
+            <GridListItem id="1" textValue="Item 1" focusMode="child">
+              <button tabIndex={0} aria-label="Item 1 first">
+                First
+              </button>
+              <button tabIndex={0} aria-label="Item 1 last">
+                Last
+              </button>
+            </GridListItem>
+          </GridList>
+        );
+        let rows = getAllByRole('row');
+        let firstBtn = getByRole('button', {name: 'Item 1 first'});
+        let lastBtn = getByRole('button', {name: 'Item 1 last'});
+        await user.tab();
+        expect(document.activeElement).toBe(firstBtn);
+        // ArrowRight: first → last → row (wraps)
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(lastBtn);
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(rows[0]);
+        // ArrowLeft from row wraps to last; from last goes to first; from first goes to row
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(lastBtn);
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(firstBtn);
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(rows[0]);
+        // ArrowRight from row enters first child
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(firstBtn);
+      });
+
+      describe('RTL', () => {
+        it('ArrowLeft/Right RTL cycle: ArrowLeft advances forward, ArrowRight wraps to last child', async () => {
+          // In RTL: ArrowLeft = forward (next), ArrowRight = backward (prev)
+          let {getByRole, getAllByRole} = render(
+            <I18nProvider locale="ar-AE">
+              <GridList aria-label="List">
+                <GridListItem id="1" textValue="Item 1" focusMode="child">
+                  <button tabIndex={0} aria-label="Item 1 first">
+                    First
+                  </button>
+                  <button tabIndex={0} aria-label="Item 1 last">
+                    Last
+                  </button>
+                </GridListItem>
+              </GridList>
+            </I18nProvider>
+          );
+          let rows = getAllByRole('row');
+          let firstBtn = getByRole('button', {name: 'Item 1 first'});
+          let lastBtn = getByRole('button', {name: 'Item 1 last'});
+          await user.tab();
+          expect(document.activeElement).toBe(firstBtn);
+          // ArrowLeft in RTL moves forward: first → last → row (lines 243-244)
+          await user.keyboard('{ArrowLeft}');
+          expect(document.activeElement).toBe(lastBtn);
+          await user.keyboard('{ArrowLeft}');
+          expect(document.activeElement).toBe(rows[0]);
+          // ArrowRight in RTL wraps back: row → last child (lines 277-282)
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(lastBtn);
+        });
+      });
+    });
+
+    describe('focusMode="row" (default) with tab navigation', () => {
+      it('Tab into list focuses row, Tab from row enters child, Shift+Tab returns to row', async () => {
+        let {getByRole, getAllByRole} = render(
+          <GridList aria-label="List" keyboardNavigationBehavior="tab">
+            <GridListItem id="1" textValue="Item 1">
+              <button tabIndex={0} aria-label="Item 1 action">
+                Go
+              </button>
+              <button tabIndex={0} aria-label="Item 1 action 2">
+                Go 2
+              </button>
+            </GridListItem>
+          </GridList>
+        );
+        let rows = getAllByRole('row');
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        await user.tab();
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+        await user.tab();
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action 2'}));
+        await user.tab({shift: true});
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+        await user.tab({shift: true});
+        expect(document.activeElement).toBe(rows[0]);
+      });
+    });
   });
 });

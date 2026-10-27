@@ -1,0 +1,30 @@
+@import './theme.css';
+
+.react-aria-Tooltip {
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: var(--radius);
+  background: var(--highlight-background);
+  color: var(--highlight-foreground);
+  forced-color-adjust: none;
+  outline: none;
+  padding: var(--spacing-1) var(--spacing-2);
+  max-width: 150px;
+  transform: translate3d(0, 0, 0);
+  font: var(--font-size) system-ui;
+
+  &[data-placement='top'] {
+    margin-bottom: 10px;
+  }
+
+  &[data-placement='bottom'] {
+    margin-top: 10px;
+  }
+
+  &[data-placement='right'] {
+    margin-left: 10px;
+  }
+
+  &[data-placement='left'] {
+    margin-right: 10px;
+  }
+}

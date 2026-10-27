@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Информативно",
+  "alert.negative": "Отрицателно",
+  "alert.notice": "Забележка",
+  "alert.positive": "Положително",
+  "attachmentlist.nextAttachments": "Показване на следващите прикачени файлове",
+  "attachmentlist.previousAttachments": "Показване на предишните прикачени файлове",
   "chat.newMessage": "Ново съобщение",
+  "chat.scrollToBottom": "Превъртете до края на страницата",
   "messagefeedback.thumbDown": "Лош отговор",
   "messagefeedback.thumbUp": "Добър отговор",
-  "responsestatus.loading": "Зареждане"
+  "promptfield.aiDisclaimer": "Отговорите се генерират с помощта на изкуствен интелект и може да са неточни. Проверете ги, преди да ги използвате.",
+  "promptfield.aiUserGuidlines": "Насоки за ползване на изкуствения интелект",
+  "promptfield.attachments": "Прикачени файлове",
+  "promptfield.insertButton": "Добавяне",
+  "promptfield.label": "Подкана",
+  "promptfield.placeholder": "Готови ли сте да започнете? Задайте въпрос, споделете идея или добавете задача.",
+  "promptfield.placeholder.small": "Попитайте нещо",
+  "promptfield.stopButton": "Спиране",
+  "promptfield.submitButton": "Изпращане",
+  "promptfield.uploading": "Качване",
+  "responsestatus.loading": "Зареждане",
+  "responsestatus.processing": "Обработва се...",
+  "voicebutton.startListening": "Начало на записването",
+  "voicebutton.stopListening": "Спиране на записването"
 }

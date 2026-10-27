@@ -12,6 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
+import {Dialog} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Label} from '../src/Label';
@@ -48,7 +49,45 @@ describe('Select', () => {
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
+  it.each([300, 301])(
+    'restores the default selection on form reset without a name with %i items',
+    async size => {
+      let items = Array.from({length: size}, (_, i) => ({
+        id: `k${i}`,
+        name: `Item ${i}`
+      }));
 
+      let {getByTestId, getByRole} = render(
+        <form>
+          <Select data-testid="select" aria-label="Choose an item" defaultSelectedKey="k0">
+            <Button>
+              <SelectValue />
+            </Button>
+            <Popover>
+              <ListBox items={items}>{item => <ListBoxItem>{item.name}</ListBoxItem>}</ListBox>
+            </Popover>
+          </Select>
+          <button type="reset">Reset</button>
+        </form>
+      );
+
+      let selectTester = testUtilUser.createTester('Select', {
+        root: getByTestId('select')
+      });
+      let trigger = selectTester.getTrigger();
+
+      expect(trigger).toHaveTextContent('Item 0');
+
+      await selectTester.open();
+      await user.click(selectTester.getOptions()[1]);
+
+      expect(trigger).toHaveTextContent('Item 1');
+
+      await user.click(getByRole('button', {name: 'Reset'}));
+
+      expect(trigger).toHaveTextContent('Item 0');
+    }
+  );
   it('provides slots', async () => {
     let {getByTestId} = render(<TestSelect />);
     let wrapper = getByTestId('select');
@@ -381,6 +420,36 @@ describe('Select', () => {
     expect(button).toHaveTextContent('0');
   });
 
+  it('should support repeat keydown events when holding an arrow key', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <Select onChange={onSelectionChange} aria-label="Pick a number">
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox items={Array.from({length: 3}).map((_, i) => ({id: i, label: `${i}`}))}>
+            {item => (
+              <ListBoxItem id={item.id} textValue={item.label}>
+                {item.label}
+              </ListBoxItem>
+            )}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let button = getByRole('button');
+    await user.tab();
+    expect(button).toHaveFocus();
+
+    // Arrow key navigation while closed moves the selection.
+    await user.keyboard('{ArrowRight>2/}');
+
+    expect(onSelectionChange).toHaveBeenLastCalledWith(1);
+    expect(button).toHaveTextContent('1');
+  });
+
   it('should support falsy (0) as a valid default value', async () => {
     let {getByRole} = render(
       <Select placeholder="pick a number">
@@ -548,6 +617,134 @@ describe('Select', () => {
       let trigger = selectTester.getTrigger();
       expect(trigger).toHaveTextContent('Northern Territory');
       expect(trigger).not.toHaveAttribute('data-pressed');
+    });
+
+    it('should move to the next matching item when the same letter is typed again after timeout', async function () {
+      let {getByTestId} = render(
+        <Select data-testid="select">
+          <Label>Favorite Fruit</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem>Banana</ListBoxItem>
+              <ListBoxItem>Blackberry</ListBoxItem>
+              <ListBoxItem>Blueberry</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
+      let trigger = selectTester.getTrigger();
+
+      await user.tab();
+      await user.keyboard('B');
+      expect(trigger).toHaveTextContent('Banana');
+
+      act(() => {
+        jest.advanceTimersByTime(1001);
+      });
+
+      await user.keyboard('B');
+      expect(trigger).toHaveTextContent('Blackberry');
+    });
+
+    it('should cycle to the next matching item when the same letter is typed twice quickly', async function () {
+      let {getByTestId} = render(
+        <Select data-testid="select">
+          <Label>Favorite Fruit</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem>Banana</ListBoxItem>
+              <ListBoxItem>Blackberry</ListBoxItem>
+              <ListBoxItem>Blueberry</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
+      let trigger = selectTester.getTrigger();
+
+      await user.tab();
+      await user.keyboard('bb');
+      expect(trigger).toHaveTextContent('Blackberry');
+    });
+
+    it('should wrap if typeahead is not found after the current key', async function () {
+      let {getByTestId} = render(
+        <Select defaultSelectedKey="blueberry" data-testid="select">
+          <Label>Favorite Fruit</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="banana">Banana</ListBoxItem>
+              <ListBoxItem id="blackberry">Blackberry</ListBoxItem>
+              <ListBoxItem id="blueberry">Blueberry</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
+      let trigger = selectTester.getTrigger();
+
+      await user.tab();
+      await user.keyboard('b');
+      expect(trigger).toHaveTextContent('Banana');
+    });
+
+    // This matches the three main browsers behavior. Even though it seems like it should go to double "b" blackberry,
+    // it's just cycling through the items that start with "b".
+    it('searches the next item that starts with the same letter, not the next item that starts with the same letter twice', async function () {
+      let {getByTestId} = render(
+        <Select data-testid="select">
+          <Label>Favorite Fruit</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="banana">Banana</ListBoxItem>
+              <ListBoxItem id="boisenberry">Boisenberry</ListBoxItem>
+              <ListBoxItem id="bblackberry">Bblackberry</ListBoxItem>
+              <ListBoxItem id="blueberry">Blueberry</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
+      let trigger = selectTester.getTrigger();
+
+      await user.tab();
+      await user.keyboard('bb');
+      expect(trigger).toHaveTextContent('Boisenberry');
     });
   });
 
@@ -883,5 +1080,21 @@ describe('Select', () => {
     let {getByTestId} = render(<Example />);
     let selectValue = getByTestId('select-value');
     expect(selectValue).toHaveTextContent('select value: 1');
+  });
+
+  it('should not throw when rendered inside a Dialog with a Text errorMessage slot', () => {
+    render(
+      <Dialog aria-label="Dialog">
+        <TestSelect isInvalid />
+      </Dialog>
+    );
+  });
+
+  it('should not throw when rendered inside an alertdialog with a Text errorMessage slot', () => {
+    render(
+      <Dialog role="alertdialog" aria-label="Dialog">
+        <TestSelect isInvalid />
+      </Dialog>
+    );
   });
 });

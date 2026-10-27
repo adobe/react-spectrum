@@ -10,19 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
+import {addEvent, setStyle} from '../utils/domHelpers';
 import {chain} from '../utils/chain';
-
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
-import {isIOS} from '../utils/platform';
+import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
+import {runAfterKeyboard, runAfterKeyboardTransition} from '../utils/runAfterKeyboard';
+import {supportsKeyboard, willOpenKeyboard} from '../utils/keyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
-import {willOpenKeyboard} from '../utils/keyboard';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
   isDisabled?: boolean;
+  /**
+   * Whether to override the `focus()` method so it does not scroll the page.
+   * This is temporary and will be removed after fully testing all overlays.
+   *
+   * @private
+   */
+  UNSTABLE_overrideFocus?: boolean;
 }
 
 const visualViewport = typeof document !== 'undefined' && window.visualViewport;
@@ -37,7 +45,7 @@ let restore;
  * shift due to the scrollbars disappearing.
  */
 export function usePreventScroll(options: PreventScrollOptions = {}): void {
-  let {isDisabled} = options;
+  let {isDisabled, UNSTABLE_overrideFocus} = options;
 
   useLayoutEffect(() => {
     if (isDisabled) {
@@ -46,10 +54,10 @@ export function usePreventScroll(options: PreventScrollOptions = {}): void {
 
     preventScrollCount++;
     if (preventScrollCount === 1) {
-      if (isIOS()) {
-        restore = preventScrollMobileSafari();
+      if (isIOS() && isWebKit()) {
+        restore = preventScrollMobileWebKit();
       } else {
-        restore = preventScrollStandard();
+        restore = preventScrollStandard(UNSTABLE_overrideFocus);
       }
     }
 
@@ -59,20 +67,22 @@ export function usePreventScroll(options: PreventScrollOptions = {}): void {
         restore();
       }
     };
-  }, [isDisabled]);
+  }, [isDisabled, UNSTABLE_overrideFocus]);
 }
 
 // For most browsers, all we need to do is set `overflow: hidden` on the root element, and
 // add some padding to prevent the page from shifting when the scrollbar is hidden.
-function preventScrollStandard() {
+function preventScrollStandard(UNSTABLE_overrideFocus?: boolean) {
   let scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
   return chain(
     scrollbarWidth > 0 &&
       // Use scrollbar-gutter when supported because it also works for fixed positioned elements.
       ('scrollbarGutter' in document.documentElement.style
-        ? setStyle(document.documentElement, 'scrollbarGutter', 'stable')
-        : setStyle(document.documentElement, 'paddingRight', `${scrollbarWidth}px`)),
-    setStyle(document.documentElement, 'overflow', 'hidden')
+        ? setStyle(document.documentElement, 'scrollbar-gutter', 'stable')
+        : setStyle(document.documentElement, 'padding-right', `${scrollbarWidth}px`)),
+    setStyle(document.documentElement, 'overflow', 'hidden'),
+    UNSTABLE_overrideFocus && overrideFocus(),
+    UNSTABLE_overrideFocus && supportsKeyboard() && handleBlur()
   );
 }
 
@@ -96,10 +106,7 @@ function preventScrollStandard() {
 //    by preventing default in a `touchmove` event. This is best effort: we can't prevent default when pinch
 //    zooming or when an element contains text selection, which may allow scrolling in some cases.
 // 3. Prevent default on `touchend` events on input elements and handle focusing the element ourselves.
-// 4. When focus moves to an input, create an off screen input and focus that temporarily. This prevents
-//    Safari from scrolling the page. After a small delay, focus the real input and scroll it into view
-//    ourselves, without scrolling the whole page.
-function preventScrollMobileSafari() {
+function preventScrollMobileWebKit() {
   // Set overflow hidden so scrollIntoViewport() (useSelectableCollection) sees isScrollPrevented and
   // scrolls only scroll parents instead of calling native scrollIntoView() which moves the window.
   let restoreOverflow = setStyle(document.documentElement, 'overflow', 'hidden');
@@ -109,7 +116,7 @@ function preventScrollMobileSafari() {
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
     let target = getEventTarget(e) as Element;
-    scrollable = isScrollable(target) ? target : getScrollParent(target, true);
+    scrollable = isScrollable(target, true) ? target : getScrollParent(target, true);
     allowTouchMove = false;
 
     // If the target is selected, don't preventDefault in touchmove to allow user to adjust selection.
@@ -177,13 +184,28 @@ function preventScrollMobileSafari() {
     }
   };
 
+  let restoreFocus = overrideFocus();
+  let removeEvents = chain(
+    addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
+    addEvent(document, 'touchmove', onTouchMove, {passive: false, capture: true}),
+    handleBlur()
+  );
+
+  return () => {
+    restoreOverflow();
+    removeEvents();
+    style.remove();
+    restoreFocus();
+  };
+}
+
+function handleBlur() {
   let onBlur = (e: FocusEvent) => {
     let target = getEventTarget(e) as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
     if (relatedTarget && willOpenKeyboard(relatedTarget)) {
-      // Focus without scrolling the whole page, and then scroll into view manually.
-      relatedTarget.focus({preventScroll: true});
-      scrollIntoViewWhenReady(relatedTarget, willOpenKeyboard(target));
+      // Re-focus programmatically to have the override below perform the scroll.
+      relatedTarget.focus();
     } else if (!relatedTarget) {
       // When tapping the Done button on the keyboard, focus moves to the body.
       // FocusScope will then restore focus back to the input. Later when tapping
@@ -195,76 +217,48 @@ function preventScrollMobileSafari() {
     }
   };
 
+  return addEvent(document, 'blur', onBlur, true);
+}
+
+function overrideFocus() {
   // Override programmatic focus to scroll into view without scrolling the whole page.
   let focus = HTMLElement.prototype.focus;
-  HTMLElement.prototype.focus = function (opts) {
-    // Track whether the keyboard was already visible before.
-    let activeElement = getActiveElement();
-    let wasKeyboardVisible = activeElement != null && willOpenKeyboard(activeElement);
+  Reflect.defineProperty(HTMLElement.prototype, 'focus', {
+    configurable: true,
+    writable: true,
+    value: function (opts?: FocusOptions) {
+      // Focus the element without scrolling the page.
+      focus.call(this, {...opts, preventScroll: true});
 
-    // Focus the element without scrolling the page.
-    focus.call(this, {...opts, preventScroll: true});
+      if (!opts || !opts.preventScroll) {
+        let scroll = () => {
+          let activeElement = getActiveElement();
 
-    if (!opts || !opts.preventScroll) {
-      scrollIntoViewWhenReady(this, wasKeyboardVisible);
+          if (activeElement === this) {
+            scrollIntoView(this);
+          }
+        };
+
+        runAfterKeyboard(isOpen =>
+          isOpen ? scroll() : runAfterKeyboardTransition(() => scroll())
+        );
+      }
     }
-  };
-
-  let removeEvents = chain(
-    addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
-    addEvent(document, 'touchmove', onTouchMove, {passive: false, capture: true}),
-    addEvent(document, 'blur', onBlur, true)
-  );
+  });
 
   return () => {
-    restoreOverflow();
-    removeEvents();
-    style.remove();
-    HTMLElement.prototype.focus = focus;
+    Reflect.defineProperty(HTMLElement.prototype, 'focus', {
+      configurable: true,
+      writable: true,
+      value: focus
+    });
   };
-}
-
-// Sets a CSS property on an element, and returns a function to revert it to the previous value.
-function setStyle(element: HTMLElement, style: string, value: string) {
-  let cur = element.style[style];
-  element.style[style] = value;
-
-  return () => {
-    element.style[style] = cur;
-  };
-}
-
-// Adds an event listener to an element, and returns a function to remove it.
-function addEvent<K extends keyof GlobalEventHandlersEventMap>(
-  target: Document | Window,
-  event: K,
-  handler: (this: Document | Window, ev: GlobalEventHandlersEventMap[K]) => any,
-  options?: boolean | AddEventListenerOptions
-) {
-  // internal function, so it's ok to ignore the difficult to fix type error
-  // @ts-ignore
-  target.addEventListener(event, handler, options);
-  return () => {
-    // @ts-ignore
-    target.removeEventListener(event, handler, options);
-  };
-}
-
-function scrollIntoViewWhenReady(target: Element, wasKeyboardVisible: boolean) {
-  if (wasKeyboardVisible || !visualViewport) {
-    // If the keyboard was already visible, scroll the target into view immediately.
-    scrollIntoView(target);
-  } else {
-    // Otherwise, wait for the visual viewport to resize before scrolling so we can
-    // measure the correct position to scroll to.
-    visualViewport.addEventListener('resize', () => scrollIntoView(target), {once: true});
-  }
 }
 
 function scrollIntoView(target: Element) {
   let root = document.scrollingElement || document.documentElement;
   let nextTarget: Element | null = target;
-  while (nextTarget && nextTarget !== root) {
+  while (nextTarget && nextTarget !== root && nextTarget.isConnected) {
     // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
     let scrollable = getScrollParent(nextTarget);
     if (

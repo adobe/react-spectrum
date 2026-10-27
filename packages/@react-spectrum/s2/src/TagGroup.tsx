@@ -23,7 +23,7 @@ import {
   TagRenderProps
 } from 'react-aria-components/TagGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
@@ -630,7 +630,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
                 {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
                   styles: style({
-                    size: fontRelative(20),
+                    size: '1lh',
                     marginStart: '--iconMargin',
                     flexShrink: 0
                   })
@@ -647,7 +647,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
                 ImageContext,
                 {
                   styles: style({
-                    size: fontRelative(20),
+                    size: '1lh',
                     flexShrink: 0,
                     order: 0,
                     aspectRatio: 'square',

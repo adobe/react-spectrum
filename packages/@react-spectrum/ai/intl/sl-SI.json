@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Informativno",
+  "alert.negative": "Negativno",
+  "alert.notice": "Obvestilo",
+  "alert.positive": "Pozitivno",
+  "attachmentlist.nextAttachments": "Prikaži naslednje priloge",
+  "attachmentlist.previousAttachments": "Prikaži prejšnje priloge",
   "chat.newMessage": "Novo sporočilo",
+  "chat.scrollToBottom": "Pomaknite se na dno",
   "messagefeedback.thumbDown": "Slab odziv",
   "messagefeedback.thumbUp": "Dober odziv",
-  "responsestatus.loading": "Nalaganje"
+  "promptfield.aiDisclaimer": "Odgovori so ustvarjeni z umetno inteligenco in so lahko nepravilni. Pred uporabo preverite odgovore.",
+  "promptfield.aiUserGuidlines": "Smernice za uporabnike UI",
+  "promptfield.attachments": "Priponke",
+  "promptfield.insertButton": "Dodaj",
+  "promptfield.label": "Poziv",
+  "promptfield.placeholder": "Ste pripravljeni začeti? Postavite vprašanje, delite idejo ali dodajte nalogo.",
+  "promptfield.placeholder.small": "Vprašajte kar koli",
+  "promptfield.stopButton": "Ustavi",
+  "promptfield.submitButton": "Pošlji",
+  "promptfield.uploading": "Nalaganje",
+  "responsestatus.loading": "Nalaganje",
+  "responsestatus.processing": "Obdelava ...",
+  "voicebutton.startListening": "Začni snemanje",
+  "voicebutton.stopListening": "Ustavi snemanje"
 }

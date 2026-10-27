@@ -8,6 +8,10 @@ import {type ReactElement} from 'react';
 const prefetchPromises = new Map<string, Promise<ReactElement>>();
 
 export function prefetchRoute(pathname: string, priority: RequestPriority = 'low') {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
   let url = getRSCUrl(pathname);
 
   // Skip if already prefetched

@@ -1,0 +1,206 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'September 1, 2026';
+export const title = 'v1.21.0';
+export const description = 'This release adds a new NavigationTree component, async loading and empty state support for Menu, TokenField API changes, along with many bug fixes!'
+export const isSubpage = true;
+
+# v1.21.0
+
+We're excited to welcome a brand new component to the family! The new [NavigationTree](../NavigationTree) component displays a hierarchical set of links, perfect for building sidebars and complex app navigation. It comes fully loaded with keyboard navigation, and support for nested routes.
+
+```tsx render hideCode
+"use client";
+import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent, NavigationTreeItemLink} from 'vanilla-starter/NavigationTree';
+import {Button} from 'vanilla-starter/Button';
+import {MoreHorizontal} from 'lucide-react';
+import {RouterProvider} from 'react-aria-components';
+import React, {ReactNode, useState} from 'react';
+
+function RoutedNavigationTree(props: {
+  children: ({selectedRoute}: {selectedRoute: string}) => ReactNode;
+  defaultSelectedRoute: string;
+}) {
+  let {children} = props;
+  let [selectedRoute, setSelectedRoute] = useState<string>(props.defaultSelectedRoute);
+
+  let updateSelection = (href: string) => {
+    setSelectedRoute(href);
+  };
+
+  return <RouterProvider navigate={updateSelection}>{children({selectedRoute})}</RouterProvider>;
+}
+
+<RoutedNavigationTree defaultSelectedRoute="/photos">
+  {({selectedRoute}) => (
+    <NavigationTree aria-label="Files" selectedRoute={selectedRoute} defaultExpandedKeys={['files']}>
+      <NavigationTreeItem id="home" href="/home" textValue="Home">
+        <NavigationTreeItemContent>
+          <NavigationTreeItemLink>Home</NavigationTreeItemLink>
+          <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+        </NavigationTreeItemContent>
+      </NavigationTreeItem>
+      <NavigationTreeItem id="files" href="/files" textValue="Files">
+        <NavigationTreeItemContent>
+          <NavigationTreeItemLink>Files</NavigationTreeItemLink>
+          <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+        </NavigationTreeItemContent>
+        <NavigationTreeItem id="photos" href="/photos" textValue="Photos">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Photos</NavigationTreeItemLink>
+            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <NavigationTreeItem id="videos" href="/videos" textValue="Videos">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Videos</NavigationTreeItemLink>
+            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+      </NavigationTreeItem>
+      <NavigationTreeItem id="shared" textValue="Shared">
+        <NavigationTreeItemContent>
+          <NavigationTreeItemLink>Shared</NavigationTreeItemLink>
+          <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+        </NavigationTreeItemContent>
+        <NavigationTreeItem id="food" href="/food" textValue="Food">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Food</NavigationTreeItemLink>
+            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <NavigationTreeItem id="drinks" href="/drinks" textValue="Drinks">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Drinks</NavigationTreeItemLink>
+            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+      </NavigationTreeItem>
+    </NavigationTree>
+  )}
+</RoutedNavigationTree>
+```
+
+[Menu](../Menu#asynchronous-loading) also gets a big upgrade this release: it now supports async loading and empty states! Load menu items from an API as the user scrolls with the new `MenuLoadMoreItem` and use `renderEmptyState` to show a indicator when data is loading or when the menu is empty.
+
+```tsx render hideCode
+"use client"
+
+import {MenuTrigger, Menu, MenuItem, MenuLoadMoreItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Collection} from 'react-aria-components/Collection';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
+
+interface Character {
+  name: string;
+  birth_year: string;
+}
+
+function AsyncMenuExample() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) cursor = cursor.replace(/^http:\/\//i, 'https://');
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
+      let json = await res.json();
+      return {items: json.results, cursor: json.next};
+    }
+  });
+
+  return (
+    <MenuTrigger>
+      <Button>Select Character</Button>
+      <Menu
+        aria-label="Characters"
+        renderEmptyState={() => list.loadingState === 'loading' ? 'Loading…' : 'No characters found'}>
+        <Collection items={list.items}>
+          {(item) => <MenuItem id={item.name}>{item.name}</MenuItem>}
+        </Collection>
+        <MenuLoadMoreItem
+          onLoadMore={list.loadMore}
+          isLoading={list.loadingState === 'loadingMore'} />
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
+## TokenField selection API update
+
+`TokenFieldValue` now tracks the full selected range instead of a single caret position. The `caretPosition` property is replaced by `selectedRange`, which stores both the anchor and current offsets so a range selection can be restored after an undo or redo. Use `withSelectedRange` to update the selection going forward.
+
+Finally, this release also features many fixes and updates from external contributors! As always, a big thank you for all the support!
+
+## Changelog
+
+### General Changes
+- Re-export `FocusableElement`, `HoverEvent`, and `KeyboardEvent` types from `react-aria-components` - [@sobol-sudo](https://github.com/sobol-sudo) - [PR](https://github.com/adobe/react-spectrum/pull/10366)
+- Export `setInteractionModality` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10491)
+- Keep the interaction modality on window refocus so Safari doesn't show a focus ring - [@daveycodez](https://github.com/daveycodez) - [PR](https://github.com/adobe/react-spectrum/pull/10513)
+- Apply hook filters in `optimize-locales-plugin` so unused locale strings are removed - [@wojtekmaj](https://github.com/wojtekmaj) - [PR](https://github.com/adobe/react-spectrum/pull/10302)
+- Improve `setStyle` and focus handling in `usePreventScroll` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10434)
+- Upgrade to TypeScript 7 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10461)
+### Calendar
+- Allow selecting dates outside the visible range when `isDateUnavailable` is set - [@cycsmail](https://github.com/cycsmail) - [PR](https://github.com/adobe/react-spectrum/pull/10328)
+### Checkbox
+- Update`inputRef` type to accept callback refs - [@timges](https://github.com/timges) - [PR](https://github.com/adobe/react-spectrum/pull/10451)
+### ColorField
+- Commit the value when pressing Enter - [@grayashh](https://github.com/grayashh) - [PR](https://github.com/adobe/react-spectrum/pull/10450)
+### Collections
+- Select the autofocused item when `selectOnFocus` is enabled - [@xevrion](https://github.com/xevrion) - [PR](https://github.com/adobe/react-spectrum/pull/10396)
+### Date and Time
+- Fix Ethiopic and Coptic year estimation in `julianDayToCE` on new year dates - [@FrancoKaddour](https://github.com/FrancoKaddour) - [PR](https://github.com/adobe/react-spectrum/pull/10424)
+### Dialog
+- Allow DialogTrigger to work when nested inside Tabs - [@RobHannay](https://github.com/RobHannay) - [PR](https://github.com/adobe/react-spectrum/pull/10367)
+- Support Select and Combobox inside a Dialog - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10430)
+### Form
+- Add Formisch to the form libraries section of the forms doc guide - [@fabian-hiller](https://github.com/fabian-hiller) - [PR](https://github.com/adobe/react-spectrum/pull/10410)
+### Menu
+- Add async loading and empty state support to Menu - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10494)
+- Add typeahead support to Menu example in docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10508)
+### NavigationTree
+- Add NavigationTree component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10404), [PR](https://github.com/adobe/react-spectrum/pull/10507)
+### Overlays
+- Fix position overlays on iOS 26 - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/10456)
+- Guard against a null restore target in `FocusScope` `restoreFocus` - [@Faithfinder](https://github.com/Faithfinder) - [PR](https://github.com/adobe/react-spectrum/pull/10371)
+### RadioGroup
+- Update`inputRef` type to accept callback refs - [@timges](https://github.com/timges) - [PR](https://github.com/adobe/react-spectrum/pull/10451)
+### Switch
+- Update `inputRef` type to accept callback refs - [@timges](https://github.com/timges) - [PR](https://github.com/adobe/react-spectrum/pull/10451)
+### Table
+- Insert at the end when dropping past the last row instead of failing to resolve the drop target - [@meesvandongen](https://github.com/meesvandongen) - [PR](https://github.com/adobe/react-spectrum/pull/10464)
+### Tabs
+- Keep ArrowLeft and ArrowRight consistent in RTL vertical orientation - [@starboyvarun](https://github.com/starboyvarun) - [PR](https://github.com/adobe/react-spectrum/pull/10467)
+### TokenField
+- Track the TokenField selection range to allow external control and restore selection on undo - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10438), [PR](https://github.com/adobe/react-spectrum/pull/10505)
+- Fix IME composition in Firefox - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/10422)
+- Fix TokenField docs regex for IME - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10474)
+
+## Released packages
+
+```
+ - @internationalized/date@3.12.4
+ - @internationalized/number@3.6.8
+ - @react-aria/test-utils@1.0.0-rc.1
+ - @react-aria/optimize-locales-plugin@2.0.2
+ - @react-aria/mcp@1.2.1
+ - react-aria@3.52.0
+ - react-aria-components@1.21.0
+ - react-stately@3.50.0
+```

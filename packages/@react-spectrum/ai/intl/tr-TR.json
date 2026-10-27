@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Bilgilendirici",
+  "alert.negative": "Negatif",
+  "alert.notice": "Not",
+  "alert.positive": "Pozitif",
+  "attachmentlist.nextAttachments": "Sonraki ekleri göster",
+  "attachmentlist.previousAttachments": "Önceki ekleri göster",
   "chat.newMessage": "Yeni mesaj",
+  "chat.scrollToBottom": "Aşağı kaydır",
   "messagefeedback.thumbDown": "Yanıt kötüydü",
   "messagefeedback.thumbUp": "Yanıt iyiydi",
-  "responsestatus.loading": "Yükleniyor"
+  "promptfield.aiDisclaimer": "Yanıtlar yapay zeka yardımıyla oluşturulmuş olup, hata içerebilir. Kullanmadan önce kontrol edin.",
+  "promptfield.aiUserGuidlines": "Yapay Zeka Kullanıcı Kılavuzları",
+  "promptfield.attachments": "Ekler",
+  "promptfield.insertButton": "Ekle",
+  "promptfield.label": "İstem",
+  "promptfield.placeholder": "Başlamaya hazır mısınız? Soru sorun, fikir paylaşın veya görev ekleyin.",
+  "promptfield.placeholder.small": "İstediğinizi sorun",
+  "promptfield.stopButton": "Durdur",
+  "promptfield.submitButton": "Gönder",
+  "promptfield.uploading": "Karşıya yükleniyor",
+  "responsestatus.loading": "Yükleniyor",
+  "responsestatus.processing": "İşleniyor...",
+  "voicebutton.startListening": "Kaydetmeye başla",
+  "voicebutton.stopListening": "Kaydetmeyi durdur"
 }

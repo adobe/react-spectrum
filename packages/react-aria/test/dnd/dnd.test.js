@@ -23,9 +23,10 @@ import {
 } from './mocks';
 import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../../src/dnd/utils';
-import React, {useEffect} from 'react';
+import React, {Profiler, useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import {setMedia} from 'mock-match-media';
+import {useDrag} from '../../src/dnd/useDrag';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
@@ -2710,12 +2711,21 @@ describe('useDrag and useDrop', function () {
   });
 
   describe('screen reader', () => {
+    let platformGetter;
+    let userAgentGetter;
+
     beforeEach(async () => {
+      platformGetter = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'iPhone');
+      userAgentGetter = jest
+        .spyOn(navigator, 'userAgent', 'get')
+        .mockImplementation(() => 'AppleWebKit');
       // reset focus visible state
       fireEvent.click(document.body, {detail: 0, pointerType: null});
     });
 
     afterEach(async () => {
+      platformGetter.mockRestore();
+      userAgentGetter.mockRestore();
       await user.keyboard('{Escape}');
     });
 
@@ -2952,7 +2962,11 @@ describe('useDrag and useDrop', function () {
         draggable,
         pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0})
       );
-      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
+      await user.pointer({
+        target: draggable,
+        keys: '[MouseLeft]',
+        coords: {clientX: 50, clientY: 25, width: 1, height: 1}
+      });
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
       expect(draggable).toHaveAttribute('aria-describedby');
@@ -3017,7 +3031,11 @@ describe('useDrag and useDrop', function () {
         draggable,
         pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0})
       );
-      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
+      await user.pointer({
+        target: draggable,
+        keys: '[MouseLeft]',
+        coords: {clientX: 50, clientY: 25, width: 1, height: 1}
+      });
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 
@@ -3329,6 +3347,57 @@ describe('useDrag and useDrop', function () {
       expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent(
         'Double tap to drop.'
       );
+    });
+  });
+
+  describe('description', () => {
+    it('should not re-render draggables that mount after the description already exists', () => {
+      function TestDraggable({id}) {
+        let {dragProps} = useDrag({
+          getItems: () => [{'text/plain': id}]
+        });
+        return (
+          <div {...dragProps} role="button" tabIndex={0}>
+            {id}
+          </div>
+        );
+      }
+
+      let updated = [];
+      let onRender = (id, phase) => {
+        if (phase !== 'mount') {
+          updated.push(id);
+        }
+      };
+
+      let tree = render(<TestDraggable id="first" />);
+      let descriptionId = tree.getByText('first').getAttribute('aria-describedby');
+      let description = document.getElementById(descriptionId).textContent;
+      expect(description).toMatch(/drag/i);
+
+      tree.rerender(
+        <>
+          <TestDraggable id="first" />
+          <Profiler id="second" onRender={onRender}>
+            <TestDraggable id="second" />
+          </Profiler>
+          <Profiler id="third" onRender={onRender}>
+            <TestDraggable id="third" />
+          </Profiler>
+        </>
+      );
+
+      expect(updated).toEqual([]);
+      expect(tree.getByText('second')).toHaveAttribute('aria-describedby', descriptionId);
+      expect(tree.getByText('third')).toHaveAttribute('aria-describedby', descriptionId);
+
+      tree.rerender(<></>);
+      expect(document.getElementById(descriptionId)).toBeNull();
+
+      tree.rerender(<TestDraggable id="fourth" />);
+      let fourthDescriptionId = tree.getByText('fourth').getAttribute('aria-describedby');
+      expect(fourthDescriptionId).not.toBe(descriptionId);
+      expect(document.getElementById(fourthDescriptionId)).toHaveTextContent(description);
     });
   });
 });

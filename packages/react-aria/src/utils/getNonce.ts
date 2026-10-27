@@ -10,17 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {getOwnerWindow} from './domHelpers';
-
-type NonceWindow = Window &
-  typeof globalThis & {
-    __webpack_nonce__?: string;
-  };
-
-function getWebpackNonce(doc?: Document): string | undefined {
-  let ownerWindow = doc?.defaultView as NonceWindow | null | undefined;
-  return ownerWindow?.__webpack_nonce__ || globalThis['__webpack_nonce__'] || undefined;
-}
+import {getMetaValue} from './getMetaValue';
+import {getOwnerDocument} from './domHelpers';
 
 let nonceCache = new WeakMap<Document, string>();
 
@@ -35,25 +26,13 @@ export function resetNonceCache(): void {
  * Security Policy.
  */
 export function getNonce(doc?: Document): string | undefined {
-  let d = doc ?? (typeof document !== 'undefined' ? document : undefined);
-  if (!d) {
-    return getWebpackNonce(d);
-  }
+  let ownerDocument = getOwnerDocument(doc);
 
-  if (nonceCache.has(d)) {
-    return nonceCache.get(d);
-  }
-
-  let meta = d.querySelector('meta[property="csp-nonce"]');
-  let nonce =
-    (meta &&
-      meta instanceof getOwnerWindow(meta).HTMLMetaElement &&
-      (meta.nonce || meta.content)) ||
-    getWebpackNonce(d) ||
-    undefined;
+  let nonce = nonceCache.get(ownerDocument);
+  nonce ??= getMetaValue('csp-nonce', ownerDocument);
 
   if (nonce !== undefined) {
-    nonceCache.set(d, nonce);
+    nonceCache.set(ownerDocument, nonce);
   }
   return nonce;
 }

@@ -1355,8 +1355,7 @@ describe('ListView', function () {
         await user.keyboard('[ControlLeft>]');
         await user.pointer({
           target: getRow(tree, 'Bar'),
-          keys: '[MouseLeft]',
-          coords: {pressure: 0.5}
+          keys: '[MouseLeft]'
         });
         await user.keyboard('[/ControlLeft]');
 
@@ -1496,7 +1495,7 @@ describe('ListView', function () {
         });
 
         let rows = tree.getAllByRole('row');
-        await user.pointer({target: rows[0], keys: '[MouseLeft]', coords: {pressure: 0.5}});
+        await user.pointer({target: rows[0], keys: '[MouseLeft]'});
         checkSelection(onSelectionChange, ['foo']);
         onSelectionChange.mockClear();
         expect(announce).toHaveBeenLastCalledWith('Foo selected.');

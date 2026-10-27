@@ -138,7 +138,8 @@ export function useDateSegment(
         // Firefox does not fire selectstart for Ctrl/Cmd + A
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
       }
-    }
+    },
+    allowRepeats: true
   });
 
   // Safari dayPeriod option doesn't work...
@@ -167,7 +168,9 @@ export function useDateSegment(
     let eras = state.calendar.getEras().map(era => {
       let eraDate = date.set({year: 1, month: 1, day: 1, era}).toDate('UTC');
       let parts = eraFormatter.formatToParts(eraDate);
-      let formatted = parts.find(p => p.type === 'era')!.value;
+      // Some eras have no localized name in CLDR (e.g. the Coptic 'BCE' era), in which case
+      // Intl omits the era part entirely. Fall back to the era identifier so it stays typeable.
+      let formatted = parts.find(p => p.type === 'era')?.value ?? era;
       return {era, formatted};
     });
 
@@ -264,7 +267,13 @@ export function useDateSegment(
     // Otherwise, when tapping on a segment in Android Chrome and then entering text,
     // composition events will be fired that break the DOM structure and crash the page.
     let selection = window.getSelection();
-    if (selection?.anchorNode && nodeContains(ref.current, selection?.anchorNode)) {
+    // Only collapse while focused, otherwise a stale anchor left in the segment (e.g. on Firefox)
+    // steals focus back into it on selectionchange. See #10259.
+    if (
+      selection?.anchorNode &&
+      nodeContains(ref.current, selection?.anchorNode) &&
+      getActiveElement() === ref.current
+    ) {
       selection.collapse(ref.current);
     }
   });

@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Tájékoztató",
+  "alert.negative": "Negatív",
+  "alert.notice": "Értesítés",
+  "alert.positive": "Pozitív",
+  "attachmentlist.nextAttachments": "Következő mellékletek megjelenítése",
+  "attachmentlist.previousAttachments": "Előző mellékletek megjelenítése",
   "chat.newMessage": "Új üzenet",
+  "chat.scrollToBottom": "Görgetés az aljára",
   "messagefeedback.thumbDown": "Rossz válasz",
   "messagefeedback.thumbUp": "Jó válasz",
-  "responsestatus.loading": "Betöltés folyamatban"
+  "promptfield.aiDisclaimer": "Előfordulhat, hogy a válaszokat mesterséges intelligencia generálja, így pontatlanok lehetnek. Felhasználás előtt ellenőrizze őket.",
+  "promptfield.aiUserGuidlines": "MI felhasználói útmutató",
+  "promptfield.attachments": "Mellékletek",
+  "promptfield.insertButton": "Hozzáadás",
+  "promptfield.label": "Utasítás",
+  "promptfield.placeholder": "Készen áll a kezdésre? Tegyen fel egy kérdést, ossza meg az ötletét, vagy adjon hozzá egy feladatot.",
+  "promptfield.placeholder.small": "Kérdezzen bármit",
+  "promptfield.stopButton": "Leállítás",
+  "promptfield.submitButton": "Küldés",
+  "promptfield.uploading": "Feltöltés",
+  "responsestatus.loading": "Betöltés folyamatban",
+  "responsestatus.processing": "Feldolgozás folyamatban...",
+  "voicebutton.startListening": "Felvétel indítása",
+  "voicebutton.stopListening": "Felvétel leállítása"
 }

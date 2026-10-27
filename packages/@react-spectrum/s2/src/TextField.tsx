@@ -47,6 +47,7 @@ import {
 } from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {InputContext, InputProps} from 'react-aria-components/Input';
+import {isChrome} from 'react-aria/private/utils/platform';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {StyleString} from '../style/types';
 import {TextContext} from './Content';
@@ -123,8 +124,18 @@ export const TextArea = forwardRef(function TextArea(
       ref={ref}
       fieldGroupCss={style({
         alignItems: 'baseline',
-        height: 'auto'
-      })}>
+        height: 'auto',
+        paddingTop: {
+          // The textarea opts out of baseline alignment (see TextAreaInput) because Chrome
+          // computes an unstable baseline for empty textareas, causing the field height to
+          // jump when an overlay opens. Instead, we pad the group's hidden ::before baseline
+          // anchor down so its baseline lands on the textarea's first line of text, keeping
+          // the prefix, error icon, and side label aligned as if the textarea participated.
+          isChrome: {
+            '::before': '[calc((var(--field-height) - 1lh) / 2)]'
+          }
+        }
+      })({isChrome: isChrome()})}>
       <TextAreaInput />
     </TextFieldBase>
   );
@@ -270,13 +281,20 @@ function TextAreaInput() {
         fontSize: 'inherit',
         fontWeight: 'inherit',
         lineHeight: 'inherit',
+        // Don't baseline align with the FieldGroup - Chrome's baseline for an empty textarea
+        // is unstable (https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/textarea#baseline_inconsistency).
+        // paddingY centers the first line within --field-height, matching the padded
+        // ::before baseline anchor on the FieldGroup.
+        alignSelf: {
+          isChrome: 'start'
+        },
         flexGrow: 1,
         minWidth: 0,
         outlineStyle: 'none',
         borderStyle: 'none',
         resize: 'none',
         overflowX: 'hidden'
-      })}
+      })({isChrome: isChrome()})}
     />
   );
 }

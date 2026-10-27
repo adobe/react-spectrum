@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Informativo",
+  "alert.negative": "Negativo",
+  "alert.notice": "Aviso",
+  "alert.positive": "Positivo",
+  "attachmentlist.nextAttachments": "Mostrar os próximos anexos",
+  "attachmentlist.previousAttachments": "Mostrar os anexos anteriores",
   "chat.newMessage": "Nova mensagem",
+  "chat.scrollToBottom": "Deslizar até ao fim da página",
   "messagefeedback.thumbDown": "Má resposta",
   "messagefeedback.thumbUp": "Boa resposta",
-  "responsestatus.loading": "A carregar"
+  "promptfield.aiDisclaimer": "As respostas são geradas com recurso a IA e podem ser imprecisas. Verifique antes de utilizar.",
+  "promptfield.aiUserGuidlines": "Diretrizes do utilizador sobre IA",
+  "promptfield.attachments": "Anexos",
+  "promptfield.insertButton": "Adicionar",
+  "promptfield.label": "Pedido",
+  "promptfield.placeholder": "Pronto para começar? Faça uma pergunta, partilhe uma ideia ou adicione uma tarefa.",
+  "promptfield.placeholder.small": "Pergunte o que quiser",
+  "promptfield.stopButton": "Parar",
+  "promptfield.submitButton": "Enviar",
+  "promptfield.uploading": "A carregar",
+  "responsestatus.loading": "A carregar",
+  "responsestatus.processing": "A processar...",
+  "voicebutton.startListening": "Iniciar a gravação",
+  "voicebutton.stopListening": "Parar a gravação"
 }

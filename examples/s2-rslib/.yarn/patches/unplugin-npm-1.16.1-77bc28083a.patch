@@ -1,0 +1,84 @@
+diff --git a/dist/index.js b/dist/index.js
+index 6a30f19344431fcbd495c8951695bdd2e5917583..00f310c9123972aa013a924bcc9c8d5b7cb20205 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1646,19 +1646,38 @@ function decodeVirtualModuleId(encoded, _plugin) {
+ function isVirtualModuleId(encoded, plugin) {
+   return (0, import_path8.dirname)(encoded) === plugin.__virtualModulePrefix;
+ }
+-var FakeVirtualModulesPlugin = class {
++var FakeVirtualModulesPlugin = class FakeVirtualModulesPlugin {
++  // PATCH (ported from unplugin>=2.x): share the virtual dir per-process and
++  // reference-count it so parallel compilers in one process (e.g. rslib's js+dts)
++  // don't delete the dir out from under each other on shutdown.
++  static counters = /* @__PURE__ */ new Map();
++  static initCleanup = false;
++  name = "FakeVirtualModulesPlugin";
+   constructor(plugin) {
+     this.plugin = plugin;
++    if (!FakeVirtualModulesPlugin.initCleanup) {
++      FakeVirtualModulesPlugin.initCleanup = true;
++      process.once("exit", () => {
++        FakeVirtualModulesPlugin.counters.forEach((_, dir) => {
++          import_fs3.default.rmSync(dir, { recursive: true, force: true });
++        });
++      });
++    }
+   }
+-  name = "FakeVirtualModulesPlugin";
+   apply(compiler) {
+     const dir = this.plugin.__virtualModulePrefix;
+     if (!import_fs3.default.existsSync(dir)) {
+       import_fs3.default.mkdirSync(dir, { recursive: true });
+     }
++    const counter = FakeVirtualModulesPlugin.counters.get(dir) ?? 0;
++    FakeVirtualModulesPlugin.counters.set(dir, counter + 1);
+     compiler.hooks.shutdown.tap(this.name, () => {
+-      if (import_fs3.default.existsSync(dir)) {
+-        import_fs3.default.rmdirSync(dir, { recursive: true });
++      const remaining = (FakeVirtualModulesPlugin.counters.get(dir) ?? 1) - 1;
++      if (remaining === 0) {
++        FakeVirtualModulesPlugin.counters.delete(dir);
++        import_fs3.default.rmSync(dir, { recursive: true, force: true });
++      } else {
++        FakeVirtualModulesPlugin.counters.set(dir, remaining);
+       }
+     });
+   }
+@@ -1682,7 +1701,7 @@ function getRspackPlugin(factory) {
+   return (userOptions) => {
+     return {
+       apply(compiler) {
+-        const VIRTUAL_MODULE_PREFIX = (0, import_path9.resolve)(compiler.options.context ?? process.cwd(), "node_modules/.virtual");
++        const VIRTUAL_MODULE_PREFIX = (0, import_path9.resolve)(compiler.options.context ?? process.cwd(), "node_modules/.virtual", compiler.rspack.experiments.VirtualModulesPlugin ? "" : process.pid.toString());
+         const injected = compiler.$unpluginContext || {};
+         compiler.$unpluginContext = injected;
+         const meta = {
+@@ -1710,7 +1729,7 @@ function getRspackPlugin(factory) {
+           });
+           const externalModules = /* @__PURE__ */ new Set();
+           if (plugin.resolveId) {
+-            const vfs = new FakeVirtualModulesPlugin(plugin);
++            const vfs = compiler.rspack.experiments.VirtualModulesPlugin ? new compiler.rspack.experiments.VirtualModulesPlugin() : new FakeVirtualModulesPlugin(plugin);
+             vfs.apply(compiler);
+             plugin.__vfsModules = /* @__PURE__ */ new Set();
+             compiler.hooks.compilation.tap(plugin.name, (compilation, { normalModuleFactory }) => {
+@@ -1744,11 +1763,16 @@ function getRspackPlugin(factory) {
+                 if (isExternal)
+                   externalModules.add(resolved);
+                 if (!import_fs4.default.existsSync(resolved)) {
++                  const encodedVirtualPath = encodeVirtualModuleId(resolved, plugin);
+                   if (!plugin.__vfsModules.has(resolved)) {
+                     plugin.__vfsModules.add(resolved);
+-                    await vfs.writeModule(resolved);
++                    if (compiler.rspack.experiments.VirtualModulesPlugin) {
++                      await vfs.writeModule(encodedVirtualPath, "");
++                    } else {
++                      await vfs.writeModule(resolved);
++                    }
+                   }
+-                  resolved = encodeVirtualModuleId(resolved, plugin);
++                  resolved = encodedVirtualPath;
+                 }
+                 resolveData.request = resolved;
+               });

@@ -46,14 +46,12 @@ export function useDatePickerGroup(
 
             if (prev) {
               prev.focus();
-              return;
             }
           }
         } else {
           focusManager.focusPrevious();
-          return;
         }
-        return false;
+        return;
       },
       ArrowRight: e => {
         if (disableArrowNavigation) {
@@ -66,16 +64,15 @@ export function useDatePickerGroup(
 
             if (next) {
               next.focus();
-              return;
             }
           }
         } else {
           focusManager.focusNext();
-          return;
         }
-        return false;
+        return;
       }
-    }
+    },
+    allowRepeats: true
   });
 
   // Focus the first placeholder segment from the end on mouse down/touch up in the field.

@@ -48,6 +48,12 @@ describe('Link', () => {
     expect(link).toHaveAttribute('id', 'my-link-id');
   });
 
+  it('should support accessibility props', () => {
+    let {getByRole} = render(<Link aria-current="page">Test</Link>);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('aria-current', 'page');
+  });
+
   it('should support render props', async () => {
     let {getByRole} = render(<Link>{({isHovered}) => (isHovered ? 'Hovered' : 'Test')}</Link>);
     let link = getByRole('link');
@@ -142,12 +148,18 @@ describe('Link', () => {
 
   it('should support press state', async () => {
     let onPress = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPressChange = jest.fn();
     let onClick = jest.fn();
     let onClickCapture = jest.fn();
     let {getByRole} = render(
       <Link
         className={({isPressed}) => (isPressed ? 'pressed' : '')}
         onPress={onPress}
+        onPressStart={onPressStart}
+        onPressEnd={onPressEnd}
+        onPressChange={onPressChange}
         onClick={onClick}
         onClickCapture={onClickCapture}>
         Test
@@ -166,6 +178,9 @@ describe('Link', () => {
     expect(link).not.toHaveAttribute('data-pressed');
     expect(link).not.toHaveClass('pressed');
 
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPressChange).toHaveBeenCalledTimes(2);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onClickCapture).toHaveBeenCalledTimes(1);

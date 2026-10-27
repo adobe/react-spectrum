@@ -16,6 +16,7 @@ import clsx from 'clsx';
 import {Context} from './context';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {getVersion} from './version-macro' with {type: 'macro'};
 import {I18nProvider, useLocale} from 'react-aria/I18nProvider';
 import {ModalProvider, useModalProvider} from 'react-aria/private/overlays/useModal';
 import {ProviderContext, ProviderProps} from './types';
@@ -27,8 +28,9 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/ind
 import {useColorScheme, useScale} from './mediaQueries';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useStyleProps} from '../utils/styleProps';
-// @ts-ignore
-import {version} from '../../package.json';
+
+// A macro ensures that we don't import the entire package.json.
+const version = getVersion();
 
 const DEFAULT_BREAKPOINTS = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
 

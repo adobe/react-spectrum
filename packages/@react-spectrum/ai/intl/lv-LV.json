@@ -1,6 +1,26 @@
 {
+  "alert.informative": "Informatīvs",
+  "alert.negative": "Negatīvs",
+  "alert.notice": "Paziņojums",
+  "alert.positive": "Pozitīvs",
+  "attachmentlist.nextAttachments": "Rādīt nākamos pielikumus",
+  "attachmentlist.previousAttachments": "Rādīt iepriekšējos pielikumus",
   "chat.newMessage": "Jauns ziņojums",
+  "chat.scrollToBottom": "Ritināt uz leju",
   "messagefeedback.thumbDown": "Slikta atbilde",
   "messagefeedback.thumbUp": "Laba atbilde",
-  "responsestatus.loading": "Notiek ielāde"
+  "promptfield.aiDisclaimer": "Mākslīgā intelekta ģenerētās atbildes var būt neprecīzas. Lūdzu, pārbaudiet tās pirms izmantošanas.",
+  "promptfield.aiUserGuidlines": "Mākslīgā intelekta lietošanas vadlīnijas",
+  "promptfield.attachments": "Pielikumi",
+  "promptfield.insertButton": "Pievienot",
+  "promptfield.label": "Uzvedne",
+  "promptfield.placeholder": "Vai esat gatavs sākt? Uzdodiet jautājumu, dalieties pārdomās vai pievienojiet jaunu uzdevumu.",
+  "promptfield.placeholder.small": "Jautājiet jebko",
+  "promptfield.stopButton": "Apturēt",
+  "promptfield.submitButton": "Nosūtīt",
+  "promptfield.uploading": "Notiek augšupielāde",
+  "responsestatus.loading": "Notiek ielāde",
+  "responsestatus.processing": "Notiek apstrāde...",
+  "voicebutton.startListening": "Sākt ierakstīšanu",
+  "voicebutton.stopListening": "Apturēt ierakstīšanu"
 }
