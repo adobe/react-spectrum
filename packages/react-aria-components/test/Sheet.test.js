@@ -514,6 +514,26 @@ describe('Sheet', () => {
       expect(tree.queryByRole('dialog')).toBeNull();
     });
 
+    it('finishes exit via scrollend when IntersectionObserver never reports ratio 0', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
+      await open(tree);
+
+      // Mark the sheet visible so onExit waits for the close event / scrollend fallback.
+      intersect(1);
+      let overlay = tree.getByTestId('overlay');
+      let scroller = overlay.querySelector('[data-sheet-scroll]');
+      await user.click(within(tree.getByRole('dialog')).getByRole('button', {name: 'Close'}));
+
+      // Simulate a missing ratio-0 report: only scrollend at the exit position.
+      await act(async () => {
+        scroller.dispatchEvent(new Event('scrollend'));
+      });
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
     it('calls onOpenChange when a controlled sheet without a trigger is swiped out of view', async () => {
       let onOpenChange = jest.fn();
       let tree = render(<StandaloneSheet isOpen onOpenChange={onOpenChange} />);

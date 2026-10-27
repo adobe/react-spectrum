@@ -448,8 +448,33 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
         scrollAlongAxis(scroller, axis, target, true);
 
         // The close event is dispatched on the overlay wrapper by the IntersectionObserver below.
+        // Fall back to scrollend at the exit position when that last ratio-0 report never arrives
+        // (seen on busy CI). See https://github.com/adobe/react-spectrum/issues/10813
         return new Promise<void>(resolve => {
-          element.addEventListener('react-aria-sheet-close', () => resolve(), {once: true});
+          let done = false;
+          let finish = () => {
+            if (done) {
+              return;
+            }
+            done = true;
+            element.removeEventListener('react-aria-sheet-close', onClose);
+            scroller.removeEventListener('scrollend', onScrollEnd);
+            resolve();
+          };
+          let onClose = () => finish();
+          let onScrollEnd = () => {
+            let pos = axis === 'y' ? scroller.scrollTop : scroller.scrollLeft;
+            if (Math.abs(pos - target) < 1) {
+              finish();
+            }
+          };
+          element.addEventListener('react-aria-sheet-close', onClose, {once: true});
+          // eslint-disable-next-line rsp-rules/no-non-composing-event-listener
+          scroller.addEventListener('scrollend', onScrollEnd);
+          let pos = axis === 'y' ? scroller.scrollTop : scroller.scrollLeft;
+          if (Math.abs(pos - target) < 1) {
+            finish();
+          }
         });
       }}>
       {renderProps => (
