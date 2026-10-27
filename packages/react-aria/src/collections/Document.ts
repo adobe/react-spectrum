@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/* eslint-disable rsp-rules/shadow-safe-parent-node */
+
 import {BaseCollection, CollectionNode, Mutable} from './BaseCollection';
 import {CollectionNodeClass} from './CollectionBuilder';
 import {CSSProperties, ForwardedRef, ReactElement, ReactNode} from 'react';

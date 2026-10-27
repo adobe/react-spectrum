@@ -23,7 +23,7 @@ import {
   RefObject
 } from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
-import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getEventTarget, getParentElement} from '../utils/shadowdom/DOMFunctions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
 import {isCtrlKeyPressed} from '../utils/keyboard';
 import {isTabbable} from '../utils/isFocusable';
@@ -474,7 +474,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       if (elCollection != null) {
         return elCollection !== collectionId;
       }
-      el = el.parentElement;
+      el = getParentElement(el);
     }
     return isTabbable(target);
   };

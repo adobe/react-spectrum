@@ -174,6 +174,8 @@
     "rsp-rules/no-non-shadow-contains": ["error"],
     "rsp-rules/safe-event-target": ["error"],
     "rsp-rules/shadow-safe-active-element": ["error"],
+    "rsp-rules/shadow-safe-parent-element": ["error"],
+    "rsp-rules/shadow-safe-parent-node": ["error"],
     "rsp-rules/faster-node-contains": ["error"],
     "rsp-rules/imports": ["error"],
     "rsp-rules/use-layout-effect-rule": ["error"],
@@ -277,6 +279,8 @@
         "rsp-rules/no-non-shadow-contains": "off",
         "rsp-rules/safe-event-target": "off",
         "rsp-rules/shadow-safe-active-element": "off",
+        "rsp-rules/shadow-safe-parent-element": "off",
+        "rsp-rules/shadow-safe-parent-node": "off",
         "rsp-rules/faster-node-contains": "off",
         "rsp-rules/imports": "off",
         "monorepo/no-internal-import": "off",
@@ -358,7 +362,9 @@
       "rules": {
         "rsp-rules/faster-node-contains": "off",
         "rsp-rules/no-non-shadow-contains": "off",
-        "rsp-rules/shadow-safe-active-element": "off"
+        "rsp-rules/shadow-safe-active-element": "off",
+        "rsp-rules/shadow-safe-parent-element": "off",
+        "rsp-rules/shadow-safe-parent-node": "off"
       }
     },
     {
