@@ -240,8 +240,20 @@ export function useNumberFieldState(props: NumberFieldStateOptions): NumberField
     }
   };
 
+  // When signDisplay is 'never', a negative numberValue formats without a
+  // minus (e.g. -1 -> "1"). Re-parsing that string yields the absolute value,
+  // so stepping must start from numberValue whenever the input still matches
+  // the formatted committed value. Fall back to parsedValue only while the
+  // user is mid-edit with a different string.
+  let stepBaseValue = () => {
+    if (!isNaN(numberValue) && inputValue === format(numberValue)) {
+      return numberValue;
+    }
+    return parsedValue;
+  };
+
   let safeNextStep = (operation: '+' | '-', minMax: number = 0) => {
-    let prev = parsedValue;
+    let prev = stepBaseValue();
 
     if (isNaN(prev)) {
       // if the input is empty, start from the min/max value when incrementing/decrementing,
@@ -306,27 +318,36 @@ export function useNumberFieldState(props: NumberFieldStateOptions): NumberField
   };
 
   let canIncrement = useMemo(
-    () =>
-      !isDisabled &&
-      !isReadOnly &&
-      (isNaN(parsedValue) ||
-        maxValue === undefined ||
-        isNaN(maxValue) ||
-        snapValueToStep(parsedValue, minValue, maxValue, clampStep) > parsedValue ||
-        handleDecimalOperation('+', parsedValue, clampStep) <= maxValue),
-    [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]
+    () => {
+      let prev = stepBaseValue();
+      return (
+        !isDisabled &&
+        !isReadOnly &&
+        (isNaN(prev) ||
+          maxValue === undefined ||
+          isNaN(maxValue) ||
+          snapValueToStep(prev, minValue, maxValue, clampStep) > prev ||
+          handleDecimalOperation('+', prev, clampStep) <= maxValue)
+      );
+    },
+    // stepBaseValue closes over numberValue/inputValue/format/parsedValue
+    [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue, numberValue, inputValue, format]
   );
 
   let canDecrement = useMemo(
-    () =>
-      !isDisabled &&
-      !isReadOnly &&
-      (isNaN(parsedValue) ||
-        minValue === undefined ||
-        isNaN(minValue) ||
-        snapValueToStep(parsedValue, minValue, maxValue, clampStep) < parsedValue ||
-        handleDecimalOperation('-', parsedValue, clampStep) >= minValue),
-    [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]
+    () => {
+      let prev = stepBaseValue();
+      return (
+        !isDisabled &&
+        !isReadOnly &&
+        (isNaN(prev) ||
+          minValue === undefined ||
+          isNaN(minValue) ||
+          snapValueToStep(prev, minValue, maxValue, clampStep) < prev ||
+          handleDecimalOperation('-', prev, clampStep) >= minValue)
+      );
+    },
+    [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue, numberValue, inputValue, format]
   );
 
   let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
