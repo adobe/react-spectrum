@@ -405,6 +405,44 @@ describe('NumberField', () => {
     expect(onChange).toHaveBeenCalledWith(1024);
   });
 
+  it('should update the value before disabling on change', async () => {
+    function Example() {
+      let [value, setValue] = useState(25);
+      let [disabled, setDisabled] = useState(false);
+
+      let onChange = value => {
+        if (disabled) {
+          return;
+        }
+
+        setValue(value);
+        setDisabled(true);
+      };
+
+      return (
+        <>
+          <NumberField value={value} onChange={onChange} isDisabled={disabled}>
+            <Label>Cookies to buy</Label>
+            <Group>
+              <Input />
+              <Button slot="decrement">-</Button>
+              <Button slot="increment">+</Button>
+            </Group>
+          </NumberField>
+          <p>Current value: {value}</p>
+        </>
+      );
+    }
+
+    let {getByRole} = render(<Example />);
+    let input = getByRole('textbox');
+    let incrementButton = getByRole('button', {name: 'Increase Cookies to buy'});
+    await user.click(incrementButton);
+
+    expect(input).toHaveValue('26');
+    expect(input).toBeDisabled();
+  });
+
   it('should allow you to delete the first digit in a number if it is followed by a group separator', async () => {
     let {getByRole} = render(
       <TestNumberField defaultValue={1024} formatOptions={{useGrouping: true}} />
