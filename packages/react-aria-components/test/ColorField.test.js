@@ -13,6 +13,7 @@
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {ColorField, ColorFieldContext} from '../src/ColorField';
 import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {parseColor} from 'react-stately/Color';
@@ -166,6 +167,23 @@ describe('ColorField', () => {
     await user.tab();
     await user.keyboard('a');
     expect(onKeyDown).toHaveBeenCalledTimes(1);
+  });
+
+
+  it('inherits validationBehavior from Form', () => {
+    let {getByRole} = render(
+      <Form validationBehavior="aria">
+        <ColorField isRequired>
+          <Label>Color</Label>
+          <Input />
+          <FieldError />
+        </ColorField>
+      </Form>
+    );
+
+    let input = getByRole('textbox');
+    expect(input).not.toHaveAttribute('required');
+    expect(input).toHaveAttribute('aria-required');
   });
 
   it('supports validation errors', async () => {
