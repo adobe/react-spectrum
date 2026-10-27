@@ -256,6 +256,59 @@ describe('NumberField', () => {
     expect(numberfield).not.toHaveAttribute('data-invalid');
   });
 
+  it.each(['.', ','])(
+    'restores the original numbering system after entering only %s in an integer field',
+    async separator => {
+      let onChange = jest.fn();
+      let {getByRole} = render(
+        <I18nProvider locale="en-US">
+          <TestNumberField
+            defaultValue={1}
+            minValue={1}
+            maxValue={99}
+            formatOptions={{style: 'unit', unit: 'percent', maximumFractionDigits: 0}}
+            onChange={onChange}
+          />
+        </I18nProvider>
+      );
+      let input = getByRole('textbox');
+      expect(input).toHaveValue('1%');
+
+      await user.clear(input);
+      await user.keyboard(separator);
+      expect(input).toHaveValue(separator);
+      await user.tab();
+
+      expect(input).toHaveValue('1%');
+      expect(onChange).not.toHaveBeenCalled();
+    }
+  );
+
+  it('keeps the locale numbering system after a lone period in the percentage documentation example', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <I18nProvider locale="en-US">
+        <TestNumberField
+          defaultValue={0.05}
+          minValue={0}
+          formatOptions={{style: 'percent'}}
+          onChange={onChange}
+        />
+      </I18nProvider>
+    );
+    let input = getByRole('textbox');
+    expect(input).toHaveValue('5%');
+
+    await user.clear(input);
+    await user.keyboard('.');
+    expect(input).toHaveValue('.');
+    await user.tab();
+
+    expect(input).toHaveValue('0%');
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(0);
+  });
+
   it('supports pasting value in another numbering system', async () => {
     let {getByRole, rerender} = render(<TestNumberField />);
     let input = getByRole('textbox');
