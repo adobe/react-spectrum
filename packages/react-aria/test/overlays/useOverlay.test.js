@@ -313,7 +313,7 @@ describe('useOverlay', function () {
       expect(onCloseFirst).not.toHaveBeenCalled();
     });
 
-    it('should let CloseWatcher handle Escape when supported', function () {
+    it('should handle Escape keydown and prevent its default when CloseWatcher is supported', function () {
       let onClose = jest.fn();
       let onKeyDown = jest.fn();
       let res = render(
@@ -323,11 +323,12 @@ describe('useOverlay', function () {
       );
       let el = res.getByTestId('test');
 
-      fireEvent.keyDown(el, {key: 'Escape'});
-      expect(onKeyDown).toHaveBeenCalledTimes(1);
-      expect(onClose).not.toHaveBeenCalled();
-
-      closeWatcherInstances[0].onclose();
+      // Synthetic Escape events never reach a native CloseWatcher, so the keydown handler
+      // closes the overlay. Preventing the default keeps a real Escape from also firing the
+      // CloseWatcher.
+      let allowed = fireEvent.keyDown(el, {key: 'Escape'});
+      expect(allowed).toBe(false);
+      expect(onKeyDown).not.toHaveBeenCalled();
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -352,12 +353,14 @@ describe('useOverlay', function () {
       });
       expect(document.activeElement).toBe(firstInput);
 
+      // Escape in the first overlay closes the most recently opened one, matching the order
+      // the native CloseWatcher stack uses.
       fireEvent.keyDown(firstInput, {key: 'Escape'});
-      expect(onCloseSecond).not.toHaveBeenCalled();
+      expect(onCloseSecond).toHaveBeenCalledTimes(1);
       expect(onCloseFirst).not.toHaveBeenCalled();
 
       closeWatcherInstances[1].onclose();
-      expect(onCloseSecond).toHaveBeenCalledTimes(1);
+      expect(onCloseSecond).toHaveBeenCalledTimes(2);
       expect(onCloseFirst).not.toHaveBeenCalled();
     });
 
@@ -374,10 +377,6 @@ describe('useOverlay', function () {
       let innerEl = res.getByTestId('inner');
 
       fireEvent.keyDown(innerEl, {key: 'Escape'});
-      expect(onCloseInner).not.toHaveBeenCalled();
-      expect(onCloseOuter).not.toHaveBeenCalled();
-
-      act(() => MockCloseWatcher.closeTopMost());
       expect(onCloseInner).toHaveBeenCalledTimes(1);
       expect(onCloseOuter).not.toHaveBeenCalled();
       expect(res.queryByTestId('inner')).toBeNull();
