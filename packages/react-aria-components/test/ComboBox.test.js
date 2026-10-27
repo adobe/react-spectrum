@@ -785,6 +785,27 @@ describe('ComboBox', () => {
     expect(formData.getAll('combobox')).toEqual(['']);
   });
 
+  it('allows Mod+A to select input text when multi-select popover is open', async () => {
+    let onChange = jest.fn();
+    let {container} = render(
+      <TestComboBox selectionMode="multiple" defaultInputValue="an" onChange={onChange} />
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    await comboboxTester.open();
+    let input = comboboxTester.getCombobox();
+    expect(input).toHaveValue('an');
+
+    let preventDefault = jest.fn();
+    fireEvent.keyDown(input, {key: 'a', code: 'KeyA', keyCode: 65, metaKey: true, preventDefault});
+
+    // Select-all options is ignored by ComboBox state and must not steal Mod+A from the input.
+    expect(preventDefault).not.toHaveBeenCalled();
+    expect(onChange).not.toHaveBeenCalled();
+    for (let option of comboboxTester.getOptions()) {
+      expect(option).toHaveAttribute('aria-selected', 'false');
+    }
+  });
+
   it('should support deselection if multiple selection is enabled', async () => {
     let onChange = jest.fn();
     let {container} = render(
