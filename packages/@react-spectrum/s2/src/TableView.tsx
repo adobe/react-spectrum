@@ -87,6 +87,7 @@ import {DragPreview} from './DragPreview';
 import {Form} from 'react-aria-components/Form';
 import {
   getActiveElement,
+  getParentElement,
   isFocusWithin,
   nodeContains
 } from 'react-aria/private/utils/shadowdom/DOMFunctions';
@@ -1690,7 +1691,7 @@ function EditableCellInner(
     }
     let width = cellRef.current?.clientWidth || 0;
     let cell = cellRef.current;
-    let boundingRect = cell?.parentElement?.getBoundingClientRect();
+    let boundingRect = getParentElement(cell)?.getBoundingClientRect();
     let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
 
     let tableWidth = cellRef.current?.closest('[role="grid"],[role="treegrid"]')?.clientWidth || 0;
