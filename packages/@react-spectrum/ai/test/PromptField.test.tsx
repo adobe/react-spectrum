@@ -15,9 +15,12 @@ import {
   AttachFileMenuItem,
   InsertMenuButton,
   PromptField,
+  PromptFieldAttachmentList,
+  PromptFieldSubmitButton,
   PromptFieldToolbar,
   PromptTokenField
 } from '../src/PromptField';
+import {Attachment, AttachmentPreview} from '../src/AttachmentList';
 import {
   imageAttachment,
   installRangePolyfill,
@@ -525,6 +528,65 @@ describeOrSkip('PromptField', () => {
       expect(screen.getByLabelText('Attachments')).toBeInTheDocument();
       // The invalid state renders a decorative alert icon.
       expect(container.querySelector('svg')).toBeTruthy();
+    });
+  });
+
+  describe('collapsed', () => {
+    function CollapsibleField(props: {
+      isCollapsed: boolean;
+      onFocusChange?: (isFocused: boolean) => void;
+    }) {
+      return (
+        <PromptField
+          isCollapsed={props.isCollapsed}
+          onFocusChange={props.onFocusChange}
+          attachments={[imageAttachment('a1')]}>
+          <PromptFieldAttachmentList>
+            {attachment => (
+              <Attachment textValue={attachment.file.name}>
+                <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
+              </Attachment>
+            )}
+          </PromptFieldAttachmentList>
+          <PromptTokenField />
+          <PromptFieldToolbar>
+            <InsertMenuButton>
+              <AttachFileMenuItem />
+            </InsertMenuButton>
+            <PromptFieldSubmitButton />
+          </PromptFieldToolbar>
+        </PromptField>
+      );
+    }
+
+    it('hides attachments while collapsed and shows them when expanded', () => {
+      let {rerender} = render(<CollapsibleField isCollapsed />);
+      expect(screen.queryByLabelText('Attachments')).not.toBeInTheDocument();
+      expect(screen.getByRole('textbox', {name: 'AI Prompt'})).toBeInTheDocument();
+
+      rerender(<CollapsibleField isCollapsed={false} />);
+      expect(screen.getByLabelText('Attachments')).toBeInTheDocument();
+    });
+
+    it('keeps the submit button available while collapsed', () => {
+      render(<CollapsibleField isCollapsed />);
+      expect(screen.getByRole('button', {name: 'Submit AI prompt'})).toBeInTheDocument();
+    });
+
+    it('calls onFocusChange when focus enters and leaves the field', async () => {
+      let onFocusChange = jest.fn();
+      render(
+        <>
+          <CollapsibleField isCollapsed onFocusChange={onFocusChange} />
+          <button>Outside</button>
+        </>
+      );
+
+      await user.click(screen.getByRole('textbox', {name: 'AI Prompt'}));
+      expect(onFocusChange).toHaveBeenLastCalledWith(true);
+
+      await user.click(screen.getByRole('button', {name: 'Outside'}));
+      expect(onFocusChange).toHaveBeenLastCalledWith(false);
     });
   });
 
