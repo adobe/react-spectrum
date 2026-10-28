@@ -22,6 +22,7 @@ import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
+import {Modal, ModalOverlay} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
 import {Text} from '../src/Text';
@@ -1023,6 +1024,38 @@ describe('ComboBox', () => {
     expect(comboboxTester.getListbox()).toBeVisible();
     expect(comboboxTester.getCombobox()).toHaveFocus();
     expect(onOpenChange).toHaveBeenCalledTimes(0);
+  });
+
+  it('should not reopen the menu with menuTrigger="focus" when focus is restored after clicking outside', async () => {
+    let {getByRole, queryByRole, getByTestId} = render(
+      <ModalOverlay isOpen data-testid="overlay">
+        <Modal>
+          <Dialog aria-label="Dialog">
+            <TestComboBox menuTrigger="focus" />
+            <button>Other</button>
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    );
+    act(() => jest.runAllTimers());
+
+    let input = getByRole('combobox');
+    await user.click(input);
+    act(() => jest.runAllTimers());
+    expect(getByRole('listbox')).toBeVisible();
+
+    // FocusScope moves focus back to the input, which should not reopen the menu.
+    await user.click(getByTestId('overlay'));
+    act(() => jest.runAllTimers());
+    expect(input).toHaveFocus();
+    expect(queryByRole('listbox')).toBeNull();
+
+    // A focus that comes from the user still opens the menu.
+    await user.click(getByRole('button', {name: 'Other'}));
+    act(() => jest.runAllTimers());
+    await user.click(input);
+    act(() => jest.runAllTimers());
+    expect(getByRole('listbox')).toBeVisible();
   });
 
   it('should close the combobox when clicking on the button, and it should reopen if clicked again', async () => {
