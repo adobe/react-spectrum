@@ -99,6 +99,7 @@ import {
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
 } from 'react-aria/useTable';
+import {useVirtualizer} from 'react-aria/private/virtualizer/useVirtualizer';
 import {useVirtualizerState} from 'react-stately/useVirtualizerState';
 import {useVisuallyHidden, VisuallyHidden} from 'react-aria/VisuallyHidden';
 
@@ -695,6 +696,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
   });
 
   useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, bodyRef);
+  useVirtualizer({}, state, bodyRef);
   let onVisibleRectChange = useCallback(
     (rect: Rect) => {
       state.setVisibleRect(rect);
