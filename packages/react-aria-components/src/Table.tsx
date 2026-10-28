@@ -695,8 +695,14 @@ const EXPANSION_KEYS = {
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
   // oxlint-disable-next-line react/react-compiler
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, disallowTypeAhead, filter, ...DOMCollectionProps} = props;
+  let {
+    shouldUseVirtualFocus: _shouldUseVirtualFocus,
+    disallowTypeAhead: _disallowTypeAhead,
+    filter,
+    expandedKeys: propExpandedKeys,
+    defaultExpandedKeys: propDefaultExpandedKeys,
+    ...DOMCollectionProps
+  } = props;
   let tableContainerContext = useContext(ResizableTableContainerContext);
   ref = useObjectRef(
     useMemo(
@@ -704,9 +710,13 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       [ref, tableContainerContext?.tableRef]
     )
   );
+  // oxlint-disable-next-line react/react-compiler
   let [expandedKeys, setExpandedKeys] = useControlledState(
-    props.expandedKeys ? new Set(props.expandedKeys) : undefined,
-    props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
+    useMemo(() => (propExpandedKeys ? new Set(propExpandedKeys) : undefined), [propExpandedKeys]),
+    useMemo(
+      () => (propDefaultExpandedKeys ? new Set(propDefaultExpandedKeys) : new Set()),
+      [propDefaultExpandedKeys]
+    ),
     props.onExpandedChange
   );
   // oxlint-disable-next-line react/react-compiler
@@ -889,13 +899,19 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   let DOMProps = filterDOMProps(props, {global: true});
 
+  let dndContextValue = useMemo(
+    () => ({dragAndDropHooks, dragState, dropState}),
+    [dragAndDropHooks, dragState, dropState]
+  );
+  let dropIndicatorContextValue = useMemo(() => ({render: TableDropIndicatorWrapper}), []);
+
   return (
     <Provider
       values={[
         [TableStateContext, filteredState],
         [TableColumnResizeStateContext, layoutState],
-        [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
-        [DropIndicatorContext, {render: TableDropIndicatorWrapper}],
+        [DragAndDropContext, dndContextValue],
+        [DropIndicatorContext, dropIndicatorContextValue],
         [SelectableCollectionContext, null],
         [FieldInputContext, null]
       ]}>
