@@ -996,4 +996,67 @@ describe('Calendar', () => {
         .map(o => o.textContent)
     ).toEqual(['2026']);
   });
+
+  // https://github.com/adobe/react-spectrum/issues/10838
+  it('preserves the focused month when changing years in a bounded full-range list', async () => {
+    function Example() {
+      return (
+        <Calendar
+          aria-label="Appointment date"
+          defaultFocusedValue={new CalendarDate(2026, 6, 15)}
+          minValue={new CalendarDate(2000, 1, 1)}
+          maxValue={new CalendarDate(2100, 12, 31)}>
+          <header>
+            <CalendarMonthPicker>
+              {({items, value, onChange, 'aria-label': ariaLabel}) => (
+                <select
+                  aria-label={ariaLabel}
+                  value={value}
+                  onChange={e => onChange(Number(e.target.value))}>
+                  {items.map(item => (
+                    <option key={item.id} value={item.id}>
+                      {item.formatted}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </CalendarMonthPicker>
+            <CalendarYearPicker visibleYears={101}>
+              {({items, value, onChange, 'aria-label': ariaLabel}) => (
+                <select
+                  aria-label={ariaLabel}
+                  value={value}
+                  onChange={e => onChange(Number(e.target.value))}>
+                  {items.map(item => (
+                    <option key={item.id} value={item.id} data-date={item.date.toString()}>
+                      {item.formatted}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </CalendarYearPicker>
+          </header>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+        </Calendar>
+      );
+    }
+
+    let tree = render(<Example />);
+    let monthPicker = tree.getByLabelText('month');
+    let yearPicker = tree.getByLabelText('year');
+    let grid = tree.getByRole('grid');
+
+    expect(monthPicker).toHaveValue('6');
+    expect(grid).toHaveAttribute('aria-label', 'Appointment date, June 2026');
+    // Bounded full-range list clamps the start to minValue (Jan 1), so year
+    // options carry January dates — selecting one must not jump the month.
+    expect(within(yearPicker).getByRole('option', {name: '2028'})).toHaveAttribute(
+      'data-date',
+      '2028-01-01'
+    );
+
+    await user.selectOptions(yearPicker, '2028');
+    expect(monthPicker).toHaveValue('6');
+    expect(grid).toHaveAttribute('aria-label', 'Appointment date, June 2028');
+  });
 });
