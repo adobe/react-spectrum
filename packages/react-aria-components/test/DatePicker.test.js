@@ -20,6 +20,7 @@ import {Dialog} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {Group} from '../src/Group';
 import {Heading} from '../src/Heading';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
 import {Popover} from '../src/Popover';
 import React from 'react';
@@ -390,5 +391,31 @@ describe('DatePicker', () => {
     let group = getByRole('group');
     let input = group.querySelector('.react-aria-DateInput');
     expect(input).toHaveTextContent('5/30/2000');
+  });
+
+  it('does not crash for locales whose 12-hour time has no day period', async () => {
+    let {getByRole, getAllByRole} = render(
+      <I18nProvider locale="fr-CM">
+        <DatePicker>
+          <Label>Birthdate</Label>
+          <Group>
+            <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+            <Button>▼</Button>
+          </Group>
+        </DatePicker>
+      </I18nProvider>
+    );
+
+    expect(getByRole('group')).toHaveTextContent('jj/mm/aaaa');
+    let segments = getAllByRole('spinbutton');
+    expect(segments.map(segment => segment.getAttribute('data-type'))).toEqual([
+      'day',
+      'month',
+      'year'
+    ]);
+
+    await user.click(segments[0]);
+    await user.keyboard('15');
+    expect(segments[0]).toHaveTextContent('15');
   });
 });
