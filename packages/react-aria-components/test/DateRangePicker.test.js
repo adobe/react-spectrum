@@ -20,6 +20,7 @@ import {Dialog} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {Group} from '../src/Group';
 import {Heading} from '../src/Heading';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
 import {Popover} from '../src/Popover';
 import React from 'react';
@@ -34,6 +35,7 @@ let TestDateRangePicker = props => (
       <span aria-hidden="true">–</span>
       <DateInput slot="end">{segment => <DateSegment segment={segment} />}</DateInput>
       <Button>▼</Button>
+      {props.children}
     </Group>
     <Text slot="description">Description</Text>
     <Text slot="errorMessage">Error</Text>
@@ -235,6 +237,155 @@ describe('DateRangePicker', () => {
     let end = document.querySelector('input[name=end]');
     expect(end).toHaveValue('2023-01-20');
     expect(end).toHaveAttribute('form', 'test');
+  });
+
+  it.each([
+    {
+      start: '20260805',
+      end: '20260809',
+      expected: {start: new CalendarDate(2026, 8, 5), end: new CalendarDate(2026, 8, 9)}
+    },
+    {
+      start: '20260931',
+      end: '20260931',
+      expected: {start: new CalendarDate(2026, 9, 30), end: new CalendarDate(2026, 9, 30)}
+    }
+  ])(
+    'should preserve typed dates when focus advances automatically ($start, $end)',
+    async ({start, end, expected}) => {
+      let onChange = jest.fn();
+      let {getAllByRole, getByRole, container} = render(
+        <I18nProvider locale="zh-TW">
+          <TestDateRangePicker
+            onChange={onChange}
+            startName="start"
+            endName="end"
+            shouldForceLeadingZeros>
+            <button>Next</button>
+          </TestDateRangePicker>
+        </I18nProvider>
+      );
+
+      let segments = getAllByRole('spinbutton');
+      await user.click(segments[0]);
+      await user.keyboard(start.slice(0, -1));
+      expect(segments[2]).toHaveAttribute('aria-valuenow', start.at(-2));
+      expect(document.activeElement).toBe(segments[2]);
+
+      await user.keyboard(start.slice(-1));
+      expect(document.activeElement).toBe(segments[3]);
+      expect(segments.slice(0, 3).map(segment => segment.textContent)).toEqual(
+        expected.start.toString().split('-')
+      );
+      expect(container.querySelector('input[name=start]')).toHaveValue(expected.start.toString());
+      expect(onChange).not.toHaveBeenCalled();
+
+      await user.keyboard(end.slice(0, -1));
+      expect(segments[5]).toHaveAttribute('aria-valuenow', end.at(-2));
+      expect(document.activeElement).toBe(segments[5]);
+      onChange.mockClear();
+
+      await user.keyboard(end.slice(-1));
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Next'}));
+      expect(segments.slice(3).map(segment => segment.textContent)).toEqual(
+        expected.end.toString().split('-')
+      );
+      expect(container.querySelector('input[name=end]')).toHaveValue(expected.end.toString());
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(expected);
+    }
+  );
+
+  it.each(['defaultValue', 'value'])(
+    'should preserve edits when focus advances automatically with %s',
+    async valueProp => {
+      let value = {start: new CalendarDate(2026, 8, 15), end: new CalendarDate(2026, 8, 15)};
+      let onChange = jest.fn();
+      let {getAllByRole, getByRole, container} = render(
+        <I18nProvider locale="zh-TW">
+          <TestDateRangePicker
+            {...{[valueProp]: value}}
+            onChange={onChange}
+            startName="start"
+            endName="end"
+            shouldForceLeadingZeros>
+            <button>Next</button>
+          </TestDateRangePicker>
+        </I18nProvider>
+      );
+
+      let segments = getAllByRole('spinbutton');
+      for (let [part, index, day] of [
+        ['start', 2, 7],
+        ['end', 5, 9]
+      ]) {
+        await user.click(segments[index]);
+        await user.keyboard('0');
+        expect(segments[index]).toHaveTextContent('00');
+        expect(onChange).not.toHaveBeenCalled();
+
+        await user.keyboard(String(day));
+        let expected = {...value, [part]: new CalendarDate(2026, 8, day)};
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith(expected);
+        expect(document.activeElement).toBe(
+          part === 'start' ? segments[3] : getByRole('button', {name: 'Next'})
+        );
+
+        if (valueProp === 'defaultValue') {
+          value = expected;
+        }
+        expect(segments[index].textContent).toBe(String(value[part].day).padStart(2, '0'));
+        expect(container.querySelector(`input[name=${part}]`)).toHaveValue(value[part].toString());
+        onChange.mockClear();
+      }
+    }
+  );
+
+  it.each([
+    {description: 'cleared', value: null},
+    {
+      description: 'replaced',
+      value: {start: new CalendarDate(2026, 9, 10), end: new CalendarDate(2026, 9, 20)}
+    }
+  ])('should discard pending edits when the controlled value is $description', async ({value}) => {
+    let onChange = jest.fn();
+    let renderPicker = value => (
+      <I18nProvider locale="zh-TW">
+        <TestDateRangePicker
+          value={value}
+          onChange={onChange}
+          startName="start"
+          endName="end"
+          shouldForceLeadingZeros>
+          <button>Next</button>
+        </TestDateRangePicker>
+      </I18nProvider>
+    );
+    let {getAllByRole, getByRole, container, rerender} = render(
+      renderPicker({start: new CalendarDate(2026, 8, 15), end: new CalendarDate(2026, 8, 25)})
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[2]);
+    await user.keyboard('0');
+    expect(segments[2]).toHaveTextContent('00');
+    expect(onChange).not.toHaveBeenCalled();
+
+    rerender(renderPicker(value));
+    await user.click(getByRole('button', {name: 'Next'}));
+    expect(onChange).not.toHaveBeenCalled();
+    expect(container.querySelector('input[name=start]')).toHaveValue(value?.start.toString() ?? '');
+    expect(container.querySelector('input[name=end]')).toHaveValue(value?.end.toString() ?? '');
+    if (value) {
+      expect(segments.slice(0, 3).map(segment => segment.textContent)).toEqual(
+        value.start.toString().split('-')
+      );
+    } else {
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('data-placeholder', 'true');
+      }
+    }
   });
 
   it('should render data- attributes only on the outer element', () => {
