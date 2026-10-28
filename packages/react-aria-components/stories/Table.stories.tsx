@@ -40,7 +40,7 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {Modal, ModalOverlay} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import {Radio, RadioGroup} from '../src/RadioGroup';
-import React, {JSX, startTransition, Suspense, useState} from 'react';
+import React, {JSX, startTransition, Suspense, useRef, useState} from 'react';
 import {Selection} from '@react-types/shared';
 import styles from '../example/index.css';
 import {TableLayout} from '../src/TableLayout';
@@ -1913,7 +1913,7 @@ export const TableWithReactTransition: TableStory = () => {
 
 function NameCell(props: CellProps) {
   return (
-    <Cell style={({level}) => ({paddingLeft: (level - 1) * 32})}>
+    <Cell {...props} style={({level}) => ({paddingLeft: (level - 1) * 32})}>
       {({hasChildItems, isTreeColumn, isExpanded}) => (
         <>
           {hasChildItems && isTreeColumn && (
@@ -2502,4 +2502,193 @@ export const TreeGridTableDnd: TableStory = () => {
       </TableBody>
     </Table>
   );
+};
+
+interface RenderCountItem {
+  id: string;
+  name: string;
+  status: string;
+  children?: RenderCountItem[];
+}
+
+function makeRenderCountItems(): RenderCountItem[] {
+  return Array.from({length: 20}, (_, w) => ({
+    id: `w${w}`,
+    name: `Workflow ${w}`,
+    status: 'Running',
+    children: Array.from({length: 4}, (_, j) => ({
+      id: `w${w}-j${j}`,
+      name: `Job ${w}.${j}`,
+      status: 'Running'
+    }))
+  }));
+}
+
+function renderCountItem(
+  item: RenderCountItem,
+  onRender: (id: string) => void,
+  withDragAndDrop: boolean
+): JSX.Element {
+  let cellProps = (column: string) => ({
+    'data-render-id': `${item.id}/${column}`,
+    className: () => {
+      onRender(`${item.id}/${column}`);
+      return '';
+    }
+  });
+  return (
+    <Row
+      id={item.id}
+      textValue={item.name}
+      data-render-id={item.id}
+      className={() => {
+        onRender(item.id);
+        return '';
+      }}>
+      {withDragAndDrop && (
+        <Cell {...cellProps('drag')}>
+          <Button slot="drag">≡</Button>
+        </Cell>
+      )}
+      <Cell {...cellProps('select')}>
+        <MyCheckbox slot="selection" />
+      </Cell>
+      <NameCell {...cellProps('name')}>{item.name}</NameCell>
+      <Cell {...cellProps('status')}>{item.status}</Cell>
+      {item.children && (
+        <Collection items={item.children}>
+          {child => renderCountItem(child, onRender, withDragAndDrop)}
+        </Collection>
+      )}
+    </Row>
+  );
+}
+
+// Flashes each row and cell when it renders, and reports how many rendered in the last update.
+const TreeTableRenderCountsRender = (args: {withDragAndDrop: boolean}): JSX.Element => {
+  let [items, setItems] = useState(makeRenderCountItems);
+  let [, forceRender] = useState({});
+  let summaryRef = useRef<HTMLSpanElement>(null);
+  let tableRef = useRef<HTMLTableElement>(null);
+  let rendered = useRef(new Set<string>()).current;
+  let frame = useRef<number | null>(null);
+
+  // Reports what rendered once the update has been committed.
+  let scheduleReport = () => {
+    if (frame.current != null) {
+      return;
+    }
+    frame.current = requestAnimationFrame(() => {
+      frame.current = null;
+      let rowCount = 0;
+      for (let renderedId of rendered) {
+        let element = tableRef.current?.querySelector(`[data-render-id="${renderedId}"]`);
+        element?.animate([{backgroundColor: 'gold'}, {backgroundColor: 'transparent'}], {
+          duration: 800
+        });
+        if (!renderedId.includes('/')) {
+          rowCount++;
+        }
+      }
+      if (summaryRef.current) {
+        let rowTotal = tableRef.current?.querySelectorAll('tbody [role="row"]').length;
+        summaryRef.current.textContent = `Last update rendered ${rowCount} of ${rowTotal} rows and ${rendered.size - rowCount} cells.`;
+      }
+      rendered.clear();
+    });
+  };
+
+  let onRender = (id: string) => {
+    rendered.add(id);
+    scheduleReport();
+  };
+
+  let updateWorkflow = (id: string, update: (item: RenderCountItem) => RenderCountItem) => {
+    scheduleReport();
+    setItems(items => items.map(item => (item.id === id ? update(item) : item)));
+  };
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys => [...keys].map(key => ({'text/plain': String(key)}))
+  });
+
+  return (
+    <div>
+      <p>
+        Rows and cells flash when they render. Expanding a row, selecting a row, or updating one
+        workflow should only render the rows that changed.
+      </p>
+      <Toolbar aria-label="Updates" style={{display: 'flex', gap: 8, marginBottom: 8}}>
+        <Button
+          onPress={() =>
+            updateWorkflow('w2', item => ({
+              ...item,
+              children: [
+                ...item.children!,
+                {
+                  id: `w2-j${item.children!.length}`,
+                  name: `Job 2.${item.children!.length}`,
+                  status: 'Queued'
+                }
+              ]
+            }))
+          }>
+          Add a job to Workflow 2
+        </Button>
+        <Button
+          onPress={() =>
+            updateWorkflow('w2', item => ({
+              ...item,
+              children: item.children!.map((child, i) =>
+                i === 0
+                  ? {...child, status: child.status === 'Running' ? 'Passed' : 'Running'}
+                  : child
+              )
+            }))
+          }>
+          Change the status of Job 2.0
+        </Button>
+        <Button
+          onPress={() => {
+            scheduleReport();
+            forceRender({});
+          }}>
+          Re-render with no changes
+        </Button>
+      </Toolbar>
+      <p aria-live="polite">
+        <span ref={summaryRef} />
+      </p>
+      <Table
+        ref={tableRef}
+        aria-label="Workflows"
+        selectionMode="multiple"
+        treeColumn="name"
+        className={styles.treeGridTable}
+        defaultExpandedKeys={['w0', 'w1', 'w2']}
+        dragAndDropHooks={args.withDragAndDrop ? dragAndDropHooks : undefined}>
+        <TableHeader>
+          {args.withDragAndDrop && <Column />}
+          <Column>
+            <MyCheckbox slot="selection" />
+          </Column>
+          <Column id="name" isRowHeader>
+            Name
+          </Column>
+          <Column id="status">Status</Column>
+        </TableHeader>
+        <TableBody items={items} dependencies={[args.withDragAndDrop]}>
+          {item => renderCountItem(item, onRender, args.withDragAndDrop)}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
+
+export const TreeTableRenderCounts: StoryObj<typeof TreeTableRenderCountsRender> = {
+  render: TreeTableRenderCountsRender,
+  name: 'Tree Table render counts',
+  args: {
+    withDragAndDrop: false
+  }
 };

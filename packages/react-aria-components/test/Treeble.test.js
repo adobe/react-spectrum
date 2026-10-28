@@ -16,7 +16,7 @@ import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
 import {composeRenderProps} from '../src/utils';
 import {I18nProvider} from 'react-aria/I18nProvider';
-import React from 'react';
+import React, {createContext, useContext, useState} from 'react';
 import {useDragAndDrop} from '../src/useDragAndDrop';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -712,5 +712,174 @@ describe('Treeble', () => {
     await user.keyboard('{ArrowUp}');
     act(() => jest.runAllTimers());
     expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Documents');
+
+    // End the drag so the rest of the document is no longer hidden for later tests.
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+  });
+});
+
+describe('Treeble row memoization', () => {
+  let user;
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+  });
+
+  let initialItems = [
+    {id: 'a', name: 'A', children: [{id: 'a1', name: 'A1'}]},
+    {id: 'b', name: 'B', children: [{id: 'b1', name: 'B1'}]},
+    {id: 'c', name: 'C'},
+    {id: 'd', name: 'D'}
+  ];
+
+  function DynamicTreeble({onRender, onAction, ...props}) {
+    let [items, setItems] = useState(initialItems);
+    let [count, setCount] = useState(0);
+    let renderRow = item => (
+      <Row
+        id={item.id}
+        textValue={item.name}
+        className={({id}) => {
+          onRender?.(id);
+          return 'row';
+        }}>
+        <Cell>{item.name}</Cell>
+        <Cell>{item.children ? 'Folder' : 'File'}</Cell>
+        {item.children && <Collection items={item.children}>{renderRow}</Collection>}
+      </Row>
+    );
+
+    return (
+      <>
+        <button onClick={() => setCount(c => c + 1)}>Increment</button>
+        <button
+          onClick={() =>
+            setItems(items =>
+              items.map(item =>
+                item.id === 'b'
+                  ? {...item, children: [...item.children, {id: 'b2', name: 'B2'}]}
+                  : item
+              )
+            )
+          }>
+          Add child
+        </button>
+        <Table
+          aria-label="Files"
+          treeColumn="name"
+          defaultExpandedKeys={['a', 'b']}
+          onRowAction={onAction ? key => onAction(key, count) : undefined}
+          {...props}>
+          <TableHeader>
+            <Column id="name" isRowHeader>
+              Name
+            </Column>
+            <Column id="type">Type</Column>
+          </TableHeader>
+          <TableBody items={items}>{renderRow}</TableBody>
+        </Table>
+      </>
+    );
+  }
+
+  function getRow(tree, name) {
+    return tree
+      .getAllByRole('rowheader')
+      .find(cell => cell.textContent.replace('>', '') === name)
+      .closest('[role="row"]');
+  }
+
+  it('does not re-render rows that did not change', async () => {
+    let rendered = new Set();
+    let tree = render(<DynamicTreeble onRender={id => rendered.add(id)} />);
+    expect(tree.getAllByRole('row')).toHaveLength(7);
+
+    rendered.clear();
+    await user.click(tree.getByRole('button', {name: 'Increment'}));
+    expect([...rendered]).toEqual([]);
+
+    // The parent, its previous last child, and the new row.
+    await user.click(tree.getByRole('button', {name: 'Add child'}));
+    expect(tree.getAllByRole('row')).toHaveLength(8);
+    expect([...rendered].sort()).toEqual(['b', 'b1', 'b2']);
+    expect(getRow(tree, 'B2')).toHaveAttribute('aria-posinset', '2');
+    expect(getRow(tree, 'B1')).toHaveAttribute('aria-setsize', '2');
+
+    rendered.clear();
+    await user.click(within(getRow(tree, 'A')).getByRole('button'));
+    expect(tree.getAllByRole('row')).toHaveLength(7);
+    expect([...rendered]).toEqual(['a']);
+  });
+
+  it('rows that did not re-render use the latest selection', async () => {
+    let onSelectionChange = jest.fn();
+    let tree = render(
+      <DynamicTreeble selectionMode="multiple" onSelectionChange={onSelectionChange} />
+    );
+
+    await user.click(getRow(tree, 'A'));
+    await user.click(getRow(tree, 'C'));
+    await user.click(getRow(tree, 'D'));
+    expect(new Set(onSelectionChange.mock.lastCall[0])).toEqual(new Set(['a', 'c', 'd']));
+
+    // Range selection from a row that did not re-render must include rows added since.
+    await user.click(getRow(tree, 'A1'));
+    await user.click(tree.getByRole('button', {name: 'Add child'}));
+    await user.keyboard('{Shift>}');
+    await user.click(getRow(tree, 'C'));
+    await user.keyboard('{/Shift}');
+    expect(new Set(onSelectionChange.mock.lastCall[0])).toEqual(
+      new Set(['a', 'a1', 'b', 'b1', 'b2', 'c', 'd'])
+    );
+    expect(getRow(tree, 'B2')).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('rows that did not re-render call the latest onRowAction', async () => {
+    let onAction = jest.fn();
+    let tree = render(<DynamicTreeble onAction={onAction} />);
+
+    await user.click(tree.getByRole('button', {name: 'Increment'}));
+    await user.click(tree.getByRole('button', {name: 'Increment'}));
+    await user.click(getRow(tree, 'D'));
+    expect(onAction).toHaveBeenLastCalledWith('d', 2);
+  });
+
+  it('updates a cell when only the cell changes', async () => {
+    let LabelContext = createContext('Initial');
+    function LabelCell() {
+      return <Cell>{useContext(LabelContext)}</Cell>;
+    }
+
+    function Example() {
+      let [label, setLabel] = useState('Initial');
+      return (
+        <>
+          <button onClick={() => setLabel('Updated')}>Update</button>
+          <LabelContext.Provider value={label}>
+            <Table aria-label="Files" treeColumn="name">
+              <TableHeader>
+                <Column id="name" isRowHeader>
+                  Name
+                </Column>
+                <Column id="label">Label</Column>
+              </TableHeader>
+              <TableBody>
+                <Row id="a">
+                  <Cell>A</Cell>
+                  <LabelCell />
+                </Row>
+              </TableBody>
+            </Table>
+          </LabelContext.Provider>
+        </>
+      );
+    }
+
+    let tree = render(<Example />);
+    expect(tree.getAllByRole('gridcell')[0]).toHaveTextContent('Initial');
+    await user.click(tree.getByRole('button', {name: 'Update'}));
+    expect(tree.getAllByRole('gridcell')[0]).toHaveTextContent('Updated');
   });
 });
