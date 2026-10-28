@@ -16,7 +16,7 @@ import {Dialog, DialogTrigger} from '../src/Dialog';
 import {Heading} from '../src/Heading';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {OverlayArrow} from '../src/OverlayArrow';
-import {Popover} from '../src/Popover';
+import {Popover, PopoverOverlay} from '../src/Popover';
 import React, {JSX, useEffect, useRef, useState} from 'react';
 import styles from './styles.css';
 
@@ -609,3 +609,44 @@ export const ScrollingBoundaryContainer: StoryObj<typeof ScrollingBoundaryContai
     }
   }
 };
+
+export const CustomOverlay: PopoverStory = args => (
+  <>
+    <style>{`
+      @keyframes popover-backdrop-enter { from { background: #0000; } }
+      @keyframes popover-backdrop-exit { to { background: #0000; } }
+      .custom-popover-overlay { background: #0004; }
+      .custom-popover-overlay[data-entering] { animation: popover-backdrop-enter 300ms; }
+      .custom-popover-overlay[data-exiting] { animation: popover-backdrop-exit 600ms; }
+    `}</style>
+    <Button style={{position: 'relative', zIndex: 5}}>Outside action</Button>
+    <DialogTrigger>
+      <Button>Open popover</Button>
+      <PopoverOverlay className="custom-popover-overlay" style={{zIndex: 10}}>
+        <Popover
+          {...args}
+          className={`${styles['popover-base']} ${styles.animation}`}
+          style={({isExiting}) => ({
+            background: 'Canvas',
+            color: 'CanvasText',
+            boxSizing: 'border-box',
+            maxWidth: 'calc(100vw - 24px)',
+            overflow: 'auto',
+            padding: 24,
+            zIndex: 11,
+            animationFillMode: isExiting ? 'forwards' : undefined
+          })}>
+          <Dialog>
+            {({close}) => (
+              <>
+                <Heading slot="title">Custom backdrop</Heading>
+                <p>The backdrop fades out independently from the popover.</p>
+                <Button onPress={close}>Close</Button>
+              </>
+            )}
+          </Dialog>
+        </Popover>
+      </PopoverOverlay>
+    </DialogTrigger>
+  </>
+);
