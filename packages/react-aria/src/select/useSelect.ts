@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '../live-announcer/LiveAnnouncer';
 import {AriaButtonProps} from '../button/useButton';
 
 import {
@@ -24,8 +25,11 @@ import {
 import {AriaListBoxOptions} from '../listbox/useListBox';
 import {chain} from '../utils/chain';
 import {filterDOMProps} from '../utils/filterDOMProps';
-import {FocusEvent, useMemo} from 'react';
+import {FocusEvent, useEffect, useMemo, useRef} from 'react';
+import {getItemCount} from 'react-stately/private/collections/getItemCount';
 import {HiddenSelectProps} from './HiddenSelect';
+import intlMessages from '../../intl/combobox/*.json';
+import {isAppleDevice} from '../utils/platform';
 import {ListKeyboardDelegate} from '../selection/ListKeyboardDelegate';
 import {mergeProps} from '../utils/mergeProps';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';
@@ -35,6 +39,7 @@ import {useCollator} from '../i18n/useCollator';
 import {useField} from '../label/useField';
 import {useId} from '../utils/useId';
 import {useKeyboard} from '../interactions/useKeyboard';
+import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMenuTrigger} from '../menu/useMenuTrigger';
 import {useTypeSelect} from '../selection/useTypeSelect';
 
@@ -121,6 +126,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
   ref: RefObject<HTMLElement | null>
 ): SelectAria<T, M> {
   let {keyboardDelegate, isDisabled, isRequired, name, form, validationBehavior = 'aria'} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/combobox');
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
@@ -204,6 +210,27 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     name,
     form,
     validationBehavior
+  });
+
+  // Announce the number of available options when it changes.
+  let optionCount = getItemCount(state.collection);
+  let lastSize = useRef(optionCount);
+  let lastOpen = useRef(state.isOpen);
+  useEffect(() => {
+    // Only announce the number of options available when the menu opens if there is no
+    // focused item, otherwise screen readers will typically read e.g. "1 of 6".
+    // The exception is VoiceOver since this isn't included in the message above.
+    let didOpenWithoutFocusedItem =
+      state.isOpen !== lastOpen.current &&
+      (state.selectionManager.focusedKey == null || isAppleDevice());
+
+    if (state.isOpen && (didOpenWithoutFocusedItem || optionCount !== lastSize.current)) {
+      let announcement = stringFormatter.format('countAnnouncement', {optionCount});
+      announce(announcement);
+    }
+
+    lastSize.current = optionCount;
+    lastOpen.current = state.isOpen;
   });
 
   return {

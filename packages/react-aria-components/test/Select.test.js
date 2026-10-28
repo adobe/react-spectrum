@@ -10,11 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
+jest.mock('react-aria/src/utils/platform', () => ({
+  ...jest.requireActual('react-aria/src/utils/platform'),
+  isAppleDevice: jest.fn(() => true)
+}));
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button} from '../src/Button';
 import {Dialog} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
+import {isAppleDevice} from 'react-aria/src/utils/platform';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from '../src/ListBox';
 import {Popover} from '../src/Popover';
@@ -48,6 +55,15 @@ describe('Select', () => {
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
+  });
+  it('announces available options when an Apple device opens a Select with a focused option', async () => {
+    let {getByTestId} = render(<TestSelect defaultSelectedKey="cat" />);
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+
+    await selectTester.open();
+
+    expect(isAppleDevice).toHaveBeenCalled();
+    expect(announce).toHaveBeenCalledWith('3 options available.');
   });
   it.each([300, 301])(
     'restores the default selection on form reset without a name with %i items',
