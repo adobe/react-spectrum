@@ -1,13 +1,30 @@
 import {Transformer} from '@parcel/plugin';
-import {enrichCsf, formatCsf, loadCsf} from 'storybook/internal/csf-tools';
-import * as t from '@babel/types';
+import {
+  type CsfFile,
+  type CsfSourceMap,
+  type ESTree,
+  type ESTreeNode,
+  type FunctionNode,
+  type SourceEditor,
+  appendStatement,
+  appendToList,
+  enrichCsf,
+  formatCsf,
+  isFunction,
+  loadCsf,
+  objectList,
+  objectProperty,
+  outerSpan,
+  removeStatement,
+  statementSpan,
+  textOf,
+  wrapExpression
+} from 'storybook/internal/csf-tools';
 import path from 'path';
 import crypto from 'crypto';
 import {getClient, getCacheDir} from './react-docgen-typescript';
 import {ComponentDoc} from 'react-docgen-typescript';
 import SourceMap from '@parcel/source-map';
-
-// There's a lot of 'any' in this file. This is because the types in storybook/core are a copy and derivative of the equivalent babel types.
 
 module.exports = new Transformer({
   async transform({asset, options}) {
@@ -18,12 +35,10 @@ module.exports = new Transformer({
     }
     let code = await asset.getCode();
     let name = options.hmrOptions ? `$parcel$ReactRefresh$${asset.id.slice(-4)}` : null;
-    let {code: compiledCode, rawMappings} = processCsf(code, asset.filePath, docs, name) as any;
+    let {code: compiledCode, map: compiledMap} = await processCsf(code, asset.filePath, docs, name);
 
     let map = new SourceMap(options.projectRoot);
-    if (rawMappings) {
-      map.addIndexedMappings(rawMappings);
-    }
+    map.addVLQMap(compiledMap);
 
     // Invalidate the asset whenever any types change.
     asset.invalidateOnFileChange(path.join(getCacheDir(options), 'sentinel'));
@@ -33,7 +48,7 @@ module.exports = new Transformer({
   }
 });
 
-function processCsf(
+async function processCsf(
   code: string,
   filePath: string,
   docs: ComponentDoc | null,
@@ -43,276 +58,306 @@ function processCsf(
     fileName: filePath,
     makeTitle: title => title || 'default'
   }).parse();
-  enrichCsf(csf, csf);
+  let editor = csf.editor;
+  // The Fast Refresh wrapper goes first, so statements appended below land after the `;` it ends a
+  // default export with, and not after an import it moves up.
+  let closeRefresh = refreshName ? wrapRefresh(editor, filePath, refreshName) : null;
+  await enrichCsf(csf, csf);
 
-  // Extract story functions into separate components. This enables React Fast Refresh to work properly.
-  let count = 0;
-  let addComponent = (node: t.Function) => {
-    let name = 'Story' + count++;
-    csf._ast.program.body.push(
-      t.functionDeclaration(
-        t.identifier(name),
-        node.params.map(p => t.cloneNode(p)),
-        t.isExpression(node.body) ? t.blockStatement([t.returnStatement(node.body)]) : node.body
-      ) as any
-    );
-    node.body = t.blockStatement([
-      t.returnStatement(
-        t.jsxElement(
-          t.jsxOpeningElement(
-            t.jsxIdentifier(name),
-            node.params.length && t.isIdentifier(node.params[0])
-              ? [t.jsxSpreadAttribute(t.cloneNode(node.params[0]))]
-              : [],
-            true
-          ),
-          null,
-          [],
-          true
-        )
-      )
-    ]);
+  // Story functions become components, so that React Fast Refresh can update them. Their code stays
+  // where it is, and so does its source map.
+  let components = new Map<FunctionNode, string>();
+  // Components named inside an expression, which need a `var`.
+  let variables: string[] = [];
+  let addComponent = (fn: FunctionNode) => {
+    // A template bound by several stories becomes one component.
+    let name = components.get(fn);
+    if (name) {
+      return name;
+    }
+    name = 'Story' + components.size;
+    components.set(fn, name);
+    let [first] = fn.params;
+    let params = first ? editor.code.slice(first.start, fn.params.at(-1)!.end) : '';
+    let props = first?.type === 'Identifier' ? ` {...${first.name}}` : '';
+    let element = `<${name}${props} />`;
+    let parent = editor.parentOf(fn);
+    if (fn.type === 'FunctionDeclaration' && fn.id) {
+      // `function Primary(args) {…}` becomes a wrapper, followed by `function Story0(args) {…}`.
+      editor.edits.appendRight(
+        fn.start,
+        `function ${fn.id.name}(${params}) {\n  return ${element};\n}\n`
+      );
+      editor.edits.update(fn.id.start, fn.id.end, name);
+    } else if (parent?.type === 'VariableDeclarator' && parent.id.type === 'Identifier') {
+      // `const Primary: Story = (args) => …` becomes
+      // `const Primary = (args) => <Story0 {...args} />, Story0: Story = (args) => …`.
+      let {id} = parent;
+      editor.edits.update(
+        id.start,
+        id.start + id.name.length,
+        `${id.name} = (${params}) => ${element}, ${name}`
+      );
+    } else {
+      // `render: (args) => …` becomes `render: (Story0 = (args) => …, (args) => <Story0 {...args} />)`.
+      variables.push(name);
+      wrapExpression(editor, fn, `(${name} = `, `, (${params}) => ${element})`);
+    }
     return name;
   };
 
-  let handleRenderProperty = (node: t.ObjectExpression) => {
-    // CSF 3 style object story. Extract render function into a component.
-    let render = node.properties.find(
-      p =>
-        (t.isObjectProperty(p) || t.isObjectMethod(p)) &&
-        t.isIdentifier(p.key) &&
-        p.key.name === 'render'
-    );
-    if (render?.type === 'ObjectProperty' && t.isFunction(render.value)) {
-      let c = addComponent(render.value);
-      node.properties.push(t.objectProperty(t.identifier('_internalComponent'), t.identifier(c)));
-    } else if (render?.type === 'ObjectMethod') {
-      let c = addComponent(render);
-      node.properties.push(t.objectProperty(t.identifier('_internalComponent'), t.identifier(c)));
-    } else if (t.isObjectProperty(render) && render.value.type === 'Identifier') {
-      render.value = t.arrowFunctionExpression(
-        [t.identifier('args')],
-        t.jsxElement(
-          t.jsxOpeningElement(
-            t.jsxIdentifier(render.value.name),
-            [t.jsxSpreadAttribute(t.identifier('args'))],
-            true
-          ),
-          null,
-          [],
-          true
-        )
-      );
+  // The component a CSF 3 `render` function becomes. `render: Button` becomes
+  // `render: args => <Button {...args} />`, so React renders `Button` instead of calling it.
+  let renderComponent = (object: ESTree.ObjectExpression) => {
+    let render = objectProperty(object, 'render');
+    if (render?.kind !== 'init') {
+      return;
+    }
+    let {value} = render;
+    if (isFunction(value)) {
+      if (render.method) {
+        // `render(args) {…}` becomes `render: function (args) {…}`, which `addComponent` then
+        // wraps like any `render` function.
+        let keyword = `${value.async ? 'async ' : ''}function${value.generator ? '*' : ''} `;
+        editor.edits.update(render.start, value.start, 'render: ');
+        wrapExpression(editor, value, keyword, '');
+      }
+      return addComponent(value);
+    }
+    if (value.type === 'Identifier') {
+      let span = render.shorthand ? render : outerSpan(value);
+      let key = render.shorthand ? 'render: ' : '';
+      editor.edits.update(span.start, span.end, `${key}args => <${value.name} {...args} />`);
     }
   };
 
+  // Fast Refresh registers a story's `_internalComponent`, and bails out when its `_hash` changes.
+  let register = (object: ESTree.ObjectExpression, hash: string) => {
+    let component = renderComponent(object);
+    let members = component ? [`_internalComponent: ${component}`] : [];
+    appendToList(editor, objectList(editor, object), [...members, `_hash: "${hash}"`]);
+  };
+
+  let meta = csf.objects({stories: false})[0]?.node;
+  let statements: string[] = [];
   if (refreshName) {
-    for (let name in csf._storyExports) {
+    for (let {exportName: name} of csf.stories) {
       let node = csf.getStoryExport(name);
-
-      // Generate a hash of the args and parameters. If this changes, we bail out of Fast Refresh.
-      let annotations = csf._storyAnnotations[name];
-      let storyHash = '';
-      if (annotations) {
-        let hash = crypto.createHash('md5');
-        if (annotations.args) {
-          hash.update(code.slice(annotations.args.start!, annotations.args.end!));
-        }
-        if (annotations.parameters) {
-          hash.update(code.slice(annotations.parameters.start!, annotations.parameters.end!));
-        }
-        storyHash = hash.digest('hex');
+      if (!isFunction(node) && node?.type !== 'ObjectExpression') {
+        continue;
       }
-
-      if (t.isFunction(node as any)) {
-        // CSF 2 style function story.
-        let c = addComponent(node as any);
-        csf._ast.program.body.push(
-          t.expressionStatement(
-            t.assignmentExpression(
-              '=',
-              t.memberExpression(t.identifier(name), t.identifier('_internalComponent')),
-              t.identifier(c)
-            )
-          ) as any
-        );
-
-        if (storyHash) {
-          csf._ast.program.body.push(
-            t.expressionStatement(
-              t.assignmentExpression(
-                '=',
-                t.memberExpression(t.identifier(name), t.identifier('_hash')),
-                t.stringLiteral(storyHash)
-              )
-            ) as any
-          );
-        }
-      } else if (node.type === 'ObjectExpression') {
-        handleRenderProperty(node as any);
-        if (storyHash) {
-          node.properties.push(
-            t.objectProperty(t.identifier('_hash'), t.stringLiteral(storyHash)) as any
-          );
-        }
-      }
-    }
-  }
-
-  // Hash the default export to invalidate Fast Refresh.
-  if (csf._metaNode?.type === 'ObjectExpression') {
-    if (docs) {
-      let component: any = csf._metaNode.properties.find(
-        (p: any) => t.isObjectProperty(p) && t.isIdentifier(p.key) && p.key.name === 'component'
-      );
-      if (t.isObjectProperty(component) && t.isExpression(component.value)) {
-        component.value = t.sequenceExpression([
-          t.assignmentExpression(
-            '=',
-            t.memberExpression(component.value, t.identifier('__docgenInfo')),
-            t.valueToNode(docs)
-          ),
-          component.value
-        ]);
-      }
-    }
-
-    if (refreshName) {
-      handleRenderProperty(csf._metaNode as any);
-
-      let hash = crypto.createHash('md5');
-      hash.update(code.slice(csf._metaNode.start!, csf._metaNode.end!));
-      hash.update(JSON.stringify(docs));
-      let metaHash = hash.digest('hex');
-      csf._metaNode.properties.push(
-        t.objectProperty(t.identifier('_hash'), t.stringLiteral(metaHash)) as any
-      );
-    }
-  }
-
-  if (refreshName) {
-    wrapRefresh(csf._ast.program as any, filePath, refreshName);
-  }
-
-  // @ts-ignore
-  return formatCsf(csf, {
-    sourceFileName: filePath,
-    sourceMaps: true,
-    importAttributesKeyword: 'with'
-  });
-}
-
-function wrapRefresh(program: t.Program, filePath: string, refreshName: string) {
-  let wrapperPath = `${path.relative(path.dirname(filePath), __dirname)}/csf-hmr.js`;
-
-  // Group imports, exports, and body statements which will be wrapped in a try...catch.
-  let imports: (t.ImportDeclaration | t.ExportDeclaration)[] = [];
-  let statements: t.Statement[] = [];
-  let exportVars: t.VariableDeclarator[] = [];
-  let exports: t.ExportSpecifier[] = [];
-
-  for (let statement of program.body) {
-    if (t.isImportDeclaration(statement) || t.isExportAllDeclaration(statement)) {
-      imports.push(statement);
-    } else if (t.isExportNamedDeclaration(statement)) {
-      if (statement.exportKind === 'type' || statement.source) {
-        imports.push(statement);
-      } else if (statement.declaration) {
-        statements.push(statement.declaration);
-        for (let id in t.getOuterBindingIdentifiers(statement.declaration)) {
-          let name = refreshName + '$Export' + exportVars.length;
-          exportVars.push(t.variableDeclarator(t.identifier(name)));
-          exports.push(t.exportSpecifier(t.identifier(name), t.identifier(id)));
-          statements.push(
-            t.expressionStatement(t.assignmentExpression('=', t.identifier(name), t.identifier(id)))
-          );
-        }
-      } else if (statement.specifiers) {
-        for (let specifier of statement.specifiers) {
-          if (t.isExportSpecifier(specifier)) {
-            let name = refreshName + '$Export' + exportVars.length;
-            exportVars.push(t.variableDeclarator(t.identifier(name)));
-            exports.push(t.exportSpecifier(t.identifier(name), specifier.exported));
-            statements.push(
-              t.expressionStatement(
-                t.assignmentExpression('=', t.identifier(name), specifier.local)
-              )
-            );
-          }
-        }
-      }
-    } else if (t.isExportDefaultDeclaration(statement)) {
-      if (t.isExpression(statement.declaration)) {
-        let name = refreshName + '$Export' + exportVars.length;
-        exportVars.push(t.variableDeclarator(t.identifier(name)));
-        exports.push(t.exportSpecifier(t.identifier(name), t.identifier('default')));
+      // When a story's annotations cannot be read, any change to the file bails out.
+      let hash = md5(...(annotationTexts(csf, name) ?? [editor.code]));
+      if (isFunction(node)) {
+        // A CSF 2 function story.
         statements.push(
-          t.expressionStatement(
-            t.assignmentExpression('=', t.identifier(name), statement.declaration)
-          )
+          `${name}._internalComponent = ${addComponent(node)};`,
+          `${name}._hash = "${hash}";`
         );
       } else {
-        statements.push(statement.declaration);
-        let name = refreshName + '$Export' + exportVars.length;
-        exportVars.push(t.variableDeclarator(t.identifier(name)));
-        exports.push(t.exportSpecifier(t.identifier(name), t.identifier('default')));
+        register(node, hash);
       }
-    } else {
-      statements.push(statement);
+    }
+    if (meta) {
+      register(meta, md5(textOf(meta), JSON.stringify(docs)));
     }
   }
 
-  program.body = [
-    ...imports,
-    t.importDeclaration(
-      [t.importNamespaceSpecifier(t.identifier(refreshName + '$Helpers'))],
-      t.stringLiteral(wrapperPath)
-    ),
-    t.variableDeclaration('var', exportVars),
-    t.variableDeclaration('var', [
-      t.variableDeclarator(
-        t.identifier(refreshName + '$PrevRefreshReg'),
-        t.memberExpression(t.identifier('window'), t.identifier('$RefreshReg$'))
-      ),
-      t.variableDeclarator(
-        t.identifier(refreshName + '$PrevRefreshSig'),
-        t.memberExpression(t.identifier('window'), t.identifier('$RefreshSig$'))
-      )
-    ]),
-    t.expressionStatement(
-      t.callExpression(
-        t.memberExpression(t.identifier(refreshName + '$Helpers'), t.identifier('prelude')),
-        [t.identifier('module')]
-      )
-    ),
-    t.tryStatement(
-      t.blockStatement([
-        ...statements,
-        t.expressionStatement(
-          t.callExpression(
-            t.memberExpression(t.identifier(refreshName + '$Helpers'), t.identifier('postlude')),
-            [t.identifier('module')]
-          )
-        )
-      ]),
-      null,
-      t.blockStatement([
-        t.expressionStatement(
-          t.assignmentExpression(
-            '=',
-            t.memberExpression(t.identifier('window'), t.identifier('$RefreshReg$')),
-            t.identifier(refreshName + '$PrevRefreshReg')
-          )
-        ),
-        t.expressionStatement(
-          t.assignmentExpression(
-            '=',
-            t.memberExpression(t.identifier('window'), t.identifier('$RefreshSig$')),
-            t.identifier(refreshName + '$PrevRefreshSig')
-          )
-        )
-      ])
-    ),
-    t.exportNamedDeclaration(null, exports)
+  let component = meta && objectProperty(meta, 'component');
+  if (docs && component?.kind === 'init' && !component.method) {
+    let {value} = component;
+    let target = value.type === 'Identifier' ? value.name : `(${textOf(value)})`;
+    statements.push(`${target}.__docgenInfo = ${JSON.stringify(docs)};`);
+  }
+
+  if (statements.length) {
+    appendStatement(editor, statements.join('\n'));
+  }
+  closeRefresh?.(variables);
+
+  return formatCsf(csf, {sourceMaps: true}) as {
+    code: string;
+    map: CsfSourceMap;
+  };
+}
+
+// The text of a story's `args`, `parameters` and legacy `Story.story = {…}`, or `undefined` when
+// csf-tools cannot read them: for a story other code uses, such as `...Primary` in another story,
+// or for `args` set both in the story's object and as `Primary.args = {…}`.
+function annotationTexts(csf: CsfFile, name: string) {
+  let found = csf.storyObject(name);
+  if (!found?.ok) {
+    return undefined;
+  }
+  let texts: string[] = [];
+  for (let key of ['args', 'parameters', 'story']) {
+    let field = found.object.inspect([key]);
+    if (field.kind === 'unreadable') {
+      return undefined;
+    }
+    if (field.kind === 'value') {
+      texts.push(textOf(field.node));
+    }
+  }
+  return texts;
+}
+
+function md5(...texts: string[]) {
+  let hash = crypto.createHash('md5');
+  for (let text of texts) {
+    hash.update(text);
+  }
+  return hash.digest('hex');
+}
+
+// Wrap the module for React Fast Refresh: imports and re-exports stay on top, the rest runs in a
+// `try` between the refresh prelude and postlude, and every export goes through a variable that
+// a final `export {…}` exports. The function it returns closes the `try` once the other edits
+// are made, declaring the variables they assign.
+function wrapRefresh(editor: SourceEditor, filePath: string, refreshName: string) {
+  let {edits, code} = editor;
+  let wrapperPath = `${path.relative(path.dirname(filePath), __dirname)}/csf-hmr.js`;
+  let helpers = `${refreshName}$Helpers`;
+  let exportVars: string[] = [];
+  let exports: string[] = [];
+  let exportVar = (exported: string) => {
+    let name = refreshName + '$Export' + exportVars.length;
+    exportVars.push(name);
+    exports.push(`${name} as ${exported}`);
+    return name;
+  };
+
+  let body = editor.program.body;
+  let first = body.findIndex(statement => !staysOnTop(statement));
+  let hoisted: string[] = [];
+  body.forEach((statement, index) => {
+    if (staysOnTop(statement)) {
+      // Imports cannot go inside the `try`, so the ones below other code move up.
+      if (first !== -1 && index > first) {
+        hoisted.push(editor.source(statement));
+        removeStatement(editor, statement);
+      }
+    } else if (statement.type === 'ExportNamedDeclaration') {
+      let {declaration} = statement;
+      if (declaration) {
+        edits.update(statement.start, declaration.start, '');
+        let assignments = bindingNames(declaration).map(id => `${exportVar(id)} = ${id};`);
+        if (assignments.length) {
+          edits.appendLeft(statement.end, `\n${assignments.join('\n')}`);
+        }
+      } else {
+        let assignments = statement.specifiers
+          .filter(specifier => specifier.exportKind !== 'type')
+          .map(
+            specifier => `${exportVar(textOf(specifier.exported))} = ${textOf(specifier.local)};`
+          );
+        edits.update(statement.start, statement.end, assignments.join('\n'));
+      }
+    } else if (statement.type === 'ExportDefaultDeclaration') {
+      let {declaration} = statement;
+      let variable = exportVar('default');
+      if (
+        (declaration.type === 'FunctionDeclaration' || declaration.type === 'ClassDeclaration') &&
+        declaration.id
+      ) {
+        edits.update(statement.start, declaration.start, '');
+        edits.appendLeft(statement.end, `\n${variable} = ${declaration.id.name};`);
+      } else {
+        edits.update(statement.start, outerSpan(declaration).start, `${variable} = `);
+        if (code[statement.end - 1] !== ';') {
+          edits.appendLeft(statement.end, ';');
+        }
+      }
+    }
+  });
+
+  let start = first === -1 ? code.length : statementSpan(editor, body[first]).start;
+  let header = [
+    ...hoisted,
+    `import * as ${helpers} from ${JSON.stringify(wrapperPath)};`,
+    ...(exportVars.length ? [`var ${exportVars.join(', ')};`] : []),
+    `var ${refreshName}$PrevRefreshReg = window.$RefreshReg$, ${refreshName}$PrevRefreshSig = window.$RefreshSig$;`,
+    `${helpers}.prelude(module);`,
+    'try {'
   ];
+  edits.appendLeft(start, header.join('\n') + '\n');
+
+  return (variables: string[]) => {
+    if (variables.length) {
+      edits.appendLeft(start, `var ${variables.join(', ')};\n`);
+    }
+    edits.append(
+      [
+        '',
+        `${helpers}.postlude(module);`,
+        '} finally {',
+        `  window.$RefreshReg$ = ${refreshName}$PrevRefreshReg;`,
+        `  window.$RefreshSig$ = ${refreshName}$PrevRefreshSig;`,
+        '}',
+        `export { ${exports.join(', ')} };`,
+        ''
+      ].join('\n')
+    );
+  };
+}
+
+// Directives, imports, re-exports and type declarations, which have to stay outside the `try`.
+function staysOnTop(statement: ESTreeNode) {
+  switch (statement.type) {
+    case 'ExpressionStatement':
+      return !!statement.directive;
+    case 'ImportDeclaration':
+    case 'ExportAllDeclaration':
+    case 'TSImportEqualsDeclaration':
+      return true;
+    case 'ExportNamedDeclaration':
+      return (
+        statement.exportKind === 'type' ||
+        !!statement.source ||
+        declaresTypes(statement.declaration)
+      );
+    case 'ExportDefaultDeclaration':
+      return declaresTypes(statement.declaration);
+    default:
+      return false;
+  }
+}
+
+// Types, `declare`s and namespaces.
+function declaresTypes(node: ESTreeNode | null) {
+  switch (node?.type) {
+    case 'TSInterfaceDeclaration':
+    case 'TSTypeAliasDeclaration':
+    case 'TSModuleDeclaration':
+    case 'TSDeclareFunction':
+      return true;
+    default:
+      return !!node && 'declare' in node && !!node.declare;
+  }
+}
+
+// The names a declaration binds, such as `a` and `b` in `const {a, b: [b]} = value`.
+function bindingNames(node: ESTreeNode | null | undefined): string[] {
+  switch (node?.type) {
+    case 'VariableDeclaration':
+      return node.declarations.flatMap(declarator => bindingNames(declarator.id));
+    case 'FunctionDeclaration':
+    case 'ClassDeclaration':
+    case 'TSEnumDeclaration':
+      return node.id ? [node.id.name] : [];
+    case 'Identifier':
+      return [node.name];
+    case 'ObjectPattern':
+      return node.properties.flatMap(property =>
+        bindingNames(property.type === 'RestElement' ? property : property.value)
+      );
+    case 'ArrayPattern':
+      return node.elements.flatMap(element => bindingNames(element));
+    case 'AssignmentPattern':
+      return bindingNames(node.left);
+    case 'RestElement':
+      return bindingNames(node.argument);
+    default:
+      return [];
+  }
 }
