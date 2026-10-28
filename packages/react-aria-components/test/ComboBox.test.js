@@ -1065,6 +1065,27 @@ describe('ComboBox', () => {
     expect(input.closest('.react-aria-ComboBox')).toHaveAttribute('data-readonly');
   });
 
+  it('should not clear a controlled selection on blur when read-only', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <TestComboBox
+        isReadOnly
+        selectedKey="4"
+        inputValue="Penguin"
+        onSelectionChange={onSelectionChange}
+      />
+    );
+    let input = getByRole('combobox');
+
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.tab();
+
+    expect(document.activeElement).not.toBe(input);
+    expect(onSelectionChange).not.toHaveBeenCalled();
+    expect(input).toHaveValue('Penguin');
+  });
+
   it('should re-open the menu when controlled items go from empty to non-empty controlled items', async () => {
     let onOpenChange = jest.fn();
     let onInputChange = jest.fn().mockReturnValueOnce(true).mockReturnValue(false);
