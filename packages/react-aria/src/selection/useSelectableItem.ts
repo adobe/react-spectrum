@@ -34,7 +34,7 @@ import {openLink, useRouter} from '../utils/openLink';
 import {PressHookProps, usePress} from '../interactions/usePress';
 import {useEffect, useRef} from 'react';
 import {useId} from '../utils/useId';
-import {useLongPress} from '../interactions/useLongPress';
+import {useLongPressHandlers} from '../interactions/useLongPress';
 
 export interface SelectableItemOptions extends DOMProps {
   /**
@@ -406,6 +406,38 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   }
 
+  // Long pressing an item with touch when selectionBehavior = 'replace' switches the selection behavior
+  // to 'toggle'. This changes the single tap behavior from performing an action (i.e. navigating) to
+  // selecting, and may toggle the appearance of a UI affordance like checkboxes on each item.
+
+  let longPressHandlers = useLongPressHandlers({
+    isDisabled: !longPressEnabled,
+    onLongPress(e) {
+      if (e.pointerType === 'touch') {
+        onSelect(e);
+        manager.setSelectionBehavior('toggle');
+      }
+    }
+  });
+
+  if (longPressEnabled) {
+    // oxlint-disable-next-line react/react-compiler
+    itemPressProps.onPressStart = chain(
+      // oxlint-disable-next-line react/react-compiler
+      itemPressProps.onPressStart,
+      longPressHandlers.onPressStart
+    );
+
+    // oxlint-disable-next-line react/react-compiler
+    itemPressProps.onPressEnd = chain(
+      // oxlint-disable-next-line react/react-compiler
+      itemPressProps.onPressEnd,
+      longPressHandlers.onPressEnd
+    );
+  }
+
+  // Event callbacks access refs when invoked, not during render.
+  // oxlint-disable-next-line react/react-compiler
   let {pressProps, isPressed} = usePress(itemPressProps);
 
   // Double clicking with a mouse with selectionBehavior = 'replace' performs an action.
@@ -418,19 +450,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       }
     : undefined;
-
-  // Long pressing an item with touch when selectionBehavior = 'replace' switches the selection behavior
-  // to 'toggle'. This changes the single tap behavior from performing an action (i.e. navigating) to
-  // selecting, and may toggle the appearance of a UI affordance like checkboxes on each item.
-  let {longPressProps} = useLongPress({
-    isDisabled: !longPressEnabled,
-    onLongPress(e) {
-      if (e.pointerType === 'touch') {
-        onSelect(e);
-        manager.setSelectionBehavior('toggle');
-      }
-    }
-  });
 
   // Prevent native drag and drop on long press if we also select on long press.
   // Once the user is in selection mode, they can long press again to drag.
@@ -457,7 +476,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     // oxlint-disable-next-line react/react-compiler
     itemProps,
     allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled) ? pressProps : {},
-    longPressEnabled ? longPressProps : {},
     // oxlint-disable-next-line react/react-compiler
     {onDoubleClick, onDragStartCapture, onClick, id},
     // Prevent DOM focus from moving on mouse down when using virtual focus
