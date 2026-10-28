@@ -1500,6 +1500,57 @@ describe('Table', () => {
     expect(items[1]).not.toHaveAttribute('data-focus-visible-within', 'true');
   });
 
+  it('should only lay out rows that come into view while scrolling', () => {
+    let items = [];
+    for (let i = 0; i < 1000; i++) {
+      items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
+    }
+
+    let laidOutRows = [];
+    class TrackingTableLayout extends TableLayout {
+      buildRow(node, x, y) {
+        laidOutRows.push(node.key);
+        return super.buildRow(node, x, y);
+      }
+    }
+
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+    let {getByRole} = render(
+      <Virtualizer layout={TrackingTableLayout} layoutOptions={{rowHeight: 25}}>
+        <Table aria-label="Test">
+          <TableHeader>
+            <Column isRowHeader>Foo</Column>
+            <Column>Bar</Column>
+          </TableHeader>
+          <TableBody items={items}>
+            {item => (
+              <Row>
+                <Cell>{item.foo}</Cell>
+                <Cell>{item.bar}</Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </Virtualizer>
+    );
+
+    let grid = getByRole('grid');
+    for (let scrollTop = 100; scrollTop <= 2000; scrollTop += 100) {
+      grid.scrollTop = scrollTop;
+      fireEvent.scroll(grid);
+    }
+
+    laidOutRows = [];
+    grid.scrollTop = 2100;
+    fireEvent.scroll(grid);
+
+    // Rows scrolled past earlier are reused rather than laid out again.
+    expect(laidOutRows.filter(key => key < 80)).toEqual([]);
+    expect(laidOutRows).toContain(88);
+  });
+
   it('should support virtualizer', async () => {
     let items = [];
     for (let i = 0; i < 50; i++) {
