@@ -18,6 +18,8 @@
     "packages/@*/*"
   ],
   "scripts": {
+    "perf": "node perf/cli.mjs",
+    "test:perf": "node --test perf/test/*.test.mjs",
     "check-types": "tsc --noEmit",
     "clean": "make clean",
     "clean:all": "make clean_all",
@@ -283,6 +285,7 @@
       "global": true,
       "pattern": "[content-hash]_[local]",
       "exclude": [
+        "perf/app/**",
         "**/*.global.css",
         "packages/@react-aria/example-theme/**",
         "packages/@react-spectrum/style-macro-s1/**",
