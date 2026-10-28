@@ -525,6 +525,25 @@ describe('Dialog', () => {
       expect(overlay).not.toBeInTheDocument();
     });
 
+    it('unmounts when the exit animation is cancelled', async () => {
+      let {getByRole, getByTestId} = render(<TestModal />);
+
+      await user.click(getByRole('button'));
+      let overlay = getByTestId('overlay');
+
+      let reject;
+      let finished = new Promise((_, r) => (reject = r));
+      Element.prototype.getAnimations = () => [{playState: 'running', finished}];
+
+      await user.click(getByRole('button', {name: 'Close'}));
+      expect(overlay).toBeInTheDocument();
+      expect(overlay).toHaveAttribute('data-exiting');
+
+      // Cancelling an animation rejects its finished promise.
+      await act(async () => reject(new DOMException('The animation was cancelled', 'AbortError')));
+      expect(overlay).not.toBeInTheDocument();
+    });
+
     it('calls the latest onEnter and onExit callbacks', async () => {
       let enterPromise = deferred();
       let exitPromise = deferred();
