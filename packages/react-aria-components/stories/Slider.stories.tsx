@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
 
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {Slider, SliderOutput, SliderThumb, SliderTrack} from '../src/Slider';
+import {Slider, SliderFill, SliderOutput, SliderThumb, SliderTrack} from '../src/Slider';
 import styles from '../example/index.css';
 import './styles.css';
 
@@ -119,3 +120,69 @@ const CustomThumb = ({index, children}: {index: number; children: React.ReactNod
     </SliderThumb>
   );
 };
+
+export const SliderOverriddenDirection: SliderStory = () => (
+  // A control whose direction comes from its content rather than from the reading order is wrapped
+  // in an `I18nProvider` that overrides the direction. Left: an RTL locale, where a playback bar
+  // stays left to right. Right: an LTR locale, where a manga page position bar runs right to left.
+  // Each is shown next to a control that follows the locale. The wrapper also sets `dir`, so that
+  // CSS logical properties inside it resolve the same way the components do.
+  <div style={{display: 'flex', gap: 48}}>
+    <I18nProvider locale="ar-AE">
+      <div dir="rtl" style={{display: 'flex', flexDirection: 'column', gap: 24}}>
+        <Slider defaultValue={30} className={styles.slider}>
+          <div className={styles.label}>
+            <Label>Volume (follows the locale)</Label>
+            <SliderOutput />
+          </div>
+          <SliderTrack className={styles.track}>
+            <SliderFill />
+            <SliderThumb className={styles.thumb} />
+          </SliderTrack>
+        </Slider>
+        <I18nProvider locale="ar-AE" direction="ltr">
+          <div dir="ltr">
+            <Slider defaultValue={30} className={styles.slider}>
+              <div className={styles.label}>
+                <Label>Playback progress (pinned ltr)</Label>
+                <SliderOutput />
+              </div>
+              <SliderTrack className={styles.track}>
+                <SliderFill />
+                <SliderThumb className={styles.thumb} />
+              </SliderTrack>
+            </Slider>
+          </div>
+        </I18nProvider>
+      </div>
+    </I18nProvider>
+    <I18nProvider locale="en-US">
+      <div dir="ltr" style={{display: 'flex', flexDirection: 'column', gap: 24}}>
+        <Slider defaultValue={30} className={styles.slider}>
+          <div className={styles.label}>
+            <Label>Volume (follows the locale)</Label>
+            <SliderOutput />
+          </div>
+          <SliderTrack className={styles.track}>
+            <SliderFill />
+            <SliderThumb className={styles.thumb} />
+          </SliderTrack>
+        </Slider>
+        <I18nProvider locale="en-US" direction="rtl">
+          <div dir="rtl">
+            <Slider defaultValue={30} className={styles.slider}>
+              <div className={styles.label}>
+                <Label>Manga page position (pinned rtl)</Label>
+                <SliderOutput />
+              </div>
+              <SliderTrack className={styles.track}>
+                <SliderFill />
+                <SliderThumb className={styles.thumb} />
+              </SliderTrack>
+            </Slider>
+          </div>
+        </I18nProvider>
+      </div>
+    </I18nProvider>
+  </div>
+);

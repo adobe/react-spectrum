@@ -11,6 +11,7 @@
  */
 
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
 import React, {useState} from 'react';
 import {
@@ -405,7 +406,7 @@ describe('Slider', () => {
     expect(fill).toHaveAttribute('data-orientation', 'horizontal');
     expect(fill).toHaveStyle({
       position: 'absolute',
-      insetInlineStart: '0%',
+      left: '0%',
       width: '30%',
       height: '100%'
     });
@@ -420,7 +421,7 @@ describe('Slider', () => {
     expect(fill).toHaveAttribute('data-orientation', 'horizontal');
     expect(fill).toHaveStyle({
       position: 'absolute',
-      insetInlineStart: '30%',
+      left: '30%',
       width: '20%',
       height: '100%'
     });
@@ -428,7 +429,7 @@ describe('Slider', () => {
     rerender(<TestSlider sliderProps={{value: 80}} fillProps={{offset: 50}} />);
     expect(fill).toHaveStyle({
       position: 'absolute',
-      insetInlineStart: '50%',
+      left: '50%',
       width: '30%',
       height: '100%'
     });
@@ -455,5 +456,64 @@ describe('Slider', () => {
       <TestSlider sliderProps={{value: 80, orientation: 'vertical'}} fillProps={{offset: 50}} />
     );
     expect(fill).toHaveStyle({position: 'absolute', bottom: '50%', height: '30%', width: '100%'});
+  });
+
+  describe('direction', () => {
+    function renderWithDirection(locale, direction, sliderProps) {
+      return render(
+        <I18nProvider locale={locale} direction={direction}>
+          <TestSlider sliderProps={{value: 30, ...sliderProps}} />
+        </I18nProvider>
+      );
+    }
+
+    function parts(getByRole) {
+      let group = getByRole('group');
+      return {
+        fill: group.querySelector('.react-aria-SliderFill'),
+        thumb: group.querySelector('.react-aria-SliderThumb')
+      };
+    }
+
+    // The fill is anchored with a physical property rather than `insetInlineStart`, because
+    // the thumb is positioned with a physical `left` and the two have to agree. A logical
+    // property would resolve against the document, which an I18nProvider override does not change.
+    it('anchors the fill and the thumb to the same edge in an LTR locale', () => {
+      let {fill, thumb} = parts(renderWithDirection('en-US', undefined).getByRole);
+      expect(fill).toHaveStyle({left: '0%', width: '30%'});
+      expect(fill.style.insetInlineStart).toBe('');
+      expect(fill.style.right).toBe('');
+      expect(thumb).toHaveStyle({left: '30%'});
+    });
+
+    it('anchors the fill and the thumb to the same edge in an RTL locale', () => {
+      let {fill, thumb} = parts(renderWithDirection('ar-AE', undefined).getByRole);
+      expect(fill).toHaveStyle({right: '0%', width: '30%'});
+      expect(fill.style.insetInlineStart).toBe('');
+      expect(fill.style.left).toBe('');
+      expect(thumb).toHaveStyle({left: '70%'});
+    });
+
+    it('follows an ltr override inside an RTL locale', () => {
+      let {fill, thumb} = parts(renderWithDirection('ar-AE', 'ltr').getByRole);
+      expect(fill).toHaveStyle({left: '0%', width: '30%'});
+      expect(fill.style.right).toBe('');
+      expect(thumb).toHaveStyle({left: '30%'});
+    });
+
+    // The case a boolean could not express: content that reads right to left inside an LTR UI.
+    it('follows an rtl override inside an LTR locale', () => {
+      let {fill, thumb} = parts(renderWithDirection('en-US', 'rtl').getByRole);
+      expect(fill).toHaveStyle({right: '0%', width: '30%'});
+      expect(fill.style.left).toBe('');
+      expect(thumb).toHaveStyle({left: '70%'});
+    });
+
+    it('leaves a vertical fill on the bottom edge whatever the direction', () => {
+      let {fill} = parts(renderWithDirection('ar-AE', 'ltr', {orientation: 'vertical'}).getByRole);
+      expect(fill).toHaveStyle({bottom: '0%', height: '30%'});
+      expect(fill.style.left).toBe('');
+      expect(fill.style.right).toBe('');
+    });
   });
 });
