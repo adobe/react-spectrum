@@ -2198,6 +2198,95 @@ describe('Table', () => {
       let resizers = getAllByTestId('resizer');
       expect(resizers).toHaveLength(5);
     });
+
+    describe('with virtualizer and estimated row heights', () => {
+      installPointerEvent();
+      let spies, measured;
+
+      beforeEach(() => {
+        measured = [];
+        spies = [
+          jest
+            .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+            .mockImplementation(() => 600),
+          jest
+            .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementation(() => 400),
+          // Text in the Labels column wraps onto a second line while the column is narrower than 150px.
+          jest
+            .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+            .mockImplementation(function () {
+              measured.push(this.textContent);
+              return this.textContent.startsWith('Labels ') && parseFloat(this.style.width) < 150
+                ? 50
+                : 25;
+            })
+        ];
+      });
+
+      afterEach(() => {
+        spies.forEach(spy => spy.mockRestore());
+      });
+
+      function WrappingTable() {
+        let columns = [
+          {id: 'name', name: 'Name', defaultWidth: 200},
+          {id: 'labels', name: 'Labels', defaultWidth: 100},
+          {id: 'status', name: 'Status'}
+        ];
+        let rows = [{id: 1}, {id: 2}, {id: 3}];
+        return (
+          <ResizableTableContainer>
+            <Virtualizer layout={TableLayout} layoutOptions={{estimatedRowHeight: 25}}>
+              <Table aria-label="Wrapping">
+                <MyTableHeader columns={columns}>
+                  {column => (
+                    <MyColumn
+                      id={column.id}
+                      defaultWidth={column.defaultWidth}
+                      isRowHeader={column.id === 'name'}
+                      allowsResizing>
+                      {column.name}
+                    </MyColumn>
+                  )}
+                </MyTableHeader>
+                <TableBody items={rows}>
+                  {row => (
+                    <Row>
+                      <Cell>{'Name ' + row.id}</Cell>
+                      <Cell>{'Labels ' + row.id}</Cell>
+                      <Cell>{'Status ' + row.id}</Cell>
+                    </Row>
+                  )}
+                </TableBody>
+              </Table>
+            </Virtualizer>
+          </ResizableTableContainer>
+        );
+      }
+
+      function getRowHeights(tree) {
+        return tree
+          .getAllByRole('row')
+          .slice(1)
+          .map(row => row.parentElement.style.height);
+      }
+
+      it('keeps measured row heights when resizing a column that does not change them', () => {
+        let tree = render(<WrappingTable />);
+        expect(getRowHeights(tree)).toEqual(['50px', '50px', '50px']);
+
+        measured = [];
+        resizeCol(tree, 'Name', 20);
+
+        expect(measured.filter(text => text.startsWith('Labels '))).toEqual([]);
+        expect(getRowHeights(tree)).toEqual(['50px', '50px', '50px']);
+
+        resizeCol(tree, 'Labels', 100);
+
+        expect(getRowHeights(tree)).toEqual(['25px', '25px', '25px']);
+      });
+    });
   });
 
   it('should support overriding table style', () => {

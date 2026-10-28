@@ -76,6 +76,10 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
   private stickyColumnIndices: number[];
   private lastPersistedKeys: Set<Key> | null = null;
   private persistedIndices: Map<Key, number[]> = new Map();
+  // Cells are stretched to their row's height, so the measured height is kept
+  // separately; otherwise a row could never shrink after a column is widened.
+  private measuredHeights: Map<Key, number> = new Map();
+  private previousLayoutNodes: Map<Key, LayoutNode> | null = null;
 
   constructor(options?: TableLayoutProps) {
     super(options);
@@ -159,7 +163,29 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       invalidationContext.sizeChanged = true;
     }
 
+    if (this.lastCollection && newCollection !== this.lastCollection) {
+      for (let key of this.measuredHeights.keys()) {
+        if (!newCollection.getItem(key)) {
+          this.measuredHeights.delete(key);
+        }
+      }
+    }
+
+    // A size change clears the cached layout nodes before the rebuild. Keep the
+    // previous ones around during it so measured heights are reused as estimates
+    // instead of every item falling back to the default and being re-measured.
+    if (invalidationContext.sizeChanged) {
+      this.previousLayoutNodes = this.layoutNodes;
+      this.layoutNodes = new Map();
+    }
+
     super.update(invalidationContext);
+    this.previousLayoutNodes = null;
+  }
+
+  updateItemSize(key: Key, size: Size): boolean {
+    this.measuredHeights.set(key, size.height);
+    return super.updateItemSize(key, size);
   }
 
   protected buildCollection(): LayoutNode[] {
@@ -326,9 +352,10 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       // If a previous version of this layout info exists, reuse its height.
       // Mark as estimated if the size of the overall collection view changed,
       // or the content of the item changed.
-      let previousLayoutNode = this.layoutNodes.get(node.key);
+      let previousLayoutNode =
+        this.layoutNodes.get(node.key) ?? this.previousLayoutNodes?.get(node.key);
       if (previousLayoutNode) {
-        height = previousLayoutNode.layoutInfo.rect.height;
+        height = this.measuredHeights.get(node.key) ?? previousLayoutNode.layoutInfo.rect.height;
         isEstimated =
           node !== previousLayoutNode.node ||
           width !== previousLayoutNode.layoutInfo.rect.width ||
