@@ -345,6 +345,27 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', comp => {
     }
   });
 
+  it('should inherit validationBehavior="aria" from the group', () => {
+    // Regression for #10856: a group-level aria validationBehavior must reach
+    // each checkbox. With the buggy 'native' default on useCheckboxAria, the
+    // checkbox keeps required and form.checkValidity() blocks submit.
+    let {getByTestId, getAllByRole} = render(
+      <form data-testid="form">
+        <CheckboxGroup isRequired validationBehavior="aria" aria-label="Contact">
+          <Checkbox value="email">Email</Checkbox>
+        </CheckboxGroup>
+        <button type="submit">Submit</button>
+      </form>
+    );
+
+    let checkboxes = getAllByRole('checkbox');
+    expect(checkboxes[0]).not.toHaveAttribute('required');
+
+    act(() => {
+      expect(getByTestId('form').checkValidity()).toBe(true);
+    });
+  });
+
   it('should support focus events', async () => {
     let onBlur = jest.fn();
     let onFocus = jest.fn();
