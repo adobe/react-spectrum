@@ -17,7 +17,7 @@ import {Orientation} from '@react-types/shared';
 import {OverlayArrow} from '../src/OverlayArrow';
 import React, {useState} from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
-import {Tab, TabList, TabPanel, TabProps, Tabs} from '../src/Tabs';
+import {Tab, TabList, TabPanel, TabPanels, TabProps, Tabs} from '../src/Tabs';
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import './styles.css';
 
@@ -143,4 +143,54 @@ export const NestedTabs: TabsStory = () => (
     </TabPanel>
     <TabPanel id="bar">Bar</TabPanel>
   </Tabs>
+);
+
+const animatedPanelsStyle = {
+  height: 'var(--tab-panel-height)',
+  transition: 'height 400ms',
+  overflow: 'clip',
+  background: 'rgba(106, 90, 205, 0.1)'
+};
+
+const InnerTabs = () => (
+  <Tabs>
+    <TabList aria-label="Inner tabs" style={{display: 'flex', gap: 8}}>
+      <CustomTab id="one">One</CustomTab>
+      <CustomTab id="two">Two</CustomTab>
+    </TabList>
+    <TabPanels style={animatedPanelsStyle}>
+      <TabPanel id="one">
+        <p>Senatus Populusque Romanus.</p>
+      </TabPanel>
+      <TabPanel id="two">
+        <p>Arma virumque cano, Troiae qui primus ab oris.</p>
+        <p>Italiam fato profugus, Laviniaque venit litora.</p>
+        <p>Multum ille et terris iactatus et alto.</p>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
+);
+
+export const NestedTabsAnimated: TabsStory = () => (
+  <div style={{height: '300px', width: '300px'}}>
+    <Tabs>
+      <TabList aria-label="Outer tabs" style={{display: 'flex', gap: 8}}>
+        <CustomTab id="foo">Foo</CustomTab>
+        <CustomTab id="bar">Bar</CustomTab>
+        <CustomTab id="baz">Baz</CustomTab>
+      </TabList>
+      <TabPanels style={animatedPanelsStyle}>
+        <TabPanel id="foo">
+          <p>Alea jacta est.</p>
+        </TabPanel>
+        <TabPanel id="bar">
+          <InnerTabs />
+        </TabPanel>
+        <TabPanel id="baz">
+          <p>Veni, vidi, vici.</p>
+          <InnerTabs />
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  </div>
 );
