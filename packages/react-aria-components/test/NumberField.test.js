@@ -256,6 +256,48 @@ describe('NumberField', () => {
     expect(numberfield).not.toHaveAttribute('data-invalid');
   });
 
+  it('should clear validation errors when a controlled value is updated externally', async () => {
+    function ControlledNumberField() {
+      let [value, setValue] = useState(1);
+
+      return (
+        <form data-testid="form">
+          <NumberField
+            value={value}
+            onChange={setValue}
+            validationBehavior="native"
+            isRequired
+            validate={v => (v % 2 ? 'Odd values are invalid' : null)}>
+            <Label>Value</Label>
+            <Group>
+              <Button slot="decrement">-</Button>
+              <Input />
+              <Button slot="increment">+</Button>
+            </Group>
+            <FieldError />
+          </NumberField>
+          <Button onPress={() => setValue(10)}>Set to 10</Button>
+        </form>
+      );
+    }
+
+    let {getByRole, getByTestId} = render(<ControlledNumberField />);
+    let input = getByRole('textbox');
+
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
+
+    let describedBy = input.getAttribute('aria-describedby');
+    expect(describedBy).toBeTruthy();
+    expect(document.getElementById(describedBy)).toHaveTextContent('Odd values are invalid');
+
+    await user.click(getByRole('button', {name: 'Set to 10'}));
+
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input).not.toHaveAttribute('aria-invalid');
+  });
+
   it('supports pasting value in another numbering system', async () => {
     let {getByRole, rerender} = render(<TestNumberField />);
     let input = getByRole('textbox');
