@@ -14,7 +14,7 @@ import {AriaPreviewTriggerProps, usePreviewTrigger} from 'react-aria/usePreviewT
 import {FocusableElement} from '@react-types/shared';
 import {FocusableProvider} from 'react-aria/private/interactions/useFocusable';
 import {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
-import {OverlayTriggerStateContext} from './Dialog';
+import {OverlayTriggerStateContext} from './OverlayTriggerStateContext';
 import {PopoverContext} from './Popover';
 import {Provider} from './utils';
 import React, {JSX, ReactNode, useMemo, useRef} from 'react';

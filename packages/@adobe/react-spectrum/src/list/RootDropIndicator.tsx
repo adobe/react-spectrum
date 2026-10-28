@@ -1,4 +1,4 @@
-import {ListViewContext} from './ListView';
+import {ListViewContext} from './ListViewContext';
 import React, {JSX, useContext, useRef} from 'react';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
