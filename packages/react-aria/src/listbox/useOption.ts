@@ -107,7 +107,7 @@ export function useOption<T>(
 
   let data = listData.get(state);
 
-  let isDisabled = props.isDisabled ?? state.selectionManager.isDisabled(key);
+  let isDisabled = props.isDisabled ?? (data?.isDisabled || state.selectionManager.isDisabled(key));
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
   let shouldSelectOnPressUp = props.shouldSelectOnPressUp ?? data?.shouldSelectOnPressUp;
   let shouldFocusOnHover = props.shouldFocusOnHover ?? data?.shouldFocusOnHover;
