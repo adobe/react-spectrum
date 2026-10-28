@@ -2992,6 +2992,24 @@ describe('Tree', () => {
       expect(document.activeElement).toBe(input);
     });
 
+    it('should not navigate rows when Home or End are pressed while a text input child has focus', async () => {
+      let {getByRole} = render(<TreeWithTextFieldStory />);
+      let treeTester = testUtilUser.createTester('Tree', {root: getByRole('treegrid')});
+      let rows = treeTester.getRows();
+      let input = getByRole('textbox', {name: 'Name'});
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('{End}');
+      expect(document.activeElement).toBe(input);
+      await user.keyboard('{Home}');
+      expect(document.activeElement).toBe(input);
+    });
+
     it('should not trigger typeahead when typing in a text input child', async () => {
       let {getByRole} = render(<TreeWithTextFieldStory />);
       let treeTester = testUtilUser.createTester('Tree', {root: getByRole('treegrid')});
