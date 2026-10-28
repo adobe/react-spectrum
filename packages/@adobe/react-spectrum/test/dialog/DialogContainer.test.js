@@ -272,6 +272,45 @@ describe('DialogContainer', function () {
     expect(document.activeElement).toBe(button);
   });
 
+  it('should not restore focus to the trigger on close when disableFocusManagement is set', async function () {
+    // Given a DialogContainer rendered with disableFocusManagement
+    // When the dialog is opened via the trigger and then dismissed
+    // Then focus is NOT automatically restored to the trigger (FocusScope's
+    // restoreFocus is skipped, unlike the default behavior asserted by the
+    // "should be able to have dialogs open dialogs and still restore focus" test above).
+    let user = userEvent.setup({delay: null, pointerMap});
+    let {getByRole, queryByRole} = render(
+      <Provider theme={theme}>
+        <DialogContainerExample disableFocusManagement />
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    expect(queryByRole('dialog')).toBeNull();
+
+    await user.click(button);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+    let confirmButton = within(dialog).getByText('Confirm');
+
+    await user.click(confirmButton);
+    act(() => {
+      jest.runAllTimers();
+    });
+    // A second timer flush lets the exit transition + FocusScope unmount/restore
+    // effect fully settle (matches the pattern used by the nested-dialog restore
+    // focus test above).
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).not.toBe(button);
+  });
+
   describe('portalContainer', () => {
     let user;
     beforeAll(() => {
