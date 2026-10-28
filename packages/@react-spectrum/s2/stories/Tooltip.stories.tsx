@@ -194,17 +194,23 @@ export const LongLabel: Story = {
 };
 
 export const ColorScheme: Story = {
+  args: {
+    variant: 'negative'
+  },
+
   render: (args: any) => (
     <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
       <ExampleRender {...args} />
     </Provider>
   ),
+
   argTypes: {
     isOpen: {
       control: 'select',
       options: [true, false, undefined]
     }
   },
+
   parameters: {
     docs: {
       source: {
