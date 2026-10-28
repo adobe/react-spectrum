@@ -818,6 +818,104 @@ describe('Table', () => {
     expect(column).not.toHaveClass('hover');
   });
 
+  describe('row focus events', () => {
+    it('should report row focus transitions using the keyboard', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let {getAllByRole, getByRole} = render(
+        <>
+          <button>Before</button>
+          <TestTable
+            rowProps={{
+              onFocus: e => onFocus(e.target),
+              onBlur: e => onBlur(e.target),
+              onFocusChange
+            }}
+          />
+          <button>After</button>
+        </>
+      );
+      let rows = getAllByRole('row').slice(1);
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      expect(rows[0]).toHaveAttribute('data-focused', 'true');
+      expect(rows[0]).toHaveAttribute('data-focus-visible', 'true');
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onFocus).toHaveBeenLastCalledWith(rows[0]);
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[1]);
+      expect(rows[1]).toHaveAttribute('data-focus-visible', 'true');
+      expect(onFocus).toHaveBeenCalledTimes(2);
+      expect(onFocus).toHaveBeenLastCalledWith(rows[1]);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenLastCalledWith(rows[0]);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false], [true]]);
+
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'After'}));
+      expect(onBlur).toHaveBeenCalledTimes(2);
+      expect(onBlur).toHaveBeenLastCalledWith(rows[1]);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false], [true], [false]]);
+    });
+
+    it('should not report focus changes when a focused row rerenders', async () => {
+      let onFocusChange = jest.fn();
+      let {rerender, getAllByRole} = renderTable({rowProps: {onFocusChange}});
+      await user.tab();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+      rerender(<TestTable rowProps={{onFocusChange, 'aria-label': 'Updated row'}} />);
+      expect(document.activeElement).toBe(getAllByRole('row')[1]);
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+    });
+
+    it('should not report cell or descendant focus as row focus', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let {getByRole} = render(
+        <Table aria-label="Files">
+          <TableHeader>
+            <Column isRowHeader>Name</Column>
+            <Column>Actions</Column>
+          </TableHeader>
+          <TableBody>
+            <Row onFocus={onFocus} onBlur={onBlur} onFocusChange={onFocusChange}>
+              <Cell>Cat</Cell>
+              <Cell>
+                <Button>First action</Button>
+                <Button>Second action</Button>
+              </Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+      await user.tab();
+      let row = getByRole('row', {name: 'Cat'});
+      expect(document.activeElement).toBe(row);
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('rowheader'));
+      expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'First action'}));
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Second action'}));
+      expect(row).toHaveAttribute('data-focus-visible-within', 'true');
+      await user.click(getByRole('rowheader'));
+      expect(document.activeElement).toBe(getByRole('rowheader'));
+      expect(row).not.toHaveAttribute('data-focus-visible');
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+    });
+  });
+
   it('should support hover', async () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
