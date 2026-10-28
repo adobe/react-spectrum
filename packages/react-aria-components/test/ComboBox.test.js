@@ -1281,6 +1281,30 @@ describe('ComboBox', () => {
     expect(queryByRole('listbox')).toBeNull();
   });
 
+  it('should prevent the default action of Escape when it closes the popover', async () => {
+    let {getByRole, queryByRole} = render(<TestComboBox />);
+    let input = getByRole('combobox');
+
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    expect(getByRole('listbox')).toBeInTheDocument();
+
+    let notPrevented = fireEvent.keyDown(input, {key: 'Escape'});
+    expect(notPrevented).toBe(false);
+    expect(queryByRole('listbox')).toBeNull();
+  });
+
+  it('should not prevent the default action of Escape when the popover is closed', async () => {
+    let {getByRole, queryByRole} = render(<TestComboBox />);
+    let input = getByRole('combobox');
+
+    await user.tab();
+    expect(queryByRole('listbox')).toBeNull();
+
+    let notPrevented = fireEvent.keyDown(input, {key: 'Escape'});
+    expect(notPrevented).toBe(true);
+  });
+
   it('should not re-open after user dismisses with Escape (revert) controlled items', async () => {
     let onOpenChange = jest.fn();
     let onInputChange = jest.fn().mockReturnValueOnce(true).mockReturnValue(false);
