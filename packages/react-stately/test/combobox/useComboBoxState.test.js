@@ -249,6 +249,38 @@ describe('useComboBoxState tests', function () {
       expect(onSelectionChange).toHaveBeenCalledWith('1');
     });
 
+    it('does not fire onSelectionChange on blur when read-only and the selected key is not in the collection', function () {
+      let initialProps = {
+        ...defaultProps,
+        isReadOnly: true,
+        selectedKey: '2',
+        inputValue: 'elsewhere'
+      };
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
+
+      act(() => {
+        result.current.setFocused(false);
+      });
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('closes the menu without committing on blur when read-only', function () {
+      let initialProps = {...defaultProps, selectedKey: '2', inputValue: 'elsewhere'};
+      let {result, rerender} = renderHook(props => useComboBoxState(props), {initialProps});
+
+      act(() => {
+        result.current.open();
+      });
+      expect(result.current.isOpen).toBe(true);
+
+      rerender({...initialProps, isReadOnly: true});
+      act(() => {
+        result.current.setFocused(false);
+      });
+      expect(result.current.isOpen).toBe(false);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
     it("won't update the returned collection if the combobox is closed (uncontrolled items)", function () {
       let filter = renderHook(props => useFilter(props), {sensitivity: 'base'});
       let initialProps = {
