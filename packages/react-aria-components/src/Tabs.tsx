@@ -150,6 +150,12 @@ export interface TabProps
   id?: Key;
   /** Whether the tab is disabled. */
   isDisabled?: boolean;
+  /**
+   * Whether the tab should remain focusable while disabled, following the ARIA APG
+   * "focusability of disabled controls" pattern. The tab stays non-interactive (not selectable,
+   * `aria-disabled`) but remains reachable via keyboard navigation.
+   */
+  allowFocusWhenDisabled?: boolean;
 }
 
 export interface TabRenderProps {
