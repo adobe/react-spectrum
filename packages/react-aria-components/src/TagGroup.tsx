@@ -265,7 +265,7 @@ function TagListInner<T>({props, forwardedRef}: TagListInnerProps<T>) {
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      <SharedElementTransition>
+      <SharedElementTransition containerRef={ref}>
         {state.collection.size === 0 && props.renderEmptyState ? (
           props.renderEmptyState(renderValues)
         ) : (
