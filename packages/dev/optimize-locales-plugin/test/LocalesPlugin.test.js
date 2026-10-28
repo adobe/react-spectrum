@@ -11,8 +11,12 @@
  */
 const path = require('path');
 const LocalesPlugin = require('../LocalesPlugin');
+const localesLoader = require('../LocalesLoader');
 
 const EMPTY_JS = path.join(path.dirname(require.resolve('../LocalesPlugin')), 'empty.js');
+const LOADER = path.join(path.dirname(require.resolve('../LocalesPlugin')), 'LocalesLoader.js');
+const LOCALES_GLOB =
+  '**/{@react-stately,@react-aria,@react-spectrum,@adobe/react-spectrum,react-stately,react-aria,react-aria-components}/**/??-??.{json,mjs,js,cjs}';
 
 function createPlugin(locales = ['en-US']) {
   return LocalesPlugin.raw({locales}, {framework: 'rollup'});
@@ -22,7 +26,18 @@ function fakeImporter(pkgName) {
   return `/repo/node_modules/${pkgName}/dist/intlStrings.mjs`;
 }
 
+function resolveId(plugin, ...args) {
+  return plugin.resolveId.handler(...args);
+}
+
 describe('@react-aria/optimize-locales-plugin', () => {
+  test('resolveId filters locale-looking specifiers', () => {
+    const plugin = createPlugin(['en-US']);
+
+    expect(plugin.resolveId.filter.id.test('./fr-FR.json')).toBe(true);
+    expect(plugin.resolveId.filter.id.test('./helpers')).toBe(false);
+  });
+
   describe('resolveId redirects non-included locales to empty.js for', () => {
     const cases = [
       ['@react-stately/combobox', fakeImporter('@react-stately/combobox')],
@@ -36,7 +51,7 @@ describe('@react-aria/optimize-locales-plugin', () => {
 
     test.each(cases)('importer under %s', (_label, sourcePath) => {
       const plugin = createPlugin(['en-US']);
-      const resolved = plugin.resolveId('./fr-FR.json', sourcePath, {});
+      const resolved = resolveId(plugin, './fr-FR.json', sourcePath, {});
       expect(resolved).toBe(EMPTY_JS);
     });
   });
@@ -44,32 +59,32 @@ describe('@react-aria/optimize-locales-plugin', () => {
   describe('resolveId leaves things alone when', () => {
     test('importer is outside React Spectrum / React Aria scopes', () => {
       const plugin = createPlugin(['en-US']);
-      const resolved = plugin.resolveId('./fr-FR.json', fakeImporter('some-other-pkg'), {});
+      const resolved = resolveId(plugin, './fr-FR.json', fakeImporter('some-other-pkg'), {});
       expect(resolved).toBeUndefined();
     });
 
     test('specifier targets an included locale', () => {
       const plugin = createPlugin(['en-US', 'fr-FR']);
-      const resolved = plugin.resolveId('./fr-FR.json', fakeImporter('@adobe/react-spectrum'), {});
+      const resolved = resolveId(plugin, './fr-FR.json', fakeImporter('@adobe/react-spectrum'), {});
       expect(resolved).toBeNull();
     });
 
     test('specifier targets a regional locale whose language is included without a region', () => {
       // Including a bare language ("fr") should keep every regional variant.
       const plugin = createPlugin(['en-US', 'fr']);
-      const resolved = plugin.resolveId('./fr-CA.json', fakeImporter('@react-aria/button'), {});
+      const resolved = resolveId(plugin, './fr-CA.json', fakeImporter('@react-aria/button'), {});
       expect(resolved).toBeNull();
     });
 
     test('specifier does not look like a locale', () => {
       const plugin = createPlugin(['en-US']);
-      const resolved = plugin.resolveId('./helpers', fakeImporter('@adobe/react-spectrum'), {});
+      const resolved = resolveId(plugin, './helpers', fakeImporter('@adobe/react-spectrum'), {});
       expect(resolved).toBeNull();
     });
 
     test('options.ssr is true', () => {
       const plugin = createPlugin(['en-US']);
-      const resolved = plugin.resolveId('./fr-FR.json', fakeImporter('@adobe/react-spectrum'), {
+      const resolved = resolveId(plugin, './fr-FR.json', fakeImporter('@adobe/react-spectrum'), {
         ssr: true
       });
       expect(resolved).toBeUndefined();
@@ -79,7 +94,91 @@ describe('@react-aria/optimize-locales-plugin', () => {
   test('handles Windows-style importer paths', () => {
     const plugin = createPlugin(['en-US']);
     const windowsImporter = 'C:\\repo\\node_modules\\@adobe\\react-spectrum\\dist\\intlStrings.mjs';
-    const resolved = plugin.resolveId('./fr-FR.json', windowsImporter, {});
+    const resolved = resolveId(plugin, './fr-FR.json', windowsImporter, {});
     expect(resolved).toBe(EMPTY_JS);
   });
+
+  describe('Turbopack', () => {
+    test('returns a single scoped loader rule', () => {
+      let config = LocalesPlugin.turbopack({locales: ['en-US', 'fr']});
+
+      expect(Object.keys(config.rules)).toEqual([LOCALES_GLOB]);
+      expect(config.rules[LOCALES_GLOB]).toEqual({
+        loaders: [
+          {
+            loader: LOADER,
+            options: {locales: ['en-US', 'fr']}
+          }
+        ],
+        as: '*.js'
+      });
+    });
+
+    test('supports different locales in browser and server module graphs', () => {
+      let config = LocalesPlugin.turbopack([
+        {locales: [], condition: 'browser'},
+        {locales: ['en-US', 'fr'], condition: {not: 'browser'}}
+      ]);
+
+      expect(config.rules[LOCALES_GLOB]).toEqual([
+        {
+          condition: 'browser',
+          loaders: [
+            {
+              loader: LOADER,
+              options: {locales: []}
+            }
+          ],
+          as: '*.js'
+        },
+        {
+          condition: {not: 'browser'},
+          loaders: [
+            {
+              loader: LOADER,
+              options: {locales: ['en-US', 'fr']}
+            }
+          ],
+          as: '*.js'
+        }
+      ]);
+    });
+
+    test('requires at least one conditional configuration', () => {
+      expect(() => LocalesPlugin.turbopack([])).toThrow(
+        'Expected at least one Turbopack locale configuration.'
+      );
+    });
+
+    test('loader replaces an excluded locale with undefined', () => {
+      let result = callLoader('fr-FR', ['en-US']);
+      expect(result).toBe('export default undefined;');
+    });
+
+    test('loader preserves an included locale', () => {
+      let result = callLoader('fr-FR', ['en-US', 'fr-FR']);
+      expect(result).toBe('export default {"message":"Bonjour"};');
+    });
+
+    test('loader preserves regional locales included by language', () => {
+      let result = callLoader('fr-CA', ['en-US', 'fr']);
+      expect(result).toBe('export default {"message":"Bonjour"};');
+    });
+
+    test('loader preserves included compiled locale modules', () => {
+      let source = 'export default {"message":"Bonjour"};';
+      let result = callLoader('fr-FR', ['fr'], 'mjs', source);
+      expect(result.toString()).toBe(source);
+    });
+  });
 });
+
+function callLoader(locale, locales, extension = 'json', source = '{"message":"Bonjour"}') {
+  return localesLoader.call(
+    {
+      resourcePath: `/repo/node_modules/@react-aria/button/intl/${locale}.${extension}`,
+      getOptions: () => ({locales})
+    },
+    Buffer.from(source)
+  );
+}

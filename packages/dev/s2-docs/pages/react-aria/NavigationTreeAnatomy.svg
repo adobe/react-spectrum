@@ -1,0 +1,72 @@
+<svg style="max-height: 210px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 580 210">
+  <defs>
+    <clipPath id="clip-navtree_anatomy">
+      <rect width="580" height="210"/>
+    </clipPath>
+  </defs>
+  <g id="navtree_anatomy" clip-path="url(#clip-navtree_anatomy)">
+    <rect width="580" height="210" fill="var(--anatomy-gray-100)"/>
+
+    <!-- Panel: NavigationTree -->
+    <g id="panel" transform="translate(200 28)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-300)">
+      <rect x="0.5" y="0.5" width="179" height="149" rx="10"/>
+    </g>
+
+    <!-- Current route pill (on Photos) -->
+    <rect x="225" y="120" width="3" height="16" rx="1.5" fill="var(--anatomy-gray-900)"/>
+
+    <!-- Section header -->
+    <text x="214" y="46" fill="var(--anatomy-gray-800)" font-size="12" font-weight="600" font-family="var(--anatomy-font)">Personal</text>
+
+    <!-- Items -->
+    <text x="220" y="74" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)">Home</text>
+    <text x="220" y="104" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)">Apollo</text>
+    <text x="234" y="132" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)">Photos</text>
+    <text x="234" y="160" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)">Videos</text>
+
+    <!-- Chevron (expanded, pointing down) on Apollo, right side -->
+    <g id="Chevron" transform="translate(355 97)">
+      <path d="M9.99,1.01A1,1,0,0,0,8.283.3L5,3.586,1.717.3A1,1,0,1,0,.3,1.717L4.293,5.7a1,1,0,0,0,1.414,0L9.7,1.717A1,1,0,0,0,9.99,1.01Z" fill="var(--anatomy-gray-700)"/>
+    </g>
+
+    <!-- ===================== Annotations ===================== -->
+    <g stroke="var(--anatomy-gray-500)" stroke-width="1" fill="none">
+      <!-- NavigationTree (top) -->
+      <line x1="290" y1="20" x2="290" y2="28"/>
+      <!-- NavigationTreeSection bracket (left) -->
+      <line x1="190" y1="36" x2="190" y2="168"/>
+      <line x1="190" y1="36" x2="196" y2="36"/>
+      <line x1="190" y1="168" x2="196" y2="168"/>
+      <line x1="190" y1="102" x2="178" y2="102"/>
+      <!-- Header -> Personal -->
+      <line x1="262" y1="42" x2="406" y2="42"/>
+      <!-- Link -> Home -->
+      <line x1="258" y1="70" x2="406" y2="70"/>
+      <!-- Item bracket (Apollo row) -->
+      <line x1="388" y1="89" x2="388" y2="111"/>
+      <line x1="382" y1="89" x2="388" y2="89"/>
+      <line x1="382" y1="111" x2="388" y2="111"/>
+      <line x1="388" y1="96" x2="406" y2="96"/>
+      <!-- Button slot=chevron -> chevron -->
+      <line x1="360" y1="110" x2="360" y2="118"/>
+      <line x1="360" y1="118" x2="406" y2="118"/>
+    </g>
+
+    <!-- Leader end dots (single-line element pointers) -->
+    <g fill="var(--anatomy-gray-500)">
+      <circle cx="290" cy="28" r="2"/>
+      <circle cx="262" cy="42" r="2"/>
+      <circle cx="258" cy="70" r="2"/>
+      <circle cx="360" cy="110" r="2"/>
+    </g>
+
+    <!-- Annotation labels -->
+    <text x="290" y="15" text-anchor="middle" fill="var(--anatomy-gray-700)" font-size="13" font-style="italic" font-family="var(--anatomy-font)">NavigationTree</text>
+    <text x="174" y="106" text-anchor="end" fill="var(--anatomy-gray-700)" font-size="13" font-style="italic" font-family="var(--anatomy-font)">NavigationTreeSection</text>
+
+    <text x="412" y="46" fill="var(--anatomy-gray-700)" font-size="13" font-style="italic" font-family="var(--anatomy-font)">NavigationTreeHeader</text>
+    <text x="412" y="74" fill="var(--anatomy-gray-700)" font-size="13" font-style="italic" font-family="var(--anatomy-font)">Link</text>
+    <text x="412" y="100" fill="var(--anatomy-gray-700)" font-size="13" font-style="italic" font-family="var(--anatomy-font)">NavigationTreeItem</text>
+    <text x="412" y="122" fill="var(--anatomy-gray-700)" font-size="13" font-style="italic" font-family="var(--anatomy-font)">Button slot="chevron"</text>
+  </g>
+</svg>

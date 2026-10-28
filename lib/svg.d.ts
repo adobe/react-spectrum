@@ -22,11 +22,20 @@ declare module 'url:*' {
 
 declare module '*.svg' {
   import {FunctionComponent, SVGProps} from 'react';
-  const content: FunctionComponent<SVGProps<SVGSVGElement>>;
+  // Our icon and illustration props extend SlotProps, which allows `slot={null}` to opt out of a
+  // slotted context. @types/react declares `slot` as `string` on SVGAttributes, so widen it here to
+  // match the props these components are given.
+  const content: FunctionComponent<Omit<SVGProps<SVGSVGElement>, 'slot'> & {slot?: string | null}>;
   export default content;
 }
 
 declare module '*.json' {
   const content: any;
   export default content;
+}
+
+declare module '*.mdx' {
+  import {ElementType, FunctionComponent} from 'react';
+  const MDXComponent: FunctionComponent<{components?: Record<string, ElementType>}>;
+  export default MDXComponent;
 }

@@ -24,6 +24,7 @@ import {
 } from '@react-types/shared';
 import {createFocusManager} from '../focus/FocusScope';
 import {filterDOMProps} from '../utils/filterDOMProps';
+import {getParentElement} from '../utils/shadowdom/DOMFunctions';
 import {ListState} from 'react-stately/useListState';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
@@ -80,7 +81,7 @@ export function useActionGroup<T>(
 
   let [isInToolbar, setInToolbar] = useState(false);
   useLayoutEffect(() => {
-    setInToolbar(!!(ref.current && ref.current.parentElement?.closest('[role="toolbar"]')));
+    setInToolbar(!!(ref.current && getParentElement(ref.current)?.closest('[role="toolbar"]')));
   }, [ref]);
 
   let allKeys = [...state.collection.getKeys()];
@@ -91,7 +92,9 @@ export function useActionGroup<T>(
   let {direction} = useLocale();
   // oxlint-disable-next-line react/react-compiler
   let focusManager = createFocusManager(ref);
-  let flipDirection = direction === 'rtl' && orientation === 'horizontal';
+  // ArrowLeft/ArrowRight follow the locale's text direction regardless of orientation, so
+  // ArrowLeft always moves to the next item in RTL. ArrowUp/ArrowDown are never flipped.
+  let flipDirection = direction === 'rtl';
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       ArrowRight: () => {

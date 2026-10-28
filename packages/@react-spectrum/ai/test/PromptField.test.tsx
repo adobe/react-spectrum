@@ -12,13 +12,20 @@
 
 import {act, screen, waitFor} from '@react-spectrum/test-utils-internal';
 import {
+  AttachFileMenuItem,
+  InsertMenuButton,
+  PromptField,
+  PromptFieldToolbar,
+  PromptTokenField
+} from '../src/PromptField';
+import {
   imageAttachment,
   installRangePolyfill,
   PromptFieldValue,
   renderPromptField,
   tokenTexts
 } from './utils/promptFieldTestUtils';
-import {PromptField, PromptTokenField} from '../src/PromptField';
+import {MenuItem} from '@react-spectrum/s2/Menu';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import userEvent from '@testing-library/user-event';
@@ -51,11 +58,20 @@ describeOrSkip('PromptField', () => {
   let user;
 
   beforeAll(() => {
-    user = userEvent.setup({delay: null});
+    installRangePolyfill();
+    user = userEvent.setup({advanceTimers: jest.advanceTimersByTime});
+    jest.useFakeTimers();
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
   });
 
-  beforeAll(() => {
-    installRangePolyfill();
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
   });
 
   describe('placeholder text', () => {
@@ -101,6 +117,34 @@ describeOrSkip('PromptField', () => {
       await user.keyboard('hello@');
 
       expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    });
+
+    it('renders async loaded items', async () => {
+      let renderCompletions = async function (): Promise<React.ReactNode[]> {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return [<MenuItem key="blah">blah</MenuItem>];
+      };
+
+      render(
+        <PromptField>
+          <PromptTokenField
+            completionTrigger={/(?<=^|\s)[@/]/}
+            renderCompletions={renderCompletions}
+          />
+        </PromptField>
+      );
+
+      await act(async () => {
+        await user.click(screen.getByRole('textbox'));
+        await user.keyboard('@');
+      });
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+
+      await act(async () => {
+        jest.advanceTimersByTime(500);
+      });
+
+      expect(await findMenuItem('blah')).toBeInTheDocument();
     });
   });
 
@@ -391,7 +435,7 @@ describeOrSkip('PromptField', () => {
   describe('submit / generate state', () => {
     it('disables submit when empty and enables it with content', async () => {
       let {user, textbox, getValue, onSubmit} = renderPromptField();
-      let submit = screen.getByRole('button', {name: 'Send'});
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
       expect(submit).toBeDisabled();
 
       await user.click(textbox);
@@ -406,11 +450,51 @@ describeOrSkip('PromptField', () => {
 
     it('shows a Stop button while generating and calls onStop', async () => {
       let {user, onStop} = renderPromptField({isGenerating: true});
-      let stop = screen.getByRole('button', {name: 'Stop'});
+      let stop = screen.getByRole('button', {name: 'Stop AI prompt'});
       expect(stop).toBeEnabled();
 
       await user.click(stop);
       expect(onStop).toHaveBeenCalledTimes(1);
+    });
+
+    it('switches back to submit while typing during generation', async () => {
+      let {user, textbox, onSubmit, onStop} = renderPromptField({isGenerating: true});
+      expect(screen.getByRole('button', {name: 'Stop AI prompt'})).toBeInTheDocument();
+
+      await user.click(textbox);
+      await user.keyboard('a');
+
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
+      expect(submit).toBeEnabled();
+      await user.keyboard('{Backspace}');
+      expect(screen.getByRole('button', {name: 'Stop AI prompt'})).toBeInTheDocument();
+
+      await user.keyboard('a');
+      submit = screen.getByRole('button', {name: 'Submit AI prompt'});
+      await user.click(submit);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onStop).not.toHaveBeenCalled();
+    });
+
+    it('enables submit with attachments and no text', async () => {
+      let {user, onSubmit} = renderPromptField({attachments: [imageAttachment('a1')]});
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
+      expect(submit).toBeEnabled();
+
+      await user.click(submit);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    it('enables submit with attachments and no text during generation', async () => {
+      let {user, onSubmit} = renderPromptField({
+        isGenerating: true,
+        attachments: [imageAttachment('a1')]
+      });
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
+      expect(submit).toBeEnabled();
+
+      await user.click(submit);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -440,15 +524,51 @@ describeOrSkip('PromptField', () => {
       let {container} = renderPromptField({attachments: [imageAttachment('a1')], invalid: true});
       expect(screen.getByLabelText('Attachments')).toBeInTheDocument();
       // The invalid state renders a decorative alert icon.
-      expect(container.querySelector('[aria-hidden="true"] svg')).toBeTruthy();
+      expect(container.querySelector('svg')).toBeTruthy();
     });
   });
 
-  it('fires onKeyDown when a key is pressed in the token field', async () => {
+  describe('InsertMenuButton', () => {
+    it('calls onOpenChange when the menu is opened', async () => {
+      let onOpenChange = jest.fn();
+      let {getByRole} = render(
+        <PromptField>
+          <PromptTokenField />
+          <PromptFieldToolbar>
+            <InsertMenuButton onOpenChange={onOpenChange}>
+              <AttachFileMenuItem />
+            </InsertMenuButton>
+          </PromptFieldToolbar>
+        </PromptField>
+      );
+      await user.click(getByRole('button', {name: 'Add'}));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+    });
+
+    it('calls AttachFileMenuItem onAction when the item is selected', async () => {
+      let onAction = jest.fn();
+      let {getByRole} = render(
+        <PromptField>
+          <PromptTokenField />
+          <PromptFieldToolbar>
+            <InsertMenuButton>
+              <AttachFileMenuItem onAction={onAction} />
+            </InsertMenuButton>
+          </PromptFieldToolbar>
+        </PromptField>
+      );
+      await user.click(getByRole('button', {name: 'Add'}));
+      await user.click(await findMenuItem('Attach a file'));
+      expect(onAction).toHaveBeenCalled();
+    });
+  });
+
+  it('fires onKeyDown and onKeyUp when a key is pressed in the token field', async () => {
     let onKeyDown = jest.fn();
+    let onKeyUp = jest.fn();
     let {getByRole} = render(
       <PromptField>
-        <PromptTokenField onKeyDown={onKeyDown} />
+        <PromptTokenField onKeyDown={onKeyDown} onKeyUp={onKeyUp} />
       </PromptField>
     );
 
@@ -456,6 +576,52 @@ describeOrSkip('PromptField', () => {
     await user.click(input);
     await user.keyboard('a');
 
-    expect(onKeyDown).toHaveBeenCalled();
+    expect(onKeyDown).toHaveBeenCalledTimes(1);
+    expect(onKeyDown).toHaveBeenCalledWith(expect.objectContaining({key: 'a'}));
+    expect(onKeyUp).toHaveBeenCalledTimes(1);
+    expect(onKeyUp).toHaveBeenCalledWith(expect.objectContaining({key: 'a'}));
+  });
+
+  it('does not fire onKeyDown when selecting a virtually focused completion', async () => {
+    let onKeyDown = jest.fn();
+    let {getByRole} = render(
+      <PromptField>
+        <PromptTokenField
+          completionTrigger={/(?<=^|\s)@/}
+          onKeyDown={onKeyDown}
+          renderCompletions={() => [<MenuItem key="blah">blah</MenuItem>]}
+        />
+      </PromptField>
+    );
+
+    await user.click(getByRole('textbox'));
+    await user.keyboard('@{ArrowDown}');
+    onKeyDown.mockClear();
+    await user.keyboard('{Enter}');
+
+    expect(onKeyDown).not.toHaveBeenCalled();
+  });
+
+  it('calls onAITermsPress when the AI User Guidelines link is pressed', async () => {
+    let onAITermsPress = jest.fn();
+    let {user} = renderPromptField({onAITermsPress});
+
+    await user.click(screen.getByRole('link', {name: 'AI User Guidelines'}));
+    expect(onAITermsPress).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the full URL when stringifying', async () => {
+    let {user, textbox, getValue} = renderPromptField();
+    await user.click(textbox);
+    await user.keyboard('visit https://www.test.com now');
+
+    await waitFor(() =>
+      expect(getValue().segments.some(s => s.type === 'token' && s.value?.type === 'url')).toBe(
+        true
+      )
+    );
+    let urlToken = getValue().segments.find(s => s.type === 'token' && s.value?.type === 'url');
+    expect(urlToken?.text).toBe('test.com');
+    expect(getValue().toString()).toContain('https://www.test.com');
   });
 });

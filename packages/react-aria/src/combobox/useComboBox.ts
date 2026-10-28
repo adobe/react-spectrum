@@ -267,8 +267,9 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
   });
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
-    let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
+    let blurFromButton = nodeContains(buttonRef.current, e.relatedTarget as Element);
     let blurIntoPopover = nodeContains(popoverRef.current, e.relatedTarget);
+
     // Ignore blur if focused moved to the button(if exists) or into the popover.
     if (blurFromButton || blurIntoPopover) {
       return;
@@ -391,9 +392,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     }
   };
 
-  // VoiceOver has issues with announcing aria-activedescendant properly on change
-  // (especially on iOS). We use a live region announcer to announce focus changes
-  // manually. In addition, section titles are announced when navigating into a new section.
+  // VoiceOver announces per-item details natively, so only announce when entering a
+  // new section, where it is silent.
   let focusedItem =
     state.selectionManager.focusedKey != null && state.isOpen
       ? state.collection.getItem(state.selectionManager.focusedKey)
@@ -404,22 +404,26 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
   let lastItem = useRef(itemKey);
   useEffect(() => {
     if (isAppleDevice() && focusedItem != null && itemKey != null && itemKey !== lastItem.current) {
-      let isSelected = state.selectionManager.isSelected(itemKey);
       let section = sectionKey != null ? state.collection.getItem(sectionKey) : null;
-      let sectionTitle =
-        section?.['aria-label'] ||
-        (typeof section?.rendered === 'string' ? section.rendered : '') ||
-        '';
+      let isGroupChange = (section && sectionKey !== lastSection.current) ?? false;
 
-      let announcement = stringFormatter.format('focusAnnouncement', {
-        isGroupChange: (section && sectionKey !== lastSection.current) ?? false,
-        groupTitle: sectionTitle,
-        groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
-        optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
-        isSelected
-      });
+      if (isGroupChange) {
+        let isSelected = state.selectionManager.isSelected(itemKey);
+        let sectionTitle =
+          section?.['aria-label'] ||
+          (typeof section?.rendered === 'string' ? section.rendered : '') ||
+          '';
 
-      announce(announcement);
+        let announcement = stringFormatter.format('focusAnnouncement', {
+          isGroupChange: true,
+          groupTitle: sectionTitle,
+          groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
+          optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
+          isSelected
+        });
+
+        announce(announcement);
+      }
     }
 
     lastSection.current = sectionKey;

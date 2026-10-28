@@ -11,9 +11,9 @@
  */
 
 import {createShadowTreeWalker} from '../utils/shadowdom/ShadowTreeWalker';
-
-import {getOwnerDocument, getOwnerWindow, isShadowRoot} from '../utils/domHelpers';
-import {nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
+import {getParentElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {isShadowRoot} from '../utils/typeHelpers';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 
 const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
@@ -105,12 +105,13 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       // Also skip children of already hidden nodes, as aria-hidden is recursive. An exception is
       // made for elements with role="row" since VoiceOver on iOS has issues hiding elements with role="row".
       // For that case we want to hide the cells inside as well (https://bugs.webkit.org/show_bug.cgi?id=222623).
+      let parentElement = getParentElement(node);
       if (
         hiddenNodes.has(node) ||
         visibleNodes.has(node) ||
-        (node.parentElement &&
-          hiddenNodes.has(node.parentElement) &&
-          node.parentElement.getAttribute('role') !== 'row')
+        (parentElement &&
+          hiddenNodes.has(parentElement) &&
+          parentElement.getAttribute('role') !== 'row')
       ) {
         return NodeFilter.FILTER_REJECT;
       }

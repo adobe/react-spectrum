@@ -14,7 +14,12 @@ import {createShadowTreeWalker, ShadowTreeWalker} from '../utils/shadowdom/Shado
 
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
-import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {
+  getActiveElement,
+  getEventTarget,
+  getParentElement,
+  nodeContains
+} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {isAndroid, isChrome} from '../utils/platform';
@@ -284,7 +289,7 @@ function createFocusManagerForScope(scopeRef: React.RefObject<Element[] | null>)
 }
 
 function getScopeRoot(scope: Element[]) {
-  return scope[0].parentElement!;
+  return getParentElement(scope[0])!;
 }
 
 function shouldContainFocus(scopeRef: ScopeRef) {
@@ -538,7 +543,7 @@ function focusElement(element: FocusableElement | null, scroll = false) {
   }
 }
 
-function getFirstInScope(scope: Element[], tabbable = true) {
+function getFirstInScope(scope: Element[], tabbable = true): FocusableElement | null {
   let sentinel = scope[0].previousElementSibling!;
   let scopeRoot = getScopeRoot(scope);
   let walker = getFocusableTreeWalker(scopeRoot, {tabbable}, scope);
@@ -553,7 +558,8 @@ function getFirstInScope(scope: Element[], tabbable = true) {
     nextNode = walker.nextNode();
   }
 
-  return nextNode as FocusableElement;
+  // TreeWalker.nextNode() returns null when the scope contains no focusable element.
+  return nextNode as FocusableElement | null;
 }
 
 function focusFirstInScope(scope: Element[], tabbable: boolean = true) {
@@ -811,8 +817,12 @@ function useRestoreFocus(
               ) {
                 // oxlint-disable-next-line react-hooks/exhaustive-deps
                 let node = getFirstInScope(treeNode.scopeRef.current, true);
-                restoreFocusToElement(node);
-                return;
+                // The scope may have nothing focusable in it, e.g. if its focusable
+                // content was removed or hidden. Keep walking up in that case.
+                if (node) {
+                  restoreFocusToElement(node);
+                  return;
+                }
               }
               treeNode = treeNode.parent;
             }

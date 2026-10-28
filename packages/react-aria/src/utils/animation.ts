@@ -10,16 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain} from './chain';
 import {flushSync} from 'react-dom';
-import {RefObject, useCallback, useState} from 'react';
+import {RefObject, useCallback, useRef, useState} from 'react';
+import {setStyle} from './domHelpers';
+import {useEffectEvent} from './useEffectEvent';
 import {useLayoutEffect} from './useLayoutEffect';
 
 export function useEnterAnimation(
   ref: RefObject<HTMLElement | null>,
-  isReady: boolean = true
+  isReady: boolean = true,
+  onEnter?: (element: HTMLElement) => void | Promise<void>
 ): boolean {
   let [isEntering, setEntering] = useState(true);
   let isAnimationReady = isEntering && isReady;
+
+  // Hide the element while it prepares for entry, using only non-layout-thrashing attributes.
+  // This prevents accidental flashes of content in scenarios where no hidden styling is applied
+  // while the enter animation is not yet ready (e.g. popovers prior to placement calculation).
+  useLayoutEffect(() => {
+    if (!isReady && ref.current) {
+      return chain(
+        setStyle(ref.current, 'opacity', '0'),
+        setStyle(ref.current, 'clip', 'rect(0 0 0 0)'),
+        setStyle(ref.current, 'clip-path', 'inset(50%)'),
+        setStyle(ref.current, 'mask-image', 'linear-gradient(#0000, #0000)')
+      );
+    }
+  }, [ref, isReady]);
 
   // There are two cases for entry animations:
   // 1. CSS @keyframes. The `animation` property is set during the isEntering state, and it is removed after the animation finishes.
@@ -40,12 +58,17 @@ export function useEnterAnimation(
   useAnimation(
     ref,
     isAnimationReady,
+    onEnter,
     useCallback(() => setEntering(false), [])
   );
   return isAnimationReady;
 }
 
-export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boolean): boolean {
+export function useExitAnimation(
+  ref: RefObject<HTMLElement | null>,
+  isOpen: boolean,
+  onExit?: (element: HTMLElement) => void | Promise<void>
+): boolean {
   let [exitState, setExitState] = useState<'closed' | 'open' | 'exiting'>(
     isOpen ? 'open' : 'closed'
   );
@@ -71,6 +94,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boo
   useAnimation(
     ref,
     isExiting,
+    onExit,
     useCallback(() => {
       // Set the state to closed, which will cause the element to be unmounted.
       setExitState(state => (state === 'exiting' ? 'closed' : state));
@@ -83,34 +107,43 @@ export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boo
 function useAnimation(
   ref: RefObject<HTMLElement | null>,
   isActive: boolean,
+  onStart: ((element: HTMLElement) => void | Promise<void>) | undefined,
   onEnd: () => void
 ): void {
+  let isActiveRef = useRef<boolean | null>(null);
+  let start = useEffectEvent(onStart);
   useLayoutEffect(() => {
-    if (isActive && ref.current) {
+    if (isActive && ref.current && isActiveRef.current !== isActive) {
+      isActiveRef.current = isActive;
       if (!('getAnimations' in ref.current)) {
         // JSDOM
         onEnd();
         return;
       }
 
-      let animations = ref.current.getAnimations();
-      if (animations.length === 0) {
+      let startPromise = start?.(ref.current);
+
+      let animations = ref.current
+        .getAnimations()
+        .filter(
+          a =>
+            (typeof DocumentTimeline === 'undefined' || a.timeline instanceof DocumentTimeline) &&
+            a.playState === 'running'
+        );
+      if (animations.length === 0 && !startPromise) {
         onEnd();
         return;
       }
 
-      let canceled = false;
-      Promise.allSettled(animations.map(a => a.finished)).then(() => {
-        if (!canceled) {
+      Promise.all([startPromise, ...animations.map(a => a.finished)])
+        .then(() => {
           flushSync(() => {
             onEnd();
           });
-        }
-      });
-
-      return () => {
-        canceled = true;
-      };
+        })
+        .catch(() => {});
     }
+
+    isActiveRef.current = isActive;
   }, [ref, isActive, onEnd]);
 }

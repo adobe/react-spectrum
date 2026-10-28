@@ -16,19 +16,19 @@ import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
 import {Chat} from '../src/Chat';
 import ChatIcon from '@react-spectrum/s2/icons/Chat';
-import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {Collection} from 'react-aria-components';
 import {Content} from '@react-spectrum/s2/Content';
 import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
-import {Image} from '@react-spectrum/s2/Image';
-import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
+  ExecutionTrace,
+  ExecutionTraceItem,
   MessageFeedback,
   MessageSource,
   MessageSuggestion,
   MessageSuggestionList,
   PromptField,
   PromptFieldSubmitButton,
+  PromptFieldToolbar,
   PromptFieldValue,
   PromptTokenField,
   ResponseStatus,
@@ -39,10 +39,11 @@ import {
   Thread,
   ThreadItem,
   ThreadLoadMoreItem,
-  ThreadScrollButton,
   TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
+import {Image} from '@react-spectrum/s2/Image';
+import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta} from '@storybook/react';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {prose} from '../src/style/prose' with {type: 'macro'};
@@ -59,7 +60,7 @@ const meta: Meta<typeof Chat> = {
   title: 'AI/Chat',
   decorators: [
     Story => (
-      <div style={{width: '800px', height: '600px'}}>
+      <div style={{width: '80vw', height: '600px'}}>
         <Story />
       </div>
     )
@@ -147,15 +148,21 @@ let initialResponses = [
   }
 ] as Message[];
 
+interface ExecutionStep {
+  id: number;
+  label: string;
+  status: 'pending' | 'success';
+  detail?: string;
+}
+
 type StreamingMessage =
   | {id: number; type: 'user'; content: string}
   | {id: number; type: 'system'; content: string; isStreaming?: boolean; sources?: string[]}
   | {
       id: number;
       type: 'status';
-      label: string;
-      isStreaming: boolean;
-      details: string;
+      status: 'pending' | 'success';
+      steps: ExecutionStep[];
     }
   | {id: number; type: 'card'; title: string; description: string; imageUrl: string}
   | {id: number; type: 'suggestions'; title: string; suggestions: string[]};
@@ -208,6 +215,44 @@ function CardMessage({
   );
 }
 
+function StatusThreadItem({msg}: {msg: Extract<StreamingMessage, {type: 'status'}>}) {
+  let isStreaming = msg.status === 'pending';
+  let lastStep = msg.steps[msg.steps.length - 1];
+  let title = isStreaming
+    ? `${lastStep.label}…`
+    : msg.steps.length > 1
+      ? `Completed ${msg.steps.length} steps`
+      : lastStep.label;
+  let announcement = isStreaming ? `${lastStep.label}…` : `${title} complete`;
+  // TODO: might want to have ThreadItem be a part of the ResponseStatus by default?
+  // Ideally it would auto focus the ResponseStatus itself via focusMode=child, but we
+  // probably want to make that on a case by case basis
+  // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
+  return (
+    <ThreadItem textValue={announcement} isStreaming={isStreaming} shouldAnnounceOnMount>
+      <ResponseStatus status={isStreaming ? 'pending' : 'success'}>
+        <ResponseStatusTitle>{title}</ResponseStatusTitle>
+        <ResponseStatusPanel>
+          <ExecutionTrace>
+            {msg.steps.map(step => (
+              <ExecutionTraceItem
+                key={step.id}
+                status={step.status}
+                detail={
+                  step.detail && (
+                    <p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>
+                  )
+                }>
+                {step.label}
+              </ExecutionTraceItem>
+            ))}
+          </ExecutionTrace>
+        </ResponseStatusPanel>
+      </ResponseStatus>
+    </ThreadItem>
+  );
+}
+
 export function VirtualizedStreamingChat() {
   let [messages, setMessages] = useState<StreamingMessage[]>(
     initialResponses as StreamingMessage[]
@@ -226,38 +271,67 @@ export function VirtualizedStreamingChat() {
       {id: nextId.current++, type: 'user', content: prompt.toString()}
     ]);
 
-    function addTool(label: string, replaceStatus = false) {
-      setMessages(prev =>
-        replaceStatus
-          ? [
-              ...prev.slice(0, -1),
-              {
-                id: nextId.current++,
-                type: 'status',
-                label,
-                isStreaming: true,
-                details: ''
-              }
-            ]
-          : [
-              ...prev,
-              {
-                id: nextId.current++,
-                type: 'status',
-                label,
-                isStreaming: true,
-                details: ''
-              }
-            ]
-      );
+    // Starts a new grouped status message containing a single pending execution trace step.
+    function startToolGroup(label: string) {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: nextId.current++,
+          type: 'status',
+          status: 'pending',
+          steps: [{id: nextId.current++, label, status: 'pending'}]
+        }
+      ]);
     }
 
-    function completeTool(details: string) {
-      setMessages(prev =>
-        prev.map(m =>
-          m.type === 'status' && m.isStreaming ? {...m, isStreaming: false, details} : m
-        )
-      );
+    // Adds a new step to the trailing status group if one is still open, otherwise starts a new group.
+    function addStep(label: string) {
+      setMessages(prev => {
+        let last = prev[prev.length - 1];
+        let newStep: ExecutionStep = {id: nextId.current++, label, status: 'pending'};
+        if (last?.type === 'status' && last.status === 'pending') {
+          return [
+            ...prev.slice(0, -1),
+            {
+              ...last,
+              steps: [
+                ...last.steps.slice(0, -1),
+                {...last.steps[last.steps.length - 1], status: 'success'},
+                newStep
+              ]
+            }
+          ];
+        }
+        return [
+          ...prev,
+          {id: nextId.current++, type: 'status', status: 'pending', steps: [newStep]}
+        ];
+      });
+    }
+
+    // Completes the last step of the trailing status group, optionally updating its label.
+    function completeStep(detail: string, label?: string) {
+      setMessages(prev => {
+        let last = prev[prev.length - 1];
+        if (last?.type !== 'status') {
+          return prev;
+        }
+        let steps = last.steps.slice();
+        let step = steps[steps.length - 1];
+        steps[steps.length - 1] = {...step, label: label ?? step.label, status: 'success', detail};
+        return [...prev.slice(0, -1), {...last, steps}];
+      });
+    }
+
+    // Marks the trailing status group as complete once all of its steps have finished.
+    function completeGroup() {
+      setMessages(prev => {
+        let last = prev[prev.length - 1];
+        if (last?.type !== 'status') {
+          return prev;
+        }
+        return [...prev.slice(0, -1), {...last, status: 'success'}];
+      });
     }
 
     function streamText(content: string, sources?: string[]) {
@@ -299,91 +373,55 @@ export function VirtualizedStreamingChat() {
     let timestamp = 0;
     let toolCallDuration = 1000;
     // Status added after short delay so user message announcement plays first
-    addTimeout(
-      () => {
-        setMessages(prev => [
-          ...prev,
-          {
-            id: nextId.current++,
-            type: 'status',
-            label: 'Generating response',
-            isStreaming: true,
-            details: ''
-          }
-        ]);
-      },
-      (timestamp += 500)
-    );
-    addTimeout(() => addTool('Thinking', true), (timestamp += 500));
+    addTimeout(() => startToolGroup('Thinking'), (timestamp += 500));
     addTimeout(
       () =>
-        completeTool(
+        completeStep(
           'Reviewed conversation context and identified the user is searching for Hilton brand assets.'
         ),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Loading tool'), (timestamp += 500));
+    addTimeout(() => addStep('Loading tool'), (timestamp += 500));
     addTimeout(
-      () => completeTool('Asset search tool loaded with access to the Hilton brand library.'),
+      () => completeStep('Asset search tool loaded with access to the Hilton brand library.'),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Searching'), (timestamp += 500));
+    addTimeout(() => addStep('Searching'), (timestamp += 500));
     addTimeout(
-      () => completeTool('Found 15 assets matching the brand criteria across 3 campaigns.'),
+      () => completeStep('Found 15 assets matching the brand criteria across 3 campaigns.'),
       (timestamp += toolCallDuration)
     );
-    addTimeout(
-      () =>
-        streamText(
-          'I found some relevant assets that match your request. Let me pull up the details.'
-        ),
-      (timestamp += 500)
-    );
+    addTimeout(() => completeGroup(), (timestamp += 200));
+    let firstStreamContent =
+      'I found some relevant assets that match your request. Let me pull up the details.';
+    addTimeout(() => streamText(firstStreamContent), (timestamp += 500));
+    timestamp += (firstStreamContent.split(' ').length - 1) * 80;
 
     // then does searching, streaming more text, returning a card and sources
-    addTimeout(() => addTool('Searching'), (timestamp += 1000));
+    addTimeout(() => startToolGroup('Searching'), (timestamp += 1000));
     addTimeout(
       () =>
-        completeTool('Identified additional brand materials related to the presentation context.'),
+        completeStep('Identified additional brand materials related to the presentation context.'),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Querying database'), (timestamp += 1000));
+    addTimeout(() => addStep('Querying database'), (timestamp += 1000));
     addTimeout(
       () =>
-        completeTool(
+        completeStep(
           'Retrieved asset records including metadata, previews, and usage rights for 12 items.'
         ),
       (timestamp += toolCallDuration)
     );
+    addTimeout(() => addStep('Generating response'), (timestamp += 500));
     addTimeout(
       () =>
-        setMessages(prev => [
-          ...prev,
-          {
-            id: nextId.current++,
-            type: 'status',
-            label: 'Generating response',
-            isStreaming: true,
-            details: ''
-          }
-        ]),
-      (timestamp += 500)
-    );
-    addTimeout(
-      () =>
-        setMessages(prev => [
-          ...prev.slice(0, -1),
-          {
-            id: nextId.current++,
-            type: 'status',
-            label: 'Response generated',
-            isStreaming: false,
-            details:
-              'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.'
-          }
-        ]),
+        completeStep(
+          'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.',
+          'Response generated'
+        ),
       (timestamp += 1000)
     );
+    addTimeout(() => completeGroup(), (timestamp += 200));
     let secondStreamContent =
       'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
       'layering in supporting visuals and data to reinforce the core message. The main themes ' +
@@ -422,188 +460,124 @@ export function VirtualizedStreamingChat() {
     timeouts.current.forEach(clearTimeout);
     timeouts.current = [];
     setMessages(prev =>
-      prev.map(m =>
-        (m.type === 'system' || m.type === 'status') && m.isStreaming
-          ? {...m, isStreaming: false}
-          : m
-      )
+      prev.map(m => {
+        if (m.type === 'system' && m.isStreaming) {
+          return {...m, isStreaming: false};
+        }
+        if (m.type === 'status' && m.status === 'pending') {
+          return {
+            ...m,
+            status: 'success',
+            steps: m.steps.map((s, i) => (i === m.steps.length - 1 ? {...s, status: 'success'} : s))
+          };
+        }
+        return m;
+      })
     );
     setGenerating(false);
   }
 
   return (
-    // TODO: these extra div wrappers would need to be implemented by the RAC user, maybe we can internalize some more?
-    // of particular note is the scroll button. Same for the other styles
-    <div
-      className={style({
-        margin: 0,
-        marginX: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 32,
-        height: '100%'
-      })}>
-      <Chat
-        styles={style({
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          flexGrow: 1,
-          gap: 16,
-          paddingX: 16,
-          boxSizing: 'border-box',
-          minWidth: 0
-        })}>
-        <div
-          className={style({
-            position: 'relative',
-            flexGrow: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0
-          })}>
-          <div
-            className={style({
-              position: 'absolute',
-              bottom: 16,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 1
-            })}>
-            <ThreadScrollButton>
-              <ActionButton slot="scroll" aria-label="Scroll to bottom">
-                <ChevronDown />
-              </ActionButton>
-            </ThreadScrollButton>
-          </div>
-          <Thread
-            items={messages}
-            aria-label="Chat thread"
-            styles={style({
-              flexGrow: 1,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              scrollPadding: 8,
-              rowGap: 16
-            })}>
-            {(msg: StreamingMessage) => {
-              if (msg.type === 'user') {
-                // TODO: probably want ThreadItem to be a part of UserMessage?
-                return (
-                  <ThreadItem
-                    textValue={msg.content}
-                    styles={style({display: 'flex', justifyContent: 'end'})}>
-                    <UserMessage>{msg.content}</UserMessage>
-                  </ThreadItem>
-                );
-              }
-              if (msg.type === 'status') {
-                let announcement = msg.isStreaming ? `${msg.label}…` : `${msg.label} complete`;
-                let title = msg.isStreaming ? `${msg.label}…` : msg.label;
-                // TODO: might want to have ThreadItem be a part of the ResponseStatus by default?
-                // Ideally it would auto focus the ResponseStatus itself via focusMode=child, but we
-                // probably want to make that on a case by case basis
-                // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
-                return (
-                  <ThreadItem
-                    textValue={announcement}
-                    isStreaming={msg.isStreaming}
-                    shouldAnnounceOnMount>
-                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
-                      <ResponseStatusTitle>{title}</ResponseStatusTitle>
-                      <ResponseStatusPanel>
-                        {msg.details && (
-                          <p className={style({font: 'body-sm', margin: 0})}>{msg.details}</p>
-                        )}
-                      </ResponseStatusPanel>
-                    </ResponseStatus>
-                  </ThreadItem>
-                );
-              }
-              if (msg.type === 'card') {
-                return (
-                  <CardMessage
-                    title={msg.title}
-                    description={msg.description}
-                    imageUrl={msg.imageUrl}
-                  />
-                );
-              }
-              if (msg.type === 'suggestions') {
-                // TODO: probably should have ThreadItem auto wrap MessageSuggestionList as well
-                // but this one I could see perhaps being a standalone component to be used outside of thread
-                return (
-                  <ThreadItem textValue={msg.title}>
-                    <MessageSuggestionList title={msg.title}>
-                      {msg.suggestions.map((s, i) => (
-                        <MessageSuggestion key={i}>{s}</MessageSuggestion>
-                      ))}
-                    </MessageSuggestionList>
-                  </ThreadItem>
-                );
-              }
-              return (
-                <SystemMessage
-                  textValue={msg.content}
-                  isStreaming={msg.isStreaming}
-                  sources={msg.sources}>
-                  <div role="document">
-                    <p className={style({font: 'body'})}>{msg.content || ''}</p>
-                  </div>
-                  {!msg.isStreaming && <MessageFeedback />}
-                </SystemMessage>
-              );
-            }}
-          </Thread>
-        </div>
-        <PromptField
-          value={promptValue}
-          onChange={setPromptValue}
-          onSubmit={prompt => {
-            setPromptValue(new PromptFieldValue([]));
-            handleSend(prompt);
-          }}
-          isGenerating={isGenerating}
-          onStop={handleStop}>
-          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-            <PromptTokenField
-              placeholder={
-                isGenerating
-                  ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
-                  : undefined
-              }
-              onKeyDown={e => {
-                if (!isGenerating) {
-                  return;
-                }
+    <Chat>
+      <Thread items={messages} aria-label="Chat thread">
+        {(msg: StreamingMessage) => {
+          if (msg.type === 'user') {
+            return (
+              <ThreadItem
+                textValue={msg.content}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{msg.content}</UserMessage>
+              </ThreadItem>
+            );
+          }
+          if (msg.type === 'status') {
+            return <StatusThreadItem msg={msg} />;
+          }
+          if (msg.type === 'card') {
+            return (
+              <CardMessage
+                title={msg.title}
+                description={msg.description}
+                imageUrl={msg.imageUrl}
+              />
+            );
+          }
+          if (msg.type === 'suggestions') {
+            // TODO: probably should have ThreadItem auto wrap MessageSuggestionList as well
+            // but this one I could see perhaps being a standalone component to be used outside of thread
+            // DG: maybe we could auto-wrap if it's inside a Thread?
+            // YL: If we auto-wrap, we would need to move some ThreadItem props (isStreaming, textValue) to the ai component level. Might be strange to have those props when used standalone
+            return (
+              <ThreadItem textValue={msg.title}>
+                <MessageSuggestionList title={msg.title}>
+                  {msg.suggestions.map((s, i) => (
+                    <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                  ))}
+                </MessageSuggestionList>
+              </ThreadItem>
+            );
+          }
+          return (
+            <SystemMessage
+              textValue={msg.content}
+              isStreaming={msg.isStreaming}
+              sources={msg.sources}>
+              {/* TODO: make this a component? Build it into SystemMessage? */}
+              <div role="document" className={prose()}>
+                <p className={style({font: 'body'})}>{msg.content || ''}</p>
+              </div>
+              {!msg.isStreaming && <MessageFeedback styles={style({marginTop: 8})} />}
+            </SystemMessage>
+          );
+        }}
+      </Thread>
+      <PromptField
+        value={promptValue}
+        onChange={setPromptValue}
+        onSubmit={prompt => {
+          setPromptValue(new PromptFieldValue([]));
+          handleSend(prompt);
+        }}
+        isGenerating={isGenerating}
+        onStop={handleStop}>
+        <PromptTokenField
+          placeholder={
+            isGenerating
+              ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
+              : undefined
+          }
+          onKeyDown={e => {
+            if (!isGenerating) {
+              return;
+            }
 
-                // TODO: we could make this even more realistic but for now just fire storybook event
-                // and add follow up message to queue
-                if (e.key === 'Enter' && !e.altKey) {
-                  e.preventDefault();
-                  if (promptValue.segments.length > 0) {
-                    action('onSteer')(promptValue.toString());
-                    setPromptValue(new PromptFieldValue([]));
-                  }
-                } else if (e.key === 'Enter' && e.altKey) {
-                  e.preventDefault();
-                  if (promptValue.segments.length > 0) {
-                    action('onFollowUp')(promptValue.toString());
-                    followUpMessage.current = promptValue;
-                    setPromptValue(new PromptFieldValue([]));
-                  }
-                } else if (e.key === 'Escape') {
-                  e.preventDefault();
-                  handleStop();
-                }
-              }}
-            />
-            <PromptFieldSubmitButton />
-          </div>
-        </PromptField>
-      </Chat>
-    </div>
+            // TODO: we could make this even more realistic but for now just fire storybook event
+            // and add follow up message to queue
+            if (e.key === 'Enter' && !e.altKey) {
+              e.preventDefault();
+              if (promptValue.segments.length > 0) {
+                action('onSteer')(promptValue.toString());
+                setPromptValue(new PromptFieldValue([]));
+              }
+            } else if (e.key === 'Enter' && e.altKey) {
+              e.preventDefault();
+              if (promptValue.segments.length > 0) {
+                action('onFollowUp')(promptValue.toString());
+                followUpMessage.current = promptValue;
+                setPromptValue(new PromptFieldValue([]));
+              }
+            } else if (e.key === 'Escape') {
+              e.preventDefault();
+              handleStop();
+            }
+          }}
+        />
+        <PromptFieldToolbar>
+          <div />
+          <PromptFieldSubmitButton />
+        </PromptFieldToolbar>
+      </PromptField>
+    </Chat>
   );
 }
 
@@ -663,134 +637,65 @@ export function EmptyChat() {
   }
 
   return (
-    <div
-      className={style({
-        margin: 0,
-        marginX: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 32,
-        height: '100%'
-      })}>
-      <Chat
-        styles={style({
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          flexGrow: 1,
-          gap: 16,
-          paddingX: 16,
-          boxSizing: 'border-box',
-          minWidth: 0
-        })}>
-        <div
-          className={style({
-            position: 'relative',
-            flexGrow: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0
-          })}>
-          <div
-            className={style({
-              position: 'absolute',
-              bottom: 16,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 1
-            })}>
-            <ThreadScrollButton>
-              <ActionButton slot="scroll" aria-label="Scroll to bottom">
-                <ChevronDown />
-              </ActionButton>
-            </ThreadScrollButton>
-          </div>
-          <Thread
-            items={messages}
-            aria-label="Chat thread"
-            styles={style({
-              flexGrow: 1,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              scrollPadding: 8,
-              rowGap: 16
-            })}>
-            {(msg: StreamingMessage) => {
-              if (msg.type === 'user') {
-                return (
-                  <ThreadItem
-                    textValue={msg.content}
-                    styles={style({display: 'flex', justifyContent: 'end'})}>
-                    <UserMessage>{msg.content}</UserMessage>
-                  </ThreadItem>
-                );
-              }
-              if (msg.type === 'status') {
-                let announcement = msg.isStreaming ? `${msg.label}…` : `${msg.label} complete`;
-                let title = msg.isStreaming ? `${msg.label}…` : msg.label;
-                return (
-                  <ThreadItem
-                    textValue={announcement}
-                    isStreaming={msg.isStreaming}
-                    shouldAnnounceOnMount>
-                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
-                      <ResponseStatusTitle>{title}</ResponseStatusTitle>
-                      <ResponseStatusPanel>
-                        {msg.details && (
-                          <p className={style({font: 'body-sm', margin: 0})}>{msg.details}</p>
-                        )}
-                      </ResponseStatusPanel>
-                    </ResponseStatus>
-                  </ThreadItem>
-                );
-              }
-              if (msg.type === 'card') {
-                return (
-                  <CardMessage
-                    title={msg.title}
-                    description={msg.description}
-                    imageUrl={msg.imageUrl}
-                  />
-                );
-              }
-              if (msg.type === 'suggestions') {
-                return (
-                  <ThreadItem textValue={msg.title}>
-                    <MessageSuggestionList title={msg.title}>
-                      {msg.suggestions.map((s, i) => (
-                        <MessageSuggestion key={i}>{s}</MessageSuggestion>
-                      ))}
-                    </MessageSuggestionList>
-                  </ThreadItem>
-                );
-              }
-              return (
-                <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
-                  <div role="document">
-                    <p className={style({font: 'body'})}>{msg.content || ''}</p>
-                  </div>
-                  {!msg.isStreaming && <MessageFeedback />}
-                </SystemMessage>
-              );
-            }}
-          </Thread>
+    <Chat>
+      <Thread items={messages} aria-label="Chat thread">
+        {(msg: StreamingMessage) => {
+          if (msg.type === 'user') {
+            return (
+              <ThreadItem
+                textValue={msg.content}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{msg.content}</UserMessage>
+              </ThreadItem>
+            );
+          }
+          if (msg.type === 'status') {
+            return <StatusThreadItem msg={msg} />;
+          }
+          if (msg.type === 'card') {
+            return (
+              <CardMessage
+                title={msg.title}
+                description={msg.description}
+                imageUrl={msg.imageUrl}
+              />
+            );
+          }
+          if (msg.type === 'suggestions') {
+            return (
+              <ThreadItem textValue={msg.title}>
+                <MessageSuggestionList title={msg.title}>
+                  {msg.suggestions.map((s, i) => (
+                    <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                  ))}
+                </MessageSuggestionList>
+              </ThreadItem>
+            );
+          }
+          return (
+            <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
+              <div role="document">
+                <p className={style({font: 'body'})}>{msg.content || ''}</p>
+              </div>
+              {!msg.isStreaming && <MessageFeedback />}
+            </SystemMessage>
+          );
+        }}
+      </Thread>
+      <PromptField
+        onSubmit={handleSend}
+        isGenerating={isGenerating}
+        onStop={() => {
+          setGenerating(false);
+          timeouts.current.forEach(clearTimeout);
+          timeouts.current = [];
+        }}>
+        <div className={style({display: 'flex', gap: 16, height: 'full'})}>
+          <PromptTokenField />
+          <PromptFieldSubmitButton />
         </div>
-        <PromptField
-          onSubmit={handleSend}
-          isGenerating={isGenerating}
-          onStop={() => {
-            setGenerating(false);
-            timeouts.current.forEach(clearTimeout);
-            timeouts.current = [];
-          }}>
-          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-            <PromptTokenField />
-            <PromptFieldSubmitButton />
-          </div>
-        </PromptField>
-      </Chat>
-    </div>
+      </PromptField>
+    </Chat>
   );
 }
 
@@ -830,8 +735,10 @@ StyleDictionary.extend({
       </pre>
       <p>
         Run it after every change and components import semantic values instead of literals. See the{' '}
-        <a href="https://spectrum.adobe.com/page/design-tokens/">Spectrum design tokens docs</a> for
-        the full naming conventions.
+        <a href="https://spectrum.adobe.com/foundations/design-data/design-tokens">
+          Spectrum design tokens docs
+        </a>{' '}
+        for the full naming conventions.
       </p>
     </div>
   );
@@ -857,27 +764,8 @@ export function ChatPopover() {
         <ChatIcon />
       </ActionButton>
       <Popover styles={style({width: 400, height: 520})}>
-        <Chat
-          styles={style({
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-            height: 'full',
-            gap: 16,
-            boxSizing: 'border-box',
-            minWidth: 0
-          })}>
-          <Thread
-            items={messages}
-            aria-label="Chat thread"
-            styles={style({
-              flexGrow: 1,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              padding: 8,
-              scrollPadding: 8,
-              rowGap: 16
-            })}>
+        <Chat>
+          <Thread items={messages} aria-label="Chat thread">
             {(msg: PopoverMessage) => {
               if (msg.type === 'user') {
                 return (
@@ -896,8 +784,8 @@ export function ChatPopover() {
               );
             }}
           </Thread>
-          <PromptField onSubmit={() => {}}>
-            <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+          <PromptField size="S" onSubmit={() => {}}>
+            <div className={style({display: 'flex', gap: 16, height: 'full'})}>
               <PromptTokenField />
               <PromptFieldSubmitButton />
             </div>
@@ -1217,76 +1105,160 @@ export function AsyncLoadingChat() {
   const {messages, isLoadingMore, handleLoadMore, hasMore} = useAsyncMessages();
 
   return (
-    <div
-      className={style({
-        margin: 0,
-        marginX: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 32,
-        height: '100%'
-      })}>
-      <Chat
-        styles={style({
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          flexGrow: 1,
-          gap: 16,
-          paddingX: 16,
-          boxSizing: 'border-box',
-          minWidth: 0
-        })}>
-        <div
-          className={style({
-            position: 'relative',
-            flexGrow: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0
-          })}>
-          <div
-            className={style({
-              position: 'absolute',
-              bottom: 16,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 1
-            })}>
-            <ThreadScrollButton>
-              <ActionButton slot="scroll" aria-label="Scroll to bottom">
-                <ChevronDown />
-              </ActionButton>
-            </ThreadScrollButton>
+    <Chat>
+      <Thread aria-label="Chat">
+        <ThreadLoadMoreItem
+          isLoading={isLoadingMore}
+          onLoadMore={hasMore ? handleLoadMore : undefined}>
+          <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
+            <ProgressCircle aria-label="Loading older messages" isIndeterminate />
           </div>
-          <Thread
-            aria-label="Chat"
-            styles={style({
-              flexGrow: 1,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              padding: 8,
-              scrollPadding: 8,
-              rowGap: 16
-            })}>
-            <ThreadLoadMoreItem
-              isLoading={isLoadingMore}
-              onLoadMore={hasMore ? handleLoadMore : undefined}>
-              <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
-                <ProgressCircle aria-label="Loading older messages" isIndeterminate />
-              </div>
-            </ThreadLoadMoreItem>
-            <Collection items={messages}>{renderAsyncMessage}</Collection>
-          </Thread>
+        </ThreadLoadMoreItem>
+        <Collection items={messages}>{renderAsyncMessage}</Collection>
+      </Thread>
+      <PromptField>
+        <div className={style({display: 'flex', gap: 16, height: 'full'})}>
+          <PromptTokenField />
+          <PromptFieldSubmitButton />
         </div>
-        <PromptField>
-          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-            <PromptTokenField />
-            <PromptFieldSubmitButton />
-          </div>
-        </PromptField>
-      </Chat>
-    </div>
+      </PromptField>
+    </Chat>
+  );
+}
+
+let initialMessages: StreamingMessage[] = [
+  {id: 1, type: 'user', content: "What's a good cat breed for a small apartment?"},
+  {
+    id: 2,
+    type: 'system',
+    content:
+      "Russian Blues and British Shorthairs do well in apartments. They're calm, quiet, and don't need a lot of space to stay happy."
+  },
+  {id: 3, type: 'user', content: 'Do they need a lot of grooming?'},
+  {
+    id: 4,
+    type: 'system',
+    content:
+      'Not much. Both have short, dense coats, so a weekly brush is usually enough to keep shedding under control.'
+  },
+  {
+    id: 5,
+    type: 'user',
+    content: 'Good to know. Are they okay to leave alone during a full workday?'
+  },
+  {
+    id: 6,
+    type: 'system',
+    content:
+      "Yes, they're pretty independent. Just make sure they have fresh water, a clean litter box, and a few toys to stay entertained while you're out."
+  }
+];
+
+export function SmallChat() {
+  let [messages, setMessages] = useState<StreamingMessage[]>(initialMessages);
+  let nextId = useRef(0);
+  let [isGenerating, setGenerating] = useState(false);
+  let timeouts = useRef<NodeJS.Timeout[]>([]);
+
+  function handleSend(prompt: TokenFieldValue) {
+    setGenerating(true);
+    setMessages(prev => [
+      ...prev,
+      {id: nextId.current++, type: 'user', content: prompt.toString()}
+    ]);
+
+    let addTimeout = (callback: () => void, delay: number) => {
+      let timeout = setTimeout(callback, delay);
+      timeouts.current.push(timeout);
+      return timeout;
+    };
+
+    let response = DUMMY_RESPONSES[Math.floor(Math.random() * DUMMY_RESPONSES.length)];
+
+    addTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        {id: nextId.current++, type: 'system', content: '', isStreaming: true}
+      ]);
+      let tokens = response.split(' ');
+      let accumulated = '';
+      tokens.forEach((token, i) => {
+        addTimeout(() => {
+          accumulated += (i === 0 ? '' : ' ') + token;
+          let isLastToken = i === tokens.length - 1;
+          setMessages(prev =>
+            prev.map(m =>
+              m.type === 'system' && m.isStreaming
+                ? {...m, content: accumulated, isStreaming: !isLastToken}
+                : m
+            )
+          );
+          if (isLastToken) {
+            setGenerating(false);
+          }
+        }, i * 60);
+      });
+    }, 600);
+  }
+
+  return (
+    <Chat styles={style({width: 'full', maxWidth: 400})}>
+      <Thread items={messages} aria-label="Chat thread">
+        {(msg: StreamingMessage) => {
+          if (msg.type === 'user') {
+            return (
+              <ThreadItem
+                textValue={msg.content}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{msg.content}</UserMessage>
+              </ThreadItem>
+            );
+          }
+          if (msg.type === 'status') {
+            return <StatusThreadItem msg={msg} />;
+          }
+          if (msg.type === 'card') {
+            return (
+              <CardMessage
+                title={msg.title}
+                description={msg.description}
+                imageUrl={msg.imageUrl}
+              />
+            );
+          }
+          if (msg.type === 'suggestions') {
+            return (
+              <ThreadItem textValue={msg.title}>
+                <MessageSuggestionList title={msg.title}>
+                  {msg.suggestions.map((s, i) => (
+                    <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                  ))}
+                </MessageSuggestionList>
+              </ThreadItem>
+            );
+          }
+          return (
+            <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
+              <div role="document">
+                <p className={style({font: 'body'})}>{msg.content || ''}</p>
+              </div>
+              {!msg.isStreaming && <MessageFeedback />}
+            </SystemMessage>
+          );
+        }}
+      </Thread>
+      <PromptField
+        size="S"
+        onSubmit={handleSend}
+        isGenerating={isGenerating}
+        onStop={() => {
+          setGenerating(false);
+          timeouts.current.forEach(clearTimeout);
+          timeouts.current = [];
+        }}>
+        <PromptTokenField />
+        <PromptFieldSubmitButton />
+      </PromptField>
+    </Chat>
   );
 }

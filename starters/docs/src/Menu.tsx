@@ -3,6 +3,7 @@ import {Check, ChevronRight, Dot} from 'lucide-react';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
+  MenuLoadMoreItem as AriaMenuLoadMoreItem,
   MenuSection as AriaMenuSection,
   MenuTrigger as AriaMenuTrigger,
   SubmenuTrigger as AriaSubmenuTrigger,
@@ -10,12 +11,14 @@ import {
   Separator,
   Keyboard,
   type MenuItemProps,
+  type MenuLoadMoreItemProps,
   type MenuProps,
   type MenuSectionProps,
   type MenuTriggerProps,
   type SubmenuTriggerProps
 } from 'react-aria-components/Menu';
 import {Popover} from './Popover';
+import {ProgressCircle} from './ProgressCircle';
 import {Text} from './Content';
 import React from 'react';
 import './Menu.css';
@@ -35,6 +38,14 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
 export function Menu<T>(props: MenuProps<T>) {
   return <AriaMenu {...props}>{props.children}</AriaMenu>;
+}
+
+export function MenuLoadMoreItem(props: MenuLoadMoreItemProps) {
+  return (
+    <AriaMenuLoadMoreItem {...props}>
+      <ProgressCircle isIndeterminate aria-label="Loading more..." />
+    </AriaMenuLoadMoreItem>
+  );
 }
 
 export function MenuItem(props: Omit<MenuItemProps, 'children'> & {children?: React.ReactNode}) {

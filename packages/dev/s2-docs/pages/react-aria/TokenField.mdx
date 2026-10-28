@@ -23,7 +23,7 @@ export const description = 'Allows users to enter text with inline tokens such a
     /* PROPS */
     defaultValue={TokenizingFieldValue.tokenize(
       'This example automatically tokenizes #hashtags and @usernames in the text.',
-      /(?<=\s|^)[#@]\S+(?=\s)/g
+      /(?<=[\s\u200B]|^)[#@][^\s\u200B]+(?=[\s\u200B])/g
     )}>
     {segment => <Token>{segment.text}</Token>}
   </TokenField>
@@ -38,7 +38,7 @@ export const description = 'Allows users to enter text with inline tokens such a
     /* PROPS */
     defaultValue={TokenizingFieldValue.tokenize(
       'This example automatically tokenizes #hashtags and @usernames in the text.',
-      /(?<=\s|^)[#@]\S+(?=\s)/g
+      /(?<=[\s\u200B]|^)[#@][^\s\u200B]+(?=[\s\u200B])/g
     )}>
     {segment => <Token>{segment.text}</Token>}
   </TokenField>
@@ -90,7 +90,7 @@ import {TokenizingFieldValue} from './TokenizingFieldValue';
   allowsNewlines
   defaultValue={TokenizingFieldValue.tokenize(
     'This example automatically tokenizes #hashtags and @usernames in the text.',
-    /(?<=\s|^)[#@]\S+(?=\s)/g
+    /(?<=[\s\u200B]|^)[#@][^\s\u200B]+(?=[\s\u200B])/g
   )}
   label="Message">
   {segment => <Token>{segment.text}</Token>}

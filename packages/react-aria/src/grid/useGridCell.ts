@@ -15,6 +15,7 @@ import {focusSafely} from '../interactions/focusSafely';
 import {
   getActiveElement,
   getEventTarget,
+  getParentElement,
   isFocusWithin,
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
@@ -106,18 +107,35 @@ export function useGridCell<T, C extends GridCollection<T>>(
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
   let keyWhenFocused = useRef<Key | null>(null);
 
+  // Tracks the specific focusable child that was last focused within this cell.
+  let lastFocusedChild = useRef<FocusableElement | null>(null);
+
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
   let focus = () => {
     if (ref.current) {
       let treeWalker = getFocusableTreeWalker(ref.current);
       if (focusMode === 'child') {
+        let activeElement = getActiveElement(getOwnerDocument(ref.current));
+
         // If focus is already on a focusable child within the cell, early return so we don't shift focus
-        if (
-          isFocusWithin(ref.current) &&
-          ref.current !== getActiveElement(getOwnerDocument(ref.current))
-        ) {
+        if (isFocusWithin(ref.current) && ref.current !== activeElement) {
           return;
+        }
+
+        let ownerDocument = getOwnerDocument(ref.current);
+        let shouldRestoreToLastFocused =
+          !activeElement || activeElement === ownerDocument.body || activeElement === ref.current;
+        if (shouldRestoreToLastFocused) {
+          let lastChild = lastFocusedChild.current;
+          if (
+            lastChild &&
+            keyWhenFocused.current === node.key &&
+            nodeContains(ref.current, lastChild)
+          ) {
+            focusSafely(lastChild);
+            return;
+          }
         }
 
         let focusable =
@@ -193,7 +211,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
             // We prevent the capturing event from reaching children of the cell, e.g. pickers.
             // We want arrow keys to navigate to the next cell instead. We need to re-dispatch
             // the event from a higher parent so it still bubbles and gets handled by useSelectableCollection.
-            ref.current.parentElement?.dispatchEvent(
+            getParentElement(ref.current)?.dispatchEvent(
               new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
             );
             break;
@@ -235,7 +253,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
             // We prevent the capturing event from reaching children of the cell, e.g. pickers.
             // We want arrow keys to navigate to the next cell instead. We need to re-dispatch
             // the event from a higher parent so it still bubbles and gets handled by useSelectableCollection.
-            ref.current.parentElement?.dispatchEvent(
+            getParentElement(ref.current)?.dispatchEvent(
               new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
             );
             break;
@@ -264,7 +282,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
         if (!e.altKey && nodeContains(ref.current, getEventTarget(e) as Element)) {
           e.stopPropagation();
           e.preventDefault();
-          ref.current.parentElement?.dispatchEvent(
+          getParentElement(ref.current)?.dispatchEvent(
             new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
           );
         }
@@ -309,7 +327,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
-  let onFocus = e => {
+  let onFocus = (e: FocusEvent) => {
     keyWhenFocused.current = node.key;
     if (getEventTarget(e) !== ref.current) {
       // useSelectableItem only handles setting the focused key when
@@ -318,6 +336,12 @@ export function useGridCell<T, C extends GridCollection<T>>(
       // If focus is currently visible (e.g. the user is navigating with the keyboard),
       // then skip this. We want to restore focus to the previously focused row/cell
       // in that case since the table should act like a single tab stop.
+
+      let target = getEventTarget(e) as FocusableElement;
+      if (ref.current && nodeContains(ref.current, target)) {
+        lastFocusedChild.current = target;
+      }
+
       if (!isFocusVisible()) {
         state.selectionManager.setFocusedKey(node.key);
       }

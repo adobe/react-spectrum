@@ -1,0 +1,15 @@
+@keyframes sheet-backdrop {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-scale-back {
+  to {
+    transform: translateZ(-120px);
+  }
+}

@@ -66,8 +66,8 @@ import {
   SelectableCollectionContextValue
 } from './Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {FocusScope} from 'react-aria/FocusScope';
 import {
+  FocusEvents,
   forwardRefType,
   GlobalDOMAttributes,
   HoverEvents,
@@ -77,6 +77,7 @@ import {
   PressEvents,
   RefObject
 } from '@react-types/shared';
+import {FocusScope} from 'react-aria/FocusScope';
 import {
   HeaderNode,
   ItemNode,
@@ -109,6 +110,7 @@ import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 import {useCollator} from 'react-aria/useCollator';
+import {useFocus} from 'react-aria/useFocus';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -486,6 +488,7 @@ export interface GridListItemProps<T = object>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
+    FocusEvents<HTMLDivElement>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -556,6 +559,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
     onHoverEnd: item.props.onHoverEnd
   });
 
+  let {focusProps: focusEventProps} = useFocus(props);
   let {isFocusVisible, focusProps} = useFocusRing();
   let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
     within: true
@@ -650,6 +654,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
           DOMProps,
           renderProps,
           rowProps,
+          focusEventProps,
           focusProps,
           focusWithinProps,
           hoverProps,
@@ -827,7 +832,7 @@ export interface GridListLoadMoreItemProps
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element.
    *
-   * @default 'react-aria-GridListLoadMoreItem'
+   * @default 'react-aria-GridListLoadingIndicator'
    */
   className?: string;
   /**

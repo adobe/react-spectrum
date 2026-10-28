@@ -12,6 +12,8 @@ import ActionMenuDark from 'url:../assets/component-illustrations/dark/ActionMen
 import ActionMenuLight from 'url:../assets/component-illustrations/light/ActionMenu.avif';
 import AdobeDark from 'url:../assets/component-illustrations/dark/Adobe.avif';
 import AdobeLight from 'url:../assets/component-illustrations/light/Adobe.avif';
+import AIComponentsDark from 'url:../assets/component-illustrations/dark/AIComponents.avif';
+import AIComponentsLight from 'url:../assets/component-illustrations/light/AIComponents.avif';
 import AutocompleteDark from 'url:../assets/component-illustrations/dark/Autocomplete.avif';
 import AutocompleteLight from 'url:../assets/component-illustrations/light/Autocomplete.avif';
 import AvatarDark from 'url:../assets/component-illustrations/dark/Avatar.avif';
@@ -156,6 +158,8 @@ import SelectBoxGroupDark from 'url:../assets/component-illustrations/dark/Selec
 import SelectBoxGroupLight from 'url:../assets/component-illustrations/light/SelectBoxGroup.avif';
 import SelectionDark from 'url:../assets/component-illustrations/dark/Selection.avif';
 import SelectionLight from 'url:../assets/component-illustrations/light/Selection.avif';
+import SheetDark from 'url:../assets/component-illustrations/dark/Sheet.avif';
+import SheetLight from 'url:../assets/component-illustrations/light/Sheet.avif';
 import SideNavDark from 'url:../assets/component-illustrations/dark/SideNav.avif';
 import SideNavLight from 'url:../assets/component-illustrations/light/SideNav.avif';
 import SkeletonDark from 'url:../assets/component-illustrations/dark/Skeleton.avif';
@@ -199,8 +203,6 @@ import TreeDark from 'url:../assets/component-illustrations/dark/Tree.avif';
 import TreeLight from 'url:../assets/component-illustrations/light/Tree.avif';
 import UtilityDark from 'url:../assets/component-illustrations/dark/Utility.avif';
 import UtilityLight from 'url:../assets/component-illustrations/light/Utility.avif';
-import WorkingWithAIDark from 'url:../assets/component-illustrations/dark/WorkingWithAI.avif';
-import WorkingWithAILight from 'url:../assets/component-illustrations/light/WorkingWithAI.avif';
 
 export interface ComponentCardItem {
   id: string;
@@ -268,6 +270,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Meter: [MeterLight, MeterDark],
   'Migrating to Spectrum 2': [MigratingLight, MigratingDark],
   Modal: [DialogLight, DialogDark],
+  NavigationTree: [SideNavLight, SideNavDark],
   NumberField: [NumberFieldLight, NumberFieldDark],
   Picker: [PickerLight, PickerDark],
   Popover: [PopoverLight, PopoverDark],
@@ -283,7 +286,9 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Select: [PickerLight, PickerDark],
   SelectBoxGroup: [SelectBoxGroupLight, SelectBoxGroupDark],
   Separator: [DividerLight, DividerDark],
+  Sheet: [SheetLight, SheetDark],
   SideNav: [SideNavLight, SideNavDark],
+  SideNavPanel: [SideNavLight, SideNavDark],
   Skeleton: [SkeletonLight, SkeletonDark],
   Slider: [SliderLight, SliderDark],
   StatusLight: [StatusLightLight, StatusLightDark],
@@ -306,6 +311,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Virtualizer: [CollectionLight, CollectionDark],
   VisuallyHidden: [AccessibilityLight, AccessibilityDark],
   // Guides
+  'AI Components': [AIComponentsLight, AIComponentsDark],
   Collections: [CollectionLight, CollectionDark],
   Customization: [StyleLight, StyleDark],
   'Drag and Drop': [DragAndDropLight, DragAndDropDark],
@@ -314,7 +320,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Getting started': [GettingStartedLight, GettingStartedDark],
   'MCP Server': [McpServerLight, McpServerDark],
   Quality: [AccessibilityLight, AccessibilityDark],
-  'Working with AI': [WorkingWithAILight, WorkingWithAIDark],
+  'Working with AI': [AIComponentsLight, AIComponentsDark],
   Selection: [SelectionLight, SelectionDark],
   'Style Macro': [StyleMacroLight, StyleMacroDark],
   Styling: [StyleLight, StyleDark],
@@ -408,6 +414,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Accessible Color Descriptions for Improved Color Pickers': [ColorPickerLight, ColorPickerDark],
   'Creating a pointer-friendly submenu experience': [MenuLight, MenuDark],
   'Introducing React Spectrum': [AdobeLight, AdobeDark],
+  'Scrolling is All You Need: Building a Swipeable Sheet': [SheetLight, SheetDark],
   // Internationalized
   'Internationalized Date': [DateRangePickerLight, DateRangePickerDark],
   'Calendar Interface': [CalendarLight, CalendarDark],

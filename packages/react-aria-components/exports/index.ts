@@ -148,6 +148,7 @@ export {
 export {
   Menu,
   MenuItem,
+  MenuLoadMoreItem,
   MenuTrigger,
   MenuSection,
   MenuContext,
@@ -182,6 +183,7 @@ export {
 export {SelectionIndicator, SelectionIndicatorContext} from '../src/SelectionIndicator';
 export {Separator, SeparatorContext} from '../src/Separator';
 export {SharedElementTransition, SharedElement} from '../src/SharedElementTransition';
+export {SheetTrigger, SheetOverlay, Sheet, SheetBackdrop, SheetContent} from '../src/Sheet';
 export {
   Slider,
   SliderOutput,
@@ -243,6 +245,15 @@ export {
 export {Toolbar, ToolbarContext} from '../src/Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from '../src/Tooltip';
 export {
+  NavigationTree,
+  NavigationTreeItem,
+  NavigationTreeItemContent,
+  NavigationTreeSection,
+  NavigationTreeHeader,
+  NavigationTreeContext,
+  NavigationTreeItemStateContext
+} from '../src/NavigationTree';
+export {
   TreeLoadMoreItem,
   Tree,
   TreeItem,
@@ -276,6 +287,7 @@ export {Focusable} from 'react-aria/Focusable';
 export {VisuallyHidden} from 'react-aria/VisuallyHidden';
 export {FormValidationContext} from 'react-stately/private/form/useFormValidationState';
 export {parseColor, getColorChannels} from 'react-stately/Color';
+export {setInteractionModality} from 'react-aria/useFocusVisible';
 export {ToastQueue as UNSTABLE_ToastQueue} from 'react-stately/useToastState';
 export {useListData} from 'react-stately/useListData';
 export {useTreeData} from 'react-stately/useTreeData';
@@ -406,6 +418,7 @@ export type {
   MenuProps,
   MenuItemProps,
   MenuItemRenderProps,
+  MenuLoadMoreItemProps,
   MenuTriggerProps,
   SubmenuTriggerProps,
   MenuSectionProps
@@ -440,6 +453,14 @@ export type {
   SharedElementRenderProps
 } from '../src/SharedElementTransition';
 export type {SeparatorProps} from '../src/Separator';
+export type {
+  SheetOverlayProps,
+  SheetProps,
+  SheetRenderProps,
+  SheetBackdropProps,
+  SheetContentProps,
+  SheetTriggerProps
+} from '../src/Sheet';
 export type {
   SliderOutputProps,
   SliderProps,
@@ -517,6 +538,16 @@ export type {ToggleButtonProps, ToggleButtonRenderProps} from '../src/ToggleButt
 export type {ToggleButtonGroupProps, ToggleButtonGroupRenderProps} from '../src/ToggleButtonGroup';
 export type {ToolbarProps, ToolbarRenderProps} from '../src/Toolbar';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from '../src/Tooltip';
+export type {
+  NavigationTreeProps,
+  NavigationTreeRenderProps,
+  NavigationTreeItemProps,
+  NavigationTreeItemRenderProps,
+  NavigationTreeItemContentProps,
+  NavigationTreeItemContentRenderProps,
+  NavigationTreeSectionProps,
+  NavigationTreeHeaderProps
+} from '../src/NavigationTree';
 export type {
   TreeProps,
   TreeRenderProps,
@@ -608,6 +639,7 @@ export type {DateRangePickerState} from 'react-stately/useDateRangePickerState';
 export type {DisclosureState} from 'react-stately/useDisclosureState';
 export type {DisclosureGroupState} from 'react-stately/useDisclosureGroupState';
 export type {ListState} from 'react-stately/useListState';
+export type {Modality} from 'react-aria/useFocusVisible';
 export type {NumberFieldState} from 'react-stately/useNumberFieldState';
 export type {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 export type {QueuedToast, ToastOptions, ToastState} from 'react-stately/useToastState';

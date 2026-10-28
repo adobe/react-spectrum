@@ -12,14 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {
-  baseColor,
-  color,
-  colorMix,
-  focusRing,
-  fontRelative,
-  style
-} from '../style' with {type: 'macro'};
+import {baseColor, color, colorMix, focusRing, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
@@ -85,7 +78,7 @@ interface S2TreeProps {
 interface TreeViewStyleProps {
   /**
    * How selection should be displayed. For guidance on when to use which option, refer to the
-   * [Spectrum](https://spectrum.adobe.com/page/tree-view/#Checkbox-or-highlight-selection-style)
+   * [Spectrum](https://spectrum.adobe.com/web/rsp/components/tree-view#component-options)
    * page.
    *
    * @default 'checkbox'
@@ -703,7 +696,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                   IconContext,
                   {
                     render: centerBaseline({slot: 'icon', styles: treeIcon}),
-                    styles: style({size: fontRelative(20), flexShrink: 0})
+                    styles: style({size: '1lh', flexShrink: 0})
                   }
                 ],
                 [ActionButtonGroupContext, {styles: treeActions, isDisabled}],
@@ -740,7 +733,7 @@ export const TreeViewLoadMoreItem = (props: TreeViewLoadMoreItemProps): ReactNod
           <div className={centeredWrapper}>
             <ProgressCircle
               isIndeterminate
-              aria-label={stringFormatter.format('table.loadingMore')}
+              aria-label={stringFormatter.format('treeview.loadingMore')}
             />
           </div>
         );

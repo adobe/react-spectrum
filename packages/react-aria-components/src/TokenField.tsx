@@ -29,6 +29,7 @@ import {FieldInputContext} from './Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {HoverProps, useHover} from 'react-aria/useHover';
+import {isDocument, isShadowRoot} from 'react-aria/private/utils/domHelpers';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
@@ -50,6 +51,7 @@ import {
   useTokenFieldState
 } from 'react-stately/useTokenFieldState';
 import {useFocusRing} from 'react-aria/useFocusRing';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useToken, useTokenField} from 'react-aria/useTokenField';
 
@@ -271,6 +273,8 @@ export const TokenInput = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   });
 
   let DOMProps = filterDOMProps(domProps, {global: true});
+  let objectRef = useObjectRef(ref);
+  useLayoutEffect(() => insertSelectionStyle(objectRef), [objectRef]);
 
   return (
     <dom.div
@@ -282,7 +286,7 @@ export const TokenInput = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         tokenFieldProps,
         autocompleteProps
       )}
-      ref={ref}
+      ref={objectRef}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
@@ -295,7 +299,7 @@ export const TokenInput = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               let token = children(v);
               return (
                 // Wrap tokens in zero-width spaces so the cursor is placed correctly.
-                <span key={i}>
+                <span key={i} data-react-aria-token>
                   {'\u200b'}
                   {token}
                   {'\u200b'}
@@ -382,3 +386,40 @@ const CompositionRenderBlocker = memo(
   (prevProps, nextProps) =>
     nextProps.isComposing ? true : prevProps.children === nextProps.children
 );
+
+// Inserts a stylesheet into the document / shadow root that hides the native text selection on tokens.
+function insertSelectionStyle(ref: RefObject<HTMLDivElement | null> | null) {
+  if (typeof CSSStyleSheet !== 'function' || !ref || !ref.current) {
+    return;
+  }
+
+  let root = ref.current.getRootNode();
+  if (!isDocument(root) && !isShadowRoot(root)) {
+    return;
+  }
+
+  if (!root.adoptedStyleSheets) {
+    return;
+  }
+
+  // Skip if we already inserted it.
+  let sym = Symbol.for('react-aria-token-style');
+  if (root.adoptedStyleSheets.some(s => s[sym])) {
+    return;
+  }
+
+  let style = new CSSStyleSheet();
+  style[sym] = true;
+  // Firefox ignores completely transparent selection colors, so use a nearly transparent color instead.
+  style.replaceSync(
+    '[data-react-aria-token]::selection,[data-react-aria-token]>*::selection{background:#ffffff01}'
+  );
+  root.adoptedStyleSheets.push(style);
+
+  return () => {
+    let index = root.adoptedStyleSheets.indexOf(style);
+    if (index >= 0) {
+      root.adoptedStyleSheets.splice(index, 1);
+    }
+  };
+}

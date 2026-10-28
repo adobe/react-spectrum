@@ -71,6 +71,7 @@ import {
 } from './Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {inertValue} from 'react-aria/private/utils/inertValue';
 import intlMessages from '../intl/*.json';
@@ -502,7 +503,7 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
     // the Table itself for virtualized tables.
     let table = tableRef.current as HTMLElement | null;
     while (table && table !== containerRef.current && !isScrollable(table)) {
-      table = table.parentElement;
+      table = getParentElement(table) as HTMLElement | null;
     }
     scrollRef.current = table;
   }, [containerRef]);
@@ -2342,7 +2343,7 @@ export interface TableLoadMoreItemProps
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element.
    *
-   * @default 'react-aria-TableLoadMoreItem'
+   * @default 'react-aria-TableLoadingIndicator'
    */
   className?: string;
   /**

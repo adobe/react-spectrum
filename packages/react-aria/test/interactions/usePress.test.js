@@ -1846,6 +1846,25 @@ describe('usePress', function () {
       expect(document.activeElement).not.toBe(el);
     });
 
+    it('should not throw if the window is focused or blurred during a press', function () {
+      let res = render(<Example preventFocusOnPress />);
+
+      let el = res.getByText('test');
+      fireEvent.mouseDown(el);
+
+      // preventFocus listens for focus and blur on the window. The browser fires
+      // those at the window itself when it gains or loses focus, e.g. returning
+      // from a native dialog, another tab, or an iframe. The target of those
+      // events is the Window, which is not a Node.
+      fireEvent(window, new FocusEvent('focus'));
+      fireEvent(window, new FocusEvent('blur'));
+
+      fireEvent.mouseUp(el);
+      fireEvent.click(el);
+
+      expect(document.activeElement).not.toBe(el);
+    });
+
     it('should focus the element on click by default', function () {
       let res = render(<Example />);
 
@@ -3152,6 +3171,29 @@ describe('usePress', function () {
           altKey: false
         }
       ]);
+    });
+
+    it('should prevent default on Enter on macOS', function () {
+      let {getByText} = render(<Example />);
+      using spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+
+      let el = getByText('test');
+      let allowDefault = fireEvent.keyDown(el, {key: 'Enter'});
+      expect(allowDefault).toBe(false);
+      allowDefault = fireEvent.keyUp(el, {key: 'Enter'});
+      expect(allowDefault).toBe(false);
+      spy.mockRestore();
+    });
+
+    it('should not prevent default on Control + Enter on macOS so the context menu can open', function () {
+      let {getByText} = render(<Example />);
+      using spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+
+      let el = getByText('test');
+      let allowDefault = fireEvent.keyDown(el, {key: 'Enter', ctrlKey: true});
+      expect(allowDefault).toBe(true);
+      fireEvent.keyUp(el, {key: 'Enter', ctrlKey: true});
+      spy.mockRestore();
     });
 
     it('should handle when focus moves between keydown and keyup', function () {

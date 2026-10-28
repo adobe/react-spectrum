@@ -14,6 +14,7 @@ import {action} from 'storybook/actions';
 import {
   AttachFileMenuItem,
   CommandMenuItem,
+  getMimeTypeLabel,
   InsertMenuButton,
   InsertTextMenuItem,
   InsertTokenMenuItem,
@@ -28,7 +29,7 @@ import {
   PromptToken,
   PromptTokenField
 } from '../src/PromptField';
-import {Attachment} from '../src/AttachmentList';
+import {Attachment, AttachmentPreview} from '../src/AttachmentList';
 import Brand from '@react-spectrum/s2/icons/Brand';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
@@ -47,7 +48,6 @@ import Data from '@react-spectrum/s2/icons/Data';
 import * as data from '../src/loader/data';
 import type {FocusableRefValue} from '@react-types/shared';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Image} from '@react-spectrum/s2/Image';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -110,10 +110,10 @@ const meta: Meta<typeof PromptField> = {
   },
   title: 'AI/PromptField',
   decorators: [
-    Story => (
+    (Story, {args}) => (
       <div
         style={{
-          width: '800px',
+          width: args.size === 'S' ? '300px' : '800px',
           maxWidth: '90vw',
           margin: '0 auto'
         }}>
@@ -349,7 +349,7 @@ let prompts = [
 ];
 
 function EverythingRender(args) {
-  let {placeholder, menuWidth, ...otherArgs} = args;
+  let {placeholder, menuWidth = 200, ...otherArgs} = args;
   let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
   let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
@@ -445,7 +445,7 @@ function EverythingRender(args) {
           setAttachments([]);
           setAttachmentState(new Map());
         }}
-        acceptedAttachmentTypes={['image/*']}
+        acceptedAttachmentTypes={['*/*']}
         onAddAttachments={newAttachments => {
           setAttachmentState(prev => {
             let newState = new Map(prev);
@@ -473,12 +473,11 @@ function EverythingRender(args) {
               <Attachment
                 isInvalid={args.attachmentInvalid}
                 uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
-                {/* TODO: what about non-image attachments? */}
-                {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
+                <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
                 {args.attachmentVariant === 'card' && (
                   <Content>
                     <Text slot="title">{attachment.file.name}</Text>
-                    <Text slot="description">{attachment.file.type}</Text>
+                    <Text slot="description">{getMimeTypeLabel(attachment.file.type)}</Text>
                   </Content>
                 )}
               </Attachment>
@@ -498,6 +497,7 @@ function EverythingRender(args) {
             });
           }}
           pixelLoader={data[args.pixelLoader]}
+          shouldAnimatePixelLoader
           placeholder={placeholder}
           menuWidth={menuWidth}>
           {token => (
@@ -508,36 +508,58 @@ function EverythingRender(args) {
           )}
         </PromptTokenField>
         <PromptFieldToolbar>
-          <InsertMenuButton>
-            <AttachFileMenuItem />
-            <SubmenuTrigger>
-              <MenuItem>
-                <Prompt />
-                <Text>Commands</Text>
-              </MenuItem>
-              <Menu items={slashCommands.filter(item => item.kind === 'command')}>
-                {item =>
-                  item.command === '/clear' ? (
-                    <MenuItem
-                      id={item.command}
-                      onAction={() => {
-                        setValue(new PromptFieldValue([]));
-                        setAttachments([]);
-                      }}>
-                      <Text slot="label">{item.command}</Text>
-                      <Text slot="description">{item.description}</Text>
-                    </MenuItem>
-                  ) : item.command === '/compact' ? (
-                    <MenuItem id={item.command} onAction={action('onCompact')}>
-                      <Text slot="label">{item.command}</Text>
-                      <Text slot="description">{item.description}</Text>
-                    </MenuItem>
-                  ) : item.command === '/feedback' || item.command === '/btw' ? (
-                    <InsertTextMenuItem id={item.command} text={item.command}>
-                      <Text slot="label">{item.command}</Text>
-                      <Text slot="description">{item.description}</Text>
-                    </InsertTextMenuItem>
-                  ) : (
+          <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+            <InsertMenuButton>
+              <AttachFileMenuItem />
+              <SubmenuTrigger>
+                <MenuItem>
+                  <Prompt />
+                  <Text>Commands</Text>
+                </MenuItem>
+                <Menu items={slashCommands.filter(item => item.kind === 'command')}>
+                  {item =>
+                    item.command === '/clear' ? (
+                      <MenuItem
+                        id={item.command}
+                        onAction={() => {
+                          setValue(new PromptFieldValue([]));
+                          setAttachments([]);
+                        }}>
+                        <Text slot="label">{item.command}</Text>
+                        <Text slot="description">{item.description}</Text>
+                      </MenuItem>
+                    ) : item.command === '/compact' ? (
+                      <MenuItem id={item.command} onAction={action('onCompact')}>
+                        <Text slot="label">{item.command}</Text>
+                        <Text slot="description">{item.description}</Text>
+                      </MenuItem>
+                    ) : item.command === '/feedback' || item.command === '/btw' ? (
+                      <InsertTextMenuItem id={item.command} text={item.command}>
+                        <Text slot="label">{item.command}</Text>
+                        <Text slot="description">{item.description}</Text>
+                      </InsertTextMenuItem>
+                    ) : (
+                      <InsertTokenMenuItem
+                        id={item.command}
+                        token={{
+                          type: 'token',
+                          text: item.command,
+                          value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+                        }}>
+                        <Text slot="label">{item.command}</Text>
+                        <Text slot="description">{item.description}</Text>
+                      </InsertTokenMenuItem>
+                    )
+                  }
+                </Menu>
+              </SubmenuTrigger>
+              <SubmenuTrigger>
+                <MenuItem>
+                  <Plugin />
+                  <Text>Skills</Text>
+                </MenuItem>
+                <Menu items={slashCommands.filter(item => item.kind === 'skill')}>
+                  {item => (
                     <InsertTokenMenuItem
                       id={item.command}
                       token={{
@@ -548,59 +570,39 @@ function EverythingRender(args) {
                       <Text slot="label">{item.command}</Text>
                       <Text slot="description">{item.description}</Text>
                     </InsertTokenMenuItem>
-                  )
-                }
-              </Menu>
-            </SubmenuTrigger>
-            <SubmenuTrigger>
-              <MenuItem>
-                <Plugin />
-                <Text>Skills</Text>
-              </MenuItem>
-              <Menu items={slashCommands.filter(item => item.kind === 'skill')}>
-                {item => (
-                  <InsertTokenMenuItem
-                    id={item.command}
-                    token={{
-                      type: 'token',
-                      text: item.command,
-                      value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
-                    }}>
-                    <Text slot="label">{item.command}</Text>
-                    <Text slot="description">{item.description}</Text>
-                  </InsertTokenMenuItem>
-                )}
-              </Menu>
-            </SubmenuTrigger>
-            <SubmenuTrigger>
-              <MenuItem>
-                <Data />
-                <Text>Reference an object</Text>
-              </MenuItem>
-              <Menu items={objects}>
-                {item => (
-                  <MenuSection>
-                    <Header>
-                      <Heading>{item.section}</Heading>
-                    </Header>
-                    <Collection items={item.items}>
-                      {item => (
-                        <InsertTokenMenuItem
-                          id={item.title}
-                          token={{
-                            type: 'token',
-                            text: item.title,
-                            value: {type: 'custom', anchor: '@', valueType: item.kind, data: item}
-                          }}>
-                          {item.title}
-                        </InsertTokenMenuItem>
-                      )}
-                    </Collection>
-                  </MenuSection>
-                )}
-              </Menu>
-            </SubmenuTrigger>
-          </InsertMenuButton>
+                  )}
+                </Menu>
+              </SubmenuTrigger>
+              <SubmenuTrigger>
+                <MenuItem>
+                  <Data />
+                  <Text>Reference an object</Text>
+                </MenuItem>
+                <Menu items={objects}>
+                  {item => (
+                    <MenuSection>
+                      <Header>
+                        <Heading>{item.section}</Heading>
+                      </Header>
+                      <Collection items={item.items}>
+                        {item => (
+                          <InsertTokenMenuItem
+                            id={item.title}
+                            token={{
+                              type: 'token',
+                              text: item.title,
+                              value: {type: 'custom', anchor: '@', valueType: item.kind, data: item}
+                            }}>
+                            {item.title}
+                          </InsertTokenMenuItem>
+                        )}
+                      </Collection>
+                    </MenuSection>
+                  )}
+                </Menu>
+              </SubmenuTrigger>
+            </InsertMenuButton>
+          </div>
           {/* TODO is this kind of styling expected from the user? Or should we have a slot that places the mic button next to the submit button? */}
           <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
             <PromptFieldVoiceButton onToggle={action('onToggle')} />
@@ -620,7 +622,8 @@ function BasicRender({placeholder, ...args}: any) {
   return (
     <PromptField {...args}>
       <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-        <PromptTokenField placeholder={placeholder} />
+        <PromptTokenField placeholder={placeholder} shouldAnimatePixelLoader />
+        <PromptFieldVoiceButton onToggle={action('onToggle')} />
         <PromptFieldSubmitButton />
       </div>
     </PromptField>
@@ -631,23 +634,48 @@ export const Basic: Story = {
   render: args => <BasicRender {...args} />
 };
 
-export const AsyncCompletions = () => (
-  <PromptField>
-    <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-      <PromptTokenField
-        completionTrigger={/(?<=^|\s)[@/]/}
-        renderCompletions={async filterValue => {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          return renderCompletions(filterValue);
-        }}>
-        {token => (
-          <PromptToken token={token}>
-            {getIcon(token)}
-            {token.text}
-          </PromptToken>
-        )}
-      </PromptTokenField>
-      <PromptFieldSubmitButton />
-    </div>
-  </PromptField>
-);
+function AsyncCompletionsRender({delay}: {delay: number}) {
+  return (
+    <PromptField>
+      <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+        <PromptTokenField
+          menuWidth={150}
+          shouldAnimatePixelLoader
+          completionTrigger={/(?<=^|\s)[@/]/}
+          renderCompletions={async filterValue => {
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return renderCompletions(filterValue);
+          }}>
+          {token => (
+            <PromptToken token={token}>
+              {getIcon(token)}
+              {token.text}
+            </PromptToken>
+          )}
+        </PromptTokenField>
+        <PromptFieldSubmitButton />
+      </div>
+    </PromptField>
+  );
+}
+
+export const AsyncCompletions: StoryObj<typeof AsyncCompletionsRender> = {
+  render: args => <AsyncCompletionsRender {...args} />,
+  args: {
+    delay: 1000
+  },
+  argTypes: {
+    delay: {control: 'number'}
+  }
+};
+
+export const CustomAIDisclaimer: Story = {
+  render: args => (
+    <BasicRender
+      aiDisclaimer={
+        'By using this feature, you agree to our AI User Guidelines. Responses may be inaccurate.'
+      }
+      {...args}
+    />
+  )
+};

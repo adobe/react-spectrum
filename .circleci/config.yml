@@ -620,10 +620,9 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: run verdaccio and publish built packages
+          name: build packages and seed verdaccio storage directly
           command: |
             mkdir -p verdaccio-workspace
-            ./scripts/verdaccio-ci.sh
             ./scripts/verdaccio-deploy.sh
           environment:
             VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage

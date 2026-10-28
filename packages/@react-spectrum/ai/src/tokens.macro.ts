@@ -68,23 +68,27 @@ export function brand(l: number, c: number, hueOffset: number, alpha = 1) {
 
 // Converts a single token color value to a brand-relative color, unless it's a
 // neutral (kept as-is) or not a color at all (e.g. an opacity number, kept as-is).
-export function convertColor(value: any) {
+// An optional opacity (0-100) overrides the color's own alpha. Note: neutral
+// colors are returned untouched, so opacity is ignored for them.
+export function convertColor(value: any, opacity?: number) {
   if (typeof value !== 'string') {
     return value;
   }
-  let match = value.match(/rgba?\(([^)]+)\)/);
-  if (!match) {
-    return value;
-  }
-  let parts = match[1].split(',').map(x => parseFloat(x.trim()));
-  let [r, g, b] = parts;
-  let alpha = parts[3] ?? 1;
-  let [L, C, H] = rgbToOklch(r, g, b);
-  if (C < NEUTRAL_CHROMA) {
-    return value;
-  }
-  let offset = Math.round((H - BRAND_REF_HUE) * 10) / 10;
-  return brand(Math.round(L * 1e4) / 1e4, Math.round(C * 1e4) / 1e4, offset, alpha);
+  return value.replace(/rgba?\([^)]+\)/g, value => {
+    let match = value.match(/rgba?\(([^)]+)\)/);
+    if (!match) {
+      return value;
+    }
+    let parts = match[1].split(',').map(x => parseFloat(x.trim()));
+    let [r, g, b] = parts;
+    let alpha = opacity != null ? opacity / 100 : (parts[3] ?? 1);
+    let [L, C, H] = rgbToOklch(r, g, b);
+    if (C < NEUTRAL_CHROMA) {
+      return value;
+    }
+    let offset = Math.round((H - BRAND_REF_HUE) * 10) / 10;
+    return brand(Math.round(L * 1e4) / 1e4, Math.round(C * 1e4) / 1e4, offset, alpha);
+  });
 }
 
 export function token(name: string) {
@@ -165,78 +169,4 @@ function outerBorderStop(stop: number, variant: string, colorScheme: string, div
     opacity = opacity / div;
   }
   return `oklch(from ${token(`outer-border.gradient.ob-hue.stop-${stop}.${colorScheme}`)} l c h / ${opacity}%)`;
-}
-
-export function keyframes(this: any | void, css: string): string {
-  // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
-  // We also check if this is globalThis, which happens in non-strict mode bundles.
-  // Also allow style to be called as a normal function in tests.
-  // @ts-ignore
-
-  if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
-    throw new Error('The keyframes macro must be imported with {type: "macro"}.');
-  }
-  let name = generateArbitraryValueSelector(css, true);
-  css = `@keyframes ${name} {
-  ${css}
-}`;
-  if (this && typeof this.addAsset === 'function') {
-    this.addAsset({
-      type: 'css',
-      content: css
-    });
-  }
-  return name;
-}
-
-function generateArbitraryValueSelector(v: string, atStart = false) {
-  let c = toBase62(hash(v));
-  if (atStart && /^[0-9]/.test(c)) {
-    c = `_${c}`;
-  }
-  return c;
-}
-
-function toBase62(value: number) {
-  if (value === 0) {
-    return generateName(value);
-  }
-
-  let res = '';
-  while (value) {
-    let remainder = value % 62;
-    res += generateName(remainder);
-    value = Math.floor((value - remainder) / 62);
-  }
-
-  return res;
-}
-
-function generateName(index: number, atStart = false): string {
-  if (index < 26) {
-    // lower case letters
-    return String.fromCharCode(index + 97);
-  }
-
-  if (index < 52) {
-    // upper case letters
-    return String.fromCharCode(index - 26 + 65);
-  }
-
-  if (index < 62 && !atStart) {
-    // numbers
-    return String.fromCharCode(index - 52 + 48);
-  }
-
-  return '_' + generateName(index - (atStart ? 52 : 62));
-}
-
-// djb2 hash function.
-// http://www.cse.yorku.ca/~oz/hash.html
-function hash(v: string) {
-  let hash = 5381;
-  for (let i = 0; i < v.length; i++) {
-    hash = ((hash << 5) + hash + v.charCodeAt(i)) >>> 0;
-  }
-  return hash;
 }

@@ -992,17 +992,26 @@ function getTypeText(decl, fallbackContext) {
 }
 
 /**
+ * Resolve the `s2:` and `react-aria:` cross-library URL schemes (used to link from one
+ * doc site to another, e.g. from an S2 component page to its React Aria counterpart)
+ * into an absolute URL on the target site. Other URLs are returned unchanged.
+ */
+function resolveSchemeUrl(href) {
+  if (href && (href.startsWith('s2:') || href.startsWith('react-aria:'))) {
+    const url = new URL(href);
+    return getBaseUrl(url.protocol.slice(0, -1)) + '/' + url.pathname;
+  }
+  return href;
+}
+
+const URI_SCHEME_PATTERN = /^[a-zA-Z][a-zA-Z0-9+.-]*:/;
+
+/**
  * Transform relative URLs to use .md extension instead of .html or no extension.
  * Preserves query params and hash fragments.
  */
 function transformRelativeUrl(href) {
-  if (
-    !href ||
-    href.startsWith('http://') ||
-    href.startsWith('https://') ||
-    href.startsWith('mailto:') ||
-    href.startsWith('#')
-  ) {
+  if (!href || href.startsWith('#') || URI_SCHEME_PATTERN.test(href)) {
     return href;
   }
 
@@ -1017,6 +1026,9 @@ function transformRelativeUrl(href) {
   if (pathPart.endsWith('.html')) {
     // Replace .html with .md
     pathPart = pathPart.slice(0, -5) + '.md';
+  } else if (pathPart.endsWith('/')) {
+    // A trailing slash refers to that directory's index page
+    pathPart = pathPart + 'index.md';
   } else if (pathPart && !pathPart.match(/\.[a-zA-Z0-9]+$/)) {
     // Add .md to paths without an extension
     pathPart = pathPart + '.md';
@@ -2695,10 +2707,7 @@ function remarkDocsComponentsToMarkdown() {
           }
         }
 
-        if (href && (href.startsWith('s2:') || href.startsWith('react-aria:'))) {
-          let url = new URL(href);
-          href = getBaseUrl(url.protocol.slice(0, -1)) + '/' + url.pathname;
-        }
+        href = resolveSchemeUrl(href);
 
         // Convert .html links to .md for relative links
         if (href && !href.startsWith('http') && !href.startsWith('//') && href.endsWith('.html')) {
@@ -3283,7 +3292,7 @@ function remarkDocsComponentsToMarkdown() {
 
     // Transform relative links to use .md extension.
     visit(tree, 'link', node => {
-      node.url = transformRelativeUrl(node.url);
+      node.url = transformRelativeUrl(resolveSchemeUrl(node.url));
     });
 
     // Append "Related Types" section if we collected any.

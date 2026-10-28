@@ -12,9 +12,9 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {baseColor, css, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
-import {centerBaseline} from './CenterBaseline';
+import {centerBaseline, CenterBaseline} from './CenterBaseline';
 import {
   centerPadding,
   getAllowedOverrides,
@@ -23,88 +23,92 @@ import {
 } from './style-utils' with {type: 'macro'};
 import Chevron from '../ui-icons/Chevron';
 import {
-  Collection,
-  DOMRef,
-  forwardRefType,
-  GlobalDOMAttributes,
-  Key,
-  Node,
-  RouterOptions
-} from '@react-types/shared';
-import {
+  ComponentType,
   createContext,
   forwardRef,
   ReactNode,
-  RefObject,
   useContext,
-  useEffect,
+  useMemo,
   useRef,
-  useState
+  useState,
+  ViewTransitionClass
 } from 'react';
+import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
+import {
+  NavigationTree,
+  NavigationTreeHeader,
+  NavigationTreeHeaderProps,
+  NavigationTreeItem,
+  NavigationTreeItemContent,
+  NavigationTreeItemContentRenderProps,
+  NavigationTreeItemProps,
+  NavigationTreeProps,
+  NavigationTreeSection,
+  NavigationTreeSectionProps
+} from 'react-aria-components/NavigationTree';
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
-import {
-  TreeItemProps as RACTreeItemProps,
-  TreeProps as RACTreeProps,
-  Tree,
-  TreeHeader,
-  TreeHeaderProps,
-  TreeItem,
-  TreeItemContent,
-  TreeItemContentProps,
-  TreeItemRenderProps,
-  TreeRenderProps,
-  TreeSection,
-  TreeSectionProps
-} from 'react-aria-components/Tree';
+import React from 'react';
+import sideNavCss from './SideNav.module.css';
+import {SideNavPanelContext} from './SideNavPanel';
 import {Text, TextContext} from './Content';
-import {TreeState} from 'react-stately/useTreeState';
+import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
+import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
+import {useMediaQuery} from './useMediaQuery';
 import {useScale} from './utils';
+
+// Older React versions just render their children, so the panel collapses and expands without
+// animating.
+const ViewTransition: ComponentType<{children: ReactNode; default?: ViewTransitionClass}> =
+  React.ViewTransition ?? (({children}) => children);
+const addTransitionType: (type: string) => void = React.addTransitionType ?? (() => {});
+const startTransition: (scope: () => void) => void =
+  React.startTransition ?? ((scope: () => void) => scope());
+const EXPAND_TRANSITION = sideNavCss['side-panel-expand'];
+const ITEM_COLLAPSE_TRANSITION = sideNavCss['side-nav-item-collapse'];
+const ITEM_EXPAND_TRANSITION = sideNavCss['side-nav-item-expand'];
+
+interface SideNavViewTransitions {
+  /** The `view-transition-class` for each row. */
+  item: ViewTransitionClass;
+  /** The `view-transition-class` for each section header, or null when headers shouldn't animate. */
+  header: string | null;
+}
+
+const viewTransitions: SideNavViewTransitions = {
+  item: {
+    default: 'none',
+    [EXPAND_TRANSITION]: sideNavCss['side-nav-item'],
+    [ITEM_COLLAPSE_TRANSITION]: sideNavCss['side-nav-item'],
+    [ITEM_EXPAND_TRANSITION]: sideNavCss['side-nav-item']
+  },
+  header: sideNavCss['side-nav-header']
+};
+
+// for prefers-reduced-motion
+const noViewTransitions: SideNavViewTransitions = {item: 'none', header: null};
+
+const SideNavViewTransitionContext = createContext<SideNavViewTransitions>(noViewTransitions);
 
 export interface SideNavProps<T>
   extends
-    Omit<
-      RACTreeProps<T>,
-      | 'style'
-      | 'className'
-      | 'render'
-      | 'onAction'
-      | 'onRowAction'
-      | 'selectionBehavior'
-      | 'onScroll'
-      | 'onCellAction'
-      | 'onSelectionChange'
-      | 'selectedKeys'
-      | 'defaultSelectedKeys'
-      | 'disabledBehavior'
-      | 'selectionMode'
-      | 'escapeKeyBehavior'
-      | 'shouldSelectOnPressUp'
-      | 'disallowEmptySelection'
-      | 'renderEmptyState'
-      | 'keyboardNavigationBehavior'
-      | 'dragAndDropHooks' // To be implemented
-      | keyof GlobalDOMAttributes
-    >,
+    Omit<NavigationTreeProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>,
     UnsafeStyles {
-  /** The route that is currently selected. */
-  selectedRoute?: string | null;
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight;
 }
 
 export interface SideNavItemProps extends Omit<
-  RACTreeItemProps,
+  NavigationTreeItemProps,
   | 'className'
   | 'style'
   | 'render'
   | 'onClick'
   | 'allowsArrowNavigation'
-  | 'focusMode'
   | 'value'
   | 'onAction'
   | keyof GlobalDOMAttributes
@@ -119,7 +123,12 @@ const sideNavWrapper = style(
   {
     minHeight: 0,
     height: 'full',
-    minWidth: 160,
+    flexShrink: 1,
+    flexGrow: 1,
+    minWidth: {
+      default: 160,
+      isInSideNavPanel: 'unset'
+    },
     display: 'flex',
     isolation: 'isolate',
     disableTapHighlight: true,
@@ -132,7 +141,7 @@ const sideNavWrapper = style(
 // TODO: the below is needed so the borders of the top and bottom row isn't cut off if the TreeView is wrapped within a container by always reserving the 2px needed for the
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
-const tree = style<TreeRenderProps>({
+const tree = style({
   ...focusRing(),
   outlineOffset: -2, // make certain we are visible inside overflow hidden containers
   userSelect: 'none',
@@ -151,14 +160,6 @@ const tree = style<TreeRenderProps>({
   }
 });
 
-interface InternalSideNavContextValue {
-  /** The route that is currently selected. */
-  selectedRoute?: string | null;
-  /** The last route the focused key was synced to; dedupes the focus sync across items. */
-  syncedRouteRef?: RefObject<string | undefined>;
-}
-let InternalSideNavContext = createContext<InternalSideNavContextValue>({});
-
 /**
  * A SideNav provides users with a way to navigate nested hierarchical set of links.
  */
@@ -166,33 +167,74 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   props: SideNavProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, UNSAFE_className, UNSAFE_style, selectedRoute, ...rest} = props;
+  let {
+    children,
+    UNSAFE_className,
+    UNSAFE_style,
+    selectedRoute,
+    expandedKeys: propExpandedKeys,
+    defaultExpandedKeys: propDefaultExpandedKeys,
+    onExpandedChange,
+    ...rest
+  } = props;
 
   let domRef = useDOMRef(ref);
+  let {isCollapsed, setCollapsed} = useContext(SideNavPanelContext) ?? {};
+  let isInSideNavPanel = isCollapsed !== undefined;
 
-  // Tracks the last route we moved the focused key to, so the focus sync (driven from
-  // RouteFocusSync, which has the built collection) only runs when the route actually changes
-  let syncedRouteRef = useRef<string | undefined>(undefined);
+  let [expandedKeys, setExpandedKeys] = useControlledState(
+    propExpandedKeys ? new Set(propExpandedKeys) : undefined,
+    propDefaultExpandedKeys ? new Set(propDefaultExpandedKeys) : new Set(),
+    onExpandedChange
+  );
+
+  // A collapsed panel is only wide enough for the icon rail, so every item renders closed. The
+  // expanded keys are kept as they were rather than cleared, so that expanding the panel restores
+  // the tree the user left behind.
+  let emptySet = useMemo(() => new Set<Key>(), []);
+  let visibleExpandedKeys = isCollapsed ? emptySet : expandedKeys;
+
+  // Expanding or collapsing an item moves every row below it and mounts or unmounts its children.
+  // Scheduling that as a transition causes the <ViewTransition> around each row to animate.
+  let toggleExpandedKeys = (keys: Set<Key>) => {
+    // A collapsed panel has no room to show an item's children, so activating an item that isn't a
+    // link expands the panel to reveal them rather than silently expanding behind the rail.
+    if (isCollapsed) {
+      setCollapsed?.(false);
+      setExpandedKeys(keys);
+      return;
+    }
+    startTransition(() => {
+      addTransitionType(
+        keys.size > visibleExpandedKeys.size ? ITEM_EXPAND_TRANSITION : ITEM_COLLAPSE_TRANSITION
+      );
+      setExpandedKeys(keys);
+    });
+  };
+
+  let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   return (
-    <div
-      ref={domRef}
-      className={(UNSAFE_className ?? '') + sideNavWrapper(null, props.styles)}
-      style={UNSAFE_style}>
-      <InternalSideNavContext.Provider value={{selectedRoute, syncedRouteRef}}>
-        <Tree
+    <SideNavViewTransitionContext.Provider
+      value={reduceMotion ? noViewTransitions : viewTransitions}>
+      <div
+        ref={domRef}
+        className={(UNSAFE_className ?? '') + sideNavWrapper({isInSideNavPanel}, props.styles)}
+        style={UNSAFE_style}>
+        <NavigationTree
           {...rest}
-          className={renderProps => tree(renderProps)}
-          selectionMode="none"
-          keyboardNavigationBehavior="tab">
+          expandedKeys={visibleExpandedKeys}
+          onExpandedChange={toggleExpandedKeys}
+          selectedRoute={selectedRoute}
+          className={renderProps => tree({...renderProps, isInSideNavPanel})}>
           {children}
-        </Tree>
-      </InternalSideNavContext.Provider>
-    </div>
+        </NavigationTree>
+      </div>
+    </SideNavViewTransitionContext.Provider>
   );
 });
 
-const treeRow = style<TreeItemRenderProps & {isLink?: boolean}>({
+const treeRow = style({
   outlineStyle: 'none',
   position: 'relative',
   display: 'flex',
@@ -230,7 +272,10 @@ const treeCellGrid = style({
   gridTemplateColumns: [12, 'auto', 'auto', '1fr', 'auto', 'auto'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: ['. level-padding icon content actions actionmenu'],
-  paddingEnd: 4, // account for any focus rings on the last item in the cell
+  paddingEnd: {
+    default: 4, // account for any focus rings on the last item in the cell,
+    isCollapsed: 0
+  },
   color: {
     default: baseColor('neutral-subdued'),
     isSelected: baseColor('neutral'),
@@ -251,16 +296,25 @@ const treeCellGrid = style({
 
 const treeIcon = style({
   gridArea: 'icon',
-  marginEnd: 'text-to-visual',
+  marginEnd: {
+    default: 'text-to-visual',
+    isCollapsed: 0
+  },
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
   }
 });
 
-const treeContent = style({
+const treeContent = style<{isCollapsed?: boolean}>({
   gridArea: 'content',
-  paddingY: `--centerPadding`
+  paddingY: `--centerPadding`,
+  flexShrink: 1,
+  minWidth: 0,
+  display: {
+    default: 'block',
+    isCollapsed: 'none'
+  }
 });
 
 let treeRowFocusRing = style({
@@ -280,11 +334,11 @@ let treeRowFocusRing = style({
   pointerEvents: 'none'
 });
 
-const treeRowLink = style({
+const treeRowLink = style<{isDisabled?: boolean}>({
   display: 'grid',
   gridArea: 'content',
-  gridTemplateColumns: ['auto', '1fr'],
-  gridTemplateAreas: ['icon content'],
+  gridTemplateColumns: ['auto', '1fr', 'auto'],
+  gridTemplateAreas: ['icon content badge'],
   alignItems: 'center',
   minWidth: 0,
   outlineStyle: 'none',
@@ -296,30 +350,14 @@ const treeRowLink = style({
   }
 });
 
-const treeActions = style({
-  gridArea: 'actions',
-  marginStart: 2,
-  marginEnd: 4
-});
+const treeActions = style({gridArea: 'actions', marginStart: 2, marginEnd: 4});
 
-const treeActionMenu = style({
-  gridArea: 'actionmenu'
-});
+const treeActionMenu = style({gridArea: 'actionmenu'});
+
+const hideUnmarkedChildren = css('& > *:not([data-do-not-hide]) {display: none;}');
 
 const SideNavItemLinkContext = createContext<{
   isDisabled?: boolean;
-  href?: string;
-  hrefLang?: string;
-  target?: string;
-  rel?: string;
-  download?: string | boolean;
-  ping?: string;
-  referrerPolicy?: ReferrerPolicy;
-  routerOptions?: RouterOptions;
-  // Lets the row track whether the link (as opposed to another focusable child like an ActionMenu
-  // trigger) is the focused element, so the row focus ring can follow the link specifically.
-  onFocusChange?: (isFocused: boolean) => void;
-  // So we can scale the row when the link is pressed.
   onPressChange?: (isPressed: boolean) => void;
 }>({});
 
@@ -328,42 +366,30 @@ const SideNavInternalItemContext = createContext<{setLinkPressed?: (isPressed: b
 );
 
 export const SideNavItem = (props: SideNavItemProps): ReactNode => {
-  let {href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions, ...rest} = props;
-
-  let hasLink = href != null && href.length > 0;
   let [isLinkPressed, setLinkPressed] = useState(false);
   let rowRef = useRef<HTMLDivElement | null>(null);
   // oxlint-disable-next-line react-compiler
   let scaling = pressScale(rowRef);
+  let viewTransitions = useContext(SideNavViewTransitionContext);
 
   return (
-    <SideNavItemLinkContext.Provider
-      value={{
-        href,
-        hrefLang,
-        target,
-        rel,
-        download,
-        ping,
-        referrerPolicy,
-        routerOptions
-      }}>
-      <SideNavInternalItemContext.Provider value={{setLinkPressed}}>
-        <TreeItem
-          {...rest}
-          ref={rowRef}
-          style={({isPressed}) => scaling({isPressed: isLinkPressed || isPressed})}
-          href={href}
-          focusMode={hasLink ? 'child' : undefined}
-          allowsArrowNavigation
-          className={renderProps => treeRow(renderProps)}
-        />
-      </SideNavInternalItemContext.Provider>
-    </SideNavItemLinkContext.Provider>
+    <SideNavInternalItemContext.Provider value={{setLinkPressed}}>
+      <NavigationTreeItem
+        {...props}
+        ref={rowRef}
+        style={({isPressed}) => scaling({isPressed: isLinkPressed || isPressed})}
+        className={renderProps => treeRow(renderProps)}
+        render={domProps => (
+          <ViewTransition default={viewTransitions.item}>
+            <div {...domProps} />
+          </ViewTransition>
+        )}
+      />
+    </SideNavInternalItemContext.Provider>
   );
 };
 
-export interface SideNavItemContentProps extends Omit<TreeItemContentProps, 'children'> {
+export interface SideNavItemContentProps {
   /** Rendered contents of the side nav item or child items. */
   children: ReactNode;
 }
@@ -399,127 +425,63 @@ const indicator = style<{isDisabled: boolean; isSelected: boolean; isHovered: bo
   borderRadius: 'full'
 });
 
-// Moves the tree's focused key to the item matching selectedRoute. Lives in items
-// (rather than up in SideNav) because it needs the built collection off `state`, which only exists
-// after the tree has rendered. Runs when the route or the collection changes; the shared
-// syncedRouteRef dedupes across items so it fires once per route change.
-// If the item is inside a collapsed parent, the focused key is moved to the closest
-// visible ancestor instead of the hidden descendant.
-function useRouteFocusSync({state}: {state: TreeState<unknown>}): void {
-  let {selectedRoute, syncedRouteRef} = useContext(InternalSideNavContext);
-  let {collection, selectionManager, expandedKeys} = state;
-  useEffect(() => {
-    if (
-      selectedRoute == null ||
-      syncedRouteRef == null ||
-      syncedRouteRef.current === selectedRoute
-    ) {
-      return;
-    }
-    let key = findKeyForRoute(collection, selectedRoute);
-    if (key != null) {
-      key = closestVisibleKey(collection, expandedKeys, key);
-      syncedRouteRef.current = selectedRoute;
-      selectionManager.setFocusedKey(key);
-    }
-  }, [selectedRoute, collection, expandedKeys, syncedRouteRef, selectionManager]);
-}
-
 export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode => {
   let {children} = props;
   let scale = useScale();
-  let linkProps = useContext(SideNavItemLinkContext);
   let {setLinkPressed} = useContext(SideNavInternalItemContext);
-  let {selectedRoute} = useContext(InternalSideNavContext);
-
   return (
-    <TreeItemContent>
-      {({
-        isExpanded,
-        hasChildItems,
-        isDisabled,
-        isSelected,
-        id,
-        state,
-        isHovered,
-        isPressed,
-        isFocusVisible,
-        isFocusVisibleWithin
-      }) => {
-        return (
-          <SideNavItemContentInner
-            isExpanded={isExpanded}
-            hasChildItems={hasChildItems}
-            isDisabled={isDisabled}
-            isSelected={isSelected}
-            setLinkPressed={setLinkPressed}
-            linkProps={linkProps}
-            scale={scale}
-            id={id}
-            state={state}
-            selectedRoute={selectedRoute}
-            isHovered={isHovered}
-            isPressed={isPressed}
-            isFocusVisible={isFocusVisible}
-            isFocusVisibleWithin={isFocusVisibleWithin}>
-            {children}
-          </SideNavItemContentInner>
-        );
-      }}
-    </TreeItemContent>
+    <NavigationTreeItemContent>
+      {(renderProps: NavigationTreeItemContentRenderProps) => (
+        <SideNavItemContentInner {...renderProps} scale={scale} setLinkPressed={setLinkPressed}>
+          {children}
+        </SideNavItemContentInner>
+      )}
+    </NavigationTreeItemContent>
   );
 };
 
 const SideNavItemContentInner = props => {
+  let {isCollapsed = false} = useContext(SideNavPanelContext);
   let {
     isExpanded,
     hasChildItems,
     isDisabled,
-    isSelected,
-    setLinkPressed,
-    linkProps,
-    scale,
-    id,
-    state,
-    selectedRoute,
+    isCurrent,
+    isCurrentAncestor,
     isHovered,
     isFocusVisible,
-    isFocusVisibleWithin,
+    scale,
+    setLinkPressed,
     children
   } = props;
-
-  useRouteFocusSync({state});
-
-  // Whether the link within this row is the focused element (any modality). Combined with the
-  // keyboard-only isFocusVisibleWithin below, this lets the row focus ring follow the link
-  // specifically and not other focusable children (e.g. an ActionMenu trigger).
-  let [isLinkFocused, setLinkFocused] = useState(false);
-
-  let hasLink = linkProps.href != null && linkProps.href.length > 0;
 
   return (
     <>
       <div
         className={treeRowFocusRing({
-          isFocusVisible: isFocusVisible || (isFocusVisibleWithin && isLinkFocused),
-          isSelected
+          isFocusVisible,
+          isSelected: isCurrent
         })}
       />
       <div
-        className={treeCellGrid({
-          isDisabled,
-          isSelected: linkProps.href === selectedRoute,
-          isDescendantSelected:
-            !isExpanded && hasChildItems && hasSelectedDescendant(id, state, selectedRoute)
-        })}>
+        className={
+          treeCellGrid({
+            isDisabled,
+            isSelected: isCurrent,
+            isDescendantSelected: isCurrentAncestor && !isExpanded,
+            isCollapsed
+          }) + (isCollapsed ? ' ' + hideUnmarkedChildren : '')
+        }>
         <div
+          data-do-not-hide
           className={indicator({
             isDisabled,
-            isSelected: linkProps.href === selectedRoute,
-            isHovered: isHovered && hasLink
+            isSelected: isCurrent || (isCurrentAncestor && !isExpanded),
+            isHovered
           })}
         />
         <div
+          data-do-not-hide
           className={style({
             gridArea: 'level-padding',
             width: 'calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))'
@@ -527,23 +489,27 @@ const SideNavItemContentInner = props => {
         />
         <Provider
           values={[
-            [TextContext, {styles: treeContent}],
-            // forward this so that it gets out of the fake dom's tree and into the real one, and
-            // add onFocusChange so the link reports focus for the row focus ring.
+            [
+              TextContext,
+              {
+                styles: treeContent({isCollapsed})
+              }
+            ],
             [
               SideNavItemLinkContext,
               {
-                ...linkProps,
                 isDisabled,
-                onFocusChange: setLinkFocused,
                 onPressChange: setLinkPressed
               }
             ],
             [
               IconContext,
               {
-                render: centerBaseline({slot: 'icon', styles: treeIcon}),
-                styles: style({size: fontRelative(20), flexShrink: 0})
+                render: (icon: ReactNode) => (
+                  <CenterBaseline data-do-not-hide slot="icon" styles={treeIcon({isCollapsed})}>
+                    {icon}
+                  </CenterBaseline>
+                )
               }
             ],
             [ActionButtonGroupContext, {styles: treeActions, isDisabled, size: 'S'}],
@@ -553,6 +519,7 @@ const SideNavItemContentInner = props => {
         </Provider>
       </div>
       <ExpandableRowChevron
+        isCollapsed={isCollapsed}
         isDisabled={isDisabled}
         isExpanded={isExpanded}
         scale={scale}
@@ -564,6 +531,7 @@ const SideNavItemContentInner = props => {
 
 interface ExpandableRowChevronProps {
   isExpanded?: boolean;
+  isCollapsed?: boolean;
   isDisabled?: boolean;
   isRTL?: boolean;
   scale: 'medium' | 'large';
@@ -571,6 +539,10 @@ interface ExpandableRowChevronProps {
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
+  display: {
+    default: 'flex',
+    isCollapsed: 'none'
+  },
   gridArea: 'expand-button',
   color: {
     default: 'inherit',
@@ -581,7 +553,6 @@ const expandButton = style<ExpandableRowChevronProps>({
   },
   height: 32,
   width: 32,
-  display: 'flex',
   flexWrap: 'wrap',
   alignContent: 'center',
   justifyContent: 'center',
@@ -595,6 +566,7 @@ const expandButton = style<ExpandableRowChevronProps>({
   },
   padding: 0,
   transition: 'default',
+  transitionDuration: 150,
   backgroundColor: 'transparent',
   borderStyle: 'none',
   disableTapHighlight: true,
@@ -610,7 +582,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
     expandButtonRef,
     ButtonContext
   );
-  let {isExpanded, scale, isHidden} = fullProps;
+  let {isExpanded, scale, isHidden, isCollapsed} = fullProps;
   let {direction} = useLocale();
 
   return (
@@ -619,7 +591,14 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       ref={ref}
       slot="chevron"
       className={renderProps =>
-        expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})
+        expandButton({
+          ...renderProps,
+          isExpanded,
+          isCollapsed,
+          isRTL: direction === 'rtl',
+          scale,
+          isHidden
+        })
       }>
       <Chevron
         className={style({
@@ -640,27 +619,38 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
 }
 
 export interface SideNavSectionProps<T> extends Omit<
-  TreeSectionProps<T>,
+  NavigationTreeSectionProps<T>,
   'value' | 'render' | 'style' | 'className'
 > {}
 
 export function SideNavSection<T extends object>(props: SideNavSectionProps<T>) {
   return (
-    <TreeSection {...props} className={style({marginTop: {':not(:first-child)': 24}})}>
+    <NavigationTreeSection {...props} className={style({marginTop: {':not(:first-child)': 24}})}>
       {props.children}
-    </TreeSection>
+    </NavigationTreeSection>
   );
 }
 
 export interface SideNavHeaderProps extends Omit<
-  TreeHeaderProps,
+  NavigationTreeHeaderProps,
   'value' | 'render' | 'style' | 'className'
 > {}
 
 export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
+  let {header} = useContext(SideNavViewTransitionContext);
+  let id = useId();
   return (
-    <TreeHeader
+    <NavigationTreeHeader
+      id={id}
+      // For some reason I'm unable to use a ViewTransition component directly here. Not sure why
+      style={header ? {viewTransitionName: `${id}-header`, viewTransitionClass: header} : undefined}
       className={style({
+        position: 'relative',
+        // Hidden by the panel rather than by the header itself — see the attribute in SideNavPanel.
+        display: {
+          default: 'block',
+          ':is([data-side-panel-collapsed] *)': 'none'
+        },
         font: 'ui-sm',
         // Component/S/Medium for the font, doesn't appear to match our fonts
         fontWeight: 'medium',
@@ -670,7 +660,7 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
         height: 16
       })}>
       {props.children}
-    </TreeHeader>
+    </NavigationTreeHeader>
   );
 };
 
@@ -681,23 +671,31 @@ export interface SideNavItemLinkProps {
 
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
-  let {selectedRoute} = useContext(InternalSideNavContext);
-  let linkProps = useContext(SideNavItemLinkContext);
+  let linkFocus = useContext(SideNavItemLinkContext);
+  let {isCollapsed = false} = useContext(SideNavPanelContext);
+  let textId = useId();
 
   return (
     <Link
       {...props}
-      {...linkProps}
-      aria-current={selectedRoute === linkProps.href ? 'page' : undefined}
-      className={treeRowLink({isDisabled: linkProps.isDisabled})}>
+      {...linkFocus}
+      aria-labelledby={textId}
+      data-do-not-hide
+      className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
       <Provider
         values={[
-          [TextContext, {styles: treeContent}],
+          [
+            TextContext,
+            {
+              id: textId,
+              styles: treeContent({isCollapsed})
+            }
+          ],
           [
             IconContext,
             {
-              render: centerBaseline({slot: 'icon', styles: treeIcon}),
-              styles: style({size: fontRelative(20), flexShrink: 0})
+              render: centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})}),
+              styles: style({size: '1lh', flexShrink: 0})
             }
           ]
         ]}>
@@ -706,74 +704,3 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
     </Link>
   );
 };
-
-// The collection key of the item whose href matches `route`, or null. getKeys() covers collapsed
-// items too, and the href is stored as a data attribute so it doesn't trigger Tree's link handling.
-function findKeyForRoute(collection: Collection<Node<unknown>>, route: string): Key | null {
-  for (let key of collection.getKeys()) {
-    if (collection.getItem(key)?.props?.href === route) {
-      return key;
-    }
-  }
-  return null;
-}
-
-// Walks up from `key` to the closest ancestor that is actually rendered (i.e. all of its ancestors
-// are expanded). Returns `key` unchanged when it is already visible. A collapsed ancestor hides
-// everything beneath it, so the highest collapsed ancestor is the closest visible row.
-function closestVisibleKey(
-  collection: Collection<Node<unknown>>,
-  expandedKeys: Set<Key>,
-  key: Key
-): Key {
-  let target = key;
-  let node = collection.getItem(key);
-  while (node?.parentKey != null) {
-    let parent = collection.getItem(node.parentKey);
-    if (parent?.type === 'item' && !expandedKeys.has(node.parentKey)) {
-      target = node.parentKey;
-    }
-    node = parent;
-  }
-  return target;
-}
-
-// Cache so each row doesn't have to walk up the tree every time
-let selectedAncestorsCache = new WeakMap<
-  Collection<Node<unknown>>,
-  {selection: unknown; ancestors: Set<Key>}
->();
-
-// The set of collection keys that are ancestors of the item matching `selectedRoute`.
-function getSelectedAncestors(state: TreeState<unknown>, selectedRoute: string): Set<Key> {
-  let {collection} = state;
-  let cached = selectedAncestorsCache.get(collection);
-  if (cached && cached.selection === selectedRoute) {
-    return cached.ancestors;
-  }
-
-  let matchKey = findKeyForRoute(collection, selectedRoute);
-
-  let ancestors = new Set<Key>();
-  let node = matchKey != null ? collection.getItem(matchKey) : null;
-  while (node?.parentKey != null && !ancestors.has(node.parentKey)) {
-    ancestors.add(node.parentKey);
-    node = collection.getItem(node.parentKey);
-  }
-
-  selectedAncestorsCache.set(collection, {selection: selectedRoute, ancestors});
-  return ancestors;
-}
-
-// Whether the row `id` is an ancestor of the item matching `selectedRoute`, i.e. it has a
-// selected descendant. Used to keep a collapsed parent styled when its selected child is hidden.
-function hasSelectedDescendant(
-  id: Key | undefined,
-  state: TreeState<unknown>,
-  selectedRoute: string | undefined
-) {
-  if (id == null || selectedRoute == null || !state) {
-    return false;
-  }
-  return getSelectedAncestors(state, selectedRoute).has(id);
-}

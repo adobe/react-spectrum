@@ -20,8 +20,10 @@ import {
   useMemo,
   useRef
 } from 'react';
-import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getParentNode, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getInteractionModality, setInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
+import {getScrollParents} from '../utils/getScrollParents';
 import {isMac} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {
@@ -32,7 +34,7 @@ import {
   TokenFieldState,
   TokenFieldValue
 } from 'react-stately/useTokenFieldState';
-import {setInteractionModality} from '../interactions/useFocusVisible';
+import {scrollRectIntoView} from '../utils/scrollIntoView';
 import {useEvent} from '../utils/useEvent';
 import {useField} from '../label/useField';
 import {useFocusable} from '../interactions/useFocusable';
@@ -183,6 +185,9 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       if (ref.current === getActiveElement(getOwnerDocument(ref.current))) {
         setTokenFieldSelection(ref.current, value.selectedRange);
         announceToken(value);
+        // We call preventDefault in the beforeinput handler below, which also prevents the
+        // browser's default behavior of scrolling the caret into view. Do it ourselves instead.
+        scrollCaretIntoView(ref.current);
       }
       selectedRange.current = value.selectedRange;
     }
@@ -411,7 +416,12 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
     }
 
     let selection = window.getSelection();
-    if (ref.current && selection && selection.containsNode(ref.current, true)) {
+    if (
+      ref.current &&
+      selection &&
+      selection.containsNode(ref.current, true) &&
+      !selection.isCollapsed
+    ) {
       selection.removeAllRanges();
       state.setValue(value =>
         value.withSelectedRange(new TokenFieldValue.SelectedRange(value.caretPosition))
@@ -655,8 +665,8 @@ function getPosition(container: Element, node: Node, offset: number, isRangeEnd 
   }
 
   let originalNode = node;
-  while (node.parentNode !== container) {
-    node = node.parentNode!;
+  while (getParentNode(node) !== container) {
+    node = getParentNode(node)!;
   }
 
   let index = indexOfNode(node);
@@ -711,7 +721,6 @@ export function setTokenFieldSelection(
     // anchor comes after the current position (backward selections).
     let [anchorNode, anchorOffset] = getDOMPosition(root, selectedRange.anchor);
     let [focusNode, focusOffset] = getDOMPosition(root, selectedRange.current);
-    root[isProgrammaticSelectionChange] = !fireEvent;
 
     // Only set selection if it has changed, because this can clobber the browser's selection direction.
     if (
@@ -720,7 +729,75 @@ export function setTokenFieldSelection(
       selection.focusNode !== focusNode ||
       selection.focusOffset !== focusOffset
     ) {
+      // Only flag the change when the selection actually moves. Otherwise no selectionchange
+      // event fires to consume the flag, and the next user selection change would be ignored.
+      root[isProgrammaticSelectionChange] = !fireEvent;
       selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    }
+  }
+}
+
+// Calling preventDefault in the beforeinput handler stops the browser from performing its
+// default edit action, which also suppresses its normal behavior of scrolling the caret into
+// view. Recreate that behavior by measuring the caret's position with a Range and
+// scrolling each scrollable ancestor of the field so it is visible.
+function scrollCaretIntoView(root: HTMLElement): void {
+  let selection = window.getSelection();
+  if (
+    getInteractionModality() !== 'keyboard' ||
+    !selection ||
+    selection.rangeCount === 0 ||
+    !nodeContains(root, selection.focusNode)
+  ) {
+    return;
+  }
+
+  let range = selection.getRangeAt(0);
+  if (range.collapsed && range.endContainer === root) {
+    // Root-level positions around tokens have no rect. Measure the adjacent
+    // zero width space without moving the actual selection into the token.
+    range = tokenFieldPositionToDOMRange(root, {index: range.endOffset, offset: 0});
+  }
+  let rect = range.getBoundingClientRect();
+
+  // A collapsed range doesn't always produce a client rect. This happens for empty lines.
+  if (rect.top === 0 && rect.bottom === 0 && rect.left === 0 && rect.right === 0) {
+    let node: Node | null = range.endContainer;
+    if (node.nodeType === Node.TEXT_NODE && range.endOffset < node.nodeValue!.length) {
+      // If we are not at the end of the text node, extend the range to include the next character.
+      range = range.cloneRange();
+      range.setEnd(node, range.endOffset + 1);
+      rect = range.getBoundingClientRect();
+    } else if (root.firstChild == null) {
+      // If the root has no children, use its rect.
+      rect = root.getBoundingClientRect();
+    } else {
+      // Otherwise find the next sibling element (e.g. trailing <br>) and use its rect in this case.
+      let nextSibling = node === root ? null : node.nextSibling;
+      while (node && node !== root && !nextSibling) {
+        node = getParentNode(node);
+        nextSibling = node && node !== root ? node.nextSibling : null;
+      }
+
+      if (nextSibling?.nodeType === Node.ELEMENT_NODE) {
+        rect = (nextSibling as HTMLElement).getBoundingClientRect();
+      }
+    }
+  }
+
+  for (let element of getScrollParents(root, true)) {
+    // scrollRectIntoView only scrolls a single scroll parent based on `rect`, which is a
+    // snapshot of the caret's position before any scrolling occurs. Scrolling an inner ancestor
+    // moves the caret within the viewport, so translate `rect` by however much we just scrolled
+    // before moving on to the next (outer) ancestor.
+    let scrollParent = element as HTMLElement;
+    let beforeTop = scrollParent.scrollTop;
+    let beforeLeft = scrollParent.scrollLeft;
+    scrollRectIntoView(scrollParent, root, rect, {block: 'nearest', inline: 'nearest'});
+    let dy = scrollParent.scrollTop - beforeTop;
+    let dx = scrollParent.scrollLeft - beforeLeft;
+    if (dy !== 0 || dx !== 0) {
+      rect = new DOMRect(rect.x - dx, rect.y - dy, rect.width, rect.height);
     }
   }
 }
@@ -739,6 +816,14 @@ export function tokenFieldPositionToDOMRange(root: Element, pos: Position): Rang
 
 function getDOMRectPosition(root: Element, pos: Position): [Node, number] {
   let child = root.childNodes[pos.index];
+  if (
+    pos.index >= root.childNodes.length &&
+    root.lastChild?.lastChild?.nodeType === Node.TEXT_NODE
+  ) {
+    // A position after the last token belongs to its trailing zero width space.
+    let text = root.lastChild.lastChild;
+    return [text, text.textContent!.length];
+  }
   if (child && child.nodeType === Node.ELEMENT_NODE) {
     // Place the position inside the zero width space wrappers around the token.
     if (pos.offset > 0) {
@@ -760,19 +845,21 @@ function createDOMRange(root: Element, start: Position, end: Position): Range {
 }
 
 function getDOMPosition(root: Element, pos: Position): [Node, number] {
-  let child = root.childNodes[pos.index];
+  let index = Math.max(0, Math.min(root.childNodes.length, pos.index));
+  let child = root.childNodes[index];
   if (!child) {
-    return [root, Math.min(root.childNodes.length, pos.index)];
+    return [root, index];
   } else if (child.nodeType === Node.ELEMENT_NODE) {
     // Place the cursor outside the token wrapper element.
     // This is necessary for composition events.
     if (pos.offset > 0) {
-      return [root, pos.index + 1];
+      return [root, index + 1];
     } else {
-      return [root, pos.index];
+      return [root, index];
     }
   } else {
-    return [child, pos.offset];
+    let offset = Math.max(0, Math.min(child.textContent?.length ?? 0, pos.offset));
+    return [child, offset];
   }
 }
 

@@ -146,6 +146,11 @@ export function PropTable({
     return null;
   }
 
+  let hasProps =
+    Object.values(properties).filter(
+      prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected'
+    ).length > 0;
+
   let defaultClassName = properties.className?.default?.slice(1, -1);
   let renderProps: TType | null = null;
   let renderPropProperty = properties.className || properties.children;
@@ -177,12 +182,14 @@ export function PropTable({
           {renderHTMLfromMarkdown(component.description, {forceInline: false, forceBlock: true})}
         </div>
       )}
-      <GroupedPropTable
-        properties={properties}
-        links={links}
-        propGroups={GROUPS}
-        defaultExpanded={DEFAULT_EXPANDED}
-      />
+      {hasProps && (
+        <GroupedPropTable
+          properties={properties}
+          links={links}
+          propGroups={GROUPS}
+          defaultExpanded={DEFAULT_EXPANDED}
+        />
+      )}
       {defaultClassName ? <DefaultClassName defaultClassName={defaultClassName} /> : null}
       {renderProps && renderProps.type === 'interface' ? (
         <StateTable

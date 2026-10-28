@@ -23,7 +23,7 @@ import {
   TagRenderProps
 } from 'react-aria-components/TagGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
@@ -53,6 +53,7 @@ import {FieldLabel, helpTextStyles} from './Field';
 import {flushSync} from 'react-dom';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -214,7 +215,7 @@ function TagGroupInner<T>({
           !currContainerRef ||
           !currTagsRef ||
           collection.size === 0 ||
-          currContainerRef.parentElement == null
+          getParentElement(currContainerRef) == null
         ) {
           return {
             visibleTagCount: 0,
@@ -254,7 +255,8 @@ function TagGroupInner<T>({
           let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
           buttonsWidth += margins * 2;
           let end = direction === 'ltr' ? 'right' : 'left';
-          let containerEnd = currContainerRef.parentElement?.getBoundingClientRect()[end] - margins;
+          let containerEnd =
+            getParentElement(currContainerRef)?.getBoundingClientRect()[end] - margins;
           let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
           lastTagEnd += margins;
           let availableWidth = containerEnd - lastTagEnd;
@@ -630,7 +632,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
                 {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
                   styles: style({
-                    size: fontRelative(20),
+                    size: '1lh',
                     marginStart: '--iconMargin',
                     flexShrink: 0
                   })
@@ -647,7 +649,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
                 ImageContext,
                 {
                   styles: style({
-                    size: fontRelative(20),
+                    size: '1lh',
                     flexShrink: 0,
                     order: 0,
                     aspectRatio: 'square',

@@ -168,7 +168,9 @@ export function useDateSegment(
     let eras = state.calendar.getEras().map(era => {
       let eraDate = date.set({year: 1, month: 1, day: 1, era}).toDate('UTC');
       let parts = eraFormatter.formatToParts(eraDate);
-      let formatted = parts.find(p => p.type === 'era')!.value;
+      // Some eras have no localized name in CLDR (e.g. the Coptic 'BCE' era), in which case
+      // Intl omits the era part entirely. Fall back to the era identifier so it stays typeable.
+      let formatted = parts.find(p => p.type === 'era')?.value ?? era;
       return {era, formatted};
     });
 

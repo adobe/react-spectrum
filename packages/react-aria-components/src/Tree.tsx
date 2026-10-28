@@ -789,7 +789,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
         node: item,
         shouldSelectOnPressUp: !!dragState,
         focusMode: props.focusMode,
-        allowsArrowNavigation: props.allowsArrowNavigation
+        allowsArrowNavigation: props.allowsArrowNavigation,
+        hasChildItems: props.hasChildItems
       },
       state,
       ref
@@ -1075,7 +1076,7 @@ export interface TreeLoadMoreItemProps
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element. A function may be provided to compute the class based on component state.
    *
-   * @default 'react-aria-TreeLoadMoreItem'
+   * @default 'react-aria-TreeLoader'
    */
   className?: ClassNameOrFunction<TreeLoadMoreItemRenderProps>;
   /**
