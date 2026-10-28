@@ -22,7 +22,7 @@ export const itemMap: WeakMap<LayoutInfo, HTMLElement> = new WeakMap();
 export function useVirtualizer<T extends object, V>(
   props: VirtualizerOptions,
   state: VirtualizerState<T, V>,
-  ref: RefObject<HTMLElement | null>
+  _ref: RefObject<HTMLElement | null>
 ): void {
   useLayoutEffect(() => {
     let views: ReusableView<T, V>[] = [...state.visibleViews];
