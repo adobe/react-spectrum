@@ -35,7 +35,8 @@ Be concise. Quote the specific line or comment that supports each decision. If a
 
 Every issue section must end with a **Would have done** block so the maintainer can give feedback on each decision. Cover each of these, writing "none" when not applicable:
 
-- **Labels:** exact labels to add/remove, each with a one-line reason.
+- **Labels:** exact labels to add/remove, each with a one-line reason. Include `ai-reviewed`.
+- **Ready for review:** "Would have added `ready for review`: yes/no", with the missing items when no.
 - **Comment:** the full text of the comment that would have been posted (or "no comment").
 - **Close / link:** whether it would be closed or linked as a duplicate, and which issue it would be kept in favor of.
 - **Other:** requests for info (e.g. StackBlitz), escalation to the team (e.g. needs investigation, needs API review, spectrum design).
@@ -44,7 +45,7 @@ Every issue section must end with a **Would have done** block so the maintainer 
 
 ## Scope
 
-Open issues created in the last 24 hours (or since the last digest) that have not been triaged (no label other than component labels).
+Open issues created in the last 24 hours (or since the last digest) that have not been triaged (no label other than component labels, and no `ai-reviewed` label).
 
 ## Review steps
 
@@ -53,12 +54,14 @@ Open issues created in the last 24 hours (or since the last digest) that have no
 - **Solvable without changes:** determine whether the issue can be resolved with existing APIs or documentation (misuse, missing prop, documented behavior, available workaround). If so, draft the answer with a code example and link the docs. Consider the `has workaround` label.
 - **Severity:** propose one of low / medium / high / critical, with reasoning (who is affected, is there a workaround, is it accessibility-impacting, is it data loss or a crash).
 - **Regression:** if it worked in an earlier version, identify the version range if the issue says so, and propose `regression`.
-- **Other labels:** component label (e.g. `Picker`, `TableView`), layer (`RAC`, `S2`), `accessibility`, `browser bug`, `needs investigation`, `waiting` (waiting on author), `spectrum design`. List any proposed label that doesn't exist in the repo yet.
+- **Ready for review:** judge whether the issue is ready for maintainers to spend time on it: it has a clear description, expected vs. actual behavior, a runnable reproduction (StackBlitz/CodeSandbox) or enough detail to reproduce, version/browser/OS info, and it is not a duplicate or answerable without changes. For every issue state **"Would have added `ready for review`: yes/no"**, listing what is missing when no (e.g. no repro, no version). When no, the usual next state is `waiting for author`.
+- **Labels:** use the shared label set where it applies to issues, with these meanings: `regression` (behavior known to have worked previously, backed by version history, a reproduction, or other evidence; cite it, otherwise only suggest it; not a synonym for "bug"), `needs decision` (a specific product, scope, compatibility, or architecture question is unresolved; state the question), `ready for review`, `waiting for author` (blocked on a specific author action, such as a reproduction), `waiting for maintainer`, `on hold` (blocked on a team decision or dependency; name who should coordinate), and `ai-reviewed` (automated triage completed, not approval). `merge-risk:*`, `small review`, and `patch worthy` are PR-only labels; do not propose them on issues except to suggest `patch worthy` for a regression a maintainer should consider.
+- **Other labels:** component label (e.g. `Picker`, `TableView`), layer (`RAC`, `S2`), `accessibility`, `browser bug`, `needs investigation`, `spectrum design`, `has workaround`. List any proposed label that doesn't exist in the repo yet.
 - **Guardrails for suggested solutions:** never recommend inaccessible patterns (removing focus indicators, dropping labels, mouse-only interactions, disabling zoom), hacks that depend on internals or DOM structure, `!important` overrides of library styles, or `setTimeout`-style workarounds. If the only available workaround is one of these, say so and mark the issue as needing a real fix instead.
 
 ## Summary table format
 
-| Issue | Severity | Reproduction? | Solvable without changes? | Would label | Would comment | Would close / duplicate of | Confidence |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| Issue | Severity | Reproduction? | Solvable without changes? | Ready for review? | Would label | Would comment | Would close / duplicate of | Confidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 Sort by: needs attention first (high severity, regressions, accessibility), then duplicates and closable items, then everything else.
