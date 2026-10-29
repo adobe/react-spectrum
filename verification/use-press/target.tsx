@@ -33,6 +33,12 @@ interface Context {
   root: Root;
   host: HTMLElement;
   other: HTMLElement;
+  otherRoot: Root;
+  otherEvents: string[];
+  otherMounted: boolean;
+  over: boolean;
+  releasedInside: boolean;
+  elapsed: boolean;
   events: string[];
   listeners: Listener[];
   restoreListeners: () => void;
@@ -72,7 +78,10 @@ let timers = (ctx: Context) => vi.getTimerCount() - ctx.baselineTimers;
 // Pointer 1: a non-virtual touch on the target, dispatched directly.
 async function pointer(ctx: Context, type: string) {
   await act(async () => {
-    (target(ctx) ?? document.body).dispatchEvent(
+    (type === 'pointerup' && !ctx.over
+      ? document.body
+      : (target(ctx) ?? document.body)
+    ).dispatchEvent(
       new PointerEvent(type, {
         bubbles: true,
         cancelable: true,
@@ -99,7 +108,7 @@ async function click(element: Element) {
 async function otherTouch(ctx: Context, type: 'start' | 'cancel') {
   let id = 0;
   await act(async () => {
-    id = await ctx.env.input.touch(ctx.other, type);
+    id = await ctx.env.input.touch(ctx.other.querySelector('[role=button]') ?? ctx.other, type);
   });
   if (id === 1) {
     throw new Error('Input diverged: the other touch reused pointer 1.');
@@ -146,7 +155,7 @@ function trackListeners(listeners: Listener[]) {
 export default defineTarget<Context>({
   name: 'use-press',
   description:
-    'usePress pointer lifecycle driven through the real hook: one press by pointer 1, an unrelated touch, clicks, the fallback timer, disable, and unmount.',
+    'Two usePress hooks: primary press, pointer leave/re-entry, a second touch, clicks, timers, disable, and independent unmount.',
   sources: [
     'packages/react-aria/src/interactions/usePress.ts',
     'packages/react-aria/src/utils/useGlobalListeners.ts',
@@ -176,6 +185,12 @@ export default defineTarget<Context>({
       root: createRoot(host),
       host,
       other,
+      otherRoot: createRoot(other),
+      otherEvents: [],
+      otherMounted: true,
+      over: true,
+      releasedInside: false,
+      elapsed: false,
       events: [],
       listeners,
       restoreListeners: trackListeners(listeners),
@@ -190,6 +205,9 @@ export default defineTarget<Context>({
       otherDown: false
     };
     await render(ctx, false);
+    await act(async () =>
+      ctx.otherRoot.render(<Example events={ctx.otherEvents} isDisabled={false} />)
+    );
     return ctx;
   },
   async teardown(ctx) {
@@ -199,6 +217,9 @@ export default defineTarget<Context>({
       },
       async () => {
         if (ctx.otherDown) await otherTouch(ctx, 'cancel');
+      },
+      async () => {
+        if (ctx.otherMounted) await act(async () => ctx.otherRoot.unmount());
       },
       () => ctx.restoreListeners(),
       () => ctx.host.remove(),
@@ -221,6 +242,9 @@ export default defineTarget<Context>({
       async run(ctx) {
         await pointer(ctx, 'pointerup');
         ctx.pointer = 'up';
+        ctx.elapsed = false;
+        ctx.releasedInside = ctx.over;
+        if (!ctx.over) cancelAttempt(ctx);
       }
     },
     PointerCancel: {
@@ -233,7 +257,8 @@ export default defineTarget<Context>({
     },
     // The browser's click after pointerup on the target. At most one per press.
     NativeClick: {
-      enabled: ctx => ctx.mounted && ctx.pointer === 'up' && !ctx.nativeClicked,
+      enabled: ctx =>
+        ctx.mounted && ctx.pointer === 'up' && ctx.releasedInside && !ctx.nativeClicked,
       async run(ctx) {
         await click(target(ctx)!);
         ctx.nativeClicked = true;
@@ -259,13 +284,19 @@ export default defineTarget<Context>({
         await act(async () => {
           vi.advanceTimersByTime(100);
         });
-        if (ctx.outcome === 'live' && ctx.pointer === 'up' && !ctx.nativeClicked) {
+        ctx.elapsed = true;
+        if (
+          ctx.outcome === 'live' &&
+          ctx.pointer === 'up' &&
+          ctx.releasedInside &&
+          !ctx.nativeClicked
+        ) {
           ctx.outcome = 'activated';
         }
       }
     },
     OtherPointerDown: {
-      enabled: ctx => !ctx.otherDown,
+      enabled: ctx => ctx.otherMounted && !ctx.otherDown,
       async run(ctx) {
         await otherTouch(ctx, 'start');
         ctx.otherDown = true;
@@ -276,6 +307,27 @@ export default defineTarget<Context>({
       async run(ctx) {
         await otherTouch(ctx, 'cancel');
         ctx.otherDown = false;
+      }
+    },
+    PointerLeave: {
+      enabled: ctx => ctx.mounted && ctx.pointer === 'down' && ctx.over,
+      async run(ctx) {
+        await pointer(ctx, 'pointerout');
+        ctx.over = false;
+      }
+    },
+    PointerEnter: {
+      enabled: ctx => ctx.mounted && ctx.pointer === 'down' && !ctx.over,
+      async run(ctx) {
+        await pointer(ctx, 'pointerover');
+        ctx.over = true;
+      }
+    },
+    OtherUnmount: {
+      enabled: ctx => ctx.otherMounted,
+      async run(ctx) {
+        await act(async () => ctx.otherRoot.unmount());
+        ctx.otherMounted = false;
       }
     },
     Disable: {
@@ -304,6 +356,14 @@ export default defineTarget<Context>({
   },
   observe(ctx) {
     return {
+      otherMounted: ctx.otherMounted,
+      otherPressed:
+        ctx.other.querySelector('[data-pressed]')?.getAttribute('data-pressed') === 'true',
+      otherStarts: ctx.otherEvents.filter(e => e === 'pressstart').length,
+      otherEnds: ctx.otherEvents.filter(e => e === 'pressend').length,
+      over: ctx.over,
+      releasedInside: ctx.releasedInside,
+      elapsed: ctx.elapsed,
       mounted: ctx.mounted,
       disabled: ctx.disabled,
       pointer: ctx.pointer,
@@ -323,7 +383,7 @@ export default defineTarget<Context>({
   },
   invariants: {
     PointerOwnership(ctx) {
-      return ctx.outcome !== 'live' || !ctx.mounted || pressed(ctx)
+      return ctx.outcome !== 'live' || !ctx.mounted || !ctx.over || pressed(ctx)
         ? true
         : 'the press ended while pointer 1 was still pressing';
     },
@@ -340,7 +400,12 @@ export default defineTarget<Context>({
     },
     NoLostActivation(ctx) {
       return (
-        ctx.outcome !== 'activated' ||
+        !(
+          ctx.pointer === 'up' &&
+          ctx.releasedInside &&
+          ctx.outcome !== 'canceled' &&
+          (ctx.nativeClicked || ctx.elapsed)
+        ) ||
         count(ctx, 'press') === 1 ||
         `the press should have activated, but onPress fired ${count(ctx, 'press')} times`
       );
@@ -356,7 +421,10 @@ export default defineTarget<Context>({
         : `${starts} pressstart and ${ends} pressend while pressed is ${pressed(ctx)}`;
     },
     CleanupComplete(ctx) {
-      if (ctx.mounted && !['canceled', 'activated'].includes(ctx.outcome)) {
+      if (
+        (ctx.otherMounted && ctx.otherDown) ||
+        (ctx.mounted && !['canceled', 'activated'].includes(ctx.outcome))
+      ) {
         return true;
       }
       return timers(ctx) === 0 && ctx.listeners.length === 0

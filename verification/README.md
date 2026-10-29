@@ -17,9 +17,21 @@ yarn verify conform use-press
 yarn verify check use-press --depth 20
 ```
 
+## Targets
+
+| Target | Approach | Coverage |
+| --- | --- | --- |
+| [tooltip](tooltip/README.md) | Real hooks (`renderHook`) | Two triggers, warmup/cooldown, registry and timer cleanup. |
+| [overlays](overlays/README.md) | Real hooks (jsdom; optional Chromium) | Two nested or sibling overlays, Escape ownership, hiding and scroll counts. |
+| [focus-scope](focus-scope/README.md) | TLA+ model checked against Chromium | Nested scopes, contain/restore/autoFocus modes, focus moves and removal. |
+| [drag-manager](drag-manager/README.md) | TLA+ model checked against the real manager | Session, targets, drop/cancel, unregister, source removal and cleanup. |
+| [combobox](combobox/README.md) | Real hook (`renderHook`) | Typing, selection, blur, controlled updates and async item arrival. |
+| [use-press](use-press/README.md) | TLA+ model checked against real hooks | Two pressables, pointer leave/re-entry, activation and lifecycle. |
+| [toast-queue](toast-queue/README.md) | Real code and TLA+ model | Queue, timers, focus, hover and pause/resume. |
+
 `explore` runs every enabled action sequence up to the depth bound breadth-first, in jsdom by default, so the first trace reported for each invariant is a shortest one. `replay` runs a trace again, by default in Chromium, where `env.input` uses Playwright for hover and CDP for touches, so the browser generates the events.
 
-All commands run inside Vitest ([targets.config.ts](targets.config.ts) and [targets.runner.tsx](targets.runner.tsx)), which supplies TypeScript, the repository's module resolution, jsdom or Chromium, and fake timers. Each candidate sequence replays its prefix from a fresh `setup`, because real code cannot be snapshotted. Evidence (`result.json`, one `<Invariant>.trace.json` per violation, and the Vitest log) goes in a fresh directory outside the checkout; `--output <directory>` picks its parent. All commands accept `--json`. `--timeout-ms` sets a cooperative deadline; cleanup runs before a timeout is reported. A parent-process timeout, with a 60-second startup and shutdown allowance, stops hung actions or model checks. Requests (including replay traces) are stored in the evidence directory rather than in environment variables.
+All commands run inside Vitest ([targets.config.ts](targets.config.ts) and [targets.runner.tsx](targets.runner.tsx)), which supplies TypeScript, the repository's module resolution, jsdom or Chromium, and fake timers. A target may supply `target.json` with `{"environment":"chromium"}` to default exploration and conformance to a browser; `--environment` overrides it. Model checking always runs in Node/jsdom. Each candidate sequence replays its prefix from a fresh `setup`, because real code cannot be snapshotted. Evidence (`result.json`, one `<Invariant>.trace.json` per violation, and the Vitest log) goes in a fresh directory outside the checkout; `--output <directory>` picks its parent. All commands accept `--json`. `--timeout-ms` sets a cooperative deadline; cleanup runs before a timeout is reported. A parent-process timeout, with a 60-second startup and shutdown allowance, stops hung actions or model checks. Requests (including replay traces) are stored in the evidence directory rather than in environment variables.
 
 ## Writing a target
 
@@ -48,9 +60,11 @@ model: {
 
 The model must declare `CONSTANT MaxSteps`; variables including `action` and `step`, listed in `vars`; `Init`; a `Next` that requires `step < MaxSteps`, increments `step`, and sets `action'` to the name of the target action each transition corresponds to; a `View` record with the same fields as `project` returns; and one operator per target invariant, with the same name. Optional `model.constants`, `model.depth`, and `model.invariants` add constants, set the default checking depth, and choose which of the target's invariants to check.
 
-1. `yarn verify conform <target>` explores the real code in jsdom with invariants off, then uses tla-ts to replay every explored run through the model, comparing `View` with the projected observation after each step. The model may be nondeterministic: a run conforms when some behavior of the model takes its actions with a matching `View` at every step. A mismatch names the trace and either the action the model does not allow or the fields that differ. Run it first, and whenever the source or the model changes; fix the model until it conforms. It shows that the explored behaviors of the code are behaviors of the model, not the reverse.
+1. `yarn verify conform <target>` explores the real code in the target's default environment (or `--environment chromium`) with invariants off, then uses tla-ts to replay every explored run through the model, comparing `View` with the projected observation after each step. The model may be nondeterministic: a run conforms when some behavior of the model takes its actions with a matching `View` at every step. A mismatch names the trace and either the action the model does not allow or the fields that differ. Run it first, and whenever the source or the model changes; fix the model until it conforms. It shows that the explored behaviors of the code are behaviors of the model, not the reverse.
 2. `yarn verify check <target> --depth <n>` model-checks each invariant separately, so one violation does not hide the others, and writes each counterexample as a trace. `--depth` goes up to 100.
 3. `yarn verify replay <target> --trace <file>` runs a model counterexample against the real code, exactly like one from `explore`. Only a reproduced replay is evidence of a bug in the code; a model counterexample alone is not.
+
+Chromium conformance sends projected observations to a Vitest server command; `tla-ts` and model files stay in Node. The same comparison is used in both environments. [instrumentation.ts](instrumentation.ts) injects private-state probes only into verification builds, without changing production modules. Probe resets, where needed, run between sequences after invariant checks.
 
 ## Results
 

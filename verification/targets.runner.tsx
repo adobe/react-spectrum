@@ -11,7 +11,7 @@
  */
 
 /// <reference types="vite/types/import-meta.d.ts" />
-import {deadline} from './runtime.mjs';
+import {deadline, now} from './runtime.mjs';
 import type {Environment} from './explorer.mjs';
 import {explore, replay} from './explorer.mjs';
 import {it} from 'vitest';
@@ -31,6 +31,7 @@ declare const __VERIFY_REQUEST__: {
 
 declare module 'vitest/browser' {
   interface BrowserCommands {
+    verifyConformance: (metadata: any, paths: any[], timeoutMs: number) => Promise<any>;
     writeVerifyResult: (result: object) => Promise<void>;
     verifyTouch: (selector: string, type: 'start' | 'cancel') => Promise<void>;
   }
@@ -129,6 +130,7 @@ async function writeResult(result: object) {
 }
 
 it(`${request.mode} ${request.target} (${request.environment})`, async () => {
+  let started = now();
   let checkDeadline = deadline(request.timeoutMs);
   let options = {...request.options, checkDeadline};
   let consoleErrors: string[] = [];
@@ -141,7 +143,30 @@ it(`${request.mode} ${request.target} (${request.environment})`, async () => {
     if (!load) throw new Error(`Unknown target: ${request.target}`);
     let target = (await load()).default;
     let result;
-    if (request.mode === 'check' || request.mode === 'conform') {
+    if (request.mode === 'conform' && request.environment === 'chromium') {
+      if (!target.model) throw new Error(`${request.target} has no model.`);
+      let env = await createEnvironment();
+      let exploration: any = await explore(target, env, {
+        ...options,
+        invariants: false,
+        collect: true
+      });
+      if (exploration.status === 'passed') {
+        let {commands} = await import('vitest/browser');
+        let {project, ...model} = target.model;
+        result = await commands.verifyConformance(
+          {name: target.name, model},
+          exploration.paths.map(path => ({...path, observations: path.observations.map(project)})),
+          Math.max(0, request.timeoutMs - (now() - started))
+        );
+        result.exploration = {
+          runs: exploration.runs,
+          distinctStates: exploration.distinctStates,
+          depthReached: exploration.depthReached,
+          neverEnabled: exploration.neverEnabled
+        };
+      } else result = exploration;
+    } else if (request.mode === 'check' || request.mode === 'conform') {
       if (!target.model) throw new Error(`${request.target} has no model.`);
       // Node-only: tla-ts and the model files are never loaded in Chromium.
       let {checkModel, conformModel, loadModel} = await import('./model.mjs');

@@ -16,7 +16,8 @@ Init ==
                  starts |-> 0, ends |-> 0, presses |-> 0],
            pointer |-> "idle", outcome |-> "none", mounted |-> TRUE,
            disabled |-> FALSE, nativeClicked |-> FALSE, otherClicked |-> FALSE,
-           otherDown |-> FALSE]
+           otherDown |-> FALSE, otherMounted |-> TRUE, otherPressed |-> FALSE,
+           otherStarts |-> 0, otherEnds |-> 0, over |-> TRUE, releasedInside |-> FALSE, elapsed |-> FALSE]
 
 \* triggerPressEnd (if a start fired) followed by cancel's cleanup of global
 \* listeners and disposables.
@@ -39,17 +40,21 @@ PointerDown ==
 \* capturing click listener; onClick will fire onPress.
 PointerUp ==
   /\ s.pointer = "down"
-  /\ s' = [s EXCEPT !.pointer = "up", !.h.timer = s.h.listeners /\ s.h.isPressed]
+  /\ s' = [s EXCEPT !.pointer = "up", !.elapsed = FALSE, !.releasedInside = s.over,
+             !.outcome = IF ~s.over THEN Cancel(@) ELSE @,
+             !.h = IF ~s.over /\ s.h.isPressed THEN Stop(@, FALSE)
+                   ELSE [@ EXCEPT !.timer = s.h.listeners /\ s.h.isPressed]]
 
 \* Document onPointerCancel -> cancel.
 PointerCancel ==
   /\ s.pointer = "down"
   /\ s' = [s EXCEPT !.pointer = "canceled", !.outcome = Cancel(@),
-             !.h = IF s.h.listeners /\ s.h.isPressed THEN Stop(@, FALSE) ELSE @]
+             !.h = IF s.h.listeners /\ s.h.isPressed THEN Stop(@, FALSE) ELSE @,
+             !.otherEnds = @ + IF s.otherPressed THEN 1 ELSE 0, !.otherPressed = FALSE]
 
 \* pressProps.onClick, pointer branch: triggerPressEnd(wasPressed) then cancel.
 NativeClick ==
-  /\ s.mounted /\ s.pointer = "up" /\ ~s.nativeClicked
+  /\ s.mounted /\ s.pointer = "up" /\ s.releasedInside /\ ~s.nativeClicked
   /\ s' = [s EXCEPT !.nativeClicked = TRUE,
              !.outcome = IF @ = "live" THEN "activated" ELSE @,
              !.h = IF s.h.isPressed THEN Stop(@, ~s.disabled) ELSE @]
@@ -63,22 +68,24 @@ OtherClick ==
 \* focuses the target and calls target.click(), which activates.
 Tick ==
   /\ s.pointer # "idle"
-  /\ s' = [s EXCEPT
-             !.outcome = IF @ = "live" /\ s.pointer = "up" /\ ~s.nativeClicked
+  /\ s' = [s EXCEPT !.elapsed = TRUE,
+             !.outcome = IF @ = "live" /\ s.pointer = "up" /\ s.releasedInside /\ ~s.nativeClicked
                          THEN "activated" ELSE @,
              !.h = IF s.h.timer /\ s.h.isPressed
                    THEN Stop(@, ~s.h.clicked /\ ~s.disabled)
                    ELSE [@ EXCEPT !.timer = FALSE]]
 
 OtherPointerDown ==
-  /\ ~s.otherDown
-  /\ s' = [s EXCEPT !.otherDown = TRUE]
+  /\ s.otherMounted /\ ~s.otherDown
+  /\ s' = [s EXCEPT !.otherDown = TRUE, !.otherPressed = TRUE,
+             !.otherStarts = @ + 1]
 
 \* The document pointercancel listener does not compare pointerId.
 OtherPointerCancel ==
   /\ s.otherDown
   /\ s' = [s EXCEPT !.otherDown = FALSE,
-             !.h = IF s.h.listeners /\ s.h.isPressed THEN Stop(@, FALSE) ELSE @]
+             !.h = IF s.h.listeners /\ s.h.isPressed THEN Stop(@, FALSE) ELSE @,
+             !.otherEnds = @ + IF s.otherPressed THEN 1 ELSE 0, !.otherPressed = FALSE]
 
 \* isDisabled effect after a committed rerender.
 Disable ==
@@ -96,6 +103,19 @@ Unmount ==
   /\ s' = [s EXCEPT !.mounted = FALSE, !.outcome = Cancel(@),
              !.h.listeners = FALSE, !.h.timer = FALSE]
 
+PointerLeave ==
+  /\ s.mounted /\ s.pointer = "down" /\ s.over
+  /\ s' = [s EXCEPT !.over = FALSE,
+       !.h.ends = @ + IF s.h.didFirePressStart THEN 1 ELSE 0, !.h.didFirePressStart = FALSE]
+PointerEnter ==
+  /\ s.mounted /\ s.pointer = "down" /\ ~s.over
+  /\ s' = [s EXCEPT !.over = TRUE,
+       !.h.starts = @ + IF s.h.isPressed THEN 1 ELSE 0,
+       !.h.didFirePressStart = s.h.isPressed]
+OtherUnmount ==
+  /\ s.otherMounted
+  /\ s' = [s EXCEPT !.otherMounted = FALSE, !.otherPressed = FALSE]
+
 Next ==
   /\ step < MaxSteps
   /\ step' = step + 1
@@ -110,25 +130,31 @@ Next ==
      \/ (Disable /\ action' = "Disable")
      \/ (Enable /\ action' = "Enable")
      \/ (Unmount /\ action' = "Unmount")
+     \/ (PointerLeave /\ action' = "PointerLeave")
+     \/ (PointerEnter /\ action' = "PointerEnter")
+     \/ (OtherUnmount /\ action' = "OtherUnmount")
 
 \* What conformance compares with the target's projected observation.
 View ==
-  [mounted |-> s.mounted, disabled |-> s.disabled, pointer |-> s.pointer,
+  [otherMounted |-> s.otherMounted, otherPressed |-> s.otherPressed,
+   otherStarts |-> s.otherStarts, otherEnds |-> s.otherEnds, over |-> s.over,
+   releasedInside |-> s.releasedInside, elapsed |-> s.elapsed,
+   mounted |-> s.mounted, disabled |-> s.disabled, pointer |-> s.pointer,
    outcome |-> s.outcome, nativeClicked |-> s.nativeClicked,
    otherClicked |-> s.otherClicked, fallbackClicked |-> s.h.clicked /\ s.h.timer,
    otherDown |-> s.otherDown,
-   pressed |-> s.mounted /\ s.h.isPressed, starts |-> s.h.starts,
+   pressed |-> s.mounted /\ s.h.didFirePressStart, starts |-> s.h.starts,
    ends |-> s.h.ends, presses |-> s.h.presses, timer |-> s.h.timer,
-   listeners |-> s.h.listeners]
+   listeners |-> s.h.listeners \/ s.otherPressed]
 
 \* Contracts; names match the target's invariants.
-PointerOwnership == (s.outcome = "live" /\ s.mounted) => s.h.isPressed
+PointerOwnership == (s.outcome = "live" /\ s.mounted /\ s.over) => s.h.didFirePressStart
 ActivationUnique == s.h.presses <= 1
 CancellationSafe == s.outcome = "canceled" => s.h.presses = 0
-NoLostActivation == s.outcome = "activated" => s.h.presses = 1
+NoLostActivation == (s.pointer = "up" /\ s.releasedInside /\ s.outcome # "canceled" /\ (s.nativeClicked \/ s.elapsed)) => s.h.presses = 1
 LifecycleBalanced ==
   /\ s.h.ends <= s.h.starts
-  /\ s.mounted => s.h.starts - s.h.ends = IF s.h.isPressed THEN 1 ELSE 0
+  /\ s.mounted => s.h.starts - s.h.ends = IF s.h.didFirePressStart THEN 1 ELSE 0
 CleanupComplete ==
-  (~s.mounted \/ s.outcome \in {"canceled", "activated"}) => ~s.h.timer /\ ~s.h.listeners
+  (~(s.otherMounted /\ s.otherDown) /\ (~s.mounted \/ s.outcome \in {"canceled", "activated"})) => ~s.h.timer /\ ~s.h.listeners /\ ~s.otherPressed
 =============================================================================

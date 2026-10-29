@@ -167,7 +167,15 @@ test('replay distinguishes reproduced, not reproduced, other failures, and disab
 
 test('targets run in Vitest with evidence outside the checkout', async t => {
   let root = fileURLToPath(new URL('../..', import.meta.url));
-  assert.deepEqual(discoverTargets(root), ['toast-queue', 'use-press']);
+  assert.deepEqual(discoverTargets(root), [
+    'combobox',
+    'drag-manager',
+    'focus-scope',
+    'overlays',
+    'toast-queue',
+    'tooltip',
+    'use-press'
+  ]);
   let output = directory(t);
   let requests = [];
   let execute = async (command, args, options) => {
@@ -204,6 +212,13 @@ test('targets run in Vitest with evidence outside the checkout', async t => {
     'toast-queue',
     {mode: 'replay', trace: tracePath, output},
     {execute: missing}
+  );
+  let conformance = await runTarget(root, 'focus-scope', {mode: 'conform', output}, {execute});
+  assert.equal(conformance.environment, 'chromium');
+  assert.equal(requests.at(-1).request.mode, 'conform');
+  await assert.rejects(
+    runTarget(root, 'focus-scope', {mode: 'check', environment: 'chromium', output}, {execute}),
+    /jsdom only/
   );
   assert.equal(replayed.environment, 'chromium');
   assert.equal(replayed.status, 'error');

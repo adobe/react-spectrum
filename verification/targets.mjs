@@ -73,11 +73,14 @@ export async function runTarget(root, name, options = {}, dependencies = {}) {
   let execute = dependencies.execute || runProcess;
   if (!discoverTargets(root).includes(name)) throw new Error(`Unknown target: ${name}`);
   let mode = options.mode || 'explore';
-  let environment = options.environment || (mode === 'replay' ? 'chromium' : 'jsdom');
+  let configPath = join(root, 'verification', name, 'target.json');
+  let defaults = existsSync(configPath) ? JSON.parse(readFileSync(configPath, 'utf8')) : {};
+  let environment =
+    options.environment ||
+    (mode === 'check' ? 'jsdom' : mode === 'replay' ? 'chromium' : defaults.environment || 'jsdom');
   if (!['jsdom', 'chromium'].includes(environment))
     throw new Error('--environment must be jsdom or chromium.');
-  if (['check', 'conform'].includes(mode) && environment !== 'jsdom')
-    throw new Error(`${mode} runs in jsdom only.`);
+  if (mode === 'check' && environment !== 'jsdom') throw new Error(`${mode} runs in jsdom only.`);
   let trace;
   if (mode === 'replay') {
     if (!options.trace) throw new Error('replay requires --trace <file>.');

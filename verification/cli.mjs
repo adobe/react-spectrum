@@ -21,7 +21,7 @@ const help = `Behavioral verification (local, opt-in)
   yarn verify list [--json]
   yarn verify explore <target> [--depth <n>] [--max-runs <n>] [--environment jsdom|chromium]
   yarn verify replay <target> --trace <file> [--environment chromium|jsdom]
-  yarn verify conform <target> [--depth <n>] [--max-runs <n>]
+  yarn verify conform <target> [--depth <n>] [--max-runs <n>] [--environment jsdom|chromium]
   yarn verify check <target> [--depth <n>]
 
 explore runs every action sequence of verification/<target>/target.tsx up to the

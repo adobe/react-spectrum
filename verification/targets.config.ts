@@ -12,7 +12,11 @@
 
 import base from '../vitest.browser.config';
 import type {CDPSession} from 'playwright';
+import {conformModel, loadModel} from './model.mjs';
+import {deadline} from './runtime.mjs';
 import {defineConfig} from 'vitest/config';
+import {instrumentation} from './instrumentation';
+import {join} from 'node:path';
 import {readFileSync, writeFileSync} from 'node:fs';
 
 // Invoked by verification/targets.mjs with a VERIFY_REQUEST_PATH file describing one
@@ -28,6 +32,7 @@ let session: CDPSession | undefined;
 
 export default defineConfig({
   ...base,
+  plugins: [...(base.plugins || []), instrumentation()],
   define: {...base.define, __VERIFY_REQUEST__: JSON.stringify(request)},
   test: {
     ...base.test,
@@ -46,6 +51,15 @@ export default defineConfig({
           ],
           commands: {
             ...base.test!.browser!.commands,
+            verifyConformance: async (_context, metadata, paths, timeoutMs) => {
+              let model = loadModel(join(__dirname, request.target), metadata.model.spec);
+              return conformModel(
+                {...metadata, model: {...metadata.model, project: value => value}},
+                model,
+                paths,
+                {checkDeadline: deadline(timeoutMs)}
+              );
+            },
             writeVerifyResult: async (_context, result) => {
               writeFileSync(request.output, JSON.stringify(result, null, 2) + '\n');
             },
