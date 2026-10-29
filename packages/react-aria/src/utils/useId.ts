@@ -10,17 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
+import {idsUpdaterMap} from './mergeIds';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '../ssr/SSRProvider';
 import {useValueEffect} from './useValueEffect';
+
+export {mergeIds, idsUpdaterMap} from './mergeIds';
 
 // copied from SSRProvider.tsx to reduce exports, if needed again, consider sharing
 let canUseDOM = Boolean(
   typeof window !== 'undefined' && window.document && window.document.createElement
 );
 
-export let idsUpdaterMap: Map<string, {current: string | null}[]> = new Map();
 // This allows us to clean up the idsUpdaterMap when the id is no longer used.
 // Map is a strong reference, so unused ids wouldn't be cleaned up otherwise.
 // This can happen in suspended components where mount/unmount is not called.
@@ -100,30 +102,6 @@ export function useId(defaultId?: string): string {
   });
 
   return res;
-}
-
-/**
- * Merges two ids.
- * Different ids will trigger a side-effect and re-render components hooked up with `useId`.
- */
-export function mergeIds(idA: string, idB: string): string {
-  if (idA === idB) {
-    return idA;
-  }
-
-  let setIdsA = idsUpdaterMap.get(idA);
-  if (setIdsA) {
-    setIdsA.forEach(ref => (ref.current = idB));
-    return idB;
-  }
-
-  let setIdsB = idsUpdaterMap.get(idB);
-  if (setIdsB) {
-    setIdsB.forEach(ref => (ref.current = idA));
-    return idA;
-  }
-
-  return idB;
 }
 
 /**
