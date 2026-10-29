@@ -1,8 +1,10 @@
 # Behavioral verification
 
-Good behavioral verification checks the contracts that users and applications rely on, against expectations computed independently of the implementation, across every input sequence up to a bound. It finds edge cases that example-based tests miss: unusual event orderings, timers that fire at the wrong moment, and state that is shared between instances or left behind after unmount.
+Traditional unit tests typically cover specific sequences someone thought to write. Many of the bugs in React Aria's stateful code sit in sequences not necessarily covered by these tests. The number of possible action orderings grows too fast to enumerate by hand and include in traditional unit tests.
 
-Each target in this directory drives the real implementation through named actions. `explore` runs every sequence of those actions up to a depth bound and checks the target's invariants after each step. A target can also have a TLA+ model, checked with [tla-ts](https://github.com/aidenybai/tla-ts), for searching deeper or larger spaces than the real code can be run through; the same target checks that the model still matches the code. The harness runs locally, with no CI integration. Evidence goes in a fresh directory outside the checkout.
+By modeling a component's behavior in a formal specification language like TLA+, we can systematically explore all possible sequences of actions and check that the invariants (i.e. assertions tested at every step) hold, even in edge cases that are difficult to cover with traditional unit tests.
+
+This harness enables agents to write formal specifications of component behavior, explore all possible sequences of actions, check that invariants hold, and reproduce failures in a real browser environment in order to confirm them.
 
 - [When to use it](#when-to-use-it)
 - [Quick start](#quick-start)
@@ -18,7 +20,7 @@ Each target in this directory drives the real implementation through named actio
 
 Use the harness to look for bugs in stateful behavior: timers, module-level registries, multiple instances that share state, event ordering, and cleanup on unmount. Use it to check a fix or refactor of that kind of code, too. Choose a target that drives the affected code, and [write a target](#write-a-target) when none does.
 
-It does not check rendering, layout, styling, or performance, and it checks accessibility only where an invariant says so. Each target covers only its own actions, bounds, and assumptions, which its README lists.
+It does not check rendering, layout, styling, or performance. Each target covers only its own actions, bounds, and assumptions, which its README lists.
 
 ## Quick start
 
