@@ -26,6 +26,7 @@ import {
 } from 'react-stately/useVirtualizerState';
 import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
 import {useScrollView} from 'react-aria/private/virtualizer/ScrollView';
+import {useVirtualizer} from 'react-aria/private/virtualizer/useVirtualizer';
 import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 
 type View = ReusableView<Node<unknown>, ReactNode>;
@@ -141,6 +142,7 @@ function CollectionRoot({
     },
     scrollRef!
   );
+  useVirtualizer({}, state, scrollRef!);
 
   return (
     <div {...contentProps}>
