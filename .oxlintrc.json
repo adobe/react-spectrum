@@ -268,7 +268,8 @@
         "**/docs/**",
         "**/chromatic/**",
         "**/chromatic-fc/**",
-        "**/__tests__/**"
+        "**/__tests__/**",
+        "verification/**"
       ],
       "rules": {
         "rsp-rules/no-react-key": ["error"],

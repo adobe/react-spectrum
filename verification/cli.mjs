@@ -1,89 +1,59 @@
 /*
  * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
- * you may obtain a copy at http://www.apache.org/licenses/LICENSE-2.0
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 
-import {discoverPackages, readPackage, selectChecks} from './metadata.mjs';
+import {discoverTargets, runTarget} from './targets.mjs';
 import {fileURLToPath, pathToFileURL} from 'node:url';
-import {inspectTools} from './adapters.mjs';
 import {parseArgs} from 'node:util';
 import {resolve} from 'node:path';
-import {runPackage} from './runner.mjs';
-import {runReplay, runValidation} from './workflows.mjs';
-import {runStatus} from './status.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const help = `Behavioral verification (local, opt-in)
 
-  yarn verify list [package] [--json]
-  yarn verify status [package] [--json]
-  yarn verify doctor <package> [--property <id>] [--json]
-  yarn verify run <package> [--property <id>] [--timeout-ms <ms>] [--output <directory>] [--json]
-  yarn verify replay <package> --trace <file> [--minimize] [--max-replays <count>] [--json]
-  yarn verify validate <package> [--property <id>] [--json]
+  yarn verify list [--json]
+  yarn verify explore <target> [--depth <n>] [--max-runs <n>] [--environment jsdom|chromium]
+  yarn verify replay <target> --trace <file> [--environment chromium|jsdom]
 
-list/status use only Node built-ins. doctor checks installed tools and launches
-a short-lived browser when required. No command installs tools or renews review
-records. run keeps logs/results in a fresh temporary directory outside the checkout.
---timeout-ms overrides each check's budget (1–3600000 ms).
-A property filter selects associated checks; shared model configs and regression
-suites may check additional properties. replay/validate also accept --timeout-ms
-and --output. Replay uses the trace's property and records synthetic browser input.
---minimize attempts up to 20 replays (override: 1–100), preserving input validity
-and the same property failure. Validation uses clean/mutated/restored runs.
+explore runs every action sequence of verification/<target>/target.tsx up to the
+depth bound against the real code (jsdom by default) and writes one shortest trace
+per violated invariant. replay runs a trace again, by default in Chromium with
+Playwright and CDP input. Both accept --timeout-ms <ms>, --output <directory>
+(evidence goes in a fresh directory outside the checkout), and --json.
 
-Exit codes: run: 0 checks passed, 1 counterexample/assertion failure,
-2 invalid setup, incomplete run, or changed inputs. Correspondence is separate.
-status: 0 matches record, 1 needs review/unrecorded, 2 invalid metadata.
-replay: 0 not reproduced, 1 reproduced, 2 unsupported/inconclusive/error.
-validate: 0 controls detected and checks pass, 1 baseline checks fail,
-2 incomplete/failed sensitivity validation or infrastructure error.
-See verification/README.md for scope and interpretation.`;
-
-function printPackage(metadata, write) {
-  write(`${metadata.name}: ${metadata.description}`);
-  for (let property of metadata.properties) {
-    write(`  ${property.id}: ${property.contract}`);
-    write(
-      `    Checks: ${selectChecks(metadata, property.id)
-        .map(check => `${check.id} (${check.kind})`)
-        .join(', ')}`
-    );
-    for (let source of metadata.sources.filter(source => source.properties.includes(property.id)))
-      write(`    ${source.path}: ${source.functions.join(', ')}`);
-  }
-  write(`  Bounds: ${metadata.bounds}`);
-}
+Exit codes: explore: 0 no violations, 1 violations found, 2 incomplete/error.
+replay: 0 not reproduced, 1 reproduced, 2 different failure/error.
+See verification/README.md.`;
 
 function printResult(result, write) {
-  write(`${result.package}: correspondence ${result.correspondence.status}`);
-  for (let check of result.checks) {
+  if (result.mode === 'replay') {
     write(
-      `  ${check.id}: ${check.outcome}${check.violatedProperty ? ` (${check.violatedProperty})` : ''}${check.detail ? ` — ${check.detail}` : ''}`
+      `${result.target}: ${result.status} in ${result.environment}${result.step ? ` at step ${result.step}` : ''} (${result.invariant})`
     );
-    if (check.replay) write(`    Replay: ${check.replay.trace || check.replay.detail}`);
+    for (let failure of result.failures || []) write(`  ${failure.invariant}: ${failure.detail}`);
+  } else {
+    write(
+      `${result.target}: ${result.status} (${result.environment}; depth ${result.depthReached}/${result.bounds?.depth}; ${result.runs} runs; ${result.distinctStates} distinct states; ${result.durationMs} ms)`
+    );
+    for (let violation of result.violations || []) {
+      write(`  ${violation.invariant}: ${violation.detail}`);
+      write(`    ${violation.actions.join(' -> ')}`);
+      write(`    Replay: yarn verify replay ${result.target} --trace ${violation.path}`);
+    }
+    if (result.neverEnabled?.length)
+      write(`  Never enabled (check guards or bounds): ${result.neverEnabled.join(', ')}`);
   }
-  if (result.replay) write(`Replay: ${result.replay.outcome}; evidence: ${result.replay.evidence}`);
-  if (result.replay?.minimization)
-    write(
-      `Minimized trace: ${result.replay.minimization.trace} (${result.replay.minimization.complete ? 'complete' : 'budgeted/incomplete'})`
-    );
-  if (result.validation) {
-    for (let control of result.validation.controls)
-      write(`  Mutation ${control.id} (${control.driver}): ${control.outcome}`);
-    for (let property of result.validation.properties)
-      write(`  Validation ${property.property}: ${property.outcome}`);
-    write(`Validation report: ${result.directory}/validation.json`);
-  }
-  if (!result.provenance.valid)
-    write(
-      `INVALID PROVENANCE: files changed during execution: ${result.provenance.changedFiles.join(', ')}`
-    );
+  if (result.error) write(`  Error: ${result.error.split('\n')[0]}`);
+  if (result.consoleErrors?.length)
+    write(`  Console errors: ${result.consoleErrors.length} (see result.json)`);
   write(`Evidence: ${result.directory}`);
-  write(
-    'Model passes apply only to the stated bounds. Implementation checks cover selected traces. Review records were not changed.'
-  );
 }
 
 export async function main(
@@ -99,12 +69,12 @@ export async function main(
       options: {
         help: {type: 'boolean'},
         json: {type: 'boolean'},
-        property: {type: 'string'},
         'timeout-ms': {type: 'string'},
         output: {type: 'string'},
         trace: {type: 'string'},
-        minimize: {type: 'boolean'},
-        'max-replays': {type: 'string'}
+        depth: {type: 'string'},
+        'max-runs': {type: 'string'},
+        environment: {type: 'string'}
       }
     });
     if (values.help || !positionals.length) {
@@ -112,83 +82,45 @@ export async function main(
       return 0;
     }
     let [command, name] = positionals;
-    if (
-      positionals.length > 2 ||
-      !['list', 'status', 'doctor', 'run', 'replay', 'validate'].includes(command)
-    )
+    if (!['list', 'explore', 'replay'].includes(command) || positionals.length > 2)
       throw new Error('Unknown command or too many arguments. Use --help.');
-    if (values.property !== undefined && !['run', 'doctor', 'validate'].includes(command))
-      throw new Error('--property is only supported by run, doctor, and validate.');
-    if (
-      (values['timeout-ms'] !== undefined || values.output !== undefined) &&
-      !['run', 'replay', 'validate'].includes(command)
-    )
-      throw new Error('--timeout-ms and --output require an execution command.');
-    if (
-      (values.trace !== undefined ||
-        values.minimize !== undefined ||
-        values['max-replays'] !== undefined) &&
-      command !== 'replay'
-    )
-      throw new Error('Trace/minimization options require replay.');
-    if (values['max-replays'] !== undefined && !values.minimize)
-      throw new Error('--max-replays requires --minimize.');
-    if (values.property === '' || values.output === '')
-      throw new Error('Options must not be empty.');
-    if (command === 'status')
-      return runStatus(
-        [...(name ? [name] : []), ...(values.json ? ['--json'] : [])],
-        repositoryRoot,
-        write
-      );
     if (command === 'list') {
-      let packages = (name ? [name] : discoverPackages(repositoryRoot)).map(name =>
-        readPackage(repositoryRoot, name)
-      );
-      if (values.json) write(JSON.stringify({packages}, null, 2));
-      else packages.forEach(metadata => printPackage(metadata, write));
+      if (name || Object.keys(values).some(key => key !== 'json'))
+        throw new Error('list takes no arguments other than --json.');
+      let targets = discoverTargets(repositoryRoot);
+      if (values.json) write(JSON.stringify({targets}, null, 2));
+      else targets.forEach(target => write(`${target}: verification/${target}/README.md`));
       return 0;
     }
-    if (!name) throw new Error(`${command} requires a package name.`);
-    let metadata = readPackage(repositoryRoot, name);
-    let checks = selectChecks(metadata, values.property);
-    if (command === 'doctor') {
-      let tools = await inspectTools(repositoryRoot, metadata, checks);
-      if (values.json)
-        write(
-          JSON.stringify({package: name, checks: checks.map(check => check.id), tools}, null, 2)
-        );
-      else
-        for (let [tool, result] of Object.entries(tools))
-          write(`${tool}: ${result.available ? `available (${result.version})` : result.error}`);
-      return Object.values(tools).every(tool => tool.available) ? 0 : 2;
-    }
-    let timeoutMs = values['timeout-ms'] === undefined ? undefined : Number(values['timeout-ms']);
-    if (
-      timeoutMs !== undefined &&
-      (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 3600000)
-    )
-      throw new Error('--timeout-ms must be an integer from 1 to 3600000.');
-    let maxReplays = values['max-replays'] === undefined ? 20 : Number(values['max-replays']);
-    if (!Number.isSafeInteger(maxReplays) || maxReplays < 1 || maxReplays > 100)
-      throw new Error('--max-replays must be an integer from 1 to 100.');
+    if (!name) throw new Error(`${command} requires a target name.`);
+    if (values.trace !== undefined && command !== 'replay')
+      throw new Error('--trace requires replay.');
+    if ((values.depth !== undefined || values['max-runs'] !== undefined) && command !== 'explore')
+      throw new Error('--depth and --max-runs require explore.');
+    if (values.output === '') throw new Error('--output must not be empty.');
+    let count = (option, max) => {
+      if (values[option] === undefined) return undefined;
+      let value = Number(values[option]);
+      if (!Number.isSafeInteger(value) || value < 1 || value > max)
+        throw new Error(`--${option} must be an integer from 1 to ${max}.`);
+      return value;
+    };
+    let options = {
+      mode: command,
+      environment: values.environment,
+      trace: values.trace,
+      depth: count('depth', 20),
+      maxRuns: count('max-runs', 1000000),
+      timeoutMs: count('timeout-ms', 3600000),
+      output: values.output,
+      onProgress: values.json ? undefined : progress
+    };
     let controller = new AbortController();
     let abort = () => controller.abort();
     process.on('SIGINT', abort);
     process.on('SIGTERM', abort);
     try {
-      let execute =
-        command === 'replay' ? runReplay : command === 'validate' ? runValidation : runPackage;
-      let result = await execute(repositoryRoot, metadata, {
-        property: values.property,
-        trace: values.trace,
-        minimize: values.minimize,
-        maxReplays,
-        timeoutMs,
-        output: values.output,
-        signal: controller.signal,
-        onProgress: values.json ? undefined : progress
-      });
+      let result = await runTarget(repositoryRoot, name, {...options, signal: controller.signal});
       if (values.json) write(JSON.stringify(result, null, 2));
       else printResult(result, write);
       return result.exitCode;
