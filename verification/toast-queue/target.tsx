@@ -46,6 +46,7 @@ interface Context {
   away: HTMLElement;
   pointerOverRegion: boolean;
   apiPaused: boolean;
+  focusEntered: boolean;
   added: number;
   open: ReferenceToast[];
   visible: Set<number>;
@@ -122,6 +123,47 @@ async function leaveEmptyRegion(ctx: Context) {
   }
 }
 
+// jsdom's Selection schedules a 0 ms timer on every focus(). Run zero-delay timers
+// after setup and each action, as a browser would, so pendingTimers counts only
+// toast timeouts.
+async function settle() {
+  await act(async () => {
+    vi.advanceTimersByTime(0);
+  });
+}
+
+// Settles each action, and records focus entering the region during any action
+// other than focus: only the user should move focus into the region. focusEntered
+// stands in for useToastRegion's private focus refs, which observe cannot read;
+// without it, states that differ only in those refs are merged.
+function instrument(
+  actions: Record<
+    string,
+    {enabled: (ctx: Context) => boolean; run: (ctx: Context) => Promise<void>}
+  >
+) {
+  return Object.fromEntries(
+    Object.entries(actions).map(([name, action]) => [
+      name,
+      {
+        ...action,
+        async run(ctx: Context) {
+          let before = focusInRegion();
+          await action.run(ctx);
+          await settle();
+          ctx.focusEntered ||= focusInRegion();
+          if (name !== 'focus' && !before && focusInRegion()) {
+            ctx.problems.push({
+              invariant: 'FocusNotStolen',
+              message: `focus moved into the region during ${name}`
+            });
+          }
+        }
+      }
+    ])
+  );
+}
+
 function problem(invariant: string) {
   return (ctx: Context) =>
     ctx.problems.find(problem => problem.invariant === invariant)?.message ?? true;
@@ -156,6 +198,20 @@ export default defineTarget<Context>({
     'packages/react-aria-components/src/Toast.tsx'
   ],
   bounds: {depth: 7},
+  model: {
+    spec: 'ToastQueue.tla',
+    // ToastQueue.tla counts time in ticks and tracks the region's focus refs, so it
+    // needs neither regionHovered (covered by check) nor focusEntered.
+    project: ({regionHovered, focusEntered, toasts, ...rest}) => ({
+      ...rest,
+      toasts: toasts.map(({elapsed, remaining, sinceStart, ...toast}) => ({
+        ...toast,
+        elapsed: elapsed / TICK,
+        remaining: remaining / TICK,
+        sinceStart: sinceStart === null ? -1 : sinceStart / TICK
+      }))
+    })
+  },
   async setup(env) {
     vi.useFakeTimers({now: 0, toFake: ['setTimeout', 'clearTimeout', 'Date']});
     let host = document.createElement('div');
@@ -170,6 +226,7 @@ export default defineTarget<Context>({
     await act(() => env.input.hover(away));
     await act(async () => away.focus());
     setInteractionModality('pointer');
+    await settle();
     return {
       env,
       queue,
@@ -178,6 +235,7 @@ export default defineTarget<Context>({
       away,
       pointerOverRegion: false,
       apiPaused: false,
+      focusEntered: false,
       added: 0,
       open: [],
       visible: new Set(),
@@ -203,7 +261,7 @@ export default defineTarget<Context>({
       );
     }
   },
-  actions: {
+  actions: instrument({
     add: {
       enabled: ctx => !ctx.apiPaused && ctx.open.length < MAX_OPEN && ctx.added < MAX_ADDED,
       async run(ctx) {
@@ -289,13 +347,14 @@ export default defineTarget<Context>({
         ctx.apiPaused = false;
       }
     }
-  },
+  }),
   observe(ctx) {
     return {
       pointerOverRegion: ctx.pointerOverRegion,
       // The region's own hover state, as evidence that real input registered.
       regionHovered: !!region()?.hasAttribute('data-hovered'),
       focusInRegion: focusInRegion(),
+      focusEntered: ctx.focusEntered,
       apiPaused: ctx.apiPaused,
       added: ctx.added,
       toasts: ctx.open.map(toast => {
@@ -320,6 +379,7 @@ export default defineTarget<Context>({
     RegionPauseHoldsTimers: problem('RegionPauseHoldsTimers'),
     PauseAllHoldsTimers: problem('PauseAllHoldsTimers'),
     AutoCloseAfterTimeout: problem('AutoCloseAfterTimeout'),
+    FocusNotStolen: problem('FocusNotStolen'),
     NoOverdueToast(ctx) {
       if (pauseReason(ctx)) {
         return true;

@@ -27,7 +27,7 @@ A target is `verification/<name>/target.tsx` exporting `defineTarget({...})` fro
 
 - `setup(env)` and `teardown(ctx)` create and dispose one fresh instance. Reset any global state the code under test keeps (focus, pointer position, interaction modality, module-level registries), because runs share a page.
 - `actions` maps names to `run(ctx)`, or `{enabled(ctx), run(ctx)}`. Guards describe the input protocol and bound the search. Real input goes through `env.input` (`hover`, `touch`), which is synthetic in jsdom and browser-generated in Chromium.
-- `observe(ctx)` returns JSON. Sequences that reach the same observation are merged, so include everything that affects future behavior, including real internals such as pending timers and listeners. Merging unequal states can hide bugs.
+- `observe(ctx)` returns JSON. Sequences that reach the same observation are merged, so include everything that affects future behavior, including real internals such as pending timers and listeners. Merging unequal states can hide bugs. When the code keeps state you cannot read (such as a hook's refs), add a stand-in from the run's history; toast-queue's `focusEntered` is an example. A model that tracks that state can confirm nothing is still being merged.
 - `check(ctx)` (optional) runs after setup and every action, and throws when the environment did not do what the actions intended, such as real input that did not register. That makes the run an error rather than evidence.
 - `invariants` return `true`, or `false`/a message when violated. Compare real behavior against a reference computed from the inputs. Never set a flag where you expect the bug.
 - `bounds.depth` (and optional `maxRuns`) limits the search.
