@@ -123,35 +123,7 @@ export function validateTrace(trace) {
   return trace;
 }
 
-export function fromTLC(log, property) {
-  let states = [
-    ...log.matchAll(
-      /^State (\d+):[^\n]*\n([\s\S]*?)(?=^State \d+:|^\d+ states generated|^Finished in|$(?![\s\S]))/gm
-    )
-  ];
-  if (states.length < 2 || states.length > 9)
-    throw new Error('Missing or unsupported TLC state trace.');
-  let actions = states.map((state, index) => {
-    let action = state[2].match(/^\/\\ action = "(\w+)"\s*$/m)?.[1];
-    let step = state[2].match(/^\/\\ step = (\d+)\s*$/m)?.[1];
-    if (Number(state[1]) !== index + 1 || step === undefined || Number(step) !== index || !action)
-      throw new Error(
-        'Trace lacks sequential steps and action labels; rerun the instrumented model.'
-      );
-    return {type: action};
-  });
-  if (actions.shift().type !== 'Init') throw new Error('Unsupported initial model state.');
-  return validateTrace({
-    schemaVersion: 1,
-    package: 'use-press',
-    adapter: adapterId,
-    property,
-    initial,
-    actions
-  });
-}
-
-// Values in the backend report use TLA+ syntax, not tla-ts's internal value classes.
+// Values in the checker report use TLA+ syntax, not tla-ts's internal value classes.
 // Use the explicit model variable rather than the checker's possibly generic Next label.
 export function fromTlaTS(report, property) {
   let states = report.violation?.trace;

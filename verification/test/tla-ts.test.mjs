@@ -20,7 +20,7 @@ import {tmpdir} from 'node:os';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const metadata = readPackage(root, 'use-press');
-const check = selectChecks(metadata, 'PointerOwnership', 'tla-ts')[0];
+const check = selectChecks(metadata, 'PointerOwnership')[0];
 const actions = ['Init', 'PointerDown', 'OtherPointerDown', 'OtherPointerCancel'];
 const report = () => ({
   schemaVersion: 1,
@@ -45,36 +45,31 @@ function directory(t) {
   return path;
 }
 
-test('backend selection defaults to TLC and preserves implementation checks and property filters', async () => {
-  let defaults = selectChecks(metadata, 'PointerOwnership');
-  let optional = selectChecks(metadata, 'PointerOwnership', 'tla-ts');
-  assert.equal(defaults[0].backend, 'tlc');
-  assert.equal(optional[0].backend, 'tla-ts');
-  assert.deepEqual(defaults.slice(1), optional.slice(1));
-  assert.deepEqual(requirements(optional[0]), ['tla-ts']);
-  assert.deepEqual(requirements(defaults[0]), ['java', 'tlc']);
-  assert.throws(
-    () => selectChecks({...metadata, tools: {}}, undefined, 'tla-ts'),
-    /does not register/
-  );
-  for (let args of [
-    ['run', 'use-press', '--backend', 'unknown'],
-    ['list', '--backend', 'tla-ts'],
-    ['replay', 'use-press', '--backend', 'tla-ts']
-  ]) {
-    assert.equal(
-      await main(
-        args,
-        root,
-        () => {},
-        () => {}
-      ),
-      2
-    );
+test('model checks use tla-ts and the CLI rejects backend selection', async () => {
+  let selected = selectChecks(metadata, 'PointerOwnership');
+  assert.equal(selected[0].kind, 'tla-ts');
+  assert.deepEqual(requirements(selected[0]), ['tla-ts']);
+  assert.equal(selected[1].kind, 'vitest');
+  assert.equal(selected[1].testNamePattern, 'pointer ownership:');
+  assert.equal(selected[2].kind, 'jest');
+  for (let command of ['run', 'doctor', 'validate', 'list', 'replay']) {
+    for (let backend of ['tlc', 'tla-ts']) {
+      let output;
+      assert.equal(
+        await main(
+          [command, 'use-press', '--backend', backend, '--json'],
+          root,
+          value => (output = value),
+          () => {}
+        ),
+        2
+      );
+      assert.match(JSON.parse(output).error, /Unknown option.*backend/);
+    }
   }
 });
 
-test('doctor requires the optional installation only when selected and verifies all runtime chunks', async t => {
+test('doctor verifies every runtime chunk and reports a missing installation', async t => {
   let path = directory(t);
   mkdirSync(join(path, 'dist'));
   writeFileSync(join(path, 'package.json'), JSON.stringify({name: 'tla-ts', version: '0.0.3'}));
@@ -144,7 +139,7 @@ test('structured replay requires explicit sequential action labels and rejects l
   }
 });
 
-test('runner exports structured counterexamples with backend provenance without parsing stdout', async t => {
+test('runner exports structured counterexamples with checker provenance without parsing stdout', async t => {
   let path = directory(t);
   let result = await runPackage(
     root,
@@ -162,7 +157,7 @@ test('runner exports structured counterexamples with backend provenance without 
     }
   );
   assert.equal(result.exitCode, 1);
-  assert.equal(result.checks[0].backend, 'tla-ts');
+  assert.equal(result.checks[0].kind, 'tla-ts');
   assert.equal(result.checks[0].replay.status, 'exported');
   let trace = JSON.parse(readFileSync(result.checks[0].replay.trace, 'utf8'));
   assert.equal(trace.origin.kind, 'tla-ts');

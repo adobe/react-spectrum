@@ -4,13 +4,12 @@
  * you may obtain a copy at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import {basename, dirname, join, resolve} from 'node:path';
 import {classifyTlaTS, inspectTlaTS} from './tla-ts.mjs';
-import {createHash} from 'node:crypto';
 import {createRequire} from 'node:module';
 import {execFile} from 'node:child_process';
 import {existsSync, readFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
+import {join, resolve} from 'node:path';
 import {promisify} from 'node:util';
 
 const exec = promisify(execFile);
@@ -25,26 +24,7 @@ export async function inspectTools(root, metadata, checks, env = process.env) {
       results[name] = {available: false, error: error.message};
     }
   };
-  if (checks.some(check => check.kind === 'tlc' && check.backend !== 'tla-ts')) {
-    let tool = metadata.tools.tlc;
-    await probe('java', async () => {
-      let {stdout, stderr} = await exec('java', ['-version'], {cwd: root, env, timeout: 15000});
-      let version = (stdout + stderr).trim();
-      let major = Number(version.match(/version "(?:1\.)?(\d+)/)?.[1]);
-      if (!(major >= tool.minimumJavaVersion))
-        throw new Error(`Java ${tool.minimumJavaVersion}+ required. ${version}`);
-      return {version};
-    });
-    await probe('tlc', async () => {
-      if (!env[tool.jarEnv]) throw new Error(`Set ${tool.jarEnv}. ${tool.acquisition}`);
-      let path = resolve(root, env[tool.jarEnv]);
-      let sha256 = createHash('sha256').update(readFileSync(path)).digest('hex');
-      if (sha256 !== tool.sha256)
-        throw new Error(`TLC checksum mismatch: ${path}. ${tool.acquisition}`);
-      return {path, sha256, version: tool.version};
-    });
-  }
-  if (checks.some(check => check.kind === 'tlc' && check.backend === 'tla-ts')) {
+  if (checks.some(check => check.kind === 'tla-ts')) {
     await probe('tla-ts', async () => {
       let tool = metadata.tools['tla-ts'];
       return inspectTlaTS(
@@ -54,7 +34,7 @@ export async function inspectTools(root, metadata, checks, env = process.env) {
       );
     });
   }
-  if (checks.some(check => check.kind !== 'tlc')) {
+  if (checks.some(check => check.kind !== 'tla-ts')) {
     await probe('yarn', async () => {
       let {stdout} = await exec('yarn', ['--version'], {cwd: root, env, timeout: 15000});
       let expected = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).packageManager;
@@ -66,7 +46,7 @@ export async function inspectTools(root, metadata, checks, env = process.env) {
     for (let name of new Set([
       'react',
       'react-dom',
-      ...checks.filter(check => check.kind !== 'tlc').map(check => check.kind)
+      ...checks.filter(check => check.kind !== 'tla-ts').map(check => check.kind)
     ])) {
       await probe(name, async () => ({version: require(`${name}/package.json`).version}));
     }
@@ -90,56 +70,30 @@ export async function inspectTools(root, metadata, checks, env = process.env) {
 }
 
 export function requirements(check) {
-  return check.kind === 'tlc'
-    ? check.backend === 'tla-ts'
-      ? ['tla-ts']
-      : ['java', 'tlc']
+  return check.kind === 'tla-ts'
+    ? ['tla-ts']
     : ['yarn', 'react', 'react-dom', check.kind, ...(check.kind === 'vitest' ? ['chromium'] : [])];
 }
 
 export function commandFor(root, check, directory, tools) {
   let report = join(directory, `${check.id}.json`);
-  if (check.kind === 'tlc') {
-    if (check.backend === 'tla-ts') {
-      let tool = tools['tla-ts'];
-      return {
-        command: process.execPath,
-        args: [
-          '--max-old-space-size=512',
-          fileURLToPath(new URL('./tla-ts-worker.mjs', import.meta.url)),
-          root,
-          tool.directory,
-          tool.version,
-          tool.sha256,
-          resolve(root, check.model),
-          resolve(root, check.config),
-          report
-        ],
-        cwd: root,
-        report
-      };
-    }
+  if (check.kind === 'tla-ts') {
+    let tool = tools['tla-ts'];
     return {
-      command: 'java',
+      command: process.execPath,
       args: [
-        '-XX:+UseParallelGC',
-        '-Xmx512m',
-        '-cp',
-        tools.tlc.path,
-        'tlc2.TLC',
-        '-workers',
-        '1',
-        '-fp',
-        '0',
-        '-seed',
-        '1',
-        '-metadir',
-        join(directory, check.id),
-        '-config',
+        '--max-old-space-size=512',
+        fileURLToPath(new URL('./tla-ts-worker.mjs', import.meta.url)),
+        root,
+        tool.directory,
+        tool.version,
+        tool.sha256,
+        resolve(root, check.model),
         resolve(root, check.config),
-        basename(check.model)
+        report
       ],
-      cwd: dirname(resolve(root, check.model))
+      cwd: root,
+      report
     };
   }
   let args =
@@ -181,49 +135,12 @@ export function classify(check, processResult, reportPath) {
       outcome: 'infrastructure-error',
       detail: processResult.error || processResult.signal
     };
-  if (check.kind === 'tlc') {
-    if (check.backend === 'tla-ts') {
-      try {
-        return classifyTlaTS(check, processResult, JSON.parse(readFileSync(reportPath, 'utf8')));
-      } catch (error) {
-        return {execution: 'error', outcome: 'infrastructure-error', detail: error.message};
-      }
+  if (check.kind === 'tla-ts') {
+    try {
+      return classifyTlaTS(check, processResult, JSON.parse(readFileSync(reportPath, 'utf8')));
+    } catch (error) {
+      return {execution: 'error', outcome: 'infrastructure-error', detail: error.message};
     }
-    let counts = processResult.output.match(
-      /([\d,]+) states generated, ([\d,]+) distinct states found/
-    );
-    let depth = processResult.output.match(
-      /The depth of the complete state graph search is (\d+)/
-    )?.[1];
-    let statistics = counts
-      ? {
-          generatedStates: Number(counts[1].replaceAll(',', '')),
-          distinctStates: Number(counts[2].replaceAll(',', '')),
-          ...(depth === undefined ? {} : {depth: Number(depth)})
-        }
-      : undefined;
-    let violatedProperty = processResult.output.match(/Invariant (\w+) is violated/)?.[1];
-    if (processResult.code !== 0 && check.properties.includes(violatedProperty)) {
-      return {
-        execution: 'completed',
-        outcome: 'model-counterexample',
-        statistics,
-        violatedProperty,
-        uncheckedProperties: check.properties.filter(id => id !== violatedProperty)
-      };
-    }
-    if (
-      processResult.code === 0 &&
-      processResult.output.includes('Model checking completed. No error has been found.')
-    ) {
-      return {execution: 'completed', outcome: 'bounded-model-pass', statistics};
-    }
-    return {
-      execution: 'error',
-      outcome: 'infrastructure-error',
-      detail:
-        'TLC did not report successful completion or a recognized invariant violation. Inspect the log.'
-    };
   }
   try {
     if (!existsSync(reportPath)) throw new Error('Runner did not produce a JSON report.');

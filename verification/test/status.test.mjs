@@ -40,18 +40,17 @@ function fixture(t) {
       exclusions: ['Concurrency.'],
       verificationFiles: ['verification/example/Model.tla'],
       tools: {
-        tlc: {
-          version: '1.7.4',
-          jarEnv: 'TLA2TOOLS_JAR',
+        'tla-ts': {
+          version: '0.0.3',
+          directoryEnv: 'TLA_TS_DIR',
           sha256: 'a'.repeat(64),
-          minimumJavaVersion: 11,
           acquisition: 'External setup.'
         }
       },
       checks: [
         {
           id: 'model',
-          kind: 'tlc',
+          kind: 'tla-ts',
           properties: ['Safety'],
           model: 'verification/example/Model.tla',
           config: 'verification/example/Model.tla',

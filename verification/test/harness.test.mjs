@@ -5,7 +5,7 @@
  */
 
 import assert from 'node:assert/strict';
-import {classify, commandFor, inspectTools} from '../adapters.mjs';
+import {classify, commandFor} from '../adapters.mjs';
 import {coveredFiles, discoverPackages, readPackage, selectChecks} from '../metadata.mjs';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
@@ -50,11 +50,10 @@ function fixture(t) {
       'jest.config.js'
     ],
     tools: {
-      tlc: {
-        version: '1.7.4',
-        jarEnv: 'TLA2TOOLS_JAR',
+      'tla-ts': {
+        version: '0.0.3',
+        directoryEnv: 'TLA_TS_DIR',
         sha256: 'a'.repeat(64),
-        minimumJavaVersion: 11,
         acquisition: 'See README.'
       }
     },
@@ -62,7 +61,7 @@ function fixture(t) {
     checks: [
       {
         id: 'model',
-        kind: 'tlc',
+        kind: 'tla-ts',
         properties: ['Safety'],
         model: 'verification/example/Model.tla',
         config: 'verification/example/Model.cfg',
@@ -132,7 +131,9 @@ test('metadata rejects duplicate IDs, unknown properties, missing registrations,
     value => (value.checks[0].config = '../outside.cfg'),
     value => (value.checks[0].timeoutMs = 0),
     value => (value.checks[1].testNamePatterns.Safety = '['),
-    value => (value.tools.tlc.sha256 = 'wrong'),
+    value => (value.tools['tla-ts'].sha256 = 'wrong'),
+    value => delete value.tools['tla-ts'],
+    value => (value.checks[0].kind = 'tlc'),
     value => (value.mutationEnvironment = ['bad-name']),
     value => (value.sources[0].path = '/outside.ts')
   ]) {
@@ -170,28 +171,6 @@ test('usePress metadata selects existing checks and preserves the shared safety 
   let command = commandFor(repositoryRoot, selected[1], '/tmp/space in path', {});
   assert.ok(command.args.includes('/tmp/space in path/browser.json'));
   assert.ok(command.args.includes('cancellation safety:'));
-});
-
-test('TLC results distinguish bounded completion, counterexamples, timeout, and tool errors', () => {
-  let check = {kind: 'tlc', properties: ['Safety', 'Ownership']};
-  assert.equal(
-    classify(check, {code: 0, output: 'Model checking completed. No error has been found.'})
-      .outcome,
-    'bounded-model-pass'
-  );
-  let failure = classify(check, {code: 12, output: 'Error: Invariant Safety is violated.'});
-  assert.equal(failure.outcome, 'model-counterexample');
-  assert.deepEqual(failure.uncheckedProperties, ['Ownership']);
-  assert.equal(classify(check, {code: 1, output: 'Parse error'}).outcome, 'infrastructure-error');
-  assert.equal(classify(check, {code: 0, output: ''}).outcome, 'infrastructure-error');
-  assert.equal(
-    classify(check, {
-      code: 0,
-      timedOut: true,
-      output: 'Model checking completed. No error has been found.'
-    }).outcome,
-    'inconclusive'
-  );
 });
 
 test('test reports do not confuse skipped tests, thrown errors, or missing reports with successful checks', t => {
@@ -285,9 +264,9 @@ test('malformed metadata is an error even without a review record', t => {
 });
 
 const availableTools = Object.fromEntries(
-  ['java', 'tlc', 'yarn', 'react', 'react-dom', 'vitest', 'chromium'].map(name => [
+  ['tla-ts', 'yarn', 'react', 'react-dom', 'vitest', 'chromium'].map(name => [
     name,
-    {available: true, path: '/tmp/tool.jar'}
+    {available: true, directory: '/tmp/tla-ts', version: '0.0.3', sha256: 'a'.repeat(64)}
   ])
 );
 
@@ -304,7 +283,19 @@ test('runner continues after a counterexample and records stale correspondence w
       doctor: async () => availableTools,
       execute: async (command, args) => {
         calls.push(command);
-        if (command === 'java') return {code: 12, output: 'Invariant Safety is violated.'};
+        if (command === process.execPath) {
+          writeFileSync(
+            args.at(-1),
+            JSON.stringify({
+              schemaVersion: 1,
+              backend: 'tla-ts',
+              status: 'invariant-violation',
+              statistics: {generatedStates: 2, distinctStates: 2, depth: 2},
+              violation: {name: 'Safety', trace: [{state: {}}]}
+            })
+          );
+          return {code: 1};
+        }
         writeFileSync(
           args[args.indexOf('--outputFile') + 1],
           JSON.stringify({
@@ -316,7 +307,7 @@ test('runner continues after a counterexample and records stale correspondence w
       }
     }
   );
-  assert.deepEqual(calls, ['java', 'yarn']);
+  assert.deepEqual(calls, [process.execPath, 'yarn']);
   assert.equal(result.exitCode, 1);
   assert.equal(result.checks[1].outcome, 'implementation-checks-pass');
   assert.equal(result.correspondence.status, 'needs-review');
@@ -336,17 +327,30 @@ test('missing tools do not prevent independent checks; mid-run edits invalidate 
     {output},
     {
       doctor: async () => ({
-        java: {available: true},
-        tlc: {available: true, path: '/tmp/tool.jar'}
+        'tla-ts': {
+          available: true,
+          directory: '/tmp/tla-ts',
+          version: '0.0.3',
+          sha256: 'a'.repeat(64)
+        }
       }),
-      execute: async command => {
+      execute: async (command, args) => {
         executed.push(command);
         writeFileSync(join(root, 'source.ts'), 'edited during run');
-        return {code: 0, output: 'Model checking completed. No error has been found.'};
+        writeFileSync(
+          args.at(-1),
+          JSON.stringify({
+            schemaVersion: 1,
+            backend: 'tla-ts',
+            status: 'success',
+            statistics: {generatedStates: 2, distinctStates: 2, depth: 2}
+          })
+        );
+        return {code: 0};
       }
     }
   );
-  assert.deepEqual(executed, ['java']);
+  assert.deepEqual(executed, [process.execPath]);
   assert.equal(result.checks[1].execution, 'not-run');
   assert.equal(result.exitCode, 2);
   assert.equal(result.provenance.valid, false);
@@ -360,19 +364,6 @@ test('normal runs reject active mutations and output inside the checkout', async
     /Unset EXAMPLE_MUTATION/
   );
   await assert.rejects(runPackage(root, metadata, {output: root}), /outside the checkout/);
-});
-
-test('doctor refuses an unpinned JAR without downloading anything', async t => {
-  let {root, metadata, directory} = fixture(t);
-  let jar = join(directory, 'wrong.jar');
-  writeFileSync(jar, 'wrong tool');
-  let tools = await inspectTools(root, metadata, [metadata.checks[0]], {
-    PATH: directory,
-    TLA2TOOLS_JAR: jar
-  });
-  assert.equal(tools.java.available, false);
-  assert.equal(tools.tlc.available, false);
-  assert.match(tools.tlc.error, /checksum mismatch/);
 });
 
 test('CLI rejects unsupported commands, options, properties, and budgets before execution', async t => {

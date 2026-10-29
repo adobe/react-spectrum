@@ -4,7 +4,7 @@
  * you may obtain a copy at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import {adapterId, fromTLC, initial, validateTrace} from '../use-press/replay.mjs';
+import {adapterId, initial, validateTrace} from '../use-press/replay.mjs';
 import assert from 'node:assert/strict';
 import {assessMutation, assessReplay, runReplay, runValidation} from '../workflows.mjs';
 import {fileURLToPath} from 'node:url';
@@ -50,31 +50,6 @@ function workspace(t) {
   t.after(() => rmSync(directory, {recursive: true, force: true}));
   return directory;
 }
-
-test('TLC conversion requires action labels and sequential bounded steps', () => {
-  let actions = ['Init', ...trace().actions.map(action => action.type)];
-  let log =
-    actions
-      .map(
-        (action, index) =>
-          `State ${index + 1}: <Next>\n/\\ action = "${action}"\n/\\ step = ${index}\n`
-      )
-      .join('\n') + '19 states generated\n';
-  assert.deepEqual(fromTLC(log, 'PointerOwnership'), trace());
-  assert.throws(
-    () =>
-      fromTLC(
-        log.replace('/\\ action = "PointerDown"', '/\\ unsupported = TRUE'),
-        'PointerOwnership'
-      ),
-    /action labels/
-  );
-  assert.throws(
-    () => fromTLC(log.replace('/\\ step = 2', '/\\ step = 5'), 'PointerOwnership'),
-    /sequential/
-  );
-  assert.throws(() => fromTLC(log, 'NotAProperty'), /Unsupported/);
-});
 
 test('replay rejects unsupported formats, parameters, and impossible input ordering', () => {
   for (let mutate of [

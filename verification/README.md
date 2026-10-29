@@ -17,23 +17,23 @@ yarn verify run use-press
 yarn verify run use-press --property PointerOwnership
 ```
 
-`list` and `status` use only Node built-ins, with no dependency installation, Git invocation, Java, browser launch, or network access. They also work as `node verification/cli.mjs <command>`. The original `node verification/status.mjs [package] [--json]` remains supported.
+`list` and `status` use only Node built-ins, with no dependency installation, Git invocation, browser launch, or network access. They also work as `node verification/cli.mjs <command>`. The original `node verification/status.mjs [package] [--json]` remains supported.
 
-`doctor` checks installed tools for the selected package/checks. For the usePress package, set `TLA2TOOLS_JAR` to the externally acquired, checksum-verified JAR described in its [setup guide](use-press/README.md#agent-tool-setup). Java and the matching browser must already be installed. Browser checks include launching and closing a headless Chromium instance. Corepack network acquisition is disabled when invoking Yarn. Missing tools are errors with setup information, not installation requests performed by the harness.
+`doctor` checks installed tools for the selected package/checks. For the usePress package, set `TLA_TS_DIR` to the externally acquired, checksum-verified tla-ts package described in its [setup guide](use-press/README.md#tool-setup). The matching browser must already be installed. Browser checks include launching and closing a headless Chromium instance. Corepack network acquisition is disabled when invoking Yarn. Missing tools are errors with setup information, not installation requests performed by the harness.
 
 `run` executes registered checks sequentially and continues independent checks after a counterexample, failed assertion, or missing tool. Each check has a finite timeout; `--timeout-ms 60000` overrides each selected check's budget. Timeout/interruption terminates the runner's process group on Unix (on Windows, only the immediate process is terminated). Ctrl+C preserves completed results and marks remaining checks incomplete. Tool probes have their own 15-second timeouts.
 
-A `--property` filter selects associated checks. Browser tests use the package's property-specific test-name pattern. A shared TLC configuration or regression suite may also check other properties; the report includes both requested and configured properties. No checks are silently dropped to obtain a passing run.
+A `--property` filter selects associated checks. Browser tests use the package's property-specific test-name pattern. A shared model configuration or regression suite may also check other properties; the report includes both requested and configured properties. No checks are silently dropped to obtain a passing run.
 
-`doctor`, `run`, and `validate` accept `--backend tlc|tla-ts`. TLC remains the default. Selecting `tla-ts` substitutes the checker for each TLA+ model/configuration; implementation checks and property filters remain the same. Only packages registering a pinned `tools.tla-ts` runtime support this option. See [usePress setup](use-press/README.md#optional-tla-ts-backend). The optional backend requires no Java and installs nothing. Both checkers run with one worker and seed 1 in separate processes with per-check timeouts. Reports identify the backend, tool version/checksum, state counts, and commands. Agreement between engines checks compatibility for those models; it does not establish source/model correspondence.
+Model checks use the pinned tla-ts runtime with one worker and seed 1, in separate processes with per-check timeouts. Reports identify the tool version/checksum, state counts, and commands. A model result does not establish source/model correspondence.
 
-All commands accept `--json`. Execution commands (`run`, `replay`, and `validate`) accept `--output <directory>`, which chooses an external parent directory for a fresh evidence directory. The default parent is the operating system's temporary directory. Output inside the checkout is rejected. Each run retains `results.json`, full per-check logs, runner JSON reports, and TLC state/trace artifacts there. Copy relevant evidence into the response or PR description; do not commit a findings archive. Replay and mutation validation use the commands below.
+All commands accept `--json`. Execution commands (`run`, `replay`, and `validate`) accept `--output <directory>`, which chooses an external parent directory for a fresh evidence directory. The default parent is the operating system's temporary directory. Output inside the checkout is rejected. Each run retains `results.json`, full per-check logs, runner JSON reports, and model state/trace artifacts there. Copy relevant evidence into the response or PR description; do not commit a findings archive. Replay and mutation validation use the commands below.
 
 ## Replay a counterexample
 
-When a supported TLC check finds a counterexample, `run` exports `<check>.trace.json` beside its log and prints the path. The model must label each step with `action` and `step`; older unlabeled traces are explicitly unsupported and need a fresh model run.
+When a supported model check finds a counterexample, `run` exports `<check>.trace.json` beside its log and prints the path. The model must label each step with `action` and `step`; older unlabeled traces are explicitly unsupported and need a fresh model run.
 
-The optional `tla-ts` backend writes `<check>.json` containing its status, state counts, and full counterexample states (values formatted as TLA+ syntax). Package adapters convert those structured states into the same replay format, preserving backend origin. Errors, unsupported features, deadlocks, and unhandled property kinds are infrastructure failures rather than passes or replayable invariant violations. The initial adapter supports self-contained models using standard modules; external modules/operator overrides are not loaded.
+The tla-ts checker writes `<check>.json` containing its status, state counts, and full counterexample states (values formatted as TLA+ syntax). Package adapters convert those structured states into the same replay format, preserving checker origin. Errors, unsupported features, deadlocks, and unhandled property kinds are infrastructure failures rather than passes or replayable invariant violations. The initial adapter supports self-contained models using standard modules; external modules/operator overrides are not loaded.
 
 ```sh
 yarn verify replay use-press --trace /tmp/evidence/ownership.trace.json
@@ -86,8 +86,8 @@ A run reports each check separately:
 
 | Outcome | Meaning |
 | --- | --- |
-| `bounded-model-pass` | TLC completed the configured model exploration without an invariant violation, within the stated scope/bounds. |
-| `model-counterexample` | TLC reported a named invariant violation. Other properties in that configuration are not certified; replay is still needed. |
+| `bounded-model-pass` | tla-ts completed the configured model exploration without an invariant violation, within the stated scope/bounds. |
+| `model-counterexample` | tla-ts reported a named invariant violation. Other properties in that configuration are not certified; replay is still needed. |
 | `implementation-checks-pass` | Selected implementation tests completed successfully. This is not exhaustive verification of the implementation. |
 | `implementation-failure` | Selected implementation assertions failed. Inspect the evidence and contract before attributing a product bug. |
 | `infrastructure-error` | A required tool is unavailable, the runner/report failed, or an error could not be identified as an assertion failure. |
@@ -105,18 +105,17 @@ Create `verification/<name>/verification.json` with `schemaVersion: 1`. Use the 
 - `sources`: repository-relative `path`, `functions`, property IDs, and a transition/operation `mapping`.
 - `bounds`, `assumptions`, and `exclusions` describing the claim's limits.
 - `verificationFiles`: models, configs, guides, and implementation checks. The manifest itself is always fingerprinted.
-- `checks`: unique `id`, `kind`, property IDs, and `timeoutMs` (1–3600000). TLC checks declare `model` and `config`. Jest/Vitest checks declare `testFile` and `config`; Vitest additionally declares a Chromium `browser` and `project`. Optional `testNamePatterns` must map every property of that check to a regex.
-- TLC packages supply `tools.tlc` with `version`, external `jarEnv`, pinned `sha256`, `minimumJavaVersion`, and `acquisition` instructions. Other checks use the repository's installed Yarn dependencies.
-- Optional `tools.tla-ts` supplies `version`, external `directoryEnv`, `sha256`, and `acquisition`. The checksum covers `package.json` and every file recursively under `dist`, including imported chunks, using `runtimeHash` in `tla-ts.mjs`. Doctor verifies the external runtime without executing it; the worker verifies it again before importing it. Changes to the pin require an explicit tool review.
+- `checks`: unique `id`, `kind`, property IDs, and `timeoutMs` (1–3600000). tla-ts checks declare `model` and `config`. Jest/Vitest checks declare `testFile` and `config`; Vitest additionally declares a Chromium `browser` and `project`. Optional `testNamePatterns` must map every property of that check to a regex.
+- Model checks use `kind: "tla-ts"` and require `tools.tla-ts` with `version`, external `directoryEnv`, `sha256`, and `acquisition`. The checksum covers `package.json` and every file recursively under `dist`, including imported chunks, using `runtimeHash` in `tla-ts.mjs`. Doctor verifies the external runtime without executing it; the worker verifies it again before importing it. Changes to the pin require an explicit tool review. Jest/Vitest checks use the repository's installed Yarn dependencies.
 - Optional `mutationEnvironment` lists variables that must be unset for normal runs, preventing manual negative-control settings from contaminating a baseline run.
 
-Optional `replay` metadata declares a registered Vitest `check`, `testFile`, `testNamePattern`, registered adapter module, stable `adapterId`, and distinct `traceEnvironment` / `resultEnvironment` names. The module exports `validateTrace` and `fromTLC`; adapters supporting replay mutation controls also export `createTrace(property, actions)`.
+Optional `replay` metadata declares a registered Vitest `check`, `testFile`, `testNamePattern`, registered adapter module, stable `adapterId`, and distinct `traceEnvironment` / `resultEnvironment` names. The module exports `validateTrace` and `fromTlaTS(report, property)`; adapters supporting replay mutation controls also export `createTrace(property, actions)`.
 
-Adapters supporting the optional backend also export `fromTlaTS(report, property)`. Unknown states/action labels must be rejected rather than guessed. Replay itself is backend-independent and needs only the exported trace and implementation-test tools.
+The model adapter must reject unknown states/action labels rather than guess. Replay needs only the exported trace and implementation-test tools.
 
 Optional `validation` metadata declares its Vitest `check`, covered `source`, mutation `environment` (also listed in `mutationEnvironment`), `receiptEnvironment`, and `mutations`. Each mutation has an `id`, covered `property`, `testNamePattern`, and a distinct intended `failureMarker`. Optional `replayActions` validates the replay assertion with the same defect. Normal runs reject inherited mutation, receipt, and replay variables; workflows set them only for their child processes.
 
-Keep implementation tests in their owning package's test directory. Declare every model/config/test path in `verificationFiles`; explicitly register relevant setup files and shared dependencies. Metadata does not establish correspondence by itself. Check method, input domain, independent oracle, and negative-control instructions belong in the package guide. The check adapters support TLC, Jest, and Chromium Vitest; other methods can add adapters later.
+Keep implementation tests in their owning package's test directory. Declare every model/config/test path in `verificationFiles`; explicitly register relevant setup files and shared dependencies. Metadata does not establish correspondence by itself. Check method, input domain, independent oracle, and negative-control instructions belong in the package guide. The check adapters support tla-ts, Jest, and Chromium Vitest; other methods can add adapters later.
 
 ## Review records
 

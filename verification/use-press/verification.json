@@ -107,24 +107,17 @@
     "packages/react-aria/test/interactions/usePress.verification.utils.tsx"
   ],
   "tools": {
-    "tlc": {
-      "version": "1.7.4 (TLC 2.19)",
-      "jarEnv": "TLA2TOOLS_JAR",
-      "sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
-      "minimumJavaVersion": 11,
-      "acquisition": "Follow verification/use-press/README.md#agent-tool-setup. Keep Java and the checksum-verified JAR outside the checkout."
-    },
     "tla-ts": {
       "version": "0.0.3",
       "directoryEnv": "TLA_TS_DIR",
       "sha256": "b3ea3357de98c19e6b649dff1b3f269952236df6f47d0267078edfdb74337367",
-      "acquisition": "Follow verification/use-press/README.md#optional-tla-ts-backend. Extract the pinned npm package outside the checkout."
+      "acquisition": "Follow verification/use-press/README.md#tool-setup. Extract the pinned npm package outside the checkout."
     }
   },
   "checks": [
     {
       "id": "safety",
-      "kind": "tlc",
+      "kind": "tla-ts",
       "properties": [
         "ActivationUnique",
         "CancellationSafe",
@@ -137,7 +130,7 @@
     },
     {
       "id": "ownership",
-      "kind": "tlc",
+      "kind": "tla-ts",
       "properties": ["PointerOwnership"],
       "model": "verification/use-press/UsePress.tla",
       "config": "verification/use-press/Ownership.cfg",

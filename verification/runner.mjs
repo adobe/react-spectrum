@@ -78,7 +78,7 @@ export async function runPackage(root, metadata, options = {}, dependencies = {}
         `Unset ${variable} before running the harness. Use replay or validate for controlled runs.`
       );
   }
-  let checks = options.checks || selectChecks(metadata, options.property, options.backend);
+  let checks = options.checks || selectChecks(metadata, options.property);
   let correspondence = inspectPackage(root, metadata.name);
   if (correspondence.status === 'error') throw new Error(correspondence.error);
   let before = fingerprints(root, metadata);
@@ -130,7 +130,6 @@ export async function runPackage(root, metadata, options = {}, dependencies = {}
     let item = {
       id: check.id,
       kind: check.kind,
-      ...(check.kind === 'tlc' ? {backend: check.backend || 'tlc'} : {}),
       properties: check.properties,
       requestedProperties: check.requestedProperties
     };
@@ -153,9 +152,7 @@ export async function runPackage(root, metadata, options = {}, dependencies = {}
       let command = commandFor(root, check, directory, result.tools);
       let log = join(directory, `${check.id}.log`);
       let timeoutMs = options.timeoutMs || check.timeoutMs;
-      options.onProgress?.(
-        `Running ${check.id} (${check.backend || check.kind}, ${timeoutMs} ms budget)...`
-      );
+      options.onProgress?.(`Running ${check.id} (${check.kind}, ${timeoutMs} ms budget)...`);
       let processResult;
       try {
         processResult = await execute(command.command, command.args, {
@@ -181,14 +178,11 @@ export async function runPackage(root, metadata, options = {}, dependencies = {}
       if (completed.outcome === 'model-counterexample' && metadata.replay) {
         try {
           let adapter = await import(pathToFileURL(resolve(root, metadata.replay.adapter)).href);
-          let trace =
-            check.backend === 'tla-ts'
-              ? adapter.fromTlaTS(
-                  JSON.parse(readFileSync(command.report, 'utf8')),
-                  completed.violatedProperty
-                )
-              : adapter.fromTLC(readFileSync(log, 'utf8'), completed.violatedProperty);
-          trace.origin = {kind: check.backend || 'tlc', check: check.id, files: before};
+          let trace = adapter.fromTlaTS(
+            JSON.parse(readFileSync(command.report, 'utf8')),
+            completed.violatedProperty
+          );
+          trace.origin = {kind: check.kind, check: check.id, files: before};
           let path = join(directory, `${check.id}.trace.json`);
           writeFileSync(path, JSON.stringify(trace, null, 2) + '\n');
           completed.replay = {status: 'exported', trace: path};

@@ -30,8 +30,6 @@ records. run keeps logs/results in a fresh temporary directory outside the check
 A property filter selects associated checks; shared model configs and regression
 suites may check additional properties. replay/validate also accept --timeout-ms
 and --output. Replay uses the trace's property and records synthetic browser input.
---backend tlc|tla-ts selects the model checker for doctor/run/validate (default: tlc).
-It does not change implementation checks. The optional tool must be registered.
 --minimize attempts up to 20 replays (override: 1–100), preserving input validity
 and the same property failure. Validation uses clean/mutated/restored runs.
 
@@ -62,7 +60,7 @@ function printResult(result, write) {
   write(`${result.package}: correspondence ${result.correspondence.status}`);
   for (let check of result.checks) {
     write(
-      `  ${check.id}${check.backend ? ` [${check.backend}]` : ''}: ${check.outcome}${check.violatedProperty ? ` (${check.violatedProperty})` : ''}${check.detail ? ` — ${check.detail}` : ''}`
+      `  ${check.id}: ${check.outcome}${check.violatedProperty ? ` (${check.violatedProperty})` : ''}${check.detail ? ` — ${check.detail}` : ''}`
     );
     if (check.replay) write(`    Replay: ${check.replay.trace || check.replay.detail}`);
   }
@@ -102,7 +100,6 @@ export async function main(
         help: {type: 'boolean'},
         json: {type: 'boolean'},
         property: {type: 'string'},
-        backend: {type: 'string'},
         'timeout-ms': {type: 'string'},
         output: {type: 'string'},
         trace: {type: 'string'},
@@ -122,8 +119,6 @@ export async function main(
       throw new Error('Unknown command or too many arguments. Use --help.');
     if (values.property !== undefined && !['run', 'doctor', 'validate'].includes(command))
       throw new Error('--property is only supported by run, doctor, and validate.');
-    if (values.backend !== undefined && !['run', 'doctor', 'validate'].includes(command))
-      throw new Error('--backend is only supported by run, doctor, and validate.');
     if (
       (values['timeout-ms'] !== undefined || values.output !== undefined) &&
       !['run', 'replay', 'validate'].includes(command)
@@ -156,7 +151,7 @@ export async function main(
     }
     if (!name) throw new Error(`${command} requires a package name.`);
     let metadata = readPackage(repositoryRoot, name);
-    let checks = selectChecks(metadata, values.property, values.backend);
+    let checks = selectChecks(metadata, values.property);
     if (command === 'doctor') {
       let tools = await inspectTools(repositoryRoot, metadata, checks);
       if (values.json)
@@ -186,7 +181,6 @@ export async function main(
         command === 'replay' ? runReplay : command === 'validate' ? runValidation : runPackage;
       let result = await execute(repositoryRoot, metadata, {
         property: values.property,
-        backend: values.backend,
         trace: values.trace,
         minimize: values.minimize,
         maxReplays,

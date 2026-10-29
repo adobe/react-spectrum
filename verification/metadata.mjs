@@ -86,10 +86,11 @@ export function readPackage(root, name) {
     require(Number.isSafeInteger(check.timeoutMs) &&
       check.timeoutMs > 0 &&
       check.timeoutMs <= 3600000, `Invalid timeout for ${check.id}.`);
-    require(['tlc', 'vitest', 'jest'].includes(
+    require(['tla-ts', 'vitest', 'jest'].includes(
       check.kind
     ), `Unsupported check kind: ${check.kind}`);
-    let files = check.kind === 'tlc' ? [check.model, check.config] : [check.testFile, check.config];
+    let files =
+      check.kind === 'tla-ts' ? [check.model, check.config] : [check.testFile, check.config];
     require(files.every(
       file => repositoryPath(file) && metadata.verificationFiles.includes(file)
     ), `Register all files for ${check.id} in verificationFiles.`);
@@ -97,7 +98,7 @@ export function readPackage(root, name) {
       require(text(check.project) &&
         check.browser === 'chromium', 'This adapter currently supports Chromium projects.');
     if (check.testNamePatterns !== undefined) {
-      require(check.kind !== 'tlc' &&
+      require(check.kind !== 'tla-ts' &&
         check.testNamePatterns &&
         typeof check.testNamePatterns === 'object', 'Invalid test filters.');
       require(Object.keys(check.testNamePatterns).length === check.properties.length &&
@@ -118,18 +119,8 @@ export function readPackage(root, name) {
       metadata.checks.some(check => check.properties.includes(id)) &&
       metadata.sources.some(source => source.properties.includes(id))
   ), 'Every property needs source coverage and a check.');
-  if (metadata.checks.some(check => check.kind === 'tlc')) {
-    let tool = metadata.tools?.tlc;
-    require(tool &&
-      text(tool.version) &&
-      /^[A-Z][A-Z0-9_]*$/.test(tool.jarEnv) &&
-      /^[a-f0-9]{64}$/.test(tool.sha256) &&
-      Number.isSafeInteger(tool.minimumJavaVersion) &&
-      tool.minimumJavaVersion >= 11 &&
-      text(tool.acquisition), 'TLC requires a pinned tool/checksum and acquisition instructions.');
-  }
-  if (metadata.tools?.['tla-ts'] !== undefined) {
-    let tool = metadata.tools['tla-ts'];
+  if (metadata.checks.some(check => check.kind === 'tla-ts')) {
+    let tool = metadata.tools?.['tla-ts'];
     require(tool &&
       text(tool.version) &&
       /^[A-Z][A-Z0-9_]*$/.test(tool.directoryEnv) &&
@@ -199,17 +190,13 @@ export function coveredFiles(metadata) {
   };
 }
 
-export function selectChecks(metadata, property, backend = 'tlc') {
-  if (!['tlc', 'tla-ts'].includes(backend)) throw new Error(`Unknown model backend: ${backend}`);
-  if (backend === 'tla-ts' && !metadata.tools?.['tla-ts'])
-    throw new Error(`${metadata.name} does not register the tla-ts backend.`);
+export function selectChecks(metadata, property) {
   if (property && !metadata.properties.some(item => item.id === property))
     throw new Error(`Unknown property: ${property}`);
   return metadata.checks
     .filter(check => !property || check.properties.includes(property))
     .map(check => ({
       ...check,
-      ...(check.kind === 'tlc' ? {backend} : {}),
       requestedProperties: property ? [property] : check.properties,
       testNamePattern: property ? check.testNamePatterns?.[property] : undefined
     }));

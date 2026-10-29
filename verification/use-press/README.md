@@ -37,23 +37,9 @@ Assume a connected HTMLElement, non-virtual input, the initiating pointer stayin
 
 Excluded: keyboard/Meta handling, independent virtual activations, pointer leave/reenter, multiple gestures, disabled-at-pointerdown behavior, portals, Shadow DOM, detached/replaced targets, link navigation, callback-driven changes/unmounts/events, exceptions, nested responders, concurrent React rendering, focus/text-selection side effects, device/assistive-technology heuristics, and liveness. Browser checks are selected implementation traces, not exhaustive verification of browsers or TypeScript. Trusted Chromium input additionally exercises mixed mouse/touch ownership.
 
-## Agent tool setup
+## Tool setup
 
-Tools are obtained and run explicitly by the agent, outside the checkout. Check existing installations first. Use the environment's normal installation process for Java 11+ if unavailable (`java -version`). The repository does not install Java or manage the TLA+ runtime.
-
-Use [TLA+ tools 1.7.4](https://github.com/tlaplus/tlaplus/releases/tag/v1.7.4), which reports TLC 2.19. Keep its JAR in temporary storage or an external tool cache. To obtain and verify the pinned artifact (or set `TLA2TOOLS_JAR` to an existing copy and verify it):
-
-```sh
-export TLA2TOOLS_JAR="${TMPDIR:-/tmp}/react-aria-tla2tools-1.7.4.jar"
-curl --fail --location https://github.com/tlaplus/tlaplus/releases/download/v1.7.4/tla2tools.jar --output "$TLA2TOOLS_JAR"
-printf '%s  %s\n' '936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88' "$TLA2TOOLS_JAR" | shasum -a 256 --check
-```
-
-Stop on a checksum mismatch. Do not change the pin to accept an unexpected artifact. Installations and downloads follow the environment's access permissions. No binary, runtime, cache, or generated evidence belongs in this package.
-
-## Optional tla-ts backend
-
-[tla-ts](https://github.com/aidenybai/tla-ts) 0.0.3 can check the same TLA+ models without Java. TLC remains the default/reference backend. Obtain the published npm archive outside the checkout, verify it, and extract it without running installation scripts:
+Model checks use [tla-ts](https://github.com/aidenybai/tla-ts) 0.0.3. Tools are obtained explicitly outside the checkout; check existing installations first. Obtain the published npm archive outside the checkout, verify it, and extract it without running installation scripts:
 
 ```sh
 export TLA_TS_CACHE="$(mktemp -d "${TMPDIR:-/tmp}/react-spectrum-tla-ts.XXXXXX")"
@@ -62,23 +48,11 @@ printf '%s  %s\n' 'e71ea7ef8c0e2dfcde64bae49fdc5b865f8ca18595ece863e190990025468
 # Continue only if the checksum matches.
 tar -xzf "$TLA_TS_CACHE/tla-ts.tgz" -C "$TLA_TS_CACHE"
 export TLA_TS_DIR="$TLA_TS_CACHE/package"
-yarn verify doctor use-press --backend tla-ts
-yarn verify run use-press --backend tla-ts
+yarn verify doctor use-press
+yarn verify run use-press
 ```
 
-No dependency or lockfile change is needed. Doctor verifies the manifest's version and SHA-256 of the distributed runtime; it does not require TLC/Java when this backend is selected. The worker verifies the runtime again before import, uses one worker, seed 1, and a 512 MiB V8 heap limit. The harness enforces the same model timeouts. Its structured JSON report retains all counterexample states, with TLA+ formatted values, before the package adapter converts explicit `action`/`step` labels into the existing replay protocol. It does not infer actions from the checker's generic `Next` label.
-
-To compare engines after changing a model or tool pin, run the full package with each backend, compare the model outcomes, invariant names, and state counts in `results.json`, then replay each exported counterexample:
-
-```sh
-yarn verify run use-press --backend tlc
-yarn verify run use-press --backend tla-ts
-yarn verify replay use-press --trace /tmp/tlc-evidence/ownership.trace.json
-yarn verify replay use-press --trace /tmp/tla-ts-evidence/ownership.trace.json
-yarn verify validate use-press --backend tla-ts
-```
-
-Replace example paths with the evidence paths printed by each run. The package's ordinary checks still run for both engines; backend selection never suppresses a failing implementation test. Compare replay observations as well as action sequences. Model agreement is scoped to these configurations and bounds, not general engine equivalence or proof of the TypeScript hook. Retain comparison evidence externally and leave correspondence renewal to the explicit review workflow below.
+No dependency or lockfile change is needed. Doctor verifies the manifest's version and SHA-256 of the distributed runtime. Stop on a checksum mismatch; do not change the pin to accept an unexpected artifact. The worker verifies the runtime again before import, uses one worker, seed 1, and a 512 MiB V8 heap limit. The harness enforces the same model timeouts. Its structured JSON report retains all counterexample states, with TLA+ formatted values, before the package adapter converts explicit `action`/`step` labels into the existing replay protocol. It does not infer actions from the checker's generic `Next` label.
 
 ## Run verification
 
@@ -91,9 +65,9 @@ yarn verify run use-press
 yarn verify run use-press --property PointerOwnership
 ```
 
-The harness runs both existing TLC configurations with one worker, fingerprint index 0, seed 1, and a 512 MiB heap. Each model check has a 120-second budget. It then runs the real-hook Chromium checks through the package Vitest config (180 seconds) and the existing `usePress.test.js` Jest suite (120 seconds). The property filter selects relevant model configs and filters browser tests by name; the shared safety config and regression suite still run in full. `--timeout-ms <ms>` overrides each check's budget.
+The harness runs both model configurations with tla-ts, one worker, seed 1, and a 512 MiB V8 heap limit. Each model check has a 120-second budget. It then runs the real-hook Chromium checks through the package Vitest config (180 seconds) and the existing `usePress.test.js` Jest suite (120 seconds). The property filter selects relevant model configs and filters browser tests by name; the shared safety config and regression suite still run in full. `--timeout-ms <ms>` overrides each check's budget.
 
-Use the repository's locked Yarn dependencies. If necessary, obtain Chromium explicitly with `yarn playwright install chromium`; no harness command installs it. Run logs, JSON reports, and TLC states go in a fresh temporary directory printed by the command. `--output <directory>` selects an external parent directory and `--json` returns the full report. `results.json` includes commands and fingerprints for reruns. Keep that evidence only as long as needed for investigation or the PR description.
+Use the repository's locked Yarn dependencies. If necessary, obtain Chromium explicitly with `yarn playwright install chromium`; no harness command installs it. Run logs, JSON reports, and model states go in a fresh temporary directory printed by the command. `--output <directory>` selects an external parent directory and `--json` returns the full report. `results.json` includes commands and fingerprints for reruns. Keep that evidence only as long as needed for investigation or the PR description.
 
 The opt-in test filename `packages/react-aria/test/interactions/usePress.verification.browser.tsx` is selected only by this package's config. Browser checks import the actual hook directly. Optional WebKit checks remain a manual command after obtaining WebKit:
 
@@ -103,7 +77,7 @@ yarn vitest run --config verification/use-press/vitest.config.ts --project webki
 
 The trusted-input test uses Chromium's CDP and is skipped elsewhere. The harness's registered browser check is Chromium only.
 
-Separate infrastructure errors, source/model drift, model counterexamples, and implementation failures. The harness continues independent checks after a failure. A failing TLC configuration leaves its other properties uncertified; its report names the violated invariant and the unchecked properties. Translate counterexample transitions to source handlers and replay against the real hook before reporting a product bug. The action-labeled model exports a replayable trace beside its log. A model pass covers only the stated model and bounds, and never renews `review.json`.
+Separate infrastructure errors, source/model drift, model counterexamples, and implementation failures. The harness continues independent checks after a failure. A failing model configuration leaves its other properties uncertified; its report names the violated invariant and the unchecked properties. Translate counterexample transitions to source handlers and replay against the real hook before reporting a product bug. The action-labeled model exports a replayable trace beside its log. A model pass covers only the stated model and bounds, and never renews `review.json`.
 
 ## Replay counterexamples
 
@@ -115,7 +89,7 @@ yarn verify replay use-press --trace /tmp/evidence/ownership.trace.json --minimi
 
 The `use-press-pointer-v1` trace fixes initial conditions to a mounted, enabled target with non-virtual touch pointer IDs 1 and 2. Supported action names are `PointerDown`, `PointerUp`, `PointerCancel`, `OtherPointerDown`, `OtherPointerCancel`, `NativeClick`, `OtherClick`, `Fallback`, `Disable`, `Enable`, and `Unmount`. Each action is an object containing only `type`; the adapter rejects extra parameters or unsupported ordering. The same eight-action bound applies. `OtherClick` and `Fallback` additionally require an actual pending timer during execution.
 
-The model's `action` variable records which transition ran, without changing its behavioral guards or invariants. Old logs that only name `Next` cannot be converted reliably; rerun the model. Exported traces retain origin fingerprints, and replay records any differences against the current checkout.
+The model's `action` variable records which transition ran, without changing its behavioral guards or invariants. Exported traces retain origin fingerprints, and replay records any differences against the current checkout.
 
 The browser driver imports the actual hook and records callbacks, pressed state, timers, and listeners after each action. It checks the requested property and stops at its first violation. Replay uses synthetic events in Chromium; the existing trusted mouse/touch test remains a separate feasibility check. `observations.json` contains the concrete evidence. A failed tool or unsupported trace is never reported as reproduction. Minimization preserves the same property failure and valid input ordering, with a bounded number of trials; see the [harness guide](../README.md#replay-a-counterexample).
 
