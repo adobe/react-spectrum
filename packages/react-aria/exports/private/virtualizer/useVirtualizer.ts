@@ -1,1 +1,5 @@
-export {useVirtualizer, type VirtualizerOptions} from '../../../src/virtualizer/useVirtualizer';
+export {
+  useVirtualizer,
+  type AriaVirtualizerOptions,
+  type VirtualizerAria
+} from '../../../src/virtualizer/useVirtualizer';

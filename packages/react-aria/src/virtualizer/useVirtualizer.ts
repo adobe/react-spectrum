@@ -15,15 +15,17 @@ import {LayoutInfo, ReusableView, Size, VirtualizerState} from 'react-stately/us
 import {RefObject} from '@react-types/shared';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
-export interface VirtualizerOptions {}
+export interface AriaVirtualizerOptions {}
+
+export interface VirtualizerAria {}
 
 export const itemMap: WeakMap<LayoutInfo, HTMLElement> = new WeakMap();
 
 export function useVirtualizer<T extends object, V>(
-  props: VirtualizerOptions,
+  props: AriaVirtualizerOptions,
   state: VirtualizerState<T, V>,
   _ref: RefObject<HTMLElement | null>
-): void {
+): VirtualizerAria {
   useLayoutEffect(() => {
     let views: ReusableView<T, V>[] = [...state.visibleViews];
     let layoutInfos: LayoutInfo[] = [];
@@ -54,4 +56,6 @@ export function useVirtualizer<T extends object, V>(
       }
     });
   });
+
+  return {};
 }
