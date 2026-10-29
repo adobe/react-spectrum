@@ -13,7 +13,7 @@
 import clsx from 'clsx';
 import {createRef} from 'react';
 import {mergeIds, useId} from '../../src/utils/useId';
-import {mergeProps} from '../../src/utils/mergeProps';
+import {mergeProps} from 'react-aria/mergeProps';
 import {render} from '@react-spectrum/test-utils-internal';
 
 describe('mergeProps', function () {
@@ -119,6 +119,25 @@ describe('mergeProps', function () {
     };
 
     expect(() => render(<Component />)).not.toThrow();
+  });
+
+  it('keeps labels associated when a registered id is overridden', function () {
+    function LabelledField() {
+      let id = useId('registered-id');
+      return (
+        <>
+          <label htmlFor={id}>Name</label>
+          <input {...mergeProps({id}, {id: 'input-id'})} />
+        </>
+      );
+    }
+
+    let {getByLabelText, getByText} = render(<LabelledField />);
+    let input = getByLabelText('Name');
+    let label = getByText('Name');
+    expect(input.id).toBe('input-id');
+    expect(label.htmlFor).toBe(input.id);
+    expect(label.control).toBe(input);
   });
 
   it('overrides other props', function () {
