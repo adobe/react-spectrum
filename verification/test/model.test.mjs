@@ -131,3 +131,16 @@ test('conform passes when the model matches and pinpoints action and state misma
   assert.deepEqual(wrong.mismatch.actions, ['acquire']);
   assert.deepEqual(wrong.mismatch.fields, [{field: 'count', model: '2', code: '1'}]);
 });
+
+test('model operations respect the shared run deadline', async t => {
+  let model = counterModel(t);
+  let options = {
+    checkDeadline: () => {
+      let error = new Error('deadline');
+      error.name = 'TimeoutError';
+      throw error;
+    }
+  };
+  await assert.rejects(checkModel(target, model, options), {name: 'TimeoutError'});
+  await assert.rejects(conformModel(target, model, await paths(), options), {name: 'TimeoutError'});
+});

@@ -24,12 +24,19 @@ export function runProcess(command, args, {cwd, env = process.env, timeoutMs, lo
     let timedOut = false;
     let interrupted = false;
     let killTimer;
-    let child = spawn(command, args, {
-      cwd,
-      env,
-      detached: process.platform !== 'win32',
-      stdio: ['ignore', 'pipe', 'pipe']
-    });
+    let child;
+    try {
+      child = spawn(command, args, {
+        cwd,
+        env,
+        detached: process.platform !== 'win32',
+        stdio: ['ignore', 'pipe', 'pipe']
+      });
+    } catch (failure) {
+      closeSync(fd);
+      resolve({code: null, error: failure.message, durationMs: Date.now() - started, output});
+      return;
+    }
     let kill = signal => {
       try {
         if (process.platform === 'win32') child.kill(signal);

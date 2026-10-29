@@ -13,6 +13,7 @@
 import {check, formatValue} from 'tla-ts';
 import {existsSync, readFileSync} from 'node:fs';
 import {join} from 'node:path';
+import {now} from './runtime.mjs';
 
 // TLA+ models for targets. A model must declare `CONSTANT MaxSteps`, variables
 // `action` and `step` (with `vars` listing all of them), `Init`, a `Next` that
@@ -114,11 +115,12 @@ async function run(source, loadModule, cfg) {
  * others, and converts counterexamples into traces `replay` runs on real code.
  */
 export async function checkModel(target, model, options = {}) {
-  let started = Date.now();
+  let started = now();
   let depth = options.depth ?? target.model.depth ?? target.bounds.depth;
   let invariants = [];
   let violations = [];
   for (let invariant of target.model.invariants ?? Object.keys(target.invariants)) {
+    options.checkDeadline?.();
     let result = await run(
       model.source,
       model.loadModule,
@@ -129,6 +131,7 @@ export async function checkModel(target, model, options = {}) {
         'CHECK_DEADLOCK FALSE'
       ])
     );
+    options.checkDeadline?.();
     let item = {
       invariant,
       status: 'passed',
@@ -165,7 +168,7 @@ export async function checkModel(target, model, options = {}) {
     depth,
     invariants,
     violations,
-    durationMs: Date.now() - started
+    durationMs: now() - started
   };
 }
 
@@ -198,8 +201,8 @@ export function conformanceModule(name, traces, views) {
  * the same View at each step. This is one-directional: it does not show that the
  * code can do everything the model allows.
  */
-export async function conformModel(target, model, paths) {
-  let started = Date.now();
+export async function conformModel(target, model, paths, options = {}) {
+  let started = now();
   // A path that is a prefix of another is checked as part of it.
   let maximal = paths.filter(
     path =>
@@ -211,6 +214,7 @@ export async function conformModel(target, model, paths) {
   );
   let traces = maximal.map(path => path.actions);
   let views = maximal.map(path => path.observations.map(target.model.project));
+  options.checkDeadline?.();
   let result = await run(
     conformanceModule(model.name, traces, views),
     module => (module === model.name ? model.source : model.loadModule(module)),
@@ -221,6 +225,7 @@ export async function conformModel(target, model, paths) {
       'CHECK_DEADLOCK TRUE'
     ])
   );
+  options.checkDeadline?.();
   let summary = {
     schemaVersion: 1,
     target: target.name,
@@ -228,7 +233,7 @@ export async function conformModel(target, model, paths) {
     traces: traces.length,
     steps: traces.reduce((total, trace) => total + trace.length, 0),
     distinctStates: result.distinctStates,
-    durationMs: Date.now() - started
+    durationMs: now() - started
   };
   if (result.status === 'success') return {...summary, status: 'conforms'};
   let last = result.violation?.trace.at(-1)?.state;

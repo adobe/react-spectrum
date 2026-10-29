@@ -11,6 +11,7 @@
  */
 
 /// <reference types="vite/client" />
+import {deadline} from './runtime.mjs';
 import type {Environment} from './explorer.mjs';
 import {explore, replay} from './explorer.mjs';
 import {it} from 'vitest';
@@ -127,73 +128,75 @@ async function writeResult(result: object) {
   }
 }
 
-it(
-  `${request.mode} ${request.target} (${request.environment})`,
-  async () => {
-    let consoleErrors: string[] = [];
-    let error = console.error;
-    console.error = (...args) => {
-      if (consoleErrors.length < 20) consoleErrors.push(args.map(String).join(' '));
-    };
-    try {
-      let load = targets[`./${request.target}/target.tsx`];
-      if (!load) throw new Error(`Unknown target: ${request.target}`);
-      let target = (await load()).default;
-      let result;
-      if (request.mode === 'check' || request.mode === 'conform') {
-        if (!target.model) throw new Error(`${request.target} has no model.`);
-        // Node-only: tla-ts and the model files are never loaded in Chromium.
-        let {checkModel, conformModel, loadModel} = await import('./model.mjs');
-        let {fileURLToPath} = await import('node:url');
-        let {dirname, join} = await import('node:path');
-        let model = loadModel(
-          join(dirname(fileURLToPath(import.meta.url)), request.target),
-          target.model.spec
-        );
-        if (request.mode === 'check') {
-          result = await checkModel(target, model, request.options);
-        } else {
-          let env = await createEnvironment();
-          let exploration: any = await explore(target, env, {
-            ...request.options,
-            invariants: false,
-            collect: true
-          });
-          let summary = {
-            runs: exploration.runs,
-            distinctStates: exploration.distinctStates,
-            depthReached: exploration.depthReached,
-            neverEnabled: exploration.neverEnabled
-          };
-          result =
-            exploration.status === 'passed'
-              ? {...(await conformModel(target, model, exploration.paths)), exploration: summary}
-              : {
-                  exploration: summary,
-                  status: 'error',
-                  error: exploration.error ?? 'Exploration was incomplete.'
-                };
-        }
+it(`${request.mode} ${request.target} (${request.environment})`, async () => {
+  let checkDeadline = deadline(request.timeoutMs);
+  let options = {...request.options, checkDeadline};
+  let consoleErrors: string[] = [];
+  let error = console.error;
+  console.error = (...args) => {
+    if (consoleErrors.length < 20) consoleErrors.push(args.map(String).join(' '));
+  };
+  try {
+    let load = targets[`./${request.target}/target.tsx`];
+    if (!load) throw new Error(`Unknown target: ${request.target}`);
+    let target = (await load()).default;
+    let result;
+    if (request.mode === 'check' || request.mode === 'conform') {
+      if (!target.model) throw new Error(`${request.target} has no model.`);
+      // Node-only: tla-ts and the model files are never loaded in Chromium.
+      let {checkModel, conformModel, loadModel} = await import('./model.mjs');
+      let {fileURLToPath} = await import('node:url');
+      let {dirname, join} = await import('node:path');
+      let model = loadModel(
+        join(dirname(fileURLToPath(import.meta.url)), request.target),
+        target.model.spec
+      );
+      if (request.mode === 'check') {
+        result = await checkModel(target, model, options);
       } else {
         let env = await createEnvironment();
+        let exploration: any = await explore(target, env, {
+          ...options,
+          invariants: false,
+          collect: true
+        });
+        let summary = {
+          runs: exploration.runs,
+          distinctStates: exploration.distinctStates,
+          depthReached: exploration.depthReached,
+          neverEnabled: exploration.neverEnabled
+        };
         result =
-          request.mode === 'explore'
-            ? await explore(target, env, request.options)
-            : await replay(target, env, request.trace);
+          exploration.status === 'passed'
+            ? {
+                ...(await conformModel(target, model, exploration.paths, options)),
+                exploration: summary
+              }
+            : {
+                exploration: summary,
+                status: exploration.status,
+                error: exploration.error ?? 'Exploration was incomplete.'
+              };
       }
-      await writeResult({...result, consoleErrors});
-    } catch (failure) {
-      await writeResult({
-        schemaVersion: 1,
-        target: request.target,
-        environment: request.environment,
-        status: 'error',
-        error: failure instanceof Error ? failure.stack || failure.message : String(failure),
-        consoleErrors
-      });
-    } finally {
-      console.error = error;
+    } else {
+      let env = await createEnvironment();
+      result =
+        request.mode === 'explore'
+          ? await explore(target, env, options)
+          : await replay(target, env, request.trace, options);
     }
-  },
-  request.timeoutMs
-);
+    if (result.status !== 'timed-out') checkDeadline();
+    await writeResult({...result, consoleErrors});
+  } catch (failure) {
+    await writeResult({
+      schemaVersion: 1,
+      target: request.target,
+      environment: request.environment,
+      status: failure instanceof Error && failure.name === 'TimeoutError' ? 'timed-out' : 'error',
+      error: failure instanceof Error ? failure.stack || failure.message : String(failure),
+      consoleErrors
+    });
+  } finally {
+    console.error = error;
+  }
+}, 0);

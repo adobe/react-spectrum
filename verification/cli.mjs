@@ -69,7 +69,7 @@ function printResult(result, write) {
       write(`  Never enabled (check guards or bounds): ${exploration.neverEnabled.join(', ')}`);
   } else if (result.mode === 'replay') {
     write(
-      `${result.target}: ${result.status} in ${result.environment}${result.step ? ` at step ${result.step}` : ''} (${result.invariant})`
+      `${result.target}: ${result.status} in ${result.environment}${result.step != null ? ` at step ${result.step}` : ''} (${result.invariant})`
     );
     for (let failure of result.failures || []) write(`  ${failure.invariant}: ${failure.detail}`);
   } else {

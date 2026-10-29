@@ -12,6 +12,7 @@
 
 import {act} from 'react';
 import {Button} from '../../packages/react-aria-components/src/Button';
+import {cleanup} from '../runtime.mjs';
 import {createRoot, Root} from 'react-dom/client';
 import {defineTarget} from '../explorer.mjs';
 import type {Environment} from '../explorer.mjs';
@@ -245,11 +246,13 @@ export default defineTarget<Context>({
     };
   },
   async teardown(ctx) {
-    await act(() => ctx.env.input.hover(ctx.away));
-    await act(async () => ctx.root.unmount());
-    ctx.host.remove();
-    vi.clearAllTimers();
-    vi.useRealTimers();
+    await cleanup(
+      () => act(() => ctx.env.input.hover(ctx.away)),
+      () => act(async () => ctx.root.unmount()),
+      () => ctx.host.remove(),
+      () => vi.clearAllTimers(),
+      () => vi.useRealTimers()
+    );
   },
   // Real input can miss (e.g. a Playwright move during layout), and Chromium hovers
   // elements that appear under a stationary pointer. Either makes a run unreliable.

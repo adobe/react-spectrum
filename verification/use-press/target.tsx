@@ -11,6 +11,7 @@
  */
 
 import {act} from 'react';
+import {cleanup} from '../runtime.mjs';
 import {createRoot, Root} from 'react-dom/client';
 import {defineTarget} from '../explorer.mjs';
 import type {Environment} from '../explorer.mjs';
@@ -188,17 +189,19 @@ export default defineTarget<Context>({
     return ctx;
   },
   async teardown(ctx) {
-    if (ctx.mounted) {
-      await act(async () => ctx.root.unmount());
-    }
-    if (ctx.otherDown) {
-      await otherTouch(ctx, 'cancel');
-    }
-    ctx.restoreListeners();
-    ctx.host.remove();
-    ctx.other.remove();
-    vi.clearAllTimers();
-    vi.useRealTimers();
+    await cleanup(
+      async () => {
+        if (ctx.mounted) await act(async () => ctx.root.unmount());
+      },
+      async () => {
+        if (ctx.otherDown) await otherTouch(ctx, 'cancel');
+      },
+      () => ctx.restoreListeners(),
+      () => ctx.host.remove(),
+      () => ctx.other.remove(),
+      () => vi.clearAllTimers(),
+      () => vi.useRealTimers()
+    );
   },
   actions: {
     PointerDown: {

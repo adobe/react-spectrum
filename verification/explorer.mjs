@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {now} from './runtime.mjs';
+
 // Bounded exhaustive exploration of real code. A target drives the actual
 // implementation through named actions; the explorer searches every enabled
 // action sequence breadth-first, so the first trace found for an invariant is
@@ -95,7 +97,9 @@ export function defineTarget(spec) {
       actions.map(([name, action]) => {
         let normalized = typeof action === 'function' ? {run: action} : action;
         if (typeof normalized?.run !== 'function') fail(`action ${name} needs a run function.`);
-        return [name, {enabled: () => true, ...normalized}];
+        let enabled = normalized.enabled ?? (() => true);
+        if (typeof enabled !== 'function') fail(`action ${name} needs an enabled function.`);
+        return [name, {...normalized, enabled}];
       })
     )
   };
@@ -128,28 +132,38 @@ function failedInvariants(target, ctx) {
 
 // Runs one action sequence from a fresh setup, stopping at the first failure.
 // `status` is 'completed', 'violation', 'disabled' (an action was not enabled),
-// or 'error' (setup, an action, an invariant, or observe threw).
-export async function execute(target, env, actions, {invariants = true} = {}) {
+// 'timed-out', or 'error' (setup, an action, an invariant, or observe threw).
+export async function execute(
+  target,
+  env,
+  actions,
+  {invariants = true, checkDeadline = () => {}} = {}
+) {
   let ctx;
   let observations = [];
   let step = 0;
   let current = null;
   let result;
   try {
+    checkDeadline();
     ctx = await target.setup(env);
+    checkDeadline();
     let record = () => observations.push(JSON.parse(stableStringify(target.observe(ctx) ?? null)));
     target.check?.(ctx);
     let failures = invariants ? failedInvariants(target, ctx) : [];
     record();
-    for (; !failures.length && step < actions.length; step++) {
+    while (!failures.length && step < actions.length) {
       current = actions[step];
+      step++;
+      checkDeadline();
       let action = target.actions[current];
       if (!action) throw new Error(`Unknown action: ${current}`);
       if (!action.enabled(ctx)) {
-        result = {status: 'disabled', step: step + 1, action: current};
+        result = {status: 'disabled', step, action: current};
         break;
       }
       await action.run(ctx);
+      checkDeadline();
       target.check?.(ctx);
       failures = invariants ? failedInvariants(target, ctx) : [];
       record();
@@ -159,7 +173,7 @@ export async function execute(target, env, actions, {invariants = true} = {}) {
       : {status: 'completed', step, enabled: enabledActions(target, ctx)};
   } catch (error) {
     result = {
-      status: 'error',
+      status: error?.name === 'TimeoutError' ? 'timed-out' : 'error',
       step,
       action: current,
       error: error instanceof Error ? error.stack || error.message : String(error)
@@ -169,7 +183,12 @@ export async function execute(target, env, actions, {invariants = true} = {}) {
       try {
         await target.teardown(ctx);
       } catch (error) {
-        result = {status: 'error', step, error: `teardown: ${error?.message ?? error}`};
+        result = {
+          ...result,
+          status: result?.status === 'timed-out' ? 'timed-out' : 'error',
+          step,
+          error: [result?.error, `teardown: ${error?.message ?? error}`].filter(Boolean).join('\n')
+        };
       }
     }
   }
@@ -198,7 +217,7 @@ function trace(target, actions, failure, observations) {
 export async function explore(target, env, options = {}) {
   let depth = options.depth ?? target.bounds.depth;
   let maxRuns = options.maxRuns ?? target.bounds.maxRuns ?? 20000;
-  let started = Date.now();
+  let started = now();
   let coverage = Object.fromEntries(
     Object.keys(target.actions).map(name => [name, {enabled: 0, ran: 0}])
   );
@@ -216,7 +235,7 @@ export async function explore(target, env, options = {}) {
     depthReached: level,
     runs,
     distinctStates: seen.size,
-    durationMs: Date.now() - started,
+    durationMs: now() - started,
     coverage,
     neverEnabled: Object.keys(coverage).filter(name => !coverage[name].enabled),
     neverRan: Object.keys(coverage).filter(name => !coverage[name].ran),
@@ -232,9 +251,13 @@ export async function explore(target, env, options = {}) {
 
   let checkInvariants = options.invariants !== false;
   let paths = [];
-  let root = await execute(target, env, [], {invariants: checkInvariants});
+  let root = await execute(target, env, [], {
+    invariants: checkInvariants,
+    checkDeadline: options.checkDeadline
+  });
   runs++;
-  if (root.status === 'error') return {...summary('error'), error: root.error, actions: []};
+  if (['error', 'timed-out'].includes(root.status))
+    return {...summary(root.status), error: root.error, actions: []};
   if (root.status === 'violation') {
     record([], root);
     return summary('violations');
@@ -252,13 +275,16 @@ export async function explore(target, env, options = {}) {
         break;
       }
       let actions = [...state.actions, name];
-      let result = await execute(target, env, actions, {invariants: checkInvariants});
+      let result = await execute(target, env, actions, {
+        invariants: checkInvariants,
+        checkDeadline: options.checkDeadline
+      });
       runs++;
       // The prefix must reproduce the state it was reached from.
       let replayed = result.observations[state.actions.length];
       if (
-        replayed !== undefined &&
-        stableStringify(replayed) !== stableStringify(state.observation)
+        (result.status === 'violation' && result.step < actions.length) ||
+        (replayed !== undefined && stableStringify(replayed) !== stableStringify(state.observation))
       )
         return {
           ...summary('error'),
@@ -267,9 +293,9 @@ export async function explore(target, env, options = {}) {
           expected: state.observation,
           actual: replayed
         };
-      if (result.status === 'error' || result.status === 'disabled')
+      if (['error', 'disabled', 'timed-out'].includes(result.status))
         return {
-          ...summary('error'),
+          ...summary(result.status === 'timed-out' ? 'timed-out' : 'error'),
           error:
             result.status === 'disabled'
               ? `Action ${result.action} was enabled during search but not on replay.`
@@ -298,10 +324,10 @@ export async function explore(target, env, options = {}) {
  * Replays a trace and reports whether its invariant fails. `reproduced` requires
  * the same invariant to fail; a different failure is reported as such.
  */
-export async function replay(target, env, input) {
+export async function replay(target, env, input, options = {}) {
   if (input?.schemaVersion !== 1 || input.target !== target.name || !Array.isArray(input.actions))
     throw new Error(`Expected a schemaVersion 1 trace for ${target.name}.`);
-  let result = await execute(target, env, input.actions);
+  let result = await execute(target, env, input.actions, options);
   let failure = result.failures?.find(item => item.invariant === input.invariant);
   return {
     schemaVersion: 1,

@@ -13,11 +13,13 @@
 import base from '../vitest.browser.config';
 import type {CDPSession} from 'playwright';
 import {defineConfig} from 'vitest/config';
-import {writeFileSync} from 'node:fs';
+import {readFileSync, writeFileSync} from 'node:fs';
 
-// Invoked by verification/targets.mjs with a VERIFY_REQUEST describing one
+// Invoked by verification/targets.mjs with a VERIFY_REQUEST_PATH file describing one
 // explore or replay run. jsdom is used for search; Chromium for replaying traces.
-let request = JSON.parse(process.env.VERIFY_REQUEST || 'null');
+let request = process.env.VERIFY_REQUEST_PATH
+  ? JSON.parse(readFileSync(process.env.VERIFY_REQUEST_PATH, 'utf8'))
+  : null;
 if (!request) {
   throw new Error('Run targets through `yarn verify explore` or `yarn verify replay`.');
 }
@@ -32,7 +34,9 @@ export default defineConfig({
     include: ['verification/targets.runner.tsx'],
     setupFiles: [],
     ...(chromium ? {} : {environment: 'jsdom'}),
-    testTimeout: request.timeoutMs,
+    // Cooperative deadlines preserve the environment until cleanup finishes.
+    // The parent process terminates hung actions or model checks.
+    testTimeout: 0,
     browser: chromium
       ? {
           ...base.test!.browser,

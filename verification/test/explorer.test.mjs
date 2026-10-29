@@ -11,12 +11,14 @@
  */
 
 import assert from 'node:assert/strict';
+import {cleanup, deadline} from '../runtime.mjs';
 import {defineTarget, execute, explore, replay} from '../explorer.mjs';
 import {discoverTargets, runTarget} from '../targets.mjs';
 import {fileURLToPath} from 'node:url';
 import {join} from 'node:path';
 import {main} from '../cli.mjs';
 import {mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {runProcess} from '../process.mjs';
 import {test} from 'node:test';
 import {tmpdir} from 'node:os';
 
@@ -144,7 +146,7 @@ test('targets run in Vitest with evidence outside the checkout', async t => {
   let output = directory(t);
   let requests = [];
   let execute = async (command, args, options) => {
-    let request = JSON.parse(options.env.VERIFY_REQUEST);
+    let request = JSON.parse(readFileSync(options.env.VERIFY_REQUEST_PATH, 'utf8'));
     requests.push({command, args, request});
     writeFileSync(
       request.output,
@@ -213,4 +215,205 @@ test('CLI validates explore and replay options before running', async t => {
   let output;
   assert.equal(await main(['list', '--json'], root, value => (output = value)), 0);
   assert.deepEqual(JSON.parse(output).targets, ['example']);
+});
+
+test('a violation in an already explored prefix is nondeterminism, not a counterexample', async () => {
+  for (let failAt of [0, 1]) {
+    let setups = 0;
+    let target = counter({
+      setup: () => ({count: 0, run: ++setups}),
+      actions: {acquire: ctx => ctx.count++},
+      observe: ctx => ctx.count,
+      invariants: {Stable: ctx => ctx.run < 3 || ctx.count < failAt}
+    });
+    let result = await explore(target, env);
+    assert.equal(result.status, 'error');
+    assert.match(result.error, /Nondeterministic/);
+    assert.deepEqual(result.violations, []);
+  }
+});
+
+test('errors and disabled actions use one-based steps, with setup at zero', async () => {
+  let target = counter({
+    actions: {
+      ok: () => {},
+      boom: () => {
+        throw new Error('boom');
+      },
+      off: {enabled: () => false, run: () => {}}
+    }
+  });
+  assert.equal((await execute(target, env, ['boom'])).step, 1);
+  assert.equal((await execute(target, env, ['ok', 'boom'])).step, 2);
+  assert.equal((await execute(target, env, ['ok', 'off'])).step, 2);
+  assert.equal(
+    (
+      await execute(
+        counter({
+          setup: () => {
+            throw new Error('setup');
+          }
+        }),
+        env,
+        []
+      )
+    ).step,
+    0
+  );
+});
+
+test('omitted guards default to enabled and invalid guards fail at definition', async () => {
+  let target = counter({actions: {acquire: {enabled: undefined, run: ctx => ctx.count++}}});
+  assert.equal((await execute(target, env, ['acquire'])).status, 'completed');
+  assert.throws(
+    () => counter({actions: {acquire: {enabled: false, run: () => {}}}}),
+    /enabled function/
+  );
+});
+
+test('deadlines stop exploration and replay after cleanup, even with a fake Date', async () => {
+  let original = Date.now;
+  let cleaned = 0;
+  let target = counter({
+    setup: () => {
+      Date.now = () => 0;
+      return {count: 0};
+    },
+    actions: {
+      slow: async ctx => {
+        await new Promise(resolve => setTimeout(resolve, 20));
+        ctx.count++;
+      }
+    },
+    teardown: () => {
+      cleaned++;
+      Date.now = original;
+    },
+    invariants: {Safe: () => true}
+  });
+  try {
+    let result = await explore(target, env, {checkDeadline: deadline(10)});
+    assert.equal(result.status, 'timed-out');
+    assert.ok(result.durationMs >= 0);
+    assert.equal(cleaned, result.runs);
+    let replayed = await replay(
+      target,
+      env,
+      {schemaVersion: 1, target: 'counter', invariant: 'Safe', actions: ['slow']},
+      {checkDeadline: deadline(10)}
+    );
+    assert.equal(replayed.status, 'timed-out');
+  } finally {
+    Date.now = original;
+  }
+});
+
+test('cleanup restores resources after earlier failures and elapsed time survives failed teardown', async () => {
+  let steps = [];
+  await assert.rejects(
+    cleanup(
+      () => {
+        steps.push('unmount');
+        throw new Error('unmount failed');
+      },
+      async () => {
+        steps.push('cancel');
+        throw new Error('cancel failed');
+      },
+      () => steps.push('restore listeners'),
+      () => steps.push('remove DOM'),
+      () => steps.push('restore timers')
+    ),
+    AggregateError
+  );
+  assert.deepEqual(steps, [
+    'unmount',
+    'cancel',
+    'restore listeners',
+    'remove DOM',
+    'restore timers'
+  ]);
+  let original = Date.now;
+  try {
+    let result = await explore(
+      counter({
+        setup: () => {
+          Date.now = () => 0;
+          return {count: 0};
+        },
+        teardown: () => {
+          throw new Error('teardown failed');
+        }
+      }),
+      env
+    );
+    assert.equal(result.status, 'error');
+    assert.ok(result.durationMs >= 0);
+  } finally {
+    Date.now = original;
+  }
+});
+
+test('failed, interrupted and timed-out runners override saved successes in every mode', async t => {
+  let root = fileURLToPath(new URL('../..', import.meta.url));
+  let output = directory(t);
+  let trace = join(output, 'trace.json');
+  writeFileSync(
+    trace,
+    JSON.stringify({schemaVersion: 1, actions: [], observations: ['x'.repeat(200000)]})
+  );
+  for (let mode of ['explore', 'replay', 'check', 'conform']) {
+    for (let processResult of [
+      {code: 1},
+      {code: 0, timedOut: true},
+      {code: 0, interrupted: true},
+      {code: 0, error: 'log write failed'}
+    ]) {
+      let result = await runTarget(
+        root,
+        'use-press',
+        {mode, output, trace},
+        {
+          execute: async (_command, _args, options) => {
+            assert.equal(options.env.VERIFY_REQUEST, undefined);
+            let request = JSON.parse(readFileSync(options.env.VERIFY_REQUEST_PATH, 'utf8'));
+            if (mode === 'replay') assert.equal(request.trace.observations[0].length, 200000);
+            writeFileSync(
+              request.output,
+              JSON.stringify({
+                status:
+                  mode === 'conform' ? 'conforms' : mode === 'replay' ? 'not-reproduced' : 'passed'
+              })
+            );
+            return processResult;
+          }
+        }
+      );
+      assert.equal(result.exitCode, 2);
+      assert.equal(
+        result.status,
+        processResult.timedOut ? 'timed-out' : processResult.interrupted ? 'interrupted' : 'error'
+      );
+    }
+  }
+});
+
+test('process startup failures resolve as errors and hung runners are terminated', async t => {
+  let output = directory(t);
+  let invalid = await runProcess('invalid\0command', [], {
+    log: join(output, 'invalid.log'),
+    timeoutMs: 1000
+  });
+  assert.match(invalid.error, /null bytes/);
+  let missing = await runProcess(join(output, 'missing'), [], {
+    log: join(output, 'missing.log'),
+    timeoutMs: 1000
+  });
+  assert.match(missing.error, /ENOENT/);
+  let timedOut = await runProcess(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], {
+    log: join(output, 'timeout.log'),
+    timeoutMs: 100
+  });
+  assert.equal(timedOut.timedOut, true);
+  assert.notEqual(timedOut.code, 0);
 });

@@ -83,6 +83,8 @@ export async function runTarget(root, name, options = {}, dependencies = {}) {
     options: {depth: options.depth, maxRuns: options.maxRuns},
     trace
   };
+  let requestPath = join(directory, 'request.json');
+  writeFileSync(requestPath, JSON.stringify(request));
   let log = join(directory, 'vitest.log');
   options.onProgress?.(`Running ${mode} for ${name} in ${environment}. Evidence: ${directory}`);
   let processResult = await execute(
@@ -93,7 +95,7 @@ export async function runTarget(root, name, options = {}, dependencies = {}) {
       env: {
         ...(options.env || process.env),
         COREPACK_ENABLE_NETWORK: '0',
-        VERIFY_REQUEST: JSON.stringify(request)
+        VERIFY_REQUEST_PATH: requestPath
       },
       // Leave time for Vitest and the browser to start and stop.
       timeoutMs: timeoutMs + 60000,
@@ -112,6 +114,25 @@ export async function runTarget(root, name, options = {}, dependencies = {}) {
           ? 'interrupted'
           : 'error',
       error: `Vitest did not produce a result. See ${log}.`,
+      output: processResult.output?.slice(-4000)
+    };
+  }
+  if (
+    processResult.timedOut ||
+    processResult.interrupted ||
+    processResult.error ||
+    processResult.code !== 0
+  ) {
+    result = {
+      ...result,
+      status: processResult.timedOut
+        ? 'timed-out'
+        : processResult.interrupted
+          ? 'interrupted'
+          : 'error',
+      error:
+        processResult.error ||
+        `Vitest ${processResult.timedOut ? 'timed out' : processResult.interrupted ? 'was interrupted' : `failed (exit ${processResult.code}, signal ${processResult.signal ?? 'none'})`}. See ${log}.`,
       output: processResult.output?.slice(-4000)
     };
   }
