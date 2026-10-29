@@ -87,7 +87,9 @@
     "blc:local": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u http://localhost:1234/",
     "blc:prod": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u https://react-spectrum.adobe.com/",
     "createRssFeed": "node scripts/createFeed.mjs",
-    "releaseNotes": "node scripts/changelog.js"
+    "releaseNotes": "node scripts/changelog.js",
+    "verify": "node verification/cli.mjs",
+    "test:verification": "node --test verification/test/*.test.mjs"
   },
   "devDependencies": {
     "@actions/core": "^1.10.0",

@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "name": "use-press",
+  "description": "Bounded pointer lifecycle model and real-hook implementation checks.",
+  "properties": [
+    {
+      "id": "PointerOwnership",
+      "contract": "Canceling another pointer preserves the active press, avoiding lost activations."
+    },
+    {
+      "id": "ActivationUnique",
+      "contract": "One attempt produces at most one onPress, avoiding duplicate actions."
+    },
+    {
+      "id": "CancellationSafe",
+      "contract": "Canceling an active attempt prevents later activation of that attempt."
+    },
+    {
+      "id": "LifecycleBalanced",
+      "contract": "While mounted and without exit/reentry, callback starts and ends balance with the outstanding start. Unmount does not promise an end callback."
+    },
+    {
+      "id": "CleanupComplete",
+      "contract": "Cancellation and unmount remove document listeners and pending fallback timers."
+    }
+  ],
+  "sources": [
+    {
+      "path": "packages/react-aria/src/interactions/usePress.ts",
+      "functions": ["triggerPressStart", "triggerPressEnd", "cancel", "usePress"],
+      "properties": [
+        "PointerOwnership",
+        "ActivationUnique",
+        "CancellationSafe",
+        "LifecycleBalanced",
+        "CleanupComplete"
+      ],
+      "mapping": "PointerDown, Stop, PointerCancel, Disable, PointerUp, OtherPointerCancel, NativeClick, Fallback, and Unmount; see README for handler boundaries."
+    },
+    {
+      "path": "packages/react-aria/src/utils/useGlobalListeners.ts",
+      "functions": ["useGlobalListeners"],
+      "properties": [
+        "PointerOwnership",
+        "ActivationUnique",
+        "CancellationSafe",
+        "LifecycleBalanced",
+        "CleanupComplete"
+      ],
+      "mapping": "Listener registration/removal and unmount cleanup, abstracted as h.listeners."
+    },
+    {
+      "path": "packages/react-aria/src/utils/isVirtualEvent.ts",
+      "functions": ["isVirtualPointerEvent", "isVirtualClick"],
+      "properties": [
+        "PointerOwnership",
+        "ActivationUnique",
+        "CancellationSafe",
+        "LifecycleBalanced",
+        "CleanupComplete"
+      ],
+      "mapping": "Selected non-virtual pointer and detail=1 click classification assumptions."
+    },
+    {
+      "path": "packages/react-aria/src/utils/useEffectEvent.ts",
+      "functions": ["useEffectEvent"],
+      "properties": [
+        "PointerOwnership",
+        "ActivationUnique",
+        "CancellationSafe",
+        "LifecycleBalanced",
+        "CleanupComplete"
+      ],
+      "mapping": "Latest committed callbacks after disabled rerenders; concurrent rendering excluded."
+    }
+  ],
+  "bounds": "One connected target, one activation attempt, two pointer IDs, and up to 8 model transitions. Implementation checks exercise selected traces; timer checks advance 100 ms past the 80 ms fallback.",
+  "assumptions": [
+    "Non-virtual pointer input and detail=1 native clicks.",
+    "The initiating pointer stays over the target.",
+    "Passive user callbacks; each modeled handler/effect is synchronous and indivisible.",
+    "Disabled changes are committed before subsequent input."
+  ],
+  "exclusions": [
+    "Keyboard/Meta handling, independent virtual activations, and device/assistive-technology heuristics.",
+    "Pointer leave/reenter, multiple gestures, and disabled-at-pointerdown behavior.",
+    "Portals, Shadow DOM, detached/replaced targets, and link navigation.",
+    "Callback reentrancy, callback exceptions, nested responders, and concurrent React rendering.",
+    "Focus/text-selection side effects and liveness."
+  ],
+  "verificationFiles": [
+    "verification/use-press/UsePress.tla",
+    "verification/use-press/Safety.cfg",
+    "verification/use-press/Ownership.cfg",
+    "verification/use-press/README.md",
+    "verification/use-press/vitest.config.ts",
+    "verification/use-press/mutations.mjs",
+    "packages/react-aria/test/interactions/usePress.verification.browser.tsx",
+    "vitest.browser.config.ts",
+    "test/browser/setup.ts",
+    "packages/react-aria/test/interactions/usePress.test.js",
+    "jest.config.js",
+    "scripts/setupTests.js",
+    "lib/jestResolver.js",
+    "verification/use-press/replay.mjs",
+    "packages/react-aria/test/interactions/usePress.replay.browser.tsx",
+    "packages/react-aria/test/interactions/usePress.verification.utils.tsx"
+  ],
+  "tools": {
+    "tlc": {
+      "version": "1.7.4 (TLC 2.19)",
+      "jarEnv": "TLA2TOOLS_JAR",
+      "sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+      "minimumJavaVersion": 11,
+      "acquisition": "Follow verification/use-press/README.md#agent-tool-setup. Keep Java and the checksum-verified JAR outside the checkout."
+    },
+    "tla-ts": {
+      "version": "0.0.3",
+      "directoryEnv": "TLA_TS_DIR",
+      "sha256": "b3ea3357de98c19e6b649dff1b3f269952236df6f47d0267078edfdb74337367",
+      "acquisition": "Follow verification/use-press/README.md#optional-tla-ts-backend. Extract the pinned npm package outside the checkout."
+    }
+  },
+  "checks": [
+    {
+      "id": "safety",
+      "kind": "tlc",
+      "properties": [
+        "ActivationUnique",
+        "CancellationSafe",
+        "LifecycleBalanced",
+        "CleanupComplete"
+      ],
+      "model": "verification/use-press/UsePress.tla",
+      "config": "verification/use-press/Safety.cfg",
+      "timeoutMs": 120000
+    },
+    {
+      "id": "ownership",
+      "kind": "tlc",
+      "properties": ["PointerOwnership"],
+      "model": "verification/use-press/UsePress.tla",
+      "config": "verification/use-press/Ownership.cfg",
+      "timeoutMs": 120000
+    },
+    {
+      "id": "browser",
+      "kind": "vitest",
+      "properties": [
+        "PointerOwnership",
+        "ActivationUnique",
+        "CancellationSafe",
+        "LifecycleBalanced",
+        "CleanupComplete"
+      ],
+      "testFile": "packages/react-aria/test/interactions/usePress.verification.browser.tsx",
+      "config": "verification/use-press/vitest.config.ts",
+      "project": "chromium-desktop",
+      "browser": "chromium",
+      "timeoutMs": 180000,
+      "testNamePatterns": {
+        "PointerOwnership": "pointer ownership:",
+        "ActivationUnique": "activation uniqueness:",
+        "CancellationSafe": "cancellation safety:",
+        "LifecycleBalanced": "lifecycle balance:",
+        "CleanupComplete": "resource cleanup:"
+      }
+    },
+    {
+      "id": "regression",
+      "kind": "jest",
+      "properties": [
+        "PointerOwnership",
+        "ActivationUnique",
+        "CancellationSafe",
+        "LifecycleBalanced",
+        "CleanupComplete"
+      ],
+      "testFile": "packages/react-aria/test/interactions/usePress.test.js",
+      "config": "jest.config.js",
+      "timeoutMs": 120000
+    }
+  ],
+  "mutationEnvironment": ["USE_PRESS_MUTATION"],
+  "replay": {
+    "adapterId": "use-press-pointer-v1",
+    "adapter": "verification/use-press/replay.mjs",
+    "check": "browser",
+    "testFile": "packages/react-aria/test/interactions/usePress.replay.browser.tsx",
+    "testNamePattern": "counterexample replay",
+    "traceEnvironment": "USE_PRESS_TRACE",
+    "resultEnvironment": "USE_PRESS_REPLAY_RESULT"
+  },
+  "validation": {
+    "check": "browser",
+    "source": "packages/react-aria/src/interactions/usePress.ts",
+    "environment": "USE_PRESS_MUTATION",
+    "receiptEnvironment": "USE_PRESS_MUTATION_RECEIPT",
+    "mutations": [
+      {
+        "id": "cancel-activates",
+        "property": "CancellationSafe",
+        "testNamePattern": "cancellation safety: pointercancel",
+        "failureMarker": "verification:CancellationSafe:activation",
+        "replayActions": ["PointerDown", "PointerCancel"]
+      },
+      {
+        "id": "duplicate-press",
+        "property": "ActivationUnique",
+        "testNamePattern": "activation uniqueness",
+        "failureMarker": "verification:ActivationUnique:callbacks",
+        "replayActions": ["PointerDown", "PointerUp", "NativeClick"]
+      },
+      {
+        "id": "unbalanced-end",
+        "property": "LifecycleBalanced",
+        "testNamePattern": "lifecycle balance",
+        "failureMarker": "verification:LifecycleBalanced:ends",
+        "replayActions": ["PointerDown", "PointerUp", "NativeClick"]
+      },
+      {
+        "id": "leak-timer",
+        "property": "CleanupComplete",
+        "testNamePattern": "resource cleanup",
+        "failureMarker": "verification:CleanupComplete:timers",
+        "replayActions": ["PointerDown", "PointerUp", "Disable"]
+      }
+    ]
+  }
+}

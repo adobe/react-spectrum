@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-21",
+  "reviewedCommit": "6e6fb8b415290e87884f33e25a181f27facce980",
+  "note": "Migrated the pilot source-correspondence baseline without renewing it. Source hashes come from the recorded commit; retained model/check artifacts and the updated scope/instructions were fingerprinted on 2026-10-23. Intervening source edits still require review. This record contains no verification result.",
+  "sourceFiles": {
+    "packages/react-aria/src/interactions/usePress.ts": "afcc52502d3ba663c2cb3bff0fb53c4260e4f10042cb082213ab212eb4983812",
+    "packages/react-aria/src/utils/useGlobalListeners.ts": "f3f3208edfb1b05c78d217fd47a07942bc18f061766d84e26c85c74c21de324a",
+    "packages/react-aria/src/utils/isVirtualEvent.ts": "fa72ab21e26ecdc4057a66726850cc9002d4d4b9831581e81ca9b5588b1e11ca",
+    "packages/react-aria/src/utils/useEffectEvent.ts": "1f1c9b24159df7aa7a245cf5415cebb0b583b07062a17d17ddb1bde022ec00c2"
+  },
+  "verificationFiles": {
+    "verification/use-press/UsePress.tla": "f65ce1b8244d65812d309080e819fa6f6cf6f7377f59d2ebe6fda7352dd6781d",
+    "verification/use-press/Safety.cfg": "7c2fe18c880ef0375614d611e6277b0f094b970ec647f246edcfbc42a2791f88",
+    "verification/use-press/Ownership.cfg": "e640778837a241cc66e9dd6a6aa8d408f0c56f0f5ba45747e5e4ef7e3dd694ea",
+    "verification/use-press/README.md": "b1a2b7692eb6a867054c7bb8745c370408f861a0e06b0b3aabd0c63dec72ba83",
+    "verification/use-press/vitest.config.ts": "8f7e4463f6e3d4a1042f824b166a58e7d860e134feab1f27d75eeba26523b595",
+    "verification/use-press/mutations.mjs": "368aca59c07224446fdb0c94349578b4613a037156781c574b501d27395b092e",
+    "packages/react-aria/test/interactions/usePress.verification.browser.tsx": "d95c93cff2424edcc18028ffbf2c54162857856c2ec820d688c25380f75a33f3",
+    "vitest.browser.config.ts": "9c40a05047f36b48ed7028db2ba586ad1ff2abe33af546ce989b55b2e443439f",
+    "test/browser/setup.ts": "49bd397d52a8662232042b24bf1083d5613e0624a36a6f6321dd0cb59ff4bd3c"
+  }
+}
