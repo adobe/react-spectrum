@@ -34,9 +34,9 @@ body:
     attributes:
       label: StackBlitz Reproduction
       description: |
-          Share a link to a minimal StackBlitz project that reproduces the issue. Include only the code needed to demonstrate the problem.
+        Share a link to a minimal StackBlitz project that reproduces the issue. Include only the code needed to demonstrate the problem.
 
-          To get started, open an example in our docs and choose “Open in StackBlitz” from the menu next to the example. Fork and save your project before sharing the link. If you cannot provide a StackBlitz reproduction, explain why.
+        To get started, open an example in our docs and choose “Open in StackBlitz” from the menu next to the example. Fork and save your project before sharing the link. If you cannot provide a StackBlitz reproduction, explain why.
     validations:
       required: true
   - type: textarea
