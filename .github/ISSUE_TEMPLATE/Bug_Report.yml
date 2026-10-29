@@ -25,8 +25,26 @@ body:
     attributes:
       label: 😯 Current Behavior
       description: |
-        Tell us what happens instead of the expected behavior. Please include a link to our docs, our storybook, or a StackBlitz reproduction if possible.
+        Tell us what happens instead of the expected behavior.
         If you are seeing an error, please include the full error message and stack trace.
+    validations:
+      required: true
+  - type: input
+    id: stackblitz-link
+    attributes:
+      label: StackBlitz Reproduction
+      description: |
+          Share a link to a minimal StackBlitz project that reproduces the issue. Include only the code needed to demonstrate the problem.
+
+          To get started, open an example in our docs and choose “Open in StackBlitz” from the menu next to the example. Fork and save your project before sharing the link. If you cannot provide a StackBlitz reproduction, explain why.
+    validations:
+      required: true
+  - type: textarea
+    id: base-reproduction
+    attributes:
+      label: 🖥️ Steps to Reproduce
+      description: |
+        List the exact steps needed to trigger the issue in your example.
     validations:
       required: true
   - type: textarea
@@ -45,25 +63,17 @@ body:
         How has this issue affected you? What are you trying to accomplish?
     validations:
       required: true
-  - type: textarea
-    id: base-reproduction
-    attributes:
-      label: 🖥️ Steps to Reproduce
-      description: |
-        Provide a minimal test case that can reproduce the problem. Include a StackBlitz, link to sample repos, or specific doc examples to help us test your issue more easily.
-
-        To get a StackBlitz template, go to an example in the docs and select the "Open in StackBlitz" option in the menu next to the example.
-        Be sure to fork/save the StackBlitz project before sharing the link.
-    validations:
-      required: true
   - type: markdown
     attributes:
       value: '## 🌍 Your Environment'
-  - type: input
+  - type: textarea
     id: version
     attributes:
       label: Version
-      description: What version of react-spectrum are you running?
+      description: List the affected packages(s) and the exact install version of each.
+      placeholder: |
+        react-aria-components@<version>
+        @react-spectrum/s2@<version>
     validations:
       required: true
   - type: dropdown
