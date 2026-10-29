@@ -48,6 +48,18 @@
  * @property {(ctx: Ctx) => unknown} observe JSON state used to merge equivalent states.
  * @property {Record<string, (ctx: Ctx) => boolean | string>} invariants Return true when the
  *   invariant holds, or false/a message when it fails.
+ * @property {TargetModel} [model] A TLA+ model of the same behavior; see model.mjs.
+ */
+
+/**
+ * @typedef {object} TargetModel
+ * @property {string} spec The .tla file, relative to the target's directory.
+ * @property {(observation: any) => Record<string, unknown>} project Maps an observation
+ *   onto the model's `View` record, for conformance.
+ * @property {number} [depth] Default model-checking depth; defaults to bounds.depth.
+ * @property {string[]} [invariants] Model operators to check; defaults to the target's
+ *   invariant names.
+ * @property {Record<string, unknown>} [constants] Extra CONSTANT values, as JSON.
  */
 
 /**
@@ -70,6 +82,13 @@ export function defineTarget(spec) {
   let actions = Object.entries(spec.actions || {});
   if (!actions.length) fail('at least one action is required.');
   if (!Object.keys(spec.invariants || {}).length) fail('at least one invariant is required.');
+  if (
+    spec.model !== undefined &&
+    (typeof spec.model?.spec !== 'string' ||
+      !spec.model.spec.endsWith('.tla') ||
+      typeof spec.model.project !== 'function')
+  )
+    fail('model needs a .tla spec and a project function.');
   return {
     ...spec,
     actions: Object.fromEntries(
@@ -110,7 +129,7 @@ function failedInvariants(target, ctx) {
 // Runs one action sequence from a fresh setup, stopping at the first failure.
 // `status` is 'completed', 'violation', 'disabled' (an action was not enabled),
 // or 'error' (setup, an action, an invariant, or observe threw).
-export async function execute(target, env, actions) {
+export async function execute(target, env, actions, {invariants = true} = {}) {
   let ctx;
   let observations = [];
   let step = 0;
@@ -120,7 +139,7 @@ export async function execute(target, env, actions) {
     ctx = await target.setup(env);
     let record = () => observations.push(JSON.parse(stableStringify(target.observe(ctx) ?? null)));
     target.check?.(ctx);
-    let failures = failedInvariants(target, ctx);
+    let failures = invariants ? failedInvariants(target, ctx) : [];
     record();
     for (; !failures.length && step < actions.length; step++) {
       current = actions[step];
@@ -132,7 +151,7 @@ export async function execute(target, env, actions) {
       }
       await action.run(ctx);
       target.check?.(ctx);
-      failures = failedInvariants(target, ctx);
+      failures = invariants ? failedInvariants(target, ctx) : [];
       record();
     }
     result ??= failures.length
@@ -172,6 +191,9 @@ function trace(target, actions, failure, observations) {
  * Searches all enabled action sequences up to `depth`, merging sequences that
  * reach the same observation. Each invariant reports its first, and therefore
  * shortest, violating trace. Sequences are not extended past a violation.
+ * `invariants: false` skips them; `collect: true` returns the path and observations
+ * of every run, including runs that reach an already-seen state, so that model
+ * conformance covers every explored transition.
  */
 export async function explore(target, env, options = {}) {
   let depth = options.depth ?? target.bounds.depth;
@@ -198,7 +220,8 @@ export async function explore(target, env, options = {}) {
     coverage,
     neverEnabled: Object.keys(coverage).filter(name => !coverage[name].enabled),
     neverRan: Object.keys(coverage).filter(name => !coverage[name].ran),
-    violations: [...violations.values()]
+    violations: [...violations.values()],
+    ...(options.collect ? {paths} : {})
   });
 
   let record = (actions, result) => {
@@ -207,7 +230,9 @@ export async function explore(target, env, options = {}) {
         violations.set(failure.invariant, trace(target, actions, failure, result.observations));
   };
 
-  let root = await execute(target, env, []);
+  let checkInvariants = options.invariants !== false;
+  let paths = [];
+  let root = await execute(target, env, [], {invariants: checkInvariants});
   runs++;
   if (root.status === 'error') return {...summary('error'), error: root.error, actions: []};
   if (root.status === 'violation') {
@@ -215,6 +240,7 @@ export async function explore(target, env, options = {}) {
     return summary('violations');
   }
   seen.set(stableStringify(root.observations.at(-1)), []);
+  paths.push({actions: [], observations: root.observations});
   let frontier = [{actions: [], enabled: root.enabled, observation: root.observations.at(-1)}];
   for (; level < depth && frontier.length; level++) {
     let next = [];
@@ -226,7 +252,7 @@ export async function explore(target, env, options = {}) {
         break;
       }
       let actions = [...state.actions, name];
-      let result = await execute(target, env, actions);
+      let result = await execute(target, env, actions, {invariants: checkInvariants});
       runs++;
       // The prefix must reproduce the state it was reached from.
       let replayed = result.observations[state.actions.length];
@@ -251,6 +277,7 @@ export async function explore(target, env, options = {}) {
           actions
         };
       coverage[name].ran++;
+      if (options.collect) paths.push({actions, observations: result.observations});
       if (result.status === 'violation') {
         record(actions, result);
         continue;

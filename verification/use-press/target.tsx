@@ -150,6 +150,15 @@ export default defineTarget<Context>({
     'packages/react-aria/src/utils/useEffectEvent.ts'
   ],
   bounds: {depth: 8},
+  model: {
+    spec: 'UsePress.tla',
+    // UsePress.tla's View tracks whether a timer or document listener exists.
+    project: ({timers, listeners, ...rest}) => ({
+      ...rest,
+      timer: timers > 0,
+      listeners: listeners.length > 0
+    })
+  },
   async setup(env) {
     vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
     let host = document.createElement('div');

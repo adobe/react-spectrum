@@ -52,6 +52,8 @@ function evidenceDirectory(root, output, name) {
 export function exitCode(result) {
   if (result.mode === 'replay')
     return result.status === 'reproduced' ? 1 : result.status === 'not-reproduced' ? 0 : 2;
+  if (result.mode === 'conform')
+    return result.status === 'conforms' ? 0 : result.status === 'mismatch' ? 1 : 2;
   return result.status === 'passed' ? 0 : result.status === 'violations' ? 1 : 2;
 }
 
@@ -62,6 +64,8 @@ export async function runTarget(root, name, options = {}, dependencies = {}) {
   let environment = options.environment || (mode === 'replay' ? 'chromium' : 'jsdom');
   if (!['jsdom', 'chromium'].includes(environment))
     throw new Error('--environment must be jsdom or chromium.');
+  if (['check', 'conform'].includes(mode) && environment !== 'jsdom')
+    throw new Error(`${mode} runs in jsdom only.`);
   let trace;
   if (mode === 'replay') {
     if (!options.trace) throw new Error('replay requires --trace <file>.');

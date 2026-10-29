@@ -4,7 +4,9 @@
 
 ```sh
 yarn verify explore use-press
-yarn verify replay use-press --trace <path printed by explore>
+yarn verify conform use-press
+yarn verify check use-press --depth 20
+yarn verify replay use-press --trace <path printed by explore or check>
 ```
 
 ## Actions and bounds
@@ -33,6 +35,12 @@ Pointer 1's press is `live` from pointerdown until it resolves. It is `activated
 | `NoLostActivation` | An activated press produces exactly one `onPress`. |
 | `LifecycleBalanced` | `pressend` never outnumbers `pressstart`, and while mounted, starts minus ends equals the pressed state. Unmount does not promise an end. |
 | `CleanupComplete` | Once the press resolves or the hook unmounts, no fallback timer or `pointerup`/`pointercancel`/`click` document listener remains. |
+
+## Model
+
+[UsePress.tla](UsePress.tla) models the same actions with the same guards and reference outcome. `s.h` follows the hook's state in `usePress.ts`; `Stop` is `triggerPressEnd` followed by `cancel`. It models the current code, bugs included: `OtherPointerCancel` ends the press because the document `pointercancel` listener does not compare `pointerId`. When the code changes, `conform` reports where the model is now wrong, and the model should be updated to match before `check` results are trusted.
+
+`View` abstracts timers and listeners to whether any exist. The model's state includes `step`, so its distinct-state count grows with depth even though the reachable hook states are exhausted by depth 8.
 
 ## Assumptions and exclusions
 

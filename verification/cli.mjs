@@ -21,19 +21,53 @@ const help = `Behavioral verification (local, opt-in)
   yarn verify list [--json]
   yarn verify explore <target> [--depth <n>] [--max-runs <n>] [--environment jsdom|chromium]
   yarn verify replay <target> --trace <file> [--environment chromium|jsdom]
+  yarn verify conform <target> [--depth <n>] [--max-runs <n>]
+  yarn verify check <target> [--depth <n>]
 
 explore runs every action sequence of verification/<target>/target.tsx up to the
 depth bound against the real code (jsdom by default) and writes one shortest trace
 per violated invariant. replay runs a trace again, by default in Chromium with
-Playwright and CDP input. Both accept --timeout-ms <ms>, --output <directory>
+Playwright and CDP input. For targets with a TLA+ model, conform checks that the
+real code's explored paths are behaviors of the model, and check model-checks each
+invariant with tla-ts (--depth up to 100) and writes counterexamples that replay
+runs against the real code. All accept --timeout-ms <ms>, --output <directory>
 (evidence goes in a fresh directory outside the checkout), and --json.
 
-Exit codes: explore: 0 no violations, 1 violations found, 2 incomplete/error.
+Exit codes: explore/check: 0 no violations, 1 violations found, 2 incomplete/error.
 replay: 0 not reproduced, 1 reproduced, 2 different failure/error.
+conform: 0 conforms, 1 mismatch, 2 error.
 See verification/README.md.`;
 
+function printViolations(result, write) {
+  for (let violation of result.violations || []) {
+    write(`  ${violation.invariant}: ${violation.detail}`);
+    write(`    ${violation.actions.join(' -> ')}`);
+    write(`    Replay: yarn verify replay ${result.target} --trace ${violation.path}`);
+  }
+}
+
 function printResult(result, write) {
-  if (result.mode === 'replay') {
+  if (result.mode === 'check') {
+    write(
+      `${result.target}: ${result.status} (model; depth ${result.depth}; ${result.durationMs} ms)`
+    );
+    for (let item of result.invariants || [])
+      write(
+        `  ${item.invariant}: ${item.status} (${item.distinctStates} distinct states)${item.error ? ` — ${item.error}` : ''}`
+      );
+    printViolations(result, write);
+  } else if (result.mode === 'conform') {
+    let exploration = result.exploration;
+    write(
+      `${result.target}: ${result.status}${result.traces === undefined ? '' : ` (${result.traces} traces, ${result.steps} steps from ${exploration.runs} runs of the real code; ${result.distinctStates} model states; ${result.durationMs} ms)`}`
+    );
+    if (result.mismatch) {
+      write(`  ${result.mismatch.detail}`);
+      write(`    ${result.mismatch.actions.join(' -> ')}`);
+    }
+    if (exploration?.neverEnabled?.length)
+      write(`  Never enabled (check guards or bounds): ${exploration.neverEnabled.join(', ')}`);
+  } else if (result.mode === 'replay') {
     write(
       `${result.target}: ${result.status} in ${result.environment}${result.step ? ` at step ${result.step}` : ''} (${result.invariant})`
     );
@@ -42,11 +76,7 @@ function printResult(result, write) {
     write(
       `${result.target}: ${result.status} (${result.environment}; depth ${result.depthReached}/${result.bounds?.depth}; ${result.runs} runs; ${result.distinctStates} distinct states; ${result.durationMs} ms)`
     );
-    for (let violation of result.violations || []) {
-      write(`  ${violation.invariant}: ${violation.detail}`);
-      write(`    ${violation.actions.join(' -> ')}`);
-      write(`    Replay: yarn verify replay ${result.target} --trace ${violation.path}`);
-    }
+    printViolations(result, write);
     if (result.neverEnabled?.length)
       write(`  Never enabled (check guards or bounds): ${result.neverEnabled.join(', ')}`);
   }
@@ -82,7 +112,10 @@ export async function main(
       return 0;
     }
     let [command, name] = positionals;
-    if (!['list', 'explore', 'replay'].includes(command) || positionals.length > 2)
+    if (
+      !['list', 'explore', 'replay', 'conform', 'check'].includes(command) ||
+      positionals.length > 2
+    )
       throw new Error('Unknown command or too many arguments. Use --help.');
     if (command === 'list') {
       if (name || Object.keys(values).some(key => key !== 'json'))
@@ -95,8 +128,10 @@ export async function main(
     if (!name) throw new Error(`${command} requires a target name.`);
     if (values.trace !== undefined && command !== 'replay')
       throw new Error('--trace requires replay.');
-    if ((values.depth !== undefined || values['max-runs'] !== undefined) && command !== 'explore')
-      throw new Error('--depth and --max-runs require explore.');
+    if (values.depth !== undefined && command === 'replay')
+      throw new Error('--depth requires explore, conform, or check.');
+    if (values['max-runs'] !== undefined && !['explore', 'conform'].includes(command))
+      throw new Error('--max-runs requires explore or conform.');
     if (values.output === '') throw new Error('--output must not be empty.');
     let count = (option, max) => {
       if (values[option] === undefined) return undefined;
@@ -109,7 +144,7 @@ export async function main(
       mode: command,
       environment: values.environment,
       trace: values.trace,
-      depth: count('depth', 20),
+      depth: count('depth', command === 'check' ? 100 : 20),
       maxRuns: count('max-runs', 1000000),
       timeoutMs: count('timeout-ms', 3600000),
       output: values.output,
