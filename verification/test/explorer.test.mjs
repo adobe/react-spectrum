@@ -165,6 +165,55 @@ test('replay distinguishes reproduced, not reproduced, other failures, and disab
   assert.deepEqual(teardown, [1]);
 });
 
+test('replay reports where the code first differs from the model, and each step', async () => {
+  let target = counter({model: {spec: 'Counter.tla', project: ({count}) => ({count, ok: true})}});
+  let trace = views => ({
+    schemaVersion: 1,
+    target: 'counter',
+    invariant: 'BelowTwo',
+    actions: ['acquire', 'acquire'],
+    views
+  });
+  let steps = [];
+  let same = await replay(
+    target,
+    env,
+    trace([
+      {count: 0, ok: true},
+      {count: 1, ok: true},
+      {count: 2, ok: true}
+    ]),
+    {onStep: async (index, action) => void steps.push([index, action])}
+  );
+  assert.equal(same.status, 'reproduced');
+  assert.equal(same.divergence, null);
+  assert.deepEqual(steps, [
+    [0, null],
+    [1, 'acquire'],
+    [2, 'acquire']
+  ]);
+  let differs = await replay(
+    target,
+    env,
+    trace([
+      {count: 0, ok: true},
+      {count: 2, ok: true, extra: 1},
+      {count: 2, ok: true}
+    ])
+  );
+  assert.deepEqual(differs.divergence, {
+    step: 1,
+    actions: ['acquire'],
+    fields: [
+      {field: 'count', model: 2, code: 1},
+      {field: 'extra', model: 1, code: null}
+    ]
+  });
+  // Explored traces have no Views to compare.
+  let explored = {...trace([]), views: undefined};
+  assert.equal('divergence' in (await replay(target, env, explored)), false);
+});
+
 test('targets run in Vitest with evidence outside the checkout', async t => {
   let root = fileURLToPath(new URL('../..', import.meta.url));
   assert.deepEqual(discoverTargets(root), [
@@ -233,6 +282,97 @@ test('targets run in Vitest with evidence outside the checkout', async t => {
     runTarget(root, 'toast-queue', {mode: 'replay', output}, {execute}),
     /--trace/
   );
+  await assert.rejects(
+    runTarget(root, 'toast-queue', {mode: 'explore', headed: true, output}, {execute}),
+    /--headed/
+  );
+});
+
+test('check replays its counterexamples on the real code in Chromium', async t => {
+  let root = fileURLToPath(new URL('../..', import.meta.url));
+  let output = directory(t);
+  let requests = [];
+  let views = [{count: 0}, {count: 1}];
+  let execute = async (_command, _args, options) => {
+    let request = JSON.parse(readFileSync(options.env.VERIFY_REQUEST_PATH, 'utf8'));
+    requests.push(request);
+    let result =
+      request.mode === 'check'
+        ? {
+            status: 'violations',
+            violations: [
+              {invariant: 'A', actions: ['add'], observations: [], views},
+              {invariant: 'B', actions: ['add'], observations: [], views}
+            ]
+          }
+        : {
+            status: 'replayed',
+            replays: [
+              {status: 'reproduced', step: 1, failures: [], divergence: null},
+              {
+                status: 'not-reproduced',
+                step: 1,
+                failures: [],
+                divergence: {step: 1, actions: ['add'], fields: []}
+              }
+            ]
+          };
+    writeFileSync(request.output, JSON.stringify(result));
+    return {code: 0};
+  };
+  let result = await runTarget(root, 'toast-queue', {mode: 'check', output}, {execute});
+  assert.equal(result.exitCode, 1);
+  assert.deepEqual(
+    requests.map(request => [request.mode, request.environment]),
+    [
+      ['check', 'jsdom'],
+      ['replay', 'chromium']
+    ]
+  );
+  assert.deepEqual(
+    requests[1].traces.map(trace => [trace.invariant, trace.views]),
+    [
+      ['A', views],
+      ['B', views]
+    ]
+  );
+  assert.notEqual(requests[0].output, requests[1].output);
+  assert.equal(result.violations[0].replay.status, 'reproduced');
+  assert.equal(result.violations[1].replay.divergence.step, 1);
+  assert.match(result.violations[1].replay.screenshots, /B\.steps$/);
+  // The saved trace is the model's counterexample, without the replay result.
+  let saved = JSON.parse(readFileSync(result.violations[0].path, 'utf8'));
+  assert.deepEqual(saved, {invariant: 'A', actions: ['add'], observations: [], views});
+  let lines = [];
+  printResult(result, line => lines.push(line));
+  assert.match(lines.join('\n'), /Chromium: reproduced at step 1/);
+  assert.match(
+    lines.join('\n'),
+    /Chromium: not-reproduced\n.*Code differs from the model after add/
+  );
+
+  // A replay that fails annotates the violations; the check's result stands.
+  let crashed = await runTarget(
+    root,
+    'toast-queue',
+    {mode: 'check', output},
+    {
+      execute: async (command, args, options) =>
+        requests.length % 2 ? {code: 1} : execute(command, args, options)
+    }
+  );
+  assert.equal(crashed.exitCode, 1);
+  assert.equal(crashed.violations[0].replay.status, 'error');
+
+  requests = [];
+  let skipped = await runTarget(
+    root,
+    'toast-queue',
+    {mode: 'check', replay: false, output},
+    {execute}
+  );
+  assert.equal(requests.length, 1);
+  assert.equal(skipped.violations[0].replay, undefined);
 });
 
 test('CLI validates explore and replay options before running', async t => {
@@ -249,7 +389,9 @@ test('CLI validates explore and replay options before running', async t => {
     ['confirm', 'example'],
     ['list', 'example'],
     ['run', 'example'],
-    ['explore', 'example', '--property', 'Safety']
+    ['explore', 'example', '--property', 'Safety'],
+    ['explore', 'example', '--no-replay'],
+    ['check', 'example', '--headed']
   ]) {
     let output;
     assert.equal(await main([...args, '--json'], root, value => (output = value)), 2);

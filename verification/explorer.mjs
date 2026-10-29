@@ -139,11 +139,12 @@ function failedInvariants(target, ctx) {
 // Runs one action sequence from a fresh setup, stopping at the first failure.
 // `status` is 'completed', 'violation', 'disabled' (an action was not enabled),
 // 'timed-out', or 'error' (setup, an action, an invariant, or observe threw).
+// `onStep(index, action)` runs after each observation, for screenshots.
 export async function execute(
   target,
   env,
   actions,
-  {invariants = true, checkDeadline = () => {}} = {}
+  {invariants = true, checkDeadline = () => {}, onStep = async () => {}} = {}
 ) {
   let ctx;
   let observations = [];
@@ -158,6 +159,7 @@ export async function execute(
     target.check?.(ctx);
     let failures = invariants ? failedInvariants(target, ctx) : [];
     record();
+    await onStep(0, null);
     while (!failures.length && step < actions.length) {
       current = actions[step];
       step++;
@@ -173,6 +175,7 @@ export async function execute(
       target.check?.(ctx);
       failures = invariants ? failedInvariants(target, ctx) : [];
       record();
+      await onStep(step, current);
     }
     result ??= failures.length
       ? {status: 'violation', step, failures}
@@ -216,9 +219,9 @@ function trace(target, actions, failure, observations) {
  * Searches all enabled action sequences up to `depth`, merging sequences that
  * reach the same observation. Each invariant reports its first, and therefore
  * shortest, violating trace. Sequences are not extended past a violation.
- * `invariants: false` skips them; `collect: true` returns the path and observations
- * of every run, including runs that reach an already-seen state, so that model
- * conformance covers every explored transition.
+ * `invariants: false` skips them; `collect: true` returns the path, observations,
+ * and finally enabled actions of every run, including runs that reach an
+ * already-seen state, so that model conformance covers every explored transition.
  */
 export async function explore(target, env, options = {}) {
   let depth = options.depth ?? target.bounds.depth;
@@ -273,7 +276,7 @@ export async function explore(target, env, options = {}) {
   }
   seen.set(stableStringify(root.observations.at(-1)), []);
   discovered(root.enabled);
-  paths.push({actions: [], observations: root.observations});
+  paths.push({actions: [], observations: root.observations, enabled: root.enabled});
   let frontier = [{actions: [], enabled: root.enabled, observation: root.observations.at(-1)}];
   for (; level < depth && frontier.length; level++) {
     let next = [];
@@ -312,7 +315,8 @@ export async function explore(target, env, options = {}) {
           actions
         };
       coverage[name].ran++;
-      if (options.collect) paths.push({actions, observations: result.observations});
+      if (options.collect)
+        paths.push({actions, observations: result.observations, enabled: result.enabled});
       if (result.status === 'violation') {
         record(actions, result);
         continue;
@@ -330,9 +334,27 @@ export async function explore(target, env, options = {}) {
   return summary(!complete ? 'incomplete' : violations.size ? 'violations' : 'passed');
 }
 
+// The first step where the code's projected observation differs from the
+// model's View, with the fields that differ.
+function divergence(target, actions, observations, views) {
+  let count = Math.min(observations.length, views.length);
+  for (let step = 0; step < count; step++) {
+    let code = target.model.project(observations[step]);
+    let model = views[step];
+    let fields = [...new Set([...Object.keys(code), ...Object.keys(model)])]
+      .sort()
+      .filter(field => stableStringify(code[field]) !== stableStringify(model[field]))
+      .map(field => ({field, model: model[field] ?? null, code: code[field] ?? null}));
+    if (fields.length) return {step, actions: actions.slice(0, step), fields};
+  }
+  return null;
+}
+
 /**
  * Replays a trace and reports whether its invariant fails. `reproduced` requires
- * the same invariant to fail; a different failure is reported as such.
+ * the same invariant to fail; a different failure is reported as such. For a
+ * model counterexample, which has the model's View at each step, `divergence` is
+ * the first step where the code's projected observation differs from it.
  */
 export async function replay(target, env, input, options = {}) {
   if (input?.schemaVersion !== 1 || input.target !== target.name || !Array.isArray(input.actions))
@@ -359,6 +381,9 @@ export async function replay(target, env, input, options = {}) {
     step: result.step,
     failures: result.failures ?? [],
     error: result.error ?? null,
-    observations: result.observations
+    observations: result.observations,
+    ...(Array.isArray(input.views) && target.model
+      ? {divergence: divergence(target, input.actions, result.observations, input.views)}
+      : {})
   };
 }

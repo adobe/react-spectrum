@@ -3,10 +3,10 @@
 [FocusScope.tla](FocusScope.tla) models two nested scopes and an outside button. The real adapter mounts `FocusScope` and checks its exported tree. [target.json](target.json) defaults exploration and conformance to Chromium: jsdom does not reproduce Chromium's focus events when a focused node is removed.
 
 ```sh
-yarn verify explore focus-scope
 yarn verify conform focus-scope
-yarn verify check focus-scope --depth 8
-yarn verify replay focus-scope --trace <printed trace path>
+yarn verify check focus-scope --depth 8  # replays each counterexample in Chromium
+yarn verify replay focus-scope --headed --trace <path printed by check>
+yarn verify explore focus-scope
 ```
 
 `MountPlain0/1` mounts with all flags false; `MountRestore0/1` enables restoreFocus and autoFocus; `MountContain0/1` additionally enables contain. `Unmount0/1`, `Focus0/1/2` (outside, outer, inner), and `RemoveOutside` exercise restoration, containment, and disconnected restore destinations. Mounting the inner scope requires the outer scope. Removing the outer scope removes both. Actions settle two animation frames before observation. Default real-code depth: 4; model checking can go deeper.

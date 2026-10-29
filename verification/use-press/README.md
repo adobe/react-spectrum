@@ -3,10 +3,10 @@
 [target.tsx](target.tsx) drives the real `usePress` hook on two `div` pressables with one press by pointer 1 and a second hook receiving touches by pointer 2, clicks, the 80 ms fallback timer, disable, and unmount.
 
 ```sh
-yarn verify explore use-press
 yarn verify conform use-press
-yarn verify check use-press --depth 20
-yarn verify replay use-press --trace <path printed by explore or check>
+yarn verify check use-press --depth 20  # replays each counterexample in Chromium
+yarn verify replay use-press --headed --trace <path printed by check>
+yarn verify explore use-press
 ```
 
 ## Actions and bounds

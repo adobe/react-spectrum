@@ -11,7 +11,7 @@
  */
 
 import assert from 'node:assert/strict';
-import {checkModel, conformModel, loadModel, toTla} from '../model.mjs';
+import {checkModel, conformModel, fromTla, loadModel, toTla} from '../model.mjs';
 import {defineTarget, explore} from '../explorer.mjs';
 import {join} from 'node:path';
 import {mkdtempSync, rmSync, writeFileSync} from 'node:fs';
@@ -45,6 +45,7 @@ function counterModel(
   {
     release = "count' = count - 1",
     acquire = "count' = count + 1",
+    guard = 'count < 2',
     init = 'count = 0',
     hidden = 'hidden = 0'
   } = {}
@@ -63,7 +64,7 @@ Next ==
   /\\ step < MaxSteps
   /\\ step' = step + 1
   /\\ hidden' = hidden
-  /\\ \\/ (count < 2 /\\ ${acquire} /\\ action' = "acquire")
+  /\\ \\/ (${guard} /\\ ${acquire} /\\ action' = "acquire")
      \\/ (${release} /\\ action' = "release")
 View == [count |-> count]
 NonNegative == count >= 0
@@ -85,6 +86,26 @@ test('TLA+ values are converted from JSON', () => {
   assert.throws(() => toTla(null), /project/);
 });
 
+test('TLA+ values are converted back to JSON', async () => {
+  let {check} = await import('tla-ts');
+  let result = await check({
+    source: `---- MODULE Values ----
+VARIABLE x
+Init == x = [a |-> <<3, 1>>, b |-> {"p"}, c |-> <<>>, d |-> [k |-> TRUE]]
+Next == UNCHANGED x
+Inv == x.a = <<>>
+====`,
+    config: 'INIT Init\nNEXT Next\nINVARIANT Inv\n',
+    workers: 1
+  });
+  assert.deepEqual(fromTla(result.violation.trace[0].state.x), {
+    a: [3, 1],
+    b: ['p'],
+    c: [],
+    d: {k: true}
+  });
+});
+
 test('check model-checks each invariant and returns replayable traces', async t => {
   let result = await checkModel(target, counterModel(t));
   assert.equal(result.status, 'violations');
@@ -98,6 +119,8 @@ test('check model-checks each invariant and returns replayable traces', async t 
   let traces = Object.fromEntries(result.violations.map(item => [item.invariant, item.actions]));
   assert.deepEqual(traces, {NonNegative: ['release'], BelowTwo: ['acquire', 'acquire']});
   assert.equal(result.violations[0].origin, 'model');
+  assert.deepEqual(result.violations[1].views, [{count: 0}, {count: 1}, {count: 2}]);
+  assert.ok(result.violations.every(item => !('verifyView' in item.observations[0])));
 
   let missing = await checkModel(
     {...target, model: {...target.model, invariants: ['Nope']}},
@@ -109,7 +132,11 @@ test('check model-checks each invariant and returns replayable traces', async t 
 test('collected paths include transitions back to already-seen states', async () => {
   let collected = await paths();
   assert.ok(collected.some(path => path.actions.join() === 'acquire,release'));
-  assert.deepEqual(collected[0], {actions: [], observations: [{count: 0}]});
+  assert.deepEqual(collected[0], {
+    actions: [],
+    observations: [{count: 0}],
+    enabled: ['acquire', 'release']
+  });
 });
 
 test('conform passes when the model matches and pinpoints action and state mismatches', async t => {
@@ -135,6 +162,13 @@ test('conform passes when the model matches and pinpoints action and state misma
   assert.equal(wrong.mismatch.kind, 'state');
   assert.deepEqual(wrong.mismatch.actions, ['acquire']);
   assert.deepEqual(wrong.mismatch.fields, [{field: 'count', model: '2', code: '1'}]);
+
+  let extra = await conformModel(target, counterModel(t, {guard: 'count < 3'}), collected);
+  assert.equal(extra.status, 'mismatch');
+  assert.equal(extra.mismatch.kind, 'extra');
+  assert.equal(extra.mismatch.action, 'acquire');
+  assert.deepEqual(extra.mismatch.actions, ['acquire', 'acquire']);
+  assert.match(extra.mismatch.detail, /model allows acquire after acquire -> acquire/);
 
   let start = await conformModel(target, counterModel(t, {init: 'count = 5'}), collected);
   assert.equal(start.status, 'mismatch');

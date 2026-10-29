@@ -3,10 +3,10 @@
 [target.tsx](target.tsx) drives a real React Aria Components `ToastRegion`, its `Toast`s, and a `ToastQueue` together, so `useToast`'s mount/unmount effects and `useToastRegion`'s hover and focus handling run as they do in an app.
 
 ```sh
-yarn verify explore toast-queue
 yarn verify conform toast-queue
-yarn verify check toast-queue --depth 11
-yarn verify replay toast-queue --trace <path printed by explore or check>
+yarn verify check toast-queue --depth 11  # replays each counterexample in Chromium
+yarn verify replay toast-queue --headed --trace <path printed by check>
+yarn verify explore toast-queue
 ```
 
 ## Actions and bounds

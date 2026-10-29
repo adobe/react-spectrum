@@ -27,7 +27,8 @@ import {tmpdir} from 'node:os';
 const targetNamePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 // Targets drive real code through verification/<name>/target.tsx. Runs happen
-// inside Vitest (targets.config.ts): jsdom for exploration, Chromium for replaying traces.
+// inside Vitest (targets.config.ts): Node for model checking, jsdom for exploring
+// the real code, and Chromium for replaying traces.
 export function discoverTargets(root) {
   return readdirSync(join(root, 'verification'), {withFileTypes: true})
     .filter(
@@ -69,39 +70,14 @@ export function exitCode(result) {
   return result.status === 'passed' ? 0 : result.status === 'violations' ? 1 : 2;
 }
 
-export async function runTarget(root, name, options = {}, dependencies = {}) {
-  let execute = dependencies.execute || runProcess;
-  if (!discoverTargets(root).includes(name)) throw new Error(`Unknown target: ${name}`);
-  let mode = options.mode || 'explore';
-  let configPath = join(root, 'verification', name, 'target.json');
-  let defaults = existsSync(configPath) ? JSON.parse(readFileSync(configPath, 'utf8')) : {};
-  let environment =
-    options.environment ||
-    (mode === 'check' ? 'jsdom' : mode === 'replay' ? 'chromium' : defaults.environment || 'jsdom');
-  if (!['jsdom', 'chromium'].includes(environment))
-    throw new Error('--environment must be jsdom or chromium.');
-  if (mode === 'check' && environment !== 'jsdom') throw new Error(`${mode} runs in jsdom only.`);
-  let trace;
-  if (mode === 'replay') {
-    if (!options.trace) throw new Error('replay requires --trace <file>.');
-    if (statSync(options.trace).size > 1024 * 1024) throw new Error('Trace exceeds 1 MiB.');
-    trace = JSON.parse(readFileSync(options.trace, 'utf8'));
-  }
-  let timeoutMs = options.timeoutMs || 600000;
-  let directory = evidenceDirectory(root, options.output, name);
-  let request = {
-    target: name,
-    mode,
-    environment,
-    output: join(directory, 'result.json'),
-    timeoutMs,
-    options: {depth: options.depth, maxRuns: options.maxRuns},
-    trace
-  };
-  let requestPath = join(directory, 'request.json');
+// Runs one request in Vitest. Each stage of a run has its own request, result,
+// and log files in the evidence directory.
+async function runStage(root, directory, stage, request, options, execute) {
+  let file = name => join(directory, stage ? `${stage}.${name}` : name);
+  request = {...request, output: file('result.json')};
+  let requestPath = file('request.json');
   writeFileSync(requestPath, JSON.stringify(request));
-  let log = join(directory, 'vitest.log');
-  options.onProgress?.(`Running ${mode} for ${name} in ${environment}. Evidence: ${directory}`);
+  let log = file('vitest.log');
   let processResult = await execute(
     'yarn',
     ['vitest', 'run', '--config', 'verification/targets.config.ts'],
@@ -113,7 +89,7 @@ export async function runTarget(root, name, options = {}, dependencies = {}) {
         VERIFY_REQUEST_PATH: requestPath
       },
       // Leave time for Vitest and the browser to start and stop.
-      timeoutMs: timeoutMs + 60000,
+      timeoutMs: request.timeoutMs + 60000,
       log,
       signal: options.signal
     }
@@ -149,11 +125,85 @@ export async function runTarget(root, name, options = {}, dependencies = {}) {
       output: processResult.output?.slice(-4000)
     };
   }
-  result = {...result, mode, target: name, environment, directory, log};
-  for (let violation of result.violations || []) {
+  return {...result, log};
+}
+
+export async function runTarget(root, name, options = {}, dependencies = {}) {
+  let execute = dependencies.execute || runProcess;
+  if (!discoverTargets(root).includes(name)) throw new Error(`Unknown target: ${name}`);
+  let mode = options.mode || 'explore';
+  let configPath = join(root, 'verification', name, 'target.json');
+  let defaults = existsSync(configPath) ? JSON.parse(readFileSync(configPath, 'utf8')) : {};
+  let environment =
+    options.environment ||
+    (mode === 'check' ? 'jsdom' : mode === 'replay' ? 'chromium' : defaults.environment || 'jsdom');
+  if (!['jsdom', 'chromium'].includes(environment))
+    throw new Error('--environment must be jsdom or chromium.');
+  if (mode === 'check' && environment !== 'jsdom') throw new Error(`${mode} runs in jsdom only.`);
+  if (options.headed && (mode !== 'replay' || environment !== 'chromium'))
+    throw new Error('--headed applies to replay in chromium only.');
+  let trace;
+  if (mode === 'replay') {
+    if (!options.trace) throw new Error('replay requires --trace <file>.');
+    if (statSync(options.trace).size > 1024 * 1024) throw new Error('Trace exceeds 1 MiB.');
+    trace = JSON.parse(readFileSync(options.trace, 'utf8'));
+  }
+  let timeoutMs = options.timeoutMs || 600000;
+  let directory = evidenceDirectory(root, options.output, name);
+  options.onProgress?.(`Running ${mode} for ${name} in ${environment}. Evidence: ${directory}`);
+  let request = {
+    target: name,
+    mode,
+    environment,
+    timeoutMs,
+    options: {depth: options.depth, maxRuns: options.maxRuns},
+    trace,
+    headed: options.headed || undefined
+  };
+  let {log, ...output} = await runStage(root, directory, '', request, options, execute);
+  let result = {...output, mode, target: name, environment, directory, log};
+  for (let violation of result.violations || [])
     violation.path = join(directory, `${violation.invariant}.trace.json`);
-    let {path, ...trace} = violation;
+  for (let {path, ...trace} of result.violations || [])
     writeFileSync(path, JSON.stringify(trace, null, 2) + '\n');
+  // Replay each model counterexample on the real code in Chromium, comparing the
+  // code with the model's View at each step and saving a screenshot of each.
+  if (
+    mode === 'check' &&
+    options.replay !== false &&
+    ['violations', 'timed-out'].includes(result.status) &&
+    result.violations?.length
+  ) {
+    options.onProgress?.(
+      `Replaying ${result.violations.length} counterexample(s) on the real code in chromium.`
+    );
+    let replayed = await runStage(
+      root,
+      directory,
+      'replay',
+      {
+        ...request,
+        mode: 'replay',
+        environment: 'chromium',
+        traces: result.violations.map(({path, ...trace}) => trace)
+      },
+      options,
+      execute
+    );
+    result.violations.forEach((violation, i) => {
+      let item = replayed.replays?.[i];
+      violation.replay = item
+        ? {
+            status: item.status,
+            step: item.step,
+            failures: item.failures,
+            error: item.error,
+            divergence: item.divergence ?? null,
+            screenshots: join(directory, `${violation.invariant}.steps`)
+          }
+        : {status: replayed.status, error: replayed.error ?? 'No replay result.'};
+    });
+    result.replayLog = replayed.log;
   }
   result.exitCode = exitCode(result);
   writeFileSync(join(directory, 'summary.json'), JSON.stringify(result, null, 2) + '\n');

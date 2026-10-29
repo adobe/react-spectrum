@@ -15,12 +15,13 @@ import type {CDPSession} from 'playwright';
 import {conformModel, loadModel} from './model.mjs';
 import {deadline} from './runtime.mjs';
 import {defineConfig} from 'vitest/config';
+import {dirname, join} from 'node:path';
 import {instrumentation} from './instrumentation';
-import {join} from 'node:path';
-import {readFileSync, writeFileSync} from 'node:fs';
+import {mkdirSync, readFileSync, writeFileSync} from 'node:fs';
 
 // Invoked by verification/targets.mjs with a VERIFY_REQUEST_PATH file describing one
-// explore or replay run. jsdom is used for search; Chromium for replaying traces.
+// run. Node runs model checks, jsdom explores the real code, and Chromium replays traces.
+// A headed replay pauses after each step so it can be watched.
 let request = process.env.VERIFY_REQUEST_PATH
   ? JSON.parse(readFileSync(process.env.VERIFY_REQUEST_PATH, 'utf8'))
   : null;
@@ -46,8 +47,16 @@ export default defineConfig({
       ? {
           ...base.test!.browser,
           screenshotFailures: false,
+          // Without the UI, the test iframe fills the page at full size, for screenshots
+          // and for watching a headed replay.
+          ui: false,
           instances: [
-            {browser: 'chromium', name: 'chromium', viewport: {width: 1280, height: 720}}
+            {
+              browser: 'chromium',
+              name: 'chromium',
+              headless: !request.headed,
+              viewport: {width: 1280, height: 720}
+            }
           ],
           commands: {
             ...base.test!.browser!.commands,
@@ -59,6 +68,16 @@ export default defineConfig({
                 paths,
                 {checkDeadline: deadline(timeoutMs)}
               );
+            },
+            // The test iframe only, as the code under test rendered it.
+            verifyStep: async (context: any, name: string, index: number, action) => {
+              let directory = join(dirname(request.output), `${name}.steps`);
+              mkdirSync(directory, {recursive: true});
+              let file = `${String(index).padStart(2, '0')}-${action ?? 'setup'}.png`;
+              await context.iframe
+                .locator('body')
+                .screenshot({path: join(directory, file.replace(/[^\w.-]/g, '_'))});
+              if (request.headed) await new Promise(resolve => setTimeout(resolve, 1000));
             },
             writeVerifyResult: async (_context, result) => {
               writeFileSync(request.output, JSON.stringify(result, null, 2) + '\n');

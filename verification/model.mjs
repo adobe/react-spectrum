@@ -20,8 +20,11 @@ import {now} from './runtime.mjs';
 // bounds `step < MaxSteps` and sets `action'` to the target's action name, a
 // `View` record matching the target's `model.project`, and one operator per
 // checked invariant. `checkModel` model-checks each invariant separately with
-// tla-ts; `conformModel` checks that some behavior of the model follows each of
-// the real code's explored paths with the same View at every step.
+// tla-ts and records the model's View at each step of a counterexample, so that
+// replay can find where the real code first differs. `conformModel` checks that
+// some behavior of the model follows each of the real code's explored paths with
+// the same View at every step, and that the model allows no action there that the
+// target does not enable.
 
 const IDENTIFIER = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -40,6 +43,19 @@ export function toTla(value) {
     return `[${keys.map(key => `${key} |-> ${toTla(value[key])}`).join(', ')}]`;
   }
   throw new Error(`Cannot express ${value} in TLA+; project it to a value.`);
+}
+
+// The inverse of toTla for the values a View holds: records become objects, and
+// sequences and sets become arrays.
+export function fromTla(value) {
+  if (['boolean', 'number', 'string'].includes(typeof value)) return value;
+  if (value?.kind === 'Function') {
+    if (value.domain.every((key, i) => key === i + 1)) return value.range.map(fromTla);
+    if (value.domain.every(key => typeof key === 'string'))
+      return Object.fromEntries(value.domain.map((key, i) => [key, fromTla(value.range[i])]));
+  }
+  if (value?.kind === 'Set') return value.elements.map(fromTla);
+  throw new Error(`Cannot express ${formatValue(value)} as JSON.`);
 }
 
 export function loadModel(directory, spec) {
@@ -61,7 +77,29 @@ function config(model, maxSteps, lines) {
 }
 
 let format = state =>
-  Object.fromEntries(Object.entries(state).map(([key, value]) => [key, formatValue(value)]));
+  Object.fromEntries(
+    Object.entries(state)
+      .filter(([key]) => key !== 'verifyView')
+      .map(([key, value]) => [key, formatValue(value)])
+  );
+
+// The model with `verifyView` holding each state's View, so that counterexamples
+// carry the View that replay compares the real code's projected observation with.
+// The variable is a function of the others, so it adds no distinct states.
+export function viewModule(name) {
+  return [
+    `---- MODULE ${name}Views ----`,
+    `EXTENDS ${name}`,
+    'VARIABLE verifyView',
+    'VerifyInit == Init /\\ verifyView = View',
+    "VerifyNext == Next /\\ verifyView' = View'",
+    '===='
+  ].join('\n');
+}
+
+function withModel(model) {
+  return module => (module === model.name ? model.source : model.loadModule(module));
+}
 
 function actionsOf(trace) {
   return trace.slice(1).map(step => {
@@ -109,11 +147,11 @@ export async function checkModel(target, model, options = {}) {
       break;
     }
     let result = await run(
-      model.source,
-      model.loadModule,
+      viewModule(model.name),
+      withModel(model),
       config(target.model, depth, [
-        'INIT Init',
-        'NEXT Next',
+        'INIT VerifyInit',
+        'NEXT VerifyNext',
         `INVARIANT ${invariant}`,
         'CHECK_DEADLOCK FALSE'
       ])
@@ -135,7 +173,8 @@ export async function checkModel(target, model, options = {}) {
         invariant,
         detail: `${invariant} fails in the model after ${trace.length - 1} steps`,
         actions: actionsOf(trace),
-        observations: trace.map(step => format(step.state))
+        observations: trace.map(step => format(step.state)),
+        views: trace.map(step => fromTla(step.state.verifyView))
       });
     } else if (result.status !== 'success') {
       item.status = 'error';
@@ -166,10 +205,15 @@ export async function checkModel(target, model, options = {}) {
  * be nondeterministic. TLC register t records that some behavior followed trace t
  * to its end, and `AllReached` prints the first trace that none did.
  *
+ * `enabled` gives, for each trace, the actions the code enabled after each of its
+ * steps; it may be shorter than the trace when the code violated an invariant.
+ * The model must not allow an action there that the code did not enable, and
+ * `ConformExtra` prints the first one it finds.
+ *
  * For diagnosis, `limit` stops comparing Views from that step on, and `diagnose`
  * records the model's View and which of its fields differ from the code's.
  */
-export function conformanceModule(name, traces, views, {limit, diagnose = false} = {}) {
+export function conformanceModule(name, traces, views, {limit, diagnose = false, enabled} = {}) {
   let longest = traces.reduce((max, trace) => Math.max(max, trace.length), 0);
   let recorded = diagnose ? ['modelView', 'differs'] : [];
   return [
@@ -177,6 +221,9 @@ export function conformanceModule(name, traces, views, {limit, diagnose = false}
     `EXTENDS ${name}, Integers, Sequences, TLC`,
     `Traces == ${toTla(traces)}`,
     `Views == ${toTla(views)}`,
+    `ConformEnabled == <<${(enabled ?? traces.map(() => []))
+      .map(steps => `<<${steps.map(names => `{${names.map(toTla).join(', ')}}`).join(', ')}>>`)
+      .join(', ')}>>`,
     `Limit == ${limit ?? longest + 1}`,
     `VARIABLES ${['trace', ...recorded].join(', ')}`,
     'Expected == Views[trace][step + 1]',
@@ -188,6 +235,8 @@ export function conformanceModule(name, traces, views, {limit, diagnose = false}
     '  /\\ trace \\in 1..Len(Traces)',
     '  /\\ 0 < Limit => View = Views[trace][1]',
     ...(diagnose ? ['  /\\ modelView = View', '  /\\ differs = Differs'] : []),
+    // Prints the trace, the step, and the action, and then rules out the step.
+    'ConformExtra == PrintT(<<"Extra", trace, step, action\'>>) /\\ FALSE',
     'ConformNext ==',
     '  \\/ /\\ step < Len(Traces[trace])',
     '     /\\ UNCHANGED trace',
@@ -195,6 +244,10 @@ export function conformanceModule(name, traces, views, {limit, diagnose = false}
     "     /\\ action' = Traces[trace][step + 1]",
     "     /\\ step' < Limit => View' = Views[trace][step + 2]",
     ...(diagnose ? ["     /\\ modelView' = View'", "     /\\ differs' = Differs'"] : []),
+    '  \\/ /\\ step < Len(ConformEnabled[trace])',
+    '     /\\ Next',
+    "     /\\ action' \\notin ConformEnabled[trace][step + 1]",
+    '     /\\ ConformExtra',
     '  \\/ /\\ step = Len(Traces[trace])',
     '     /\\ TLCSet(trace, TRUE)',
     `     /\\ UNCHANGED <<${['vars', 'trace', ...recorded].join(', ')}>>`,
@@ -211,8 +264,10 @@ export function conformanceModule(name, traces, views, {limit, diagnose = false}
 
 /**
  * Checks that for every explored path of the real code, some behavior of the model
- * takes the same actions with the same View at each step. This is one-directional:
- * it does not show that the code can do everything the model allows.
+ * takes the same actions with the same View at each step, and that along those
+ * behaviors the model allows only actions that the code enabled. Within the
+ * explored depth, the model then has the code's behaviors and no others, up to
+ * the View: hidden model state the View does not determine is not compared.
  */
 export async function conformModel(target, model, paths, options = {}) {
   let started = now();
@@ -224,20 +279,35 @@ export async function conformModel(target, model, paths, options = {}) {
   let maximal = paths.filter(path => !parents.has(JSON.stringify(path.actions)));
   let traces = maximal.map(path => path.actions);
   let views = maximal.map(path => path.observations.map(target.model.project));
-  let loadModule = module => (module === model.name ? model.source : model.loadModule(module));
+  // What the code enabled after each step of each trace, from the paths that are
+  // its prefixes. A path that violated an invariant has none, and ends the list.
+  let enabledAfter = new Map(paths.map(path => [JSON.stringify(path.actions), path.enabled]));
+  let enabled = traces.map(actions => {
+    let steps = [];
+    for (let k = 0; k <= actions.length; k++) {
+      let names = enabledAfter.get(JSON.stringify(actions.slice(0, k)));
+      if (!names) break;
+      steps.push(names);
+    }
+    return steps;
+  });
   let conform = async (traces, views, lines, moduleOptions) => {
     let printed = [];
     let longest = traces.reduce((max, trace) => Math.max(max, trace.length), 1);
+    // One more step than the longest trace, so the model can show what it allows
+    // after the last one.
     let result = await run(
       conformanceModule(model.name, traces, views, moduleOptions),
-      loadModule,
-      config(target.model, longest, ['INIT ConformInit', 'NEXT ConformNext', ...lines]),
+      withModel(model),
+      config(target.model, longest + 1, ['INIT ConformInit', 'NEXT ConformNext', ...lines]),
       text => printed.push(text)
     );
     return {...result, printed};
   };
   options.checkDeadline?.();
-  let result = await conform(traces, views, ['POSTCONDITION AllReached', 'CHECK_DEADLOCK FALSE']);
+  let result = await conform(traces, views, ['POSTCONDITION AllReached', 'CHECK_DEADLOCK FALSE'], {
+    enabled
+  });
   let summary = {
     schemaVersion: 1,
     target: target.name,
@@ -248,7 +318,25 @@ export async function conformModel(target, model, paths, options = {}) {
     durationMs: now() - started
   };
   let error = message => ({...summary, status: 'error', error: message});
-  if (result.status === 'success') return {...summary, status: 'conforms'};
+  let after = (actions, count) => (count ? actions.slice(0, count).join(' -> ') : 'setup');
+  if (result.status === 'success') {
+    let extra = result.printed
+      .map(text => text.match(/^<<"Extra", (\d+), (\d+), "(.*)">>$/))
+      .find(Boolean);
+    if (!extra) return {...summary, status: 'conforms'};
+    let actions = traces[Number(extra[1]) - 1].slice(0, Number(extra[2]));
+    let action = JSON.parse(`"${extra[3]}"`);
+    return {
+      ...summary,
+      status: 'mismatch',
+      mismatch: {
+        kind: 'extra',
+        actions,
+        action,
+        detail: `the model allows ${action} after ${after(actions, actions.length)}, but the code does not enable it`
+      }
+    };
+  }
   let unreached = result.printed
     .map(text => text.match(/^<<"Unreached", (\d+)>>$/)?.[1])
     .find(Boolean);
@@ -280,7 +368,6 @@ export async function conformModel(target, model, paths, options = {}) {
       diagnose: true
     }
   );
-  let after = count => (count ? actions.slice(0, count).join(' -> ') : 'setup');
   if (at.status === 'success') {
     if (!step) return error('The model has no initial state.');
     return {
@@ -289,7 +376,7 @@ export async function conformModel(target, model, paths, options = {}) {
       mismatch: {
         kind: 'action',
         actions: actions.slice(0, step),
-        detail: `the code took ${actions[step - 1]} after ${after(step - 1)}, but the model does not allow it`
+        detail: `the code took ${actions[step - 1]} after ${after(actions, step - 1)}, but the model does not allow it`
       }
     };
   }
@@ -313,7 +400,7 @@ export async function conformModel(target, model, paths, options = {}) {
       kind: 'state',
       actions: actions.slice(0, step),
       fields,
-      detail: `after ${after(step)}, ${fields.map(item => `${item.field} is ${item.code} in the code but ${item.model} in the model`).join('; ')}`
+      detail: `after ${after(actions, step)}, ${fields.map(item => `${item.field} is ${item.code} in the code but ${item.model} in the model`).join('; ')}`
     }
   };
 }

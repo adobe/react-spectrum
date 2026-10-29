@@ -4,7 +4,7 @@ Traditional unit tests typically cover specific sequences someone thought to wri
 
 By modeling a component's behavior in a formal specification language like TLA+, we can systematically explore all possible sequences of actions and check that the invariants (i.e. assertions tested at every step) hold, even in edge cases that are difficult to cover with traditional unit tests.
 
-This harness enables agents to write formal specifications of component behavior, explore all possible sequences of actions, check that invariants hold, and reproduce failures in a real browser environment in order to confirm them.
+This harness enables agents to write formal specifications of component behavior, check them against the real code, model-check invariants far deeper than the real code can be run, and investigate each violation by replaying it on the real code in Chromium.
 
 - [When to use it](#when-to-use-it)
 - [Quick start](#quick-start)
@@ -27,88 +27,121 @@ It does not check rendering, layout, styling, or performance. Each target covers
 From the repository root, with dependencies already installed:
 
 ```sh
-# Install Chromium if it is missing. replay and some targets run in it.
+# Install Chromium if it is missing. Counterexamples are replayed in it.
 yarn playwright install chromium
 
-# List the targets, then explore one.
+# List the targets. For one with a model: check the model against the code, then
+# model-check it, replaying each counterexample on the real code in Chromium.
 yarn verify list
-yarn verify explore tooltip
+yarn verify conform use-press
+yarn verify check use-press --depth 12
 ```
 
-`explore` prints a summary, then for each violated invariant its shortest action sequence and a `Replay:` command, then the evidence directory. Use `yarn verify --help` or the [command options](#command-options) for everything else.
+`check` prints each invariant's status, then for each violation its action sequence, whether it reproduced on the real code in Chromium, where the code first differs from the model, the directory of per-step screenshots, and a `Replay:` command. For a target without a model, use [`explore`](#search-the-real-code-without-a-model). Use `yarn verify --help` or the [command options](#command-options) for everything else.
 
-**A pass is bounded evidence, not proof.** It covers only the target's actions, depth, and observation. Check `neverEnabled` and `depthReached`, and [check that the target catches a bug](#check-that-it-catches-a-bug), before relying on one.
+**A pass is bounded evidence, not proof.** It covers only the target's actions and the depth checked, and holds for the code only as far as the model [conforms](#2-check-the-model-against-the-code). [Check that the target catches a bug](#check-that-it-catches-a-bug) before relying on one.
 
 ## Find a bug
 
+The model is the primary way to search: it is fast enough to check every sequence to depths the real code cannot reach. The real code checks the model (`conform`) and confirms each counterexample (`check` replays them in Chromium). Only a counterexample that reproduces on the real code is evidence of a bug.
+
+```mermaid
+flowchart LR
+  conform["conform<br/>model ⇔ code"] --> check["check<br/>model-check invariants"]
+  check --> replay["replay in Chromium<br/>reproduced? divergence? screenshots"]
+  replay --> triage["triage and fix"]
+  triage --> conform
+```
+
 ### 1. Choose a target
 
-Read the target's README for its actions, invariants, and assumptions and exclusions. If the behavior you suspect is excluded, extend the target or write a new one.
+Read the target's README for its actions, invariants, and assumptions and exclusions. If the behavior you suspect is excluded, extend the target or write a new one. If the target has no model, [add one](#add-a-model), or [search the real code directly](#search-the-real-code-without-a-model).
 
 | Target | Default environment | Model | Coverage |
 | --- | --- | --- | --- |
-| [tooltip](tooltip/README.md) | jsdom | None | Two triggers, warmup/cooldown, registry and timer cleanup. |
-| [overlays](overlays/README.md) | jsdom | None | Two nested or sibling overlays, Escape ownership, hiding and scroll counts. |
-| [focus-scope](focus-scope/README.md) | Chromium | [FocusScope.tla](focus-scope/FocusScope.tla) | Nested scopes, contain/restore/autoFocus modes, focus moves and removal. |
-| [drag-manager](drag-manager/README.md) | jsdom | [DragManager.tla](drag-manager/DragManager.tla) | Session, targets, drop/cancel, unregister, source removal and cleanup. |
-| [combobox](combobox/README.md) | jsdom | None | Typing, selection, blur, controlled updates and async item arrival. |
 | [use-press](use-press/README.md) | jsdom | [UsePress.tla](use-press/UsePress.tla) | Two pressables, pointer leave/re-entry, activation and lifecycle. |
 | [toast-queue](toast-queue/README.md) | jsdom | [ToastQueue.tla](toast-queue/ToastQueue.tla) | Queue, timers, focus, hover and pause/resume. |
+| [focus-scope](focus-scope/README.md) | Chromium | [FocusScope.tla](focus-scope/FocusScope.tla) | Nested scopes, contain/restore/autoFocus modes, focus moves and removal. |
+| [drag-manager](drag-manager/README.md) | jsdom | [DragManager.tla](drag-manager/DragManager.tla) | Session, targets, drop/cancel, unregister, source removal and cleanup. |
+| [tooltip](tooltip/README.md) | jsdom | None | Two triggers, warmup/cooldown, registry and timer cleanup. |
+| [overlays](overlays/README.md) | jsdom | None | Two nested or sibling overlays, Escape ownership, hiding and scroll counts. |
+| [combobox](combobox/README.md) | jsdom | None | Typing, selection, blur, controlled updates and async item arrival. |
 
-### 2. Explore
+### 2. Check the model against the code
 
 ```sh
-yarn verify explore use-press
-yarn verify explore use-press --depth 10 --max-runs 100000
+yarn verify conform use-press
 ```
 
-`explore` runs every enabled action sequence breadth-first up to the target's `bounds.depth`, so the first trace reported for each invariant is a shortest one. Sequences that reach the same observation are merged. If the run budget (`--max-runs`) runs out first, the status is `incomplete`, which is not a pass. `--depth` accepts at most 20 for real code; [use a model](#6-go-deeper-with-a-model) to go deeper.
+`conform` runs every action sequence of the real code up to the target's depth bound (in its default environment, or `--environment chromium`) and compares it with the model in both directions:
+
+- Each path the code takes must be a behavior of the model with the same `View` at every step. Otherwise it reports the action the model does not allow, or the `View` fields that differ.
+- Along those behaviors, the model must allow only actions the code enables. Otherwise it reports the action the model allows too much.
+
+Run it first, and again whenever the source or the model changes. Fix the model until it conforms before trusting `check`: a model that allows too much produces counterexamples that do not reproduce, and one that allows too little misses bugs. When the code's behavior looks wrong, triage it as a possible bug instead.
+
+Beyond the depth bound, conformance is an assumption. The model's hidden state (variables `View` does not determine) is not compared directly.
+
+### 3. Model-check
+
+```sh
+yarn verify check use-press --depth 20
+```
+
+`check` model-checks each invariant separately, to depth 100 at most, so one violation does not hide the others. It writes each counterexample as a trace, with the model's state and `View` after each step, and then replays every counterexample on the real code in Chromium, in one browser run. Pass `--no-replay` to skip that, for example while iterating on a model.
+
+### 4. Triage each violation
+
+For each violation, `check` prints the replay's result:
+
+| Replay | Meaning | Next step |
+| --- | --- | --- |
+| `reproduced` | The real code violates the invariant too. | Decide what kind of violation it is (below). |
+| `not-reproduced`, with a divergence | The model allows something the code does not. The divergence is the first step where the code's projected observation differs from the model's `View`, with the fields that differ. | Fix the model at that step, run `conform`, and `check` again. Extend the depth of `conform` if it conforms. |
+| `different-violation` | Another invariant fails first on the real code. | Triage that one. |
+| `disabled` | The code does not enable an action of the counterexample. | The model allows the action where the code does not; fix the model. |
+
+A reproduced violation can still have a divergence, when the model and code reach the failure along different states. Look at the screenshots in `<Invariant>.steps/` (one after setup and one after each action, named `NN-<action>.png`) to see what the code rendered at each step. To watch it happen, replay it headed: a Chromium window opens and pauses after each step.
+
+```sh
+yarn verify replay use-press --headed --trace <trace path printed by check>
+```
+
+Decide what kind of reproduced violation it is before changing anything:
+
+| Cause | Signs | Next step |
+| --- | --- | --- |
+| Bug in the code | A user or application can produce the sequence, and the expected behavior follows from documentation or the component's contract. | Fix it with a regression test. |
+| Bug in the target | The reference is wrong, a guard allows input that cannot happen, or the observation merged states that differ. | Fix the target (and the model to match), and run `conform` again. |
+| Contract question | The code behaves consistently, but the intended behavior is unclear, such as use-press's `OtherClick` or a tooltip cooldown that survives the last unmount. | Record it under the target README's assumptions, and ask a maintainer. |
+
+Don't weaken an invariant or tighten a guard just to make a violation go away. When you change one, say why in the target's README.
+
+### 5. Fix and check again
+
+After a fix, update the model to the fixed behavior, run `conform` until it conforms again, and `check`. A known bug can hide others behind it: once an invariant fails, the shortest counterexample is the only one reported for it.
+
+### 6. Report
+
+Put the confirmed trace (the invariant and its action sequence) in the PR description, with the fix and a regression test in the owning package's `test/` directory. Evidence directories are temporary; don't commit them or add a findings archive here.
+
+### Search the real code without a model
+
+```sh
+yarn verify explore tooltip
+yarn verify explore tooltip --depth 10 --max-runs 100000
+```
+
+`explore` runs every enabled action sequence of the real code breadth-first up to the target's `bounds.depth` (at most 20), checking the target's invariants after each step, so the first trace reported for each invariant is a shortest one. Sequences that reach the same observation are merged. Use it for targets without a model, and for checks that need the real code's internals, such as leaked listeners or timers. Replay its traces in Chromium with `yarn verify replay <target> --trace <file>`.
 
 Before trusting a pass, read the summary:
 
 - `neverEnabled` lists actions that no explored state enabled. Check those guards.
 - On a pass, `depthReached` below the depth bound means no unexplored state remained, within what `observe` distinguishes. When it equals the bound, deeper sequences were not tried.
+- If the run budget (`--max-runs`) runs out first, the status is `incomplete`, which is not a pass.
 - Console errors, such as React warnings, are reported but do not fail the run. Read them in `summary.json`.
 
-### 3. Triage each violation
-
-Open `<Invariant>.trace.json`. `actions` is the sequence, and `observations` holds the observation after setup and after each action. Decide what kind of violation it is before changing anything:
-
-| Cause | Signs | Next step |
-| --- | --- | --- |
-| Bug in the code | A user or application can produce the sequence, and the expected behavior follows from documentation or the component's contract. | Replay it in Chromium, then fix it with a regression test. |
-| Bug in the target | The reference is wrong, a guard allows input that cannot happen, or the observation merged states that differ. | Fix the target and explore again. |
-| Contract question | The code behaves consistently, but the intended behavior is unclear, such as use-press's `OtherClick` or a tooltip cooldown that survives the last unmount. | Record it under the target README's assumptions, and ask a maintainer. |
-
-Don't weaken an invariant or tighten a guard just to make a violation go away. When you change one, say why in the target's README.
-
-### 4. Replay in Chromium
-
-```sh
-yarn verify replay use-press --trace <trace path printed by explore>
-```
-
-`replay` runs the trace against the real code again, in Chromium by default. Actions that go through `env.input` get browser-generated events there: Playwright for hover and CDP for touches. Events that a target dispatches itself are the same in both environments. `reproduced` means the same invariant failed again; see [statuses and exit codes](#statuses-and-exit-codes) for the others.
-
-### 5. Fix and explore again
-
-Sequences are not extended past a violation, so a known bug can hide others behind it. Fix it locally, or temporarily tighten the guard that reaches it, and explore again until the target passes.
-
-### 6. Go deeper with a model
-
-For a target with a model (see [Add a model](#add-a-model)):
-
-```sh
-yarn verify conform use-press
-yarn verify check use-press --depth 20
-yarn verify replay use-press --trace <trace path printed by check>
-```
-
-`conform` checks that every run of the real code that exploration produced is a behavior of the model. Run it first, and again whenever the source or the model changes; fix the model until it conforms before trusting `check`. `check` model-checks each invariant separately, to depth 100 at most, and writes each counterexample as a trace. **Only a reproduced replay is evidence of a bug in the code; a model counterexample alone is not.**
-
-### 7. Report
-
-Put the confirmed trace (the invariant and its action sequence) in the PR description, with the fix and a regression test in the owning package's `test/` directory. Evidence directories are temporary; don't commit them or add a findings archive here.
+Sequences are not extended past a violation, so fix it locally, or temporarily tighten the guard that reaches it, and explore again.
 
 ## Read the results
 
@@ -118,9 +151,11 @@ Each run prints its evidence directory, `verification-<target>-<random>` under `
 | --- | --- |
 | `summary.json` | The final result: status, exit code, counts, coverage, violations with their trace paths, and console errors. `--json` prints the same object. |
 | `<Invariant>.trace.json` | One per violated invariant, from `explore` or `check`. Pass it to `replay`. |
+| `<Invariant>.steps/` | Screenshots of the code under test after setup (`00-setup.png`) and after each action (`NN-<action>.png`), from replays in Chromium. |
 | `vitest.log` | Complete Vitest output. Start here when a run reports an error. |
 | `result.json` | The result as the Vitest run wrote it, before process failures and trace paths were added. |
 | `request.json` | The command's options and, for `replay`, the trace. |
+| `replay.*` | `check`'s replay of its counterexamples: the same files for that Vitest run. |
 
 ### Exploration summary
 
@@ -134,7 +169,9 @@ Each run prints its evidence directory, `verification-<target>-<random>` under `
 | `violations` | For each violated invariant: its message, actions, observations, and trace path. |
 | `consoleErrors` | Up to 20 `console.error` calls from the run. |
 
-`check` reports each invariant's status (`passed`, `violated`, or `error`) and distinct model states. Its traces have `origin: "model"`, and their `observations` are model states rather than observations of the code. `conform` reports the number of traces and steps compared. A mismatch names the action sequence and either the action the model does not allow or the fields that differ.
+`check` reports each invariant's status (`passed`, `violated`, or `error`) and distinct model states. Its traces have `origin: "model"`; their `observations` are model states, and `views` holds the model's `View` after setup and after each action. Each violation's `replay` holds the Chromium replay's `status`, `step`, `failures`, `divergence` (the first step where the code's projected observation differs from `views`, with the differing fields, or `null`), and `screenshots` directory. A standalone `replay` of a model trace reports `divergence` too.
+
+`conform` reports the number of traces and steps compared. A mismatch has a `kind`: `action` (the code took an action the model does not allow), `state` (the `View` fields that differ), or `extra` (the model allows an action the code does not enable), with the action sequence that leads to it.
 
 ### Statuses and exit codes
 
@@ -145,7 +182,7 @@ Each run prints its evidence directory, `verification-<target>-<random>` under `
 | `conform` | `conforms` | `mismatch` | `incomplete` (exploration ran out of runs), `error`, `timed-out`, `interrupted` |
 | `replay` | `not-reproduced` | `reproduced` | `different-violation`, `disabled` (an action is no longer enabled), `error`, `timed-out`, `interrupted` |
 
-Invalid arguments also exit 2.
+`check`'s exit code reflects the model check only; read each violation's replay status to see whether it reproduced. Invalid arguments also exit 2.
 
 ## Common problems
 
@@ -160,7 +197,7 @@ Invalid arguments also exit 2.
 | `incomplete` | The run budget ran out. Raise `--max-runs`, lower `--depth`, tighten guards that allow redundant input, or use a model. `conform` needs a complete exploration. |
 | `TLA+ values must be integers`, `TLA+ has no empty record`, `Invalid field`, or `Cannot express … in TLA+` | `model.project` or `model.constants` produced a value TLA+ cannot represent. Use booleans, integers, strings, arrays, and non-empty objects with identifier keys; no `null`, `undefined`, or fractions. |
 | `conform` reports a mismatch | The model no longer matches the code. Fix the model and run `conform` again. If the code's behavior looks wrong, triage it as a possible bug. |
-| A model counterexample is `not-reproduced` | The model allows something the code does not, which `conform` cannot detect. Find the step where the replay's observations stop matching the trace and tighten the model there. |
+| A model counterexample is `not-reproduced` | The model allows something the code does not, beyond the depth `conform` explored or in hidden state the `View` does not show. Fix the model at the step its divergence names, and consider adding the hidden state to the `View`. |
 | `different-violation` on replay | Another invariant fails first. Triage that one. |
 | `disabled` on replay | The trace is stale: the code or the target's guards changed since it was written. Explore or check again. |
 
@@ -170,7 +207,7 @@ Invalid arguments also exit 2.
 2. Import the code under test from package source by relative path (`../../packages/...`), so the target runs this checkout's code and [probes](#probes) apply.
 3. Write `verification/<name>/README.md`, following [the target README sections](#target-readme).
 4. Add the target to the [targets table](#1-choose-a-target).
-5. Run `yarn verify explore <name>`, check `neverEnabled`, and [check that it catches a bug](#check-that-it-catches-a-bug).
+5. Run `yarn verify explore <name>`, check `neverEnabled`, and [check that it catches a bug](#check-that-it-catches-a-bug). Then [add a model](#add-a-model) to search deeper.
 6. Run `yarn lint`.
 
 ### Target fields
@@ -204,7 +241,7 @@ Each run calls `setup`, then `check`, the invariants, and `observe`, and after e
 
 ### Check that it catches a bug
 
-Before trusting a pass, plant a bug the target should find: revert a past fix, skip a cleanup, or remove a condition in the source. Confirm that `explore` reports the expected invariant with a short trace, then restore the source. If it does not, the observation may be merging states, a guard may be too tight, or the invariant may restate the implementation.
+Before trusting a pass, plant a bug the target should find: revert a past fix, skip a cleanup, or remove a condition in the source. Confirm that `explore` reports the expected invariant with a short trace, then restore the source. For a model, also confirm that `conform` reports a mismatch with the planted bug, then make the same change in the model and confirm that `check` reports a counterexample that reproduces in Chromium. If it does not, the observation may be merging states, a guard may be too tight, or the invariant may restate the implementation.
 
 ### Target README
 
@@ -245,13 +282,15 @@ The model must declare:
 - A `View` record with the same fields as `project` returns.
 - One operator per checked invariant, with the same name as the target's invariant.
 
-`conform` wraps the model in a module that extends `Integers`, `Sequences`, and `TLC` and defines `trace`, `Traces`, `Views`, `Limit`, `Expected`, `Differs`, `Unreached`, `AllReached`, `modelView`, `differs`, and names starting with `Conform`, so a model must not define those names.
+`conform` and `check` wrap the model in modules that extend it. `conform`'s extends `Integers`, `Sequences`, and `TLC` and defines `trace`, `Traces`, `Views`, `Limit`, `Expected`, `Differs`, `Unreached`, `AllReached`, `modelView`, `differs`, and names starting with `Conform`. `check`'s defines `verifyView` and names starting with `Verify`. A model must not define those names.
 
-`conform` explores the real code in the target's default environment (or `--environment chromium`) with invariants off, then replays every explored run through the model, comparing `View` with the projected observation after each step. The model may be nondeterministic: a run conforms when some behavior of the model takes its actions with a matching `View` at every step. This shows that the explored behaviors of the code are behaviors of the model, not the reverse, so a model that allows too much still conforms and produces counterexamples that do not reproduce.
+`conform` explores the real code in the target's default environment (or `--environment chromium`) with invariants off, recording the actions the code enables after each step, then follows every explored run through the model, comparing `View` with the projected observation after each step. The model may be nondeterministic: a run conforms when some behavior of the model takes its actions with a matching `View` at every step. Along those behaviors, the model must not allow an action the code did not enable. Within the explored depth, the model then has the code's behaviors and no others, as far as the `View` shows. A model that allows too much in hidden state, or beyond that depth, still conforms; its counterexamples then do not reproduce, and their divergence shows where the model goes wrong.
 
 `conform` also cannot catch an observation that leaves something out: once two states are merged, the second one's successors are never run. A model that tracks state the code hides shows what the observation needs to distinguish.
 
 `check` model-checks each invariant separately, so one violation does not hide the others. The model's state includes `step`, so its distinct-state count grows with depth even after the other variables have reached every value they can.
+
+The target's JavaScript invariants are still required for a model's invariants: they decide whether a counterexample reproduces on the real code, where the model's variables are not available.
 
 ## Maintain the harness
 
@@ -264,7 +303,7 @@ yarn lint
 
 The harness tests cover the explorer, model checking, conformance, and CLI with toy targets and models, and need no browser. `yarn lint` format-checks, type-checks, and lints this directory along with the packages.
 
-After changing a target, a model, or the package source a target drives, run `yarn verify explore <target>` (and `conform` and `check` if it has a model) and inspect the results. A model that no longer conforms must be updated before its `check` results are trusted.
+After changing a target, a model, or the package source a target drives, run `yarn verify conform <target>` and `yarn verify check <target>` (or `explore` for a target without a model) and inspect the results. A model that no longer conforms must be updated before its `check` results are trusted.
 
 ## Reference
 
@@ -276,13 +315,15 @@ After changing a target, a model, or the package source a target drives, run `ya
 | `--max-runs <n>` | `explore`, `conform` | `bounds.maxRuns`, or 20,000 |
 | `--environment <name>` (`jsdom` or `chromium`) | `explore`, `conform`, `replay` | The target's `target.json`, or jsdom; Chromium for `replay`. `check` runs only in jsdom. |
 | `--trace <file>` | `replay` | Required; at most 1 MiB. |
+| `--no-replay` | `check` | Replays counterexamples in Chromium unless set. |
+| `--headed` | `replay` in Chromium | Headless. Shows the browser and pauses one second after each step. |
 | `--timeout-ms <ms>` | All except `list` | 600,000 (10 minutes); at most 3,600,000. |
 | `--output <directory>` | All except `list` | The system temporary directory. Must be outside the checkout. |
 | `--json` | All | Prints the result as JSON. |
 
 ### How runs work
 
-All commands run inside Vitest ([targets.config.ts](targets.config.ts) and [targets.runner.tsx](targets.runner.tsx)), which supplies TypeScript, the repository's module resolution, jsdom or Chromium, and fake timers. Model checking always runs in Node. Chromium conformance explores in the browser and sends projected observations to a Vitest server command, so `tla-ts` and model files stay in Node.
+All commands run inside Vitest ([targets.config.ts](targets.config.ts) and [targets.runner.tsx](targets.runner.tsx)), which supplies TypeScript, the repository's module resolution, jsdom or Chromium, and fake timers. Model checking always runs in Node; `check` then starts a second Vitest run in Chromium that replays all of its counterexamples. Chromium conformance explores in the browser and sends projected observations to a Vitest server command, so `tla-ts` and model files stay in Node. Screenshots are taken by another server command, of the test iframe only.
 
 Each candidate sequence replays its prefix from a fresh `setup`, because real code cannot be snapshotted. The explorer reports an error if a replayed prefix's observation changes, if an action that was enabled during search is not enabled on replay, or if setup, an action, `check`, `observe`, an invariant, or teardown throws.
 

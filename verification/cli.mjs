@@ -12,36 +12,63 @@
 
 import {discoverTargets, runTarget} from './targets.mjs';
 import {fileURLToPath, pathToFileURL} from 'node:url';
+import {join, resolve} from 'node:path';
 import {parseArgs} from 'node:util';
-import {resolve} from 'node:path';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const help = `Behavioral verification (local, opt-in)
 
   yarn verify list [--json]
-  yarn verify explore <target> [--depth <n>] [--max-runs <n>] [--environment jsdom|chromium]
-  yarn verify replay <target> --trace <file> [--environment chromium|jsdom]
   yarn verify conform <target> [--depth <n>] [--max-runs <n>] [--environment jsdom|chromium]
-  yarn verify check <target> [--depth <n>]
+  yarn verify check <target> [--depth <n>] [--no-replay]
+  yarn verify replay <target> --trace <file> [--environment chromium|jsdom] [--headed]
+  yarn verify explore <target> [--depth <n>] [--max-runs <n>] [--environment jsdom|chromium]
 
-explore runs every action sequence of verification/<target>/target.tsx up to the
-depth bound against the real code (jsdom by default) and writes one shortest trace
-per violated invariant. replay runs a trace again, by default in Chromium with
-Playwright and CDP input. For targets with a TLA+ model, conform checks that the
-real code's explored paths are behaviors of the model, and check model-checks each
-invariant with tla-ts (--depth up to 100) and writes counterexamples that replay
-runs against the real code. All accept --timeout-ms <ms>, --output <directory>
-(evidence goes in a fresh directory outside the checkout), and --json.
+For a target with a TLA+ model, conform checks the model against the real code:
+each path the code takes up to the depth bound must be a behavior of the model
+with the same View at every step, and the model must allow no action there that
+the code does not enable. check then model-checks each invariant with tla-ts
+(--depth up to 100) and replays each counterexample on the real code in Chromium,
+reporting whether it reproduces, the first step where the code differs from the
+model, and a screenshot after each step (--no-replay skips this). replay runs one
+trace again, by default in Chromium; --headed shows the browser and pauses after
+each step. explore searches the real code directly, for targets without a model.
+All accept --timeout-ms <ms>, --output <directory> (evidence goes in a fresh
+directory outside the checkout), and --json.
 
-Exit codes: explore/check: 0 no violations, 1 violations found, 2 incomplete/error.
+Exit codes: conform: 0 conforms, 1 mismatch, 2 error.
+check/explore: 0 no violations, 1 violations found, 2 incomplete/error.
 replay: 0 not reproduced, 1 reproduced, 2 different failure/error.
-conform: 0 conforms, 1 mismatch, 2 error.
 See verification/README.md.`;
+
+let json = value => JSON.stringify(value);
+
+function printDivergence(divergence, write, indent) {
+  if (!divergence) return;
+  let after = divergence.actions.length ? divergence.actions.join(' -> ') : 'setup';
+  let fields = divergence.fields.map(
+    item => `${item.field} is ${json(item.code)} in the code but ${json(item.model)} in the model`
+  );
+  write(`${indent}Code differs from the model after ${after}: ${fields.join('; ')}`);
+}
 
 function printViolations(result, write) {
   for (let violation of result.violations || []) {
     write(`  ${violation.invariant}: ${violation.detail}`);
     write(`    ${violation.actions.join(' -> ')}`);
+    let replay = violation.replay;
+    if (replay) {
+      let at =
+        replay.step != null && replay.status !== 'not-reproduced' ? ` at step ${replay.step}` : '';
+      write(
+        `    Chromium: ${replay.status}${at}${replay.error ? ` — ${replay.error.split('\n')[0]}` : ''}`
+      );
+      if (replay.status === 'different-violation')
+        for (let failure of replay.failures || [])
+          write(`      ${failure.invariant}: ${failure.detail}`);
+      printDivergence(replay.divergence, write, '    ');
+      if (replay.screenshots) write(`    Screenshots: ${replay.screenshots}`);
+    }
     write(`    Replay: yarn verify replay ${result.target} --trace ${violation.path}`);
   }
 }
@@ -67,7 +94,9 @@ export function printResult(result, write) {
     );
     if (result.mismatch) {
       write(`  ${result.mismatch.detail}`);
-      write(`    ${result.mismatch.actions.join(' -> ')}`);
+      write(
+        `    ${[...result.mismatch.actions, ...(result.mismatch.action ? [`(${result.mismatch.action})`] : [])].join(' -> ') || 'setup'}`
+      );
     }
     if (exploration?.neverEnabled?.length)
       write(`  Never enabled (check guards or bounds): ${exploration.neverEnabled.join(', ')}`);
@@ -76,6 +105,9 @@ export function printResult(result, write) {
       `${result.target}: ${result.status} in ${result.environment}${result.step != null ? ` at step ${result.step}` : ''}${result.invariant === undefined ? '' : ` (${result.invariant})`}`
     );
     for (let failure of result.failures || []) write(`  ${failure.invariant}: ${failure.detail}`);
+    printDivergence(result.divergence, write, '  ');
+    if (result.environment === 'chromium' && result.observations)
+      write(`  Screenshots: ${join(result.directory, `${result.invariant ?? 'trace'}.steps`)}`);
   } else {
     write(
       `${result.target}: ${result.status} (${result.environment}${result.runs === undefined ? '' : `; depth ${result.depthReached}/${result.bounds.depth}; ${result.runs} runs; ${result.distinctStates} distinct states; ${ms(result.durationMs)}`})`
@@ -108,7 +140,9 @@ export async function main(
         trace: {type: 'string'},
         depth: {type: 'string'},
         'max-runs': {type: 'string'},
-        environment: {type: 'string'}
+        environment: {type: 'string'},
+        'no-replay': {type: 'boolean'},
+        headed: {type: 'boolean'}
       }
     });
     if (values.help || !positionals.length) {
@@ -136,6 +170,8 @@ export async function main(
       throw new Error('--depth requires explore, conform, or check.');
     if (values['max-runs'] !== undefined && !['explore', 'conform'].includes(command))
       throw new Error('--max-runs requires explore or conform.');
+    if (values['no-replay'] && command !== 'check') throw new Error('--no-replay requires check.');
+    if (values.headed && command !== 'replay') throw new Error('--headed requires replay.');
     if (values.output === '') throw new Error('--output must not be empty.');
     let count = (option, max) => {
       if (values[option] === undefined) return undefined;
@@ -152,6 +188,8 @@ export async function main(
       maxRuns: count('max-runs', 1000000),
       timeoutMs: count('timeout-ms', 3600000),
       output: values.output,
+      replay: !values['no-replay'],
+      headed: values.headed,
       onProgress: values.json ? undefined : progress
     };
     let controller = new AbortController();

@@ -27,6 +27,9 @@ declare const __VERIFY_REQUEST__: {
   timeoutMs: number;
   options?: {depth?: number; maxRuns?: number};
   trace?: any;
+  // A batch of traces to replay, from `check`.
+  traces?: any[];
+  headed?: boolean;
 };
 
 declare module 'vitest/browser' {
@@ -34,6 +37,7 @@ declare module 'vitest/browser' {
     verifyConformance: (metadata: any, paths: any[], timeoutMs: number) => Promise<any>;
     writeVerifyResult: (result: object) => Promise<void>;
     verifyTouch: (selector: string, type: 'start' | 'cancel') => Promise<void>;
+    verifyStep: (name: string, index: number, action: string | null) => Promise<void>;
   }
 }
 
@@ -116,6 +120,34 @@ async function createEnvironment(): Promise<Environment> {
         return pointerId;
       }
     }
+  };
+}
+
+// In Chromium, a screenshot after each step of a replay, in <Invariant>.steps.
+async function stepRecorder(name: string) {
+  if (request.environment !== 'chromium') return undefined;
+  let {commands} = await import('vitest/browser');
+  return (index: number, action: string | null) => commands.verifyStep(name, index, action);
+}
+
+async function replayTraces(target: any, env: Environment, options: object) {
+  let replays: any[] = [];
+  for (let trace of request.traces!) {
+    try {
+      replays.push(
+        await replay(target, env, trace, {...options, onStep: await stepRecorder(trace.invariant)})
+      );
+    } catch (failure) {
+      if (failure instanceof Error && failure.name === 'TimeoutError') throw failure;
+      replays.push({status: 'error', error: failure instanceof Error ? failure.message : failure});
+    }
+  }
+  return {
+    schemaVersion: 1,
+    target: target.name,
+    environment: env.name,
+    status: 'replayed',
+    replays
   };
 }
 
@@ -208,7 +240,12 @@ it(`${request.mode} ${request.target} (${request.environment})`, async () => {
       result =
         request.mode === 'explore'
           ? await explore(target, env, options)
-          : await replay(target, env, request.trace, options);
+          : request.traces
+            ? await replayTraces(target, env, options)
+            : await replay(target, env, request.trace, {
+                ...options,
+                onStep: await stepRecorder(request.trace?.invariant ?? 'trace')
+              });
     }
     // A result that finished after the deadline is still evidence; keep it.
     await writeResult({...result, consoleErrors});

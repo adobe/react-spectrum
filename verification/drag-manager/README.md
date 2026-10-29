@@ -3,10 +3,10 @@
 [DragManager.tla](DragManager.tla) models one attempted drag session, two registered drop targets, entry/exit, drop/cancel, unregister, and removal of the source. The real adapter uses the actual manager; verification-only probes expose its session and target registry.
 
 ```sh
-yarn verify explore drag-manager
 yarn verify conform drag-manager
-yarn verify check drag-manager --depth 8
-yarn verify replay drag-manager --trace <printed trace path>
+yarn verify check drag-manager --depth 8  # replays each counterexample in Chromium
+yarn verify replay drag-manager --headed --trace <path printed by check>
+yarn verify explore drag-manager
 ```
 
 `Begin` starts and settles a virtual drag. `BeginWhileDragging` attempts a second begin and checks that it is rejected without replacing the session. `Enter0/1` and `Leave` drive the manager's target-transition method; `Drop` and `Cancel` end the session. `Unregister0/1` remove registration during or outside a drag, allowing the manager to choose a remaining target. `Unmount` removes the source DOM node without issuing an application cancellation. Default real-code depth: 6.
