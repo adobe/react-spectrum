@@ -211,6 +211,14 @@ Next ==
      \/ (PauseAllAction /\ action' = "pauseAll")
      \/ (ResumeAllAction /\ action' = "resumeAll")
 
+\* Ticks until each pending timeout fires, in ascending order, including the
+\* untracked ones Resume leaves running. A timeout is due within Timeout ticks.
+RECURSIVE ScheduleFrom(_)
+ScheduleFrom(d) ==
+  IF d > Timeout THEN <<>>
+  ELSE [k \in 1..Len(SelectSeq(s.timeouts, LAMBDA x : x.due - s.now = d)) |-> d]
+         \o ScheduleFrom(d + 1)
+
 \* What conformance compares with the target's projected observation (times in ticks).
 View ==
   [pointerOverRegion |-> s.pointer, focusInRegion |-> FocusIn(s),
@@ -220,7 +228,7 @@ View ==
        [id |-> i, visible |-> i \in VisibleSet(s.queue), elapsed |-> s.elapsed[i],
         running |-> s.timer[i].id # 0, remaining |-> s.timer[i].remaining,
         sinceStart |-> IF s.timer[i].id # 0 THEN s.now - s.timer[i].start ELSE -1]],
-   pendingTimers |-> Len(s.timeouts), problems |-> s.problems]
+   pendingTimers |-> ScheduleFrom(1), problems |-> s.problems]
 
 \* Contracts; names match the target's invariants.
 NoProblem(name) == \A k \in 1..Len(s.problems) : s.problems[k] # name

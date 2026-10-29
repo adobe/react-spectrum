@@ -20,7 +20,9 @@ yarn verify replay toast-queue --trace <path printed by explore or check>
 | `tick` | Advance fake time by 2500 ms. |
 | `pauseAll` / `resumeAll` | The public queue methods. Only enabled while the region is neither hovered nor focused. |
 
-`maxVisibleToasts` is 1, so adding a toast hides the previous one. Depth 7 takes about 2,300 runs and 830 distinct states in jsdom, roughly 11 seconds. jsdom's `Selection` schedules a 0 ms timer on every `focus()`, so the target runs zero-delay timers after setup and each action, as a browser would; `pendingTimers` then counts only toast timeouts.
+`maxVisibleToasts` is 1, so adding a toast hides the previous one. Depth 7 takes about 2,900 runs and 1,200 distinct states in jsdom, roughly 13 seconds. jsdom's `Selection` schedules a 0 ms timer on every `focus()`, so the target runs zero-delay timers after setup and each action, as a browser would; `pendingTimers` then lists only toast timeouts.
+
+`pendingTimers` is how long until each pending timeout fires, not just how many there are. `resume()` on a running timer leaves its old timeout pending with nothing referencing it, so two runs can have the same toasts and the same number of timeouts but different deadlines. The target wraps `setTimeout` and `clearTimeout` to see every timeout, and `check` fails the run if that tracking misses one.
 
 ## Reference model and invariants
 

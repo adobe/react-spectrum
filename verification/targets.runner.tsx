@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="vite/client" />
+/// <reference types="vite/types/import-meta.d.ts" />
 import {deadline} from './runtime.mjs';
 import type {Environment} from './explorer.mjs';
 import {explore, replay} from './explorer.mjs';
@@ -185,7 +185,7 @@ it(`${request.mode} ${request.target} (${request.environment})`, async () => {
           ? await explore(target, env, options)
           : await replay(target, env, request.trace, options);
     }
-    if (result.status !== 'timed-out') checkDeadline();
+    // A result that finished after the deadline is still evidence; keep it.
     await writeResult({...result, consoleErrors});
   } catch (failure) {
     await writeResult({

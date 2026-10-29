@@ -11,7 +11,7 @@
  */
 
 import assert from 'node:assert/strict';
-import {checkModel, conformModel, loadModel, parseRecord, toTla} from '../model.mjs';
+import {checkModel, conformModel, loadModel, toTla} from '../model.mjs';
 import {defineTarget, explore} from '../explorer.mjs';
 import {join} from 'node:path';
 import {mkdtempSync, rmSync, writeFileSync} from 'node:fs';
@@ -39,7 +39,16 @@ const target = defineTarget({
   }
 });
 
-function counterModel(t, {release = "count' = count - 1", acquire = "count' = count + 1"} = {}) {
+// `hidden` is model state the View does not show; the defaults never change it.
+function counterModel(
+  t,
+  {
+    release = "count' = count - 1",
+    acquire = "count' = count + 1",
+    init = 'count = 0',
+    hidden = 'hidden = 0'
+  } = {}
+) {
   let directory = mkdtempSync(join(tmpdir(), 'verification-model-test-'));
   t.after(() => rmSync(directory, {recursive: true, force: true}));
   writeFileSync(
@@ -47,12 +56,13 @@ function counterModel(t, {release = "count' = count - 1", acquire = "count' = co
     `---- MODULE Counter ----
 EXTENDS Integers
 CONSTANT MaxSteps
-VARIABLES count, step, action
-vars == <<count, step, action>>
-Init == count = 0 /\\ step = 0 /\\ action = "Init"
+VARIABLES count, hidden, step, action
+vars == <<count, hidden, step, action>>
+Init == ${init} /\\ ${hidden} /\\ step = 0 /\\ action = "Init"
 Next ==
   /\\ step < MaxSteps
   /\\ step' = step + 1
+  /\\ hidden' = hidden
   /\\ \\/ (count < 2 /\\ ${acquire} /\\ action' = "acquire")
      \\/ (${release} /\\ action' = "release")
 View == [count |-> count]
@@ -68,16 +78,11 @@ async function paths() {
   return (await explore(target, env, {invariants: false, collect: true})).paths;
 }
 
-test('TLA+ values are converted from JSON and records are parsed back', () => {
+test('TLA+ values are converted from JSON', () => {
   assert.equal(toTla({b: [1, 'x'], a: {c: true}}), '[a |-> [c |-> TRUE], b |-> <<1, "x">>]');
   assert.throws(() => toTla(1.5), /integers/);
   assert.throws(() => toTla({}), /empty record/);
   assert.throws(() => toTla(null), /project/);
-  assert.deepEqual(parseRecord('[a |-> "x, y", b |-> <<1, 2>>, c |-> [d |-> TRUE]]'), {
-    a: '"x, y"',
-    b: '<<1, 2>>',
-    c: '[d |-> TRUE]'
-  });
 });
 
 test('check model-checks each invariant and returns replayable traces', async t => {
@@ -130,17 +135,65 @@ test('conform passes when the model matches and pinpoints action and state misma
   assert.equal(wrong.mismatch.kind, 'state');
   assert.deepEqual(wrong.mismatch.actions, ['acquire']);
   assert.deepEqual(wrong.mismatch.fields, [{field: 'count', model: '2', code: '1'}]);
+
+  let start = await conformModel(target, counterModel(t, {init: 'count = 5'}), collected);
+  assert.equal(start.status, 'mismatch');
+  assert.deepEqual(start.mismatch.actions, []);
+  assert.match(start.mismatch.detail, /^after setup, count is 0 in the code but 5 in the model/);
+});
+
+test('conform accepts a nondeterministic model when one of its behaviors matches', async t => {
+  let collected = await paths();
+  let either = await conformModel(
+    target,
+    counterModel(t, {acquire: "(count' = count + 1 \\/ count' = count + 2)"}),
+    collected
+  );
+  assert.equal(either.status, 'conforms');
+
+  // Both branches look the same, but only one can release afterwards.
+  let hidden = await conformModel(
+    target,
+    counterModel(t, {
+      hidden: 'hidden \\in {0, 1}',
+      release: "hidden = 0 /\\ count' = count - 1"
+    }),
+    collected
+  );
+  assert.equal(hidden.status, 'conforms');
+
+  let neither = await conformModel(
+    target,
+    counterModel(t, {acquire: "(count' = count + 2 \\/ count' = count + 3)"}),
+    collected
+  );
+  assert.equal(neither.status, 'mismatch');
+  assert.equal(neither.mismatch.kind, 'state');
+  assert.deepEqual(neither.mismatch.actions, ['acquire']);
 });
 
 test('model operations respect the shared run deadline', async t => {
   let model = counterModel(t);
-  let options = {
-    checkDeadline: () => {
+  let deadline = after => {
+    let calls = 0;
+    return () => {
+      if (calls++ < after) return;
       let error = new Error('deadline');
       error.name = 'TimeoutError';
       throw error;
-    }
+    };
   };
-  await assert.rejects(checkModel(target, model, options), {name: 'TimeoutError'});
-  await assert.rejects(conformModel(target, model, await paths(), options), {name: 'TimeoutError'});
+  let none = await checkModel(target, model, {checkDeadline: deadline(0)});
+  assert.equal(none.status, 'timed-out');
+  assert.deepEqual(none.invariants, []);
+  // The first invariant's counterexample is kept when time runs out before the second.
+  let partial = await checkModel(target, model, {checkDeadline: deadline(1)});
+  assert.equal(partial.status, 'timed-out');
+  assert.deepEqual(
+    partial.violations.map(item => item.invariant),
+    ['NonNegative']
+  );
+  await assert.rejects(conformModel(target, model, await paths(), {checkDeadline: deadline(0)}), {
+    name: 'TimeoutError'
+  });
 });

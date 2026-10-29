@@ -14,10 +14,10 @@ import assert from 'node:assert/strict';
 import {cleanup, deadline} from '../runtime.mjs';
 import {defineTarget, execute, explore, replay} from '../explorer.mjs';
 import {discoverTargets, runTarget} from '../targets.mjs';
+import {existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {join} from 'node:path';
-import {main} from '../cli.mjs';
-import {mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {main, printResult} from '../cli.mjs';
 import {runProcess} from '../process.mjs';
 import {test} from 'node:test';
 import {tmpdir} from 'node:os';
@@ -58,6 +58,10 @@ test('defineTarget rejects incomplete targets', () => {
   assert.throws(() => counter({bounds: {depth: 0}}), /depth/);
   assert.throws(() => counter({invariants: {}}), /invariant/);
   assert.throws(() => counter({actions: {broken: {}}}), /run function/);
+  assert.throws(
+    () => counter({model: {spec: 'Counter.tla', project: x => x, invariants: ['Nope']}}),
+    /model.invariants/
+  );
 });
 
 test('explore reports the shortest trace per invariant and coverage gaps', async () => {
@@ -70,6 +74,22 @@ test('explore reports the shortest trace per invariant and coverage gaps', async
   assert.equal(traces.BelowTwo.detail, 'BelowTwo failed.');
   assert.deepEqual(traces.BelowTwo.observations, [{count: 0}, {count: 1}, {count: 2}]);
   assert.deepEqual(result.neverEnabled, ['reset']);
+});
+
+test('actions enabled only at the depth bound are not reported as never enabled', async () => {
+  let result = await explore(
+    counter({
+      bounds: {depth: 2},
+      actions: {
+        acquire: {enabled: ctx => ctx.count < 2, run: ctx => void ctx.count++},
+        full: {enabled: ctx => ctx.count === 2, run: () => {}}
+      },
+      invariants: {Always: () => true}
+    }),
+    env
+  );
+  assert.deepEqual(result.neverEnabled, []);
+  assert.deepEqual(result.neverRan, ['full']);
 });
 
 test('equivalent observations are merged unless dedupe is disabled', async () => {
@@ -135,6 +155,11 @@ test('replay distinguishes reproduced, not reproduced, other failures, and disab
   );
   assert.equal((await replay(target, env, trace(['reset']))).status, 'disabled');
   await assert.rejects(replay(target, env, {...trace([]), target: 'other'}), /trace for counter/);
+  // A trace for an invariant the target lacks could never be reproduced.
+  await assert.rejects(
+    replay(target, env, {...trace(['release']), invariant: 'Nope'}),
+    /no invariant named Nope/
+  );
   let teardown = [];
   await execute(counter({teardown: ctx => teardown.push(ctx.count)}), env, ['acquire']);
   assert.deepEqual(teardown, [1]);
@@ -185,6 +210,9 @@ test('targets run in Vitest with evidence outside the checkout', async t => {
   assert.equal(replayed.exitCode, 2);
 
   await assert.rejects(runTarget(root, 'toast-queue', {output: root}, {execute}), /outside/);
+  let inside = join(root, 'verification', `.evidence-${process.pid}`);
+  await assert.rejects(runTarget(root, 'toast-queue', {output: inside}, {execute}), /outside/);
+  assert.equal(existsSync(inside), false);
   await assert.rejects(runTarget(root, 'missing', {output}, {execute}), /Unknown target/);
   await assert.rejects(
     runTarget(root, 'toast-queue', {mode: 'replay', output}, {execute}),
@@ -215,6 +243,25 @@ test('CLI validates explore and replay options before running', async t => {
   let output;
   assert.equal(await main(['list', '--json'], root, value => (output = value)), 0);
   assert.deepEqual(JSON.parse(output).targets, ['example']);
+});
+
+test('the CLI prints runs that failed before reporting without undefined fields', () => {
+  for (let mode of ['explore', 'replay', 'check', 'conform']) {
+    let lines = [];
+    printResult(
+      // What runTarget reports when Vitest wrote no result.
+      {
+        mode,
+        target: 'example',
+        environment: 'jsdom',
+        status: 'error',
+        error: 'Vitest failed.',
+        directory: '/tmp/evidence'
+      },
+      line => lines.push(line)
+    );
+    assert.doesNotMatch(lines.join('\n'), /undefined/, mode);
+  }
 });
 
 test('a violation in an already explored prefix is nondeterminism, not a counterexample', async () => {
@@ -416,4 +463,45 @@ test('process startup failures resolve as errors and hung runners are terminated
   });
   assert.equal(timedOut.timedOut, true);
   assert.notEqual(timedOut.code, 0);
+  let untimed = await runProcess(process.execPath, ['-e', 'setTimeout(() => {}, 200)'], {
+    log: join(output, 'untimed.log')
+  });
+  assert.equal(untimed.timedOut, false);
+  assert.equal(untimed.code, 0);
 });
+
+test(
+  'stopping a runner also stops descendants in their own process groups',
+  {skip: process.platform === 'win32'},
+  async t => {
+    let output = directory(t);
+    // Like Playwright's browser: a detached grandchild in a process group of its own.
+    let script = `
+      let {spawn} = require('node:child_process');
+      let child = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], {
+        detached: true,
+        stdio: 'ignore'
+      });
+      child.unref();
+      console.log(child.pid);
+      setInterval(() => {}, 1000);`;
+    let result = await runProcess(process.execPath, ['-e', script], {
+      log: join(output, 'tree.log'),
+      timeoutMs: 500
+    });
+    let pid = Number(result.output.trim());
+    let alive = () => {
+      try {
+        process.kill(pid, 0);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+    t.after(() => alive() && process.kill(pid, 'SIGKILL'));
+    assert.equal(result.timedOut, true);
+    assert.ok(pid > 0);
+    for (let i = 0; alive() && i < 50; i++) await new Promise(resolve => setTimeout(resolve, 100));
+    assert.equal(alive(), false);
+  }
+);

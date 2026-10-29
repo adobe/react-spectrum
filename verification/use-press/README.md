@@ -21,7 +21,9 @@ yarn verify replay use-press --trace <path printed by explore or check>
 | `Disable` / `Enable` | Rerender with `isDisabled`. |
 | `Unmount` | Unmount the hook. |
 
-Depth 8 takes about 480 runs and 120 distinct states in jsdom, under a second.
+Depth 8 takes about 490 runs and 126 distinct states in jsdom, under a second.
+
+The hook records a click for the fallback in a closure, so `observe` includes `fallbackClicked`: whether a click reached the fallback's capturing listener while its timer is pending. Without it, a click before pointerup (which the fallback never sees) and one after it would be merged, and only one of them would be explored further.
 
 ## Reference model and invariants
 

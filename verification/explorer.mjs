@@ -59,8 +59,8 @@ import {now} from './runtime.mjs';
  * @property {(observation: any) => Record<string, unknown>} project Maps an observation
  *   onto the model's `View` record, for conformance.
  * @property {number} [depth] Default model-checking depth; defaults to bounds.depth.
- * @property {string[]} [invariants] Model operators to check; defaults to the target's
- *   invariant names.
+ * @property {string[]} [invariants] Target invariants to model-check; defaults to all of
+ *   them. Each must be a target invariant so that its counterexamples can be replayed.
  * @property {Record<string, unknown>} [constants] Extra CONSTANT values, as JSON.
  */
 
@@ -91,6 +91,12 @@ export function defineTarget(spec) {
       typeof spec.model.project !== 'function')
   )
     fail('model needs a .tla spec and a project function.');
+  let modelInvariants = spec.model?.invariants ?? [];
+  if (
+    !Array.isArray(modelInvariants) ||
+    modelInvariants.some(name => !Object.hasOwn(spec.invariants, name))
+  )
+    fail('model.invariants must name target invariants, so their counterexamples can be replayed.');
   return {
     ...spec,
     actions: Object.fromEntries(
@@ -248,6 +254,9 @@ export async function explore(target, env, options = {}) {
       if (!violations.has(failure.invariant))
         violations.set(failure.invariant, trace(target, actions, failure, result.observations));
   };
+  // Coverage counts the distinct states that enable each action, including states
+  // at the depth bound that are not extended, and the runs that took it.
+  let discovered = enabled => enabled.forEach(name => coverage[name].enabled++);
 
   let checkInvariants = options.invariants !== false;
   let paths = [];
@@ -263,12 +272,12 @@ export async function explore(target, env, options = {}) {
     return summary('violations');
   }
   seen.set(stableStringify(root.observations.at(-1)), []);
+  discovered(root.enabled);
   paths.push({actions: [], observations: root.observations});
   let frontier = [{actions: [], enabled: root.enabled, observation: root.observations.at(-1)}];
   for (; level < depth && frontier.length; level++) {
     let next = [];
     let candidates = frontier.flatMap(state => state.enabled.map(name => ({state, name})));
-    for (let {name} of candidates) coverage[name].enabled++;
     for (let {state, name} of candidates) {
       if (runs >= maxRuns) {
         complete = false;
@@ -312,6 +321,7 @@ export async function explore(target, env, options = {}) {
       let key = options.dedupe === false ? stableStringify(actions) : stableStringify(observation);
       if (seen.has(key)) continue;
       seen.set(key, actions);
+      discovered(result.enabled);
       next.push({actions, enabled: result.enabled, observation});
     }
     if (!complete) break;
@@ -327,6 +337,9 @@ export async function explore(target, env, options = {}) {
 export async function replay(target, env, input, options = {}) {
   if (input?.schemaVersion !== 1 || input.target !== target.name || !Array.isArray(input.actions))
     throw new Error(`Expected a schemaVersion 1 trace for ${target.name}.`);
+  // Otherwise the trace could never be reproduced, and would read as a pass.
+  if (!Object.hasOwn(target.invariants, input.invariant))
+    throw new Error(`${target.name} has no invariant named ${input.invariant}.`);
   let result = await execute(target, env, input.actions, options);
   let failure = result.failures?.find(item => item.invariant === input.invariant);
   return {

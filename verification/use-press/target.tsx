@@ -43,6 +43,9 @@ interface Context {
   outcome: Outcome;
   nativeClicked: boolean;
   otherClicked: boolean;
+  // A click reached the fallback's capturing listener. The hook keeps this in a
+  // closure; without it, a click before pointerup and one after it would be merged.
+  fallbackClicked: boolean;
   otherDown: boolean;
 }
 
@@ -183,6 +186,7 @@ export default defineTarget<Context>({
       outcome: 'none',
       nativeClicked: false,
       otherClicked: false,
+      fallbackClicked: false,
       otherDown: false
     };
     await render(ctx, false);
@@ -242,6 +246,7 @@ export default defineTarget<Context>({
     OtherClick: {
       enabled: ctx => ['down', 'up'].includes(ctx.pointer) && !ctx.otherClicked,
       async run(ctx) {
+        ctx.fallbackClicked ||= ctx.listeners.some(item => item.type === 'click' && item.capture);
         await click(ctx.other);
         ctx.otherClicked = true;
       }
@@ -305,6 +310,8 @@ export default defineTarget<Context>({
       outcome: ctx.outcome,
       nativeClicked: ctx.nativeClicked,
       otherClicked: ctx.otherClicked,
+      // Only a pending fallback acts on the click.
+      fallbackClicked: ctx.fallbackClicked && timers(ctx) > 0,
       otherDown: ctx.otherDown,
       pressed: pressed(ctx),
       starts: count(ctx, 'pressstart'),

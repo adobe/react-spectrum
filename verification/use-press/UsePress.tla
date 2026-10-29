@@ -115,7 +115,8 @@ Next ==
 View ==
   [mounted |-> s.mounted, disabled |-> s.disabled, pointer |-> s.pointer,
    outcome |-> s.outcome, nativeClicked |-> s.nativeClicked,
-   otherClicked |-> s.otherClicked, otherDown |-> s.otherDown,
+   otherClicked |-> s.otherClicked, fallbackClicked |-> s.h.clicked /\ s.h.timer,
+   otherDown |-> s.otherDown,
    pressed |-> s.mounted /\ s.h.isPressed, starts |-> s.h.starts,
    ends |-> s.h.ends, presses |-> s.h.presses, timer |-> s.h.timer,
    listeners |-> s.h.listeners]

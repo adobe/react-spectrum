@@ -38,9 +38,11 @@ const MAX_ADDED = 3;
 // useToast's reset on mount.
 type ReferenceToast = {id: number; key: string; elapsed: number};
 type Problem = {invariant: string; message: string};
+type Timeouts = {due: Map<unknown, number>; restore: () => void};
 
 interface Context {
   env: Environment;
+  timeouts: Timeouts;
   queue: ToastQueue<{id: number}>;
   root: Root;
   host: HTMLElement;
@@ -165,6 +167,47 @@ function instrument(
   );
 }
 
+// Record when each pending timeout fires. Timer.resume() on a running timer leaves
+// its old timeout pending with nothing referencing it, so the queue cannot show it.
+function trackTimeouts(): Timeouts {
+  let set = globalThis.setTimeout;
+  let clear = globalThis.clearTimeout;
+  let due = new Map<unknown, number>();
+  globalThis.setTimeout = ((callback: (...args: unknown[]) => void, delay = 0, ...args) => {
+    let id = set(() => {
+      due.delete(id);
+      callback(...args);
+    }, delay);
+    due.set(id, Date.now() + delay);
+    return id;
+  }) as typeof setTimeout;
+  globalThis.clearTimeout = (id => {
+    due.delete(id);
+    clear(id);
+  }) as typeof clearTimeout;
+  return {
+    due,
+    restore() {
+      globalThis.setTimeout = set;
+      globalThis.clearTimeout = clear;
+    }
+  };
+}
+
+// ToastQueue keeps each toast's Timer in private fields. Fail if they change,
+// rather than observe every toast as stopped.
+function timerOf(ctx: Context, key: string) {
+  let queued: Array<{key: string; timer?: any}> = (ctx.queue as any).queue;
+  if (!Array.isArray(queued)) {
+    throw new Error('ToastQueue internals changed: it has no queue array.');
+  }
+  let timer = queued.find(item => item.key === key)?.timer;
+  if (timer && (typeof timer.remaining !== 'number' || !('startTime' in timer))) {
+    throw new Error('ToastQueue internals changed: its Timer has no remaining or startTime.');
+  }
+  return timer;
+}
+
 function problem(invariant: string) {
   return (ctx: Context) =>
     ctx.problems.find(problem => problem.invariant === invariant)?.message ?? true;
@@ -203,18 +246,20 @@ export default defineTarget<Context>({
     spec: 'ToastQueue.tla',
     // ToastQueue.tla counts time in ticks and tracks the region's focus refs, so it
     // needs neither regionHovered (covered by check) nor focusEntered.
-    project: ({regionHovered, focusEntered, toasts, ...rest}) => ({
+    project: ({regionHovered, focusEntered, toasts, pendingTimers, ...rest}) => ({
       ...rest,
       toasts: toasts.map(({elapsed, remaining, sinceStart, ...toast}) => ({
         ...toast,
         elapsed: elapsed / TICK,
-        remaining: remaining / TICK,
+        remaining: remaining === null ? -1 : remaining / TICK,
         sinceStart: sinceStart === null ? -1 : sinceStart / TICK
-      }))
+      })),
+      pendingTimers: pendingTimers.map(delay => delay / TICK)
     })
   },
   async setup(env) {
     vi.useFakeTimers({now: 0, toFake: ['setTimeout', 'clearTimeout', 'Date']});
+    let timeouts = trackTimeouts();
     let host = document.createElement('div');
     document.body.append(host);
     let queue = new ToastQueue<{id: number}>({maxVisibleToasts: MAX_VISIBLE});
@@ -230,6 +275,7 @@ export default defineTarget<Context>({
     await settle();
     return {
       env,
+      timeouts,
       queue,
       root,
       host,
@@ -250,6 +296,8 @@ export default defineTarget<Context>({
       () => act(() => ctx.env.input.hover(ctx.away)),
       () => act(async () => ctx.root.unmount()),
       () => ctx.host.remove(),
+      // Before useRealTimers, which would otherwise be undone.
+      () => ctx.timeouts.restore(),
       () => vi.clearAllTimers(),
       () => vi.useRealTimers()
     );
@@ -261,6 +309,12 @@ export default defineTarget<Context>({
     if (hovered !== ctx.pointerOverRegion) {
       throw new Error(
         `Input diverged: the region is ${hovered ? '' : 'not '}hovered, but the pointer is ${ctx.pointerOverRegion ? 'over it' : 'away'}.`
+      );
+    }
+    // A timer scheduled through a saved reference to setTimeout would be missed.
+    if (ctx.timeouts.due.size !== vi.getTimerCount()) {
+      throw new Error(
+        `Timeout tracking diverged: ${vi.getTimerCount()} timers are pending, but ${ctx.timeouts.due.size} were tracked.`
       );
     }
   },
@@ -362,19 +416,22 @@ export default defineTarget<Context>({
       added: ctx.added,
       toasts: ctx.open.map(toast => {
         // Timer internals (private) keep states with different pending timeouts apart.
-        let queued: Array<{key: string; timer?: any}> = (ctx.queue as any).queue;
-        let timer = queued.find(item => item.key === toast.key)?.timer;
+        let timer = timerOf(ctx, toast.key);
         let running = timer?.timerId != null;
         return {
           id: toast.id,
           visible: ctx.visible.has(toast.id),
           elapsed: toast.elapsed,
           running,
-          remaining: timer?.remaining ?? null,
+          // null if the queue no longer holds the toast.
+          remaining: timer ? timer.remaining : null,
           sinceStart: running ? Date.now() - timer.startTime : null
         };
       }),
-      pendingTimers: vi.getTimerCount(),
+      // How long until each pending timeout fires, including untracked ones.
+      pendingTimers: [...ctx.timeouts.due.values()]
+        .map(due => due - Date.now())
+        .sort((a, b) => a - b),
       problems: ctx.problems.map(problem => problem.invariant)
     };
   },

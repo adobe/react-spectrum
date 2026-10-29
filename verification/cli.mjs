@@ -46,10 +46,14 @@ function printViolations(result, write) {
   }
 }
 
-function printResult(result, write) {
+let ms = value => `${Math.round(value)} ms`;
+
+// A run that failed before reporting has only a status and an error, so each
+// summary is printed only when its fields are present.
+export function printResult(result, write) {
   if (result.mode === 'check') {
     write(
-      `${result.target}: ${result.status} (model; depth ${result.depth}; ${result.durationMs} ms)`
+      `${result.target}: ${result.status}${result.invariants ? ` (model; depth ${result.depth}; ${ms(result.durationMs)})` : ''}`
     );
     for (let item of result.invariants || [])
       write(
@@ -59,7 +63,7 @@ function printResult(result, write) {
   } else if (result.mode === 'conform') {
     let exploration = result.exploration;
     write(
-      `${result.target}: ${result.status}${result.traces === undefined ? '' : ` (${result.traces} traces, ${result.steps} steps from ${exploration.runs} runs of the real code; ${result.distinctStates} model states; ${result.durationMs} ms)`}`
+      `${result.target}: ${result.status}${result.traces === undefined ? '' : ` (${result.traces} traces, ${result.steps} steps from ${exploration.runs} runs of the real code; ${result.distinctStates} model states; ${ms(result.durationMs)})`}`
     );
     if (result.mismatch) {
       write(`  ${result.mismatch.detail}`);
@@ -69,12 +73,12 @@ function printResult(result, write) {
       write(`  Never enabled (check guards or bounds): ${exploration.neverEnabled.join(', ')}`);
   } else if (result.mode === 'replay') {
     write(
-      `${result.target}: ${result.status} in ${result.environment}${result.step != null ? ` at step ${result.step}` : ''} (${result.invariant})`
+      `${result.target}: ${result.status} in ${result.environment}${result.step != null ? ` at step ${result.step}` : ''}${result.invariant === undefined ? '' : ` (${result.invariant})`}`
     );
     for (let failure of result.failures || []) write(`  ${failure.invariant}: ${failure.detail}`);
   } else {
     write(
-      `${result.target}: ${result.status} (${result.environment}; depth ${result.depthReached}/${result.bounds?.depth}; ${result.runs} runs; ${result.distinctStates} distinct states; ${result.durationMs} ms)`
+      `${result.target}: ${result.status} (${result.environment}${result.runs === undefined ? '' : `; depth ${result.depthReached}/${result.bounds.depth}; ${result.runs} runs; ${result.distinctStates} distinct states; ${ms(result.durationMs)}`})`
     );
     printViolations(result, write);
     if (result.neverEnabled?.length)

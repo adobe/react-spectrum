@@ -11,10 +11,35 @@
  */
 
 import {closeSync, openSync, writeSync} from 'node:fs';
-import {spawn} from 'node:child_process';
+import {execFileSync, spawn} from 'node:child_process';
+
+// The process groups of `pid` and its descendants, other than this process's own.
+// Playwright starts each browser in a group of its own, so signaling only the
+// runner's group would leave the browser running.
+function processGroups(pid) {
+  let groups = new Set([pid]);
+  let rows;
+  try {
+    rows = execFileSync('ps', ['-A', '-o', 'pid=,ppid=,pgid='], {encoding: 'utf8'})
+      .trim()
+      .split('\n')
+      .map(line => line.trim().split(/\s+/).map(Number));
+  } catch {
+    return groups;
+  }
+  let tree = new Set([pid]);
+  for (let size = 0; size !== tree.size; ) {
+    size = tree.size;
+    for (let [child, parent] of rows) if (tree.has(parent)) tree.add(child);
+  }
+  for (let [child, , group] of rows) if (tree.has(child)) groups.add(group);
+  groups.delete(rows.find(([child]) => child === process.pid)?.[2]);
+  return groups;
+}
 
 // Write complete logs to disk, retaining only a bounded tail for diagnostics.
 // A separate process group lets timeouts stop Yarn's child runners as well.
+// Without `timeoutMs`, the process runs until it exits or `signal` aborts it.
 export function runProcess(command, args, {cwd, env = process.env, timeoutMs, log, signal} = {}) {
   return new Promise(resolve => {
     let fd = openSync(log, 'wx');
@@ -24,6 +49,7 @@ export function runProcess(command, args, {cwd, env = process.env, timeoutMs, lo
     let timedOut = false;
     let interrupted = false;
     let killTimer;
+    let groups;
     let child;
     try {
       child = spawn(command, args, {
@@ -38,25 +64,42 @@ export function runProcess(command, args, {cwd, env = process.env, timeoutMs, lo
       return;
     }
     let kill = signal => {
-      try {
-        if (process.platform === 'win32') child.kill(signal);
-        else if (child.pid) process.kill(-child.pid, signal);
-      } catch (failure) {
-        if (failure.code !== 'ESRCH') error = failure.message;
+      if (!child.pid) return;
+      if (process.platform === 'win32') {
+        // taskkill /T stops the whole tree.
+        try {
+          execFileSync('taskkill', ['/pid', String(child.pid), '/T', '/F'], {stdio: 'ignore'});
+        } catch {
+          // The tree has already exited.
+        }
+        return;
+      }
+      // Find the groups once, while the process tree still links them to the child.
+      groups ??= processGroups(child.pid);
+      for (let group of groups) {
+        try {
+          process.kill(-group, signal);
+        } catch (failure) {
+          if (failure.code !== 'ESRCH') error = failure.message;
+        }
       }
     };
     let stop = () => {
       kill('SIGTERM');
+      // Not cleared when the child closes: a browser in its own group can outlive it.
       killTimer ??= setTimeout(() => kill('SIGKILL'), 1000);
     };
     let abort = () => {
       interrupted = true;
       stop();
     };
-    let timer = setTimeout(() => {
-      timedOut = true;
-      stop();
-    }, timeoutMs);
+    let timer =
+      timeoutMs === undefined
+        ? undefined
+        : setTimeout(() => {
+            timedOut = true;
+            stop();
+          }, timeoutMs);
     let record = chunk => {
       try {
         writeSync(fd, chunk);
@@ -73,7 +116,6 @@ export function runProcess(command, args, {cwd, env = process.env, timeoutMs, lo
     });
     child.on('close', (code, exitSignal) => {
       clearTimeout(timer);
-      clearTimeout(killTimer);
       signal?.removeEventListener('abort', abort);
       closeSync(fd);
       resolve({

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {basename, dirname, isAbsolute, join, relative, resolve, sep} from 'node:path';
 import {
   existsSync,
   mkdirSync,
@@ -20,7 +21,6 @@ import {
   statSync,
   writeFileSync
 } from 'node:fs';
-import {join, relative, resolve, sep} from 'node:path';
 import {runProcess} from './process.mjs';
 import {tmpdir} from 'node:os';
 
@@ -40,12 +40,24 @@ export function discoverTargets(root) {
     .sort();
 }
 
+// The real path of `path`, which may not exist yet.
+function realpathOf(path) {
+  let missing = [];
+  while (!existsSync(path)) {
+    missing.unshift(basename(path));
+    path = dirname(path);
+  }
+  return join(realpathSync(path), ...missing);
+}
+
+// Check before creating anything, so a rejected path leaves nothing in the checkout.
+// `relative` returns an absolute path for another drive on Windows.
 function evidenceDirectory(root, output, name) {
   let parent = resolve(output || tmpdir());
-  mkdirSync(parent, {recursive: true});
-  let local = relative(realpathSync(root), realpathSync(parent));
-  if (local === '' || (!local.startsWith(`..${sep}`) && local !== '..' && !local.startsWith(sep)))
+  let local = relative(realpathSync(root), realpathOf(parent));
+  if (!isAbsolute(local) && local !== '..' && !local.startsWith(`..${sep}`))
     throw new Error('Run evidence must be outside the checkout. Use a temporary output directory.');
+  mkdirSync(parent, {recursive: true});
   return mkdtempSync(join(parent, `verification-${name}-`));
 }
 
@@ -103,16 +115,20 @@ export async function runTarget(root, name, options = {}, dependencies = {}) {
       signal: options.signal
     }
   );
+  let failure = processResult.timedOut
+    ? {status: 'timed-out', reason: 'timed out'}
+    : processResult.interrupted
+      ? {status: 'interrupted', reason: 'was interrupted'}
+      : {
+          status: 'error',
+          reason: `failed (exit ${processResult.code}, signal ${processResult.signal ?? 'none'})`
+        };
   let result;
   try {
     result = JSON.parse(readFileSync(request.output, 'utf8'));
   } catch {
     result = {
-      status: processResult.timedOut
-        ? 'timed-out'
-        : processResult.interrupted
-          ? 'interrupted'
-          : 'error',
+      status: failure.status,
       error: `Vitest did not produce a result. See ${log}.`,
       output: processResult.output?.slice(-4000)
     };
@@ -125,14 +141,8 @@ export async function runTarget(root, name, options = {}, dependencies = {}) {
   ) {
     result = {
       ...result,
-      status: processResult.timedOut
-        ? 'timed-out'
-        : processResult.interrupted
-          ? 'interrupted'
-          : 'error',
-      error:
-        processResult.error ||
-        `Vitest ${processResult.timedOut ? 'timed out' : processResult.interrupted ? 'was interrupted' : `failed (exit ${processResult.code}, signal ${processResult.signal ?? 'none'})`}. See ${log}.`,
+      status: failure.status,
+      error: processResult.error || `Vitest ${failure.reason}. See ${log}.`,
       output: processResult.output?.slice(-4000)
     };
   }
