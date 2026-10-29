@@ -40,6 +40,9 @@ Next == /\ step < MaxSteps /\ step' = step + 1
 View == [duplicateSafe |-> TRUE, mounted |-> mounted, begun |-> begun, registered |-> registered,
          active |-> active, current |-> current, drops |-> drops, ends |-> ends,
          listeners |-> listeners, hidden |-> hidden]
+\* What `yarn verify cover` generates tests from: the state with capped counters.
+Cap(n) == IF n > 2 THEN 2 ELSE n
+Coverage == <<mounted, begun, registered, active, current, Cap(drops), Cap(ends), listeners, hidden>>
 AtMostOneSession == ends <= 1 /\ ~(active /\ ends > 0)
 SessionCleanup == ~active => ~listeners /\ ~hidden
 DropAtMostOnce == drops <= 1

@@ -4,6 +4,7 @@
 
 ```sh
 yarn verify conform toast-queue
+yarn verify cover toast-queue
 yarn verify check toast-queue --depth 11  # replays each counterexample in Chromium
 yarn verify replay toast-queue --headed --trace <path printed by check>
 yarn verify explore toast-queue

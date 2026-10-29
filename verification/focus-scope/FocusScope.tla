@@ -45,6 +45,8 @@ Next == /\ step < MaxSteps /\ step' = step + 1
            \/ (RemoveOutside /\ action' = "RemoveOutside")
 Nodes == (IF modes[1] > 0 THEN 1 ELSE 0) + (IF modes[2] > 0 THEN 1 ELSE 0)
 View == [modes |-> modes, focus |-> focus, outside |-> outside, nodes |-> Nodes, detached |-> detached]
+\* What `yarn verify cover` generates tests from: the whole state, which is finite.
+Coverage == <<modes, restore, focus, outside, detached>>
 FocusConnected == Connected(focus)
 RestoreConnected == ~detached
 NoDanglingNodes == modes[2] > 0 => modes[1] > 0

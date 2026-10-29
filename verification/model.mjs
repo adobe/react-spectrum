@@ -24,7 +24,9 @@ import {now} from './runtime.mjs';
 // replay can find where the real code first differs. `conformModel` checks that
 // some behavior of the model follows each of the real code's explored paths with
 // the same View at every step, and that the model allows no action there that the
-// target does not enable.
+// target does not enable. A model may also define `Coverage`, a finite summary of
+// its state; `coverModel` generates tests from it that reach every transition of
+// that summary, however deep, for `yarn verify cover`.
 
 const IDENTIFIER = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -195,6 +197,80 @@ export async function checkModel(target, model, options = {}) {
     depth,
     invariants,
     violations,
+    durationMs: now() - started
+  };
+}
+
+// The model with `verifyPath` recording the actions that led to each state. With
+// `VIEW VerifyCoverage`, tla-ts expands one state per value of the model's
+// `Coverage`, the first it reaches and so by a shortest path, and each of its
+// transitions prints the path that takes it, as JSON.
+export function coverageModule(name) {
+  return [
+    `---- MODULE ${name}Coverage ----`,
+    `EXTENDS ${name}, Sequences, TLC, Json`,
+    'VARIABLE verifyPath',
+    'VerifyCoverInit == Init /\\ verifyPath = <<>>',
+    'VerifyCoverNext ==',
+    '  /\\ Next',
+    "  /\\ verifyPath' = Append(verifyPath, action')",
+    "  /\\ PrintT(ToJson(verifyPath'))",
+    'VerifyCoverage == Coverage',
+    '===='
+  ].join('\n');
+}
+
+/**
+ * Generates tests that take every transition of the model's coverage graph: the
+ * graph of its `Coverage` values, a finite summary of its state that leaves out
+ * detail such as counters. Each transition is reached by a shortest path, and a
+ * path that is a prefix of another is dropped, since the longer test runs it too.
+ * `depth` bounds the length of a test; reaching it means `Coverage` may be unbounded.
+ */
+export async function coverModel(target, model, options = {}) {
+  let started = now();
+  let depth = options.depth ?? 100;
+  let summary = {schemaVersion: 1, target: target.name, depth};
+  if (!/^Coverage\s*==/m.test(model.source))
+    return {
+      ...summary,
+      status: 'error',
+      error: `${model.name} has no Coverage operator; see verification/README.md.`
+    };
+  options.checkDeadline?.();
+  let printed = new Set();
+  let result = await run(
+    coverageModule(model.name),
+    withModel(model),
+    config(target.model, depth, [
+      'INIT VerifyCoverInit',
+      'NEXT VerifyCoverNext',
+      'VIEW VerifyCoverage',
+      'CHECK_DEADLOCK FALSE'
+    ]),
+    text => printed.add(JSON.parse(text))
+  );
+  if (result.status !== 'success')
+    return {
+      ...summary,
+      status: 'error',
+      error: result.failure?.message ?? `tla-ts reported ${result.status}.`,
+      durationMs: now() - started
+    };
+  let transitions = [...printed].map(text => JSON.parse(text));
+  let prefixes = new Set(
+    transitions.flatMap(actions => actions.map((_, k) => JSON.stringify(actions.slice(0, k))))
+  );
+  let tests = transitions.filter(actions => !prefixes.has(JSON.stringify(actions)));
+  let longest = tests.reduce((max, actions) => Math.max(max, actions.length), 0);
+  return {
+    ...summary,
+    status: 'generated',
+    coverageStates: result.distinctStates,
+    transitions: transitions.length,
+    longest,
+    truncated: longest >= depth,
+    tests,
     durationMs: now() - started
   };
 }

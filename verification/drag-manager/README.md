@@ -4,6 +4,7 @@
 
 ```sh
 yarn verify conform drag-manager
+yarn verify cover drag-manager
 yarn verify check drag-manager --depth 8  # replays each counterexample in Chromium
 yarn verify replay drag-manager --headed --trace <path printed by check>
 yarn verify explore drag-manager

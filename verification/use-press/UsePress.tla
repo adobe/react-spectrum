@@ -147,6 +147,15 @@ View ==
    ends |-> s.h.ends, presses |-> s.h.presses, timer |-> s.h.timer,
    listeners |-> s.h.listeners \/ s.otherPressed]
 
+\* What `yarn verify cover` generates tests from: the state without counters,
+\* except whether a press is in progress and whether onPress fired more than once.
+Cap(n) == IF n > 2 THEN 2 ELSE n
+Coverage ==
+  <<s.pointer, s.outcome, s.mounted, s.disabled, s.over, s.releasedInside, s.elapsed,
+    s.nativeClicked, s.otherClicked, s.otherDown, s.otherPressed, s.otherMounted,
+    s.h.isPressed, s.h.didFirePressStart, s.h.listeners, s.h.timer, s.h.clicked,
+    s.h.starts - s.h.ends, Cap(s.h.presses)>>
+
 \* Contracts; names match the target's invariants.
 PointerOwnership == (s.outcome = "live" /\ s.mounted /\ s.over) => s.h.didFirePressStart
 ActivationUnique == s.h.presses <= 1

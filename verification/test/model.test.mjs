@@ -11,8 +11,8 @@
  */
 
 import assert from 'node:assert/strict';
-import {checkModel, conformModel, fromTla, loadModel, toTla} from '../model.mjs';
-import {defineTarget, explore} from '../explorer.mjs';
+import {checkModel, conformModel, coverModel, fromTla, loadModel, toTla} from '../model.mjs';
+import {defineTarget, explore, runTests} from '../explorer.mjs';
 import {join} from 'node:path';
 import {mkdtempSync, rmSync, writeFileSync} from 'node:fs';
 import {test} from 'node:test';
@@ -47,7 +47,8 @@ function counterModel(
     acquire = "count' = count + 1",
     guard = 'count < 2',
     init = 'count = 0',
-    hidden = 'hidden = 0'
+    hidden = 'hidden = 0',
+    coverage
   } = {}
 ) {
   let directory = mkdtempSync(join(tmpdir(), 'verification-model-test-'));
@@ -69,6 +70,7 @@ Next ==
 View == [count |-> count]
 NonNegative == count >= 0
 BelowTwo == count < 2
+${coverage ? `Coverage == ${coverage}` : ''}
 ====
 `
   );
@@ -206,6 +208,49 @@ test('conform accepts a nondeterministic model when one of its behaviors matches
   assert.deepEqual(neither.mismatch.actions, ['acquire']);
 });
 
+// Release is unguarded, so count is unbounded below; Coverage merges negatives.
+const negatives = 'IF count < 0 THEN -1 ELSE count';
+
+test('cover generates tests that take every transition between coverage states', async t => {
+  let result = await coverModel(target, counterModel(t, {coverage: negatives}));
+  assert.equal(result.status, 'generated');
+  assert.equal(result.coverageStates, 4);
+  assert.equal(result.transitions, 7);
+  assert.deepEqual(result.tests.map(actions => actions.join()).sort(), [
+    'acquire,acquire,release',
+    'acquire,release',
+    'release,acquire',
+    'release,release'
+  ]);
+  assert.equal(result.longest, 3);
+  assert.equal(result.truncated, false);
+
+  let shallow = await coverModel(target, counterModel(t, {coverage: negatives}), {depth: 2});
+  assert.equal(shallow.truncated, true);
+
+  let missing = await coverModel(target, counterModel(t));
+  assert.equal(missing.status, 'error');
+  assert.match(missing.error, /no Coverage operator/);
+});
+
+test('cover runs its tests on the code and checks them for conformance', async t => {
+  let model = counterModel(t, {coverage: negatives});
+  let executed = await runTests(target, env, (await coverModel(target, model)).tests);
+  assert.equal(executed.status, 'passed');
+  assert.equal(executed.runs, 4);
+  assert.equal(executed.disabled, 0);
+  assert.equal((await conformModel(target, model, executed.paths)).status, 'conforms');
+
+  // A model that allows a third acquire generates a test the code cannot take.
+  let looser = counterModel(t, {guard: 'count < 3', coverage: negatives});
+  let truncated = await runTests(target, env, (await coverModel(target, looser)).tests);
+  assert.equal(truncated.disabled, 1);
+  let extra = await conformModel(target, looser, truncated.paths);
+  assert.equal(extra.status, 'mismatch');
+  assert.equal(extra.mismatch.kind, 'extra');
+  assert.deepEqual(extra.mismatch.actions, ['acquire', 'acquire']);
+});
+
 test('model operations respect the shared run deadline', async t => {
   let model = counterModel(t);
   let deadline = after => {
@@ -230,4 +275,8 @@ test('model operations respect the shared run deadline', async t => {
   await assert.rejects(conformModel(target, model, await paths(), {checkDeadline: deadline(0)}), {
     name: 'TimeoutError'
   });
+  await assert.rejects(
+    coverModel(target, counterModel(t, {coverage: negatives}), {checkDeadline: deadline(0)}),
+    {name: 'TimeoutError'}
+  );
 });

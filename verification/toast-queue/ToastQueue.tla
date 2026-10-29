@@ -187,8 +187,9 @@ Blur ==
 Tick ==
   /\ s.queue # <<>>
   /\ LET advanced == Advance(s, s.now + 1)
-     IN s' = Steal(LeaveEmpty(Render(FireEach(advanced,
-                SelectSeq(advanced.timeouts, LAMBDA x : x.due <= advanced.now)))))
+         fired == FireEach(advanced, SelectSeq(advanced.timeouts, LAMBDA x : x.due <= advanced.now))
+     \* React commits, and reruns the region's effects, only if a toast closed.
+     IN s' = Steal(LeaveEmpty(IF fired.queue = s.queue THEN fired ELSE Render(fired)))
 
 PauseAllAction ==
   /\ ~s.pointer /\ ~FocusIn(s)
@@ -229,6 +230,19 @@ View ==
         running |-> s.timer[i].id # 0, remaining |-> s.timer[i].remaining,
         sinceStart |-> IF s.timer[i].id # 0 THEN s.now - s.timer[i].start ELSE -1]],
    pendingTimers |-> ScheduleFrom(1), problems |-> s.problems]
+
+\* What `yarn verify cover` generates tests from: times relative to now, and for
+\* each queued toast whether its timer runs, what remains, how long it has shown
+\* (capped), and whether an untracked timeout is pending for it.
+Coverage ==
+  [length |-> Len(s.queue), pointer |-> s.pointer, focus |-> FocusIn(s), within |-> s.within,
+   apiPaused |-> s.apiPaused, problems |-> {s.problems[k] : k \in DOMAIN s.problems},
+   toasts |-> [k \in DOMAIN s.queue |->
+     LET i == s.queue[k] IN
+       [running |-> s.timer[i].id # 0, remaining |-> s.timer[i].remaining,
+        elapsed |-> Min(s.elapsed[i], Timeout + 1),
+        untracked |-> \E j \in DOMAIN s.timeouts :
+          s.timeouts[j].toast = i /\ s.timeouts[j].serial # s.timer[i].id]]]
 
 \* Contracts; names match the target's invariants.
 NoProblem(name) == \A k \in 1..Len(s.problems) : s.problems[k] # name

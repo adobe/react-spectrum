@@ -391,7 +391,9 @@ test('CLI validates explore and replay options before running', async t => {
     ['run', 'example'],
     ['explore', 'example', '--property', 'Safety'],
     ['explore', 'example', '--no-replay'],
-    ['check', 'example', '--headed']
+    ['check', 'example', '--headed'],
+    ['cover', 'example', '--depth', '101'],
+    ['cover', 'example', '--no-replay']
   ]) {
     let output;
     assert.equal(await main([...args, '--json'], root, value => (output = value)), 2);
@@ -403,7 +405,7 @@ test('CLI validates explore and replay options before running', async t => {
 });
 
 test('the CLI prints runs that failed before reporting without undefined fields', () => {
-  for (let mode of ['explore', 'replay', 'check', 'conform']) {
+  for (let mode of ['explore', 'replay', 'check', 'conform', 'cover']) {
     let lines = [];
     printResult(
       // What runTarget reports when Vitest wrote no result.
@@ -419,6 +421,38 @@ test('the CLI prints runs that failed before reporting without undefined fields'
     );
     assert.doesNotMatch(lines.join('\n'), /undefined/, mode);
   }
+});
+
+test('the CLI prints what cover generated and ran', () => {
+  let lines = [];
+  printResult(
+    {
+      mode: 'cover',
+      target: 'example',
+      environment: 'jsdom',
+      status: 'mismatch',
+      exitCode: 1,
+      states: 12,
+      durationMs: 5,
+      coverage: {
+        coverageStates: 4,
+        transitions: 7,
+        longest: 3,
+        depth: 3,
+        truncated: true,
+        durationMs: 1
+      },
+      execution: {runs: 4, steps: 10, durationMs: 2},
+      mismatch: {kind: 'state', actions: ['add'], detail: 'after add, count differs'},
+      directory: '/tmp/evidence'
+    },
+    line => lines.push(line)
+  );
+  let text = lines.join('\n');
+  assert.match(text, /Model: 4 coverage states, 7 transitions; tests up to 3 steps/);
+  assert.match(text, /depth bound of 3/);
+  assert.match(text, /count differs/);
+  assert.doesNotMatch(text, /undefined/);
 });
 
 test('a violation in an already explored prefix is nondeterminism, not a counterexample', async () => {
@@ -566,7 +600,7 @@ test('failed, interrupted and timed-out runners override saved successes in ever
     trace,
     JSON.stringify({schemaVersion: 1, actions: [], observations: ['x'.repeat(200000)]})
   );
-  for (let mode of ['explore', 'replay', 'check', 'conform']) {
+  for (let mode of ['explore', 'replay', 'check', 'conform', 'cover']) {
     for (let processResult of [
       {code: 1},
       {code: 0, timedOut: true},
@@ -586,7 +620,11 @@ test('failed, interrupted and timed-out runners override saved successes in ever
               request.output,
               JSON.stringify({
                 status:
-                  mode === 'conform' ? 'conforms' : mode === 'replay' ? 'not-reproduced' : 'passed'
+                  mode === 'conform' || mode === 'cover'
+                    ? 'conforms'
+                    : mode === 'replay'
+                      ? 'not-reproduced'
+                      : 'passed'
               })
             );
             return processResult;

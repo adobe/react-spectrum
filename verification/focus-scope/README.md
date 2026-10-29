@@ -4,6 +4,7 @@
 
 ```sh
 yarn verify conform focus-scope
+yarn verify cover focus-scope
 yarn verify check focus-scope --depth 8  # replays each counterexample in Chromium
 yarn verify replay focus-scope --headed --trace <path printed by check>
 yarn verify explore focus-scope
@@ -20,4 +21,6 @@ yarn verify explore focus-scope
 
 The model stores mount modes, captured restore targets, and focus. Removal chooses a connected captured target, then the surviving parent scope's first control; containment can also recover focus in Chromium after removal. The real observation retains history and captured targets to distinguish internal scope refs; its model projection compares modes, focus, outside-node existence, tree size, and detached-focus attempts. A stored restore reference may become disconnected before unmount; the contract is that it must not be used for restoration.
 
-The model abstracts tree shape to the two nested scopes and focus to one control per scope. It does not enumerate every independent flag combination, portals, sibling scope reparenting, Tab traversal, positive tabindex, Shadow DOM, or application callbacks. Conformance is bounded and one-directional; deeper model counterexamples still need Chromium replay. An explicit jsdom override is useful for diagnosis but is not the conformance oracle for this model.
+The model abstracts tree shape to the two nested scopes and focus to one control per scope. It does not enumerate every independent flag combination, portals, sibling scope reparenting, Tab traversal, positive tabindex, Shadow DOM, or application callbacks. Conformance is bounded; deeper model counterexamples still need Chromium replay. An explicit jsdom override is useful for diagnosis but is not the conformance oracle for this model.
+
+Known gap: `cover` reports a mismatch after `MountRestore0 -> MountPlain1 -> Focus2 -> Unmount1 -> Unmount0`. Unmounting the plain inner scope leaves focus on `<body>` and makes the outer scope the active scope, so unmounting the outer scope restores focus to the outside button; the model leaves focus on `<body>`. FocusScope also restores from `<body>` when the unmounting scope is the module's `activeScope` (`shouldRestoreFocus`), which the model does not track.

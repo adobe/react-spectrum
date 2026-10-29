@@ -13,15 +13,15 @@
 /// <reference types="vite/types/import-meta.d.ts" />
 import {deadline, now} from './runtime.mjs';
 import type {Environment} from './explorer.mjs';
-import {explore, replay} from './explorer.mjs';
+import {explore, replay, runTests} from './explorer.mjs';
 import {it} from 'vitest';
 
-// Runs one request from `yarn verify explore|replay|check|conform` inside Vitest, which
+// Runs one request from `yarn verify explore|replay|check|conform|cover` inside Vitest, which
 // supplies TypeScript, the repository's module resolution, jsdom or Chromium,
 // and fake timers. The request is injected by targets.config.ts.
 declare const __VERIFY_REQUEST__: {
   target: string;
-  mode: 'explore' | 'replay' | 'check' | 'conform';
+  mode: 'explore' | 'replay' | 'check' | 'conform' | 'cover';
   environment: 'jsdom' | 'chromium';
   output: string;
   timeoutMs: number;
@@ -35,6 +35,7 @@ declare const __VERIFY_REQUEST__: {
 declare module 'vitest/browser' {
   interface BrowserCommands {
     verifyConformance: (metadata: any, paths: any[], timeoutMs: number) => Promise<any>;
+    verifyCoverage: (metadata: any, options: {depth?: number}, timeoutMs: number) => Promise<any>;
     writeVerifyResult: (result: object) => Promise<void>;
     verifyTouch: (selector: string, type: 'start' | 'cancel') => Promise<void>;
     verifyStep: (name: string, index: number, action: string | null) => Promise<void>;
@@ -175,65 +176,84 @@ it(`${request.mode} ${request.target} (${request.environment})`, async () => {
     if (!load) throw new Error(`Unknown target: ${request.target}`);
     let target = (await load()).default;
     let result;
-    if (request.mode === 'conform' && request.environment === 'chromium') {
-      if (!target.model) throw new Error(`${request.target} has no model.`);
+    // tla-ts and the model files load in Node only: in jsdom's Node process, or
+    // through a command from Chromium.
+    let remaining = () => Math.max(0, request.timeoutMs - (now() - started));
+    let nodeModel = async () => {
+      let {loadModel} = await import('./model.mjs');
+      let {fileURLToPath} = await import('node:url');
+      let {dirname, join} = await import('node:path');
+      return loadModel(
+        join(dirname(fileURLToPath(import.meta.url)), request.target),
+        target.model.spec
+      );
+    };
+    // project is a function, so it cannot cross to a Vitest server command.
+    let metadata = () => ({
+      name: target.name,
+      model: Object.fromEntries(Object.entries(target.model).filter(([key]) => key !== 'project'))
+    });
+    let conformance = async (paths: any[]) => {
+      if (request.environment === 'chromium') {
+        let {commands} = await import('vitest/browser');
+        return commands.verifyConformance(
+          metadata(),
+          paths.map(path => ({...path, observations: path.observations.map(target.model.project)})),
+          remaining()
+        );
+      }
+      let {conformModel} = await import('./model.mjs');
+      return conformModel(target, await nodeModel(), paths, options);
+    };
+    if (
+      (request.mode === 'check' || request.mode === 'conform' || request.mode === 'cover') &&
+      !target.model
+    )
+      throw new Error(`${request.target} has no model.`);
+    if (request.mode === 'check') {
+      let {checkModel} = await import('./model.mjs');
+      result = await checkModel(target, await nodeModel(), options);
+    } else if (request.mode === 'conform') {
       let env = await createEnvironment();
       let exploration: any = await explore(target, env, {
         ...options,
         invariants: false,
         collect: true
       });
-      if (exploration.status === 'passed') {
+      let summary = {
+        runs: exploration.runs,
+        distinctStates: exploration.distinctStates,
+        depthReached: exploration.depthReached,
+        neverEnabled: exploration.neverEnabled
+      };
+      result =
+        exploration.status === 'passed'
+          ? {...(await conformance(exploration.paths)), exploration: summary}
+          : {
+              exploration: summary,
+              status: exploration.status,
+              error: exploration.error ?? 'Exploration was incomplete.'
+            };
+    } else if (request.mode === 'cover') {
+      let coverage: any;
+      if (request.environment === 'chromium') {
         let {commands} = await import('vitest/browser');
-        let {project, ...model} = target.model;
-        result = await commands.verifyConformance(
-          {name: target.name, model},
-          exploration.paths.map(path => ({...path, observations: path.observations.map(project)})),
-          Math.max(0, request.timeoutMs - (now() - started))
-        );
-        result.exploration = {
-          runs: exploration.runs,
-          distinctStates: exploration.distinctStates,
-          depthReached: exploration.depthReached,
-          neverEnabled: exploration.neverEnabled
-        };
-      } else result = exploration;
-    } else if (request.mode === 'check' || request.mode === 'conform') {
-      if (!target.model) throw new Error(`${request.target} has no model.`);
-      // Node-only: tla-ts and the model files are never loaded in Chromium.
-      let {checkModel, conformModel, loadModel} = await import('./model.mjs');
-      let {fileURLToPath} = await import('node:url');
-      let {dirname, join} = await import('node:path');
-      let model = loadModel(
-        join(dirname(fileURLToPath(import.meta.url)), request.target),
-        target.model.spec
-      );
-      if (request.mode === 'check') {
-        result = await checkModel(target, model, options);
+        coverage = await commands.verifyCoverage(metadata(), {depth: options.depth}, remaining());
       } else {
+        let {coverModel} = await import('./model.mjs');
+        coverage = await coverModel(target, await nodeModel(), options);
+      }
+      let {tests, ...summary} = coverage;
+      if (coverage.status !== 'generated')
+        result = {status: coverage.status, error: coverage.error, coverage: summary};
+      else {
         let env = await createEnvironment();
-        let exploration: any = await explore(target, env, {
-          ...options,
-          invariants: false,
-          collect: true
-        });
-        let summary = {
-          runs: exploration.runs,
-          distinctStates: exploration.distinctStates,
-          depthReached: exploration.depthReached,
-          neverEnabled: exploration.neverEnabled
-        };
+        let run: any = await runTests(target, env, tests, options);
+        let {paths, ...execution} = run;
         result =
-          exploration.status === 'passed'
-            ? {
-                ...(await conformModel(target, model, exploration.paths, options)),
-                exploration: summary
-              }
-            : {
-                exploration: summary,
-                status: exploration.status,
-                error: exploration.error ?? 'Exploration was incomplete.'
-              };
+          run.status === 'passed'
+            ? {...(await conformance(paths)), coverage: summary, execution}
+            : {status: run.status, error: run.error, coverage: summary, execution};
       }
     } else {
       let env = await createEnvironment();

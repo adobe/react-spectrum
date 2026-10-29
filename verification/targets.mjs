@@ -27,8 +27,8 @@ import {tmpdir} from 'node:os';
 const targetNamePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 // Targets drive real code through verification/<name>/target.tsx. Runs happen
-// inside Vitest (targets.config.ts): Node for model checking, jsdom for exploring
-// the real code, and Chromium for replaying traces.
+// inside Vitest (targets.config.ts): Node for model checking, jsdom for running
+// the real code against the model, and Chromium for replaying traces.
 export function discoverTargets(root) {
   return readdirSync(join(root, 'verification'), {withFileTypes: true})
     .filter(
@@ -65,7 +65,7 @@ function evidenceDirectory(root, output, name) {
 export function exitCode(result) {
   if (result.mode === 'replay')
     return result.status === 'reproduced' ? 1 : result.status === 'not-reproduced' ? 0 : 2;
-  if (result.mode === 'conform')
+  if (result.mode === 'conform' || result.mode === 'cover')
     return result.status === 'conforms' ? 0 : result.status === 'mismatch' ? 1 : 2;
   return result.status === 'passed' ? 0 : result.status === 'violations' ? 1 : 2;
 }

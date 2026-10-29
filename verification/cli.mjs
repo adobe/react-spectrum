@@ -20,6 +20,7 @@ const help = `Behavioral verification (local, opt-in)
 
   yarn verify list [--json]
   yarn verify conform <target> [--depth <n>] [--max-runs <n>] [--environment jsdom|chromium]
+  yarn verify cover <target> [--depth <n>] [--environment jsdom|chromium]
   yarn verify check <target> [--depth <n>] [--no-replay]
   yarn verify replay <target> --trace <file> [--environment chromium|jsdom] [--headed]
   yarn verify explore <target> [--depth <n>] [--max-runs <n>] [--environment jsdom|chromium]
@@ -27,7 +28,9 @@ const help = `Behavioral verification (local, opt-in)
 For a target with a TLA+ model, conform checks the model against the real code:
 each path the code takes up to the depth bound must be a behavior of the model
 with the same View at every step, and the model must allow no action there that
-the code does not enable. check then model-checks each invariant with tla-ts
+the code does not enable. cover checks the same deeper, along tests that take
+every transition of the model's Coverage, a finite summary of its state; --depth
+(up to 100) bounds their length. check then model-checks each invariant with tla-ts
 (--depth up to 100) and replays each counterexample on the real code in Chromium,
 reporting whether it reproduces, the first step where the code differs from the
 model, and a screenshot after each step (--no-replay skips this). replay runs one
@@ -36,7 +39,7 @@ each step. explore searches the real code directly, for targets without a model.
 All accept --timeout-ms <ms>, --output <directory> (evidence goes in a fresh
 directory outside the checkout), and --json.
 
-Exit codes: conform: 0 conforms, 1 mismatch, 2 error.
+Exit codes: conform/cover: 0 conforms, 1 mismatch, 2 error.
 check/explore: 0 no violations, 1 violations found, 2 incomplete/error.
 replay: 0 not reproduced, 1 reproduced, 2 different failure/error.
 See verification/README.md.`;
@@ -87,11 +90,28 @@ export function printResult(result, write) {
         `  ${item.invariant}: ${item.status} (${item.distinctStates} distinct states)${item.error ? ` — ${item.error}` : ''}`
       );
     printViolations(result, write);
-  } else if (result.mode === 'conform') {
+  } else if (result.mode === 'conform' || result.mode === 'cover') {
     let exploration = result.exploration;
-    write(
-      `${result.target}: ${result.status}${result.traces === undefined ? '' : ` (${result.traces} traces, ${result.steps} steps from ${exploration.runs} runs of the real code; ${result.distinctStates} model states; ${ms(result.durationMs)})`}`
-    );
+    let {coverage, execution} = result;
+    if (result.mode === 'conform')
+      write(
+        `${result.target}: ${result.status}${result.traces === undefined ? '' : ` (${result.traces} traces, ${result.steps} steps from ${exploration.runs} runs of the real code; ${result.distinctStates} model states; ${ms(result.durationMs)})`}`
+      );
+    else {
+      write(
+        `${result.target}: ${result.status}${execution?.runs === undefined ? '' : ` (${execution.runs} tests, ${execution.steps} steps on the real code in ${result.environment}; ${ms(execution.durationMs)})`}`
+      );
+      if (coverage?.coverageStates !== undefined)
+        write(
+          `  Model: ${coverage.coverageStates} coverage states, ${coverage.transitions} transitions; tests up to ${coverage.longest} steps (${ms(coverage.durationMs)})`
+        );
+      if (coverage?.truncated)
+        write(
+          `  Tests reached the depth bound of ${coverage.depth}; Coverage may be unbounded, so some transitions may be missing.`
+        );
+      if (result.traces !== undefined)
+        write(`  Conformance: ${result.distinctStates} model states (${ms(result.durationMs)})`);
+    }
     if (result.mismatch) {
       write(`  ${result.mismatch.detail}`);
       write(
@@ -151,7 +171,7 @@ export async function main(
     }
     let [command, name] = positionals;
     if (
-      !['list', 'explore', 'replay', 'conform', 'check'].includes(command) ||
+      !['list', 'explore', 'replay', 'conform', 'cover', 'check'].includes(command) ||
       positionals.length > 2
     )
       throw new Error('Unknown command or too many arguments. Use --help.');
@@ -167,7 +187,7 @@ export async function main(
     if (values.trace !== undefined && command !== 'replay')
       throw new Error('--trace requires replay.');
     if (values.depth !== undefined && command === 'replay')
-      throw new Error('--depth requires explore, conform, or check.');
+      throw new Error('--depth requires explore, conform, cover, or check.');
     if (values['max-runs'] !== undefined && !['explore', 'conform'].includes(command))
       throw new Error('--max-runs requires explore or conform.');
     if (values['no-replay'] && command !== 'check') throw new Error('--no-replay requires check.');
@@ -184,7 +204,7 @@ export async function main(
       mode: command,
       environment: values.environment,
       trace: values.trace,
-      depth: count('depth', command === 'check' ? 100 : 20),
+      depth: count('depth', ['check', 'cover'].includes(command) ? 100 : 20),
       maxRuns: count('max-runs', 1000000),
       timeoutMs: count('timeout-ms', 3600000),
       output: values.output,

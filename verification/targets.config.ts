@@ -12,7 +12,7 @@
 
 import base from '../vitest.browser.config';
 import type {CDPSession} from 'playwright';
-import {conformModel, loadModel} from './model.mjs';
+import {conformModel, coverModel, loadModel} from './model.mjs';
 import {deadline} from './runtime.mjs';
 import {defineConfig} from 'vitest/config';
 import {dirname, join} from 'node:path';
@@ -20,7 +20,8 @@ import {instrumentation} from './instrumentation';
 import {mkdirSync, readFileSync, writeFileSync} from 'node:fs';
 
 // Invoked by verification/targets.mjs with a VERIFY_REQUEST_PATH file describing one
-// run. Node runs model checks, jsdom explores the real code, and Chromium replays traces.
+// run. Node runs model checks, jsdom explores the real code, and Chromium replays traces;
+// conform and cover may also run the real code in Chromium.
 // A headed replay pauses after each step so it can be watched.
 let request = process.env.VERIFY_REQUEST_PATH
   ? JSON.parse(readFileSync(process.env.VERIFY_REQUEST_PATH, 'utf8'))
@@ -68,6 +69,10 @@ export default defineConfig({
                 paths,
                 {checkDeadline: deadline(timeoutMs)}
               );
+            },
+            verifyCoverage: async (_context, metadata, {depth}, timeoutMs) => {
+              let model = loadModel(join(__dirname, request.target), metadata.model.spec);
+              return coverModel(metadata, model, {depth, checkDeadline: deadline(timeoutMs)});
             },
             // The test iframe only, as the code under test rendered it.
             verifyStep: async (context: any, name: string, index: number, action) => {

@@ -140,14 +140,16 @@ function failedInvariants(target, ctx) {
 // `status` is 'completed', 'violation', 'disabled' (an action was not enabled),
 // 'timed-out', or 'error' (setup, an action, an invariant, or observe threw).
 // `onStep(index, action)` runs after each observation, for screenshots.
+// `trackEnabled` also records the actions enabled after each observation.
 export async function execute(
   target,
   env,
   actions,
-  {invariants = true, checkDeadline = () => {}, onStep = async () => {}} = {}
+  {invariants = true, checkDeadline = () => {}, onStep = async () => {}, trackEnabled = false} = {}
 ) {
   let ctx;
   let observations = [];
+  let enabledSteps = [];
   let step = 0;
   let current = null;
   let result;
@@ -155,7 +157,10 @@ export async function execute(
     checkDeadline();
     ctx = await target.setup(env);
     checkDeadline();
-    let record = () => observations.push(JSON.parse(stableStringify(target.observe(ctx) ?? null)));
+    let record = () => {
+      observations.push(JSON.parse(stableStringify(target.observe(ctx) ?? null)));
+      if (trackEnabled) enabledSteps.push(enabledActions(target, ctx));
+    };
     target.check?.(ctx);
     let failures = invariants ? failedInvariants(target, ctx) : [];
     record();
@@ -201,7 +206,7 @@ export async function execute(
       }
     }
   }
-  return {...result, actions, observations};
+  return {...result, actions, observations, ...(trackEnabled ? {enabledSteps} : {})};
 }
 
 function trace(target, actions, failure, observations) {
@@ -332,6 +337,63 @@ export async function explore(target, env, options = {}) {
     frontier = next;
   }
   return summary(!complete ? 'incomplete' : violations.size ? 'violations' : 'passed');
+}
+
+/**
+ * Runs tests generated from a model, without invariants, and returns every prefix
+ * of each as a path for conformModel, with what the code enabled after it. A test
+ * stops where the code does not enable its next action; conformance reports that.
+ */
+export async function runTests(target, env, tests, options = {}) {
+  let started = now();
+  let paths = new Map();
+  let runs = 0;
+  let steps = 0;
+  let disabled = 0;
+  let summary = status => ({
+    schemaVersion: 1,
+    target: target.name,
+    environment: env.name,
+    status,
+    runs,
+    steps,
+    disabled,
+    durationMs: now() - started
+  });
+  // Every run records setup, so setup alone runs only when there are no tests.
+  for (let actions of tests.length ? tests : [[]]) {
+    let result = await execute(target, env, actions, {
+      invariants: false,
+      checkDeadline: options.checkDeadline,
+      trackEnabled: true
+    });
+    runs++;
+    if (['error', 'timed-out'].includes(result.status))
+      return {...summary(result.status), error: result.error, actions};
+    if (result.status === 'disabled') disabled++;
+    steps += result.observations.length - 1;
+    for (let k = 0; k < result.observations.length; k++) {
+      let prefix = actions.slice(0, k);
+      let key = stableStringify(prefix);
+      let observation = stableStringify(result.observations[k]);
+      let seen = paths.get(key);
+      if (seen && stableStringify(seen.observations.at(-1)) !== observation)
+        return {
+          ...summary('error'),
+          error: 'Nondeterministic target: the same actions produced a different observation.',
+          actions: prefix,
+          expected: seen.observations.at(-1),
+          actual: result.observations[k]
+        };
+      if (!seen)
+        paths.set(key, {
+          actions: prefix,
+          observations: result.observations.slice(0, k + 1),
+          enabled: result.enabledSteps[k]
+        });
+    }
+  }
+  return {...summary('passed'), paths: [...paths.values()]};
 }
 
 // The first step where the code's projected observation differs from the

@@ -34,6 +34,7 @@ yarn playwright install chromium
 # model-check it, replaying each counterexample on the real code in Chromium.
 yarn verify list
 yarn verify conform use-press
+yarn verify cover use-press
 yarn verify check use-press --depth 12
 ```
 
@@ -43,11 +44,11 @@ yarn verify check use-press --depth 12
 
 ## Find a bug
 
-The model is the primary way to search: it is fast enough to check every sequence to depths the real code cannot reach. The real code checks the model (`conform`) and confirms each counterexample (`check` replays them in Chromium). Only a counterexample that reproduces on the real code is evidence of a bug.
+The model is the primary way to search: it is fast enough to check every sequence to depths the real code cannot reach. The real code checks the model (`conform` and `cover`) and confirms each counterexample (`check` replays them in Chromium). Only a counterexample that reproduces on the real code is evidence of a bug.
 
 ```mermaid
 flowchart LR
-  conform["conform<br/>model ⇔ code"] --> check["check<br/>model-check invariants"]
+  conform["conform, cover<br/>model ⇔ code"] --> check["check<br/>model-check invariants"]
   check --> replay["replay in Chromium<br/>reproduced? divergence? screenshots"]
   replay --> triage["triage and fix"]
   triage --> conform
@@ -81,6 +82,16 @@ yarn verify conform use-press
 Run it first, and again whenever the source or the model changes. Fix the model until it conforms before trusting `check`: a model that allows too much produces counterexamples that do not reproduce, and one that allows too little misses bugs. When the code's behavior looks wrong, triage it as a possible bug instead.
 
 Beyond the depth bound, conformance is an assumption. The model's hidden state (variables `View` does not determine) is not compared directly.
+
+Then check it deeper:
+
+```sh
+yarn verify cover use-press
+```
+
+`cover` generates tests from the model instead of running every sequence. The model's `Coverage` operator maps each state to a small, finite summary that leaves out unbounded detail such as counters. `cover` searches the model, merging states with the same `Coverage` value, and records the shortest path to every transition between those values. It runs each maximal path on the real code (in the target's default environment, or `--environment chromium`) and checks the runs for conformance as `conform` does. The tests are as long as the model needs to reach every coverage state, often well beyond `conform`'s depth bound, and their number grows with the coverage states, not with depth.
+
+A transition is tested only from the first state `cover` reaches with its `Coverage` value, so a summary that merges states that behave differently hides their differences. A `Coverage` that is not finite makes `cover` stop at `--depth` (100 by default) and warn that the tests reached it.
 
 ### 3. Model-check
 
@@ -171,6 +182,8 @@ Each run prints its evidence directory, `verification-<target>-<random>` under `
 
 `check` reports each invariant's status (`passed`, `violated`, or `error`) and distinct model states. Its traces have `origin: "model"`; their `observations` are model states, and `views` holds the model's `View` after setup and after each action. Each violation's `replay` holds the Chromium replay's `status`, `step`, `failures`, `divergence` (the first step where the code's projected observation differs from `views`, with the differing fields, or `null`), and `screenshots` directory. A standalone `replay` of a model trace reports `divergence` too.
 
+`cover` also reports `coverage` (the model's coverage states, transitions, the longest test, and whether tests reached the depth bound) and `execution` (the runs and steps on the real code, and tests that stopped early because the code did not enable an action).
+
 `conform` reports the number of traces and steps compared. A mismatch has a `kind`: `action` (the code took an action the model does not allow), `state` (the `View` fields that differ), or `extra` (the model allows an action the code does not enable), with the action sequence that leads to it.
 
 ### Statuses and exit codes
@@ -180,6 +193,7 @@ Each run prints its evidence directory, `verification-<target>-<random>` under `
 | `explore` | `passed` | `violations` | `incomplete`, `error`, `timed-out`, `interrupted` |
 | `check` | `passed` | `violations` | `error`, `timed-out`, `interrupted` |
 | `conform` | `conforms` | `mismatch` | `incomplete` (exploration ran out of runs), `error`, `timed-out`, `interrupted` |
+| `cover` | `conforms` | `mismatch` | `error`, `timed-out`, `interrupted` |
 | `replay` | `not-reproduced` | `reproduced` | `different-violation`, `disabled` (an action is no longer enabled), `error`, `timed-out`, `interrupted` |
 
 `check`'s exit code reflects the model check only; read each violation's replay status to see whether it reproduced. Invalid arguments also exit 2.
@@ -281,8 +295,9 @@ The model must declare:
 - A `Next` that requires `step < MaxSteps`, increments `step`, and sets `action'` to the name of the target action each transition corresponds to.
 - A `View` record with the same fields as `project` returns.
 - One operator per checked invariant, with the same name as the target's invariant.
+- For `cover`, a `Coverage` operator: a finite summary of the state, for example the state with counters capped. Keep it small; it sets the number of tests.
 
-`conform` and `check` wrap the model in modules that extend it. `conform`'s extends `Integers`, `Sequences`, and `TLC` and defines `trace`, `Traces`, `Views`, `Limit`, `Expected`, `Differs`, `Unreached`, `AllReached`, `modelView`, `differs`, and names starting with `Conform`. `check`'s defines `verifyView` and names starting with `Verify`. A model must not define those names.
+`conform` and `check` wrap the model in modules that extend it. `conform`'s extends `Integers`, `Sequences`, and `TLC` and defines `trace`, `Traces`, `Views`, `Limit`, `Expected`, `Differs`, `Unreached`, `AllReached`, `modelView`, `differs`, and names starting with `Conform`. `check`'s defines `verifyView` and names starting with `Verify`, and `cover`'s defines `verifyPath` and names starting with `Verify`. A model must not define those names.
 
 `conform` explores the real code in the target's default environment (or `--environment chromium`) with invariants off, recording the actions the code enables after each step, then follows every explored run through the model, comparing `View` with the projected observation after each step. The model may be nondeterministic: a run conforms when some behavior of the model takes its actions with a matching `View` at every step. Along those behaviors, the model must not allow an action the code did not enable. Within the explored depth, the model then has the code's behaviors and no others, as far as the `View` shows. A model that allows too much in hidden state, or beyond that depth, still conforms; its counterexamples then do not reproduce, and their divergence shows where the model goes wrong.
 
@@ -303,7 +318,7 @@ yarn lint
 
 The harness tests cover the explorer, model checking, conformance, and CLI with toy targets and models, and need no browser. `yarn lint` format-checks, type-checks, and lints this directory along with the packages.
 
-After changing a target, a model, or the package source a target drives, run `yarn verify conform <target>` and `yarn verify check <target>` (or `explore` for a target without a model) and inspect the results. A model that no longer conforms must be updated before its `check` results are trusted.
+After changing a target, a model, or the package source a target drives, run `yarn verify conform <target>`, `yarn verify cover <target>`, and `yarn verify check <target>` (or `explore` for a target without a model) and inspect the results. A model that no longer conforms must be updated before its `check` results are trusted.
 
 ## Reference
 
@@ -311,9 +326,9 @@ After changing a target, a model, or the package source a target drives, run `ya
 
 | Option | Commands | Default |
 | --- | --- | --- |
-| `--depth <n>` | `explore` and `conform` (at most 20), `check` (at most 100) | `bounds.depth`; `model.depth` for `check` |
+| `--depth <n>` | `explore` and `conform` (at most 20), `check` and `cover` (at most 100) | `bounds.depth`; `model.depth` for `check`; 100 for `cover` |
 | `--max-runs <n>` | `explore`, `conform` | `bounds.maxRuns`, or 20,000 |
-| `--environment <name>` (`jsdom` or `chromium`) | `explore`, `conform`, `replay` | The target's `target.json`, or jsdom; Chromium for `replay`. `check` runs only in jsdom. |
+| `--environment <name>` (`jsdom` or `chromium`) | `explore`, `conform`, `cover`, `replay` | The target's `target.json`, or jsdom; Chromium for `replay`. `check` runs only in jsdom. |
 | `--trace <file>` | `replay` | Required; at most 1 MiB. |
 | `--no-replay` | `check` | Replays counterexamples in Chromium unless set. |
 | `--headed` | `replay` in Chromium | Headless. Shows the browser and pauses one second after each step. |
@@ -323,7 +338,7 @@ After changing a target, a model, or the package source a target drives, run `ya
 
 ### How runs work
 
-All commands run inside Vitest ([targets.config.ts](targets.config.ts) and [targets.runner.tsx](targets.runner.tsx)), which supplies TypeScript, the repository's module resolution, jsdom or Chromium, and fake timers. Model checking always runs in Node; `check` then starts a second Vitest run in Chromium that replays all of its counterexamples. Chromium conformance explores in the browser and sends projected observations to a Vitest server command, so `tla-ts` and model files stay in Node. Screenshots are taken by another server command, of the test iframe only.
+All commands run inside Vitest ([targets.config.ts](targets.config.ts) and [targets.runner.tsx](targets.runner.tsx)), which supplies TypeScript, the repository's module resolution, jsdom or Chromium, and fake timers. Model checking always runs in Node; `check` then starts a second Vitest run in Chromium that replays all of its counterexamples. Chromium conformance and coverage run the code in the browser and send projected observations to a Vitest server command, so `tla-ts` and model files stay in Node. Screenshots are taken by another server command, of the test iframe only.
 
 Each candidate sequence replays its prefix from a fresh `setup`, because real code cannot be snapshotted. The explorer reports an error if a replayed prefix's observation changes, if an action that was enabled during search is not enabled on replay, or if setup, an action, `check`, `observe`, an invariant, or teardown throws.
 

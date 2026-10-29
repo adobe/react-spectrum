@@ -4,6 +4,7 @@
 
 ```sh
 yarn verify conform use-press
+yarn verify cover use-press
 yarn verify check use-press --depth 20  # replays each counterexample in Chromium
 yarn verify replay use-press --headed --trace <path printed by check>
 yarn verify explore use-press
