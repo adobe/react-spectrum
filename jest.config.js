@@ -112,7 +112,7 @@ module.exports = {
   // preset:
 
   // Run tests from one or more projects
-  projects: ['<rootDir>'],
+  projects: ['<rootDir>', '<rootDir>/jest.rsc.config.js'],
 
   // Use this configuration option to add custom reporters to Jest
   reporters: [
@@ -174,6 +174,7 @@ module.exports = {
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   testPathIgnorePatterns: [
     '/node_modules/',
+    '\\.rsc\\.test\\.[tj]sx?$',
     '\\.ssr\\.test\\.[tj]sx?$',
     '\\.browser\\.test\\.[tj]sx?$'
   ],
