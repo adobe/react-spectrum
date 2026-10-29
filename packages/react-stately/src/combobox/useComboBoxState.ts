@@ -665,6 +665,10 @@ function filterCollection<T>(
   inputValue: string,
   filter: FilterFn
 ): Collection<Node<T>> {
+  if (collection.filter) {
+    return collection.filter(textValue => filter(textValue, inputValue));
+  }
+
   return new ListCollection(filterNodes(collection, collection, inputValue, filter));
 }
 
