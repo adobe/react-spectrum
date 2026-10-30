@@ -512,10 +512,6 @@ describe('ComboBox', () => {
         onSelectionChange={onSelectionChange}
       />
     );
-
-    onChange.mockClear();
-    onSelectionChange.mockClear();
-
     let input = getByRole('combobox');
     await user.click(input);
     await user.tab();
