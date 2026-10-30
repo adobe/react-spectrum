@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from '@react-types/shared';
+import {Key} from './key';
 import {LinkDOMProps} from './dom';
 import {ReactElement, ReactNode} from 'react';
+import {Rect, Size} from './layout';
 
 export interface ItemProps<T> extends LinkDOMProps {
   /** Rendered contents of the item or child items. */
@@ -130,18 +131,6 @@ export interface KeyboardDelegate {
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch?(search: string, fromKey?: Key | null): Key | null;
-}
-
-export interface Rect {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-export interface Size {
-  width: number;
-  height: number;
 }
 
 /** A LayoutDelegate provides layout information for collection items. */

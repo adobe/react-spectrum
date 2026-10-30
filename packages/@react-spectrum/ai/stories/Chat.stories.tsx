@@ -60,7 +60,7 @@ const meta: Meta<typeof Chat> = {
   title: 'AI/Chat',
   decorators: [
     Story => (
-      <div style={{width: '800px', height: '600px'}}>
+      <div style={{width: '80vw', height: '600px'}}>
         <Story />
       </div>
     )
@@ -392,13 +392,10 @@ export function VirtualizedStreamingChat() {
       (timestamp += toolCallDuration)
     );
     addTimeout(() => completeGroup(), (timestamp += 200));
-    addTimeout(
-      () =>
-        streamText(
-          'I found some relevant assets that match your request. Let me pull up the details.'
-        ),
-      (timestamp += 500)
-    );
+    let firstStreamContent =
+      'I found some relevant assets that match your request. Let me pull up the details.';
+    addTimeout(() => streamText(firstStreamContent), (timestamp += 500));
+    timestamp += (firstStreamContent.split(' ').length - 1) * 80;
 
     // then does searching, streaming more text, returning a card and sources
     addTimeout(() => startToolGroup('Searching'), (timestamp += 1000));
@@ -1205,7 +1202,7 @@ export function SmallChat() {
   }
 
   return (
-    <Chat styles={style({width: 400})}>
+    <Chat styles={style({width: 'full', maxWidth: 400})}>
       <Thread items={messages} aria-label="Chat thread">
         {(msg: StreamingMessage) => {
           if (msg.type === 'user') {

@@ -12,8 +12,8 @@
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from './useOverlayPosition';
 import {clamp} from 'react-stately/private/utils/number';
+import {getParentElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {isWebKit} from '../utils/platform';
-import {nodeContains} from '../utils/shadowdom/DOMFunctions';
 
 interface Position {
   top?: number;
@@ -61,7 +61,7 @@ interface PositionOpts {
   crossOffset: number;
   maxHeight?: number;
   arrowBoundaryOffset?: number;
-  targetRect?: Offset | null | undefined;
+  targetRect?: Readonly<Offset> | null | undefined;
 }
 
 type HeightGrowthDirection = 'top' | 'bottom';
@@ -763,7 +763,7 @@ export function getRect(node: Element, ignoreScale: boolean) {
 function getOffset(
   node: Element,
   ignoreScale: boolean,
-  overrideRect?: Offset | null | undefined
+  overrideRect?: Readonly<Offset> | null | undefined
 ): Offset {
   let {top, left, width, height} = overrideRect || getRect(node, ignoreScale);
   let {scrollTop, scrollLeft, clientTop, clientLeft} = document.documentElement;
@@ -779,12 +779,13 @@ function getPosition(
   node: Element,
   parent: Element,
   ignoreScale: boolean,
-  overrideRect?: Offset | null | undefined
+  overrideRect?: Readonly<Offset> | null | undefined
 ): Offset {
   let style = window.getComputedStyle(node);
   let offset: Offset;
   if (style.position === 'fixed') {
-    offset = overrideRect || getRect(node, ignoreScale);
+    let {top, left, width, height} = overrideRect || getRect(node, ignoreScale);
+    offset = {top, left, width, height};
   } else {
     offset = getOffset(node, ignoreScale, overrideRect);
     let parentOffset = getOffset(parent, ignoreScale);
@@ -826,9 +827,9 @@ function getContainingBlock(node: HTMLElement): Element {
   // We have to walk up the tree manually in this case because fixed positioned elements
   // are still positioned relative to their containing block, which is not always the viewport.
   if (offsetParent == null) {
-    offsetParent = node.parentElement;
+    offsetParent = getParentElement(node);
     while (offsetParent && !isContainingBlock(offsetParent)) {
-      offsetParent = offsetParent.parentElement;
+      offsetParent = getParentElement(offsetParent);
     }
   }
 

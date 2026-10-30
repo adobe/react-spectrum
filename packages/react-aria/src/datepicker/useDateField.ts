@@ -32,6 +32,7 @@ import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useFormReset} from '../utils/useFormReset';
 import {useFormValidation} from '../form/useFormValidation';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface AriaDateFieldProps<T extends DateValue>
@@ -114,6 +115,11 @@ export function useDateField<T extends DateValue>(
       props.onBlur?.(e);
     },
     onFocusWithinChange: props.onFocusChange
+  });
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown: props.onKeyDown,
+    onKeyUp: props.onKeyUp
   });
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
@@ -212,9 +218,7 @@ export function useDateField<T extends DateValue>(
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps, {
-      onKeyDown: props.onKeyDown,
-      onKeyUp: props.onKeyUp,
+    fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps, keyboardProps, {
       style: {
         unicodeBidi: 'isolate'
       }

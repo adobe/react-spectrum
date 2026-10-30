@@ -102,6 +102,7 @@ if (
 if (
   process.env.NODE_ENV === 'test' &&
   typeof window !== 'undefined' &&
+  window.screen != null &&
   !Reflect.has(window.screen, 'orientation')
 ) {
   const orientation = Object.assign(new EventTarget(), {
@@ -129,7 +130,7 @@ function getTouchScreen(): TouchScreen {
   return {
     width: screenWidth * visualScale,
     height: screenHeight * visualScale,
-    angle: window.screen.orientation.angle
+    angle: window.screen.orientation?.angle ?? 0
   };
 }
 

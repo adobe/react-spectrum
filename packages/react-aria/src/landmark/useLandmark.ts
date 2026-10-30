@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getEventTarget, getParentElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {useCallback, useEffect, useState} from 'react';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
@@ -270,9 +270,9 @@ class LandmarkManager implements LandmarkManagerApi {
       currentElement &&
       !landmarkMap.has(currentElement) &&
       currentElement !== document.body &&
-      currentElement.parentElement
+      getParentElement(currentElement)
     ) {
-      currentElement = currentElement.parentElement;
+      currentElement = getParentElement(currentElement) as FocusableElement;
     }
     return landmarkMap.get(currentElement);
   }
