@@ -10,6 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+export type BoundingNode = Element | Document;
+
+export type Axis = 'block' | 'inline';
+export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+
 export interface Point {
   x: number;
   y: number;

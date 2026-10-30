@@ -10,22 +10,94 @@
  * governing permissions and limitations under the License.
  */
 
-import {getParentElement} from './shadowdom/DOMFunctions';
-import {isScrollable} from './isScrollable';
+import {getContainingElement, getScrollingElement} from './layoutHelpers';
+import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
+import {getParentNode, nodeContains} from './shadowdom/DOMFunctions';
+import {isElement, isNode, isShadowRoot} from './typeHelpers';
+import {isScrollable, ScrollableOptions} from './isScrollable';
+import {ScrollContainer} from '@react-types/shared';
+import {shadowDOM} from 'react-stately/private/flags/flags';
 
-export function getScrollParents(node: Element, checkForOverflow?: boolean): Element[] {
-  let parentElements: Element[] = [];
-  let root = document.scrollingElement || document.documentElement;
+export interface ScrollGeneratorOptions extends ScrollableOptions {
+  /** The ancestor container to stop traversal at. */
+  container?: Element | Document | ScrollContainer | null;
+}
 
-  while (node) {
-    if (isScrollable(node, checkForOverflow)) {
-      parentElements.push(node);
-    }
-    if (node === root) {
-      break;
-    }
-    node = getParentElement(node) as Element;
+export interface ScrollParentOptions extends ScrollableOptions {
+  /** The ancestor container to stop traversal at. */
+  container?: Element | Document | null;
+}
+
+/**
+ * Returns all (scrollable) ancestors of a given element.
+ * https://drafts.csswg.org/cssom-view/#dom-htmlelement-scrollparent.
+ */
+export function getScrollParents(element: Element, options?: ScrollParentOptions): Element[];
+/** @deprecated Use 'getScrollParents(element, {scrollable: true})' instead. */
+export function getScrollParents(element: Element, checkForOverflow?: boolean): Element[];
+export function getScrollParents(element: Element, options?: ScrollParentOptions | boolean) {
+  if (typeof options === 'undefined' || typeof options === 'boolean') {
+    return getScrollParents(element, {scrollable: options});
   }
 
-  return parentElements;
+  let scrollGenerator = genScrollParents(element, {
+    container: 'all',
+    ...options
+  });
+
+  return Array.from(scrollGenerator);
+}
+
+/**
+ * Returns the container-bound (scrollable) ancestor of an element. Yields intermediary
+ * ancestors as nodes of a scrollable flat-tree that composes the element.
+ */
+export function* genScrollParents(
+  element: Element,
+  options: ScrollGeneratorOptions = {}
+): Generator<Element, Element | null> {
+  let {container = 'all'} = options;
+
+  let node: Node | null = null;
+  let cursor: Element | null = null;
+
+  let ownerWindow = getOwnerWindow(element);
+  let ownerDocument = getOwnerDocument(element);
+
+  let rootScrollingElement = getScrollingElement(ownerDocument);
+
+  while ((node = getParentNode(element))) {
+    let style = ownerWindow.getComputedStyle(element);
+
+    // A positioned node may only scroll with its containing element.
+    if (/(absolute|fixed)/.test(style.position)) node = getContainingElement(element);
+
+    // A shadow root cant be a scroll parent so skip to its host.
+    if (isShadowRoot(node) && shadowDOM()) node = node.host;
+    else if (isShadowRoot(node)) return null;
+
+    // A fixed element without a containing block has no scroll parent.
+    if (node == null && style.position === 'fixed') return null;
+
+    // Bail if we traverse past a (custom) boundary (inclusive).
+    if (isNode(container) && !nodeContains(container, node)) return cursor;
+    else if (!isElement(node)) break;
+
+    // A node containing the root scrolling element is special cased below.
+    if (nodeContains(node, rootScrollingElement)) break;
+
+    // Otherwise, yield if the node is scrollable.
+    if (isScrollable(node, options)) {
+      yield (cursor = node);
+      if (container === 'nearest') return cursor;
+    }
+
+    element = node;
+  }
+
+  if (isScrollable(rootScrollingElement, options)) {
+    yield (cursor = rootScrollingElement);
+  }
+
+  return cursor;
 }

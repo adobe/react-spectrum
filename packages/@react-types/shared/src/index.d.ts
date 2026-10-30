@@ -25,3 +25,4 @@ export * from './orientation';
 export * from './locale';
 export * from './key';
 export * from './layout';
+export * from './interactions';
