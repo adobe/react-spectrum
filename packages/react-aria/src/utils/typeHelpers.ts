@@ -48,9 +48,9 @@ export function isShadowRoot(value: unknown): value is ShadowRoot {
   return isNode(value) && value.nodeType === 11 && 'host' in value;
 }
 
-/*
- * Type guard that checks if a value is an Element. Uses nodeType and host property checks to
- * distinguish Element from other values.
+/**
+ * Type guard that checks if a value is an Element. Uses nodeType checks to distinguish Element
+ * from other values.
  */
 export function isElement(value: unknown): value is Element {
   // 1 = ELEMENT_NODE

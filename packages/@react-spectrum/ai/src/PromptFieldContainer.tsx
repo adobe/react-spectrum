@@ -8,7 +8,11 @@ import {
   token
 } from './tokens.macro' with {type: 'macro'};
 import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {
+  getEventTarget,
+  getParentElement,
+  nodeContains
+} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {keyframes} from './style/style-macro' with {type: 'macro'};
@@ -398,7 +402,7 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
         // If not clicking on something focusable within the prompt field, focus the input.
         let target = getEventTarget(e) as Element | null;
         while (target && target !== e.currentTarget && !isFocusable(target)) {
-          target = target.parentElement;
+          target = getParentElement(target);
         }
 
         if (target === e.currentTarget) {

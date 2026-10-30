@@ -1,9 +1,9 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
-/* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target */
+/* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target, rsp-rules/shadow-safe-parent-node */
 
 import {EventTargetType} from '@react-types/shared';
 import {getOwnerWindow} from '../domHelpers';
-import {isShadowRoot} from '../typeHelpers';
+import {isElement, isShadowRoot} from '../typeHelpers';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 import type {SyntheticEvent} from 'react';
 
@@ -74,6 +74,19 @@ export function nodeContains(
   }
 
   return false;
+}
+
+/**
+ * ShadowDOM safe version of element.parentElement.
+ */
+export function getParentElement(node: Node | Element | null | undefined): Element | null {
+  let parentNode = getParentNode(node);
+
+  while (parentNode != null && !isElement(parentNode)) {
+    parentNode = getParentNode(parentNode);
+  }
+
+  return parentNode;
 }
 
 /**
