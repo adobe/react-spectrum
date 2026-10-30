@@ -329,8 +329,8 @@ export default defineConfig({
         ) => {
           const locator = iframe.locator(selector);
           const box = await locator.boundingBox();
-          const width = await locator.evaluate((el: Element) => el.getBoundingClientRect().width);
-          const scale = box.width / width;
+          const rect = await locator.evaluate((el: Element) => el.getBoundingClientRect().toJSON());
+          const scale = box.width / rect.width;
           const x = box.x + offsetX * scale;
           const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY * scale;
           await page.mouse.move(x, y);
