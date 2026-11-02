@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {getParentElement} from './shadowdom/DOMFunctions';
 import {isScrollable} from './isScrollable';
 
 export function getScrollParent(node: Element, checkForOverflow?: boolean): Element {
   let scrollableNode: Element | null = node;
   if (isScrollable(scrollableNode, checkForOverflow)) {
-    scrollableNode = scrollableNode.parentElement;
+    scrollableNode = getParentElement(scrollableNode);
   }
 
   while (scrollableNode && !isScrollable(scrollableNode, checkForOverflow)) {
-    scrollableNode = scrollableNode.parentElement;
+    scrollableNode = getParentElement(scrollableNode);
   }
 
   return scrollableNode || document.scrollingElement || document.documentElement;

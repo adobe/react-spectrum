@@ -14,7 +14,12 @@ import {createShadowTreeWalker, ShadowTreeWalker} from '../utils/shadowdom/Shado
 
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
-import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {
+  getActiveElement,
+  getEventTarget,
+  getParentElement,
+  nodeContains
+} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {isAndroid, isChrome} from '../utils/platform';
@@ -284,7 +289,7 @@ function createFocusManagerForScope(scopeRef: React.RefObject<Element[] | null>)
 }
 
 function getScopeRoot(scope: Element[]) {
-  return scope[0].parentElement!;
+  return getParentElement(scope[0])!;
 }
 
 function shouldContainFocus(scopeRef: ScopeRef) {
