@@ -257,7 +257,7 @@ describe('NumberField', () => {
   });
 
   it.each(['.', ','])(
-    'restores the original numbering system after entering only %s in an integer field',
+    'restores the original numbering system after entering only %s in a percent unit field with no decimal places',
     async separator => {
       let onChange = jest.fn();
       let {getByRole} = render(
@@ -284,7 +284,7 @@ describe('NumberField', () => {
     }
   );
 
-  it('keeps the locale numbering system after a lone period in the percentage documentation example', async () => {
+  it('keeps the locale numbering system after a lone period', async () => {
     let onChange = jest.fn();
     let {getByRole} = render(
       <I18nProvider locale="en-US">

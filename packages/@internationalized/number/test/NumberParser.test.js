@@ -937,7 +937,7 @@ describe('NumberParser', function () {
       ['en-US-u-nu-arab', 'arab'],
       ['ar-EG-u-nu-latn', 'latn']
     ])(
-      'should retain the default numbering system for integer separators in %s',
+      'should retain the default numbering system for input without numerals when decimal places are disabled in %s',
       (locale, numberingSystem) => {
         for (let options of [
           {style: 'decimal'},
@@ -956,7 +956,7 @@ describe('NumberParser', function () {
       }
     );
 
-    it('should detect non-default numerals in integer fields', function () {
+    it('should detect non-default numerals', function () {
       let parser = new NumberParser('en-US', {
         style: 'unit',
         unit: 'percent',
