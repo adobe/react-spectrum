@@ -42,7 +42,7 @@ import {IconContext} from '@react-spectrum/s2/Icon';
 import intlMessages from '../intl/*.json';
 import {keyframes, scrollFade} from './style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
-import {PixelLoader} from '../exports';
+import {PixelLoader} from './loader/react';
 import {Provider} from 'react-aria-components/slots';
 import React, {
   createContext,

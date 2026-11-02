@@ -11,7 +11,7 @@
  */
 
 import React, {ReactNode, useRef} from 'react';
-import {useTableContext} from './TableViewBase';
+import {useTableContext} from './TableContext';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export function RootDropIndicator(): ReactNode | null {

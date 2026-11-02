@@ -14,7 +14,6 @@ import {action} from 'storybook/actions';
 import {
   AttachFileMenuItem,
   CommandMenuItem,
-  getMimeTypeLabel,
   InsertMenuButton,
   InsertTextMenuItem,
   InsertTokenMenuItem,
@@ -47,6 +46,7 @@ import {Content} from '@react-spectrum/s2/Content';
 import Data from '@react-spectrum/s2/icons/Data';
 import * as data from '../src/loader/data';
 import type {FocusableRefValue} from '@react-types/shared';
+import {getMimeTypeLabel} from '../src/mimeTypes';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';

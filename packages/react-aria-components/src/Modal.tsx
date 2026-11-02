@@ -21,7 +21,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {DialogContext, DialogProps, OverlayTriggerStateContext} from './Dialog';
+import {DialogContext, DialogProps} from './Dialog';
 import {DismissButton, Overlay} from 'react-aria/Overlay';
 import {DOMAttributes, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
@@ -33,6 +33,7 @@ import {
   OverlayTriggerState,
   useOverlayTriggerState
 } from 'react-stately/useOverlayTriggerState';
+import {OverlayTriggerStateContext} from './OverlayTriggerStateContext';
 import React, {
   createContext,
   ForwardedRef,

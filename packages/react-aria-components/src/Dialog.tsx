@@ -27,7 +27,8 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {HeadingContext} from './Heading';
 import {mergeProps} from 'react-aria/mergeProps';
-import {OverlayTriggerProps, OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
+import {OverlayTriggerProps} from 'react-stately/useOverlayTriggerState';
+import {OverlayTriggerStateContext} from './OverlayTriggerStateContext';
 import {PopoverContext} from './Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {
@@ -73,7 +74,6 @@ export interface DialogProps
 }
 
 export const DialogContext = createContext<ContextValue<DialogProps, HTMLElement>>(null);
-export const OverlayTriggerStateContext = createContext<OverlayTriggerState | null>(null);
 
 /**
  * A DialogTrigger opens a dialog when a trigger element is pressed.
