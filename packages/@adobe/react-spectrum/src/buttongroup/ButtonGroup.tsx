@@ -13,6 +13,7 @@
 import {Alignment, DOMProps, DOMRef, Orientation, StyleProps} from '@react-types/shared';
 import {classNames} from '../utils/classNames';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Provider, useProvider, useProviderProps} from '../provider/Provider';
 import React, {ReactNode, useCallback, useRef} from 'react';
 import {SlotProvider, useSlotProps} from '../utils/Slots';
@@ -101,7 +102,7 @@ export const ButtonGroup = React.forwardRef(function ButtonGroup(
   // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     if (domRef.current) {
-      parent.current = domRef.current.parentElement as HTMLElement;
+      parent.current = getParentElement(domRef.current) as HTMLElement;
     }
   }, [domRef.current]);
   // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps

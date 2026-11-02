@@ -54,6 +54,7 @@ import {
 } from 'react';
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {HeadingContext} from 'react-aria-components/Heading';
 import {inertValue} from 'react-aria/private/utils/inertValue';
 import intlMessages from '../intl/*.json';
@@ -467,7 +468,7 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
       setVisibleItems(collection.size);
       return;
     }
-    let container = currListRef.parentElement;
+    let container = getParentElement(currListRef) as HTMLElement | null;
     if (!container) {
       setVisibleItems(collection.size);
       return;

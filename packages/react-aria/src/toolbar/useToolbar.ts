@@ -14,7 +14,12 @@ import {AriaLabelingProps, FocusableElement, Orientation, RefObject} from '@reac
 import {createFocusManager} from '../focus/FocusScope';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {FocusEventHandler, HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
-import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {
+  getActiveElement,
+  getEventTarget,
+  getParentElement,
+  nodeContains
+} from '../utils/shadowdom/DOMFunctions';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
@@ -56,7 +61,7 @@ export function useToolbar(
   // this will allow us to react should a parent re-render and change its role though
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
-    setInToolbar(!!(ref.current && ref.current.parentElement?.closest('[role="toolbar"]')));
+    setInToolbar(!!(ref.current && getParentElement(ref.current)?.closest('[role="toolbar"]')));
   });
   const {direction} = useLocale();
   const shouldReverse = direction === 'rtl' && orientation === 'horizontal';
