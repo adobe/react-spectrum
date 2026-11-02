@@ -603,7 +603,12 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
       }
     } else {
       if (shouldCloseOnBlur) {
-        commitValue();
+        // A read-only combobox can't change its value, so close without committing.
+        if (props.isReadOnly) {
+          closeMenu();
+        } else {
+          commitValue();
+        }
       }
 
       // Commit validation if the input value or selected items changed.
