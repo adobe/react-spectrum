@@ -850,6 +850,9 @@ describe('Table', () => {
 
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(rows[1]);
+      expect(rows[0]).not.toHaveAttribute('data-focused');
+      expect(rows[0]).not.toHaveAttribute('data-focus-visible');
+      expect(rows[1]).toHaveAttribute('data-focused', 'true');
       expect(rows[1]).toHaveAttribute('data-focus-visible', 'true');
       expect(onFocus).toHaveBeenCalledTimes(2);
       expect(onFocus).toHaveBeenLastCalledWith(rows[1]);
@@ -898,10 +901,19 @@ describe('Table', () => {
       await user.tab();
       let row = getByRole('row', {name: 'Cat'});
       expect(document.activeElement).toBe(row);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).not.toHaveBeenCalled();
       expect(onFocusChange.mock.calls).toEqual([[true]]);
       await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(getByRole('rowheader'));
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(1);
       expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+
+      onFocus.mockClear();
+      onBlur.mockClear();
+      onFocusChange.mockClear();
+
       await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(getByRole('button', {name: 'First action'}));
       await user.keyboard('{ArrowRight}');
@@ -910,9 +922,9 @@ describe('Table', () => {
       await user.click(getByRole('rowheader'));
       expect(document.activeElement).toBe(getByRole('rowheader'));
       expect(row).not.toHaveAttribute('data-focus-visible');
-      expect(onFocus).toHaveBeenCalledTimes(1);
-      expect(onBlur).toHaveBeenCalledTimes(1);
-      expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+      expect(onFocus).not.toHaveBeenCalled();
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange).not.toHaveBeenCalled();
     });
   });
 
