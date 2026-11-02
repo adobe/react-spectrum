@@ -17,6 +17,7 @@ import {Orientation} from '@react-types/shared';
 import {OverlayArrow} from '../src/OverlayArrow';
 import React, {useState} from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
+import {SelectionIndicator} from '../src/SelectionIndicator';
 import {Tab, TabList, TabPanel, TabProps, Tabs} from '../src/Tabs';
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import './styles.css';
@@ -27,6 +28,36 @@ export default {
 } as Meta<typeof Tabs>;
 
 export type TabsStory = StoryFn<typeof Tabs>;
+
+// Manual playground for indicator motion (arrow keys / clicks). SSR/hydration is covered in Tabs.browser.test.tsx.
+export const AnimatedSelectionIndicator: TabsStory = () => (
+  <Tabs defaultSelectedKey="settings">
+    <TabList aria-label="Sections" style={{display: 'flex', gap: 12}}>
+      {['overview', 'activity', 'settings'].map(key => (
+        <Tab
+          key={key}
+          id={key}
+          style={{position: 'relative', padding: '12px 20px', outlineOffset: '2px'}}>
+          <SelectionIndicator
+            style={{
+              position: 'absolute',
+              inset: 0,
+              border: '2px solid currentColor',
+              borderRadius: 4,
+              pointerEvents: 'none',
+              transitionProperty: 'translate, width, height',
+              transitionDuration: '200ms'
+            }}
+          />
+          {key}
+        </Tab>
+      ))}
+    </TabList>
+    <TabPanel id="overview">Overview</TabPanel>
+    <TabPanel id="activity">Activity</TabPanel>
+    <TabPanel id="settings">Settings</TabPanel>
+  </Tabs>
+);
 
 export const TabsExample: TabsStory = () => {
   let [url, setUrl] = useState('/FoR');
