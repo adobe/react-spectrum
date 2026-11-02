@@ -760,6 +760,12 @@ export interface TreeItemProps<T = object>
   /** Whether the item is disabled. */
   isDisabled?: boolean;
   /**
+   * Whether the item should remain focusable while disabled, following the ARIA APG
+   * "focusability of disabled controls" pattern. The item stays non-interactive (no selection or
+   * action, `aria-disabled`) but remains reachable via keyboard navigation.
+   */
+  allowFocusWhenDisabled?: boolean;
+  /**
    * Handler that is called when a user performs an action on this tree item. The exact user event
    * depends on the collection's `selectionBehavior` prop and the interaction modality.
    */
