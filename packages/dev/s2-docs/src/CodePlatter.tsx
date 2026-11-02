@@ -24,6 +24,7 @@ import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
 import type {DownloadFiles} from './CodeBlock';
 import {getCodeSandboxFiles} from './CodeSandbox';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -163,7 +164,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                         }
 
                         // Move up to parent
-                        node = node.parentElement;
+                        node = getParentElement(node);
                       }
 
                       if (node instanceof HTMLHeadingElement && node.id) {

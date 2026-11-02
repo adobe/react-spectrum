@@ -14,7 +14,7 @@ import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
 import {baseColor, css, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
-import {centerBaseline} from './CenterBaseline';
+import {CenterBaseline} from './CenterBaseline';
 import {
   centerPadding,
   getAllowedOverrides,
@@ -245,7 +245,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
 
   let domRef = useDOMRef(ref);
   useViewTransitionHover(domRef);
-  let {isCollapsed, targetCollapsed} = useContext(SideNavPanelContext) ?? {};
+  let {isCollapsed, targetCollapsed, setCollapsed} = useContext(SideNavPanelContext) ?? {};
   let isInSideNavPanel = isCollapsed !== undefined;
   let panelRef = useContext(SideNavPanelBoundsContext);
 
@@ -264,6 +264,13 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   // Expanding or collapsing an item moves every row below it and mounts or unmounts its children.
   // Scheduling that as a transition causes the <ViewTransition> around each row to animate.
   let toggleExpandedKeys = (keys: Set<Key>) => {
+    // A collapsed panel has no room to show an item's children, so activating an item that isn't a
+    // link expands the panel to reveal them rather than silently expanding behind the rail.
+    if (isCollapsed) {
+      setCollapsed?.(false);
+      setExpandedKeys(keys);
+      return;
+    }
     startTransition(() => {
       addTransitionType(ITEM_TRANSITION);
       setExpandedKeys(keys);
@@ -392,12 +399,20 @@ const treeIcon = style({
   }
 });
 
-/** Renders a row's icon inside its own `<ViewTransition>`, for `IconContext`. */
+/**
+ * Renders a row's icon inside its own `<ViewTransition>`, for `IconContext`. It is marked
+ * `data-do-not-hide` so it stays visible in a collapsed panel's icon rail.
+ */
 function useSideNavIcon(isCollapsed: boolean): (icon: ReactNode) => ReactNode {
   let {iconTransition, getMovingClipBounds} = useContext(SideNavViewTransitionContext);
   let viewTransition = useMovingClippedViewTransition(iconTransition, getMovingClipBounds);
-  let render = centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})});
-  return (icon: ReactNode) => <ViewTransition {...viewTransition}>{render(icon)}</ViewTransition>;
+  return (icon: ReactNode) => (
+    <ViewTransition {...viewTransition}>
+      <CenterBaseline data-do-not-hide slot="icon" styles={treeIcon({isCollapsed})}>
+        {icon}
+      </CenterBaseline>
+    </ViewTransition>
+  );
 }
 
 const treeContent = style<{isCollapsed?: boolean}>({
@@ -600,8 +615,7 @@ const SideNavItemContentInner = props => {
             [
               IconContext,
               {
-                render: renderIcon,
-                styles: style({size: '1lh', flexShrink: 0})
+                render: renderIcon
               }
             ],
             [ActionButtonGroupContext, {styles: treeActions, isDisabled, size: 'S'}],

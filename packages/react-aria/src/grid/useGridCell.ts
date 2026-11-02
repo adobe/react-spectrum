@@ -15,6 +15,7 @@ import {focusSafely} from '../interactions/focusSafely';
 import {
   getActiveElement,
   getEventTarget,
+  getParentElement,
   isFocusWithin,
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
@@ -210,7 +211,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
             // We prevent the capturing event from reaching children of the cell, e.g. pickers.
             // We want arrow keys to navigate to the next cell instead. We need to re-dispatch
             // the event from a higher parent so it still bubbles and gets handled by useSelectableCollection.
-            ref.current.parentElement?.dispatchEvent(
+            getParentElement(ref.current)?.dispatchEvent(
               new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
             );
             break;
@@ -252,7 +253,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
             // We prevent the capturing event from reaching children of the cell, e.g. pickers.
             // We want arrow keys to navigate to the next cell instead. We need to re-dispatch
             // the event from a higher parent so it still bubbles and gets handled by useSelectableCollection.
-            ref.current.parentElement?.dispatchEvent(
+            getParentElement(ref.current)?.dispatchEvent(
               new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
             );
             break;
@@ -281,7 +282,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
         if (!e.altKey && nodeContains(ref.current, getEventTarget(e) as Element)) {
           e.stopPropagation();
           e.preventDefault();
-          ref.current.parentElement?.dispatchEvent(
+          getParentElement(ref.current)?.dispatchEvent(
             new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
           );
         }

@@ -3173,6 +3173,29 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should prevent default on Enter on macOS', function () {
+      let {getByText} = render(<Example />);
+      using spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+
+      let el = getByText('test');
+      let allowDefault = fireEvent.keyDown(el, {key: 'Enter'});
+      expect(allowDefault).toBe(false);
+      allowDefault = fireEvent.keyUp(el, {key: 'Enter'});
+      expect(allowDefault).toBe(false);
+      spy.mockRestore();
+    });
+
+    it('should not prevent default on Control + Enter on macOS so the context menu can open', function () {
+      let {getByText} = render(<Example />);
+      using spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+
+      let el = getByText('test');
+      let allowDefault = fireEvent.keyDown(el, {key: 'Enter', ctrlKey: true});
+      expect(allowDefault).toBe(true);
+      fireEvent.keyUp(el, {key: 'Enter', ctrlKey: true});
+      spy.mockRestore();
+    });
+
     it('should handle when focus moves between keydown and keyup', function () {
       let events = [];
       let addEvent = e => events.push(e);

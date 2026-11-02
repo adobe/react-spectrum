@@ -11,6 +11,7 @@
  */
 
 import {getOwnerWindow} from './domHelpers';
+import {getParentElement} from './shadowdom/DOMFunctions';
 import {isElementVisible} from './isElementVisible';
 
 const focusableElements = [
@@ -57,7 +58,7 @@ function isInert(element: Element): boolean {
       return true;
     }
 
-    node = node.parentElement;
+    node = getParentElement(node);
   }
 
   return false;

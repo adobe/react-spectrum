@@ -12,7 +12,7 @@
 
 import {addEvent, setStyle} from '../utils/domHelpers';
 import {chain} from '../utils/chain';
-import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getEventTarget, getParentElement} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
@@ -212,7 +212,7 @@ function handleBlur() {
       // the same input again, it is already focused, so no blur event will fire,
       // resulting in the flow above never running and Safari's native scrolling occurring.
       // Instead, move focus to the parent focusable element (e.g. the dialog).
-      let focusable = target.parentElement?.closest('[tabindex]') as HTMLElement | null;
+      let focusable = getParentElement(target)?.closest('[tabindex]') as HTMLElement | null;
       focusable?.focus({preventScroll: true});
     }
   };
@@ -296,6 +296,6 @@ function scrollIntoView(target: Element) {
       }
     }
 
-    nextTarget = scrollable.parentElement;
+    nextTarget = getParentElement(scrollable);
   }
 }

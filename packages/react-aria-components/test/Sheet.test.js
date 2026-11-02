@@ -316,6 +316,98 @@ describe('Sheet', () => {
     }
   });
 
+  describe('enter scroll', () => {
+    let rect;
+    function mockContentRect(contentRect) {
+      rect = jest
+        .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(function () {
+          return this.hasAttribute('data-sheet-content')
+            ? {top: 0, bottom: 0, left: 0, right: 0, ...contentRect}
+            : {top: 0, bottom: 0, left: 0, right: 0};
+        });
+    }
+
+    beforeEach(() => {
+      // jsdom skips enter animations unless getAnimations is implemented.
+      Element.prototype.getAnimations = () => [];
+    });
+
+    afterEach(() => {
+      rect?.mockRestore();
+      rect = undefined;
+      delete Element.prototype.getAnimations;
+    });
+
+    it('skips the part where the sheet is still off screen past the end edge', async () => {
+      mockContentRect({top: window.innerHeight + 200, bottom: window.innerHeight + 500});
+      let tree = render(<TestSheet />);
+      await open(tree);
+      let scroller = tree.getByTestId('overlay').querySelector('[data-sheet-scroll]');
+
+      expect(scroller.scrollTop).toBe(200);
+      expect(scroller.style.scrollSnapType).toBe('none');
+
+      act(() => jest.runAllTimers());
+      expect(scroller.scrollTop).toBe(window.innerHeight);
+
+      await act(async () => {
+        scroller.dispatchEvent(new Event('scrollend'));
+      });
+      expect(scroller.style.scrollSnapType).toBe('y mandatory');
+    });
+
+    it('skips the part where the sheet is still off screen past the start edge', async () => {
+      mockContentRect({left: -500, right: -200});
+      let tree = render(<TestSheet overlayProps={{position: 'left'}} />);
+      await open(tree);
+      let scroller = tree.getByTestId('overlay').querySelector('[data-sheet-scroll]');
+
+      expect(scroller.scrollLeft).toBe(window.innerWidth - 200);
+      expect(scroller.style.scrollSnapType).toBe('none');
+
+      act(() => jest.runAllTimers());
+      expect(scroller.scrollLeft).toBe(0);
+
+      await act(async () => {
+        scroller.dispatchEvent(new Event('scrollend'));
+      });
+      expect(scroller.style.scrollSnapType).toBe('x mandatory');
+    });
+
+    it('does not skip when the sheet is already partly on screen', async () => {
+      mockContentRect({top: window.innerHeight - 100, bottom: window.innerHeight + 200});
+      let tree = render(<TestSheet />);
+      await open(tree);
+      let scroller = tree.getByTestId('overlay').querySelector('[data-sheet-scroll]');
+
+      expect(scroller.scrollTop).toBe(window.innerHeight);
+      expect(scroller.style.scrollSnapType).toBe('y mandatory');
+    });
+
+    it('ignores the scrollend from the jump and waits for the enter scroll to finish', async () => {
+      mockContentRect({top: window.innerHeight + 200, bottom: window.innerHeight + 500});
+      let tree = render(<TestSheet />);
+      await open(tree);
+      let overlay = tree.getByTestId('overlay');
+      let scroller = overlay.querySelector('[data-sheet-scroll]');
+
+      // The instant jump fires its own scrollend before the smooth scroll starts on the next frame.
+      await act(async () => {
+        scroller.dispatchEvent(new Event('scrollend'));
+      });
+      expect(scroller.style.scrollSnapType).toBe('none');
+      expect(overlay).toHaveAttribute('data-entering');
+
+      act(() => jest.runAllTimers());
+      await act(async () => {
+        scroller.dispatchEvent(new Event('scrollend'));
+      });
+      expect(scroller.style.scrollSnapType).toBe('y mandatory');
+      expect(overlay).not.toHaveAttribute('data-entering');
+    });
+  });
+
   it('closes via the close function passed to SheetContent children', async () => {
     let tree = render(<TestSheet />);
     let dialog = await open(tree);
