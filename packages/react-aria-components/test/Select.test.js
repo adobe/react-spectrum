@@ -332,6 +332,25 @@ describe('Select', () => {
     expect(trigger).not.toHaveAttribute('data-pressed', 'true');
   });
 
+  it('disables options when an open Select becomes disabled', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole, rerender} = render(
+      <TestSelect defaultSelectedKey="cat" onSelectionChange={onSelectionChange} />
+    );
+    await user.click(getByRole('button'));
+    let dog = getByRole('option', {name: 'Dog'});
+    rerender(
+      <TestSelect defaultSelectedKey="cat" onSelectionChange={onSelectionChange} isDisabled />
+    );
+    expect(dog).toHaveAttribute('aria-disabled', 'true');
+    await user.click(dog);
+    await user.keyboard('{ArrowDown}{Enter}');
+    expect(onSelectionChange).not.toHaveBeenCalled();
+    rerender(<TestSelect defaultSelectedKey="cat" onSelectionChange={onSelectionChange} />);
+    await user.click(dog);
+    expect(onSelectionChange).toHaveBeenCalledWith('dog');
+  });
+
   it('should send disabled prop to the hidden field', () => {
     render(<TestSelect name="select" isDisabled />);
 

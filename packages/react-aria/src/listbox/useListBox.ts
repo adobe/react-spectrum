@@ -80,6 +80,8 @@ export interface ListBoxAria {
 }
 
 export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
+  /** @private */
+  UNSTABLE_isDisabled?: boolean;
   /** Whether the listbox uses virtual scrolling. */
   isVirtualized?: boolean;
 
@@ -164,6 +166,7 @@ export function useListBox<T>(
   let id = useId(props.id);
   listData.set(state, {
     id,
+    isDisabled: props.UNSTABLE_isDisabled,
     shouldUseVirtualFocus: props.shouldUseVirtualFocus,
     shouldSelectOnPressUp: props.shouldSelectOnPressUp,
     shouldFocusOnHover: props.shouldFocusOnHover,

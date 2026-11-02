@@ -15,6 +15,7 @@ import {ListState} from 'react-stately/useListState';
 
 interface ListData {
   id?: string;
+  isDisabled?: boolean;
   shouldSelectOnPressUp?: boolean;
   shouldFocusOnHover?: boolean;
   shouldUseVirtualFocus?: boolean;
