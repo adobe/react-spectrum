@@ -82,9 +82,8 @@ function Example({
 
 // Firefox doesn't isolate focus and hover state between pages, so these tests are flaky when test files run in parallel.
 // https://github.com/vitest-dev/vitest/issues/10096
-const itHoverFocus = it
-  .skipIf(/firefox/i.test(navigator.userAgent))
-  .each(['ListView', 'TableView', 'TreeView'] as const);
+const itDnD = it.skipIf(/firefox/i.test(navigator.userAgent));
+const itHoverFocus = itDnD.each(['ListView', 'TableView', 'TreeView'] as const);
 
 itHoverFocus(
   '%s reveals handle-only dragging on row hover and keyboard focus within editable content',
@@ -135,7 +134,7 @@ itHoverFocus(
   }
 );
 
-it.each(['ListView', 'TableView', 'TreeView'] as const)(
+itHoverFocus(
   '%s keeps the handle hidden on hover and selection when dragging from the whole item',
   async component => {
     await render(
