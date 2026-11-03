@@ -28,7 +28,7 @@ import {
 import {AriaListBoxOptions} from '../listbox/useListBox';
 import {chain} from '../utils/chain';
 import {ComboBoxProps, ComboBoxState, SelectionMode} from 'react-stately/useComboBoxState';
-import {dispatchVirtualFocus} from '../focus/virtualFocus';
+import {dispatchVirtualFocus, getOriginalRelatedTarget} from '../focus/virtualFocus';
 import {
   ElementType,
   FocusEvent,
@@ -268,7 +268,10 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     let blurFromButton = nodeContains(buttonRef.current, e.relatedTarget as Element);
-    let blurIntoPopover = nodeContains(popoverRef.current, e.relatedTarget);
+    let blurIntoPopover = nodeContains(
+      popoverRef.current,
+      getOriginalRelatedTarget(e.nativeEvent) as Element
+    );
 
     // Ignore blur if focused moved to the button(if exists) or into the popover.
     if (blurFromButton || blurIntoPopover) {
