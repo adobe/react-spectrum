@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -86,14 +86,12 @@ const addTransitionType: (type: string) => void = React.addTransitionType ?? (()
 const startTransition: (scope: () => void) => void =
   React.startTransition ?? ((scope: () => void) => scope());
 
-// Transition types, we can easily turn off the animations.
 const SIDE_NAV_CLASS = sideNavCss['side-nav'];
 const SIDE_NAV_ICON_CLASS = sideNavCss['side-nav-icon'];
 const ITEM_TRANSITION = sideNavCss['side-nav-item'];
 
-// `default: 'none'` opts an element out of the transitions it isn't part of. Rows and headers are
-// already inside the panel's snapshot when it collapses, and capturing them again would lift them
-// out of it and let them animate past its edges.
+// Captured only when an item expands or collapses. When the panel does, rows and headers stay in
+// its snapshot rather than animating past its edges on their own.
 const itemViewTransition: ViewTransitionClass = {
   default: 'none',
   [ITEM_TRANSITION]: SIDE_NAV_CLASS
@@ -109,9 +107,9 @@ interface SideNavViewTransitionValue {
   transition: ViewTransitionClass;
   /** The class applied to each icon snapshot. */
   iconTransition: ViewTransitionClass;
-  /** Reads the bounds to clip snapshots to, as they are for the frame being drawn. */
+  /** Returns the current bounds to clip snapshots to. */
   getClipBounds: () => Rect | null;
-  /** Reads the bounds to clip to at the start and at the end of the update being transitioned. */
+  /** Returns the bounds to clip icon snapshots to at the start and end of the transition. */
   getMovingClipBounds: () => ClipBounds;
 }
 
@@ -128,11 +126,9 @@ function useSideNavViewTransition(): Omit<ViewTransitionProps, 'children'> {
   return useClippedViewTransition(transition, getClipBounds);
 }
 
-// While a view transition runs, Safari hit tests the snapshots it paints rather than the live DOM,
-// so the pointer appears to move onto the document element and then back a frame or two after the
-// animation ends, leaving whatever it was resting on unhovered in between. Swallow the events it
-// moves with. A pointer that really moves enters the element it moved to, not the document
-// element, so it is left alone.
+// View transition snapshots are above all other elements, so the pointer hover ends then
+// reappears. A pointer that really moves enters the element it moved to, not the document element,
+// so it is left alone.
 function useViewTransitionHover(ref: RefObject<HTMLElement | null>): void {
   useEffect(() => {
     let view = ref.current?.ownerDocument.defaultView;
@@ -149,7 +145,7 @@ function useViewTransitionHover(ref: RefObject<HTMLElement | null>): void {
       }
     };
 
-    // Hover is tracked with listeners on the document, so these must be on the window to run first.
+    // Hover is tracked with listeners on the document.
     view.addEventListener('pointerover', onPointerEvent, true);
     view.addEventListener('pointerout', onPointerEvent, true);
     return () => {
@@ -245,7 +241,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
 
   let domRef = useDOMRef(ref);
   useViewTransitionHover(domRef);
-  let {isCollapsed, targetCollapsed, setCollapsed} = useContext(SideNavPanelContext) ?? {};
+  let {isCollapsed, willBeCollapsed, setCollapsed} = useContext(SideNavPanelContext) ?? {};
   let isInSideNavPanel = isCollapsed !== undefined;
   let panelRef = useContext(SideNavPanelBoundsContext);
 
@@ -279,8 +275,6 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
 
   let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
-  // Travelling snapshots are clipped to where the nav is drawn, which is somewhere between the
-  // bounds it had before the panel started resizing and the ones it ends up with.
   let boundsBeforeResize = useRef<Rect | null>(null);
   let getNavBounds = useCallback(() => domRef.current?.getBoundingClientRect() ?? null, [domRef]);
 
@@ -289,24 +283,21 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       transition: reduceMotion ? 'none' : itemViewTransition,
       iconTransition: reduceMotion ? 'none' : iconViewTransition,
       getClipBounds: () => {
-        // Rows stay within the nav, and within the panel while it is still widening or narrowing
-        // around them, so they never reach the content beside it either.
+        // Also stay within the panel, which may still be resizing around the nav.
         let bounds = getNavBounds();
         let panel = panelRef?.current;
         return bounds && panel ? intersect(bounds, panel.getBoundingClientRect()) : bounds;
       },
-      // Unlike the panel, whose width is still transitioning around it, the nav's own width snaps,
-      // so by the time there is a transition to clip its bounds are already the final ones.
+      // The nav's width snaps to its new size, unlike the panel's, which animates. So by the time
+      // the transition runs, the nav's current bounds are already its final ones.
       getMovingClipBounds: () => [boundsBeforeResize.current, getNavBounds()]
     }),
     [reduceMotion, getNavBounds, panelRef]
   );
 
-  // The panel renders a collapse or expand one commit after it is asked for, so this still sees
-  // the bounds the transition is about to capture rather than the ones it animates to.
   useLayoutEffect(() => {
     boundsBeforeResize.current = getNavBounds();
-  }, [targetCollapsed, getNavBounds]);
+  }, [willBeCollapsed, getNavBounds]);
 
   return (
     <SideNavViewTransitionContext.Provider value={viewTransition}>
@@ -399,10 +390,7 @@ const treeIcon = style({
   }
 });
 
-/**
- * Renders a row's icon inside its own `<ViewTransition>`, for `IconContext`. It is marked
- * `data-do-not-hide` so it stays visible in a collapsed panel's icon rail.
- */
+/** Renders a row's icon in its own `<ViewTransition>`, for `IconContext`. */
 function useSideNavIcon(isCollapsed: boolean): (icon: ReactNode) => ReactNode {
   let {iconTransition, getMovingClipBounds} = useContext(SideNavViewTransitionContext);
   let viewTransition = useMovingClippedViewTransition(iconTransition, getMovingClipBounds);
@@ -746,7 +734,7 @@ const sideNavHeader = style<{isCollapsed: boolean}>({
   position: 'relative',
   display: {
     default: 'block',
-    // Lets the divider that takes the label's place center itself.
+    // Centers the divider shown in place of the label.
     isCollapsed: 'flex'
   },
   font: 'ui-sm',
@@ -768,12 +756,8 @@ const sideNavHeaderDivider = style({
 });
 
 /**
- * Renders the header's element, for `NavigationTreeHeader`'s `render` prop.
- *
- * Whether the panel is collapsed is read here rather than in SideNavHeader, because this runs as
- * the tree renders, while what SideNavHeader returns is read back out of the collection, which is
- * only rebuilt once the collapse or expand has finished. A header still showing its label until
- * then leaves the rows below it to jump into place after the panel has settled.
+ * Renders the header for `NavigationTreeHeader`'s `render` prop. `isCollapsed` is read here, not
+ * in SideNavHeader, whose output comes from the collection and only updates after the transition.
  */
 function SideNavHeaderElement(props: {domProps: ComponentProps<'div'>}): ReactNode {
   let viewTransition = useSideNavViewTransition();

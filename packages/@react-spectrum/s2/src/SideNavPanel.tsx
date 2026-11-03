@@ -54,52 +54,36 @@ const addTransitionType: (type: string) => void = React.addTransitionType ?? (()
 const startTransition: (scope: () => void) => void =
   React.startTransition ?? ((scope: () => void) => scope());
 
-// Transition types, we can easily turn off the animations.
 export const PANEL_TRANSITION = sideNavCss['side-panel'];
 const PANEL_RTL_TRANSITION = sideNavCss['side-panel-rtl']; // Must be applied alongside PANEL_TRANSITION
 const SIDE_NAV_CLASS = sideNavCss['side-nav'];
 
-// `default: 'none'` opts an element out of the transitions it isn't part of. The nav is captured
-// when the panel collapses, but not when an item inside it expands.
+// Captured only when the panel collapses or expands, not when an item inside it does.
 const panelViewTransition: ViewTransitionClass = {
   default: 'none',
   [PANEL_TRANSITION]: SIDE_NAV_CLASS
 };
 
 /*
- * Both of the animations here are view transitions: React captures the old and new states of an
- * element as images, the browser paints those over the page in an overlay, and animates between
- * them while the real DOM sits underneath already in its new state. Whatever is captured is
- * replaced by its image until the animation ends. Anything else keeps painting as usual.
+ * Both animations are view transitions: the browser captures the old and new states as snapshots
+ * and animates them in an overlay above the page, while the real DOM is already in its new state.
  *
- * Collapsing the panel is one transition. The nav is captured whole and cross fades at its new
- * width, with each row's icon captured separately so it can slide to where its row ended up.
- * Expanding an item in the nav is the other, where rows are captured one by one and slide down.
+ * - Collapsing or expanding the panel captures its contents as one snapshot, and each row's icon
+ *   on its own so it can slide to its new position.
+ * - Expanding or collapsing an item captures each row and header so they can slide.
  *
- * Because the snapshots are painted in an overlay instead of in place, the side nav's `overflow:
- * clip` no longer applies and rows paint over the rest of the app. We fix this by clipping on the
- * overlay image through one of two hooks:
+ * The overlay ignores the nav's `overflow: clip`, so snapshots would paint over the rest of the
+ * app. Two hooks clip them:
  *
- * - `useClippedViewTransition` goes on the Panel's contents and on every row and header. It sets a
- *   `clip-path` on the overlay, which every snapshot is painted inside, so all of them share one
- *   box, the intersection of the bounds each of them registers. Expanding an item clips to the Nav, so
- *   the rows pushed below its bottom edge stop being drawn at the account footer instead of
- *   sliding over it. The footer itself is fine, because the Panel isn't captured during an item
- *   transition and keeps painting live underneath. The overlay is the size of the viewport and
- *   never moves, so bounds match the coordinate system of `clip-path`, rewritten each frame as they change.
- *
- * - `useMovingClippedViewTransition` goes on each row's icon, and clips that one snapshot by
- *   itself. Collapsing the Panel captures its contents as a single image, footer and all, with the
- *   icons travelling over it as images of their own. An icon sliding past the bottom of the nav
- *   needs a box that stops there, while the Panel's image needs one that reaches past it or its
- *   footer disappears for the length of the animation, and one shared box can't be both. A private
- *   clip is measured from its snapshot's own corner, which the motion moves with the
- *   the same keyframes rather than rewritten each frame.
+ * - `useClippedViewTransition` clips the whole overlay to the bounds every snapshot registers. Used
+ *   for the panel's contents, rows and headers.
+ * - `useMovingClippedViewTransition` clips a single snapshot. Used for icons, which have to stop at
+ *   the nav's bottom edge while the panel's snapshot reaches past it to the footer.
  */
 
 const OVERLAY = '::view-transition';
 
-/** A rect in the coordinates snapshots are placed in, which match the viewport. */
+/** A rect in viewport coordinates. */
 export interface Rect {
   top: number;
   right: number;
@@ -122,9 +106,8 @@ function getClipPath(bounds: Rect): string {
   return `inset(${top}px calc(100% - ${right}px) calc(100% - ${bottom}px) ${left}px)`;
 }
 
-// Rows all register the same `getBounds` function, and a set of functions would collapse them
-// into one entry, dropped as soon as the first row finished animating. Each registration is
-// wrapped in its own object instead, so the overlay stays clipped until every snapshot is done.
+// Each registration gets its own object, since rows share one `getBounds`. Storing the functions
+// directly would dedupe them and drop the clip when the first row finished.
 let clips = new Set<{getBounds: () => Rect | null}>();
 let clipFrame = 0;
 let clipAnimation: Animation | null = null;
@@ -140,7 +123,6 @@ function writeClip() {
   }
 
   if (bounds && clipAnimation) {
-    // Both keyframes hold the same value, so there is nothing in between for it to animate to.
     let clipPath = getClipPath(bounds);
     (clipAnimation.effect as KeyframeEffect).setKeyframes([{clipPath}, {clipPath}]);
   }
@@ -213,12 +195,11 @@ function getOrigin(transform: unknown): [number, number] {
 /** A `clip-path` for a group whose origin is at `[x, y]`. */
 function getGroupClipPath(bounds: Rect, [x, y]: [number, number]): string {
   let {top, right, bottom, left} = bounds;
-  // The percentages resolve against the group, so the two edges furthest from its origin follow it
-  // as it resizes. Insets reaching past an edge are allowed, and mean that edge isn't clipped.
+  // Percentages resolve against the group, so its far edges follow it as it resizes. An inset past
+  // an edge leaves that edge unclipped.
   return `inset(${top - y}px calc(100% - ${right - x}px) calc(100% - ${bottom - y}px) ${left - x}px)`;
 }
 
-/** The bounds `progress` of the way from `from` to `to`. */
 function interpolate(from: Rect, to: Rect, progress: number): Rect {
   return {
     top: from.top + (to.top - from.top) * progress,
@@ -228,7 +209,7 @@ function interpolate(from: Rect, to: Rect, progress: number): Rect {
   };
 }
 
-/** The animation moving a group, which is the only one with a transform to read a position from. */
+/** The animation moving a group, i.e. the one animating its `transform`. */
 function getMotion(group: ViewTransitionPseudoElement): Animation | undefined {
   for (let animation of group.getAnimations()) {
     let keyframes = (animation.effect as KeyframeEffect)?.getKeyframes?.();
@@ -239,12 +220,8 @@ function getMotion(group: ViewTransitionPseudoElement): Animation | undefined {
 }
 
 /**
- * Clips a snapshot to bounds moving from `from` to `to` for the length of the transition.
- *
- * A snapshot's `clip-path` is measured from its own top left corner, which its motion moves, so
- * the clip is animated from that motion's keyframes: at every point the snapshot is somewhere
- * between the two positions they describe, and the clip is the same amount of the way between
- * `from` and `to`.
+ * Clips a snapshot to bounds moving from `from` to `to`. Its `clip-path` is relative to its own
+ * corner, which moves, so the clip is keyframed to match the snapshot's motion.
  */
 function clipGroup(
   group: ViewTransitionPseudoElement,
@@ -266,7 +243,7 @@ function clipGroup(
     clipPath: getGroupClipPath(interpolate(from, to, computedOffset), getOrigin(transform))
   }));
   let animation = group.animate(keyframes, {...effect.getTiming(), fill: 'both'});
-  // Start with the motion rather than whenever this happens to run, or the two drift apart.
+  // Start in sync with the motion so the two don't drift apart.
   if (motion.startTime != null) {
     animation.startTime = motion.startTime;
   }
@@ -278,11 +255,9 @@ function clipGroup(
 export type ClipBounds = [Rect | null, Rect | null];
 
 /**
- * Props for a `<ViewTransition>` whose snapshot is clipped on its own rather than with the rest of
- * the transition, to bounds moving from the first of `getBounds()` to the second.
- *
- * Only elements in both states are captured. One in a single state has nowhere to travel from or
- * to, so it is left to fade with its ancestor's snapshot instead.
+ * Props for a `<ViewTransition>` whose snapshot is clipped on its own, to bounds moving from the
+ * first of `getBounds()` to the second. Elements in only one state aren't captured, and fade with
+ * their ancestor's snapshot instead.
  */
 export function useMovingClippedViewTransition(
   transition: ViewTransitionClass,
@@ -322,10 +297,11 @@ interface SideNavPanelContextValue {
   /** Whether the side panel is currently collapsed. */
   isCollapsed?: boolean;
   /**
-   * The state the panel is about to render. `isCollapsed` lags it by a commit, which is the last
-   * chance descendants get to measure themselves before the transition captures them.
+   * Whether the side panel will be collapsed. It changes a render before `isCollapsed`, so while
+   * the two differ, a transition is about to start. Use it to prepare for the transition, like
+   * measuring elements before the panel resizes.
    */
-  targetCollapsed?: boolean;
+  willBeCollapsed?: boolean;
   /** Sets whether the side panel is collapsed. */
   setCollapsed?: (isCollapsed: boolean) => void;
 }
@@ -350,8 +326,6 @@ const sideNavPanelStyle = style(
     // Keep in sync with the group animation in SideNav.module.css.
     transitionDuration: 200,
     transitionTimingFunction: 'default',
-    // The expanded width is supplied by the consumer via `styles`; when collapsed, the inline
-    // width below overrides it with the fixed icon-rail size.
     '--collapsedWidth': {
       type: 'width',
       value: 42
@@ -360,9 +334,8 @@ const sideNavPanelStyle = style(
   getAllowedOverrides({height: true})
 );
 
-// The ViewTransition captured element. Its width snaps rather than transitioning. A CSS transition still reports
-// its starting width when the new state is captured, which would leave the snapshot at the old
-// width for the whole animation and then jump.
+// The element the view transition captures. Its width snaps rather than transitioning, since a
+// transitioning width would be captured at its old value and jump when the animation ends.
 const sideNavPanelContentStyle = style({
   display: 'flex',
   flexDirection: 'column',
@@ -415,12 +388,11 @@ export const SideNavPanel = /*#__PURE__*/ forwardRef(function SideNavPanel(
   }, [isCollapsed, renderedCollapsed, direction]);
 
   let context = useMemo(
-    () => ({isCollapsed: renderedCollapsed, targetCollapsed: isCollapsed, setCollapsed}),
+    () => ({isCollapsed: renderedCollapsed, willBeCollapsed: isCollapsed, setCollapsed}),
     [renderedCollapsed, isCollapsed, setCollapsed]
   );
-  // The panel's own snapshot animates to the new width on the view transition's clock, while the
-  // panel underneath it transitions on its own. Clipping it to the panel keeps whichever one is
-  // ahead from painting over the content beside it.
+  // The snapshot and the live panel animate their widths separately. Clipping the snapshot to the
+  // panel stops it painting over the content beside it if it gets ahead.
   let getPanelBounds = useCallback(() => domRef.current?.getBoundingClientRect() ?? null, [domRef]);
   let viewTransition = useClippedViewTransition(
     reduceMotion ? 'none' : panelViewTransition,
@@ -442,7 +414,6 @@ export const SideNavPanel = /*#__PURE__*/ forwardRef(function SideNavPanel(
           {...filteredProps}
           role={hasLabel ? 'region' : undefined}
           ref={domRef}
-          // Allow children to hide via CSS instead of waiting for another state render.
           data-side-panel-collapsed={renderedCollapsed || undefined}
           style={{...UNSAFE_style, width: panelWidth}}
           className={UNSAFE_className + sideNavPanelStyle(null, styles)}>

@@ -826,12 +826,8 @@ export const SideNavPanelWithNav = {
         <AdobeLogo size={28} />
       </div>
       <SideNavPanel
-        styles={style({
-          gridArea: 'sidebar',
-          marginStart: '[6px]',
-          marginEnd: '[10px]',
-          width: 224
-        })}>
+        width={224}
+        styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]'})}>
         <nav aria-label="Main" className={sideNavPanelNav}>
           <RoutedSideNav {...args} selectedRoute="/files" defaultExpandedKeys={['projects']}>
             <SideNavItem href="/files" textValue="Files">

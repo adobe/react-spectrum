@@ -51,8 +51,7 @@ export function AccountFooter(): ReactNode {
       className={style({
         display: 'flex',
         flexDirection: {default: 'row', isCollapsed: 'column-reverse'},
-        // Left aligned in both states, and with the same padding either way. The two states cross
-        // fade, so anything sitting at a different offset in each slides across as it fades.
+        // Same alignment and padding in both states, so the avatar stays put as they cross fade.
         alignItems: {default: 'center', isCollapsed: 'start'},
         justifyContent: 'start',
         gap: 8,

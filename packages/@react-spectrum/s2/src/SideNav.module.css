@@ -1,12 +1,8 @@
-/* Collapsing the panel runs two animations at once: the outer element animates its width with a
- * plain CSS transition so the rest of the page reflows, while the inner element's view transition
- * snapshot cross fades on top of it. Both use the same duration and easing so the two stay aligned.
- *
- * Expanding an item is a separate transition, where rows are captured individually instead. */
+/* Collapsing or expanding the panel runs two animations at once: the outer element's width uses a
+ * CSS transition so the page reflows, while the inner element's snapshot cross fades on top of it.
+ * Expanding an item is a separate transition that captures each row instead. */
 
-/* The icons are captured out of the rows while the panel collapses or expands, so the rows
- * themselves only have to fade. Their timing has to match the panel's, because SideNavPanel clips
- * them to where the nav is drawn, which is wherever the panel's own snapshot has reached. */
+/* Icons are clipped to where the panel's snapshot has reached, so both need the same timing. */
 ::view-transition-group(.side-nav),
 ::view-transition-group(.side-nav-icon) {
   /* Keep in sync with the transition on SideNavPanel in SideNavPanel.tsx. */
@@ -14,10 +10,8 @@
   animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1);
 }
 
-/* The group animates between the collapsed and expanded widths. Sizing the snapshots to it stops
- * them deriving a huge height from the changing aspect ratio, and `object-fit: none` then keeps
- * their contents from scaling with it, so rows only fade and the group clips them.
- * Think of the snapshot like an `img` tag. */
+/* Snapshots behave like `img`s: fill the group as it resizes, and crop rather than scale their
+ * contents. */
 ::view-transition-old(.side-nav),
 ::view-transition-new(.side-nav) {
   width: 100%;
@@ -26,16 +20,15 @@
   object-position: left top;
 }
 
-/* These pseudo elements are children of the document root, so they can't inherit the panel's
- * direction. In RTL the panel's right edge is the one that stays put. */
+/* Snapshots live under the root, so they can't inherit the panel's direction. In RTL the right
+ * edge stays put. */
 :root:active-view-transition-type(side-panel-rtl)::view-transition-old(.side-nav),
 :root:active-view-transition-type(side-panel-rtl)::view-transition-new(.side-nav) {
   object-position: right top;
 }
 
-/* The page underneath is animating too, so show it live instead of cross fading the root. It also
- * keeps the root out of the overlay, which SideNavPanel clips to the nav: a root snapshot is the
- * whole page, and clipping that to the nav would hide everything else until the transition ends. */
+/* Don't capture the root. The page reflows live with the panel, and the overlay is clipped to the
+ * nav, so a root snapshot would hide the rest of the page until the transition ends. */
 :root:active-view-transition-type(side-panel, side-nav-item) {
   view-transition-name: none;
 }

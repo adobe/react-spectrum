@@ -195,6 +195,7 @@ function CollapsibleSideNavPanel() {
   codeColumns={[0]}
   rows={[
     ["isCollapsed", "Whether the panel is collapsed. This changes in the same transition as the panel's width, so anything you show or hide with it animates along with the panel."],
+    ['willBeCollapsed', 'Whether the panel will be collapsed. This changes a render before isCollapsed, so while the two differ, a transition is about to start. Useful for preparing for the transition, like measuring elements before the panel resizes.'],
     ['setCollapsed', 'Collapses or expands the panel. Useful for building your own expand and collapse trigger.']
   ]} />
 
