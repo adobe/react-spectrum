@@ -17,11 +17,17 @@ import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {createContext, ReactNode, useContext, useReducer, useRef, useState} from 'react';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {FocusScope} from 'react-aria/FocusScope';
+import {FocusScope, useFocusManager} from 'react-aria/FocusScope';
+import {
+  getActiveElement,
+  getEventTarget,
+  nodeContains
+} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {ImageContext} from '@react-spectrum/s2/Image';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+// @ts-ignore
 import {Key} from '@react-types/shared';
+import type {KeyboardEvent} from 'react';
 import {
   Tab as RACTab,
   TabList as RACTabList,
@@ -34,11 +40,10 @@ import {
   TabProps,
   TabsProps
 } from 'react-aria-components/Tabs';
+import {scrollFade} from './style/style-macro' with {type: 'macro'};
+import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-
-import {scrollFade} from './style/style-macro' with {type: 'macro'};
-
 
 export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
   isInfinite?: boolean;
@@ -122,7 +127,7 @@ const itemsStyles = style({
   scrollbarWidth: 'none',
   scrollSnapType: 'x mandatory',
   scrollBehavior: {
-    default: 'auto',
+    default: 'smooth',
     '@media (prefers-reduced-motion: reduce)': 'auto'
   }
 });
@@ -222,11 +227,10 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
     <div className={style({display: 'flex', justifyContent: 'center', order: 1})}>
       <RACTabList
         {...props}
-        className={renderProps =>
-          pickerStyles(renderProps) + ' ' + scrollFade({x: 16})
-        }
+        className={renderProps => pickerStyles(renderProps) + ' ' + scrollFade({x: 16})}
       />
-    </div>);
+    </div>
+  );
 
   // Wait until tab state has initialized its focus target before running autofocus.
   return state?.selectionManager.focusedKey != null ? (
@@ -260,10 +264,7 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
   let {isInfinite} = useContext(LightBoxCarouselContext);
 
-  let selectedKey = state?.selectedKey;
-  let selectedItem = selectedKey != null ? state?.collection.getItem(selectedKey) : null;
-
-  if (selectedItem == null) {
+  if (state?.selectedItem == null) {
     return null;
   }
 
@@ -272,7 +273,9 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
       {index => props.children?.at(getWrappedIndex(index, state.collection.size))}
     </InfiniteLightboxItems>
   ) : (
-    <FiniteLightboxItems>{index => props.children?.at(index)}</FiniteLightboxItems>
+    <FocusScope>
+      <FiniteLightboxItems>{index => props.children?.at(index)}</FiniteLightboxItems>
+    </FocusScope>
   );
 
   return (
@@ -299,13 +302,17 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   let {children: renderPage, ...otherProps} = props;
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
+  let keyboardScroll = useRef(false);
+  let focusAfterSelection = useRef(false);
+  let focusManager = useFocusManager();
 
   let selectedKey = state?.selectedKey;
-  let selectedItem = selectedKey != null ? state?.collection.getItem(selectedKey) : null;
-
-  let selectedIndex = selectedItem != null ? selectedItem.index : null;
+  let selectedIndex = state?.selectedItem?.index ?? null;
 
   useLayoutEffect(() => {
+    let moveFocus = focusAfterSelection.current;
+    focusAfterSelection.current = false;
+
     let el = ref.current;
     if (!el || selectedIndex == null) {
       return;
@@ -319,52 +326,139 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
         behavior: 'instant'
       });
     }
-  }, [selectedIndex, selectedKey]);
 
-  if (selectedIndex == null || state.collection.size === 0) {
-    return null;
-  }
+    if (!moveFocus) {
+      return;
+    }
+
+    let activeElement = getActiveElement(el.ownerDocument);
+    if (activeElement && activeElement !== el.ownerDocument.body) {
+      return;
+    }
+
+    // Once the new slide is active, focus its first tabbable control or the panel.
+    let panel = el.querySelector<HTMLElement>('[role="tabpanel"]');
+    let control = focusManager?.focusFirst({
+      tabbable: true,
+      accept: element => element !== panel && nodeContains(panel, element)
+    });
+    if (!control) {
+      focusManager?.focusFirst({
+        tabbable: true,
+        accept: element => element === panel
+      });
+    }
+  }, [selectedIndex, selectedKey, focusManager]);
 
   let size = state.collection.size;
-  let pages = [selectedIndex - 1, selectedIndex, selectedIndex + 1].filter(
-    page => page >= 0 && page < size
-  );
-  let leadingPages = Math.max(0, selectedIndex - 1);
-  let trailingPages = Math.max(0, size - selectedIndex - 2);
 
-  let prevItem = () => {
+  let scrollToPage = (index: number): boolean => {
     let el = ref.current;
-    if (el && selectedIndex > 0) {
-      el.scrollLeft = el.offsetWidth * (selectedIndex - 1);
+    if (!el || index < 0 || index >= size) {
+      return false;
     }
+
+    el.scrollLeft = el.offsetWidth * index;
+    return true;
   };
 
-  let nextItem = () => {
-    let el = ref.current;
-    if (el && selectedIndex < size - 1) {
-      el.scrollLeft = el.offsetWidth * (selectedIndex + 1);
-    }
-  };
-
-  let onScroll = () => {
+  let updateSelection = (moveFocus = false) => {
     let el = ref.current;
     if (!el) {
       return;
     }
 
     let currentIndex = Math.max(0, Math.min(size - 1, Math.round(el.scrollLeft / el.offsetWidth)));
-    if (selectedIndex !== currentIndex) {
-      let key = [...state.collection].at(currentIndex)?.key;
-      if (key != null) {
-        state.setSelectedKey(key);
-      }
+    let key = [...state.collection].at(currentIndex)?.key;
+    if (key == null || key === selectedKey) {
+      return;
+    }
+
+    let panel = el.querySelector<HTMLElement>('[role="tabpanel"]');
+    let activeElement = getActiveElement(el.ownerDocument);
+    if (
+      activeElement &&
+      nodeContains(panel, activeElement) &&
+      'blur' in activeElement &&
+      typeof activeElement.blur === 'function'
+    ) {
+      focusAfterSelection.current = moveFocus && activeElement === panel;
+      // Blur before deselection removes the panel's focus handlers.
+      activeElement.blur();
+    }
+
+    state.setSelectedKey(key);
+  };
+
+  // Keep the focused panel non-inert until keyboard scrolling finishes.
+  let onScroll = () => {
+    if (!keyboardScroll.current) {
+      updateSelection();
     }
   };
 
+  let onScrollEnd = () => {
+    if (!keyboardScroll.current) {
+      return;
+    }
+
+    keyboardScroll.current = false;
+    updateSelection(true);
+  };
+
+  // Only handle arrows from the panel itself, preserving keyboard behavior
+  // in text fields and other child controls.
+  let handleArrow = (e: KeyboardEvent, delta: -1 | 1) => {
+    console.log('handleArrow')
+    let panel = ref.current?.querySelector('[role="tabpanel"]');
+    if (e.isDefaultPrevented() || getEventTarget(e) !== panel) {
+      console.log(getEventTarget(e))
+      return false;
+    }
+
+    if (selectedIndex == null || keyboardScroll.current) {
+      return;
+    }
+
+    console.log('scroll');
+    keyboardScroll.current = scrollToPage(selectedIndex + delta);
+  };
+
+  let {keyboardProps} = useKeyboard({
+    allowRepeats: true,
+    shortcuts: {
+      ArrowLeft: e => handleArrow(e, -1),
+      ArrowRight: e => handleArrow(e, 1)
+    }
+  });
+
+  if (selectedIndex == null || size === 0) {
+    return null;
+  }
+
+  let pages = [selectedIndex - 1, selectedIndex, selectedIndex + 1].filter(
+    page => page >= 0 && page < size
+  );
+  let leadingPages = Math.max(0, selectedIndex - 1);
+  let trailingPages = Math.max(0, size - selectedIndex - 2);
+
+  // TODO: are there actually otherProps, should i just mergeProps?
   return (
     <>
-      <CarouselNavButton onPress={prevItem} side="start" isDisabled={selectedIndex === 0} />
-      <div ref={ref} {...otherProps} className={itemsStyles} onScroll={onScroll}>
+      <CarouselNavButton
+        onPress={() => {
+          scrollToPage(selectedIndex - 1);
+        }}
+        side="start"
+        aria-disabled={selectedIndex === 0}
+      />
+      <div
+        ref={ref}
+        {...otherProps}
+        {...keyboardProps}
+        className={itemsStyles}
+        onScroll={onScroll}
+        onScrollEnd={onScrollEnd}>
         <div
           style={{
             width: leadingPages * 100 + '%',
@@ -395,7 +489,13 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
           }}
         />
       </div>
-      <CarouselNavButton onPress={nextItem} side="end" isDisabled={selectedIndex === size - 1} />
+      <CarouselNavButton
+        onPress={() => {
+          scrollToPage(selectedIndex + 1);
+        }}
+        side="end"
+        aria-disabled={selectedIndex === size - 1}
+      />
     </>
   );
 }
@@ -478,10 +578,7 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
 
-  let selectedKey = state?.selectedKey;
-  let selectedItem = selectedKey != null ? state?.collection.getItem(selectedKey) : null;
-
-  let selectedIndex = selectedItem != null ? selectedItem.index : null;
+  let selectedIndex = state?.selectedItem?.index ?? null;
 
   let [{centerPage, currentPage}, dispatch] = useReducer(reducer, null, () => ({
     centerPage: selectedIndex ?? 0,
