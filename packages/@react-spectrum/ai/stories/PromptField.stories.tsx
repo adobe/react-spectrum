@@ -48,6 +48,15 @@ import Data from '@react-spectrum/s2/icons/Data';
 import * as data from '../src/loader/data';
 import type {FocusableRefValue} from '@react-types/shared';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Image} from '@react-spectrum/s2/Image';
+import {
+  LightboxCarousel,
+  LightboxItem,
+  LightboxItems,
+  LightboxPicker,
+  LightboxPickerItem,
+  LightboxTrigger
+} from '../src/Lightbox';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -465,25 +474,86 @@ function EverythingRender(args) {
             return newState;
           });
         }}>
-        <PromptFieldAttachmentList
-          dependencies={[attachmentState, args.attachmentVariant, args.attachmentInvalid]}>
-          {attachment => {
-            let state = attachmentState.get(attachment.id);
-            return (
-              <Attachment
-                isInvalid={args.attachmentInvalid}
-                uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
-                <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
-                {args.attachmentVariant === 'card' && (
-                  <Content>
-                    <Text slot="title">{attachment.file.name}</Text>
-                    <Text slot="description">{getMimeTypeLabel(attachment.file.type)}</Text>
-                  </Content>
+        {attachments.length > 0 && (
+          <LightboxTrigger>
+            <PromptFieldAttachmentList
+              dependencies={[attachmentState, args.attachmentVariant, args.attachmentInvalid]}>
+              {attachment => {
+                let state = attachmentState.get(attachment.id);
+                return (
+                  <Attachment
+                    id={attachment.id}
+                    textValue={attachment.file.name}
+                    aria-label={attachment.file.name}
+                    isInvalid={args.attachmentInvalid}
+                    uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
+                    <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
+                    {args.attachmentVariant === 'card' && (
+                      <Content>
+                        <Text slot="title">{attachment.file.name}</Text>
+                        <Text slot="description">{getMimeTypeLabel(attachment.file.type)}</Text>
+                      </Content>
+                    )}
+                  </Attachment>
+                );
+              }}
+            </PromptFieldAttachmentList>
+            <LightboxCarousel>
+              <LightboxPicker aria-label="Choose attachment" items={attachments}>
+                {attachment => (
+                  <LightboxPickerItem id={attachment.id} aria-label={attachment.file.name}>
+                    <div
+                      className={style({
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 64,
+                        height: 64,
+                        backgroundColor: 'gray-100',
+                        borderRadius: 'lg'
+                      })}>
+                      <AttachmentPreview
+                        mimeType={attachment.file.type}
+                        src={attachment.image}
+                        alt=""
+                      />
+                    </div>
+                  </LightboxPickerItem>
                 )}
-              </Attachment>
-            );
-          }}
-        </PromptFieldAttachmentList>
+              </LightboxPicker>
+              <LightboxItems>
+                {attachments.map(attachment => (
+                  <LightboxItem key={attachment.id} id={attachment.id}>
+                    {attachment.image ? (
+                      <Image src={attachment.image} alt={attachment.file.name} />
+                    ) : (
+                      <div
+                        className={style({
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: 12,
+                          font: 'body',
+                          color: 'white'
+                        })}>
+                        <div
+                          className={style({
+                            backgroundColor: 'gray-100',
+                            borderRadius: 'lg',
+                            padding: 16
+                          })}>
+                          <AttachmentPreview mimeType={attachment.file.type} />
+                        </div>
+                        <span>{attachment.file.name}</span>
+                        <span>{getMimeTypeLabel(attachment.file.type)}</span>
+                      </div>
+                    )}
+                  </LightboxItem>
+                ))}
+              </LightboxItems>
+            </LightboxCarousel>
+          </LightboxTrigger>
+        )}
         <PromptTokenField
           completionTrigger={/(?<=^|\s)[@/]/}
           renderCompletions={(filterValue, valueType) => {
