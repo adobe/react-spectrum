@@ -328,6 +328,39 @@ export const TableDynamicExample: TableStory = () => {
   );
 };
 
+export const RowFocusEvents: TableStory = args => (
+  <div>
+    <p>
+      Tab into the table and use the up and down arrow keys to focus rows. Focus events appear in
+      the Actions panel. Moving into a cell or its button blurs the row.
+    </p>
+    <Table {...args} aria-label="Row focus events" style={{width: 400}}>
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Actions</Column>
+      </TableHeader>
+      <TableBody>
+        {['Cat', 'Dog', 'Kangaroo'].map(name => (
+          <Row
+            key={name}
+            id={name}
+            onFocus={action(name + ': onFocus')}
+            onBlur={action(name + ': onBlur')}
+            onFocusChange={action(name + ': onFocusChange')}>
+            <Cell>{name}</Cell>
+            <Cell>
+              <Button>Open {name}</Button>
+            </Cell>
+          </Row>
+        ))}
+      </TableBody>
+    </Table>
+    <Button>After the table</Button>
+  </div>
+);
+
+RowFocusEvents.args = {selectionMode: 'single'};
+
 let timeTableColumns = [
   {name: 'Time', id: 'time', isRowHeader: true},
   {name: 'Monday', id: 'monday'},
