@@ -14,7 +14,7 @@ import {Button, ButtonProps} from '@react-spectrum/s2/Button';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
-import {createContext, ReactNode, useContext, useReducer, useRef, useState} from 'react';
+import {createContext, ReactNode, useContext, useEffect, useReducer, useRef, useState} from 'react';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {FocusScope, useFocusManager} from 'react-aria/FocusScope';
@@ -303,11 +303,21 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
   let keyboardScroll = useRef(false);
+  let keyboardIntentTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let focusAfterSelection = useRef(false);
   let focusManager = useFocusManager();
 
   let selectedKey = state?.selectedKey;
   let selectedIndex = state?.selectedItem?.index ?? null;
+
+  useEffect(() => {
+    return () => {
+      if (keyboardIntentTimeout.current !== null) {
+        clearTimeout(keyboardIntentTimeout.current);
+        keyboardIntentTimeout.current = null;
+      }
+    };
+  }, []);
 
   useLayoutEffect(() => {
     let moveFocus = focusAfterSelection.current;
@@ -382,7 +392,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       'blur' in activeElement &&
       typeof activeElement.blur === 'function'
     ) {
-      focusAfterSelection.current = moveFocus && activeElement === panel;
+      focusAfterSelection.current = moveFocus;
       // Blur before deselection removes the panel's focus handlers.
       activeElement.blur();
     }
@@ -390,8 +400,20 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     state.setSelectedKey(key);
   };
 
+  let clearKeyboardIntent = () => {
+    if (keyboardIntentTimeout.current !== null) {
+      clearTimeout(keyboardIntentTimeout.current);
+      keyboardIntentTimeout.current = null;
+    }
+  };
+
   // Keep the focused panel non-inert until keyboard scrolling finishes.
   let onScroll = () => {
+    if (keyboardIntentTimeout.current !== null) {
+      clearKeyboardIntent();
+      keyboardScroll.current = true;
+    }
+
     if (!keyboardScroll.current) {
       updateSelection();
     }
@@ -409,10 +431,19 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   // Only handle arrows from the panel itself, preserving keyboard behavior
   // in text fields and other child controls.
   let handleArrow = (e: KeyboardEvent, delta: -1 | 1) => {
-    console.log('handleArrow')
+    clearKeyboardIntent();
+
+    if (e.isDefaultPrevented()) {
+      return false;
+    }
+
     let panel = ref.current?.querySelector('[role="tabpanel"]');
-    if (e.isDefaultPrevented() || getEventTarget(e) !== panel) {
-      console.log(getEventTarget(e))
+    if (getEventTarget(e) !== panel) {
+      // Clear the ref if the panel does not scroll
+      keyboardIntentTimeout.current = setTimeout(() => {
+        keyboardIntentTimeout.current = null;
+      }, 100);
+
       return false;
     }
 
@@ -420,7 +451,6 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       return;
     }
 
-    console.log('scroll');
     keyboardScroll.current = scrollToPage(selectedIndex + delta);
   };
 
