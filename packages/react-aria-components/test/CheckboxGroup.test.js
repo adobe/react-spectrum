@@ -19,6 +19,7 @@ import {
   CheckboxGroupContext
 } from '../src/Checkbox';
 import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
 import {Label} from '../src/Label';
 import React, {forwardRef} from 'react';
 import {Text} from '../src/Text';
@@ -345,26 +346,56 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', comp => {
     }
   });
 
-  it('should inherit validationBehavior="aria" from the group', () => {
-    // Regression for #10856: a group-level aria validationBehavior must reach
-    // each checkbox. With the buggy 'native' default on useCheckboxAria, the
-    // checkbox keeps required and form.checkValidity() blocks submit.
-    let {getByTestId, getAllByRole} = render(
-      <form data-testid="form">
-        <CheckboxGroup isRequired validationBehavior="aria" aria-label="Contact">
-          <Checkbox value="email">Email</Checkbox>
-        </CheckboxGroup>
-        <button type="submit">Submit</button>
-      </form>
-    );
+  it.each([
+    ['form', 'form'],
+    ['Form', Form]
+  ])(
+    'should inherit validationBehavior="aria" from the group inside %s',
+    async (_, FormComponent) => {
+      let {getByRole} = render(
+        <FormComponent>
+          <CheckboxGroup isRequired validationBehavior="aria" aria-label="Contact">
+            <Checkbox value="email">Email</Checkbox>
+          </CheckboxGroup>
+        </FormComponent>
+      );
 
-    let checkboxes = getAllByRole('checkbox');
-    expect(checkboxes[0]).not.toHaveAttribute('required');
+      let checkbox = getByRole('checkbox');
+      expect(checkbox).not.toHaveAttribute('required');
+      expect(checkbox).toHaveAttribute('aria-required', 'true');
 
-    act(() => {
-      expect(getByTestId('form').checkValidity()).toBe(true);
-    });
-  });
+      await act(async () => {
+        expect(checkbox.form.checkValidity()).toBe(true);
+      });
+    }
+  );
+
+  it.each([
+    ['aria', 'native', true],
+    ['native', 'aria', false]
+  ])(
+    'should allow a %s checkbox to override a %s group inside Form',
+    async (validationBehavior, groupValidationBehavior, isValid) => {
+      let {getByRole} = render(
+        <Form>
+          <CheckboxGroup
+            isRequired
+            validationBehavior={groupValidationBehavior}
+            aria-label="Contact">
+            <Checkbox value="email" validationBehavior={validationBehavior}>
+              Email
+            </Checkbox>
+          </CheckboxGroup>
+        </Form>
+      );
+
+      let checkbox = getByRole('checkbox');
+      expect(checkbox.required).toBe(!isValid);
+      await act(async () => {
+        expect(checkbox.form.checkValidity()).toBe(isValid);
+      });
+    }
+  );
 
   it('should support focus events', async () => {
     let onBlur = jest.fn();

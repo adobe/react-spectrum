@@ -433,11 +433,8 @@ function useCheckboxAria(
 ): [CheckboxAria, RefObject<HTMLInputElement | null>] {
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let groupState = useContext(CheckboxGroupStateContext);
-  // Standalone checkboxes default to native validation. Inside a CheckboxGroup,
-  // leave validationBehavior undefined so useCheckboxGroupItem inherits the
-  // group's setting (e.g. validationBehavior="aria" on the group).
   let validationBehavior =
-    props.validationBehavior ?? formValidationBehavior ?? (groupState ? undefined : 'native');
+    props.validationBehavior ?? (groupState ? undefined : (formValidationBehavior ?? 'native'));
   let inputRef = useObjectRef(
     useMemo(
       () => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null),

@@ -399,6 +399,26 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     expect(checkbox).not.toHaveAttribute('aria-describedby');
   });
 
+  it.each([
+    ['native', false],
+    ['aria', true]
+  ])(
+    'should inherit %s validation from Form without a group',
+    async (validationBehavior, isValid) => {
+      let {getByRole} = render(
+        <Form validationBehavior={validationBehavior}>
+          <Checkbox isRequired>Test</Checkbox>
+        </Form>
+      );
+
+      let checkbox = getByRole('checkbox');
+      expect(checkbox.required).toBe(!isValid);
+      await act(async () => {
+        expect(checkbox.form.checkValidity()).toBe(isValid);
+      });
+    }
+  );
+
   it('should support render props', async () => {
     let {getByRole} = render(
       <Checkbox>{({isSelected}) => (isSelected ? 'Selected' : 'Not Selected')}</Checkbox>
