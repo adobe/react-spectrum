@@ -21,7 +21,7 @@ import {
 import {getOwnerWindow} from '../utils/domHelpers';
 import {isFocusable} from '../utils/isFocusable';
 import {isNode, isShadowRoot} from '../utils/typeHelpers';
-import {FocusEvent as ReactFocusEvent, SyntheticEvent, useRef} from 'react';
+import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
@@ -63,60 +63,66 @@ export function useSyntheticBlurEvent<Target extends Element = Element>(
   }, []);
 
   // This function is called during a React onFocus event.
-  return (e: ReactFocusEvent<Target>) => {
-    // React does not fire onBlur when an element is disabled. https://github.com/facebook/react/issues/9142
-    // Most browsers fire a native focusout event in this case, except for Firefox. In that case, we use a
-    // MutationObserver to watch for the disabled attribute, and dispatch these events ourselves.
-    // For browsers that do, focusout fires before the MutationObserver, so onBlur should not fire twice.
-    let eventTarget = getEventTarget(e);
-    if (
-      eventTarget instanceof HTMLButtonElement ||
-      eventTarget instanceof HTMLInputElement ||
-      eventTarget instanceof HTMLTextAreaElement ||
-      eventTarget instanceof HTMLSelectElement
-    ) {
-      stateRef.current.isFocused = true;
+  // Keep a stable identity (useCallback) so consumers that depend on referential equality
+  // still see a stable function; useEffectEvent supplies the latest onBlur for the async
+  // disable path without re-creating that identity when onBlur's identity changes.
+  return useCallback(
+    (e: ReactFocusEvent<Target>) => {
+      // React does not fire onBlur when an element is disabled. https://github.com/facebook/react/issues/9142
+      // Most browsers fire a native focusout event in this case, except for Firefox. In that case, we use a
+      // MutationObserver to watch for the disabled attribute, and dispatch these events ourselves.
+      // For browsers that do, focusout fires before the MutationObserver, so onBlur should not fire twice.
+      let eventTarget = getEventTarget(e);
+      if (
+        eventTarget instanceof HTMLButtonElement ||
+        eventTarget instanceof HTMLInputElement ||
+        eventTarget instanceof HTMLTextAreaElement ||
+        eventTarget instanceof HTMLSelectElement
+      ) {
+        stateRef.current.isFocused = true;
 
-      let target = eventTarget;
-      let onBlurHandler: EventListenerOrEventListenerObject | null = e => {
-        stateRef.current.isFocused = false;
+        let target = eventTarget;
+        let onBlurHandler: EventListenerOrEventListenerObject | null = e => {
+          stateRef.current.isFocused = false;
 
-        if (target.disabled) {
-          // Disabling can fire focusout during React's commit. Wait until the latest
-          // blur handler is installed and it is safe for it to update state.
-          queueMicrotask(() => {
-            setEventTarget(e, target);
-            let event = createSyntheticEvent<ReactFocusEvent<Target>>(e);
-            onBlurEvent(event);
-          });
-        }
+          if (target.disabled) {
+            // Disabling can fire focusout during React's commit. Wait until the latest
+            // blur handler is installed and it is safe for it to update state.
+            queueMicrotask(() => {
+              setEventTarget(e, target);
+              let event = createSyntheticEvent<ReactFocusEvent<Target>>(e);
+              onBlurEvent(event);
+            });
+          }
 
-        // We no longer need the MutationObserver once the target is blurred.
-        if (stateRef.current.observer) {
-          stateRef.current.observer.disconnect();
-          stateRef.current.observer = null;
-        }
-      };
+          // We no longer need the MutationObserver once the target is blurred.
+          if (stateRef.current.observer) {
+            stateRef.current.observer.disconnect();
+            stateRef.current.observer = null;
+          }
+        };
 
-      target.addEventListener('focusout', onBlurHandler, {once: true});
+        target.addEventListener('focusout', onBlurHandler, {once: true});
 
-      stateRef.current.observer = new MutationObserver(() => {
-        if (stateRef.current.isFocused && target.disabled) {
-          stateRef.current.observer?.disconnect();
-          let relatedTargetEl = target === getActiveElement() ? null : getActiveElement();
-          target.dispatchEvent(new FocusEvent('blur', {relatedTarget: relatedTargetEl}));
-          target.dispatchEvent(
-            new FocusEvent('focusout', {bubbles: true, relatedTarget: relatedTargetEl})
-          );
-        }
-      });
+        stateRef.current.observer = new MutationObserver(() => {
+          if (stateRef.current.isFocused && target.disabled) {
+            stateRef.current.observer?.disconnect();
+            let relatedTargetEl = target === getActiveElement() ? null : getActiveElement();
+            target.dispatchEvent(new FocusEvent('blur', {relatedTarget: relatedTargetEl}));
+            target.dispatchEvent(
+              new FocusEvent('focusout', {bubbles: true, relatedTarget: relatedTargetEl})
+            );
+          }
+        });
 
-      stateRef.current.observer.observe(target, {
-        attributes: true,
-        attributeFilter: ['disabled']
-      });
-    }
-  };
+        stateRef.current.observer.observe(target, {
+          attributes: true,
+          attributeFilter: ['disabled']
+        });
+      }
+    },
+    [onBlurEvent]
+  );
 }
 
 export let ignoreFocusEvent = false;
