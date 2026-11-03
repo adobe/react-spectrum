@@ -298,6 +298,36 @@ const TreeExampleStaticNoActionsRender = <T extends any>(args: TreeProps<T>): JS
   </Tree>
 );
 
+export const WithDescriptions: TreeStory = args => (
+  <Tree {...args} aria-label="Files" className={styles.tree} selectionMode="single">
+    <TreeItem id="projects" textValue="Projects" className={styles['tree-item']}>
+      <TreeItemContent>
+        {({isExpanded}) => (
+          <>
+            <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>
+            <div>
+              <Text>Projects</Text>
+              <Text slot="description" style={{display: 'block'}}>
+                Shared project files
+              </Text>
+            </div>
+          </>
+        )}
+      </TreeItemContent>
+      <TreeItem id="report" textValue="Report" className={styles['tree-item']}>
+        <TreeItemContent>
+          <div>
+            <Text>Report</Text>
+            <Text slot="description" style={{display: 'block'}}>
+              Last updated today
+            </Text>
+          </div>
+        </TreeItemContent>
+      </TreeItem>
+    </TreeItem>
+  </Tree>
+);
+
 export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
   render: args => <TreeExampleStaticRender {...args} />,
   args: {
