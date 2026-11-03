@@ -34,8 +34,9 @@ import {useControlledState} from '../utils/useControlledState';
 import {useMemo, useState} from 'react';
 
 export interface DateRangePickerStateOptions<
-  T extends DateValue = DateValue
-> extends DateRangePickerProps<T> {
+  T extends DateValue = DateValue,
+  Target extends Element = Element
+> extends DateRangePickerProps<T, Target> {
   /**
    * Determines whether the date picker popover should close automatically when a date is selected.
    *
@@ -106,9 +107,10 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-export function useDateRangePickerState<T extends DateValue = DateValue>(
-  props: DateRangePickerStateOptions<T>
-): DateRangePickerState {
+export function useDateRangePickerState<
+  T extends DateValue = DateValue,
+  Target extends Element = Element
+>(props: DateRangePickerStateOptions<T, Target>): DateRangePickerState {
   let overlayState = useOverlayTriggerState(props);
   let [controlledValue, setControlledValue] = useControlledState<
     DateRange | null,
