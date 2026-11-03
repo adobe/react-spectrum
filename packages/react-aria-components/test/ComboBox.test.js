@@ -806,6 +806,8 @@ describe('ComboBox', () => {
   });
 
   it('allows Mod+A to select input text when multi-select popover is open', async () => {
+    // eslint-disable-next-line no-unused-vars
+    using _spy = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
     let onChange = jest.fn();
     let {container} = render(
       <TestComboBox selectionMode="multiple" defaultInputValue="an" onChange={onChange} />
@@ -815,11 +817,22 @@ describe('ComboBox', () => {
     let input = comboboxTester.getCombobox();
     expect(input).toHaveValue('an');
 
-    let preventDefault = jest.fn();
-    fireEvent.keyDown(input, {key: 'a', code: 'KeyA', keyCode: 65, metaKey: true, preventDefault});
+    // useSelectableCollection owns Mod+A while the popover is open. Without disallowSelectAll it
+    // preventDefaults after a no-op selectAll(); with it, the browser can select the input text.
+    let defaultPrevented = false;
+    let onKeyDown = e => {
+      if (e.target === input && e.key === 'a' && e.metaKey) {
+        defaultPrevented = e.defaultPrevented;
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    try {
+      await user.keyboard('{Meta>}a{/Meta}');
+    } finally {
+      document.removeEventListener('keydown', onKeyDown);
+    }
 
-    // Select-all options is ignored by ComboBox state and must not steal Mod+A from the input.
-    expect(preventDefault).not.toHaveBeenCalled();
+    expect(defaultPrevented).toBe(false);
     expect(onChange).not.toHaveBeenCalled();
     for (let option of comboboxTester.getOptions()) {
       expect(option).toHaveAttribute('aria-selected', 'false');
