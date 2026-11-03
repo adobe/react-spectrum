@@ -55,7 +55,7 @@ it('commits typed text once when a focused field is disabled after rerendering',
 
 it('keeps the incremented value when onChange disables a focused field', async () => {
   let onChange = vi.fn();
-  let onBlur = vi.fn();
+  let onDisabledBlur = vi.fn();
   function Example() {
     let [value, setValue] = useState(25);
     let [isDisabled, setDisabled] = useState(false);
@@ -63,7 +63,12 @@ it('keeps the incremented value when onChange disables a focused field', async (
       <TestNumberField
         value={value}
         isDisabled={isDisabled}
-        onBlur={onBlur}
+        onBlur={event => {
+          // Pointer interactions may blur and refocus the enabled input first.
+          if ((event.currentTarget as HTMLInputElement).disabled) {
+            onDisabledBlur(event);
+          }
+        }}
         onChange={value => {
           onChange(value);
           setValue(value);
@@ -82,5 +87,5 @@ it('keeps the incremented value when onChange disables a focused field', async (
   await expect.element(input).toHaveValue('26');
   expect(onChange).toHaveBeenCalledTimes(1);
   expect(onChange).toHaveBeenCalledWith(26);
-  expect(onBlur).toHaveBeenCalledTimes(1);
+  expect(onDisabledBlur).toHaveBeenCalledTimes(1);
 });
