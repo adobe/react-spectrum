@@ -122,6 +122,7 @@ const itemsStyles = style({
   width: 'full',
   height: 'full',
   display: 'flex',
+  order: 1,
   overflowX: 'auto',
   overflowY: 'hidden',
   scrollbarWidth: 'none',
@@ -475,13 +476,6 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   // TODO: are there actually otherProps, should i just mergeProps?
   return (
     <>
-      <CarouselNavButton
-        onPress={() => {
-          scrollToPage(selectedIndex - 1);
-        }}
-        side="start"
-        aria-disabled={selectedIndex === 0}
-      />
       <div
         ref={ref}
         {...otherProps}
@@ -521,6 +515,13 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       </div>
       <CarouselNavButton
         onPress={() => {
+          scrollToPage(selectedIndex - 1);
+        }}
+        side="start"
+        aria-disabled={selectedIndex === 0}
+      />
+      <CarouselNavButton
+        onPress={() => {
           scrollToPage(selectedIndex + 1);
         }}
         side="end"
@@ -543,6 +544,14 @@ function CarouselNavButton(props: CarouselNavButtonProps) {
     <Button
       {...otherProps}
       variant="secondary"
+      styles={style({
+        order: {
+          default: 2,
+          side: {
+            start: 0
+          }
+        }
+      })({side})}
       staticColor={isInModal ? 'white' : undefined}
       aria-label={stringFormatter.format(
         side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
@@ -690,7 +699,6 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
 
   return (
     <>
-      <CarouselNavButton onPress={prevItem} side="start" />
       <div ref={ref} onScroll={onScroll} onScrollEnd={onScrollEnd} className={itemsStyles}>
         {/* Placeholder to hold space in the scroll width for more pages. */}
         <div
@@ -725,6 +733,7 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
           }}
         />
       </div>
+      <CarouselNavButton onPress={prevItem} side="start" />
       <CarouselNavButton onPress={nextItem} side="end" />
     </>
   );
