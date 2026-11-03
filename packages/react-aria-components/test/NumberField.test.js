@@ -443,6 +443,30 @@ describe('NumberField', () => {
     expect(input).toBeDisabled();
   });
 
+  it('should commit typed text when the focused field is disabled', async () => {
+    let onChange = jest.fn();
+    let onBlur = jest.fn();
+    let {getByRole, rerender} = render(
+      <TestNumberField defaultValue={25} onChange={onChange} onBlur={onBlur} />
+    );
+    let input = getByRole('textbox');
+    await user.clear(input);
+    await user.type(input, '42');
+    expect(onChange).not.toHaveBeenCalled();
+
+    await act(async () => {
+      rerender(
+        <TestNumberField defaultValue={25} onChange={onChange} onBlur={onBlur} isDisabled />
+      );
+    });
+
+    expect(input).toBeDisabled();
+    expect(input).toHaveValue('42');
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(42);
+    expect(onBlur).toHaveBeenCalledTimes(1);
+  });
+
   it('should allow you to delete the first digit in a number if it is followed by a group separator', async () => {
     let {getByRole} = render(
       <TestNumberField defaultValue={1024} formatOptions={{useGrouping: true}} />

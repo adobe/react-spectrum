@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {press, testKeypresses} from './utils';
 import {Provider} from '../../src/provider/Provider';
 import {RangeSlider} from '../../src/slider/RangeSlider';
@@ -349,7 +349,7 @@ describe('RangeSlider', function () {
       ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                   | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}, {right: press.ArrowRight, result: +1}, {right: press.ArrowLeft, result: -1}]}
       ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                   | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}, {right: press.ArrowRight, result: -1}, {right: press.ArrowLeft, result: +1}]}
       ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}} | ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}, {right: press.ArrowRight, result: 0}, {right: press.ArrowLeft, result: 0}]}
-    `('$Name moves the slider in the correct direction', function ({props, commands}) {
+    `('$Name moves the slider in the correct direction', async function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
           <RangeSlider
@@ -362,6 +362,8 @@ describe('RangeSlider', function () {
       );
       let sliders = tree.getAllByRole('slider') as [HTMLInputElement, HTMLInputElement];
       testKeypresses(sliders, commands);
+      // Flush the synthetic blur queued when moving between disabled thumbs.
+      await act(async () => {});
     });
 
     it.each`

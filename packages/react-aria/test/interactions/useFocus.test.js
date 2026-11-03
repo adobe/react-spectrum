@@ -188,6 +188,38 @@ describe('useFocus', function () {
     await waitFor(() => expect(onBlur).toHaveBeenCalled());
   });
 
+  it('should use the latest callbacks when a focused element is disabled', async function () {
+    function Example(props) {
+      let {focusProps} = useFocus(props);
+      return <input disabled={props.isDisabled} {...focusProps} />;
+    }
+
+    let onBlur = jest.fn();
+    let onFocusChange = jest.fn();
+    let tree = render(<Example onBlur={onBlur} onFocusChange={onFocusChange} />);
+    let input = tree.getByRole('textbox');
+    act(() => input.focus());
+    expect(onFocusChange).toHaveBeenCalledWith(true);
+
+    let nextOnBlur = jest.fn();
+    let nextOnFocusChange = jest.fn();
+    tree.rerender(<Example isDisabled onBlur={nextOnBlur} onFocusChange={nextOnFocusChange} />);
+    await waitFor(() => expect(nextOnBlur).toHaveBeenCalledTimes(1));
+    expect(nextOnBlur).toHaveBeenCalledWith(
+      expect.objectContaining({target: input, currentTarget: input})
+    );
+
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(nextOnFocusChange).toHaveBeenCalledTimes(1);
+    expect(nextOnFocusChange).toHaveBeenCalledWith(false);
+    act(() => {
+      input.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+    });
+    expect(nextOnBlur).toHaveBeenCalledTimes(1);
+    expect(nextOnFocusChange).toHaveBeenCalledTimes(1);
+  });
+
   describe('useFocus with Shadow DOM', function () {
     beforeAll(() => {
       enableShadowDOM();

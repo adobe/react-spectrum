@@ -132,11 +132,6 @@ export function useNumberField(
 
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/numberfield');
   let commitAndAnnounce = useCallback(() => {
-    // Disabling a focused input fires blur during React's commit, so don't commit again.
-    if (inputRef.current?.disabled) {
-      return;
-    }
-
     let oldValue = inputRef.current?.value ?? '';
     // Set input value to normalized valid value
     flushSync(() => {
@@ -150,7 +145,6 @@ export function useNumberField(
 
   let inputId = useId(id);
   let {focusProps} = useFocus({
-    isDisabled,
     onBlur() {
       commitAndAnnounce();
     }
