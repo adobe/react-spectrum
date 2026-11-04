@@ -1310,6 +1310,7 @@ describe('ComboBox', () => {
     expect(getByRole('listbox')).toBeInTheDocument();
 
     let notPrevented = fireEvent.keyDown(input, {key: 'Escape'});
+    fireEvent.keyUp(input, {key: 'Escape'});
     expect(notPrevented).toBe(false);
     expect(queryByRole('listbox')).toBeNull();
   });
@@ -1322,6 +1323,7 @@ describe('ComboBox', () => {
     expect(queryByRole('listbox')).toBeNull();
 
     let notPrevented = fireEvent.keyDown(input, {key: 'Escape'});
+    fireEvent.keyUp(input, {key: 'Escape'});
     expect(notPrevented).toBe(true);
   });
 
