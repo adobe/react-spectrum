@@ -204,7 +204,6 @@ describe('useOverlayPosition', function () {
   });
 
   it('should not flip in RTL when a user maxHeight fits within the available space', function () {
-    // 'start' cross-placement exercises the RTL codepath.
     let res = render(
       <I18nProvider locale="ar-AE">
         <Example placement="bottom start" maxHeight={400} />
@@ -217,14 +216,11 @@ describe('useOverlayPosition', function () {
   });
 
   describe('flipping when the overlay outgrows its current placement', function () {
-    // Natural (unclamped) content height; tests mutate this to simulate content
-    // populating after the initial positioning pass.
     let overlayNaturalHeight: number;
 
     beforeEach(() => {
       overlayNaturalHeight = 40;
 
-      // Simulates a scrollable overlay whose offsetHeight is clamped to its CSS max-height.
       jest
         .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
         .mockImplementation(function (this: HTMLElement) {
