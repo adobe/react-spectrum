@@ -15,6 +15,7 @@ import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {Text} from '../src/Text';
 import {Token, TokenField, TokenInput} from '../src/TokenField';
+import {tokenFieldPositionToDOMRange} from 'react-aria/useTokenField';
 import {TokenFieldValue} from 'react-stately/useTokenFieldState';
 
 let TestTokenField = props => (
@@ -70,5 +71,20 @@ describe('TokenField', () => {
       expect(input).toHaveAttribute('aria-label', 'Message');
       expect(input).not.toHaveAttribute('aria-labelledby');
     });
+  });
+
+  it('should not throw when measuring a position before a trailing <br>', () => {
+    let {getByRole} = render(
+      <TestTokenField
+        allowsNewlines
+        defaultValue={new TokenFieldValue([{type: 'text', text: 'hello\n'}])}
+      />
+    );
+
+    let input = getByRole('textbox');
+    let br = input.querySelector('br');
+    expect(br).not.toBeNull();
+    let index = Array.from(input.childNodes).indexOf(br);
+    expect(() => tokenFieldPositionToDOMRange(input, {index, offset: 0})).not.toThrow();
   });
 });
