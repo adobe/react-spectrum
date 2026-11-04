@@ -220,6 +220,7 @@ describe('PreviewTrigger', () => {
 
     expect(queryByTestId('preview')).not.toBeInTheDocument();
     expect(document.activeElement).toBe(link);
+    expect(fireEvent.keyDown(link, {key: 'Escape'})).toBe(true);
   });
 
   it('does not reopen when closed via the popover Dismiss button (focus restore)', async () => {
