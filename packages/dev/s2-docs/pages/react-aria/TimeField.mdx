@@ -75,6 +75,10 @@ import {TimeField} from 'vanilla-starter/TimeField';
   defaultValue={parseZonedDateTime('2025-02-03T17:45:00[America/Los_Angeles]')} />
 ```
 
+### Copy and paste
+
+Copying from any segment copies the whole time as it is displayed, e.g. `2:30 PM`. Pasting a complete time in the field's own display format or as an ISO 8601 time such as `14:30` replaces the field's value. A pasted hour without a day period is treated as 24 hour time. Pasting a number sets only the focused segment.
+
 ## Forms
 
 Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.

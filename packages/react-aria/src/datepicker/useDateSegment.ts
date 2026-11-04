@@ -12,15 +12,17 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from 'react-stately/useDateFieldState';
+import {DropItem, RefObject, TextDropItem} from '@react-types/shared';
 import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getDateFieldText, parseDateFieldText} from './dateFieldClipboard';
 import {getScrollParent} from '../utils/getScrollParent';
 import {hookData} from './useDateField';
 import {isIOS} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {NumberParser} from '@internationalized/number';
 import React, {CSSProperties, useMemo, useRef} from 'react';
-import {RefObject} from '@react-types/shared';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
+import {useClipboard} from '../dnd/useClipboard';
 import {useDateFormatter} from '../i18n/useDateFormatter';
 import {useDisplayNames} from './useDisplayNames';
 import {useEvent} from '../utils/useEvent';
@@ -327,6 +329,41 @@ export function useDateSegment(
     }
   });
 
+  // Copying from any segment copies the whole value as displayed. Pasting accepts a complete value,
+  // either in ISO 8601 format or in the field's own display format, or a number for the focused segment.
+  let fieldText = getDateFieldText(state);
+  let onPaste = async (items: DropItem[]) => {
+    let item = items.find(
+      (item): item is TextDropItem => item.kind === 'text' && item.types.has('text/plain')
+    );
+    if (!item || state.isDisabled || state.isReadOnly) {
+      return;
+    }
+
+    let text = await item.getText('text/plain');
+    let fields = parseDateFieldText(text, state, locale);
+    enteredKeys.current = '';
+    if (fields) {
+      state.setFields(fields);
+      return;
+    }
+
+    let trimmed = text.trim();
+    let isNumeric = segment.type !== 'dayPeriod' && segment.type !== 'era';
+    if (isNumeric && segment.isEditable && segment.maxValue != null && /^\p{Nd}+$/u.test(trimmed)) {
+      let value = parser.parse(trimmed);
+      if (value >= (segment.minValue ?? 0) && value <= segment.maxValue) {
+        state.setSegment(segment.type, value);
+      }
+    }
+  };
+
+  let {clipboardProps} = useClipboard({
+    isDisabled: state.isDisabled || segment.type === 'literal',
+    getItems: fieldText ? () => [{'text/plain': fieldText}] : undefined,
+    onPaste: state.isReadOnly ? undefined : onPaste
+  });
+
   useLayoutEffect(() => {
     let element = ref.current;
     return () => {
@@ -394,7 +431,7 @@ export function useDateSegment(
 
   return {
     // oxlint-disable-next-line react/react-compiler
-    segmentProps: mergeProps(spinButtonProps, labelProps, {
+    segmentProps: mergeProps(spinButtonProps, labelProps, clipboardProps, {
       id,
       ...touchPropOverrides,
       ...keyboardProps,

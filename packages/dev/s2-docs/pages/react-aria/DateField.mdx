@@ -92,6 +92,10 @@ import {DateField} from 'vanilla-starter/DateField';
 </I18nProvider>
 ```
 
+### Copy and paste
+
+Copying from any segment copies the whole value as it is displayed, e.g. `11/4/2026`. Pasting a complete value replaces the field's value. Pasted text can use the field's own display format in the current locale (separators between segments don't need to match), or an ISO 8601 string such as `2026-11-04` or `2026-11-04T14:30`. ISO 8601 strings with a time zone or offset are converted to the field's time zone, or to the user's local time zone if the value has none. Pasting a number sets only the focused segment. Text that is not a valid value for the field is ignored.
+
 ## Forms
 
 Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
