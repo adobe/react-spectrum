@@ -675,7 +675,8 @@ describe('DateField', () => {
     }
 
     function displayedText(group) {
-      return group.textContent.replace(/[\u2066-\u2069]/g, '');
+      // Normalize spaces since some ICU versions put a narrow no-break space before the day period.
+      return group.textContent.replace(/[\u2066-\u2069]/g, '').replace(/\s/g, ' ');
     }
 
     function copy(segment) {

@@ -18,7 +18,7 @@ import {
   render,
   within
 } from '@react-spectrum/test-utils-internal';
-import {ClipboardEvent, DataTransfer, DataTransferItem} from 'react-aria/test/dnd/mocks';
+import {ClipboardEvent, DataTransfer} from 'react-aria/test/dnd/mocks';
 import {DateInput, DateSegment, TimeField, TimeFieldContext} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
 import {Label} from '../src/Label';
@@ -285,7 +285,11 @@ describe('TimeField', () => {
       await user.click(segment);
       let clipboardData = new DataTransfer();
       fireEvent(segment, new ClipboardEvent('copy', {clipboardData}));
-      expect([...clipboardData.items]).toEqual([new DataTransferItem('text/plain', '2:30 PM')]);
+      let items = [...clipboardData.items];
+      expect(items).toHaveLength(1);
+      expect(items[0].type).toBe('text/plain');
+      // Some ICU versions put a narrow no-break space before the day period.
+      expect(items[0]._data.replace(/\s/g, ' ')).toBe('2:30 PM');
     });
 
     it.each([
