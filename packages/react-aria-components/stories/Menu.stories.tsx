@@ -147,10 +147,10 @@ export const MenuScrollPaddingExample: MenuStory = () => (
 );
 
 export const MenuTriggerMaxHeightFlip: MenuStory = () => (
-  // The trigger sits near the bottom of the viewport, with less room below it than the
-  // Popover's maxHeight. The Menu should flip above the trigger instead of staying below
-  // and shrinking to a small scrollable area (#10176).
-  <div style={{marginBlock: '90vh'}}>
+  // The trigger sits a fixed 100px above the bottom of the viewport (regardless of viewport height),
+  // with less room below it than the Popover's maxHeight. The Menu should flip above the trigger
+  // instead of staying below and shrinking to a small scrollable area (#10176).
+  <div style={{marginTop: 'calc(100vh - 100px)', marginBottom: '100vh'}}>
     <MenuTrigger>
       <Button aria-label="Menu">☰</Button>
       <Popover maxHeight={350}>
@@ -166,7 +166,7 @@ export const MenuTriggerMaxHeightFlip: MenuStory = () => (
 
 MenuTriggerMaxHeightFlip.parameters = {
   description: {
-    data: 'The trigger sits near the bottom of the viewport and the Popover has maxHeight={350}, which does not fit below the trigger. Open the menu: it should flip above the trigger and be up to 350px tall, not stay below clamped to a tiny scrollable area. Reverting the change in calculatePosition.ts reproduces #10176.'
+    data: 'The trigger sits near the bottom of the viewport (about 80px of room below it) and the Popover has maxHeight={350}, which does not fit below the trigger. Open the menu: it should flip above the trigger and be up to 350px tall, not stay below clamped to a tiny scrollable area. Reverting the change in calculatePosition.ts reproduces #10176.'
   }
 };
 
