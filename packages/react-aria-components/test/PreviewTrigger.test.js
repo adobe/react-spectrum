@@ -208,11 +208,22 @@ describe('PreviewTrigger', () => {
   });
 
   it('closes on Escape and restores focus to the link', async () => {
-    let {getByRole, queryByTestId} = render(<TestPreviewTrigger />);
+    let onClose = jest.fn();
+    let {getByRole, queryByTestId} = render(
+      <div
+        role="dialog"
+        onKeyDown={e => {
+          if (e.key === 'Escape' && !e.defaultPrevented) {
+            onClose();
+          }
+        }}>
+        <TestPreviewTrigger />
+      </div>
+    );
     let link = getByRole('link');
 
-    await user.tab(); // link, opens
-    await user.tab(); // into preview
+    await user.tab();
+    await user.tab();
     expect(document.activeElement).toBe(getByRole('button', {name: 'Action'}));
 
     await user.keyboard('{Escape}');
@@ -220,7 +231,11 @@ describe('PreviewTrigger', () => {
 
     expect(queryByTestId('preview')).not.toBeInTheDocument();
     expect(document.activeElement).toBe(link);
-    expect(fireEvent.keyDown(link, {key: 'Escape'})).toBe(true);
+    expect(onClose).not.toHaveBeenCalled();
+
+    await user.keyboard('{Escape}');
+
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('does not reopen when closed via the popover Dismiss button (focus restore)', async () => {
