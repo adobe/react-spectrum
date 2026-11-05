@@ -17,7 +17,7 @@ import {
   render,
   within
 } from '@react-spectrum/test-utils-internal';
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
 import {I18nProvider} from 'react-aria/I18nProvider';
@@ -610,6 +610,28 @@ describe('DateField', () => {
     expect(monthSegment).toHaveTextContent('mm');
     expect(segements[1]).toHaveTextContent('dd');
     expect(segements[2]).toHaveTextContent('yyyy');
+  });
+
+  it('keeps the wall-clock time when arrow keys move the month or day across a DST change', async () => {
+    for (let [type, from, to] of [
+      ['month', '2026-10-14T09:44[Europe/Lisbon]', '2026-11-14T09:44[Europe/Lisbon]'],
+      ['day', '2026-10-24T09:33[Europe/Lisbon]', '2026-10-25T09:33[Europe/Lisbon]']
+    ]) {
+      let onChange = jest.fn();
+      let {getAllByRole, unmount} = render(
+        <DateField defaultValue={parseZonedDateTime(from)} onChange={onChange}>
+          <Label>Date</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      );
+
+      let segment = getAllByRole('spinbutton').find(s => s.getAttribute('data-type') === type);
+      await user.click(segment);
+      await user.keyboard('{ArrowUp}');
+      await user.click(document.body);
+      expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime(to));
+      unmount();
+    }
   });
 
   // Regression test for #10259: in Firefox a stale selection anchor can remain inside a segment
