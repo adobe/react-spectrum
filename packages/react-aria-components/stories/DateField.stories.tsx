@@ -19,7 +19,7 @@ import {Form} from '../src/Form';
 import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 import {TextField} from '../src/TextField';
@@ -66,49 +66,21 @@ export default {
   component: DateField
 } as Meta<typeof DateField>;
 
-export type DateFieldStory = StoryFn<
+export type DateFieldStory = StoryObj<
   Omit<typeof DateField, 'minValue' | 'maxValue'> & {
     minValue?: number;
     maxValue?: number;
   }
 >;
 
-export const DateFieldExample: DateFieldStory = props => (
-  <DateField
-    {...props}
-    minValue={props.minValue ? fromAbsolute(props.minValue, getLocalTimeZone()) : undefined}
-    maxValue={props.maxValue ? fromAbsolute(props.maxValue, getLocalTimeZone()) : undefined}
-    data-testid="date-field-example"
-    defaultValue={parseAbsoluteToLocal('2024-01-01T01:01:00Z')}>
-    <Label style={{display: 'block'}}>Date</Label>
-    <DateInput className={styles.field} data-testid2="date-input">
-      {segment => (
-        <DateSegment
-          segment={segment}
-          className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
-        />
-      )}
-    </DateInput>
-    <FieldError style={{display: 'block'}} />
-  </DateField>
-);
-
-export const DateFieldAutoFill = props => (
-  <Form
-    onSubmit={e => {
-      action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
-      e.preventDefault();
-    }}>
-    <TextField>
-      <Label>Name</Label>
-      <Input name="name" type="text" id="name" autoComplete="name" />
-    </TextField>
+export const DateFieldExample: DateFieldStory = {
+  render: props => (
     <DateField
       {...props}
-      name="bday"
-      autoComplete="bday"
-      defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')}
-      data-testid="date-field-example">
+      minValue={props.minValue ? fromAbsolute(props.minValue, getLocalTimeZone()) : undefined}
+      maxValue={props.maxValue ? fromAbsolute(props.maxValue, getLocalTimeZone()) : undefined}
+      data-testid="date-field-example"
+      defaultValue={parseAbsoluteToLocal('2024-01-01T01:01:00Z')}>
       <Label style={{display: 'block'}}>Date</Label>
       <DateInput className={styles.field} data-testid2="date-input">
         {segment => (
@@ -120,6 +92,38 @@ export const DateFieldAutoFill = props => (
       </DateInput>
       <FieldError style={{display: 'block'}} />
     </DateField>
-    <Button type="submit">Submit</Button>
-  </Form>
-);
+  )
+};
+
+export const DateFieldAutoFill = {
+  render: props => (
+    <Form
+      onSubmit={e => {
+        action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
+        e.preventDefault();
+      }}>
+      <TextField>
+        <Label>Name</Label>
+        <Input name="name" type="text" id="name" autoComplete="name" />
+      </TextField>
+      <DateField
+        {...props}
+        name="bday"
+        autoComplete="bday"
+        defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')}
+        data-testid="date-field-example">
+        <Label style={{display: 'block'}}>Date</Label>
+        <DateInput className={styles.field} data-testid2="date-input">
+          {segment => (
+            <DateSegment
+              segment={segment}
+              className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+            />
+          )}
+        </DateInput>
+        <FieldError style={{display: 'block'}} />
+      </DateField>
+      <Button type="submit">Submit</Button>
+    </Form>
+  )
+};

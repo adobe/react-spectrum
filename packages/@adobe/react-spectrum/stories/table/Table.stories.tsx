@@ -40,8 +40,9 @@ import {IllustratedMessage} from '../../src/illustratedmessage/IllustratedMessag
 import {Item} from 'react-stately/Item';
 import {Key, LoadingState, SortDescriptor} from '@react-types/shared';
 import {Link} from '../../src/link/Link';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
+import {Performance as PerformanceRender} from './Performance';
 import {Picker} from '../../src/picker/Picker';
 import {Radio} from '../../src/radio/Radio';
 import {RadioGroup} from '../../src/radio/RadioGroup';
@@ -461,81 +462,85 @@ let timeTableRows = [
   }
 ];
 
-export type TableStoryFn = StoryFn<Omit<typeof TableView, 'children'>>;
+export type TableStoryFn = StoryObj<Omit<typeof TableView, 'children'>>;
 
-export const TableColSpanExample: TableStoryFn = () => {
-  return (
-    <TableView aria-label="Timetable">
-      <TableHeader columns={timeTableColumns}>
-        {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
-      </TableHeader>
-      <TableBody items={timeTableRows}>
-        {item => (
-          <Row key={item.id}>
-            {item.type === 'break'
-              ? [<Cell>{item.time}</Cell>, <Cell colSpan={5}>{item.name}</Cell>]
-              : [
-                  <Cell>{item.time}</Cell>,
-                  <Cell>{item.monday}</Cell>,
-                  <Cell>{item.tuesday}</Cell>,
-                  <Cell>{item.wednesday}</Cell>,
-                  <Cell>{item.thursday}</Cell>,
-                  <Cell>{item.friday}</Cell>
-                ]}
-          </Row>
-        )}
-      </TableBody>
-    </TableView>
-  );
+export const TableColSpanExample: TableStoryFn = {
+  render: () => {
+    return (
+      <TableView aria-label="Timetable">
+        <TableHeader columns={timeTableColumns}>
+          {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={timeTableRows}>
+          {item => (
+            <Row key={item.id}>
+              {item.type === 'break'
+                ? [<Cell>{item.time}</Cell>, <Cell colSpan={5}>{item.name}</Cell>]
+                : [
+                    <Cell>{item.time}</Cell>,
+                    <Cell>{item.monday}</Cell>,
+                    <Cell>{item.tuesday}</Cell>,
+                    <Cell>{item.wednesday}</Cell>,
+                    <Cell>{item.thursday}</Cell>,
+                    <Cell>{item.friday}</Cell>
+                  ]}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+    );
+  }
 };
 
-export const TableCellColSpanWithVariousSpansExample: TableStoryFn = () => {
-  return (
-    <TableView aria-label="Table with various colspans">
-      <TableHeader>
-        <Column isRowHeader>Col 1</Column>
-        <Column>Col 2</Column>
-        <Column>Col 3</Column>
-        <Column>Col 4</Column>
-      </TableHeader>
-      <TableBody>
-        <Row>
-          <Cell>Cell</Cell>
-          <Cell colSpan={2}>Span 2</Cell>
-          <Cell>Cell</Cell>
-        </Row>
-        <Row>
-          <Cell>Cell</Cell>
-          <Cell>Cell</Cell>
-          <Cell>Cell</Cell>
-          <Cell>Cell</Cell>
-        </Row>
-        <Row>
-          <Cell colSpan={4}>Span 4</Cell>
-        </Row>
-        <Row>
-          <Cell>Cell</Cell>
-          <Cell>Cell</Cell>
-          <Cell>Cell</Cell>
-          <Cell>Cell</Cell>
-        </Row>
-        <Row>
-          <Cell colSpan={3}>Span 3</Cell>
-          <Cell>Cell</Cell>
-        </Row>
-        <Row>
-          <Cell>Cell</Cell>
-          <Cell>Cell</Cell>
-          <Cell>Cell</Cell>
-          <Cell>Cell</Cell>
-        </Row>
-        <Row>
-          <Cell>Cell</Cell>
-          <Cell colSpan={3}>Span 3</Cell>
-        </Row>
-      </TableBody>
-    </TableView>
-  );
+export const TableCellColSpanWithVariousSpansExample: TableStoryFn = {
+  render: () => {
+    return (
+      <TableView aria-label="Table with various colspans">
+        <TableHeader>
+          <Column isRowHeader>Col 1</Column>
+          <Column>Col 2</Column>
+          <Column>Col 3</Column>
+          <Column>Col 4</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Cell</Cell>
+            <Cell colSpan={2}>Span 2</Cell>
+            <Cell>Cell</Cell>
+          </Row>
+          <Row>
+            <Cell>Cell</Cell>
+            <Cell>Cell</Cell>
+            <Cell>Cell</Cell>
+            <Cell>Cell</Cell>
+          </Row>
+          <Row>
+            <Cell colSpan={4}>Span 4</Cell>
+          </Row>
+          <Row>
+            <Cell>Cell</Cell>
+            <Cell>Cell</Cell>
+            <Cell>Cell</Cell>
+            <Cell>Cell</Cell>
+          </Row>
+          <Row>
+            <Cell colSpan={3}>Span 3</Cell>
+            <Cell>Cell</Cell>
+          </Row>
+          <Row>
+            <Cell>Cell</Cell>
+            <Cell>Cell</Cell>
+            <Cell>Cell</Cell>
+            <Cell>Cell</Cell>
+          </Row>
+          <Row>
+            <Cell>Cell</Cell>
+            <Cell colSpan={3}>Span 3</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+  }
 };
 export const FocusableCells: TableStory = {
   args: {
@@ -2388,41 +2393,43 @@ export const TypeaheadWithDialog: TableStory = {
   )
 };
 
-export const Links: TableStoryFn = args => {
-  return (
-    <TableView
-      {...args}
-      aria-label="Bookmarks table"
-      onSelectionChange={action('onSelectionChange')}>
-      <TableHeader>
-        <Column>Name</Column>
-        <Column>URL</Column>
-        <Column>Date added</Column>
-      </TableHeader>
-      <TableBody>
-        <Row key="https://adobe.com/" href="https://adobe.com/">
-          <Cell>Adobe</Cell>
-          <Cell>https://adobe.com/</Cell>
-          <Cell>January 28, 2023</Cell>
-        </Row>
-        <Row key="https://google.com/" href="https://google.com/">
-          <Cell>Google</Cell>
-          <Cell>https://google.com/</Cell>
-          <Cell>April 5, 2023</Cell>
-        </Row>
-        <Row key="https://apple.com/" href="https://apple.com/">
-          <Cell>Apple</Cell>
-          <Cell>https://apple.com/</Cell>
-          <Cell>June 5, 2023</Cell>
-        </Row>
-        <Row key="https://nytimes.com/" href="https://nytimes.com/">
-          <Cell>New York Times</Cell>
-          <Cell>https://nytimes.com/</Cell>
-          <Cell>July 12, 2023</Cell>
-        </Row>
-      </TableBody>
-    </TableView>
-  );
+export const Links: TableStoryFn = {
+  render: args => {
+    return (
+      <TableView
+        {...args}
+        aria-label="Bookmarks table"
+        onSelectionChange={action('onSelectionChange')}>
+        <TableHeader>
+          <Column>Name</Column>
+          <Column>URL</Column>
+          <Column>Date added</Column>
+        </TableHeader>
+        <TableBody>
+          <Row key="https://adobe.com/" href="https://adobe.com/">
+            <Cell>Adobe</Cell>
+            <Cell>https://adobe.com/</Cell>
+            <Cell>January 28, 2023</Cell>
+          </Row>
+          <Row key="https://google.com/" href="https://google.com/">
+            <Cell>Google</Cell>
+            <Cell>https://google.com/</Cell>
+            <Cell>April 5, 2023</Cell>
+          </Row>
+          <Row key="https://apple.com/" href="https://apple.com/">
+            <Cell>Apple</Cell>
+            <Cell>https://apple.com/</Cell>
+            <Cell>June 5, 2023</Cell>
+          </Row>
+          <Row key="https://nytimes.com/" href="https://nytimes.com/">
+            <Cell>New York Times</Cell>
+            <Cell>https://nytimes.com/</Cell>
+            <Cell>July 12, 2023</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+  }
 };
 
 export const ColumnHeaderFocusRingTable: StoryObj<typeof LoadingTable> = {
@@ -2520,4 +2527,6 @@ export const AsyncLoadOverflowWrapReproStory: TableStory = {
   }
 };
 
-export {Performance} from './Performance';
+export const Performance: TableStory = {
+  render: PerformanceRender
+};

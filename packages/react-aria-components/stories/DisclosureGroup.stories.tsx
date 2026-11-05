@@ -14,7 +14,7 @@ import {Button} from '../src/Button';
 
 import {Disclosure, DisclosureGroup, DisclosurePanel} from '../src/Disclosure';
 import {Heading} from '../src/Heading';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';
 
@@ -23,45 +23,47 @@ export default {
   component: DisclosureGroup
 } as Meta<typeof DisclosureGroup>;
 
-export type DisclosureGroupStory = StoryFn<typeof DisclosureGroup>;
+export type DisclosureGroupStory = StoryObj<typeof DisclosureGroup>;
 
-export const DisclosureGroupExample: DisclosureGroupStory = args => {
-  const [isDisabled, setIsDisabled] = React.useState(false);
-  const toggleDisabled = () => setIsDisabled(d => !d);
+export const DisclosureGroupExample: DisclosureGroupStory = {
+  render: function DisclosureGroupExample(args) {
+    const [isDisabled, setIsDisabled] = React.useState(false);
+    const toggleDisabled = () => setIsDisabled(d => !d);
 
-  return (
-    <>
-      <Button onPress={toggleDisabled}>Toggle Disabled</Button>
-      <DisclosureGroup {...args}>
-        <Disclosure isDisabled={isDisabled}>
-          {({isExpanded}) => (
-            <>
-              <Heading level={3}>
-                <Button slot="trigger">
-                  {isExpanded ? '⬇️' : '➡️'} This is a disclosure header
-                </Button>
-              </Heading>
-              <DisclosurePanel>
-                <p>This is the content of the disclosure panel.</p>
-              </DisclosurePanel>
-            </>
-          )}
-        </Disclosure>
-        <Disclosure isDisabled={isDisabled}>
-          {({isExpanded}) => (
-            <>
-              <Heading level={3}>
-                <Button slot="trigger">
-                  {isExpanded ? '⬇️' : '➡️'} This is a disclosure header
-                </Button>
-              </Heading>
-              <DisclosurePanel>
-                <p>This is the content of the disclosure panel.</p>
-              </DisclosurePanel>
-            </>
-          )}
-        </Disclosure>
-      </DisclosureGroup>
-    </>
-  );
+    return (
+      <>
+        <Button onPress={toggleDisabled}>Toggle Disabled</Button>
+        <DisclosureGroup {...args}>
+          <Disclosure isDisabled={isDisabled}>
+            {({isExpanded}) => (
+              <>
+                <Heading level={3}>
+                  <Button slot="trigger">
+                    {isExpanded ? '⬇️' : '➡️'} This is a disclosure header
+                  </Button>
+                </Heading>
+                <DisclosurePanel>
+                  <p>This is the content of the disclosure panel.</p>
+                </DisclosurePanel>
+              </>
+            )}
+          </Disclosure>
+          <Disclosure isDisabled={isDisabled}>
+            {({isExpanded}) => (
+              <>
+                <Heading level={3}>
+                  <Button slot="trigger">
+                    {isExpanded ? '⬇️' : '➡️'} This is a disclosure header
+                  </Button>
+                </Heading>
+                <DisclosurePanel>
+                  <p>This is the content of the disclosure panel.</p>
+                </DisclosurePanel>
+              </>
+            )}
+          </Disclosure>
+        </DisclosureGroup>
+      </>
+    );
+  }
 };

@@ -36,7 +36,7 @@ import {ListLayout, Size, WaterfallLayout} from 'react-stately/useVirtualizerSta
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {LoadingState} from '@react-types/shared';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Modal, ModalOverlay, ModalOverlayProps} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React, {JSX, useState} from 'react';
@@ -57,102 +57,53 @@ export default {
   excludeStories: ['MyGridListItem']
 } as Meta<typeof GridList>;
 
-export type GridListStory = StoryFn<typeof GridList>;
+export type GridListStory = StoryObj<typeof GridList>;
 
-export const GridListExample: GridListStory = args => {
-  let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
-  return (
-    <GridList
-      {...args}
-      className={styles.menu}
-      aria-label="test gridlist"
-      style={{
-        width: isHorizontalStack ? undefined : 300,
-        height: isHorizontalStack ? undefined : 300,
-        display: isHorizontalStack ? 'flex' : 'grid',
-        gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
-        gridAutoFlow: args.orientation === 'horizontal' ? 'column' : 'row'
-      }}>
-      <MyGridListItem textValue="1,1">
-        1,1 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem textValue="1,2">
-        1,2 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem textValue="1,3">
-        1,3 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem textValue="2,1">
-        2,1 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem textValue="2,2">
-        2,2 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem textValue="2,3">
-        2,3 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem textValue="3,1">
-        3,1 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem textValue="3,2">
-        3,2 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem textValue="3,3">
-        3,3 <Button>Actions</Button>
-      </MyGridListItem>
-    </GridList>
-  );
-};
-
-export const ItemFocusEvents: GridListStory = args => (
-  <div>
-    <p>
-      Tab into the list, use the arrow keys, or click an item. Focus events appear in the Actions
-      panel.
-    </p>
-    <GridList {...args} aria-label="Item focus events" className={styles.menu} style={{width: 300}}>
-      {['Cat', 'Dog', 'Kangaroo'].map(name => (
-        <GridListItem
-          key={name}
-          id={name}
-          onFocus={action(name + ': onFocus')}
-          onBlur={action(name + ': onBlur')}
-          onFocusChange={action(name + ': onFocusChange')}
-          className={({isFocusVisible}) => classNames(styles, 'item', {focused: isFocusVisible})}>
-          {name}
-        </GridListItem>
-      ))}
-    </GridList>
-    <Button>After the list</Button>
-  </div>
-);
-
-ItemFocusEvents.args = {selectionMode: 'single'};
-
-export const MyGridListItem = (props: GridListItemProps) => {
-  return (
-    <GridListItem
-      {...props}
-      style={{display: 'flex', alignItems: 'center', gap: 8}}
-      className={({isFocused, isSelected, isHovered}) =>
-        classNames(styles, 'item', {
-          focused: isFocused,
-          selected: isSelected,
-          hovered: isHovered
-        })
-      }>
-      {({selectionMode, allowsDragging}) => (
-        <>
-          {allowsDragging && <Button slot="drag">≡</Button>}
-          {selectionMode !== 'none' ? <MyCheckbox slot="selection" /> : null}
-          {props.children as any}
-        </>
-      )}
-    </GridListItem>
-  );
-};
-
-GridListExample.story = {
+export const GridListExample: GridListStory = {
+  render: args => {
+    let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
+    return (
+      <GridList
+        {...args}
+        className={styles.menu}
+        aria-label="test gridlist"
+        style={{
+          width: isHorizontalStack ? undefined : 300,
+          height: isHorizontalStack ? undefined : 300,
+          display: isHorizontalStack ? 'flex' : 'grid',
+          gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
+          gridAutoFlow: args.orientation === 'horizontal' ? 'column' : 'row'
+        }}>
+        <MyGridListItem textValue="1,1">
+          1,1 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem textValue="1,2">
+          1,2 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem textValue="1,3">
+          1,3 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem textValue="2,1">
+          2,1 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem textValue="2,2">
+          2,2 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem textValue="2,3">
+          2,3 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem textValue="3,1">
+          3,1 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem textValue="3,2">
+          3,2 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem textValue="3,3">
+          3,3 <Button>Actions</Button>
+        </MyGridListItem>
+      </GridList>
+    );
+  },
   args: {
     layout: 'stack',
     orientation: 'vertical',
@@ -186,6 +137,59 @@ GridListExample.story = {
       options: ['clearSelection', 'none']
     }
   }
+};
+
+export const ItemFocusEvents: GridListStory = {
+  render: args => (
+    <div>
+      <p>
+        Tab into the list, use the arrow keys, or click an item. Focus events appear in the Actions
+        panel.
+      </p>
+      <GridList
+        {...args}
+        aria-label="Item focus events"
+        className={styles.menu}
+        style={{width: 300}}>
+        {['Cat', 'Dog', 'Kangaroo'].map(name => (
+          <GridListItem
+            key={name}
+            id={name}
+            onFocus={action(name + ': onFocus')}
+            onBlur={action(name + ': onBlur')}
+            onFocusChange={action(name + ': onFocusChange')}
+            className={({isFocusVisible}) => classNames(styles, 'item', {focused: isFocusVisible})}>
+            {name}
+          </GridListItem>
+        ))}
+      </GridList>
+      <Button>After the list</Button>
+    </div>
+  ),
+  args: {selectionMode: 'single'}
+};
+
+export const MyGridListItem = (props: GridListItemProps) => {
+  return (
+    <GridListItem
+      {...props}
+      style={{display: 'flex', alignItems: 'center', gap: 8}}
+      className={({isFocused, isSelected, isHovered}) =>
+        classNames(styles, 'item', {
+          focused: isFocused,
+          selected: isSelected,
+          hovered: isHovered
+        })
+      }>
+      {({selectionMode, allowsDragging}) => (
+        <>
+          {allowsDragging && <Button slot="drag">≡</Button>}
+          {selectionMode !== 'none' ? <MyCheckbox slot="selection" /> : null}
+          {props.children as any}
+        </>
+      )}
+    </GridListItem>
+  );
 };
 
 const DraggableGridListRender = (args: GridListProps<any>) => {
@@ -265,55 +269,54 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-export const GridListSectionExample = args => (
-  <GridList
-    {...args}
-    className={styles.menu}
-    aria-label="test gridlist"
-    style={{
-      width: 400,
-      height: 400
-    }}>
-    <GridListSection>
-      <GridListHeader>Section 1</GridListHeader>
-      <MyGridListItem>
-        1,1 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem>
-        1,2 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem>
-        1,3 <Button>Actions</Button>
-      </MyGridListItem>
-    </GridListSection>
-    <GridListSection>
-      <GridListHeader>Section 2</GridListHeader>
-      <MyGridListItem>
-        2,1 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem>
-        2,2 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem>
-        2,3 <Button>Actions</Button>
-      </MyGridListItem>
-    </GridListSection>
-    <GridListSection>
-      <GridListHeader>Section 3</GridListHeader>
-      <MyGridListItem>
-        3,1 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem>
-        3,2 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem>
-        3,3 <Button>Actions</Button>
-      </MyGridListItem>
-    </GridListSection>
-  </GridList>
-);
-
-GridListSectionExample.story = {
+export const GridListSectionExample = {
+  render: args => (
+    <GridList
+      {...args}
+      className={styles.menu}
+      aria-label="test gridlist"
+      style={{
+        width: 400,
+        height: 400
+      }}>
+      <GridListSection>
+        <GridListHeader>Section 1</GridListHeader>
+        <MyGridListItem>
+          1,1 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem>
+          1,2 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem>
+          1,3 <Button>Actions</Button>
+        </MyGridListItem>
+      </GridListSection>
+      <GridListSection>
+        <GridListHeader>Section 2</GridListHeader>
+        <MyGridListItem>
+          2,1 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem>
+          2,2 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem>
+          2,3 <Button>Actions</Button>
+        </MyGridListItem>
+      </GridListSection>
+      <GridListSection>
+        <GridListHeader>Section 3</GridListHeader>
+        <MyGridListItem>
+          3,1 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem>
+          3,2 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem>
+          3,3 <Button>Actions</Button>
+        </MyGridListItem>
+      </GridListSection>
+    </GridList>
+  ),
   args: {
     layout: 'stack',
     escapeKeyBehavior: 'clearSelection',
@@ -343,50 +346,52 @@ GridListSectionExample.story = {
   }
 };
 
-export function VirtualizedGridListSection() {
-  let sections: {
-    id: string;
-    name: string;
-    children: {id: string; name: string}[];
-  }[] = [];
-  for (let s = 0; s < 10; s++) {
-    let items: {id: string; name: string}[] = [];
-    for (let i = 0; i < 3; i++) {
-      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
+export const VirtualizedGridListSection = {
+  render: function VirtualizedGridListSection() {
+    let sections: {
+      id: string;
+      name: string;
+      children: {id: string; name: string}[];
+    }[] = [];
+    for (let s = 0; s < 10; s++) {
+      let items: {id: string; name: string}[] = [];
+      for (let i = 0; i < 3; i++) {
+        items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
+      }
+      sections.push({
+        id: `section_${s}`,
+        name: `Section ${s}`,
+        children: items
+      });
     }
-    sections.push({
-      id: `section_${s}`,
-      name: `Section ${s}`,
-      children: items
-    });
-  }
 
-  return (
-    <Virtualizer
-      layout={ListLayout}
-      layoutOptions={{
-        rowHeight: 25
-      }}>
-      <GridList
-        className={styles.menu}
-        // selectionMode="multiple"
-        style={{height: 400}}
-        aria-label="virtualized with grid section"
-        items={sections}>
-        <Collection items={sections}>
-          {section => (
-            <GridListSection>
-              <GridListHeader>{section.name}</GridListHeader>
-              <Collection items={section.children}>
-                {item => <MyGridListItem>{item.name}</MyGridListItem>}
-              </Collection>
-            </GridListSection>
-          )}
-        </Collection>
-      </GridList>
-    </Virtualizer>
-  );
-}
+    return (
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: 25
+        }}>
+        <GridList
+          className={styles.menu}
+          // selectionMode="multiple"
+          style={{height: 400}}
+          aria-label="virtualized with grid section"
+          items={sections}>
+          <Collection items={sections}>
+            {section => (
+              <GridListSection>
+                <GridListHeader>{section.name}</GridListHeader>
+                <Collection items={section.children}>
+                  {item => <MyGridListItem>{item.name}</MyGridListItem>}
+                </Collection>
+              </GridListSection>
+            )}
+          </Collection>
+        </GridList>
+      </Virtualizer>
+    );
+  }
+};
 
 const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolean}) => {
   let items: {id: number; name: string}[] = [];
@@ -462,42 +467,41 @@ interface VirtualizedGridListGridProps {
   maxHorizontalSpace?: number;
 }
 
-export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = args => {
-  const {
-    minItemSizeWidth = 40,
-    maxItemSizeWidth = 65,
-    maxColumns = Infinity,
-    minHorizontalSpace = 0,
-    maxHorizontalSpace = Infinity
-  } = args;
-  let items: {id: number; name: string}[] = [];
-  for (let i = 0; i < 10000; i++) {
-    items.push({id: i, name: `Item ${i}`});
-  }
+export let VirtualizedGridListGrid: StoryObj<VirtualizedGridListGridProps> = {
+  render: args => {
+    const {
+      minItemSizeWidth = 40,
+      maxItemSizeWidth = 65,
+      maxColumns = Infinity,
+      minHorizontalSpace = 0,
+      maxHorizontalSpace = Infinity
+    } = args;
+    let items: {id: number; name: string}[] = [];
+    for (let i = 0; i < 10000; i++) {
+      items.push({id: i, name: `Item ${i}`});
+    }
 
-  return (
-    <Virtualizer
-      layout={GridLayout}
-      layoutOptions={{
-        minItemSize: new Size(minItemSizeWidth, 40),
-        maxItemSize: new Size(maxItemSizeWidth, 40),
-        minSpace: new Size(minHorizontalSpace, 18),
-        maxColumns,
-        maxHorizontalSpace
-      }}>
-      <GridList
-        className={styles.menu}
-        layout="grid"
-        style={{height: 400, width: 400}}
-        aria-label="virtualized listbox"
-        items={items}>
-        {item => <MyGridListItem>{item.name}</MyGridListItem>}
-      </GridList>
-    </Virtualizer>
-  );
-};
-
-VirtualizedGridListGrid.story = {
+    return (
+      <Virtualizer
+        layout={GridLayout}
+        layoutOptions={{
+          minItemSize: new Size(minItemSizeWidth, 40),
+          maxItemSize: new Size(maxItemSizeWidth, 40),
+          minSpace: new Size(minHorizontalSpace, 18),
+          maxColumns,
+          maxHorizontalSpace
+        }}>
+        <GridList
+          className={styles.menu}
+          layout="grid"
+          style={{height: 400, width: 400}}
+          aria-label="virtualized listbox"
+          items={items}>
+          {item => <MyGridListItem>{item.name}</MyGridListItem>}
+        </GridList>
+      </Virtualizer>
+    );
+  },
   args: {
     minItemSizeWidth: 40,
     maxItemSizeWidth: 65,
@@ -737,60 +741,62 @@ export let AsyncGridListVirtualized: StoryObj<typeof AsyncGridListVirtualizedRen
   }
 };
 
-export let TagGroupInsideGridList: GridListStory = () => {
-  return (
-    <GridList
-      className={styles.menu}
-      aria-label="Grid list with tag group"
-      keyboardNavigationBehavior="tab"
-      style={{
-        width: 300,
-        height: 300
-      }}>
-      <MyGridListItem textValue="Tags">
-        1,1
-        <TagGroup aria-label="Tag group 1" onRemove={action('onRemove')}>
-          <TagList style={{display: 'flex', gap: 10}}>
-            <Tag key="1">
-              Tag 1<Button slot="remove">X</Button>
-            </Tag>
-            <Tag key="2">
-              Tag 2<Button slot="remove">X</Button>
-            </Tag>
-            <Tag key="3">
-              Tag 3<Button slot="remove">X</Button>
-            </Tag>
-          </TagList>
-        </TagGroup>
-        <TagGroup aria-label="Tag group 2" onRemove={action('onRemove')}>
-          <TagList style={{display: 'flex', gap: 10}}>
-            <Tag key="1">
-              Tag 1<Button slot="remove">X</Button>
-            </Tag>
-            <Tag key="2">
-              Tag 2<Button slot="remove">X</Button>
-            </Tag>
-            <Tag key="3">
-              Tag 3<Button slot="remove">X</Button>
-            </Tag>
-          </TagList>
-        </TagGroup>
-      </MyGridListItem>
-      <MyGridListItem>
-        1,2 <Button>Actions</Button>
-      </MyGridListItem>
-      <MyGridListItem>
-        1,3
-        <TagGroup aria-label="Tag group">
-          <TagList style={{display: 'flex', gap: 10}}>
-            <Tag key="1">Tag 1</Tag>
-            <Tag key="2">Tag 2</Tag>
-            <Tag key="3">Tag 3</Tag>
-          </TagList>
-        </TagGroup>
-      </MyGridListItem>
-    </GridList>
-  );
+export let TagGroupInsideGridList: GridListStory = {
+  render: () => {
+    return (
+      <GridList
+        className={styles.menu}
+        aria-label="Grid list with tag group"
+        keyboardNavigationBehavior="tab"
+        style={{
+          width: 300,
+          height: 300
+        }}>
+        <MyGridListItem textValue="Tags">
+          1,1
+          <TagGroup aria-label="Tag group 1" onRemove={action('onRemove')}>
+            <TagList style={{display: 'flex', gap: 10}}>
+              <Tag key="1">
+                Tag 1<Button slot="remove">X</Button>
+              </Tag>
+              <Tag key="2">
+                Tag 2<Button slot="remove">X</Button>
+              </Tag>
+              <Tag key="3">
+                Tag 3<Button slot="remove">X</Button>
+              </Tag>
+            </TagList>
+          </TagGroup>
+          <TagGroup aria-label="Tag group 2" onRemove={action('onRemove')}>
+            <TagList style={{display: 'flex', gap: 10}}>
+              <Tag key="1">
+                Tag 1<Button slot="remove">X</Button>
+              </Tag>
+              <Tag key="2">
+                Tag 2<Button slot="remove">X</Button>
+              </Tag>
+              <Tag key="3">
+                Tag 3<Button slot="remove">X</Button>
+              </Tag>
+            </TagList>
+          </TagGroup>
+        </MyGridListItem>
+        <MyGridListItem>
+          1,2 <Button>Actions</Button>
+        </MyGridListItem>
+        <MyGridListItem>
+          1,3
+          <TagGroup aria-label="Tag group">
+            <TagList style={{display: 'flex', gap: 10}}>
+              <Tag key="1">Tag 1</Tag>
+              <Tag key="2">Tag 2</Tag>
+              <Tag key="3">Tag 3</Tag>
+            </TagList>
+          </TagGroup>
+        </MyGridListItem>
+      </GridList>
+    );
+  }
 };
 
 const GridListDropdown = () => {

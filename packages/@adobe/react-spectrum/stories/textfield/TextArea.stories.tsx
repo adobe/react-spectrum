@@ -19,7 +19,7 @@ import {Flex} from '../../src/layout/Flex';
 import {Form} from '../../src/form/Form';
 import {Heading} from '../../src/text/Heading';
 import Info from '@spectrum-icons/workflow/Info';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import {TextArea} from '../../src/textfield/TextArea';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -66,122 +66,112 @@ export default {
   }
 } as Meta<typeof TextArea>;
 
-export type TextAreaStory = StoryFn<typeof TextArea>;
+export type TextAreaStory = StoryObj<typeof TextArea>;
 
-export const Default: TextAreaStory = args => render(args);
-export const ValueTestControlled: TextAreaStory = args => render({...args, value: 'Test'});
-
-ValueTestControlled.story = {
+export const Default: TextAreaStory = {
+  render: args => render(args)
+};
+export const ValueTestControlled: TextAreaStory = {
+  render: args => render({...args, value: 'Test'}),
   name: 'value: Test (controlled)'
 };
 
-export const DefaultValueTestUncontrolled: TextAreaStory = args =>
-  render({...args, defaultValue: 'Test'});
-
-DefaultValueTestUncontrolled.story = {
+export const DefaultValueTestUncontrolled: TextAreaStory = {
+  render: args => render({...args, defaultValue: 'Test'}),
   name: 'defaultValue: Test (uncontrolled)'
 };
 
-export const AutoFocusTrue: TextAreaStory = args => render({...args, autoFocus: true});
-
-AutoFocusTrue.story = {
+export const AutoFocusTrue: TextAreaStory = {
+  render: args => render({...args, autoFocus: true}),
   name: 'autoFocus: true'
 };
 
-export const IconInfo: TextAreaStory = args => render({...args, icon: <Info />});
-
-IconInfo.story = {
+export const IconInfo: TextAreaStory = {
+  render: args => render({...args, icon: <Info />}),
   name: 'icon: Info'
 };
 
-export const NoVisibleLabel: TextAreaStory = args =>
-  render({...args, label: null, 'aria-label': 'Street address'});
-
-NoVisibleLabel.story = {
+export const NoVisibleLabel: TextAreaStory = {
+  render: args => render({...args, label: null, 'aria-label': 'Street address'}),
   name: 'no visible label'
 };
 
-export const WithDescription: TextAreaStory = args =>
-  render({...args, description: 'Enter product feedback.'});
-
-WithDescription.story = {
+export const WithDescription: TextAreaStory = {
+  render: args => render({...args, description: 'Enter product feedback.'}),
   name: 'with description'
 };
 
-export const WithErrorMessage: TextAreaStory = args =>
-  render({...args, errorMessage: 'Enter at least 250 characters.', validationState: 'invalid'});
-
-WithErrorMessage.story = {
+export const WithErrorMessage: TextAreaStory = {
+  render: args =>
+    render({...args, errorMessage: 'Enter at least 250 characters.', validationState: 'invalid'}),
   name: 'with error message'
 };
 
-export const WithContextualHelp: TextAreaStory = args =>
-  render({
-    ...args,
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>
-          Segments identify who your visitors are, what devices and services they use, where they
-          navigated from, and much more.
-        </Content>
-      </ContextualHelp>
-    )
-  });
-
-WithContextualHelp.story = {
+export const WithContextualHelp: TextAreaStory = {
+  render: args =>
+    render({
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    }),
   name: 'with contextual help'
 };
 
-export const CustomWidth: TextAreaStory = args =>
-  render({...args, icon: <Info />, validationState: 'invalid', width: '300px'});
-
-CustomWidth.story = {
+export const CustomWidth: TextAreaStory = {
+  render: args => render({...args, icon: <Info />, validationState: 'invalid', width: '300px'}),
   name: 'custom width'
 };
 
-export const CustomWidthSmall: TextAreaStory = args =>
-  render({...args, icon: <Info />, validationState: 'invalid', width: '30px'});
-
-CustomWidthSmall.story = {
+export const CustomWidthSmall: TextAreaStory = {
+  render: args => render({...args, icon: <Info />, validationState: 'invalid', width: '30px'}),
   name: 'custom width small'
 };
 
-export const CustomHeightWithLabel: TextAreaStory = args => (
-  <Form>
-    <TextArea {...args} label="Custom height" description="height: size-2000" height="size-2000" />
-    <TextArea
-      {...args}
-      label="Custom height"
-      description="height: size-2000"
-      height="size-2000"
-      isQuiet
-    />
-    <TextArea
-      {...args}
-      labelPosition="side"
-      label="Custom height"
-      description="height: size-2000"
-      height="size-2000"
-    />
-    <TextArea
-      {...args}
-      labelPosition="side"
-      label="Custom height"
-      description="height: size-2000"
-      height="size-2000"
-      isQuiet
-    />
-  </Form>
-);
-
-CustomHeightWithLabel.story = {
+export const CustomHeightWithLabel: TextAreaStory = {
+  render: args => (
+    <Form>
+      <TextArea
+        {...args}
+        label="Custom height"
+        description="height: size-2000"
+        height="size-2000"
+      />
+      <TextArea
+        {...args}
+        label="Custom height"
+        description="height: size-2000"
+        height="size-2000"
+        isQuiet
+      />
+      <TextArea
+        {...args}
+        labelPosition="side"
+        label="Custom height"
+        description="height: size-2000"
+        height="size-2000"
+      />
+      <TextArea
+        {...args}
+        labelPosition="side"
+        label="Custom height"
+        description="height: size-2000"
+        height="size-2000"
+        isQuiet
+      />
+    </Form>
+  ),
   name: 'custom height with label'
 };
 
-export const ChangeableHelptext: TextAreaStory = args => <ValidationExample {...args} />;
-
-ChangeableHelptext.story = {
+export const ChangeableHelptext: TextAreaStory = {
+  render: args => <ValidationExample {...args} />,
   name: 'changeable helptext',
   parameters: {
     description: {
@@ -190,11 +180,8 @@ ChangeableHelptext.story = {
   }
 };
 
-export const ChangeableHelptextCustomHeight: TextAreaStory = args => (
-  <ValidationExample {...args} height="175px" minHeight="100px" maxHeight="50vh" />
-);
-
-ChangeableHelptextCustomHeight.story = {
+export const ChangeableHelptextCustomHeight: TextAreaStory = {
+  render: args => <ValidationExample {...args} height="175px" minHeight="100px" maxHeight="50vh" />,
   name: 'changeable helptext custom height',
   parameters: {
     description: {
@@ -203,22 +190,18 @@ ChangeableHelptextCustomHeight.story = {
   }
 };
 
-export const ControlledInteractive: TextAreaStory = args => <ControlledTextArea {...args} />;
-
-ControlledInteractive.story = {
+export const ControlledInteractive: TextAreaStory = {
+  render: args => <ControlledTextArea {...args} />,
   name: 'controlled interactive'
 };
 
-export const InFlex: TextAreaStory = args => renderInFlexRowAndBlock(args);
-
-InFlex.story = {
+export const InFlex: TextAreaStory = {
+  render: args => renderInFlexRowAndBlock(args),
   name: 'in flex'
 };
 
-export const InFlexValidationState: TextAreaStory = args =>
-  renderInFlexRowAndBlock({...args, validationState: 'invalid'});
-
-InFlexValidationState.story = {
+export const InFlexValidationState: TextAreaStory = {
+  render: args => renderInFlexRowAndBlock({...args, validationState: 'invalid'}),
   name: 'in flex validation state'
 };
 

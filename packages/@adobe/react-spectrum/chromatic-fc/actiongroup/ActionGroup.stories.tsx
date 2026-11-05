@@ -18,38 +18,37 @@ import {
 } from '../../chromatic/actiongroup/ActionGroup.stories';
 import {Flex} from '../../src/layout/Flex';
 import React from 'react';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 import {View} from '../../src/view/View';
 
 export default {
   title: 'ActionGroup'
 };
 
-export type ActionGroupStory = StoryFn<typeof Render>;
+export type ActionGroupStory = StoryObj<typeof Render>;
 
-export const All: ActionGroupStory = () => (
-  <Flex gap="size-100" direction={'column'}>
-    <h2>default</h2>
-    <Render items={docItems} />
-    <h2>isDisabled</h2>
-    <Render items={docItems} isDisabled defaultSelectedKeys={['1']} />
-    <h2>compact</h2>
-    <Render items={viewItems} density="compact" defaultSelectedKeys={['1']} />
-    <h2>isQuiet</h2>
-    <Render items={editItems} isQuiet defaultSelectedKeys={['1']} />
-    <h2>isEmphasized</h2>
-    <Render items={docItems} isEmphasized defaultSelectedKeys={['1']} />
-    <h2>staticColor: black</h2>
-    <View backgroundColor="static-yellow-400" padding="size-1000">
-      <Render items={viewItems} staticColor="black" defaultSelectedKeys={['1']} />
-    </View>
-    <h2>staticColor: white</h2>
-    <View backgroundColor="static-blue-700" padding="size-1000">
-      <Render items={viewItems} staticColor="white" defaultSelectedKeys={['1']} />
-    </View>
-  </Flex>
-);
-
-All.story = {
+export const All: ActionGroupStory = {
+  render: () => (
+    <Flex gap="size-100" direction={'column'}>
+      <h2>default</h2>
+      <Render items={docItems} />
+      <h2>isDisabled</h2>
+      <Render items={docItems} isDisabled defaultSelectedKeys={['1']} />
+      <h2>compact</h2>
+      <Render items={viewItems} density="compact" defaultSelectedKeys={['1']} />
+      <h2>isQuiet</h2>
+      <Render items={editItems} isQuiet defaultSelectedKeys={['1']} />
+      <h2>isEmphasized</h2>
+      <Render items={docItems} isEmphasized defaultSelectedKeys={['1']} />
+      <h2>staticColor: black</h2>
+      <View backgroundColor="static-yellow-400" padding="size-1000">
+        <Render items={viewItems} staticColor="black" defaultSelectedKeys={['1']} />
+      </View>
+      <h2>staticColor: white</h2>
+      <View backgroundColor="static-blue-700" padding="size-1000">
+        <Render items={viewItems} staticColor="white" defaultSelectedKeys={['1']} />
+      </View>
+    </Flex>
+  ),
   name: 'all'
 };

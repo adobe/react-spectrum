@@ -14,7 +14,7 @@ import {Button} from '../src/Button';
 
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {Heading} from '../src/Heading';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
 import React, {JSX, useEffect, useRef, useState} from 'react';
@@ -62,47 +62,49 @@ export default {
   }
 } as Meta<typeof Popover>;
 
-export type PopoverStory = StoryFn<typeof Popover>;
+export type PopoverStory = StoryObj<typeof Popover>;
 
-export const PopoverExample: PopoverStory = args => (
-  <DialogTrigger>
-    <Button>Open popover</Button>
-    <Popover
-      {...args}
-      className={`${styles['popover-base']} ${styles[(args as any).animation]}`}
-      style={{
-        background: 'Canvas',
-        color: 'CanvasText',
-        border: '1px solid gray',
-        padding: 30,
-        zIndex: 5
-      }}>
-      {!(args as any).hideArrow && (
-        <OverlayArrow style={{display: 'flex'}}>
-          <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
-            <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
-          </svg>
-        </OverlayArrow>
-      )}
-      <Dialog>
-        {({close}) => (
-          <form style={{display: 'flex', flexDirection: 'column'}}>
-            <Heading slot="title">Sign up</Heading>
-            <label>
-              First Name: <input placeholder="John" />
-            </label>
-            <label>
-              Last Name: <input placeholder="Smith" />
-            </label>
-            <Button onPress={close} style={{marginTop: 10}}>
-              Submit
-            </Button>
-          </form>
+export const PopoverExample: PopoverStory = {
+  render: args => (
+    <DialogTrigger>
+      <Button>Open popover</Button>
+      <Popover
+        {...args}
+        className={`${styles['popover-base']} ${styles[(args as any).animation]}`}
+        style={{
+          background: 'Canvas',
+          color: 'CanvasText',
+          border: '1px solid gray',
+          padding: 30,
+          zIndex: 5
+        }}>
+        {!(args as any).hideArrow && (
+          <OverlayArrow style={{display: 'flex'}}>
+            <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
+              <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+            </svg>
+          </OverlayArrow>
         )}
-      </Dialog>
-    </Popover>
-  </DialogTrigger>
-);
+        <Dialog>
+          {({close}) => (
+            <form style={{display: 'flex', flexDirection: 'column'}}>
+              <Heading slot="title">Sign up</Heading>
+              <label>
+                First Name: <input placeholder="John" />
+              </label>
+              <label>
+                Last Name: <input placeholder="Smith" />
+              </label>
+              <Button onPress={close} style={{marginTop: 10}}>
+                Submit
+              </Button>
+            </form>
+          )}
+        </Dialog>
+      </Popover>
+    </DialogTrigger>
+  )
+};
 
 const COUNTDOWN = 5000;
 
@@ -518,22 +520,24 @@ export const PopoverArrowBoundaryOffsetExample: StoryObj<
   render: args => <PopoverArrowBoundaryOffsetExampleRender {...args} />
 };
 
-export const PopoverTriggerWidthExample: PopoverStory = () => (
-  <DialogTrigger>
-    <Button>Open popover</Button>
-    <Popover
-      placement="bottom start"
-      style={{
-        background: 'Canvas',
-        color: 'CanvasText',
-        border: '1px solid gray',
-        zIndex: 5,
-        width: 'var(--trigger-width)'
-      }}>
-      <Dialog>Should match the width of the trigger button</Dialog>
-    </Popover>
-  </DialogTrigger>
-);
+export const PopoverTriggerWidthExample: PopoverStory = {
+  render: () => (
+    <DialogTrigger>
+      <Button>Open popover</Button>
+      <Popover
+        placement="bottom start"
+        style={{
+          background: 'Canvas',
+          color: 'CanvasText',
+          border: '1px solid gray',
+          zIndex: 5,
+          width: 'var(--trigger-width)'
+        }}>
+        <Dialog>Should match the width of the trigger button</Dialog>
+      </Popover>
+    </DialogTrigger>
+  )
+};
 
 function ScrollingBoundaryContainerExample(args) {
   let [boundaryElem, setBoundaryElem] = useState<HTMLDivElement | null>(null);

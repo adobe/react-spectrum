@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {useViewportSize} from '../../src/utils/useViewportSize';
 
 export default {
   title: 'useViewportSize',
-  component: Example
-} as Meta<typeof Example>;
+  component: ExampleRender
+} as Meta<typeof ExampleRender>;
 
-export function Example() {
+function ExampleRender() {
   const viewportSize = useViewportSize();
 
   return (
@@ -31,8 +31,11 @@ export function Example() {
   );
 }
 
-Example.parameters = {
-  description: {
-    data: 'Clicking the input and then clicking outside should not cause the viewport size to change.'
+export const Example: StoryObj<typeof ExampleRender> = {
+  render: ExampleRender,
+  parameters: {
+    description: {
+      data: 'Clicking the input and then clicking outside should not cause the viewport size to change.'
+    }
   }
 };

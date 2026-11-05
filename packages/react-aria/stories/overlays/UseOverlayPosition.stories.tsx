@@ -15,7 +15,7 @@ import {mergeProps} from '../../src/utils/mergeProps';
 import {Placement, useOverlayPosition} from '../../src/overlays/useOverlayPosition';
 import React, {JSX} from 'react';
 import ReactDOM from 'react-dom';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 import {useOverlayTrigger} from '../../src/overlays/useOverlayTrigger';
 import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 
@@ -92,58 +92,39 @@ export default {
   title: 'UseOverlayPosition'
 };
 
-export type TriggerStory = StoryFn<typeof Trigger>;
+export type TriggerStory = StoryObj<typeof Trigger>;
 
-export const DocumentBodyContainerBottom: TriggerStory = () => (
-  <Trigger withPortal placement="bottom" />
-);
-
-DocumentBodyContainerBottom.story = {
+export const DocumentBodyContainerBottom: TriggerStory = {
+  render: () => <Trigger withPortal placement="bottom" />,
   name: 'document.body container bottom'
 };
 
-export const DocumentBodyContainerTop: TriggerStory = () => <Trigger withPortal placement="top" />;
-
-DocumentBodyContainerTop.story = {
+export const DocumentBodyContainerTop: TriggerStory = {
+  render: () => <Trigger withPortal placement="top" />,
   name: 'document.body container top'
 };
 
-export const PositionedContainerBottom: TriggerStory = () => (
-  <Trigger withPortal={false} placement="bottom" />
-);
-
-PositionedContainerBottom.story = {
+export const PositionedContainerBottom: TriggerStory = {
+  render: () => <Trigger withPortal={false} placement="bottom" />,
   name: 'positioned container bottom'
 };
 
-export const PositionedContainerTop: TriggerStory = () => (
-  <Trigger withPortal={false} placement="top" />
-);
-
-PositionedContainerTop.story = {
+export const PositionedContainerTop: TriggerStory = {
+  render: () => <Trigger withPortal={false} placement="top" />,
   name: 'positioned container top'
 };
 
-export const ButtonWidth500DocumentBodyBottomStart: TriggerStory = () => (
-  <Trigger withPortal buttonWidth={500} placement="bottom start" />
-);
-
-ButtonWidth500DocumentBodyBottomStart.story = {
+export const ButtonWidth500DocumentBodyBottomStart: TriggerStory = {
+  render: () => <Trigger withPortal buttonWidth={500} placement="bottom start" />,
   name: 'buttonWidth=500 document.body bottom start'
 };
 
-export const MaxHeight200ContainerBottom: TriggerStory = () => (
-  <Trigger withPortal maxHeight={200} placement="bottom" />
-);
-
-MaxHeight200ContainerBottom.story = {
+export const MaxHeight200ContainerBottom: TriggerStory = {
+  render: () => <Trigger withPortal maxHeight={200} placement="bottom" />,
   name: 'maxHeight=200 container bottom'
 };
 
-export const MaxHeight200ContainerTop: TriggerStory = () => (
-  <Trigger withPortal maxHeight={200} placement="top" />
-);
-
-MaxHeight200ContainerTop.story = {
+export const MaxHeight200ContainerTop: TriggerStory = {
+  render: () => <Trigger withPortal maxHeight={200} placement="top" />,
   name: 'maxHeight=200 container top'
 };

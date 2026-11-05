@@ -13,25 +13,25 @@
 import {Example} from '../../stories/actionbar/Example';
 import {Flex} from '../../src/layout/Flex';
 import React from 'react';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 
 export default {
   title: 'ActionBar'
 };
 
-export type ActionBarStory = StoryFn<typeof Example>;
+export type ActionBarStory = StoryObj<typeof Example>;
 
-export const All: ActionBarStory = () => (
-  <Flex gap="size-100" direction={'column'}>
-    <h2>Default</h2>
-    <Flex gap="size-250">
-      <Example />
-      <Example defaultSelectedKeys={new Set(['Foo 1'])} />
+export const All: ActionBarStory = {
+  render: () => (
+    <Flex gap="size-100" direction={'column'}>
+      <h2>Default</h2>
+      <Flex gap="size-250">
+        <Example />
+        <Example defaultSelectedKeys={new Set(['Foo 1'])} />
+      </Flex>
+      <h2>Large width</h2>
+      <Example isEmphasized tableWidth={800} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
     </Flex>
-    <h2>Large width</h2>
-    <Example isEmphasized tableWidth={800} isQuiet defaultSelectedKeys={new Set(['Foo 1'])} />
-  </Flex>
-);
-All.story = {
+  ),
   name: 'all'
 };

@@ -11,7 +11,7 @@
  */
 
 import {ColorSwatch, SpectrumColorSwatchProps} from '../../src/color/ColorSwatch';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -32,15 +32,20 @@ export default {
   }
 } as Meta<SpectrumColorSwatchProps>;
 
-export type ColorSwatchStory = StoryFn<typeof ColorSwatch>;
+export type ColorSwatchStory = StoryObj<typeof ColorSwatch>;
 
-export const Default: ColorSwatchStory = args => <ColorSwatch {...args} />;
-
-Default.args = {
-  color: 'rgb(255, 0, 0)'
+export const Default: ColorSwatchStory = {
+  render: args => <ColorSwatch {...args} />,
+  args: {
+    color: 'rgb(255, 0, 0)'
+  }
 };
 
-export const NoValue: ColorSwatchStory = args => <ColorSwatch {...args} />;
+export const NoValue: ColorSwatchStory = {
+  render: args => <ColorSwatch {...args} />
+};
 
-export const CustomWidth: ColorSwatchStory = args => <ColorSwatch {...args} width="size-1000" />;
-CustomWidth.args = Default.args;
+export const CustomWidth: ColorSwatchStory = {
+  render: args => <ColorSwatch {...args} width="size-1000" />,
+  args: Default.args
+};

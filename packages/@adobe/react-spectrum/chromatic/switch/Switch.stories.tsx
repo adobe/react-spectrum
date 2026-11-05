@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {SpectrumSwitchProps, Switch} from '../../src/switch/Switch';
 import {View} from '../../src/view/View';
@@ -19,56 +19,49 @@ export default {
   title: 'Switch'
 } as Meta<SpectrumSwitchProps>;
 
-export type SwitchStory = StoryFn<typeof Switch>;
+export type SwitchStory = StoryObj<typeof Switch>;
 
-export const Default: SwitchStory = () => render();
-export const IsDisabledTrue: SwitchStory = () => render({isDisabled: true});
-
-IsDisabledTrue.story = {
+export const Default: SwitchStory = {
+  render: () => render()
+};
+export const IsDisabledTrue: SwitchStory = {
+  render: () => render({isDisabled: true}),
   name: 'isDisabled: true'
 };
 
-export const IsEmphasizedTrue: SwitchStory = () => render({isEmphasized: true});
-
-IsEmphasizedTrue.story = {
+export const IsEmphasizedTrue: SwitchStory = {
+  render: () => render({isEmphasized: true}),
   name: 'isEmphasized: true'
 };
 
-export const IsEmphasizedTrueIsDisabledTrue: SwitchStory = () =>
-  render({isEmphasized: true, isDisabled: true});
-
-IsEmphasizedTrueIsDisabledTrue.story = {
+export const IsEmphasizedTrueIsDisabledTrue: SwitchStory = {
+  render: () => render({isEmphasized: true, isDisabled: true}),
   name: 'isEmphasized: true, isDisabled: true'
 };
 
-export const IsReadOnlyTrue: SwitchStory = () => render({isReadOnly: true});
-
-IsReadOnlyTrue.story = {
+export const IsReadOnlyTrue: SwitchStory = {
+  render: () => render({isReadOnly: true}),
   name: 'isReadOnly: true'
 };
 
-export const CustomLabel: SwitchStory = () => renderCustomLabel();
-
-CustomLabel.story = {
+export const CustomLabel: SwitchStory = {
+  render: () => renderCustomLabel(),
   name: 'custom label'
 };
 
-export const LongLabel: SwitchStory = () => (
-  <View width="size-2000">
-    <Switch>
-      Super long switch label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
-    </Switch>
-  </View>
-);
-
-LongLabel.story = {
+export const LongLabel: SwitchStory = {
+  render: () => (
+    <View width="size-2000">
+      <Switch>
+        Super long switch label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
+      </Switch>
+    </View>
+  ),
   name: 'long label'
 };
 
-export const NoLabel: SwitchStory = () =>
-  renderNoLabel({'aria-label': 'This checkbox has no visible label'});
-
-NoLabel.story = {
+export const NoLabel: SwitchStory = {
+  render: () => renderNoLabel({'aria-label': 'This checkbox has no visible label'}),
   name: 'no label'
 };
 

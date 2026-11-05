@@ -12,7 +12,7 @@
 
 import {ColorSwatch} from '../../src/color/ColorSwatch';
 import {ColorSwatchPicker, SpectrumColorSwatchPickerProps} from '../../src/color/ColorSwatchPicker';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -37,26 +37,30 @@ export default {
   }
 } as Meta<SpectrumColorSwatchPickerProps>;
 
-export type ColorSwatchPickerStory = StoryFn<typeof ColorSwatchPicker>;
+export type ColorSwatchPickerStory = StoryObj<typeof ColorSwatchPicker>;
 
-export const Default: ColorSwatchPickerStory = args => (
-  <ColorSwatchPicker defaultValue="#f00" {...args}>
-    <ColorSwatch color="#f00" />
-    <ColorSwatch color="#0f0" />
-    <ColorSwatch color="#0ff" />
-    <ColorSwatch color="#00f" />
-  </ColorSwatchPicker>
-);
+export const Default: ColorSwatchPickerStory = {
+  render: args => (
+    <ColorSwatchPicker defaultValue="#f00" {...args}>
+      <ColorSwatch color="#f00" />
+      <ColorSwatch color="#0f0" />
+      <ColorSwatch color="#0ff" />
+      <ColorSwatch color="#00f" />
+    </ColorSwatchPicker>
+  )
+};
 
 let randomColors = Array.from(Array(24)).map(() => {
   return `#${Math.floor(Math.random() * 0xffffff)
     .toString(16)
     .padStart(6, '0')}`;
 });
-export const ManySwatches: ColorSwatchPickerStory = args => (
-  <ColorSwatchPicker {...args} maxWidth="size-3000">
-    {randomColors.map(color => {
-      return <ColorSwatch key={color} color={color} />;
-    })}
-  </ColorSwatchPicker>
-);
+export const ManySwatches: ColorSwatchPickerStory = {
+  render: args => (
+    <ColorSwatchPicker {...args} maxWidth="size-3000">
+      {randomColors.map(color => {
+        return <ColorSwatch key={color} color={color} />;
+      })}
+    </ColorSwatchPicker>
+  )
+};
