@@ -28,5 +28,6 @@
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6"
   },
-  "browserslist": "defaults"
+  "browserslist": "defaults",
+  "packageManager": "yarn@4.18.0"
 }
