@@ -132,3 +132,34 @@ export const ToolbarButtonsStory: Story = {
     </div>
   )
 };
+
+export const Collapsed: Story = {
+  render: () => (
+    <div
+      className={style({
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 24,
+        width: 540,
+        maxWidth: '90vw',
+        marginX: 'auto'
+      })}>
+      {(['balanced', 'prominent', 'subtle'] as const).flatMap(variant =>
+        (['M', 'S'] as const).map(size => (
+          <PromptField key={`${variant}-${size}`} variant={variant} size={size} isCollapsed>
+            <PromptTokenField />
+            <PromptFieldToolbar>
+              <InsertMenuButton>
+                <AttachFileMenuItem />
+              </InsertMenuButton>
+              <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+                <PromptFieldVoiceButton />
+                <PromptFieldSubmitButton />
+              </div>
+            </PromptFieldToolbar>
+          </PromptField>
+        ))
+      )}
+    </div>
+  )
+};
