@@ -12,8 +12,8 @@
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from './useOverlayPosition';
 import {clamp} from 'react-stately/private/utils/number';
+import {getParentElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {isWebKit} from '../utils/platform';
-import {nodeContains} from '../utils/shadowdom/DOMFunctions';
 
 interface Position {
   top?: number;
@@ -827,9 +827,9 @@ function getContainingBlock(node: HTMLElement): Element {
   // We have to walk up the tree manually in this case because fixed positioned elements
   // are still positioned relative to their containing block, which is not always the viewport.
   if (offsetParent == null) {
-    offsetParent = node.parentElement;
+    offsetParent = getParentElement(node);
     while (offsetParent && !isContainingBlock(offsetParent)) {
-      offsetParent = offsetParent.parentElement;
+      offsetParent = getParentElement(offsetParent);
     }
   }
 

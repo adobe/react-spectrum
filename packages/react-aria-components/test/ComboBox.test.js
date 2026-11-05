@@ -500,6 +500,26 @@ describe('ComboBox', () => {
     expect(queryByRole('listbox')).not.toBeInTheDocument();
   });
 
+  it('should not fire change events on blur when isReadOnly', async () => {
+    let onChange = jest.fn();
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <TestComboBox
+        isReadOnly
+        value="4"
+        inputValue="Finland"
+        onChange={onChange}
+        onSelectionChange={onSelectionChange}
+      />
+    );
+    let input = getByRole('combobox');
+    await user.click(input);
+    await user.tab();
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
   it('should support virtualizer', async () => {
     let items = [];
     for (let i = 0; i < 50; i++) {
@@ -1279,6 +1299,32 @@ describe('ComboBox', () => {
 
     await user.keyboard('Z');
     expect(queryByRole('listbox')).toBeNull();
+  });
+
+  it('should prevent the default action of Escape when it closes the popover', async () => {
+    let {getByRole, queryByRole} = render(<TestComboBox />);
+    let input = getByRole('combobox');
+
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    expect(getByRole('listbox')).toBeInTheDocument();
+
+    let notPrevented = fireEvent.keyDown(input, {key: 'Escape'});
+    fireEvent.keyUp(input, {key: 'Escape'});
+    expect(notPrevented).toBe(false);
+    expect(queryByRole('listbox')).toBeNull();
+  });
+
+  it('should not prevent the default action of Escape when the popover is closed', async () => {
+    let {getByRole, queryByRole} = render(<TestComboBox />);
+    let input = getByRole('combobox');
+
+    await user.tab();
+    expect(queryByRole('listbox')).toBeNull();
+
+    let notPrevented = fireEvent.keyDown(input, {key: 'Escape'});
+    fireEvent.keyUp(input, {key: 'Escape'});
+    expect(notPrevented).toBe(true);
   });
 
   it('should not re-open after user dismisses with Escape (revert) controlled items', async () => {
