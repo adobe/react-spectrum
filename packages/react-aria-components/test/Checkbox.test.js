@@ -413,9 +413,11 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
 
       let checkbox = getByRole('checkbox');
       expect(checkbox.required).toBe(!isValid);
+      let validity;
       await act(async () => {
-        expect(checkbox.form.checkValidity()).toBe(isValid);
+        validity = await checkbox.form.checkValidity();
       });
+      expect(validity).toBe(isValid);
     }
   );
 
