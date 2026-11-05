@@ -12,7 +12,7 @@
 
 import {ClearPressResponder} from '../interactions/PressResponder';
 import {FocusableContext} from '../interactions/useFocusable';
-import {FocusScope} from '../focus/FocusScope';
+import {FocusScope, FocusScopeProps} from '../focus/FocusScope';
 import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '../ssr/SSRProvider';
@@ -38,6 +38,15 @@ export interface OverlayProps {
    * Whether to contain focus within the overlay.
    */
   shouldContainFocus?: boolean;
+  /**
+   * Where focus goes when the overlay closes. By default, focus returns to the element that was
+   * focused when the overlay opened. Pass a ref or a function to choose another element, for
+   * example when that element was removed while the overlay was open, or `false` to leave
+   * focus where it lands.
+   *
+   * @default true
+   */
+  restoreFocus?: FocusScopeProps['restoreFocus'];
   /**
    * Whether the overlay is currently performing an exit animation. When true,
    * focus is allowed to move outside.
@@ -75,7 +84,9 @@ export function Overlay(props: OverlayProps): React.ReactPortal | null {
   let contents = props.children;
   if (!props.disableFocusManagement) {
     contents = (
-      <FocusScope restoreFocus contain={(props.shouldContainFocus || contain) && !isExiting}>
+      <FocusScope
+        restoreFocus={props.restoreFocus ?? true}
+        contain={(props.shouldContainFocus || contain) && !isExiting}>
         {contents}
       </FocusScope>
     );

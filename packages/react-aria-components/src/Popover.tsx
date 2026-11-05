@@ -26,7 +26,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {DismissButton, Overlay} from 'react-aria/Overlay';
+import {DismissButton, Overlay, OverlayProps} from 'react-aria/Overlay';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
@@ -110,6 +110,15 @@ export interface PopoverProps
    * @default document.body
    */
   UNSTABLE_portalContainer?: Element;
+  /**
+   * Where focus goes when the popover closes. By default, focus returns to the element that was
+   * focused when the popover opened. Pass a ref or a function to choose another element, for
+   * example when that element was removed while the popover was open, or `false` to leave
+   * focus where it lands.
+   *
+   * @default true
+   */
+  restoreFocus?: OverlayProps['restoreFocus'];
   /**
    * The additional offset applied along the main axis between the element and its
    * anchor element.
