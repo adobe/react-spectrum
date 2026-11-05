@@ -77,4 +77,41 @@ describe('Button keyboard activation', () => {
     expect(onClick).toHaveBeenCalledTimes(2);
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
+
+  it('should allow virtual activation after a key press that moved focus to a native element', async () => {
+    let onPress = vi.fn();
+    let linkRef = React.createRef<HTMLAnchorElement>();
+    let {getByRole, getByText} = await render(
+      <>
+        <Button
+          id="trigger"
+          onPressStart={e => {
+            if (e.pointerType === 'keyboard') {
+              // oxlint-disable-next-line rsp-rules/act-events-test
+              linkRef.current!.focus();
+            }
+          }}
+          onPress={onPress}
+          autoFocus>
+          Activate
+        </Button>
+        <a href="https://example.com" ref={linkRef}>
+          Link
+        </a>
+        {/* Label activation dispatches a trusted click with no pointerType, like a screen reader. */}
+        <label htmlFor="trigger">Label</label>
+      </>
+    );
+    await expect.element(getByRole('button')).toHaveFocus();
+
+    // Space key down starts the press and moves focus, so key up lands on the link. The link
+    // doesn't prevent the key up's default, but it never fires a click either.
+    await userEvent.keyboard(' ');
+    await expect.element(getByRole('link')).toHaveFocus();
+    expect(onPress).not.toHaveBeenCalled();
+
+    await userEvent.click(getByText('Label'));
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenLastCalledWith(expect.objectContaining({pointerType: 'virtual'}));
+  });
 });

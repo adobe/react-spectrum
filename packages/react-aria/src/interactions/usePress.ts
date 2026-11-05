@@ -515,14 +515,15 @@ export function usePress(props: PressHookProps): PressResult {
         if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e)) {
           e.preventDefault();
         }
+        let target = getEventTarget(e);
+        let wasPressed = nodeContains(state.target, target as Element);
 
         // Space performs the element's activation behavior on key up. This listener is capturing,
         // so another handler may still prevent the default behavior. Store the event and read
-        // defaultPrevented later, once it has finished propagating.
-        state.defaultKeyboardClickEvent = e.key === 'Enter' ? null : e;
+        // defaultPrevented later, once it has finished propagating. Only store it if the key
+        // was released on the pressed target, where the browser can fire its click.
+        state.defaultKeyboardClickEvent = e.key !== 'Enter' && wasPressed ? e : null;
 
-        let target = getEventTarget(e);
-        let wasPressed = nodeContains(state.target, target as Element);
         triggerPressEndEvent(createEvent(state.target, e), 'keyboard', wasPressed);
         if (wasPressed) {
           triggerSyntheticClick(e, state.target);
