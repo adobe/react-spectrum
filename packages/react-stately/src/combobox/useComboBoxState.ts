@@ -493,11 +493,13 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     // Update the inputValue if the selected item's text changes from its last tracked value.
     // This is to handle cases where a selectedKey is specified but the items aren't available (async loading) or the selected item's text value updates.
     // Only reset if the user isn't currently within the field so we don't erroneously modify user input.
+    // The exception is an empty field whose selected item had no text yet (e.g. autoFocus before the
+    // collection is built), since there is no user input to preserve.
     // If inputValue is controlled, it is the user's responsibility to update the inputValue when items change.
     let selectedItemText =
       selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
     if (
-      !isFocused &&
+      (!isFocused || (inputValue === '' && lastSelectedKeyText.current === '')) &&
       selectedKey != null &&
       props.inputValue === undefined &&
       selectedKey === lastValueRef.current
