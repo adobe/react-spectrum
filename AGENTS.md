@@ -41,6 +41,7 @@ Run only one of the Parcel 3 Storybooks at a time: both public Storybook servers
 ## Contributing
 
 - **Match the surrounding code** — follow the naming, structure, and patterns of neighboring files.
+- **Before committing** — run `yarn format <changed-file-paths>` to format the files you changed, and include the formatting fixes in your commit. Then run `yarn format:check` to verify formatting. CI runs this check as part of `yarn lint`.
 - **Commit format** — use conventional-commit prefixes (`fix:`, `feat:`, `chore:`, `docs:`) as seen in the git history.
 
 ## Filing GitHub issues

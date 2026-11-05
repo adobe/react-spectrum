@@ -238,8 +238,10 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         if (!state.selectionManager.isEmpty || state.inputValue === '' || props.allowsCustomValue) {
           shouldContinuePropagation = true;
         }
+        // Closing the popover consumes Escape, so prevent the browser default (e.g. Safari exiting fullscreen).
+        let shouldPreventDefault = state.isOpen;
         state.revert();
-        return {shouldContinuePropagation};
+        return {shouldContinuePropagation, shouldPreventDefault};
       }
     }
   });

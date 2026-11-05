@@ -306,7 +306,13 @@ export function CalendarPopover(
           size: 'full'
         })}>
         <Dialog>
-          <Provider values={[[OverlayTriggerStateContext, null]]}>{props.children}</Provider>
+          <Provider
+            values={[
+              [OverlayTriggerStateContext, null],
+              [FormContext, null]
+            ]}>
+            {props.children}
+          </Provider>
         </Dialog>
       </div>
     </Popover>
