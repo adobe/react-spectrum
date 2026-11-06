@@ -29,6 +29,5 @@
   "resolutions": {
     "react": "link:../../node_modules/react",
     "react-dom": "link:../../node_modules/react-dom"
-  },
-  "packageManager": "yarn@4.18.0"
+  }
 }

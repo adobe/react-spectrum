@@ -30,6 +30,5 @@
   "resolutions": {
     "next/@swc/helpers": "0.4.36"
   },
-  "browserslist": "defaults",
-  "packageManager": "yarn@4.18.0"
+  "browserslist": "defaults"
 }

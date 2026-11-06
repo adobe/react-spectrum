@@ -56,7 +56,7 @@ async function build() {
   let pkg = {
     name: 'react-spectrum-monorepo',
     version: '0.0.0',
-    packageManager: 'yarn@4.18.0',
+    packageManager: packageJSON.packageManager,
     private: true,
     workspaces: ['packages/*/*'],
     devDependencies: Object.fromEntries(
@@ -91,7 +91,7 @@ async function build() {
   let cleanPkg = {
     name: 'react-spectrum-monorepo',
     version: '0.0.0',
-    packageManager: 'yarn@4.18.0',
+    packageManager: packageJSON.packageManager,
     private: true,
     workspaces: ['packages/*/*'],
     devDependencies: Object.fromEntries(

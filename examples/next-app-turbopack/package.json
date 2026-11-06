@@ -20,6 +20,5 @@
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
     "typescript": "^7"
-  },
-  "packageManager": "yarn@4.18.0"
+  }
 }
