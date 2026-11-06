@@ -574,6 +574,68 @@ describe('DateField', () => {
     expect(eraSegment).toHaveTextContent('AM');
   });
 
+  it('does not crash for locales whose 12-hour time has no day period', async () => {
+    let {getByRole, getAllByRole, unmount} = render(
+      <I18nProvider locale="fr-CM">
+        <DateField>
+          <Label>Birthdate</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    let input = getByRole('group');
+    expect(input).toHaveTextContent('jj/mm/aaaa');
+    let segments = getAllByRole('spinbutton');
+    expect(segments.map(segment => segment.getAttribute('data-type'))).toEqual([
+      'day',
+      'month',
+      'year'
+    ]);
+
+    await user.click(segments[0]);
+    await user.keyboard('15');
+    expect(segments[0]).toHaveTextContent('15');
+    unmount();
+
+    let filled = render(
+      <I18nProvider locale="fr-CM">
+        <DateField defaultValue={new CalendarDate(2019, 2, 3)}>
+          <Label>Birthdate</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+    expect(filled.getByRole('group')).toHaveTextContent('03/02/2019');
+  });
+
+  it.each([['fr-FR'], ['de-DE'], ['ja-JP'], ['ar-EG'], ['th-TH']])(
+    'renders a date field in %s',
+    async locale => {
+      let {getAllByRole} = render(
+        <I18nProvider locale={locale}>
+          <DateField>
+            <Label>Birthdate</Label>
+            <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          </DateField>
+        </I18nProvider>
+      );
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments.map(segment => segment.getAttribute('data-type')).sort()).toEqual([
+        'day',
+        'month',
+        'year'
+      ]);
+
+      let day = segments.find(segment => segment.getAttribute('data-type') === 'day');
+      let before = day.textContent;
+      await user.click(day);
+      await user.keyboard('15');
+      expect(day.textContent).not.toBe(before);
+    }
+  );
+
   it('should support autofill', async () => {
     let {getByRole} = render(
       <DateField>
