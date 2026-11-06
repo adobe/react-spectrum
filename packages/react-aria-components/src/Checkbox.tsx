@@ -432,8 +432,9 @@ function useCheckboxAria(
   userProvidedInputRef: Ref<HTMLInputElement | null> | null
 ): [CheckboxAria, RefObject<HTMLInputElement | null>] {
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
-  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let groupState = useContext(CheckboxGroupStateContext);
+  let validationBehavior =
+    props.validationBehavior ?? (groupState ? undefined : (formValidationBehavior ?? 'native'));
   let inputRef = useObjectRef(
     useMemo(
       () => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null),
