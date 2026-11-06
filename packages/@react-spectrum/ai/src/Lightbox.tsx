@@ -197,7 +197,11 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
             })}>
             {({close}) => (
               <>
-                <CloseButton staticColor="white" onPress={close} />
+                <CloseButton
+                  staticColor="white"
+                  onPress={close}
+                  styles={style({justifySelf: 'end'})}
+                />
                 <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
                   <RACTabs
                     {...props}
@@ -245,7 +249,7 @@ const thumbnailStyles = style({
   width: 64,
   height: 64,
   objectFit: 'cover',
-  borderRadius: 'lg',
+  borderRadius: 'default',
   opacity: 0.8
 });
 
@@ -287,7 +291,6 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
         flexGrow: 1,
         minWidth: 0,
         minHeight: 0,
-        maxHeight: 'fit',
         gap: 28
       })}>
       {wrapper}
@@ -304,6 +307,8 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
   let keyboardScroll = useRef(false);
+  let selectionScroll = useRef(false);
+  let previousSelectedIndex = useRef<number | null>(null);
   let keyboardIntentTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let focusAfterSelection = useRef(false);
   let focusManager = useFocusManager();
@@ -329,12 +334,22 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       return;
     }
 
+    let previousIndex = previousSelectedIndex.current;
+    previousSelectedIndex.current = selectedIndex;
+
     let currentIndex = Math.round(el.scrollLeft / el.offsetWidth);
-    if (selectedIndex !== currentIndex) {
-      // Jump directly because pages between distant selections may not be mounted.
+    if (
+      selectedIndex !== previousIndex &&
+      (selectedIndex !== currentIndex || selectionScroll.current)
+    ) {
+      let isAdjacent = previousIndex !== null && Math.abs(selectedIndex - previousIndex) === 1;
+      let left = el.offsetWidth * selectedIndex;
+      selectionScroll.current = isAdjacent && el.scrollLeft !== left;
+
+      // Distant selections may have unmounted pages between them.
       el.scrollTo({
-        left: el.offsetWidth * selectedIndex,
-        behavior: 'instant'
+        left,
+        behavior: isAdjacent ? 'auto' : 'instant'
       });
     }
 
@@ -415,18 +430,20 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       keyboardScroll.current = true;
     }
 
-    if (!keyboardScroll.current) {
+    if (!keyboardScroll.current && !selectionScroll.current) {
       updateSelection();
     }
   };
 
   let onScrollEnd = () => {
-    if (!keyboardScroll.current) {
-      return;
-    }
-
+    let moveFocus = keyboardScroll.current;
+    let shouldUpdateSelection = moveFocus || selectionScroll.current;
     keyboardScroll.current = false;
-    updateSelection(true);
+    selectionScroll.current = false;
+
+    if (shouldUpdateSelection) {
+      updateSelection(moveFocus);
+    }
   };
 
   // Only handle arrows from the panel itself, preserving keyboard behavior
@@ -603,8 +620,8 @@ const imageStyles = style({
   display: 'block',
   width: 'fit',
   height: 'full',
+  maxHeight: 'full',
   objectFit: 'contain',
-  borderRadius: 'lg',
   backgroundColor: 'transparent'
 });
 
@@ -674,7 +691,12 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
   // update selected tab while scrolling
   let onScroll = () => {
     let el = ref.current;
-    let index = el ? Math.round(el.scrollLeft / el.offsetWidth) : 0; // this is not the collection index, this is the pages index
+    // Scroll events can arrive while the carousel is hidden.
+    if (!el || el.offsetWidth === 0) {
+      return;
+    }
+
+    let index = Math.round(el.scrollLeft / el.offsetWidth); // this is not the collection index, this is the pages index
     let collectionIndex = centerPage + index - PAGES; // this is the actual collection index
     if (currentPage !== index) {
       // actually update the selected key (so that the tabs actually reflect what is in the viewport)
@@ -710,8 +732,8 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
         />
         {pages.map(page => (
           <div
-            // Follow the page, not its position in the rendered window, so React keeps
-            // the incoming Image mounted as it becomes centered instead of restarting its loading state.
+            // Keep each slide mounted when it moves to a new position.
+            // Recreating S2 Image can make it flash, even if the image is already cached.
             key={page}
             inert={page !== visiblePage}
             style={{
