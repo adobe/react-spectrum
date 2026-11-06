@@ -298,6 +298,36 @@ const TreeExampleStaticNoActionsRender = <T extends any>(args: TreeProps<T>): JS
   </Tree>
 );
 
+export const WithDescriptions: TreeStory = args => (
+  <Tree {...args} aria-label="Files" className={styles.tree} selectionMode="single">
+    <TreeItem id="projects" textValue="Projects" className={styles['tree-item']}>
+      <TreeItemContent>
+        {({isExpanded}) => (
+          <>
+            <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>
+            <div>
+              <Text>Projects</Text>
+              <Text slot="description" style={{display: 'block'}}>
+                Shared project files
+              </Text>
+            </div>
+          </>
+        )}
+      </TreeItemContent>
+      <TreeItem id="report" textValue="Report" className={styles['tree-item']}>
+        <TreeItemContent>
+          <div>
+            <Text>Report</Text>
+            <Text slot="description" style={{display: 'block'}}>
+              Last updated today
+            </Text>
+          </div>
+        </TreeItemContent>
+      </TreeItem>
+    </TreeItem>
+  </Tree>
+);
+
 export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
   render: args => <TreeExampleStaticRender {...args} />,
   args: {
@@ -810,6 +840,87 @@ export const WithLinks: StoryObj<typeof WithLinksRender> = {
   parameters: {
     description: {
       data: 'every tree item should link to adobe.com'
+    }
+  }
+};
+
+interface LazyChildrenTreeItemProps {
+  item: {id: string; name: string; childItems?: LazyChildrenTreeItemProps['item'][]};
+  expandedKeys: Set<Key>;
+}
+
+const LazyChildrenTreeItem = ({item, expandedKeys}: LazyChildrenTreeItemProps) => {
+  let childItems = item.childItems ?? [];
+
+  return (
+    <TreeItem
+      id={item.id}
+      textValue={item.name}
+      hasChildItems={childItems.length > 0}
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) =>
+        classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })
+      }>
+      <TreeItemContent>
+        {({isExpanded, hasChildItems, level}) => (
+          <div
+            className={styles['content-wrapper']}
+            style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
+            {hasChildItems && (
+              <Button className={styles.chevron} slot="chevron">
+                <div
+                  style={{
+                    transform: `rotate(${isExpanded ? 90 : 0}deg)`,
+                    width: '16px',
+                    height: '16px'
+                  }}>
+                  <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
+                    <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg>
+                </div>
+              </Button>
+            )}
+            <Text>{item.name}</Text>
+          </div>
+        )}
+      </TreeItemContent>
+      <Collection items={expandedKeys.has(item.id) ? childItems : []}>
+        {child => <LazyChildrenTreeItem item={child} expandedKeys={expandedKeys} />}
+      </Collection>
+    </TreeItem>
+  );
+};
+
+const LazyChildrenTreeRender = <T extends any>(args: TreeProps<T>): JSX.Element => {
+  let [expandedKeys, setExpandedKeys] = useState<Set<Key>>(new Set());
+
+  return (
+    <Tree
+      {...args}
+      className={styles.tree}
+      aria-label="test lazy children tree"
+      items={rows}
+      expandedKeys={expandedKeys}
+      onExpandedChange={keys => {
+        action('onExpandedChange')(keys);
+        setExpandedKeys(keys);
+      }}
+      dependencies={[expandedKeys]}>
+      {item => <LazyChildrenTreeItem item={item} expandedKeys={expandedKeys} />}
+    </Tree>
+  );
+};
+
+export const TreeWithLazyChildren: StoryObj<typeof LazyChildrenTreeRender> = {
+  render: args => <LazyChildrenTreeRender {...args} />,
+  name: 'Tree with lazily rendered children',
+  parameters: {
+    description: {
+      data: 'Child rows are only added to the collection once their parent is expanded. Rows with children use hasChildItems so they can be expanded before their children are rendered.'
     }
   }
 };

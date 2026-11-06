@@ -16,6 +16,7 @@ import {createContext, forwardRef, ReactNode, useCallback, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -168,7 +169,7 @@ export const ButtonGroup = forwardRef(function ButtonGroup(
   // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     if (domRef.current) {
-      parent.current = domRef.current.parentElement as HTMLElement;
+      parent.current = getParentElement(domRef.current) as HTMLElement;
     }
   }, [domRef.current]);
   // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps

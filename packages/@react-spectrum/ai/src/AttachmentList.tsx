@@ -38,7 +38,7 @@ import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import File from '@react-spectrum/s2/icons/File';
 import FileText from '@react-spectrum/s2/icons/FileText';
-import {getMimeTypeLabel, matchMimeType} from './PromptField';
+import {getMimeTypeLabel, matchMimeType} from './mimeType';
 import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
@@ -117,6 +117,7 @@ const closeButton = style<{
   disableTapHighlight: true
 });
 
+const hasContent = ':has([data-slot=content])';
 const onlyPreview = ':not(:has([data-slot=content])):not(:has([data-slot=preview]))';
 
 const container = {
@@ -577,7 +578,10 @@ export interface AttachmentProps
 const tagStyles = style({
   flexShrink: 0,
   flexGrow: 0,
-  flexBasis: '0%',
+  flexBasis: {
+    default: '0%',
+    [hasContent]: 'auto'
+  },
   position: 'relative',
   ...focusRing(),
   borderRadius: 'lg',

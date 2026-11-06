@@ -2523,6 +2523,39 @@ describe('keyboard modifier keys', () => {
       expect(document.activeElement).toBe(options[1]);
     });
 
+    it('does not activate an element focused during selection with Enter', async () => {
+      let onClick = jest.fn();
+      let triggerRef = React.createRef();
+      let {getByRole} = render(
+        <>
+          <button ref={triggerRef} onClick={onClick}>
+            Trigger
+          </button>
+          <ListBox
+            aria-label="Favorite Animal"
+            selectionMode="single"
+            onSelectionChange={() => {
+              // oxlint-disable-next-line rsp-rules/act-events-test
+              triggerRef.current.focus();
+            }}>
+            <ListBoxItem id="cat">Cat</ListBoxItem>
+            <ListBoxItem id="dog">Dog</ListBoxItem>
+          </ListBox>
+        </>
+      );
+
+      let options = within(getByRole('listbox')).getAllByRole('option');
+      act(() => options[0].focus());
+
+      // Selection moves focus to the trigger during keydown. Unless Enter's default is
+      // prevented, the browser dispatches the activation click to the newly focused
+      // element.
+      await user.keyboard('{Enter}');
+
+      expect(triggerRef.current).toHaveFocus();
+      expect(onClick).not.toHaveBeenCalled();
+    });
+
     describe('multiple selection, replace behavior', () => {
       it('replaces selection as focus moves with arrow keys', async () => {
         let onSelectionChange = jest.fn();

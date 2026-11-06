@@ -38,10 +38,15 @@ export interface ScrollAnchorInfo {
   /** Distance (px) from `edge` within which the viewport is considered "following" it. */
   threshold: number;
   /**
-   * Optional classifier excluding structural/ephemeral layout infos (e.g. loaders) from being
-   * selected as the anchor. Defaults to allowing any layoutInfo.
+   * Whether a layout info can be selected as the scroll anchor.
+   * If omitted, any layout info can be selected.
    */
   isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
+  /**
+   * Whether resizing an item should keep the viewport pinned to the anchored edge.
+   * If omitted, resizing any item can keep the viewport pinned to that edge.
+   */
+  isEdgeContent?: (key: Key) => boolean;
 }
 
 export interface ListLayoutOptions {
@@ -238,7 +243,26 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       return null;
     }
     let threshold = layoutOptions?.scrollEndThreshold ?? this.scrollEndThreshold;
-    return {edge: 'end', axis: 'y', threshold, isAnchorable: isLoaderAnchorable};
+    return {
+      edge: 'end',
+      axis: 'y',
+      threshold,
+      isAnchorable: isLoaderAnchorable,
+      isEdgeContent: key => key === this.getLastContentKey()
+    };
+  }
+
+  private getLastContentKey(): Key | null {
+    let lastKey = this.collection.getLastKey();
+    while (lastKey != null) {
+      let node = this.collection.getItem(lastKey);
+      if (node?.type !== 'loader') {
+        break;
+      }
+      lastKey = this.collection.getKeyBefore(lastKey);
+    }
+
+    return lastKey;
   }
 
   // Backward compatibility for subclassing.

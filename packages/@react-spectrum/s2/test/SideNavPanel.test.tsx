@@ -11,6 +11,7 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {createIcon} from '../src/Icon';
 import React from 'react';
 import {RouterProvider} from 'react-aria-components';
 import {
@@ -24,10 +25,15 @@ import {SideNavPanel, SideNavPanelProps} from '../src/SideNavPanel';
 import {Text} from '../src/Content';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
+// Icons imported from s2wf-icons are mocked in jest, which skips createIcon and the slot wiring that
+// places an icon in a side nav row, so build a real one here instead.
+const TestIcon = createIcon(props => <svg {...props} data-testid="categories-icon" />);
+
 // "Files" is a top-level leaf (no children). "Libraries" is a parent with an href and a nested "Photos" leaf.
 // "Favorites" is a parent with no href but with a nested "Documents" leaf.
-// Items are always links. An item with an href navigates when it is activated, whether or not it has
-// children and whether or not the panel is collapsed. An item without one toggles its category instead.
+// "Categories" is a parent with neither an href nor a link, with a nested "Archive" leaf.
+// An item with an href navigates when it is activated, whether or not it has children and whether or
+// not the panel is collapsed. An item without one toggles its category instead.
 function SideNavPanelExample(
   props: SideNavPanelProps &
     SideNavProps<any> & {
@@ -72,6 +78,19 @@ function SideNavPanelExample(
             <SideNavItemContent>
               <SideNavItemLink>
                 <Text>Documents</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+        <SideNavItem id="categories" textValue="Categories">
+          <SideNavItemContent>
+            <TestIcon />
+            <Text>Categories</Text>
+          </SideNavItemContent>
+          <SideNavItem id="archive" href="/archive" textValue="Archive">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Text>Archive</Text>
               </SideNavItemLink>
             </SideNavItemContent>
           </SideNavItem>
@@ -237,5 +256,62 @@ describe('SideNavPanel', () => {
     expect(favoritesRow).toHaveAttribute('aria-expanded', 'true');
     expect(getByRole('link', {name: 'Documents'})).toBeInTheDocument();
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('toggles the category when an item with neither an href nor a link is clicked', async () => {
+    let navigate = jest.fn();
+    let onCollapsedChange = jest.fn();
+    let {getByRole, queryByRole} = render(
+      <SideNavPanelExample navigate={navigate} onCollapsedChange={onCollapsedChange} />
+    );
+
+    let categoriesRow = getByRole('row', {name: 'Categories'});
+    expect(categoriesRow).toHaveAttribute('aria-expanded', 'false');
+    expect(queryByRole('link', {name: 'Archive'})).toBeNull();
+
+    await user.click(categoriesRow);
+
+    expect(categoriesRow).toHaveAttribute('aria-expanded', 'true');
+    expect(getByRole('link', {name: 'Archive'})).toBeInTheDocument();
+    expect(navigate).not.toHaveBeenCalled();
+    expect(onCollapsedChange).not.toHaveBeenCalled();
+  });
+
+  it('expands the panel when a collapsed item with no href is activated', async () => {
+    let navigate = jest.fn();
+    let onCollapsedChange = jest.fn();
+    let {getByRole, queryByRole} = render(
+      <SideNavPanelExample
+        defaultCollapsed
+        navigate={navigate}
+        onCollapsedChange={onCollapsedChange}
+      />
+    );
+
+    let categoriesRow = getByRole('row', {name: 'Categories'});
+    expect(categoriesRow).toHaveAttribute('aria-expanded', 'false');
+
+    await user.click(categoriesRow);
+    expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
+    expect(navigate).not.toHaveBeenCalled();
+    expect(queryByRole('link', {name: 'Archive'})).toBeNull();
+
+    finishExpanding();
+    expect(getByRole('row', {name: 'Categories'})).toHaveAttribute('aria-expanded', 'true');
+    expect(getByRole('link', {name: 'Archive'})).toBeInTheDocument();
+  });
+
+  it('expands the panel when a collapsed link with no href is activated', async () => {
+    let onCollapsedChange = jest.fn();
+    let {getByRole} = render(
+      <SideNavPanelExample defaultCollapsed onCollapsedChange={onCollapsedChange} />
+    );
+
+    await user.click(getByRole('link', {name: 'Favorites'}));
+    expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
+
+    finishExpanding();
+    expect(getByRole('row', {name: 'Favorites'})).toHaveAttribute('aria-expanded', 'true');
+    expect(getByRole('link', {name: 'Documents'})).toBeInTheDocument();
   });
 });

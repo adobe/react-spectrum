@@ -23,6 +23,7 @@ import {focusSafely} from '../interactions/focusSafely';
 import {
   getActiveElement,
   getEventTarget,
+  getParentElement,
   isFocusWithin,
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
@@ -303,7 +304,7 @@ export function useGridListItem<T>(
         if (!e.altKey && nodeContains(ref.current, getEventTarget(e) as Element)) {
           e.stopPropagation();
           e.preventDefault();
-          ref.current.parentElement?.dispatchEvent(
+          getParentElement(ref.current)?.dispatchEvent(
             new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
           );
         }

@@ -19,7 +19,8 @@ export function Ideas() {
   let list = useAsyncList<Topic, number | null>({
     async load() {
       let res = await import('./topics.json');
-      let items = res.filter((topic: Topic) => !!topic.preview_photos);
+      let topics = res.default || res;
+      let items = topics.filter((topic: Topic) => !!topic.preview_photos);
       return {items};
     }
   });

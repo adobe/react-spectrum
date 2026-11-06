@@ -46,7 +46,7 @@ import {
 } from '../src/SideNav';
 import {SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
 import {style} from '../style' with {type: 'macro'};
-import {useLandmark} from 'react-aria';
+import {useLandmark} from 'react-aria/useLandmark';
 
 const events = ['onSelectionChange'];
 
@@ -760,12 +760,10 @@ export const SideNavPanelExample2 = {
               </SideNavItemLink>
             </SideNavItemContent>
           </SideNavItem>
-          <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+          <SideNavItem id="your-libraries" textValue="Your Libraries">
             <SideNavItemContent>
-              <SideNavItemLink>
-                <CCLibrary />
-                <Text>Your Libraries</Text>
-              </SideNavItemLink>
+              <CCLibrary />
+              <Text>Your Libraries</Text>
             </SideNavItemContent>
             <SideNavItem id="photos" href="/photos" textValue="Photos">
               <SideNavItemContent>
