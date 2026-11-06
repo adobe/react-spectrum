@@ -26,7 +26,7 @@ import {Header} from '../../src/view/Header';
 import {Heading} from '../../src/text/Heading';
 import {Image} from '../../src/image/Image';
 import {Item} from 'react-stately/Item';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Picker} from '../../src/picker/Picker';
 import {Radio} from '../../src/radio/Radio';
 import {RadioGroup} from '../../src/radio/RadioGroup';
@@ -40,107 +40,91 @@ export default {
   excludeStories: ['singleParagraph']
 } as Meta<typeof Dialog>;
 
-export type DialogStory = StoryFn<typeof Dialog>;
+export type DialogStory = StoryObj<typeof Dialog>;
 
-export const Default: DialogStory = () => render({});
-
-Default.story = {
+export const Default: DialogStory = {
+  render: () => render({}),
   name: 'default'
 };
 
-export const IsDismissable: DialogStory = () => render({isDismissable: true});
-
-IsDismissable.story = {
+export const IsDismissable: DialogStory = {
+  render: () => render({isDismissable: true}),
   name: 'isDismissable'
 };
 
-export const LongContent: DialogStory = () => renderLongContent({});
-
-LongContent.story = {
+export const LongContent: DialogStory = {
+  render: () => renderLongContent({}),
   name: 'long content'
 };
 
-export const WithHero: DialogStory = () => renderHero({});
-
-WithHero.story = {
+export const WithHero: DialogStory = {
+  render: () => renderHero({}),
   name: 'with hero'
 };
 
-export const WithHeroIsDimissable: DialogStory = () => renderHero({isDismissable: true});
-
-WithHeroIsDimissable.story = {
+export const WithHeroIsDimissable: DialogStory = {
+  render: () => renderHero({isDismissable: true}),
   name: 'with hero, isDimissable'
 };
 
-export const WithFooter: DialogStory = () => renderFooter({});
-
-WithFooter.story = {
+export const WithFooter: DialogStory = {
+  render: () => renderFooter({}),
   name: 'with footer'
 };
 
-export const Small: DialogStory = () => render({size: 'S'});
-
-Small.story = {
+export const Small: DialogStory = {
+  render: () => render({size: 'S'}),
   name: 'small'
 };
 
-export const Medium: DialogStory = () => render({size: 'M'});
-
-Medium.story = {
+export const Medium: DialogStory = {
+  render: () => render({size: 'M'}),
   name: 'medium'
 };
 
-export const Large: DialogStory = () => render({size: 'L'});
-
-Large.story = {
+export const Large: DialogStory = {
+  render: () => render({size: 'L'}),
   name: 'large'
 };
 
-export const _Form: DialogStory = () => renderWithForm({});
-
-_Form.story = {
+export const _Form: DialogStory = {
+  render: () => renderWithForm({}),
   name: 'form'
 };
 
-export const FullscreenTakeoverForm: DialogStory = () =>
-  renderWithForm({type: 'fullscreenTakeover'});
-
-FullscreenTakeoverForm.story = {
+export const FullscreenTakeoverForm: DialogStory = {
+  render: () => renderWithForm({type: 'fullscreenTakeover'}),
   name: 'fullscreenTakeover form'
 };
 
-export const ThreeButtons: DialogStory = () => renderWithThreeButtons({});
-
-ThreeButtons.story = {
+export const ThreeButtons: DialogStory = {
+  render: () => renderWithThreeButtons({}),
   name: 'three buttons'
 };
 
-export const ThreeButtonsVerticalOrientation: DialogStory = () =>
-  renderWithThreeButtonsVertical({});
-
-ThreeButtonsVerticalOrientation.story = {
+export const ThreeButtonsVerticalOrientation: DialogStory = {
+  render: () => renderWithThreeButtonsVertical({}),
   name: 'three buttons, vertical orientation'
 };
 
-export const ThreeButtonsFooter: DialogStory = () => <RenderWithThreeButtonsAndFooter />;
-
-ThreeButtonsFooter.story = {
+export const ThreeButtonsFooter: DialogStory = {
+  render: () => <RenderWithThreeButtonsAndFooter />,
   name: 'three buttons, footer'
 };
 
-export const ClearedContent: DialogStory = () => renderWithDividerInContent({});
-
-ClearedContent.story = {
+export const ClearedContent: DialogStory = {
+  render: () => renderWithDividerInContent({}),
   name: 'cleared content'
 };
 
-export const WithIframe: DialogStory = () => renderIframe({});
-
-WithIframe.story = {
+export const WithIframe: DialogStory = {
+  render: () => renderIframe({}),
   name: 'with iframe'
 };
 
-export const HorizontalScrolling: DialogStory = () => renderHorizontalScrolling({});
+export const HorizontalScrolling: DialogStory = {
+  render: () => renderHorizontalScrolling({})
+};
 
 type RenderProps = Omit<
   SpectrumDialogProps & {isDismissable?: boolean; width?: string},

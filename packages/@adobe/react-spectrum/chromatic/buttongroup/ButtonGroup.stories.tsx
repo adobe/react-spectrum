@@ -13,50 +13,42 @@
 import {Button} from '../../src/button/Button';
 import {ButtonGroup, SpectrumButtonGroupProps} from '../../src/buttongroup/ButtonGroup';
 import React, {JSX} from 'react';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 import {View} from '../../src/view/View';
 
 export default {
   title: 'ButtonGroup'
 };
 
-export type ButtonGroupStory = StoryFn<typeof ButtonGroup>;
+export type ButtonGroupStory = StoryObj<typeof ButtonGroup>;
 
-export const Default: ButtonGroupStory = () => render({});
-
-Default.story = {
+export const Default: ButtonGroupStory = {
+  render: () => render({}),
   name: 'default'
 };
 
-export const AlignCenter: ButtonGroupStory = () => render({align: 'center'});
-
-AlignCenter.story = {
+export const AlignCenter: ButtonGroupStory = {
+  render: () => render({align: 'center'}),
   name: 'align: center'
 };
 
-export const AlignEnd: ButtonGroupStory = () => render({align: 'end'});
-
-AlignEnd.story = {
+export const AlignEnd: ButtonGroupStory = {
+  render: () => render({align: 'end'}),
   name: 'align: end'
 };
 
-export const OrientationVertical: ButtonGroupStory = () => render({orientation: 'vertical'});
-
-OrientationVertical.story = {
+export const OrientationVertical: ButtonGroupStory = {
+  render: () => render({orientation: 'vertical'}),
   name: 'orientation: vertical'
 };
 
-export const OrientationVerticalAlignCenter: ButtonGroupStory = () =>
-  render({orientation: 'vertical', align: 'center'});
-
-OrientationVerticalAlignCenter.story = {
+export const OrientationVerticalAlignCenter: ButtonGroupStory = {
+  render: () => render({orientation: 'vertical', align: 'center'}),
   name: 'orientation: vertical, align: center'
 };
 
-export const OrientationVerticalAlignEnd: ButtonGroupStory = () =>
-  render({orientation: 'vertical', align: 'end'});
-
-OrientationVerticalAlignEnd.story = {
+export const OrientationVerticalAlignEnd: ButtonGroupStory = {
+  render: () => render({orientation: 'vertical', align: 'end'}),
   name: 'orientation: vertical, align: end'
 };
 

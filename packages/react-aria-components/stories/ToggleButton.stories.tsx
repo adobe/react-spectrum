@@ -12,7 +12,7 @@
 
 import {action} from 'storybook/actions';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {ToggleButton} from '../src/ToggleButton';
@@ -23,21 +23,23 @@ export default {
   component: ToggleButton
 } as Meta<typeof ToggleButton>;
 
-export type ToggleButtonStory = StoryFn<typeof ToggleButton>;
+export type ToggleButtonStory = StoryObj<typeof ToggleButton>;
 
-export const ToggleButtonExample: ToggleButtonStory = () => {
-  const [textColor, setTextColor] = useState('black');
+export const ToggleButtonExample: ToggleButtonStory = {
+  render: function ToggleButtonExample() {
+    const [textColor, setTextColor] = useState('black');
 
-  return (
-    <ToggleButton
-      className={classNames(styles, 'toggleButtonExample')}
-      data-testid="toggle-button-example"
-      onKeyUp={action('keyup')}
-      onPress={action('press')}
-      onHoverStart={() => setTextColor('red')}
-      onHoverEnd={() => setTextColor('black')}
-      style={{color: textColor}}>
-      Toggle
-    </ToggleButton>
-  );
+    return (
+      <ToggleButton
+        className={classNames(styles, 'toggleButtonExample')}
+        data-testid="toggle-button-example"
+        onKeyUp={action('keyup')}
+        onPress={action('press')}
+        onHoverStart={() => setTextColor('red')}
+        onHoverEnd={() => setTextColor('black')}
+        style={{color: textColor}}>
+        Toggle
+      </ToggleButton>
+    );
+  }
 };

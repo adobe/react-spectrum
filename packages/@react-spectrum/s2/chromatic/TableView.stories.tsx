@@ -605,7 +605,7 @@ export const TableWithNestedRows: StoryObj<typeof TableView> = {
 };
 
 export const RACFixedWidth = {
-  render: FixedColumnWidths,
+  render: FixedColumnWidths.render,
   parameters: {
     chromaticProvider: {
       locales: ['en-US'],

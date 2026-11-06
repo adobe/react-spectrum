@@ -22,23 +22,25 @@ export default {
 
 export type ColorSwatchStory = StoryObj<typeof ColorSwatch>;
 
-export const ColorSwatchExampleRender = (args: ColorSwatchProps): JSX.Element => (
-  <ColorSwatch
-    {...args}
-    style={({color}) => ({
-      width: 32,
-      height: 32,
-      borderRadius: 4,
-      boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.1)',
-      background: `
+export const ColorSwatchExampleRender = {
+  render: (args: ColorSwatchProps): JSX.Element => (
+    <ColorSwatch
+      {...args}
+      style={({color}) => ({
+        width: 32,
+        height: 32,
+        borderRadius: 4,
+        boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.1)',
+        background: `
         linear-gradient(${color}, ${color}),
         repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`
-    })}
-  />
-);
+      })}
+    />
+  )
+};
 
 export const ColorSwatchExample: ColorSwatchStory = {
-  render: args => <ColorSwatchExampleRender {...args} />,
+  render: args => <ColorSwatchExampleRender.render {...args} />,
   args: {
     color: 'rgb(255, 0, 0)'
   },

@@ -20,45 +20,49 @@ export default {
   parameters: {
     docs: {disable: true}
   }
-} as Meta<typeof Example>;
+} as Meta<typeof Example.render>;
 
-export function Example(): ReactElement {
-  return (
-    <div
-      className={style({
-        backgroundColor: 'orange-500',
-        color: 'black',
-        font: 'body',
-        paddingX: 8,
-        paddingY: 4,
-        borderRadius: 'lg'
-      })}>
-      Test
-    </div>
-  );
-}
+export const Example = {
+  render: function Example(): ReactElement {
+    return (
+      <div
+        className={style({
+          backgroundColor: 'orange-500',
+          color: 'black',
+          font: 'body',
+          paddingX: 8,
+          paddingY: 4,
+          borderRadius: 'lg'
+        })}>
+        Test
+      </div>
+    );
+  }
+};
 
-export function Well(): ReactElement {
-  return (
-    <div
-      className={style({
-        display: 'block',
-        textAlign: 'start',
-        minWidth: 160,
-        padding: 16,
-        marginTop: 4,
-        borderWidth: 1,
-        borderRadius: 'sm',
-        backgroundColor: 'layer-1',
-        borderStyle: 'solid',
-        borderColor: 'transparent-black-75',
-        font: 'body-sm'
-      })}>
-      S2 style macro equivalent to v3{' '}
-      <Link href="https://react-spectrum.adobe.com/react-spectrum/Well.html" target="_blank">
-        Well
-      </Link>
-      .
-    </div>
-  );
-}
+export const Well = {
+  render: function WellRender(): ReactElement {
+    return (
+      <div
+        className={style({
+          display: 'block',
+          textAlign: 'start',
+          minWidth: 160,
+          padding: 16,
+          marginTop: 4,
+          borderWidth: 1,
+          borderRadius: 'sm',
+          backgroundColor: 'layer-1',
+          borderStyle: 'solid',
+          borderColor: 'transparent-black-75',
+          font: 'body-sm'
+        })}>
+        S2 style macro equivalent to v3{' '}
+        <Link href="https://react-spectrum.adobe.com/react-spectrum/Well.html" target="_blank">
+          Well
+        </Link>
+        .
+      </div>
+    );
+  }
+};

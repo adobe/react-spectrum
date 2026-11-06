@@ -20,7 +20,7 @@ import {Item} from 'react-stately/Item';
 import {Keyboard} from '../../src/text/Keyboard';
 import {Menu} from '../../src/menu/Menu';
 import {MenuTrigger, SpectrumMenuTriggerProps} from '../../src/menu/MenuTrigger';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Provider} from '../../src/provider/Provider';
 import React, {JSX} from 'react';
@@ -74,40 +74,52 @@ export let TranslateMenu = (props: Omit<SpectrumMenuTriggerProps, 'children'>): 
   );
 };
 
-export type MenuTriggerLanguagesStory = StoryFn<typeof MenuTrigger>;
+export type MenuTriggerLanguagesStory = StoryObj<typeof MenuTrigger>;
 
-export const ArabicComplex: MenuTriggerLanguagesStory = () => (
-  <Provider locale="ar-AE">
-    <TranslateMenu isOpen />
-  </Provider>
-);
+export const ArabicComplex: MenuTriggerLanguagesStory = {
+  render: () => (
+    <Provider locale="ar-AE">
+      <TranslateMenu isOpen />
+    </Provider>
+  )
+};
 
-export const HebrewComplex: MenuTriggerLanguagesStory = () => (
-  <Provider locale="he-IL">
-    <TranslateMenu isOpen />
-  </Provider>
-);
+export const HebrewComplex: MenuTriggerLanguagesStory = {
+  render: () => (
+    <Provider locale="he-IL">
+      <TranslateMenu isOpen />
+    </Provider>
+  )
+};
 
-export const JapaneseComplex: MenuTriggerLanguagesStory = () => (
-  <Provider locale="ja-JP">
-    <TranslateMenu isOpen />
-  </Provider>
-);
+export const JapaneseComplex: MenuTriggerLanguagesStory = {
+  render: () => (
+    <Provider locale="ja-JP">
+      <TranslateMenu isOpen />
+    </Provider>
+  )
+};
 
-export const KoreanComplex: MenuTriggerLanguagesStory = () => (
-  <Provider locale="ko-KR">
-    <TranslateMenu isOpen />
-  </Provider>
-);
+export const KoreanComplex: MenuTriggerLanguagesStory = {
+  render: () => (
+    <Provider locale="ko-KR">
+      <TranslateMenu isOpen />
+    </Provider>
+  )
+};
 
-export const ChineseSimplfiedComplex: MenuTriggerLanguagesStory = () => (
-  <Provider locale="zh-CN">
-    <TranslateMenu isOpen />
-  </Provider>
-);
+export const ChineseSimplfiedComplex: MenuTriggerLanguagesStory = {
+  render: () => (
+    <Provider locale="zh-CN">
+      <TranslateMenu isOpen />
+    </Provider>
+  )
+};
 
-export const ChineseTraditionalComplex: MenuTriggerLanguagesStory = () => (
-  <Provider locale="zh-TW">
-    <TranslateMenu isOpen />
-  </Provider>
-);
+export const ChineseTraditionalComplex: MenuTriggerLanguagesStory = {
+  render: () => (
+    <Provider locale="zh-TW">
+      <TranslateMenu isOpen />
+    </Provider>
+  )
+};

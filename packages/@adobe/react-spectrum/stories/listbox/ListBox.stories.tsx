@@ -30,7 +30,7 @@ import {Item} from 'react-stately/Item';
 import {Key} from '@react-types/shared';
 import {Label} from '../../src/label/Label';
 import {ListBox} from '../../src/listbox/ListBox';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {JSX, useRef, useState} from 'react';
 import {Section} from 'react-stately/Section';
@@ -1112,34 +1112,31 @@ export let FocusExample = (args: Omit<SpectrumListBoxProps<any>, 'children'> = {
   );
 };
 
-export const Links: StoryFn<typeof ListBox> = (
-  args: Omit<SpectrumListBoxProps<any>, 'children'>
-) => {
-  return (
-    <ListBox
-      aria-label="ListBox with links"
-      width="250px"
-      height={400}
-      onSelectionChange={action('onSelectionChange')}
-      {...args}>
-      <Item key="https://adobe.com/" href="https://adobe.com/">
-        Adobe
-      </Item>
-      <Item key="https://google.com/" href="https://google.com/">
-        Google
-      </Item>
-      <Item key="https://apple.com/" href="https://apple.com/">
-        Apple
-      </Item>
-      <Item key="https://nytimes.com/" href="https://nytimes.com/">
-        New York Times
-      </Item>
-      <Item>Non link</Item>
-    </ListBox>
-  );
-};
-
-Links.story = {
+export const Links: StoryObj<typeof ListBox> = {
+  render: (args: Omit<SpectrumListBoxProps<any>, 'children'>) => {
+    return (
+      <ListBox
+        aria-label="ListBox with links"
+        width="250px"
+        height={400}
+        onSelectionChange={action('onSelectionChange')}
+        {...args}>
+        <Item key="https://adobe.com/" href="https://adobe.com/">
+          Adobe
+        </Item>
+        <Item key="https://google.com/" href="https://google.com/">
+          Google
+        </Item>
+        <Item key="https://apple.com/" href="https://apple.com/">
+          Apple
+        </Item>
+        <Item key="https://nytimes.com/" href="https://nytimes.com/">
+          New York Times
+        </Item>
+        <Item>Non link</Item>
+      </ListBox>
+    );
+  },
   decorators: [
     Story => (
       <StoryDecorator>
@@ -1191,58 +1188,60 @@ interface ItemValue {
   items?: Array<ItemValue> | null;
 }
 
-export let WithTreeData: StoryFn<typeof ListBox> = () => {
-  let tree = useTreeData<ItemValue>({
-    initialItems: [
-      {
-        name: 'People',
-        items: [{name: 'David'}, {name: 'Sam'}, {name: 'Jane'}]
-      },
-      {
-        name: 'Animals',
-        items: [{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake', items: null}]
-      }
-    ],
-    initialSelectedKeys: ['Sam', 'Kangaroo'],
-    getKey: item => item.name,
-    getChildren: item => item.items || []
-  });
-  return (
-    <ListBox
-      width="250px"
-      height={400}
-      aria-label="List organisms"
-      items={tree.items}
-      selectedKeys={tree.selectedKeys}
-      selectionMode="multiple"
-      onSelectionChange={keys => {
-        if (keys === 'all') {
-          tree.setSelectedKeys(
-            new Set(
-              tree.items.reduce((acc, item) => {
-                acc.push(item.key);
-                function traverse(children) {
-                  if (children) {
-                    children.forEach(child => {
-                      acc.push(child.key);
-                      traverse(child.children);
-                    });
-                  }
-                }
-                traverse(item.children);
-                return acc;
-              }, [] as Key[])
-            )
-          );
-        } else {
-          tree.setSelectedKeys(keys);
+export let WithTreeData: StoryObj<typeof ListBox> = {
+  render: function WithTreeData() {
+    let tree = useTreeData<ItemValue>({
+      initialItems: [
+        {
+          name: 'People',
+          items: [{name: 'David'}, {name: 'Sam'}, {name: 'Jane'}]
+        },
+        {
+          name: 'Animals',
+          items: [{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake', items: null}]
         }
-      }}>
-      {node => (
-        <Section title={node.value.name} items={node.children ?? []}>
-          {node => <Item>{node.value.name}</Item>}
-        </Section>
-      )}
-    </ListBox>
-  );
+      ],
+      initialSelectedKeys: ['Sam', 'Kangaroo'],
+      getKey: item => item.name,
+      getChildren: item => item.items || []
+    });
+    return (
+      <ListBox
+        width="250px"
+        height={400}
+        aria-label="List organisms"
+        items={tree.items}
+        selectedKeys={tree.selectedKeys}
+        selectionMode="multiple"
+        onSelectionChange={keys => {
+          if (keys === 'all') {
+            tree.setSelectedKeys(
+              new Set(
+                tree.items.reduce((acc, item) => {
+                  acc.push(item.key);
+                  function traverse(children) {
+                    if (children) {
+                      children.forEach(child => {
+                        acc.push(child.key);
+                        traverse(child.children);
+                      });
+                    }
+                  }
+                  traverse(item.children);
+                  return acc;
+                }, [] as Key[])
+              )
+            );
+          } else {
+            tree.setSelectedKeys(keys);
+          }
+        }}>
+        {node => (
+          <Section title={node.value.name} items={node.children ?? []}>
+            {node => <Item>{node.value.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
+    );
+  }
 };

@@ -13,7 +13,7 @@
 import {Avatar} from '../../src/avatar/Avatar';
 import {Flex} from '../../src/layout/Flex';
 import React from 'react';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 
 const SRC_URL_1 =
   'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
@@ -23,15 +23,17 @@ export default {
   title: 'Avatar'
 };
 
-export type AvatarStory = StoryFn<typeof Avatar>;
+export type AvatarStory = StoryObj<typeof Avatar>;
 
-export const all: AvatarStory = () => (
-  <Flex gap="size-100" direction={'column'}>
-    <h2>Default</h2>
-    <Avatar src={SRC_URL_1} />
-    <h2>Disabled</h2>
-    <Avatar src={SRC_URL_1} isDisabled />
-    <h2>Custom size</h2>
-    <Avatar src={SRC_URL_2} size={'avatar-size-700'} />
-  </Flex>
-);
+export const all: AvatarStory = {
+  render: () => (
+    <Flex gap="size-100" direction={'column'}>
+      <h2>Default</h2>
+      <Avatar src={SRC_URL_1} />
+      <h2>Disabled</h2>
+      <Avatar src={SRC_URL_1} isDisabled />
+      <h2>Custom size</h2>
+      <Avatar src={SRC_URL_2} size={'avatar-size-700'} />
+    </Flex>
+  )
+};

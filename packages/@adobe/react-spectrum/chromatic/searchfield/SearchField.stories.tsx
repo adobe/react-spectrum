@@ -14,7 +14,7 @@ import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {Flex} from '../../src/layout/Flex';
 import {Heading} from '../../src/text/Heading';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../../src/searchfield/SearchField';
@@ -26,74 +26,62 @@ export default {
   title: 'SearchField'
 } as Meta<typeof SearchField>;
 
-export type SearchFieldStory = StoryFn<typeof SearchField>;
+export type SearchFieldStory = StoryObj<typeof SearchField>;
 
-export const Default: SearchFieldStory = () => renderSearchLandmark(render());
-
-Default.story = {
+export const Default: SearchFieldStory = {
+  render: () => renderSearchLandmark(render()),
   parameters: {info}
 };
 
-export const Value: SearchFieldStory = () => renderSearchLandmark(render({value: 'React'}));
-
-Value.story = {
+export const Value: SearchFieldStory = {
+  render: () => renderSearchLandmark(render({value: 'React'})),
   name: 'value',
   parameters: {info}
 };
 
-export const IsDisabled: SearchFieldStory = () =>
-  renderSearchLandmark(render({value: 'React', isDisabled: true}));
-
-IsDisabled.story = {
+export const IsDisabled: SearchFieldStory = {
+  render: () => renderSearchLandmark(render({value: 'React', isDisabled: true})),
   name: 'isDisabled',
   parameters: {info}
 };
 
-export const IsReadOnly: SearchFieldStory = () =>
-  renderSearchLandmark(render({value: 'React', isReadOnly: true}));
-
-IsReadOnly.story = {
+export const IsReadOnly: SearchFieldStory = {
+  render: () => renderSearchLandmark(render({value: 'React', isReadOnly: true})),
   name: 'isReadOnly',
   parameters: {info}
 };
 
-export const IconRefresh: SearchFieldStory = () =>
-  renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />}));
-
-IconRefresh.story = {
+export const IconRefresh: SearchFieldStory = {
+  render: () => renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />})),
   name: 'icon: refresh',
   parameters: {info}
 };
 
-export const IconNull: SearchFieldStory = () =>
-  renderSearchLandmark(render({defaultValue: 'React', icon: null}));
-
-IconNull.story = {
+export const IconNull: SearchFieldStory = {
+  render: () => renderSearchLandmark(render({defaultValue: 'React', icon: null})),
   name: 'icon: null',
   parameters: {info}
 };
 
-export const CustomWidth: SearchFieldStory = () => render({defaultValue: 'React', width: 275});
-
-CustomWidth.story = {
+export const CustomWidth: SearchFieldStory = {
+  render: () => render({defaultValue: 'React', width: 275}),
   name: 'custom width'
 };
 
-export const _ContextualHelp: SearchFieldStory = args =>
-  render({
-    ...args,
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>
-          Segments identify who your visitors are, what devices and services they use, where they
-          navigated from, and much more.
-        </Content>
-      </ContextualHelp>
-    )
-  });
-
-_ContextualHelp.story = {
+export const _ContextualHelp: SearchFieldStory = {
+  render: args =>
+    render({
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    }),
   name: 'contextual help'
 };
 
