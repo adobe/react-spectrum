@@ -213,8 +213,6 @@ export interface StepListItemContentProps
 
 const StepListItemContext = createContext<{hiddenId: string | undefined} | undefined>(undefined);
 
-// Need this so I can get an id on the contents so that the announcement makes sense.
-// It lands on this element, not the `li` itself.
 export const StepListItemContent = /*#__PURE__*/ (forwardRef as forwardRefType)(
   function StepListItemContent(
     props: StepListItemContentProps,
