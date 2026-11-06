@@ -118,6 +118,11 @@ export function isVirtualDragging(): boolean {
   return !!dragSession;
 }
 
+/** @private */
+export function cancelDragging(): void {
+  dragSession?.cancel();
+}
+
 function endDragging() {
   dragSession = null;
   for (let cb of subscriptions) {

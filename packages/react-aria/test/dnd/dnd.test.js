@@ -22,6 +22,7 @@ import {
   FileSystemFileEntry
 } from './mocks';
 import {Draggable, Droppable} from './examples';
+import * as DragManager from '../../src/dnd/DragManager';
 import {DragTypes} from '../../src/dnd/utils';
 import React, {Profiler, useEffect} from 'react';
 import ReactDOM from 'react-dom';
@@ -71,6 +72,24 @@ describe('useDrag and useDrop', function () {
   });
 
   describe('native drag and drop', () => {
+    it('ends a native drag once when its source unmounts without a dragend event', () => {
+      let onDragEnd = jest.fn();
+      let {getByText, unmount} = render(<Draggable onDragEnd={onDragEnd} />);
+      let source = getByText('Drag me');
+      let dataTransfer = new DataTransfer();
+      fireEvent(source, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+      expect(source).toHaveAttribute('data-dragging', 'true');
+      unmount();
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        x: 0,
+        y: 0,
+        dropOperation: 'cancel'
+      });
+    });
+
     it('should perform basic drag and drop', async () => {
       let onDragStart = jest.fn();
       let onDragMove = jest.fn();
@@ -1637,6 +1656,28 @@ describe('useDrag and useDrop', function () {
         expect(dataTransfer._dragImage.y).toBe(0);
       });
     });
+  });
+
+  it('cancels a virtual drag when its standalone source unmounts', () => {
+    let onDragEnd = jest.fn();
+    let {getByText, unmount} = render(<Draggable onDragEnd={onDragEnd} />);
+    let source = getByText('Drag me');
+
+    fireEvent.focus(source);
+    fireEvent.click(source);
+    act(() => jest.runAllTimers());
+    expect(DragManager.isVirtualDragging()).toBe(true);
+
+    unmount();
+    try {
+      expect(DragManager.isVirtualDragging()).toBe(false);
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith(expect.objectContaining({dropOperation: 'cancel'}));
+    } finally {
+      if (DragManager.isVirtualDragging()) {
+        fireEvent.keyDown(document, {key: 'Escape'});
+      }
+    }
   });
 
   describe('keyboard', () => {
