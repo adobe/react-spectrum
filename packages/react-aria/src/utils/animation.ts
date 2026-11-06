@@ -111,6 +111,7 @@ function useAnimation(
   onEnd: () => void
 ): void {
   let isActiveRef = useRef<boolean | null>(null);
+  let currentRun = useRef<object | null>(null);
   let start = useEffectEvent(onStart);
   useLayoutEffect(() => {
     if (isActive && ref.current && isActiveRef.current !== isActive) {
@@ -135,15 +136,22 @@ function useAnimation(
         return;
       }
 
-      Promise.all([startPromise, ...animations.map(a => a.finished)])
-        .then(() => {
+      // Cancelled animations reject, so wait for every promise to settle. Ignore interrupted runs with
+      // a token rather than an effect cleanup, which the isActiveRef guard breaks in StrictMode.
+      let run = {};
+      currentRun.current = run;
+      Promise.allSettled([startPromise, ...animations.map(a => a.finished)]).then(() => {
+        if (currentRun.current === run) {
           flushSync(() => {
             onEnd();
           });
-        })
-        .catch(() => {});
+        }
+      });
     }
 
+    if (!isActive) {
+      currentRun.current = null;
+    }
     isActiveRef.current = isActive;
   }, [ref, isActive, onEnd]);
 }
