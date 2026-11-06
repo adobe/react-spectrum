@@ -55,6 +55,9 @@ const itemStyles = tv({
   }
 });
 
+const dragButtonStyles =
+  '[&[draggable=true]]:cursor-grab [&[draggable=true]]:pressed:cursor-grabbing [&[draggable=true]]:[-webkit-user-drag:element]';
+
 export function GridListItem({children, ...props}: GridListItemProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
@@ -64,7 +67,11 @@ export function GridListItem({children, ...props}: GridListItemProps) {
         (children, {selectionMode, selectionBehavior, allowsDragging}) => (
           <>
             {/* Add elements for drag and drop and selection. */}
-            {allowsDragging && <Button slot="drag">≡</Button>}
+            {allowsDragging && (
+              <Button slot="drag" className={dragButtonStyles}>
+                ≡
+              </Button>
+            )}
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               <Checkbox slot="selection" />
             )}
