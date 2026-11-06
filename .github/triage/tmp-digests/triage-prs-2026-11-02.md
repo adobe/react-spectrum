@@ -1,76 +1,235 @@
-| PR | Complexity | Red flags | Merge risk | Would label | Ready for review? | Would comment (duplicate notice only) | Would close / duplicate of | Confidence |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [#10901](https://github.com/adobe/react-spectrum/pull/10901) | High | Maintainer paused review; new hook option and unresolved disabled/focus contract | High | `merge-risk: high`, `ai-reviewed`, `needs API review`, `needs decision`, `on hold` | No | No comment; partial implementation overlap, not a complete duplicate | Would not close; would link #10619 for coordination | High on hold; medium on implementation |
-| [#10908](https://github.com/adobe/react-spectrum/pull/10908) | High | CLA ACTION_REQUIRED; author-understanding confirmation unchecked | Medium | `merge-risk: medium`, `ai-reviewed`, `waiting for author` | No | No comment | Would not close; no same-bug duplicate found | High on blockers; medium on correctness |
+# PR triage digest — 2026-11-02
 
-# PR triage digest, 2026-11-02
+> Presentation-only revision of the original digest. This is not fresh triage: findings, labels, comments and closures remain historical proposals, not executed actions or current authorization.
 
-Read-only GitHub draft. All actions below are proposals, not applied.
+## At a glance
 
-- Branch: `triage_support`, dedicated checkout `/Users/darobins/dev/react-spectrum-triage`. Initial index empty; no merge in progress or other active triage session observed. The existing local `.github/triage/setup.md` adaptation remains untouched and unstaged.
-- Synchronization: `git fetch origin` succeeded; `git merge origin/main --no-edit` succeeded without conflicts. Merged main: `83fb30648fe0a1c463256423553d6b3a4ee2ce82`.
-- Scope: open, non-draft, non-bot PRs created since the previous digest commit, `2026-11-01T17:24:38Z`, through this run on November 2 PST, without `ai-reviewed`. Both the last-24-hours query and the since-last-digest query returned only the two PRs above.
-- Method: GitHub reads through `gh pr list/view/diff`, `gh issue view`, `gh search`, and explicit GET API calls. Read full issue comments and inline PR comments with pagination. No PR checkout, patch application, contributor URL retrieval, or code execution. No GitHub writes and no push.
-- Both PRs change shared core behavior, so step 1's high-complexity rule takes precedence over their small source line counts. Step 2's full low-complexity red-flag review was intentionally not performed. Readiness is still assessed from descriptions, diffs, maintainer discussion and reported checks.
+- 2 PRs assessed in the original run; these are historical recommendations, not fresh readiness checks.
+- No analyzed PR was judged ready; concrete author blockers and unresolved maintainer direction remain historical findings.
 
-## #10901: prevent selecting an open Select after it is disabled
+## Analyzed PRs
+
+### [#10901](https://github.com/adobe/react-spectrum/pull/10901) — Disabled-while-open Select
+
+**Decision:** Keep on hold: the maintainer explicitly paused review pending the focus/API decision.
+
+**Complexity:** High
+
+**Impact / severity:** Not assessed in the original run
+
+**Merge risk:** High
+
+#### What matters
+
+- The new hook option and option-disable precedence need API review despite private marking.
+- Green CI cannot resolve whether to close, keep open but disabled, or rely on application sequencing; #10619 is partial overlap.
+
+#### Would have done
+
+**Labels (proposed)**
+
+- would apply `merge-risk: high` because the shared option override and focus/API contract are unresolved
+- would apply `ai-reviewed` because this revision's scoped triage and gaps are recorded
+- would apply `needs API review` for the new exported hook option and interaction semantics
+- would apply `needs decision` for close-on-disable versus keep-open/application-controlled behavior
+- would apply `on hold` pending that decision, coordinated by snowystinger.
+- Would remove none: current label set is empty.
+
+
+**Maintainer next step**
+
+- **Historical proposal:** would not close.
+- **Historical proposal:** would escalate the API/focus decision to snowystinger; would make no assignment.
+- No automated comment was proposed; any explicitly optional comment remains optional in the appendix.
+
+### [#10908](https://github.com/adobe/react-spectrum/pull/10908) — Tree mutations through falsy keys
+
+**Decision:** Not ready until CLA and explicit contributor-understanding confirmation are complete.
+
+**Complexity:** High
+
+**Impact / severity:** Not assessed in the original run
+
+**Merge risk:** Medium
+
+#### What matters
+
+- A nullish parent-key test restores traversal through 0 and empty-string keys.
+- The focused hook tests are promising, but local outcomes and full core-mutation correctness were not independently verified.
+
+#### Would have done
+
+**Labels (proposed)**
+
+- would apply `merge-risk: medium` for shared core mutation behavior with promising focused coverage but limited automated triage
+- would apply `ai-reviewed` for this revision's completed scoped assessment
+- would apply `waiting for author` because CLA and human-understanding confirmation remain outstanding.
+- Would remove none: current label set is empty.
+- Would not apply `small review`: the core-behavior rule makes complexity high.
+
+
+**Maintainer next step**
+
+- **Historical proposal:** would not close; no duplicate.
+- **Historical proposal:** would make no assignment or API escalation.
+- No automated comment was proposed; any explicitly optional comment remains optional in the appendix.
+
+## Evidence and verification appendix
+
+### #10901 — Evidence and verification
 
 [PR](https://github.com/adobe/react-spectrum/pull/10901), reviewed revision `07b1c101e13b8a426f1a1abfdb582be1e06a70fb`. **High complexity:** shared listbox/option behavior plus Select wiring and RAC coverage.
 
+
 The change propagates Select's current disabled state to listbox options so an already-open popup cannot change selection, while deliberately leaving popup open state under application control. It adds a pointer/keyboard/re-enable regression, but the maintainer has explicitly paused review pending agreement on whether this interaction should be supported.
 
-**API and compatibility:** [diff](https://github.com/adobe/react-spectrum/pull/10901/files), `packages/react-aria/src/listbox/useListBox.ts:83-85` adds `/** @private */ UNSTABLE_isDisabled?: boolean` to exported `AriaListBoxOptions`; `useSelect.ts` forwards it in `menuProps`. Although private-marked, this is a new hook-option/type surface and merits `needs API review`, contrary to the body's "no public API change" shorthand. `useOption.ts:110` changes precedence to `data?.isDisabled || (props.isDisabled ?? state.selectionManager.isDisabled(key))`, so a globally disabled listbox overrides an explicit option-level `isDisabled={false}`. Options become `aria-disabled`; no new DOM wrapper, class, data attribute or CSS variable is added. No rename/removal or changed default is apparent, but disabled-state interaction and focus compatibility require a team decision.
 
-**Decision evidence:** in [#10902's sole issue comment](https://github.com/adobe/react-spectrum/issues/10902#issuecomment-6584018218), snowystinger says "Focus will be lost to the page and it could be very jarring" and suggests controlling the value and deferring disabling, or starting disabled while waiting for an API. The [PR review](https://github.com/adobe/react-spectrum/pull/10901) says "Will not continue reviewing until the conversation on the Issue is resolved"; the [inline comment](https://github.com/adobe/react-spectrum/pull/10901#discussion_r4445599170) asks "Is there any way we can do this without adding a prop? Maybe close the popover if the select becomes disabled?" Would apply `needs decision`: should Select close when disabled, propagate disabled state while remaining open, or rely on application-controlled sequencing? This is not a request for the author to guess a direction.
 
-**Duplicates and overlap:** would link [#10619](https://github.com/adobe/react-spectrum/pull/10619), not close either PR as a complete duplicate. Its [diff](https://github.com/adobe/react-spectrum/pull/10619/files) adds ListBox-wide `isDisabled`, the same shared `listData.isDisabled` field, and option disabling, but does not add Select's propagation; its option-level override precedence also differs. Both PRs have successful Adobe CLA checks, so CLA does not select a winner. Would retain #10619 as the existing ListBox API discussion and defer #10901's Select-specific direction to snowystinger; neither is an agreed end-to-end replacement for the other. The [unresolved selection-only contract](https://github.com/adobe/react-spectrum/pull/10619#discussion_r4133030058) and [maintainer scope warning](https://github.com/adobe/react-spectrum/pull/10619#discussion_r4059062148) reinforce coordination rather than automatic closure. Searches covered #10902 references, disabled Select/ListBox behavior, and shared `useOption.ts`; no other same-reproduction PR was identified.
+#### API and compatibility
 
-**Readiness evidence:** [checks](https://github.com/adobe/react-spectrum/pull/10901/checks) show Adobe CLA SUCCESS and all returned CI contexts successful. The body reports unrelated local full-suite/browser failures; those are author-reported, not independently established as baseline here. The test at `packages/react-aria-components/test/Select.test.js:335` clicks Dog after disabling, checks `aria-disabled`, tries keyboard input, then re-enables; manual instructions exist. API/focus direction remains the blocker regardless of green CI. GitHub reports non-draft, although the body still says "Draft pending author review".
+[diff](https://github.com/adobe/react-spectrum/pull/10901/files), `packages/react-aria/src/listbox/useListBox.ts:83-85` adds `/** @private */ UNSTABLE_isDisabled?: boolean` to exported `AriaListBoxOptions`; `useSelect.ts` forwards it in `menuProps`.
 
-**Would have done**
+Although private-marked, this is a new hook-option/type surface and merits `needs API review`, contrary to the body's "no public API change" shorthand. `useOption.ts:110` changes precedence to `data?.isDisabled || (props.isDisabled ?? state.selectionManager.isDisabled(key))`, so a globally disabled listbox overrides an explicit option-level `isDisabled={false}`.
 
-- **Labels:** would apply `merge-risk: high` because the shared option override and focus/API contract are unresolved; would apply `ai-reviewed` because this revision's scoped triage and gaps are recorded; would apply `needs API review` for the new exported hook option and interaction semantics; would apply `needs decision` for close-on-disable versus keep-open/application-controlled behavior; would apply `on hold` pending that decision, coordinated by snowystinger. Would remove none: current label set is empty.
-- **Ready for review:** Would have added `ready for review`: no. Missing maintainer direction on #10902, resolution of the requested prop-free approach and coordination with #10619; then the chosen focus contract needs appropriate verification/instructions. CLA is signed and CI is green.
-- **Comment:** no comment. #10619 is overlapping infrastructure, not a duplicate solution to the Select reproduction; no duplicate-notice comment is proposed.
-- **Close / link:** would not close. Would link #10619 for shared implementation/API coordination, without declaring either the winner for both problems.
-- **Other:** would escalate the API/focus decision to snowystinger; would make no assignment. No `regression` or patch-release recommendation without history/release-policy evidence.
-- **Confidence:** high that review should remain on hold, medium on implementation correctness because high-complexity review is deliberately limited and focus behavior was not executed. An agreed design and verified focus/interaction behavior would change readiness.
-- **Feedback prompt:** review whether partial ListBox overlap should stay a coordination link rather than trigger a duplicate notice or closure.
+Options become `aria-disabled`; no new DOM wrapper, class, data attribute or CSS variable is added. No rename/removal or changed default is apparent, but disabled-state interaction and focus compatibility require a team decision.
 
-## #10908: propagate useTreeData mutations through falsy parent keys
+
+
+#### Decision evidence
+
+in [#10902's sole issue comment](https://github.com/adobe/react-spectrum/issues/10902#issuecomment-6584018218), snowystinger says "Focus will be lost to the page and it could be very jarring" and suggests controlling the value and deferring disabling, or starting disabled while waiting for an API.
+
+The [PR review](https://github.com/adobe/react-spectrum/pull/10901) says "Will not continue reviewing until the conversation on the Issue is resolved"; the [inline comment](https://github.com/adobe/react-spectrum/pull/10901#discussion_r4445599170) asks "Is there any way we can do this without adding a prop?
+
+Maybe close the popover if the select becomes disabled?" Would apply `needs decision`: should Select close when disabled, propagate disabled state while remaining open, or rely on application-controlled sequencing? This is not a request for the author to guess a direction.
+
+
+
+#### Duplicates and overlap
+
+would link [#10619](https://github.com/adobe/react-spectrum/pull/10619), not close either PR as a complete duplicate. Its [diff](https://github.com/adobe/react-spectrum/pull/10619/files) adds ListBox-wide `isDisabled`, the same shared `listData.isDisabled` field, and option disabling, but does not add Select's propagation; its option-level override precedence also differs.
+Both PRs have successful Adobe CLA checks, so CLA does not select a winner. Would retain #10619 as the existing ListBox API discussion and defer #10901's Select-specific direction to snowystinger; neither is an agreed end-to-end replacement for the other.
+The [unresolved selection-only contract](https://github.com/adobe/react-spectrum/pull/10619#discussion_r4133030058) and [maintainer scope warning](https://github.com/adobe/react-spectrum/pull/10619#discussion_r4059062148) reinforce coordination rather than automatic closure. Searches covered #10902 references, disabled Select/ListBox behavior, and shared `useOption.ts`; no other same-reproduction PR was identified.
+
+
+
+#### Readiness evidence
+
+[checks](https://github.com/adobe/react-spectrum/pull/10901/checks) show Adobe CLA SUCCESS and all returned CI contexts successful. The body reports unrelated local full-suite/browser failures; those are author-reported, not independently established as baseline here.
+The test at `packages/react-aria-components/test/Select.test.js:335` clicks Dog after disabling, checks `aria-disabled`, tries keyboard input, then re-enables; manual instructions exist. API/focus direction remains the blocker regardless of green CI.
+GitHub reports non-draft, although the body still says "Draft pending author review".
+
+#### Original confidence and decision-changing evidence
+
+high that review should remain on hold, medium on implementation correctness because high-complexity review is deliberately limited and focus behavior was not executed. An agreed design and verified focus/interaction behavior would change readiness.
+
+#### Original summary caveats
+
+Maintainer paused review; new hook option and unresolved disabled/focus contract
+
+
+#### Historical action and comment detail (not executed)
+
+#### Readiness rationale
+Would have added `ready for review`: no. Missing maintainer direction on #10902, resolution of the requested prop-free approach and coordination with #10619; then the chosen focus contract needs appropriate verification/instructions.
+
+CLA is signed and CI is green.
+#### Historical close / link proposal
+would not close. Would link #10619 for shared implementation/API coordination, without declaring either the winner for both problems.
+#### Historical other proposal
+would escalate the API/focus decision to snowystinger; would make no assignment. No `regression` or patch-release recommendation without history/release-policy evidence.
+- **Historical comment proposal:** no comment. #10619 is overlapping infrastructure, not a duplicate solution to the Select reproduction; no duplicate-notice comment is proposed.
+
+### #10908 — Evidence and verification
 
 [PR](https://github.com/adobe/react-spectrum/pull/10908), reviewed revision `2a787e8f993a64babe0d2c5e8ef8a20829514ee4`. **High complexity:** `react-stately` core tree-mutation behavior, despite a one-line source change.
 
+
 The ancestor-reconstruction loop changes from a truthiness check to `node.parentKey != null`, allowing traversal through parent keys `0` and `''` while preserving the nullish root sentinel. Eight parameterized hook regressions cover descendant update, remove/selection cleanup, insertion and moving to root, including a higher ancestor and an immutable previous snapshot.
 
-**API and compatibility:** [diff](https://github.com/adobe/react-spectrum/pull/10908/files), `packages/react-stately/src/data/useTreeData.ts:213` changes `while (node && node.parentKey)` to `while (node && node.parentKey != null)`. No prop, type, export, event, default, DOM/class/data attribute or CSS-variable change is present; observable mutation results for valid falsy keys change from stale/duplicated to consistent tree contents. Would not apply `needs API review` on this evidence: it restores the existing valid-key contract rather than proposing a new API.
 
-**Issue and duplicate context:** closes [#10907](https://github.com/adobe/react-spectrum/issues/10907), whose inline reproduction updates a child beneath key `0` and compares `items` with `getItem`; the issue has no comments or competing maintainer direction. `git show origin/main:packages/react-stately/src/data/useTreeData.ts` confirms the truthiness loop remains at the synchronized main revision, so main has not already incorporated this fix. Searches covered #10907, `useTreeData`, `parentKey`, the source filename and falsy-key issues.
 
-Related but not equivalent: [#9841](https://github.com/adobe/react-spectrum/pull/9841) changes `TreeDropTargetDelegate.ts` for single-root drag/drop targets, not the mutation loop; merged [#10560](https://github.com/adobe/react-spectrum/pull/10560) validates moving into one's own subtree in the same source/test files; closed [#9991](https://github.com/adobe/react-spectrum/issues/9991) reports falsy keys in RAC TreeCollection, a different collection/rendering path. Would not close or prefer any of these over #10908; no same-bug duplicate was found, so no duplicate-candidate CLA tie-break is needed. #9991's version regression is not evidence that this distinct mutation defect is itself a regression.
+#### API and compatibility
 
-**Readiness evidence:** [checks](https://github.com/adobe/react-spectrum/pull/10908/checks) show "Adobe CLA Signed?" = ACTION_REQUIRED; all other returned checks/CI contexts are successful. The [body](https://github.com/adobe/react-spectrum/pull/10908) explicitly leaves "I understand and can explain every change" unchecked for the human contributor and reports focused before/after results plus a rerun of an initially failed FocusScope worker. Would not treat the reported local outcomes as independently reproduced; the provided public-hook tests and manual issue-component instructions are evidence for reviewability, not execution here. No story/docs change is evidently needed for an internal consistency fix.
+[diff](https://github.com/adobe/react-spectrum/pull/10908/files), `packages/react-stately/src/data/useTreeData.ts:213` changes `while (node && node.parentKey)` to `while (node && node.parentKey != null)`. No prop, type, export, event, default, DOM/class/data attribute or CSS-variable change is present; observable mutation results for valid falsy keys change from stale/duplicated to consistent tree contents.
+Would not apply `needs API review` on this evidence: it restores the existing valid-key contract rather than proposing a new API.
 
-**Would have done**
 
-- **Labels:** would apply `merge-risk: medium` for shared core mutation behavior with promising focused coverage but limited automated triage; would apply `ai-reviewed` for this revision's completed scoped assessment; would apply `waiting for author` because CLA and human-understanding confirmation remain outstanding. Would remove none: current label set is empty. Would not apply `small review`: the core-behavior rule makes complexity high.
-- **Ready for review:** Would have added `ready for review`: no. Missing successful CLA signing and the contributor's explicit understanding confirmation; tests and manual reproduction instructions are present and returned code CI is green.
-- **Comment:** no comment.
-- **Close / link:** would not close; no duplicate. Would keep this PR for #10907 rather than substituting the related but different #9841, #10560 or #9991.
-- **Other:** would make no assignment or API escalation. Would not propose `regression` without known-working version/history evidence, or `patch worthy` without release-policy context.
-- **Confidence:** high on the CLA/confirmation blockers; medium on correctness because this high-complexity triage does not perform the full red-flag review or execute code. A successful CLA check and author confirmation would permit readiness reassessment.
-- **Feedback prompt:** review whether the explicit core-behavior complexity rule should outweigh the one-line source diff for this kind of falsy-key fix.
 
-## Unresolved decision candidates
+#### Issue and duplicate context
+
+closes [#10907](https://github.com/adobe/react-spectrum/issues/10907), whose inline reproduction updates a child beneath key `0` and compares `items` with `getItem`; the issue has no comments or competing maintainer direction. `git show origin/main:packages/react-stately/src/data/useTreeData.ts` confirms the truthiness loop remains at the synchronized main revision, so main has not already incorporated this fix. Searches covered #10907, `useTreeData`, `parentKey`, the source filename and falsy-key issues.
+
+
+Related but not equivalent: [#9841](https://github.com/adobe/react-spectrum/pull/9841) changes `TreeDropTargetDelegate.ts` for single-root drag/drop targets, not the mutation loop; merged [#10560](https://github.com/adobe/react-spectrum/pull/10560) validates moving into one's own subtree in the same source/test files; closed [#9991](https://github.com/adobe/react-spectrum/issues/9991) reports falsy keys in RAC TreeCollection, a different collection/rendering path.
+
+Would not close or prefer any of these over #10908; no same-bug duplicate was found, so no duplicate-candidate CLA tie-break is needed. #9991's version regression is not evidence that this distinct mutation defect is itself a regression.
+
+
+
+
+#### Readiness evidence
+
+[checks](https://github.com/adobe/react-spectrum/pull/10908/checks) show "Adobe CLA Signed?" = ACTION_REQUIRED; all other returned checks/CI contexts are successful. The [body](https://github.com/adobe/react-spectrum/pull/10908) explicitly leaves "I understand and can explain every change" unchecked for the human contributor and reports focused before/after results plus a rerun of an initially failed FocusScope worker.
+Would not treat the reported local outcomes as independently reproduced; the provided public-hook tests and manual issue-component instructions are evidence for reviewability, not execution here. No story/docs change is evidently needed for an internal consistency fix.
+
+#### Original confidence and decision-changing evidence
+
+high on the CLA/confirmation blockers; medium on correctness because this high-complexity triage does not perform the full red-flag review or execute code. A successful CLA check and author confirmation would permit readiness reassessment.
+
+#### Original summary caveats
+
+CLA ACTION_REQUIRED; author-understanding confirmation unchecked
+
+
+
+#### Historical action and comment detail (not executed)
+
+#### Readiness rationale
+Would have added `ready for review`: no. Missing successful CLA signing and the contributor's explicit understanding confirmation; tests and manual reproduction instructions are present and returned code CI is green.
+#### Historical close / link proposal
+would not close; no duplicate. Would keep this PR for #10907 rather than substituting the related but different #9841, #10560 or #9991.
+#### Historical other proposal
+would make no assignment or API escalation. Would not propose `regression` without known-working version/history evidence, or `patch worthy` without release-policy context.
+- **Historical comment proposal:** no comment.
+
+## Run notes
+
+The following records the original run, including its operational history and policy feedback; it does not describe actions taken during this presentation-only revision.
+
+Read-only GitHub draft. All actions below are proposals, not applied.
+- Branch: `triage_support`, dedicated checkout `/Users/darobins/dev/react-spectrum-triage`. Initial index empty; no merge in progress or other active triage session observed.
+- The existing local `.github/triage/setup.md` adaptation remains untouched and unstaged.
+- Synchronization: `git fetch origin` succeeded; `git merge origin/main --no-edit` succeeded without conflicts. Merged main: `83fb30648fe0a1c463256423553d6b3a4ee2ce82`.
+- Scope: open, non-draft, non-bot PRs created since the previous digest commit, `2026-11-01T17:24:38Z`, through this run on November 2 PST, without `ai-reviewed`. Both the last-24-hours query and the since-last-digest query returned only the two PRs above.
+- Method: GitHub reads through `gh pr list/view/diff`, `gh issue view`, `gh search`, and explicit GET API calls. Read full issue comments and inline PR comments with pagination.
+- No PR checkout, patch application, contributor URL retrieval, or code execution. No GitHub writes and no push.
+- Both PRs change shared core behavior, so step 1's high-complexity rule takes precedence over their small source line counts. Step 2's full low-complexity red-flag review was intentionally not performed.
+- Readiness is still assessed from descriptions, diffs, maintainer discussion and reported checks.
+#### Feedback for #10901
+
+#10901: review whether partial ListBox overlap should stay a coordination link rather than trigger a duplicate notice or closure.
+#### Unresolved decision candidates
+
 
 Would keep [#10901](https://github.com/adobe/react-spectrum/pull/10901) on hold with snowystinger coordinating: establish the disabled-while-open Select focus/API contract before continuing review, and reconcile shared ListBox behavior with [#10619](https://github.com/adobe/react-spectrum/pull/10619). No product/scope decision is evidenced for #10908.
 
-## Rule feedback
 
-- **Missing proposed labels:** the full repository label listing lacks `ai-reviewed`, `merge-risk: high`, `merge-risk: medium`, `needs decision` and `waiting for author`. Would request these exact labels be created before applying the proposals; the existing `waiting on author` is not silently substituted. `needs API review`, `on hold` and `ready for review` exist. No labels were created.
-- **Complexity versus size:** both changes meet the explicit high-complexity core-behavior criterion. Only classification, summary, API/compatibility, duplicate context and required readiness/proposal evidence were assessed, not the full low-complexity step 2 audit. Thus absence of a low-complexity flag is not a clean bill of health.
+
+#### Rule feedback
+
+
+- **Missing proposed labels:** the full repository label listing lacks `ai-reviewed`, `merge-risk: high`, `merge-risk: medium`, `needs decision` and `waiting for author`. Would request these exact labels be created before applying the proposals; the existing `waiting on author` is not silently substituted. `needs API review`, `on hold` and `ready for review` exist.
+- No labels were created.
+- **Complexity versus size:** both changes meet the explicit high-complexity core-behavior criterion. Only classification, summary, API/compatibility, duplicate context and required readiness/proposal evidence were assessed, not the full low-complexity step 2 audit.
+- Thus absence of a low-complexity flag is not a clean bill of health.
 - **Partial duplicate judgment:** #10619 overlaps implementation, but does not address Select propagation end to end. Would link and coordinate rather than draft a duplicate notice or recommend closure; both CLAs are signed, so that preference does not resolve the contract dispute.
 - **Scope cutoff:** used the prior digest commit time rather than trusting its approximate prose timestamp. The exact since-last-digest and 24-hour scopes yielded the same two PRs; neither draft/bot nor previously digested PR was added.
-- **Search failures and recovery:** two initial `gh search` calls combining `repo:` and terms in a positional query failed with "Invalid search query". Retried successfully with explicit `--repo adobe/react-spectrum`, including title/body searches. Exact issue-reference queries and direct inspection of related PRs supplemented search results; text search is not exhaustive diff indexing.
-- **Verification limits:** no contributor-supplied links, reproduction videos, external CI URLs or PR code were opened/executed. Conclusions derive from GitHub metadata, read-only diffs/discussions and synchronized main source. No exploit assessment or full test run is claimed. Neither PR changes workflows, scripts, dependencies, lockfiles, install scripts or build configuration, so the file-triggered "needs security review" escalation does not apply.
+- **Search failures and recovery:** two initial `gh search` calls combining `repo:` and terms in a positional query failed with "Invalid search query". Retried successfully with explicit `--repo adobe/react-spectrum`, including title/body searches.
+- Exact issue-reference queries and direct inspection of related PRs supplemented search results; text search is not exhaustive diff indexing.
+- **Verification limits:** no contributor-supplied links, reproduction videos, external CI URLs or PR code were opened/executed. Conclusions derive from GitHub metadata, read-only diffs/discussions and synchronized main source.
+- No exploit assessment or full test run is claimed. Neither PR changes workflows, scripts, dependencies, lockfiles, install scripts or build configuration, so the file-triggered "needs security review" escalation does not apply.
 - **Human confirmation:** #10908 intentionally leaves the author-understanding item unchecked. Would treat that explicit pending attestation as an author action under current contribution guidance rather than assume automated testing supplies it. #10901's non-draft metadata takes precedence over its stale "Draft pending" prose, but the maintainer's explicit hold still controls readiness.
+#### Feedback for #10908
+
+#10908: review whether the explicit core-behavior complexity rule should outweigh the one-line source diff for this kind of falsy-key fix.
