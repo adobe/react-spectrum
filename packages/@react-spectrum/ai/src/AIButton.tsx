@@ -1,9 +1,7 @@
 import {Button, ButtonProps} from 'react-aria-components/Button';
 import {
-  convertColor,
   defaultBrand,
   defineProperties,
-  token
 } from './tokens.macro' with {type: 'macro'};
 import {createIcon, IconContext} from '@react-spectrum/s2/Icon';
 import {
