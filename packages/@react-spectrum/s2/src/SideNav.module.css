@@ -1,46 +1,34 @@
-/* Collapse/expand animations for SideNav.
- *
- * SideNav puts a <ViewTransition> around every row and names every section header, and SideNavPanel
- * animates its own width with a plain CSS transition so the rest of the page reflows along with it.
- * The two never run at the same time. */
+/* Collapsing or expanding the panel runs two animations at once: the outer element's width uses a
+ * CSS transition so the page reflows, while the inner element's snapshot cross fades on top of it.
+ * Expanding an item is a separate transition that captures each row instead. */
 
-::view-transition-group(.side-nav-item),
-::view-transition-group(.side-nav-header) {
+/* Icons are clipped to where the panel's snapshot has reached, so both need the same timing. */
+::view-transition-group(.side-nav),
+::view-transition-group(.side-nav-icon) {
+  /* Keep in sync with the transition on SideNavPanel in SideNavPanel.tsx. */
   animation-duration: 200ms;
   animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1);
 }
 
-::view-transition-old(.side-nav-item),
-::view-transition-new(.side-nav-item),
-::view-transition-old(.side-nav-header),
-::view-transition-new(.side-nav-header) {
+/* Snapshots behave like `img`s: fill the group as it resizes, and crop rather than scale their
+ * contents. */
+::view-transition-old(.side-nav),
+::view-transition-new(.side-nav) {
   width: 100%;
   height: 100%;
+  object-fit: none;
+  object-position: left top;
 }
 
-:root:active-view-transition-type(
-    side-panel-expand,
-    side-nav-item-collapse,
-    side-nav-item-expand
-  ):global(::view-transition-old(root)) {
-  animation: none;
-  opacity: 0;
+/* Snapshots live under the root, so they can't inherit the panel's direction. In RTL the right
+ * edge stays put. */
+:root:active-view-transition-type(side-panel-rtl)::view-transition-old(.side-nav),
+:root:active-view-transition-type(side-panel-rtl)::view-transition-new(.side-nav) {
+  object-position: right top;
 }
 
-:root:active-view-transition-type(
-    side-panel-expand,
-    side-nav-item-collapse,
-    side-nav-item-expand
-  ):global(::view-transition-new(root)) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-/* Expanding the panel puts section headers back into the layout, which pushes every row below them
- * down. A header comes back from display: none, so it has no box in the old state and enters rather
- * than moves. Holding that fade in until the second half keeps the header from appearing on top of
- * the rows that are still sliding past it. */
-:root:active-view-transition-type(side-panel-expand)::view-transition-new(.side-nav-header) {
-  animation-duration: 100ms;
-  animation-delay: 100ms;
+/* Don't capture the root. The page reflows live with the panel, and the overlay is clipped to the
+ * nav, so a root snapshot would hide the rest of the page until the transition ends. */
+:root:active-view-transition-type(side-panel, side-nav-item) {
+  view-transition-name: none;
 }
