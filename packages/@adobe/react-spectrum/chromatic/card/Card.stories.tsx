@@ -171,7 +171,7 @@ export const WithIllustration: CardStory = {
   args: {
     children: (
       <>
-        <File alt="file" slot="illustration" width={50} height={50} />
+        <FileAsset alt="file" slot="illustration" width={50} height={50} />
         <Heading>Title</Heading>
         <Text slot="detail">PNG</Text>
       </>
@@ -297,7 +297,7 @@ export const Selected: CardStory = SelectedStory;
 
 // actually use Illustration???
 // where to get the three asset svgs to use with Illustration
-export function File(props: any): JSX.Element {
+function FileAsset(props: any): JSX.Element {
   props = useSlotProps(props, 'asset');
   let {styleProps} = useStyleProps(props);
   return (
@@ -325,6 +325,10 @@ export function File(props: any): JSX.Element {
     </div>
   );
 }
+
+export const File = {
+  render: FileAsset
+};
 
 function IllustrationContainer(props) {
   props = useSlotProps(props, 'illustration');

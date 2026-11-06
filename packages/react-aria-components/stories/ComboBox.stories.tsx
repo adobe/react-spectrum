@@ -22,7 +22,7 @@ import {ListBox} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {LoadingSpinner, MyListBoxItem} from './utils';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Modal, ModalOverlay} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React, {JSX, useMemo, useState} from 'react';
@@ -38,35 +38,37 @@ export default {
   component: ComboBox
 } as Meta<typeof ComboBox>;
 
-export type ComboBoxStory = StoryFn<typeof ComboBox>;
+export type ComboBoxStory = StoryObj<typeof ComboBox>;
 export type ComboBoxStoryObj = StoryObj<typeof ComboBox>;
 
-export const ComboBoxExample: ComboBoxStory = () => (
-  <ComboBox name="combo-box-example" data-testid="combo-box-example" allowsEmptyCollection>
-    <Label style={{display: 'block'}}>Test</Label>
-    <div style={{display: 'flex'}}>
-      <Input />
-      <Button>
-        <span aria-hidden="true" style={{padding: '0 2px'}}>
-          ▼
-        </span>
-      </Button>
-    </div>
-    <Popover>
-      <ListBox
-        renderEmptyState={renderEmptyState}
-        data-testid="combo-box-list-box"
-        className={styles.menu}
-        style={{width: 'var(--trigger-width)'}}>
-        <MyListBoxItem>Foo</MyListBoxItem>
-        <MyListBoxItem>Bar</MyListBoxItem>
-        <MyListBoxItem>Baz</MyListBoxItem>
-        <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-        <MyListBoxLoaderIndicator />
-      </ListBox>
-    </Popover>
-  </ComboBox>
-);
+export const ComboBoxExample: ComboBoxStory = {
+  render: () => (
+    <ComboBox name="combo-box-example" data-testid="combo-box-example" allowsEmptyCollection>
+      <Label style={{display: 'block'}}>Test</Label>
+      <div style={{display: 'flex'}}>
+        <Input />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>
+            ▼
+          </span>
+        </Button>
+      </div>
+      <Popover>
+        <ListBox
+          renderEmptyState={renderEmptyState}
+          data-testid="combo-box-list-box"
+          className={styles.menu}
+          style={{width: 'var(--trigger-width)'}}>
+          <MyListBoxItem>Foo</MyListBoxItem>
+          <MyListBoxItem>Bar</MyListBoxItem>
+          <MyListBoxItem>Baz</MyListBoxItem>
+          <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+          <MyListBoxLoaderIndicator />
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  )
+};
 
 interface ComboBoxItem {
   id: string;
@@ -78,53 +80,57 @@ let items: ComboBoxItem[] = [
   {id: '2', name: 'Bar'},
   {id: '3', name: 'Baz'}
 ];
-export const ComboBoxRenderPropsStatic: ComboBoxStory = () => (
-  <ComboBox data-testid="combo-box-render-props-static">
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>
-              {isOpen ? '▲' : '▼'}
-            </span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu}>
-            <MyListBoxItem>Foo</MyListBoxItem>
-            <MyListBoxItem>Bar</MyListBoxItem>
-            <MyListBoxItem>Baz</MyListBoxItem>
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
+export const ComboBoxRenderPropsStatic: ComboBoxStory = {
+  render: () => (
+    <ComboBox data-testid="combo-box-render-props-static">
+      {({isOpen}) => (
+        <>
+          <Label style={{display: 'block'}}>Test</Label>
+          <div style={{display: 'flex'}}>
+            <Input />
+            <Button>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>
+                {isOpen ? '▲' : '▼'}
+              </span>
+            </Button>
+          </div>
+          <Popover placement="bottom end">
+            <ListBox className={styles.menu}>
+              <MyListBoxItem>Foo</MyListBoxItem>
+              <MyListBoxItem>Bar</MyListBoxItem>
+              <MyListBoxItem>Baz</MyListBoxItem>
+            </ListBox>
+          </Popover>
+        </>
+      )}
+    </ComboBox>
+  )
+};
 
-export const ComboBoxRenderPropsDefaultItems: ComboBoxStory = () => (
-  <ComboBox defaultItems={items}>
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>
-              {isOpen ? '▲' : '▼'}
-            </span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu}>
-            {(item: ComboBoxItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
+export const ComboBoxRenderPropsDefaultItems: ComboBoxStory = {
+  render: () => (
+    <ComboBox defaultItems={items}>
+      {({isOpen}) => (
+        <>
+          <Label style={{display: 'block'}}>Test</Label>
+          <div style={{display: 'flex'}}>
+            <Input />
+            <Button>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>
+                {isOpen ? '▲' : '▼'}
+              </span>
+            </Button>
+          </div>
+          <Popover placement="bottom end">
+            <ListBox className={styles.menu}>
+              {(item: ComboBoxItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
+            </ListBox>
+          </Popover>
+        </>
+      )}
+    </ComboBox>
+  )
+};
 
 export const ComboBoxRenderPropsItems: ComboBoxStoryObj = {
   render: () => (
@@ -156,60 +162,85 @@ export const ComboBoxRenderPropsItems: ComboBoxStoryObj = {
   }
 };
 
-export const ComboBoxRenderPropsListBoxDynamic: ComboBoxStory = () => (
-  <ComboBox>
-    {({isOpen}) => (
-      <>
+export const ComboBoxRenderPropsListBoxDynamic: ComboBoxStory = {
+  render: () => (
+    <ComboBox>
+      {({isOpen}) => (
+        <>
+          <Label style={{display: 'block'}}>Test</Label>
+          <div style={{display: 'flex'}}>
+            <Input />
+            <Button>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>
+                {isOpen ? '▲' : '▼'}
+              </span>
+            </Button>
+          </div>
+          <Popover placement="bottom end">
+            <ListBox className={styles.menu} items={items}>
+              {item => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
+            </ListBox>
+          </Popover>
+        </>
+      )}
+    </ComboBox>
+  )
+};
+
+export const ComboBoxAsyncLoadingExample: ComboBoxStory = {
+  render: function ComboBoxAsyncLoadingExample() {
+    let list = useAsyncList<ComboBoxItem>({
+      async load({filterText}) {
+        let json = (await new Promise(resolve => {
+          setTimeout(() => {
+            resolve(
+              filterText
+                ? items.filter(item => {
+                    let name = item.name.toLowerCase();
+                    for (let filterChar of filterText.toLowerCase()) {
+                      if (!name.includes(filterChar)) {
+                        return false;
+                      }
+                      name = name.replace(filterChar, '');
+                    }
+                    return true;
+                  })
+                : items
+            );
+          }, 300);
+        })) as ComboBoxItem[];
+
+        return {
+          items: json
+        };
+      }
+    });
+
+    return (
+      <ComboBox items={list.items} inputValue={list.filterText} onInputChange={list.setFilterText}>
         <Label style={{display: 'block'}}>Test</Label>
         <div style={{display: 'flex'}}>
           <Input />
           <Button>
             <span aria-hidden="true" style={{padding: '0 2px'}}>
-              {isOpen ? '▲' : '▼'}
+              ▼
             </span>
           </Button>
         </div>
         <Popover placement="bottom end">
-          <ListBox className={styles.menu} items={items}>
-            {item => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
+          <ListBox<ComboBoxItem> className={styles.menu}>
+            {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
           </ListBox>
         </Popover>
-      </>
-    )}
-  </ComboBox>
-);
+      </ComboBox>
+    );
+  }
+};
 
-export const ComboBoxAsyncLoadingExample: ComboBoxStory = () => {
-  let list = useAsyncList<ComboBoxItem>({
-    async load({filterText}) {
-      let json = (await new Promise(resolve => {
-        setTimeout(() => {
-          resolve(
-            filterText
-              ? items.filter(item => {
-                  let name = item.name.toLowerCase();
-                  for (let filterChar of filterText.toLowerCase()) {
-                    if (!name.includes(filterChar)) {
-                      return false;
-                    }
-                    name = name.replace(filterChar, '');
-                  }
-                  return true;
-                })
-              : items
-          );
-        }, 300);
-      })) as ComboBoxItem[];
-
-      return {
-        items: json
-      };
-    }
-  });
-
-  return (
-    <ComboBox items={list.items} inputValue={list.filterText} onInputChange={list.setFilterText}>
-      <Label style={{display: 'block'}}>Test</Label>
+export const ComboBoxImeExample: ComboBoxStory = {
+  render: () => (
+    <ComboBox>
+      <Label style={{display: 'block'}}>IME Test</Label>
       <div style={{display: 'flex'}}>
         <Input />
         <Button>
@@ -219,37 +250,18 @@ export const ComboBoxAsyncLoadingExample: ComboBoxStory = () => {
         </Button>
       </div>
       <Popover placement="bottom end">
-        <ListBox<ComboBoxItem> className={styles.menu}>
-          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        <ListBox data-testid="combo-box-list-box" className={styles.menu}>
+          <MyListBoxItem>にほんご</MyListBoxItem>
+          <MyListBoxItem>ニホンゴ</MyListBoxItem>
+          <MyListBoxItem>ﾆﾎﾝｺﾞ</MyListBoxItem>
+          <MyListBoxItem>日本語</MyListBoxItem>
+          <MyListBoxItem>123</MyListBoxItem>
+          <MyListBoxItem>１２３</MyListBoxItem>
         </ListBox>
       </Popover>
     </ComboBox>
-  );
+  )
 };
-
-export const ComboBoxImeExample: ComboBoxStory = () => (
-  <ComboBox>
-    <Label style={{display: 'block'}}>IME Test</Label>
-    <div style={{display: 'flex'}}>
-      <Input />
-      <Button>
-        <span aria-hidden="true" style={{padding: '0 2px'}}>
-          ▼
-        </span>
-      </Button>
-    </div>
-    <Popover placement="bottom end">
-      <ListBox data-testid="combo-box-list-box" className={styles.menu}>
-        <MyListBoxItem>にほんご</MyListBoxItem>
-        <MyListBoxItem>ニホンゴ</MyListBoxItem>
-        <MyListBoxItem>ﾆﾎﾝｺﾞ</MyListBoxItem>
-        <MyListBoxItem>日本語</MyListBoxItem>
-        <MyListBoxItem>123</MyListBoxItem>
-        <MyListBoxItem>１２３</MyListBoxItem>
-      </ListBox>
-    </Popover>
-  </ComboBox>
-);
 
 let manyItems = [...Array(10000)].map((_, i) => ({id: i, name: `Item ${i}`}));
 
@@ -371,12 +383,43 @@ const MyListBoxLoaderIndicator = props => {
   );
 };
 
-export function WithCreateOption() {
-  let [inputValue, setInputValue] = useState('');
+export const WithCreateOption = {
+  render: function WithCreateOption() {
+    let [inputValue, setInputValue] = useState('');
 
-  return (
-    <ComboBox allowsEmptyCollection inputValue={inputValue} onInputChange={setInputValue}>
-      <Label style={{display: 'block'}}>Favorite Animal</Label>
+    return (
+      <ComboBox allowsEmptyCollection inputValue={inputValue} onInputChange={setInputValue}>
+        <Label style={{display: 'block'}}>Favorite Animal</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>
+              ▼
+            </span>
+          </Button>
+        </div>
+        <Popover placement="bottom end">
+          <ListBox data-testid="combo-box-list-box" className={styles.menu}>
+            {inputValue.length > 0 && (
+              <MyListBoxItem onAction={() => alert('hi')}>{`Create "${inputValue}"`}</MyListBoxItem>
+            )}
+            <MyListBoxItem>Aardvark</MyListBoxItem>
+            <MyListBoxItem>Cat</MyListBoxItem>
+            <MyListBoxItem>Dog</MyListBoxItem>
+            <MyListBoxItem>Kangaroo</MyListBoxItem>
+            <MyListBoxItem>Panda</MyListBoxItem>
+            <MyListBoxItem>Snake</MyListBoxItem>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+  }
+};
+
+export const ComboBoxListBoxItemWithAriaLabel: ComboBoxStory = {
+  render: () => (
+    <ComboBox name="combo-box-example" data-testid="combo-box-example" allowsEmptyCollection>
+      <Label style={{display: 'block'}}>Test</Label>
       <div style={{display: 'flex'}}>
         <Input />
         <Button>
@@ -386,91 +429,66 @@ export function WithCreateOption() {
         </Button>
       </div>
       <Popover placement="bottom end">
-        <ListBox data-testid="combo-box-list-box" className={styles.menu}>
-          {inputValue.length > 0 && (
-            <MyListBoxItem onAction={() => alert('hi')}>{`Create "${inputValue}"`}</MyListBoxItem>
-          )}
-          <MyListBoxItem>Aardvark</MyListBoxItem>
-          <MyListBoxItem>Cat</MyListBoxItem>
-          <MyListBoxItem>Dog</MyListBoxItem>
-          <MyListBoxItem>Kangaroo</MyListBoxItem>
-          <MyListBoxItem>Panda</MyListBoxItem>
-          <MyListBoxItem>Snake</MyListBoxItem>
+        <ListBox
+          renderEmptyState={renderEmptyState}
+          data-testid="combo-box-list-box"
+          className={styles.menu}>
+          <MyListBoxItem aria-label="Item Foo" textValue="Foo">
+            Item <b>Foo</b>
+          </MyListBoxItem>
+          <MyListBoxItem aria-label="Item Bar" textValue="Bar">
+            Item <b>Bar</b>
+          </MyListBoxItem>
+          <MyListBoxItem aria-label="Item Baz" textValue="Baz">
+            Item <b>Baz</b>
+          </MyListBoxItem>
         </ListBox>
       </Popover>
     </ComboBox>
-  );
-}
+  )
+};
 
-export const ComboBoxListBoxItemWithAriaLabel: ComboBoxStory = () => (
-  <ComboBox name="combo-box-example" data-testid="combo-box-example" allowsEmptyCollection>
-    <Label style={{display: 'block'}}>Test</Label>
-    <div style={{display: 'flex'}}>
-      <Input />
-      <Button>
-        <span aria-hidden="true" style={{padding: '0 2px'}}>
-          ▼
-        </span>
-      </Button>
-    </div>
-    <Popover placement="bottom end">
-      <ListBox
-        renderEmptyState={renderEmptyState}
-        data-testid="combo-box-list-box"
-        className={styles.menu}>
-        <MyListBoxItem aria-label="Item Foo" textValue="Foo">
-          Item <b>Foo</b>
-        </MyListBoxItem>
-        <MyListBoxItem aria-label="Item Bar" textValue="Bar">
-          Item <b>Bar</b>
-        </MyListBoxItem>
-        <MyListBoxItem aria-label="Item Baz" textValue="Baz">
-          Item <b>Baz</b>
-        </MyListBoxItem>
-      </ListBox>
-    </Popover>
-  </ComboBox>
-);
-
-export const MultiSelectComboBox: ComboBoxStory = () => (
-  <ComboBox allowsEmptyCollection selectionMode="multiple" defaultItems={usStateOptions}>
-    <Label style={{display: 'block'}}>Test</Label>
-    <Group style={{display: 'flex', width: 300, flexWrap: 'wrap', border: '1px solid gray'}}>
-      <ComboBoxStateContext.Consumer>
-        {state =>
-          state && (
-            <TagGroup
-              aria-label="Selected states"
-              items={state.selectedItems.map(item => item.value)}
-              onRemove={keys => {
-                // Remove keys from ComboBox state.
-                if (Array.isArray(state.value)) {
-                  state.setValue(state.value.filter(k => !keys.has(k)));
-                }
-              }}>
-              {item => <Tag>{item.name}</Tag>}
-            </TagGroup>
-          )
-        }
-      </ComboBoxStateContext.Consumer>
-      <Input placeholder="Select an item" style={{border: 'none', width: 80, flex: 1}} />
-      <Button>
-        <span aria-hidden="true" style={{padding: '0 2px'}}>
-          ▼
-        </span>
-      </Button>
-    </Group>
-    <Popover>
-      <ListBox<{name: string}>
-        renderEmptyState={renderEmptyState}
-        data-testid="combo-box-list-box"
-        className={styles.menu}
-        style={{width: 'var(--trigger-width)'}}>
-        {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-      </ListBox>
-    </Popover>
-  </ComboBox>
-);
+export const MultiSelectComboBox: ComboBoxStory = {
+  render: () => (
+    <ComboBox allowsEmptyCollection selectionMode="multiple" defaultItems={usStateOptions}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <Group style={{display: 'flex', width: 300, flexWrap: 'wrap', border: '1px solid gray'}}>
+        <ComboBoxStateContext.Consumer>
+          {state =>
+            state && (
+              <TagGroup
+                aria-label="Selected states"
+                items={state.selectedItems.map(item => item.value)}
+                onRemove={keys => {
+                  // Remove keys from ComboBox state.
+                  if (Array.isArray(state.value)) {
+                    state.setValue(state.value.filter(k => !keys.has(k)));
+                  }
+                }}>
+                {item => <Tag>{item.name}</Tag>}
+              </TagGroup>
+            )
+          }
+        </ComboBoxStateContext.Consumer>
+        <Input placeholder="Select an item" style={{border: 'none', width: 80, flex: 1}} />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>
+            ▼
+          </span>
+        </Button>
+      </Group>
+      <Popover>
+        <ListBox<{name: string}>
+          renderEmptyState={renderEmptyState}
+          data-testid="combo-box-list-box"
+          className={styles.menu}
+          style={{width: 'var(--trigger-width)'}}>
+          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  )
+};
 
 const usStateOptions = [
   {id: 'AL', name: 'Alabama'},
@@ -534,59 +552,64 @@ const usStateOptions = [
   {id: 'WY', name: 'Wyoming'}
 ];
 
-export const InModal: ComboBoxStory = () => (
-  <DialogTrigger>
-    <Button>Open modal</Button>
-    <ModalOverlay
-      style={{
-        position: 'fixed',
-        zIndex: 100,
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
-        background: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-      <Modal
-        style={({isEntering}) => ({
-          background: 'Canvas',
-          color: 'CanvasText',
-          border: '1px solid gray',
-          padding: 30,
-          transform: isEntering ? 'scale(0.8)' : 'scale(1)',
-          transition: 'transform 400ms'
-        })}>
-        <Dialog>
-          <ComboBox name="combo-box-example" data-testid="combo-box-example" allowsEmptyCollection>
-            <Label style={{display: 'block'}}>Test</Label>
-            <Group style={{display: 'flex'}}>
-              <Input />
-              <Button>
-                <span aria-hidden="true" style={{padding: '0 2px'}}>
-                  ▼
-                </span>
-              </Button>
-            </Group>
-            <Popover>
-              <ListBox
-                renderEmptyState={renderEmptyState}
-                data-testid="combo-box-list-box"
-                className={styles.menu}
-                style={{width: 'var(--trigger-width)'}}>
-                <MyListBoxItem>Foo</MyListBoxItem>
-                <MyListBoxItem>Bar</MyListBoxItem>
-                <MyListBoxItem>Baz</MyListBoxItem>
-                <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-                <MyListBoxLoaderIndicator />
-              </ListBox>
-            </Popover>
-          </ComboBox>
-          <Button slot="close">Close</Button>
-        </Dialog>
-      </Modal>
-    </ModalOverlay>
-  </DialogTrigger>
-);
+export const InModal: ComboBoxStory = {
+  render: () => (
+    <DialogTrigger>
+      <Button>Open modal</Button>
+      <ModalOverlay
+        style={{
+          position: 'fixed',
+          zIndex: 100,
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+        <Modal
+          style={({isEntering}) => ({
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 30,
+            transform: isEntering ? 'scale(0.8)' : 'scale(1)',
+            transition: 'transform 400ms'
+          })}>
+          <Dialog>
+            <ComboBox
+              name="combo-box-example"
+              data-testid="combo-box-example"
+              allowsEmptyCollection>
+              <Label style={{display: 'block'}}>Test</Label>
+              <Group style={{display: 'flex'}}>
+                <Input />
+                <Button>
+                  <span aria-hidden="true" style={{padding: '0 2px'}}>
+                    ▼
+                  </span>
+                </Button>
+              </Group>
+              <Popover>
+                <ListBox
+                  renderEmptyState={renderEmptyState}
+                  data-testid="combo-box-list-box"
+                  className={styles.menu}
+                  style={{width: 'var(--trigger-width)'}}>
+                  <MyListBoxItem>Foo</MyListBoxItem>
+                  <MyListBoxItem>Bar</MyListBoxItem>
+                  <MyListBoxItem>Baz</MyListBoxItem>
+                  <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+                  <MyListBoxLoaderIndicator />
+                </ListBox>
+              </Popover>
+            </ComboBox>
+            <Button slot="close">Close</Button>
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </DialogTrigger>
+  )
+};

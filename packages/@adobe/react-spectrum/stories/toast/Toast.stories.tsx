@@ -20,7 +20,7 @@ import {Dialog} from '../../src/dialog/Dialog';
 import {DialogTrigger} from '../../src/dialog/DialogTrigger';
 import {Flex} from '../../src/layout/Flex';
 import {Heading} from '../../src/text/Heading';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX, SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions, ToastPlacement} from '../../src/toast/ToastContainer';
 import {ToastContainer, ToastQueue} from '../../src/toast/ToastContainer';
@@ -57,10 +57,10 @@ export default {
   }
 } as Meta<typeof RenderProvider>;
 
-export type ToastStory = StoryFn<typeof RenderProvider>;
+export type ToastStory = StoryObj<typeof RenderProvider>;
 
-export const Default: ToastStory = args => <RenderProvider {...args} />;
-Default.story = {
+export const Default: ToastStory = {
+  render: args => <RenderProvider {...args} />,
   parameters: {
     a11y: {
       config: {
@@ -76,11 +76,8 @@ Default.story = {
   }
 };
 
-export const WithAction: ToastStory = args => (
-  <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />
-);
-
-WithAction.story = {
+export const WithAction: ToastStory = {
+  render: args => <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />,
   name: 'With action',
   parameters: {
     a11y: {
@@ -95,16 +92,15 @@ WithAction.story = {
   }
 };
 
-export const WithTestId: ToastStory = args => (
-  <RenderProvider
-    {...args}
-    actionLabel="Action"
-    onAction={action('onAction')}
-    data-testid="hello i am a test id"
-  />
-);
-
-WithTestId.story = {
+export const WithTestId: ToastStory = {
+  render: args => (
+    <RenderProvider
+      {...args}
+      actionLabel="Action"
+      onAction={action('onAction')}
+      data-testid="hello i am a test id"
+    />
+  ),
   name: 'With test id',
   parameters: {
     a11y: {
@@ -119,19 +115,18 @@ WithTestId.story = {
   }
 };
 
-export const WithDialog: ToastStory = args => (
-  <DialogTrigger isDismissable>
-    <Button variant="accent">Open dialog</Button>
-    <Dialog>
-      <Heading>Toasty</Heading>
-      <Content>
-        <RenderProvider {...args} />
-      </Content>
-    </Dialog>
-  </DialogTrigger>
-);
-
-WithDialog.story = {
+export const WithDialog: ToastStory = {
+  render: args => (
+    <DialogTrigger isDismissable>
+      <Button variant="accent">Open dialog</Button>
+      <Dialog>
+        <Heading>Toasty</Heading>
+        <Content>
+          <RenderProvider {...args} />
+        </Content>
+      </Dialog>
+    </DialogTrigger>
+  ),
   name: 'With dialog',
   parameters: {
     a11y: {
@@ -146,9 +141,8 @@ WithDialog.story = {
   }
 };
 
-export const MultipleToastContainers: StoryFn<typeof Multiple> = args => <Multiple {...args} />;
-
-MultipleToastContainers.story = {
+export const MultipleToastContainers: StoryObj<typeof Multiple> = {
+  render: args => <Multiple {...args} />,
   name: 'multiple ToastContainers',
   parameters: {
     disableToastContainer: true,
@@ -164,9 +158,8 @@ MultipleToastContainers.story = {
   }
 };
 
-export const ProgrammaticallyClosing: ToastStory = args => <ToastToggle {...args} />;
-
-ProgrammaticallyClosing.story = {
+export const ProgrammaticallyClosing: ToastStory = {
+  render: args => <ToastToggle {...args} />,
   name: 'programmatically closing',
   parameters: {
     a11y: {
@@ -181,9 +174,8 @@ ProgrammaticallyClosing.story = {
   }
 };
 
-export const WithIframe: ToastStory = () => <IframeExample />;
-
-WithIframe.story = {
+export const WithIframe: ToastStory = {
+  render: () => <IframeExample />,
   name: 'with iframe',
   parameters: {
     a11y: {

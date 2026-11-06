@@ -12,7 +12,7 @@
 
 import {ActionButton} from '../../src/button/ActionButton';
 import {Divider} from '../../src/divider/Divider';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import Properties from '@spectrum-icons/workflow/Properties';
 import React from 'react';
 import Select from '@spectrum-icons/workflow/Select';
@@ -22,51 +22,53 @@ export default {
   providerSwitcher: {status: 'positive'}
 } as Meta<typeof Divider>;
 
-export type DividerStory = StoryFn<typeof Divider>;
+export type DividerStory = StoryObj<typeof Divider>;
 
-export const LargeDefault: DividerStory = () => (
-  <section>
-    <h1>Large</h1>
-    <Divider />
-    <p>Page or Section Titles.</p>
-  </section>
-);
-
-LargeDefault.story = {
+export const LargeDefault: DividerStory = {
+  render: () => (
+    <section>
+      <h1>Large</h1>
+      <Divider />
+      <p>Page or Section Titles.</p>
+    </section>
+  ),
   name: 'Large (Default)'
 };
 
-export const Medium: DividerStory = () => (
-  <section>
-    <h1>Medium</h1>
-    <Divider size="M" />
-    <p>Divide subsections, or divide different groups of elements (between panels, rails, etc.)</p>
-  </section>
-);
+export const Medium: DividerStory = {
+  render: () => (
+    <section>
+      <h1>Medium</h1>
+      <Divider size="M" />
+      <p>
+        Divide subsections, or divide different groups of elements (between panels, rails, etc.)
+      </p>
+    </section>
+  )
+};
 
-export const Small: DividerStory = () => (
-  <section>
-    <h1>Small</h1>
-    <Divider size="S" />
-    <p>Divide like-elements (tables, tool groups, elements within a panel, etc.)</p>
-  </section>
-);
+export const Small: DividerStory = {
+  render: () => (
+    <section>
+      <h1>Small</h1>
+      <Divider size="S" />
+      <p>Divide like-elements (tables, tool groups, elements within a panel, etc.)</p>
+    </section>
+  )
+};
 
-export const VerticalLargeDefault: DividerStory = () => renderVertical();
-
-VerticalLargeDefault.story = {
+export const VerticalLargeDefault: DividerStory = {
+  render: () => renderVertical(),
   name: 'Vertical, Large (Default)'
 };
 
-export const VerticalMedium: DividerStory = () => renderVertical({size: 'M'});
-
-VerticalMedium.story = {
+export const VerticalMedium: DividerStory = {
+  render: () => renderVertical({size: 'M'}),
   name: 'Vertical, Medium'
 };
 
-export const VerticalSmall: DividerStory = () => renderVertical({size: 'S'});
-
-VerticalSmall.story = {
+export const VerticalSmall: DividerStory = {
+  render: () => renderVertical({size: 'S'}),
   name: 'Vertical, Small'
 };
 

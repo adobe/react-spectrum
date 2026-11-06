@@ -19,7 +19,7 @@ import intlMessages from './intlMessages.json';
 import {Item} from 'react-stately/Item';
 import {Label} from '../../src/label/Label';
 import {ListBox} from '../../src/listbox/ListBox';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Provider} from '../../src/provider/Provider';
 import React, {JSX} from 'react';
 import {Section} from 'react-stately/Section';
@@ -39,7 +39,7 @@ export default {
   excludeStories: ['TranslateListBox']
 } as Meta<typeof ListBox>;
 
-type ListBoxStory = StoryFn<typeof ListBox>;
+type ListBoxStory = StoryObj<typeof ListBox>;
 
 export const TranslateListBox = (): JSX.Element => {
   let strings = useLocalizedStringFormatter(intlMessages);
@@ -90,38 +90,50 @@ export const TranslateListBox = (): JSX.Element => {
   );
 };
 
-export const ArabicComplex: ListBoxStory = () => (
-  <Provider locale="ar-AE">
-    <TranslateListBox />
-  </Provider>
-);
+export const ArabicComplex: ListBoxStory = {
+  render: () => (
+    <Provider locale="ar-AE">
+      <TranslateListBox />
+    </Provider>
+  )
+};
 
-export const HebrewComplex: ListBoxStory = () => (
-  <Provider locale="he-IL">
-    <TranslateListBox />
-  </Provider>
-);
+export const HebrewComplex: ListBoxStory = {
+  render: () => (
+    <Provider locale="he-IL">
+      <TranslateListBox />
+    </Provider>
+  )
+};
 
-export const JapaneseComplex: ListBoxStory = () => (
-  <Provider locale="ja-JP">
-    <TranslateListBox />
-  </Provider>
-);
+export const JapaneseComplex: ListBoxStory = {
+  render: () => (
+    <Provider locale="ja-JP">
+      <TranslateListBox />
+    </Provider>
+  )
+};
 
-export const KoreanComplex: ListBoxStory = () => (
-  <Provider locale="ko-KR">
-    <TranslateListBox />
-  </Provider>
-);
+export const KoreanComplex: ListBoxStory = {
+  render: () => (
+    <Provider locale="ko-KR">
+      <TranslateListBox />
+    </Provider>
+  )
+};
 
-export const ChineseSimplfiedComplex: ListBoxStory = () => (
-  <Provider locale="zh-CN">
-    <TranslateListBox />
-  </Provider>
-);
+export const ChineseSimplfiedComplex: ListBoxStory = {
+  render: () => (
+    <Provider locale="zh-CN">
+      <TranslateListBox />
+    </Provider>
+  )
+};
 
-export const ChineseTraditionalComplex: ListBoxStory = () => (
-  <Provider locale="zh-TW">
-    <TranslateListBox />
-  </Provider>
-);
+export const ChineseTraditionalComplex: ListBoxStory = {
+  render: () => (
+    <Provider locale="zh-TW">
+      <TranslateListBox />
+    </Provider>
+  )
+};

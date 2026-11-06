@@ -25,7 +25,7 @@ import {Form} from '../../src/form/Form';
 import {Header} from '../../src/view/Header';
 import {Heading} from '../../src/text/Heading';
 import {Image} from '../../src/image/Image';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {Radio} from '../../src/radio/Radio';
 import {RadioGroup} from '../../src/radio/RadioGroup';
 import React, {JSX} from 'react';
@@ -46,168 +46,141 @@ export default {
   excludeStories: ['singleParagraph', 'renderTriggerProps']
 } as Meta<typeof Dialog>;
 
-export type DialogStory = StoryFn<typeof Dialog>;
+export type DialogStory = StoryObj<typeof Dialog>;
 
-export const Default: DialogStory = () => render({});
-
-Default.story = {
+export const Default: DialogStory = {
+  render: () => render({}),
   name: 'default'
 };
 
-export const IsDismissable: DialogStory = () => render({isDismissable: true});
-
-IsDismissable.story = {
+export const IsDismissable: DialogStory = {
+  render: () => render({isDismissable: true}),
   name: 'isDismissable'
 };
 
-export const LongContent: DialogStory = () => renderLongContent({});
-
-LongContent.story = {
+export const LongContent: DialogStory = {
+  render: () => renderLongContent({}),
   name: 'long content'
 };
 
-export const LongContentMobileViewport: DialogStory = () => renderLongContent({});
-
-LongContentMobileViewport.story = {
+export const LongContentMobileViewport: DialogStory = {
+  render: () => renderLongContent({}),
   name: 'long content, mobile viewport',
   parameters: {chromatic: {viewports: [320]}}
 };
 
-export const WithHero: DialogStory = () => renderHero({});
-
-WithHero.story = {
+export const WithHero: DialogStory = {
+  render: () => renderHero({}),
   name: 'with hero'
 };
 
-export const WithHeroIsDimissable: DialogStory = () => renderHero({isDismissable: true});
-
-WithHeroIsDimissable.story = {
+export const WithHeroIsDimissable: DialogStory = {
+  render: () => renderHero({isDismissable: true}),
   name: 'with hero, isDimissable'
 };
 
-export const WithFooter: DialogStory = () => renderFooter({});
-
-WithFooter.story = {
+export const WithFooter: DialogStory = {
+  render: () => renderFooter({}),
   name: 'with footer'
 };
 
-export const Small: DialogStory = () => render({size: 'S'});
-
-Small.story = {
+export const Small: DialogStory = {
+  render: () => render({size: 'S'}),
   name: 'small'
 };
 
-export const Medium: DialogStory = () => render({size: 'M'});
-
-Medium.story = {
+export const Medium: DialogStory = {
+  render: () => render({size: 'M'}),
   name: 'medium'
 };
 
-export const Large: DialogStory = () => render({size: 'L'});
-
-Large.story = {
+export const Large: DialogStory = {
+  render: () => render({size: 'L'}),
   name: 'large'
 };
 
-export const _Form: DialogStory = () => renderWithForm({});
-
-_Form.story = {
+export const _Form: DialogStory = {
+  render: () => renderWithForm({}),
   name: 'form'
 };
 
-export const FullscreenTakeoverForm: DialogStory = () =>
-  renderWithForm({type: 'fullscreenTakeover'});
-
-FullscreenTakeoverForm.story = {
+export const FullscreenTakeoverForm: DialogStory = {
+  render: () => renderWithForm({type: 'fullscreenTakeover'}),
   name: 'fullscreenTakeover form'
 };
 
-export const FullscreenTakeoverFormMobileViewport: DialogStory = () =>
-  renderWithForm({type: 'fullscreenTakeover'});
-
-FullscreenTakeoverFormMobileViewport.story = {
+export const FullscreenTakeoverFormMobileViewport: DialogStory = {
+  render: () => renderWithForm({type: 'fullscreenTakeover'}),
   name: 'fullscreenTakeover form, mobile viewport',
   parameters: {chromatic: {viewports: [320]}}
 };
 
-export const ThreeButtons: DialogStory = () => renderWithThreeButtons({});
-
-ThreeButtons.story = {
+export const ThreeButtons: DialogStory = {
+  render: () => renderWithThreeButtons({}),
   name: 'three buttons'
 };
 
-export const ThreeButtonsVerticalOrientation: DialogStory = () =>
-  renderWithThreeButtonsVertical({});
-
-ThreeButtonsVerticalOrientation.story = {
+export const ThreeButtonsVerticalOrientation: DialogStory = {
+  render: () => renderWithThreeButtonsVertical({}),
   name: 'three buttons, vertical orientation'
 };
 
-export const ThreeButtonsFooter: DialogStory = () => renderWithThreeButtons({showFooter: true});
-
-ThreeButtonsFooter.story = {
+export const ThreeButtonsFooter: DialogStory = {
+  render: () => renderWithThreeButtons({showFooter: true}),
   name: 'three buttons, footer'
 };
 
-export const ThreeButtonsFooterExtraLabel: DialogStory = () =>
-  renderWithThreeButtons({showFooter: true, extraLabel: ': This is the extra text'});
-
-ThreeButtonsFooterExtraLabel.story = {
+export const ThreeButtonsFooterExtraLabel: DialogStory = {
+  render: () => renderWithThreeButtons({showFooter: true, extraLabel: ': This is the extra text'}),
   name: 'three buttons, footer, extraLabel'
 };
 
-export const ClearedContent: DialogStory = () => renderWithDividerInContent({});
-
-ClearedContent.story = {
+export const ClearedContent: DialogStory = {
+  render: () => renderWithDividerInContent({}),
   name: 'cleared content'
 };
 
-export const ExtraLongFooter: DialogStory = () =>
-  renderWithOptions({
-    extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap'
-  });
-
-ExtraLongFooter.story = {
+export const ExtraLongFooter: DialogStory = {
+  render: () =>
+    renderWithOptions({
+      extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap'
+    }),
   name: 'extra long footer'
 };
 
-export const ShowHeaderLongerHeadingAndHeader: DialogStory = () =>
-  renderWithOptions({
-    showHeader: true,
-    extraHeadering: ' This is extra text for long heading and header'
-  });
-
-ShowHeaderLongerHeadingAndHeader.story = {
+export const ShowHeaderLongerHeadingAndHeader: DialogStory = {
+  render: () =>
+    renderWithOptions({
+      showHeader: true,
+      extraHeadering: ' This is extra text for long heading and header'
+    }),
   name: 'showHeader, longer heading and header'
 };
 
-export const ExtraLongFooterLongerHeadingAndHeader: DialogStory = () =>
-  renderWithOptions({
-    extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap',
-    extraHeadering:
-      ' This is extra text for long heading that wraps to make sure it fills the width'
-  });
-
-ExtraLongFooterLongerHeadingAndHeader.story = {
+export const ExtraLongFooterLongerHeadingAndHeader: DialogStory = {
+  render: () =>
+    renderWithOptions({
+      extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap',
+      extraHeadering:
+        ' This is extra text for long heading that wraps to make sure it fills the width'
+    }),
   name: 'extra long footer, longer heading and header'
 };
 
-export const ExtraLongFooterShowHeaderLongerHeadingAndHeader: DialogStory = () =>
-  renderWithOptions({
-    extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap',
-    showHeader: true,
-    extraHeadering: ' This is extra text for long heading and header'
-  });
-
-ExtraLongFooterShowHeaderLongerHeadingAndHeader.story = {
+export const ExtraLongFooterShowHeaderLongerHeadingAndHeader: DialogStory = {
+  render: () =>
+    renderWithOptions({
+      extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap',
+      showHeader: true,
+      extraHeadering: ' This is extra text for long heading and header'
+    }),
   name: 'extra long footer, showHeader, longer heading and header'
 };
 
 export type DialogTriggerStory = StoryFn<typeof DialogTrigger>;
 
-export const Tray: DialogStory = () => renderTriggerProps({type: 'tray'});
-
-Tray.story = {
+export const Tray: DialogStory = {
+  render: () => renderTriggerProps({type: 'tray'}),
   name: 'tray',
   parameters: {
     chromatic: {viewports: [320, 1200]},
@@ -220,9 +193,8 @@ Tray.story = {
   }
 };
 
-export const Popover: DialogStory = () => renderTriggerProps({type: 'popover'});
-
-Popover.story = {
+export const Popover: DialogStory = {
+  render: () => renderTriggerProps({type: 'popover'}),
   name: 'popover',
   parameters: {
     chromatic: {viewports: [320, 1200]},
@@ -235,10 +207,8 @@ Popover.story = {
   }
 };
 
-export const PopoverCrossOffset50: DialogStory = () =>
-  renderTriggerProps({type: 'popover', crossOffset: 50});
-
-PopoverCrossOffset50.story = {
+export const PopoverCrossOffset50: DialogStory = {
+  render: () => renderTriggerProps({type: 'popover', crossOffset: 50}),
   name: 'popover: crossOffset50',
   parameters: {
     chromatic: {viewports: [1200]},
@@ -251,10 +221,8 @@ PopoverCrossOffset50.story = {
   }
 };
 
-export const PopoverCrossOffset200: DialogStory = () =>
-  renderTriggerProps({type: 'popover', crossOffset: 200});
-
-PopoverCrossOffset200.story = {
+export const PopoverCrossOffset200: DialogStory = {
+  render: () => renderTriggerProps({type: 'popover', crossOffset: 200}),
   name: 'popover: crossOffset200',
   parameters: {
     chromatic: {viewports: [1200]},
@@ -267,10 +235,8 @@ PopoverCrossOffset200.story = {
   }
 };
 
-export const PopoverCrossOffset1000: DialogStory = () =>
-  renderTriggerProps({type: 'popover', crossOffset: 1000});
-
-PopoverCrossOffset1000.story = {
+export const PopoverCrossOffset1000: DialogStory = {
+  render: () => renderTriggerProps({type: 'popover', crossOffset: 1000}),
   name: 'popover: crossOffset1000',
   parameters: {
     chromatic: {viewports: [1200]},
@@ -283,10 +249,14 @@ PopoverCrossOffset1000.story = {
   }
 };
 
-export const PopoverContainerPadding: DialogStory = () =>
-  renderTriggerProps({type: 'popover', containerPadding: 30, shouldFlip: false, placement: 'top'});
-
-PopoverContainerPadding.story = {
+export const PopoverContainerPadding: DialogStory = {
+  render: () =>
+    renderTriggerProps({
+      type: 'popover',
+      containerPadding: 30,
+      shouldFlip: false,
+      placement: 'top'
+    }),
   name: 'popover: containerPadding',
   parameters: {
     chromatic: {viewports: [1200]},
@@ -299,10 +269,8 @@ PopoverContainerPadding.story = {
   }
 };
 
-export const MobileTypeFullscreenTakeoverModal: DialogStory = () =>
-  renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'});
-
-MobileTypeFullscreenTakeoverModal.story = {
+export const MobileTypeFullscreenTakeoverModal: DialogStory = {
+  render: () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'}),
   name: 'mobileType fullscreenTakeover, modal',
   parameters: {
     chromatic: {viewports: [320, 1200]},
@@ -315,10 +283,8 @@ MobileTypeFullscreenTakeoverModal.story = {
   }
 };
 
-export const MobileTypeModalPopover: DialogStory = () =>
-  renderTriggerProps({type: 'popover', mobileType: 'modal'});
-
-MobileTypeModalPopover.story = {
+export const MobileTypeModalPopover: DialogStory = {
+  render: () => renderTriggerProps({type: 'popover', mobileType: 'modal'}),
   name: 'mobileType: modal, popover',
   parameters: {
     chromatic: {viewports: [320, 1200]},
@@ -331,10 +297,8 @@ MobileTypeModalPopover.story = {
   }
 };
 
-export const MobileTypeTrayPopover: DialogStory = () =>
-  renderTriggerProps({type: 'popover', mobileType: 'tray'});
-
-MobileTypeTrayPopover.story = {
+export const MobileTypeTrayPopover: DialogStory = {
+  render: () => renderTriggerProps({type: 'popover', mobileType: 'tray'}),
   name: 'mobileType: tray, popover',
   parameters: {
     chromatic: {viewports: [320, 1200]},
@@ -346,6 +310,7 @@ MobileTypeTrayPopover.story = {
     }
   }
 };
+
 type RenderProps = Omit<
   SpectrumDialogProps & {isDismissable?: boolean; width?: string},
   'children'

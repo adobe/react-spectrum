@@ -12,7 +12,7 @@
 
 import {Flex} from '../../src/layout/Flex';
 import {LogicButton, SpectrumLogicButtonProps} from '../../src/button/LogicButton';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 
 export default {
@@ -20,17 +20,15 @@ export default {
   excludeStories: ['Render']
 } as Meta<typeof LogicButton>;
 
-export type LogicButtonStory = StoryFn<typeof LogicButton>;
+export type LogicButtonStory = StoryObj<typeof LogicButton>;
 
-export const LogicVariantAnd: LogicButtonStory = () => <Render variant="and" />;
-
-LogicVariantAnd.story = {
+export const LogicVariantAnd: LogicButtonStory = {
+  render: () => <Render variant="and" />,
   name: 'logic variant: and'
 };
 
-export const LogicVariantOr: LogicButtonStory = () => <Render variant="or" />;
-
-LogicVariantOr.story = {
+export const LogicVariantOr: LogicButtonStory = {
+  render: () => <Render variant="or" />,
   name: 'logic variant: or'
 };
 
