@@ -365,8 +365,11 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', comp => {
       expect(checkbox).toHaveAttribute('aria-required', 'true');
 
       let validity;
+      act(() => {
+        validity = checkbox.form.checkValidity();
+      });
       await act(async () => {
-        validity = await checkbox.form.checkValidity();
+        await Promise.resolve();
       });
       expect(validity).toBe(true);
     }
@@ -394,8 +397,11 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', comp => {
       let checkbox = getByRole('checkbox');
       expect(checkbox.required).toBe(!isValid);
       let validity;
+      act(() => {
+        validity = checkbox.form.checkValidity();
+      });
       await act(async () => {
-        validity = await checkbox.form.checkValidity();
+        await Promise.resolve();
       });
       expect(validity).toBe(isValid);
     }
