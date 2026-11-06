@@ -144,7 +144,7 @@ type SheetValues = Omit<SheetRenderProps, keyof ModalRenderProps>;
 interface InternalSheetContextValue extends Omit<SheetOverlayProps, 'position' | 'swipeDirection'> {
   position: SheetPosition;
   swipeDirection: SheetSwipeDirection;
-  index: number;
+  timelineName: string;
   descendants: SheetStackEntry[];
   isEntering: boolean;
   isExiting: boolean;
@@ -155,6 +155,7 @@ const InternalSheetContext = createContext<InternalSheetContextValue | null>(nul
 
 interface SheetStackEntry {
   id: string;
+  timelineName: string;
   range: string;
   direction: string;
   iterations: number;
@@ -167,9 +168,7 @@ function emitStackChange() {
   // Hoist every mounted sheet's timeline name to the root so a parent
   // can still resolve the child's timeline by name.
   // TODO: don't override existing timelines declared in CSS or inline styles.
-  let names = Array.from({length: sheetStack.length})
-    .map((_, i) => `--sheet-timeline-${i}`)
-    .join(', ');
+  let names = sheetStack.map(sheet => sheet.timelineName).join(', ');
   document.documentElement.style.setProperty('timeline-scope', names);
   stackListeners.forEach(listener => listener());
 }
@@ -248,14 +247,17 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
     getSwipeConfig(swipeDirection);
 
   let id = useId();
+  // A sheet needs its own timeline before it registers and while its stack index changes.
+  let timelineName = `--sheet-timeline-${id.replace(/:/g, '')}`;
   let stackItem = useMemo(
     () => ({
       id,
+      timelineName,
       range: viewRange,
       direction: viewDirection,
       iterations: viewIterations
     }),
-    [id, viewRange, viewDirection, viewIterations]
+    [id, timelineName, viewRange, viewDirection, viewIterations]
   );
 
   let [isExpanded, setExpanded] = useState(false);
@@ -458,7 +460,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
             ...props,
             position,
             swipeDirection,
-            index,
+            timelineName,
             descendants,
             isEntering: renderProps.isEntering,
             isExiting: renderProps.isExiting,
@@ -730,7 +732,6 @@ export const Sheet = forwardRef(function Sheet(
     position,
     swipeDirection,
     snapPoints,
-    index,
     descendants,
     isEntering,
     isExiting,
@@ -837,9 +838,9 @@ export const Sheet = forwardRef(function Sheet(
 
   if (props.stackAnimation && descendants.length > 0 && supportsViewTimeline) {
     // Append one animation per descendant sheet, driven by that descendant's view timeline.
-    let stackStyle: Record<string, (d: SheetStackEntry, i: number) => string> = {
+    let stackStyle: Record<string, (d: SheetStackEntry) => string> = {
       animationName: () => props.stackAnimation!,
-      animationTimeline: (_, i) => `--sheet-timeline-${index + 1 + i}`,
+      animationTimeline: d => d.timelineName,
       animationDirection: d => d.direction,
       animationIterationCount: d => String(d.iterations),
       animationFillMode: () => 'both',
@@ -1032,7 +1033,7 @@ export const SheetBackdrop = forwardRef(function SheetBackdrop(
 });
 
 function useSwipeAnimation(props: SheetBackdropProps) {
-  let {swipeDirection, snapPoints, index, isEntering, isExiting} =
+  let {swipeDirection, snapPoints, timelineName, isEntering, isExiting} =
     useContext(InternalSheetContext)!;
   let {viewRange, viewDirection, viewIterations} = getSwipeConfig(swipeDirection);
 
@@ -1056,7 +1057,7 @@ function useSwipeAnimation(props: SheetBackdropProps) {
     if (supportsViewTimeline) {
       return {
         animationName: props.swipeAnimation,
-        animationTimeline: `--sheet-timeline-${index}`,
+        animationTimeline: timelineName,
         animationDirection: viewDirection,
         animationIterationCount: viewIterations,
         animationFillMode: 'both',
@@ -1098,7 +1099,7 @@ export const SheetContent = forwardRef(function SheetContent(
   props: SheetContentProps,
   ref: ForwardedRef<HTMLDivElement>
 ) {
-  let {swipeDirection, index} = useContext(InternalSheetContext)!;
+  let {swipeDirection, timelineName} = useContext(InternalSheetContext)!;
   let {axis, before, after} = getSwipeConfig(swipeDirection);
   let viewportLength = axis === 'y' ? '100dvh' : '100dvw';
 
@@ -1116,7 +1117,7 @@ export const SheetContent = forwardRef(function SheetContent(
         // It is _not_ the Modal because that may have additional padding for overscroll and therefore never be entirely visible.
         // The inset crops the scroll container's scrollport down to the visible viewport.
         // @ts-ignore
-        viewTimelineName: `--sheet-timeline-${index}`,
+        viewTimelineName: timelineName,
         viewTimelineAxis: axis,
         viewTimelineInset: before && !after ? `${viewportLength} 0` : `0 ${viewportLength}`
       }}
