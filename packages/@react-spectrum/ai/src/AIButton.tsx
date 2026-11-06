@@ -8,10 +8,7 @@ import {
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {CSSProperties, useRef} from 'react';
-import {
-  defaultBrand,
-  defineProperties,
-} from './tokens.macro' with {type: 'macro'};
+import {defaultBrand, defineProperties} from './tokens.macro' with {type: 'macro'};
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 
