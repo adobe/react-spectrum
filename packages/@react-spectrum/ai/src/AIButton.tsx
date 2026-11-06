@@ -10,8 +10,8 @@ import {
   css,
   focusRing,
   fontRelative,
-  space,
-  style
+  style,
+  lightDark
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {CSSProperties, useRef} from 'react';
 import {GlobalDOMAttributes} from '@react-types/shared';
@@ -48,7 +48,6 @@ const controlSize = {
 
 const button = style({
   ...focusRing(),
-  // ...control({shape: 'pill', wrap: true, icon: true}),
   font: {
     default: 'ui',
     size: {
@@ -72,12 +71,11 @@ const button = style({
   position: 'relative',
   justifyContent: 'center',
   textAlign: 'start',
-  fontWeight: 'bold',
   userSelect: 'none',
   width: 'fit',
-  transition: 'default',
+  transition: '[--color2, --color3, transform, scale, box-shadow, color]',
   color: {
-    default: `[color-mix(in srgb, light-dark(black, white), ${token('container.gradient.con-bg.idle.stop-4')} 20%)]`,
+    default: lightDark('[#530035]', 'white/80'),
     isDisabled: 'transparent-overlay-400'
   },
   '--iconPrimary': {
@@ -87,25 +85,14 @@ const button = style({
   forcedColorAdjust: 'none',
   disableTapHighlight: true,
   overflow: 'clip',
-  '--fill-y': {
+  '--inner-shadow-size': {
     type: 'top',
     value: {
       size: {
-        S: 4,
-        M: 4,
-        L: space(6),
-        XL: space(10)
-      }
-    }
-  },
-  '--fill-x': {
-    type: 'top',
-    value: {
-      size: {
-        S: 2,
-        M: 2,
-        L: 4,
-        XL: 4
+        S: 12,
+        M: 16,
+        L: 20,
+        XL: 24
       }
     }
   }
@@ -117,9 +104,65 @@ defineProperties(`
     initial-value: ${defaultBrand()};
     inherits: true;
   }
+
+  @property --color1 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+  }
+
+  @property --color2 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+  }
+
+  @property --color3 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+  }
+
+  @property --color4 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+  }
 `);
 
-const bg = css(`
+const bg = css(`  
+  --color1: light-dark(rgb(243 222 238), rgb(62 33 50));
+  --color2: light-dark(rgb(241 188 233), rgb(100 46 63));
+  --color3: light-dark(rgb(248 198 183), rgb(92 44 75));
+  --color4: light-dark(rgb(246 230 225), rgb(47 29 47));
+  --top-shine: light-dark(transparent, rgb(255 255 255 / 12%));
+  --inner-shadow: light-dark(white, rgb(24 24 24));
+  --outer-stroke: light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 8%));
+  background-image:
+    linear-gradient(
+      to right,
+      var(--color1),
+      var(--color2) 10% 40%,
+      var(--color3) 70% 90%,
+      var(--color4)
+    );
+
+  box-shadow:
+    /* Outer stroke */
+    inset 0 0 0 0.5px var(--outer-stroke),
+    /* Top shine (dark mode only) */
+    inset 0 2px 8px var(--top-shine),
+    /* Inner shadow */
+    inset 0px var(--inner-shadow-size) var(--inner-shadow-size) var(--inner-shadow),
+    /* Outer shadow */
+    0 2px 4px 0 rgb(0 0 0 / 2%),
+    0 4px 12px 0 rgb(0 0 0 / 6%);
+
+  &:hover {
+    --color2: light-dark(rgb(241 177 235), rgb(137 65 98));
+    --color3: light-dark(rgb(250 187 163), rgb(122 61 84));
+  }
+
   &::before, &::after {
     content: '';
     pointer-events: none;
@@ -129,109 +172,50 @@ const bg = css(`
     z-index: -1;
     transition: inherit;
   }
-  
-  @container style(--s2-color-scheme: dark) {
-    background-image: linear-gradient(to bottom, light-dark(white, #292929), light-dark(white, #383838));
-    --border-opacity: 10%;
-    box-shadow:
-      inset 0 0.5px 0 0px rgb(255 255 255 / var(--border-opacity)),
-      inset 0 0 0 0.5px rgb(255 255 255 / var(--border-opacity)),
-      inset 0px 2px 8px rgb(95 95 95 / 50%);
 
-    /* bottom sheen */
-    &::before {
-      height: 24px;
-      inset-inline: 4px;
-      background-image: linear-gradient(to bottom, transparent, white);
-      mix-blend-mode: plus-lighter;
-      filter: blur(2px);
-      opacity: 50%;
-    }
-
-    /* color gradient (top layer) */
-    &::after {
-      top: var(--fill-y);
-      inset-inline: var(--fill-x);
-      background-image: linear-gradient(
-        to right,
-        ${token('container.gradient.con-bg.generating.stop-3')} 0%,
-        ${token('container.gradient.con-bg.idle.stop-3')} 28%,
-        ${token('container.gradient.con-bg.idle.stop-2')} 98%
-      );
-      opacity: 75%;
-      mix-blend-mode: hard-light;
-      filter: blur(8px);
-    }
-
-    &:has(svg:only-child) {
-      &::after {
-        filter: blur(4px);
-      }
-    }
-
-    &[data-hovered] {
-      --border-opacity: 20%;
-      &::before {
-        opacity: 75%;
-      }
-    }
-
-    &[data-disabled] {
-      &::before {
-        opacity: 25%;
-      }
-
-      &::after {
-        opacity: 0;
-      }
-    }
+  /* Bottom highlight */
+  &::before {
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      light-dark(rgb(255 255 255 / 66%), rgb(255 255 255 / 8%))
+    );
+    top: 8px;
+    left: 4px;
+    right: 4px;
+    bottom: 1px;
+    filter: blur(1px);
   }
 
-  @container style(--s2-color-scheme: light) {
-    background-color: white;
-
-    /* color gradient */
-    &::before {
-      top: var(--fill-y);
-      inset-inline: var(--fill-x);
-      background-image: linear-gradient(
-        to right,
-        ${token('container.gradient.con-bg.idle.stop-3')} 0%,
-        ${token('container.gradient.con-bg.idle.stop-2')} 12%,
-        ${token('container.gradient.con-bg.generating.stop-3')} 77%
+  /* Overlay */
+  &::after {
+    inset: 0;
+    background:
+      linear-gradient(
+        to bottom,
+        light-dark(
+          color-mix(rgb(0 0 0 / 8%), rgb(255 255 255 / 40%)),
+          color-mix(rgb(255 255 255 / 6%), rgb(0 0 0 / 64%))
+        ),
+        light-dark(
+          color-mix(rgb(0 0 0 / 8%), rgb(255 255 255 / 16%)),
+          color-mix(rgb(255 255 255 / 6%), rgb(0 0 0 / 56%))
+        )
       );
-      opacity: 75%;
-      filter: blur(4px);
-    }
+  }
 
-    /* inset shadows */
+  &[data-disabled] {
+    --color1: light-dark(rgb(245 245 245), rgb(24 24 24));
+    --color2: light-dark(rgb(245 245 245), rgb(24 24 24));
+    --color3: light-dark(rgb(245 245 245), rgb(24 24 24));
+    --color4: light-dark(rgb(245 245 245), rgb(24 24 24));
+    --top-shine: light-dark(transparent, rgb(255 255 255 / 6%));
+    --inner-shadow: light-dark(rgb(245 245 245), rgb(24 24 24));
+    --outer-stroke: light-dark(rgb(0 0 0 / 4%), rgb(255 255 255 / 4%));
+
+    &::before,
     &::after {
-      inset: 0px;
-      box-shadow:
-        inset 0 -0.5px 1px ${token('container.gradient.con-bg.generating.stop-3')},
-        inset 0.5px -1.5px 6px ${convertColor('rgb(252, 228, 233)')},
-        inset -7px -23px 9px -12px rgb(255 255 255 / 75%);
-    }
-
-    &[data-hovered] {
-      &::before {
-        opacity: 95%;
-      }
-    }
-
-    &[data-disabled] {
-      background-color: #F8F8F8;
-
-      &::before {
-        opacity: 0;
-      }
-
-      &::after {
-        box-shadow:
-          inset 0 -0.5px 1px rgb(0 0 0 / 10%),
-          inset 0.5px -1.5px 6px rgb(0 0 0 / 5%),
-          inset -7px -23px 9px -12px rgb(255 255 255 / 75%);
-      }
+      opacity: 0;
     }
   }
 `);
