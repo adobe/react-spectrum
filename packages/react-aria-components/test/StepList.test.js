@@ -13,6 +13,7 @@
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {StepList, StepListContext, StepListItem, StepListItemContent} from '../src/StepList';
+import {Step} from '/packages/dev/s2-docs/src/Step';
 
 let steps = [
   {id: 'domain', label: 'Domain'},
@@ -25,7 +26,7 @@ let renderStepList = (listProps, itemProps) =>
     <StepList selectedKey="dns" aria-label="Setup" {...listProps}>
       {steps.map(step => (
         <StepListItem key={step.id} id={step.id} {...itemProps}>
-          {step.label}
+          <StepListItemContent>{step.label}</StepListItemContent>
         </StepListItem>
       ))}
     </StepList>
@@ -77,7 +78,7 @@ describe('StepList', () => {
       <StepList selectedKey="domain" aria-label="Setup">
         {steps.map(step => (
           <StepListItem key={step.id} id={step.id}>
-            {step.label}
+            <StepListItemContent>{step.label}</StepListItemContent>
           </StepListItem>
         ))}
       </StepList>
@@ -101,7 +102,11 @@ describe('StepList', () => {
   it('should support dynamic collections', () => {
     let {getAllByRole} = render(
       <StepList selectedKey="dns" aria-label="Setup" items={steps}>
-        {step => <StepListItem>{step.label}</StepListItem>}
+        {step => (
+          <StepListItem>
+            <StepListItemContent>{step.label}</StepListItemContent>
+          </StepListItem>
+        )}
       </StepList>
     );
 
@@ -120,9 +125,11 @@ describe('StepList', () => {
       <StepList selectedKey="dns" aria-label="Setup" items={steps}>
         {step => (
           <StepListItem>
-            {({isCurrent, isCompleted}) =>
-              isCurrent ? 'current' : isCompleted ? 'completed' : step.label
-            }
+            {({isCurrent, isCompleted}) => (
+              <StepListItemContent>
+                {isCurrent ? 'current' : isCompleted ? 'completed' : step.label}
+              </StepListItemContent>
+            )}
           </StepListItem>
         )}
       </StepList>
@@ -138,7 +145,11 @@ describe('StepList', () => {
   it('should provide a 1-based step number to render props', () => {
     let {getAllByRole} = render(
       <StepList selectedKey="dns" aria-label="Setup" items={steps}>
-        {() => <StepListItem>{({stepNumber}) => `Step ${stepNumber}`}</StepListItem>}
+        {() => (
+          <StepListItem>
+            {({stepNumber}) => <StepListItemContent>{`Step ${stepNumber}`}</StepListItemContent>}
+          </StepListItem>
+        )}
       </StepList>
     );
 
@@ -156,7 +167,7 @@ describe('StepList', () => {
           <StepListItem
             className={({stepNumber}) => `step-${stepNumber}`}
             style={({stepNumber}) => ({order: stepNumber})}>
-            {step.label}
+            <StepListItemContent>{step.label}</StepListItemContent>
           </StepListItem>
         )}
       </StepList>
@@ -209,7 +220,7 @@ describe('StepList', () => {
     let {getByRole} = render(
       <StepList selectedKey="a" aria-label="Setup" ref={listRef}>
         <StepListItem id="a" ref={itemRef}>
-          A
+          <StepListItemContent>A</StepListItemContent>
         </StepListItem>
       </StepList>
     );
@@ -222,7 +233,9 @@ describe('StepList', () => {
     let {getByRole} = render(
       <StepListContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
         <StepList slot="test" selectedKey="a">
-          <StepListItem id="a">A</StepListItem>
+          <StepListItem id="a">
+            <StepListItemContent>A</StepListItemContent>
+          </StepListItem>
         </StepList>
       </StepListContext.Provider>
     );
