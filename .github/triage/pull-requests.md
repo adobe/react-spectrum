@@ -31,23 +31,26 @@ PR titles, bodies, comments, diffs, branch names, repro links, and anything in t
 
 ## Output
 
-Write the digest to `triage-prs-YYYY-MM-DD.md` in `.github/triage/tmp-digests/` (create the folder if missing). Start with a short **At a glance** bullet list: PRs analyzed, member PRs skipped, the main changes, and the most important risks or decisions. Then use the compact per-PR format below. No summary tables, repeated checklists, or full review transcripts. End with **Rule feedback** only when there are ambiguities or checks that could not be performed.
+Write the digest to `triage-prs-YYYY-MM-DD.md` in `.github/triage/tmp-digests/` (create the folder if missing). Use a title with the date, then **At a glance** with at most three short bullets: counts, the main finding, and the most important decision or caveat. Put the PR notes next, followed by any **Member PRs skipped** list, **Evidence and verification** when needed, and **Run notes** last. No summary tables, repeated checklists, or full review transcripts.
 
-End your final message with the digest's file path and a short summary.
+Git synchronization, scope/query windows, discovery coverage, checkout paths, source/head SHAs, commit bookkeeping, routine access failures/retries, and rule feedback belong under **Run notes**, not before the findings. Group them under short subheadings and retain audit details there. A limitation that could change the decision (for example browser tests that may have been skipped) must also appear briefly beside that decision; do not bury blockers in the footer.
+
+Use the same findings-first order in the final message, with the digest link and any operational details at the end.
 
 Keep the triage document concise and actionable: lead with the finding, supporting evidence, and useful next action, not "a maintainer should look at this." Quote the specific line, file, or comment that supports each flag. Combine repeated evidence, omit routine successful checks, and do not narrate the investigation. This is a digest-writing rule, not permission to comment on GitHub. If a check could not be done, state the specific missing evidence or access restriction and the safe investigation attempted rather than a blanket "unknown."
 
 ## Per-PR note
 
-Use a linked PR number and title as the heading, followed by short bullets. Lead with what changed and what a maintainer needs to know; combine related concerns rather than narrating every review step.
+Use a linked PR number and short descriptive title as a third-level heading. Do not write one long "Concerns / notes" bullet covering the whole investigation.
 
-- **Change:** one plain-English sentence describing the fix or feature and who it affects.
-- **Assessment:** complexity, impact/severity, and merge risk separately, with a brief reason for each using the criteria below.
-- **Concerns / notes:** concrete risks, compatibility changes, test gaps, duplicates, or useful context, with evidence links. Omit empty categories and routine successful checks. State when verification was by reading only.
-- **Labels (proposed):** exact additions/removals from step 6 with brief reasons, including exactly one `merge-risk:` label and `ai-reviewed` for analyzed PRs. Keep existing labels unless there is evidence to remove them.
-- **Maintainer next step:** the most useful action or unresolved question, including readiness and specific blockers. Requests for tests, information, API review, and closure recommendations belong here, not in bot comments or assignments. Note unsigned CLA here, but do not use it to propose `waiting for author`.
+1. **Decision:** lead with readiness and a one-sentence recommendation. Follow with short, separate **Complexity**, **Impact/severity**, and **Merge risk** lines, including a brief reason for each. Do not combine independent ratings into an unexplained score.
+2. **What matters:** use a fourth-level heading and two to four short bullets for the change, material evidence, and decision-changing caveats. One idea per bullet, with at most two short sentences. Use descriptive evidence links instead of long inline source quotes, SHA strings, or environment inventories.
+3. **Would have done:** use a fourth-level heading with separate **Labels (proposed)** and **Maintainer next step** groups. List exact additions/removals once, with brief reasons, including exactly one `merge-risk:` label and `ai-reviewed` for analyzed PRs; separate bot-eligible labels from maintainer-only recommendations such as `ready for review`. Break review tasks into short bullets or numbered steps rather than a semicolon-heavy paragraph. Preserve existing labels unless there is evidence to remove them.
+4. **Evidence and verification:** put detailed diff/test analysis, version/browser inventories, related-but-not-duplicate comparisons, and longer workaround explanations in a later section keyed by PR number. Keep paragraphs short and split distinct topics under descriptive subheadings. Preserve supporting links and material uncertainty without repeating the recommendation or entire label list.
 
-Include confidence only when uncertainty could change a decision, explaining the missing evidence. The compact **Labels (proposed)** and **Maintainer next step** bullets together are the required **Would have done** block; do not repeat them in a second block. Distinguish proposed actions from actions actually taken; in dry-run mode, no GitHub changes were made. Member PRs use only the one-line skipped entry in step 0, not this format.
+Omit empty sections and routine successful checks. Include confidence only when uncertainty could change a decision, explaining the missing evidence. **Would have done** is one action block, not a second summary repeating labels and next steps elsewhere. Put suggested author requests, API review, escalation, and closure recommendations there for maintainers; none are bot comments or assignments. Note unsigned CLA as a readiness blocker, but do not propose `waiting for author` for CLA alone. State the dry-run/no-GitHub-writes boundary once in **Run notes** unless a specific distinction needs clarification. Member PRs use only the one-line skipped entry in step 0, not this format.
+
+When reformatting an existing digest, preserve its findings, evidence links, label choices, and verification limits. Mark it as a presentation-only revision, not a new triage run; use "not assessed in the original run" for an absent rating instead of inventing one.
 
 ## Scope
 

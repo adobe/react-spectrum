@@ -1,34 +1,99 @@
+# Issue triage - November 6, 2026
+
+*Presentation-only revision of the original read-only digest; no new triage or runtime verification.*
+
 ## At a glance
 
-- **1 issue triaged:** [#10932](https://github.com/adobe/react-spectrum/issues/10932), pending submit Button allows another form submission from Enter in a field.
-- **Medium severity; ready for maintainer review:** duplicate requests are reported, with a partial application-level guard available. No confirmed data loss, crash or previously working version.
-- **Main concern:** the current implementation and an existing test's explicit one-field exception support an incomplete-fix follow-up to #6197 / #7498, not closure as a duplicate. Preserve focusability and pending announcements in any fix.
+- **1 issue analyzed:** [#10932](https://github.com/adobe/react-spectrum/issues/10932), repeat form submission while a Button is pending.
+- **Ready for maintainer review.** Inline examples are sufficient to investigate; a hosted sandbox is still missing.
+- **Likely incomplete earlier fix, not a duplicate.** Browser behavior remains unverified.
 
-**Git synchronization:** Verified the dedicated `/Users/darobins/dev/react-spectrum-triage` checkout on `triage_support`, an empty index, no in-progress merge, no other active triage session, and no existing target digest. `git fetch origin` and `git merge origin/main --no-edit` succeeded. Merged `origin/main`: `8203ef81549ef9e01391a57b2e244b13cf36daaa`, verified as an ancestor of HEAD. The pre-existing local `.github/triage/setup.md` adaptation remains unstaged.
+## Triage
 
-**Scope:** Open, untriaged issues created since the previous issue digest commit, `f44203be0bc8be7b1f056f3dd1526255d9501f87` at `2026-11-05T16:50:20Z`, through the supplied run timestamp, `2026-11-06T16:00:57Z`. The exact-window query returned only #10932; a broader query from November 5 also returned #10925 and #10924, both created before this window. #10932 remained open, unlabeled and without comments on the final eligibility read. No issue discovery or duplicate search reached its result limit.
+### [#10932 - Enter can submit again while the Button is pending](https://github.com/adobe/react-spectrum/issues/10932)
 
-**Read-only boundary:** No GitHub changes were made. All GitHub retrieval used `gh issue list/view`, `gh pr view`, `gh search`, or `gh api --method GET`. No issue-supplied URL, reproduction, attachment or code was opened, fetched or executed. Source and documentation evidence below comes from `origin/main` at the merged commit. Runtime results are author reports, not independently reproduced findings.
+**Decision:** Recommend maintainer review; keep the issue open as a follow-up to an incomplete fix.
 
-## [#10932 - Button: Enter in a field submits the form again while its submit Button is pending](https://github.com/adobe/react-spectrum/issues/10932)
+**Impact/severity: Medium** - duplicate requests are reported; an application guard offers partial mitigation. No data loss or crash is established.
 
-- **Problem:** **Medium severity.** Users of one-field forms and forms with another submit button can reportedly trigger a second request by pressing Enter while the original submit Button is pending. The author reports "`onSubmit` runs again, with `event.nativeEvent.submitter === null`" for one field, and that the other button's "`onPress` runs" in the two-button case. Duplicate actions matter for dialog confirmations and form footers; no actual data loss or crash is established, and guarding the application's request handler can limit impact.
-- **Concerns / notes:** Verification was by reading only. The report gives expected/actual behavior, two small inline examples, numbered steps, RAC 1.16.0, hooks package 3.47.0, React 18.3.1, Chromium 153 / Playwright 1.63, and macOS 27.2. Its StackBlitz field is only "`<to create from the code below>`"; no runnable sandbox link is supplied. The inline examples and complete environment are enough to start maintainer investigation. Current-release behavior and Firefox/Safari are not measured.
-- **Source evidence:** [Button.tsx lines 165-172](https://github.com/adobe/react-spectrum/blob/8203ef81549ef9e01391a57b2e244b13cf36daaa/packages/react-aria-components/src/Button.tsx#L165-L172) still uses `type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}` and `aria-disabled` while pending. The [implicit-submission test, lines 387-415](https://github.com/adobe/react-spectrum/blob/8203ef81549ef9e01391a57b2e244b13cf36daaa/packages/react-aria-components/test/Button.test.js#L387-L415), explicitly says, "Implicit form submission can happen if there's only one," and uses two text inputs. This corroborates the reported coverage gap, not a browser reproduction. The new [browser tests](https://github.com/adobe/react-spectrum/blob/8203ef81549ef9e01391a57b2e244b13cf36daaa/packages/react-aria-components/test/Button.browser.test.tsx#L19-L55) exercise activation of the focused button, not Enter in a field while pending.
-- **Duplicates / fixes:** Closed [#6197](https://github.com/adobe/react-spectrum/issues/6197) reports "pressing the button is triggering a form submit" while pending. Merged [#7498](https://github.com/adobe/react-spectrum/pull/7498), merged December 19, 2024, promised to "disable implicit and explicit form submission for pending buttons" and added the type change. Keep #10932 separate as a specific remaining one-field/default-button gap, with those items linked as history; do not claim the merged PR resolves it. Open [#7543](https://github.com/adobe/react-spectrum/issues/7543) instead says the Button "doesn't reflect the pending state from `useFormStatus`," unlike this report where pending is already set. Closed [#10721](https://github.com/adobe/react-spectrum/pull/10721) concerns callbacks firing twice on Space activation of the button, not Enter from a field. No matching complete fix or supported duplicate was identified.
-- **Existing APIs / accessibility:** No complete API-only solution was established. A form-level in-flight guard is a **partial mitigation**, not grounds for closing: it can reject a second request but does not prevent the other button's earlier `onPress` callback. The [Form documentation](https://github.com/adobe/react-spectrum/blob/8203ef81549ef9e01391a57b2e244b13cf36daaa/packages/dev/s2-docs/pages/react-aria/Form.mdx#L49-L97) documents React 18 `onSubmit` handling with `preventDefault`; maintainers can recommend gating request dispatch there while retaining `isPending`. Do not endorse native disabling as the fix: the [Button documentation](https://github.com/adobe/react-spectrum/blob/8203ef81549ef9e01391a57b2e244b13cf36daaa/packages/dev/s2-docs/pages/react-aria/Button.mdx#L70-L72) says pending buttons "remain focusable," and a [maintainer comment on #6197](https://github.com/adobe/react-spectrum/issues/6197#issuecomment-2052692015) explains the focus and screen-reader feedback requirements. The author's click-cancellation proposal needs maintainer evaluation; it is not verified or recommended here.
-- **Maintainer next step:** **Ready for review: yes**, based on sufficient inline reproduction detail despite the missing hosted sandbox. Investigate Enter with one text input, two text inputs, and another submit button on current RAC in real browser tests; check submitter identity, alternate-button callbacks, focus retention and pending announcements. A maintainer should request a StackBlitz or CodeSandbox matching the bug form, without treating its absence as an author blocker before trying these explicit cases. No previously working version is provided, and the test already acknowledges the one-field exception: do not label this `regression` without additional evidence.
+**Complexity:** Not assessed in the original run.
 
-### Would have done
+#### What matters
 
-- **Labels (proposed):** Would add `bug` (reported repeat submission), `Button` (pending submit control), `Form` (implicit submission), `RAC` (reported layer), `needs investigation` (runtime and full fix unconfirmed), `ready for review` (enough detail to reproduce), and `ai-reviewed` (automated triage completed, not approval). Would remove none. All seven exist in the live label inventory. Would not add `has workaround` for an incomplete guard, `browser bug` without browser attribution, or `accessibility` without an established assistive-technology failure.
-- **Maintainer action:** Would recommend current-version browser investigation and the hosted reproduction request above. Would not add `waiting for author` because maintainer work can proceed; no specific author action currently blocks it.
-- **Comment / closure:** Would post no comment or duplicate notice, and would not close. Would link #6197 / #7498 as prior incomplete-fix context, not a duplicate disposition. Information requests, mitigation advice and investigation recommendations belong to maintainers, not bot comments.
-- **Confidence:** Medium. Source/test evidence supports the gap, but native submission behavior and the proposed cancellation fix were not run. Current-version browser results or a matching complete fix could change readiness, severity or disposition.
+- Pressing Enter can reportedly resubmit a one-field form or activate another submit button while the original Button is pending.
+- An [existing test explicitly excludes the one-field case](https://github.com/adobe/react-spectrum/blob/8203ef81549ef9e01391a57b2e244b13cf36daaa/packages/react-aria-components/test/Button.test.js#L387-L415). This supports investigating a coverage gap, not claiming a reproduced browser failure.
+- A request-handler guard is **not a complete fix**: it cannot prevent the other button's earlier `onPress` callback.
 
-## Rule feedback
+#### Would have done
 
-- Used the previous issue digest's commit timestamp rather than a strict 24-hour window, as allowed by scope. Labels and comments were read live, not as an atomic historical snapshot.
-- The sandbox placeholder is not a runnable reproduction. The rules also accept enough detail to reproduce, so the inline examples support `ready for review`; a maintainer sandbox request is still recorded without proposing an author-wait label.
-- Reproductions, external specification links and runtime claims could not be verified under the execution/URL prohibition. No tests or issue code were run. Searches covered open/closed issues and open/closed/merged PRs, but cannot rule out differently worded reports.
-- Routine non-destructive shell checks and trusted `git show origin/main:...` reads used the user's standing authorization. Only this digest is authored and staged for the digest commit; the local setup adaptation is excluded. No push or other GitHub write is authorized or performed.
+**Labels (proposed)**
+
+- Add `bug`, `Button`, `Form`, and `RAC` for the reported behavior, components, and layer.
+- Add `needs investigation` for unverified runtime behavior and `ai-reviewed` for completed triage, not approval.
+- Recommend maintainer-only `ready for review`: enough detail exists to begin. All seven proposed labels exist; remove none.
+
+**Maintainer next step**
+
+1. Check Enter with one input, two inputs, and another submit button on current RAC in real browser tests.
+2. Verify submitter identity, alternate-button callbacks, focus retention, and pending announcements.
+3. Request a matching StackBlitz or CodeSandbox, without blocking investigation on it.
+
+**Confidence: Medium** - source evidence supports the gap; browser behavior and the author's cancellation proposal were not tested.
+
+## Evidence and verification
+
+### Evidence for #10932
+
+#### Reproduction and environment
+
+The report includes expected/actual behavior, two inline examples, and numbered steps. The StackBlitz field is the placeholder `<to create from the code below>`, not a supplied runnable link.
+
+Reported environment: RAC 1.16.0, hooks 3.47.0, React 18.3.1, Chromium 153 / Playwright 1.63, and macOS 27.2. Current-release behavior and Firefox/Safari were not measured.
+
+The author reports `onSubmit` running again with `event.nativeEvent.submitter === null` in the one-field case, and the other button's `onPress` running in the two-button case.
+
+#### Source and test coverage
+
+- [Button implementation](https://github.com/adobe/react-spectrum/blob/8203ef81549ef9e01391a57b2e244b13cf36daaa/packages/react-aria-components/src/Button.tsx#L165-L172) changes a pending submit button's type to `button` and uses `aria-disabled`.
+- The implicit-submission test linked above says, "Implicit form submission can happen if there's only one," and uses two text inputs.
+- [New browser tests](https://github.com/adobe/react-spectrum/blob/8203ef81549ef9e01391a57b2e244b13cf36daaa/packages/react-aria-components/test/Button.browser.test.tsx#L19-L55) activate the focused button, not Enter in a field while pending.
+
+These are reading-based findings, not an independent reproduction. No previously working version is supplied; the acknowledged exception does not establish a regression.
+
+#### Related reports, not a duplicate disposition
+
+- Closed [#6197](https://github.com/adobe/react-spectrum/issues/6197) reports form submission while pending. [#7498](https://github.com/adobe/react-spectrum/pull/7498), merged December 19, 2024, added the type change to disable implicit and explicit pending submission. They are incomplete-fix history, not proof this case is resolved.
+- Open [#7543](https://github.com/adobe/react-spectrum/issues/7543) concerns pending state not reflecting `useFormStatus`; this report already has pending set.
+- Closed [#10721](https://github.com/adobe/react-spectrum/pull/10721) concerns duplicate callbacks on Space activation, not Enter from a field.
+
+No supported duplicate or complete fix was found. Differently worded reports cannot be ruled out.
+
+#### Partial mitigation and label boundaries
+
+The [Form docs](https://github.com/adobe/react-spectrum/blob/8203ef81549ef9e01391a57b2e244b13cf36daaa/packages/dev/s2-docs/pages/react-aria/Form.mdx#L49-L97) cover React 18 `onSubmit` with `preventDefault`. Gating request dispatch there while retaining `isPending` can reduce duplicate requests, but is not a full API-only solution.
+
+Native disabling is not recommended as the fix. The [Button docs](https://github.com/adobe/react-spectrum/blob/8203ef81549ef9e01391a57b2e244b13cf36daaa/packages/dev/s2-docs/pages/react-aria/Button.mdx#L70-L72) require pending buttons to remain focusable; a [maintainer comment](https://github.com/adobe/react-spectrum/issues/6197#issuecomment-2052692015) explains focus and screen-reader feedback. The author's click-cancellation proposal still needs evaluation.
+
+Do not propose `regression` without earlier-version evidence, `has workaround` for the incomplete guard, `browser bug` without attribution, or `accessibility` without an established assistive-technology failure. No author action currently blocks investigation, so `waiting for author` is not proposed. No comment, duplicate notice, or closure is recommended.
+
+## Run notes
+
+### Scope and discovery
+
+- Window: previous digest commit `f44203be0bc8be7b1f056f3dd1526255d9501f87` at `2026-11-05T16:50:20Z` through `2026-11-06T16:00:57Z`.
+- The exact-window query returned only #10932. Broader discovery also returned #10925 and #10924, both outside the window. No discovery/duplicate search reached its result limit.
+- Final eligibility: #10932 was open, unlabeled, and without comments. Labels/comments were live reads, not an atomic historical snapshot.
+
+### Git synchronization - original run
+
+- Checkout: `/Users/darobins/dev/react-spectrum-triage`; branch: `triage_support`.
+- Index was empty; no merge, other active triage session, or existing target digest was found.
+- `git fetch origin` and `git merge origin/main --no-edit` succeeded. Source main: `8203ef81549ef9e01391a57b2e244b13cf36daaa`, verified as an ancestor of HEAD.
+- The pre-existing local `setup.md` adaptation remained unstaged. The original run recorded only this digest as authored/staged for its digest commit; this presentation edit makes no new commit.
+
+### Permissions and rule feedback
+
+- No GitHub writes, push, external URL/reproduction/attachment retrieval, or code execution occurred. Reads used `gh issue list/view`, `gh pr view`, `gh search`, and `gh api --method GET`.
+- Trusted source/docs came from the main revision above. Routine shell checks and `git show origin/main:...` used the original automation's standing authorization.
+- The since-last-digest window and inline-detail readiness exception were used. A sandbox request remains useful, but is not an author blocker.
+- Runtime claims and external specification links remain unverified. Changed browser evidence or a complete fix could change the original disposition.
