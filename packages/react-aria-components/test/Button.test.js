@@ -43,6 +43,52 @@ describe('Button', () => {
     expect(button).toHaveAttribute('class', 'test');
   });
 
+  it('should support updating and removing aria-keyshortcuts', () => {
+    let {getByRole, rerender} = render(<Button aria-keyshortcuts="F5">Test</Button>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-keyshortcuts', 'F5');
+
+    rerender(<Button aria-keyshortcuts="Alt+ArrowLeft Control+Shift+N">Test</Button>);
+    expect(button).toHaveAttribute('aria-keyshortcuts', 'Alt+ArrowLeft Control+Shift+N');
+
+    rerender(<Button>Test</Button>);
+    expect(button).not.toHaveAttribute('aria-keyshortcuts');
+  });
+
+  it('should not activate the button with aria-keyshortcuts alone', async () => {
+    let onPress = jest.fn();
+    let {getByRole} = render(
+      <Button aria-keyshortcuts="s" onPress={onPress}>
+        Test
+      </Button>
+    );
+    let button = getByRole('button');
+    await user.tab();
+    expect(button).toHaveFocus();
+    await user.keyboard('s');
+    expect(onPress).not.toHaveBeenCalled();
+
+    await user.keyboard('{Enter}');
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(button).toHaveAttribute('aria-keyshortcuts', 's');
+  });
+
+  it.each([{isDisabled: true}, {isPending: true}])(
+    'should preserve aria-keyshortcuts without allowing presses when %o',
+    async props => {
+      let onPress = jest.fn();
+      let {getByRole} = render(
+        <Button {...props} aria-keyshortcuts="F5" onPress={onPress}>
+          Test
+        </Button>
+      );
+      let button = getByRole('button');
+      expect(button).toHaveAttribute('aria-keyshortcuts', 'F5');
+      await user.click(button);
+      expect(onPress).not.toHaveBeenCalled();
+    }
+  );
+
   it('should support DOM props', () => {
     let {getByRole} = render(<Button data-foo="bar">Test</Button>);
     let button = getByRole('button');

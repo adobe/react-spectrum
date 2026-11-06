@@ -33,6 +33,53 @@ describe('ToggleButton', () => {
     expect(button).toHaveAttribute('class', 'test');
   });
 
+  it('should support updating and removing aria-keyshortcuts', () => {
+    let {getByRole, rerender} = render(<ToggleButton aria-keyshortcuts="F5">Test</ToggleButton>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-keyshortcuts', 'F5');
+
+    rerender(<ToggleButton aria-keyshortcuts="Alt+ArrowLeft Control+Shift+N">Test</ToggleButton>);
+    expect(button).toHaveAttribute('aria-keyshortcuts', 'Alt+ArrowLeft Control+Shift+N');
+
+    rerender(<ToggleButton>Test</ToggleButton>);
+    expect(button).not.toHaveAttribute('aria-keyshortcuts');
+  });
+
+  it('should not activate the button with aria-keyshortcuts alone', async () => {
+    let onPress = jest.fn();
+    let {getByRole} = render(
+      <ToggleButton aria-keyshortcuts="s" onPress={onPress}>
+        Test
+      </ToggleButton>
+    );
+    let button = getByRole('button');
+    await user.tab();
+    expect(button).toHaveFocus();
+    await user.keyboard('s');
+    expect(onPress).not.toHaveBeenCalled();
+    expect(button).toHaveAttribute('aria-pressed', 'false');
+
+    await user.keyboard('{Enter}');
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(button).toHaveAttribute('aria-pressed', 'true');
+    expect(button).toHaveAttribute('aria-keyshortcuts', 's');
+  });
+
+  it('should preserve aria-keyshortcuts and selection when disabled', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <ToggleButton isDisabled defaultSelected aria-keyshortcuts="F5" onChange={onChange}>
+        Test
+      </ToggleButton>
+    );
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-keyshortcuts', 'F5');
+    expect(button).toBeDisabled();
+    await user.click(button);
+    expect(onChange).not.toHaveBeenCalled();
+    expect(button).toHaveAttribute('aria-pressed', 'true');
+  });
+
   it('should support DOM props', () => {
     let {getByRole} = render(<ToggleButton data-foo="bar">Test</ToggleButton>);
     let button = getByRole('button');
