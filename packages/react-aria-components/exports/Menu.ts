@@ -50,8 +50,13 @@ export {Keyboard} from '../src/Keyboard';
 export {Header} from '../src/Header';
 export type {HeaderProps} from '../src/Header';
 
-export {Popover} from '../src/Popover';
-export type {PopoverProps, PopoverRenderProps} from '../src/Popover';
+export {Popover, PopoverOverlay} from '../src/Popover';
+export type {
+  PopoverProps,
+  PopoverRenderProps,
+  PopoverOverlayProps,
+  PopoverOverlayRenderProps
+} from '../src/Popover';
 
 export {Separator} from '../src/Separator';
 export type {SeparatorProps} from '../src/Separator';

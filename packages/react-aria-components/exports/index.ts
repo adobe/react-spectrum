@@ -160,7 +160,7 @@ export {Meter, MeterContext} from '../src/Meter';
 export {Modal, ModalOverlay, ModalContext} from '../src/Modal';
 export {NumberField, NumberFieldContext, NumberFieldStateContext} from '../src/NumberField';
 export {OverlayArrow} from '../src/OverlayArrow';
-export {Popover, PopoverContext} from '../src/Popover';
+export {Popover, PopoverOverlay, PopoverContext} from '../src/Popover';
 export {ProgressBar, ProgressBarContext} from '../src/ProgressBar';
 export {
   RadioGroup,
@@ -427,7 +427,12 @@ export type {MeterProps, MeterRenderProps} from '../src/Meter';
 export type {ModalOverlayProps, ModalRenderProps} from '../src/Modal';
 export type {NumberFieldProps, NumberFieldRenderProps} from '../src/NumberField';
 export type {OverlayArrowProps, OverlayArrowRenderProps} from '../src/OverlayArrow';
-export type {PopoverProps, PopoverRenderProps} from '../src/Popover';
+export type {
+  PopoverProps,
+  PopoverRenderProps,
+  PopoverOverlayProps,
+  PopoverOverlayRenderProps
+} from '../src/Popover';
 export type {ProgressBarProps, ProgressBarRenderProps} from '../src/ProgressBar';
 export type {
   RadioGroupProps,
