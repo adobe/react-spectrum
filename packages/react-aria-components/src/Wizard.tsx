@@ -19,8 +19,8 @@ import React, {
   ReactElement,
   ReactNode,
   useContext,
-  useEffect,
-  useMemo
+  useMemo,
+  useState
 } from 'react';
 import {
   Tab,
@@ -52,10 +52,13 @@ export interface WizardProps extends Omit<TabsProps, 'children' | 'selectedKey'>
    * The key of the last completed step (controlled). Every step up to and including the one after
    * it is navigable by default.
    */
-  lastCompletedStep?: Key;
+  lastCompletedStep?: Key | null;
   /** The key of the initially last completed step (uncontrolled). */
   defaultLastCompletedStep?: Key;
-  /** Handler called when the last completed step changes. */
+  /**
+   * Handler called when selecting a step completes the steps before it, in the same event as
+   * `onSelectionChange`.
+   */
   onLastCompletedStepChange?: (key: Key | null) => void;
   /**
    * Whether every step that is not in `disabledKeys` is navigable at any time, rather than only
@@ -95,10 +98,13 @@ export interface WizardStateOptions {
   /** Handler called when the selected step changes. */
   onSelectionChange?: (key: Key) => void;
   /** The key of the last completed step (controlled). */
-  lastCompletedStep?: Key;
+  lastCompletedStep?: Key | null;
   /** The key of the initially last completed step (uncontrolled). */
   defaultLastCompletedStep?: Key;
-  /** Handler called when the last completed step changes. */
+  /**
+   * Handler called when selecting a step completes the steps before it, in the same event as
+   * `onSelectionChange`.
+   */
   onLastCompletedStepChange?: (key: Key | null) => void;
   /** Whether every step that is not in `disabledKeys` is navigable at any time. */
   allowsRandomAccess?: boolean;
@@ -125,20 +131,23 @@ export interface WizardState {
 /**
  * This hook controls the selected step and tracks the last completed step so it can derive which
  * steps are navigable. Completed steps and the current step are navigable; upcoming steps are not
- * unless random access is allowed. The last completed step advances as the selection moves forward
- * and is never rolled back unless it's in a controlled state,
- * so previously reached steps stay navigable after navigating backwards.
+ * unless random access is allowed. Unless it's controlled, the last completed step is derived from
+ * the selection: it advances as the selection moves forward and is never rolled back, so previously
+ * reached steps stay navigable after navigating backwards. `onLastCompletedStepChange` is called in
+ * the same event as `onSelectionChange`, so a controlled last completed step can be updated along
+ * with the selection.
  */
 export function useWizardState(options: WizardStateOptions): WizardState {
   let {
     keys,
     allowsRandomAccess = false,
     disabledKeys: disabledStepKeys,
-    onSelectionChange
+    onSelectionChange,
+    onLastCompletedStepChange
   } = options;
   let firstKey = keys.length > 0 ? keys[0] : null;
 
-  let [selectedKeyState, setSelectedKey] = useControlledState<Key | null>(
+  let [selectedKeyState, setSelectedKeyState] = useControlledState<Key | null>(
     options.selectedKey,
     options.defaultSelectedKey ?? null,
     onSelectionChange
@@ -153,18 +162,33 @@ export function useWizardState(options: WizardStateOptions): WizardState {
   let selectedKey = selectedKeyState ?? firstKey;
   let selectedIndex = selectedKey != null ? keys.indexOf(selectedKey) : -1;
 
-  let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key | null>(
-    options.lastCompletedStep,
-    options.defaultLastCompletedStep ?? null,
-    options.onLastCompletedStepChange
+  let isLastCompletedStepControlled = options.lastCompletedStep !== undefined;
+  let [lastCompletedStepState, setLastCompletedStepState] = useState<Key | null>(
+    options.defaultLastCompletedStep ?? null
   );
+  let lastCompletedStep = isLastCompletedStepControlled
+    ? (options.lastCompletedStep ?? null)
+    : lastCompletedStepState;
   let lastCompletedIndex = lastCompletedStep != null ? keys.indexOf(lastCompletedStep) : -1;
 
-  useEffect(() => {
-    if (selectedIndex > lastCompletedIndex + 1 && selectedIndex > 0) {
-      setLastCompletedStep(keys[selectedIndex - 1]);
+  // When uncontrolled, every step before the selected step is completed. Store it during render
+  // rather than syncing it in an effect, so it's correct on the first render and isn't rolled back
+  // when the selection moves backwards, even if the selection is controlled.
+  if (!isLastCompletedStepControlled && selectedIndex - 1 > lastCompletedIndex) {
+    lastCompletedIndex = selectedIndex - 1;
+    lastCompletedStep = keys[lastCompletedIndex];
+    setLastCompletedStepState(lastCompletedStep);
+  }
+
+  // Notify in the same event as the selection change, so a controlled lastCompletedStep can be
+  // updated along with the selection.
+  let setSelectedKey = (key: Key) => {
+    setSelectedKeyState(key);
+    let index = keys.indexOf(key);
+    if (index - 1 > lastCompletedIndex) {
+      onLastCompletedStepChange?.(keys[index - 1]);
     }
-  }, [keys, selectedIndex, lastCompletedIndex, setLastCompletedStep]);
+  };
 
   let disabledKeys = useMemo(() => {
     // Steps disabled by the consumer are never navigable, however the wizard is configured.
@@ -219,12 +243,14 @@ function WizardInner({props, collection, tabsRef: ref}: WizardInnerProps) {
     disabledKeys
   });
 
+  // Tabs treats null as a controlled empty selection, so passing it rather than undefined keeps Tabs
+  // controlled while there is no selected step (e.g. before the collection is populated).
   return (
     <Tabs
       {...tabsProps}
       keyboardActivation="manual"
       ref={ref}
-      selectedKey={state.selectedKey ?? undefined}
+      selectedKey={state.selectedKey!}
       onSelectionChange={state.setSelectedKey}
       disabledKeys={state.disabledKeys}>
       {children}
