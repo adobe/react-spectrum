@@ -115,7 +115,11 @@ export function useCalendarYearPicker(
     value,
     onChange: key => {
       if (key != null) {
-        state.setFocusedDate(years[key].date);
+        // Preserve focused month/day. Year items may carry bound month/day when
+        // visibleYears was clamped to minValue/maxValue.
+        let yearDate = years[key].date;
+        let focused = state.focusedDate;
+        state.setFocusedDate(yearDate.set({month: focused.month, day: focused.day}));
       }
     },
     items: years
