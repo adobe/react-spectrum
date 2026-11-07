@@ -299,6 +299,14 @@ describe('Toolbar', () => {
     // Other keys don't affect focus
     await user.keyboard('{Enter}');
     expect(zoomOut).toHaveFocus();
+
+    await user.tab();
+    await user.click(alignLeft);
+    expect(alignLeft).toHaveFocus();
+
+    await user.click(after);
+    await user.tab({shift: true});
+    expect(alignLeft).toHaveFocus();
   });
 
   it('scrolls the newly focused item into view when navigating with arrow keys', async () => {
