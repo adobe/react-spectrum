@@ -139,6 +139,26 @@ describe('useOverlayPosition', function () {
     `);
   });
 
+  it('keeps a top popover open above the iOS keyboard when offsetTop is inconsistent', () => {
+    let clientHeight = jest
+      .spyOn(document.documentElement, 'clientHeight', 'get')
+      .mockReturnValue(714);
+    let previousScrollTop = document.documentElement.scrollTop;
+    document.documentElement.scrollTop = 466;
+    Object.assign(window.visualViewport!, {pageTop: 466, offsetTop: 310, height: 404});
+
+    try {
+      let res = render(<Example placement="top" triggerTop={214} />);
+      let overlay = res.getByTestId('overlay');
+
+      expect(overlay).toHaveTextContent('placement: top');
+      expect(parseFloat(overlay.style.maxHeight)).toBeGreaterThan(100);
+    } finally {
+      document.documentElement.scrollTop = previousScrollTop;
+      clientHeight.mockRestore();
+    }
+  });
+
   it('should update the position on window resize', function () {
     let res = render(<Example triggerTop={400} />);
     let overlay = res.getByTestId('overlay');
