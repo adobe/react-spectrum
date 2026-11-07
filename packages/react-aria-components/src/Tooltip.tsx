@@ -233,6 +233,7 @@ function TooltipInner(
       style={
         {
           ...overlayProps.style,
+          visibility: !placement && !state.isOpen ? 'hidden' : undefined,
           '--trigger-anchor-point': triggerAnchorPoint
             ? `${triggerAnchorPoint.x}px ${triggerAnchorPoint.y}px`
             : undefined,
