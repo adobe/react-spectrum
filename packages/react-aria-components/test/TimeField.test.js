@@ -19,6 +19,7 @@ import {
 } from '@react-spectrum/test-utils-internal';
 import {DateInput, DateSegment, TimeField, TimeFieldContext} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
 import React from 'react';
 import {Text} from '../src/Text';
@@ -261,5 +262,81 @@ describe('TimeField', () => {
     await user.tab();
 
     expect(getDescription()).not.toContain('Constraints not satisfied');
+  });
+
+  describe('clipboard', () => {
+    async function paste(segment, text) {
+      await user.click(segment);
+      await navigator.clipboard.writeText(text);
+      await user.paste();
+      await act(async () => {});
+    }
+
+    it('copies the displayed time', async () => {
+      let {getAllByRole} = render(
+        <TimeField defaultValue={new Time(14, 30)}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      );
+      let segment = getAllByRole('spinbutton')[1];
+      await user.click(segment);
+      // user.copy() only fires a copy event when there is a selection, and it fills the clipboard
+      // data with the selected text before the event, so skip that first item.
+      act(() => document.getSelection().selectAllChildren(segment));
+      let clipboardData = await user.copy();
+      let [, item] = clipboardData.items.filter(item => item.type === 'text/plain');
+      let text = '';
+      item.getAsString(data => (text = data));
+      // Some ICU versions put a narrow no-break space before the day period.
+      expect(text.replace(/\s/g, ' ')).toBe('2:30 PM');
+    });
+
+    it.each([
+      ['an ISO 8601 time', '14:30'],
+      ['the display format', '2:30 PM'],
+      ['a lowercase day period', '2:30pm']
+    ])('pastes %s', async (_, text) => {
+      let onChange = jest.fn();
+      let {getAllByRole} = render(
+        <TimeField onChange={onChange}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      );
+      await paste(getAllByRole('spinbutton')[0], text);
+      expect(onChange).toHaveBeenCalledWith(new Time(14, 30));
+    });
+
+    it.each([
+      ['ar-EG', '٢:٣٠ م'],
+      ['ar-EG', '14:30'],
+      ['ar-AE', '2:30 م'],
+      ['he-IL', '14:30']
+    ])('pastes a time in %s: %s', async (locale, text) => {
+      let onChange = jest.fn();
+      let {getAllByRole} = render(
+        <I18nProvider locale={locale}>
+          <TimeField onChange={onChange}>
+            <Label>Time</Label>
+            <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          </TimeField>
+        </I18nProvider>
+      );
+      await paste(getAllByRole('spinbutton')[0], text);
+      expect(onChange).toHaveBeenCalledWith(new Time(14, 30));
+    });
+
+    it('rejects an hour that does not fit the day period', async () => {
+      let onChange = jest.fn();
+      let {getAllByRole} = render(
+        <TimeField onChange={onChange}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </TimeField>
+      );
+      await paste(getAllByRole('spinbutton')[0], '14:30 PM');
+      expect(onChange).not.toHaveBeenCalled();
+    });
   });
 });

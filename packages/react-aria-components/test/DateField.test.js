@@ -17,7 +17,14 @@ import {
   render,
   within
 } from '@react-spectrum/test-utils-internal';
-import {CalendarDate} from '@internationalized/date';
+import {
+  CalendarDate,
+  CalendarDateTime,
+  getLocalTimeZone,
+  parseAbsolute,
+  parseZonedDateTime,
+  toCalendarDateTime
+} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
 import {I18nProvider} from 'react-aria/I18nProvider';
@@ -638,5 +645,306 @@ describe('DateField', () => {
 
     expect(collapse).not.toHaveBeenCalled();
     jest.restoreAllMocks();
+  });
+
+  describe('clipboard', () => {
+    function renderField(props = {}, locale = 'en-US') {
+      let onChange = jest.fn();
+      let tree = render(
+        <I18nProvider locale={locale}>
+          <DateField onChange={onChange} {...props}>
+            <Label>Date</Label>
+            <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          </DateField>
+        </I18nProvider>
+      );
+      let group = tree.getByRole('group');
+      let segments = within(group).getAllByRole('spinbutton');
+      return {...tree, group, segments, onChange};
+    }
+
+    async function paste(segment, text) {
+      await user.click(segment);
+      await navigator.clipboard.writeText(text);
+      await user.paste();
+      // Reading the pasted text is async.
+      await act(async () => {});
+    }
+
+    function displayedText(group) {
+      // Normalize spaces since some ICU versions put a narrow no-break space before the day period.
+      return group.textContent.replace(/[\u2066-\u2069]/g, '').replace(/\s/g, ' ');
+    }
+
+    // Returns the text the field put on the clipboard, or null if it left the copy to the browser.
+    async function copy(segment) {
+      await user.click(segment);
+      // user.copy() only fires a copy event when there is a selection, and it fills the clipboard
+      // data with the selected text before the event, so skip that first item.
+      act(() => document.getSelection().selectAllChildren(segment));
+      let clipboardData = await user.copy();
+      let [, item] = clipboardData.items.filter(item => item.type === 'text/plain');
+      let text = null;
+      item?.getAsString(data => (text = data));
+      return text;
+    }
+
+    it('copies the whole value as displayed from any segment', async () => {
+      let {segments} = renderField({defaultValue: new CalendarDate(2026, 11, 4)});
+      expect(await copy(segments[1])).toBe('11/4/2026');
+      expect(await copy(segments[2])).toBe('11/4/2026');
+    });
+
+    it('does not copy an empty or partially filled value', async () => {
+      let {segments} = renderField();
+      expect(await copy(segments[0])).toBeNull();
+
+      await user.keyboard('11');
+      expect(await copy(segments[1])).toBeNull();
+    });
+
+    it('pastes a date in the display format of the locale', async () => {
+      let {group, segments, onChange} = renderField();
+      await paste(segments[0], '11/04/2026');
+      expect(group).toHaveTextContent('11/4/2026');
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2026, 11, 4));
+    });
+
+    it('accepts different separators and surrounding whitespace', async () => {
+      let {segments, onChange} = renderField();
+      await paste(segments[2], '  11-4-2026 ');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2026, 11, 4));
+    });
+
+    it('uses the segment order of the locale', async () => {
+      let {group, segments, onChange} = renderField({}, 'de-DE');
+      await paste(segments[0], '4.11.2026');
+      expect(group).toHaveTextContent('4.11.2026');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2026, 11, 4));
+    });
+
+    it('pastes an ISO 8601 date', async () => {
+      let {segments, onChange} = renderField({}, 'de-DE');
+      await paste(segments[0], '2026-11-04');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2026, 11, 4));
+    });
+
+    it('replaces an existing value', async () => {
+      let {segments, onChange} = renderField({defaultValue: new CalendarDate(2020, 2, 3)});
+      await paste(segments[1], '12/25/2026');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2026, 12, 25));
+    });
+
+    it('pastes a date and time with a day period', async () => {
+      let {group, segments, onChange} = renderField({granularity: 'minute'});
+      await paste(segments[0], '11/4/2026, 2:30 PM');
+      expect(displayedText(group)).toBe('11/4/2026, 2:30 PM');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2026, 11, 4, 14, 30));
+    });
+
+    it('pastes an ISO 8601 date time into a 12 hour field', async () => {
+      let {group, segments, onChange} = renderField({granularity: 'minute'});
+      await paste(segments[0], '2026-11-04T00:05');
+      expect(displayedText(group)).toBe('11/4/2026, 12:05 AM');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2026, 11, 4, 0, 5));
+    });
+
+    it('treats an hour without a day period as 24 hour time', async () => {
+      let {segments, onChange} = renderField({granularity: 'minute'});
+      await paste(segments[0], '11/4/2026 14:30');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2026, 11, 4, 14, 30));
+    });
+
+    it('keeps the time when pasting an ISO 8601 date into a date time field', async () => {
+      let {group, segments, onChange} = renderField({
+        defaultValue: new CalendarDateTime(2020, 2, 3, 9, 15)
+      });
+      await paste(segments[0], '2026-11-04');
+      expect(displayedText(group)).toBe('11/4/2026, 9:15 AM');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2026, 11, 4, 9, 15));
+    });
+
+    it('pastes into a zoned field, converting offsets to its time zone', async () => {
+      let {segments, onChange} = renderField({
+        defaultValue: parseZonedDateTime('2020-02-03T09:15[America/New_York]')
+      });
+      await paste(segments[0], '2026-11-04T19:30:00Z');
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange.mock.calls[0][0].toString()).toBe(
+        '2026-11-04T14:30:00-05:00[America/New_York]'
+      );
+    });
+
+    it('converts ISO 8601 offsets to local time in a field without a time zone', async () => {
+      let {segments, onChange} = renderField({granularity: 'minute'});
+      await paste(segments[0], '2026-11-04T19:30:00Z');
+      expect(onChange).toHaveBeenCalledWith(
+        toCalendarDateTime(parseAbsolute('2026-11-04T19:30:00Z', getLocalTimeZone()))
+      );
+    });
+
+    it('keeps the offset of an ambiguous time during a daylight saving time transition', async () => {
+      let {segments, onChange} = renderField({
+        defaultValue: parseZonedDateTime('2026-10-01T09:15[America/New_York]')
+      });
+      // 1:30 AM happens twice on Nov 1, 2026 in New York. This is the second one, in EST.
+      await paste(segments[0], '2026-11-01T06:30:00Z');
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange.mock.calls[0][0].toString()).toBe(
+        '2026-11-01T01:30:00-05:00[America/New_York]'
+      );
+    });
+
+    it('keeps the existing time when pasting a date time with an offset into a zoned date field', async () => {
+      let {segments, onChange} = renderField({
+        defaultValue: parseZonedDateTime('2026-01-10T09:15[America/New_York]'),
+        granularity: 'day'
+      });
+      // The pasted offset (EST) is not used since the time is not displayed.
+      await paste(segments[0], '2026-03-08T06:30:00Z');
+      expect(onChange.mock.calls[0][0].toString()).toBe(
+        '2026-03-08T09:15:00-04:00[America/New_York]'
+      );
+    });
+
+    it('ignores the time zone name when pasting the display format of a zoned field', async () => {
+      let {segments, onChange} = renderField({
+        defaultValue: parseZonedDateTime('2020-02-03T09:15[America/New_York]')
+      });
+      await paste(segments[0], '11/4/2026, 2:30 PM EST');
+      expect(onChange.mock.calls[0][0].toString()).toBe(
+        '2026-11-04T14:30:00-05:00[America/New_York]'
+      );
+    });
+
+    it('round trips a copied value into another field', async () => {
+      let first = renderField({
+        defaultValue: new CalendarDateTime(2026, 11, 4, 18, 45),
+        granularity: 'minute'
+      });
+      let text = await copy(first.segments[0]);
+      first.unmount();
+
+      let second = renderField({granularity: 'minute'});
+      await paste(second.segments[3], text);
+      expect(second.onChange).toHaveBeenCalledWith(new CalendarDateTime(2026, 11, 4, 18, 45));
+    });
+
+    it('parses eras in calendars that display them', async () => {
+      let first = renderField({defaultValue: new CalendarDate(1995, 6, 15)}, 'ja-JP-u-ca-japanese');
+      let text = await copy(first.segments[0]);
+      expect(text).toMatch(/^(H|平成)7\/6\/15$/);
+      first.unmount();
+
+      let second = renderField(
+        {defaultValue: new CalendarDate(2026, 11, 4)},
+        'ja-JP-u-ca-japanese'
+      );
+      await paste(second.segments[1], text);
+      expect(second.onChange).toHaveBeenCalledWith(new CalendarDate(1995, 6, 15));
+    });
+
+    it('accepts 24 hour time and localized day periods', async () => {
+      let {segments, onChange, unmount} = renderField({granularity: 'minute'}, 'es-ES');
+      await paste(segments[0], '4/11/2026, 14:30');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2026, 11, 4, 14, 30));
+      unmount();
+
+      let field = renderField({granularity: 'minute', hourCycle: 12}, 'es-ES');
+      await paste(field.segments[0], '4/11/2026, 2:30 p. m.');
+      expect(field.onChange).toHaveBeenCalledWith(new CalendarDateTime(2026, 11, 4, 14, 30));
+    });
+
+    it('consumes literal text in the display format', async () => {
+      let {segments, onChange, unmount} = renderField({}, 'bg-BG');
+      await paste(segments[0], '4.11.2026 г.');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2026, 11, 4));
+      unmount();
+
+      let field = renderField({granularity: 'minute'}, 'bg-BG');
+      await paste(field.segments[0], '4.11.2026 г., 14:30');
+      expect(field.onChange).toHaveBeenCalledWith(new CalendarDateTime(2026, 11, 4, 14, 30));
+    });
+
+    describe('RTL locales', () => {
+      it.each([
+        ['ar-EG', new CalendarDate(2026, 11, 4)],
+        ['ar-AE', new CalendarDate(2026, 11, 4)],
+        ['he-IL', new CalendarDate(2026, 11, 4)],
+        ['ar-EG', new CalendarDateTime(2026, 11, 4, 14, 30)],
+        ['he-IL', new CalendarDateTime(2026, 11, 4, 14, 30)]
+      ])('round trips a copied value in %s', async (locale, value) => {
+        let props = {granularity: 'hour' in value ? 'minute' : 'day'};
+        let first = renderField({...props, defaultValue: value}, locale);
+        let text = await copy(first.segments[0]);
+        expect(text).toBe(displayedText(first.group));
+        first.unmount();
+
+        let second = renderField(props, locale);
+        await paste(second.segments[0], text);
+        expect(second.onChange).toHaveBeenCalledTimes(1);
+        expect(second.onChange).toHaveBeenCalledWith(value);
+      });
+
+      it.each([
+        ['ar-EG', '٤‏/١١‏/٢٠٢٦، ٢:٣٠ م'],
+        ['ar-EG', '4/11/2026 2:30 م'],
+        ['ar-AE', '4‏/11‏/2026، 2:30 م'],
+        ['he-IL', '4.11.2026, 14:30'],
+        ['he-IL', '2026-11-04T14:30']
+      ])('pastes a date and time in %s: %s', async (locale, text) => {
+        let {segments, onChange} = renderField({granularity: 'minute'}, locale);
+        await paste(segments[segments.length - 1], text);
+        expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2026, 11, 4, 14, 30));
+      });
+
+      it('uses the segment order of the locale in ar-EG', async () => {
+        let {group, segments, onChange} = renderField({}, 'ar-EG');
+        await paste(segments[0], '٤/١١/٢٠٢٦');
+        expect(onChange).toHaveBeenCalledWith(new CalendarDate(2026, 11, 4));
+        expect(displayedText(group)).toBe('٤‏/١١‏/٢٠٢٦');
+      });
+
+      it('ignores an invalid date in he-IL', async () => {
+        let {segments, onChange} = renderField({}, 'he-IL');
+        await paste(segments[0], '30.2.2026');
+        expect(onChange).not.toHaveBeenCalled();
+      });
+    });
+
+    it.each([
+      ['an invalid date', '2/30/2026'],
+      ['an out of range month', '13/1/2026'],
+      ['an incomplete date', '11/4'],
+      ['extra text', '11/4/2026 tomorrow'],
+      ['an invalid ISO date', '2026-02-30'],
+      ['unrelated text', 'hello']
+    ])('ignores %s', async (_, text) => {
+      let {group, segments, onChange} = renderField({defaultValue: new CalendarDate(2020, 2, 3)});
+      await paste(segments[0], text);
+      expect(group).toHaveTextContent('2/3/2020');
+      expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('pastes a number into the focused segment', async () => {
+      let {group, segments, onChange} = renderField({defaultValue: new CalendarDate(2020, 2, 3)});
+      await paste(segments[1], '17');
+      expect(group).toHaveTextContent('2/17/2020');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2020, 2, 17));
+
+      await paste(segments[1], '45');
+      expect(group).toHaveTextContent('2/17/2020');
+    });
+
+    it('does not paste into a read only field', async () => {
+      let {group, segments, onChange} = renderField({
+        defaultValue: new CalendarDate(2020, 2, 3),
+        isReadOnly: true
+      });
+      await paste(segments[0], '11/4/2026');
+      expect(group).toHaveTextContent('2/3/2020');
+      expect(onChange).not.toHaveBeenCalled();
+    });
   });
 });
