@@ -12,15 +12,14 @@
 
 import {
   act,
-  fireEvent,
   installPointerEvent,
   pointerMap,
   render,
   within
 } from '@react-spectrum/test-utils-internal';
-import {ClipboardEvent, DataTransfer} from 'react-aria/test/dnd/mocks';
 import {DateInput, DateSegment, TimeField, TimeFieldContext} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
 import React from 'react';
 import {Text} from '../src/Text';
@@ -268,9 +267,8 @@ describe('TimeField', () => {
   describe('clipboard', () => {
     async function paste(segment, text) {
       await user.click(segment);
-      let clipboardData = new DataTransfer();
-      clipboardData.items.add(text, 'text/plain');
-      fireEvent(segment, new ClipboardEvent('paste', {clipboardData}));
+      await navigator.clipboard.writeText(text);
+      await user.paste();
       await act(async () => {});
     }
 
@@ -283,13 +281,15 @@ describe('TimeField', () => {
       );
       let segment = getAllByRole('spinbutton')[1];
       await user.click(segment);
-      let clipboardData = new DataTransfer();
-      fireEvent(segment, new ClipboardEvent('copy', {clipboardData}));
-      let items = [...clipboardData.items];
-      expect(items).toHaveLength(1);
-      expect(items[0].type).toBe('text/plain');
+      // user.copy() only fires a copy event when there is a selection, and it fills the clipboard
+      // data with the selected text before the event, so skip that first item.
+      act(() => document.getSelection().selectAllChildren(segment));
+      let clipboardData = await user.copy();
+      let [, item] = clipboardData.items.filter(item => item.type === 'text/plain');
+      let text = '';
+      item.getAsString(data => (text = data));
       // Some ICU versions put a narrow no-break space before the day period.
-      expect(items[0]._data.replace(/\s/g, ' ')).toBe('2:30 PM');
+      expect(text.replace(/\s/g, ' ')).toBe('2:30 PM');
     });
 
     it.each([
@@ -303,6 +303,25 @@ describe('TimeField', () => {
           <Label>Time</Label>
           <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
         </TimeField>
+      );
+      await paste(getAllByRole('spinbutton')[0], text);
+      expect(onChange).toHaveBeenCalledWith(new Time(14, 30));
+    });
+
+    it.each([
+      ['ar-EG', '٢:٣٠ م'],
+      ['ar-EG', '14:30'],
+      ['ar-AE', '2:30 م'],
+      ['he-IL', '14:30']
+    ])('pastes a time in %s: %s', async (locale, text) => {
+      let onChange = jest.fn();
+      let {getAllByRole} = render(
+        <I18nProvider locale={locale}>
+          <TimeField onChange={onChange}>
+            <Label>Time</Label>
+            <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          </TimeField>
+        </I18nProvider>
       );
       await paste(getAllByRole('spinbutton')[0], text);
       expect(onChange).toHaveBeenCalledWith(new Time(14, 30));
