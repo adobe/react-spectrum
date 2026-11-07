@@ -11,6 +11,7 @@
  */
 
 import {NumberFormatOptions, NumberFormatter} from '@internationalized/number';
+import {useDeepMemo} from '../utils/useDeepMemo';
 import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
 
@@ -21,6 +22,27 @@ import {useMemo} from 'react';
  * @param options - Formatting options.
  */
 export function useNumberFormatter(options: NumberFormatOptions = {}): Intl.NumberFormat {
+  options = useDeepMemo(options, isEqual);
   let {locale} = useLocale();
   return useMemo(() => new NumberFormatter(locale, options), [locale, options]);
+}
+
+function isEqual(a: NumberFormatOptions, b: NumberFormatOptions) {
+  if (a === b) {
+    return true;
+  }
+
+  let aKeys = Object.keys(a);
+  let bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) {
+    return false;
+  }
+
+  for (let key of aKeys) {
+    if (b[key] !== a[key]) {
+      return false;
+    }
+  }
+
+  return true;
 }
