@@ -112,9 +112,13 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
           'focus',
           e => {
             let eventTarget = getEventTarget(e);
+            // Virtual focus (e.g. options in a portaled ComboBox listbox) dispatches
+            // focus events outside currentTarget while activeElement stays inside,
+            // so only synthesize a blur if focus actually left.
             if (
               state.current.isFocusWithin &&
-              !nodeContains(currentTarget, eventTarget as Element)
+              !nodeContains(currentTarget, eventTarget as Element) &&
+              !nodeContains(currentTarget, getActiveElement(ownerDocument))
             ) {
               let nativeEvent = new ownerDocument.defaultView!.FocusEvent('blur', {
                 relatedTarget: eventTarget
