@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonProps} from '@react-spectrum/s2/Button';
+import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Button';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {createContext, ReactNode, useContext, useEffect, useReducer, useRef, useState} from 'react';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
-import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {FocusScope, useFocusManager} from 'react-aria/FocusScope';
 import {
   getActiveElement,
@@ -28,6 +28,7 @@ import intlMessages from '../intl/*.json';
 // @ts-ignore
 import {Key} from '@react-types/shared';
 import type {KeyboardEvent} from 'react';
+import {pressScale} from '@react-spectrum/s2/pressScale';
 import {
   Tab as RACTab,
   TabList as RACTabList,
@@ -594,30 +595,90 @@ interface CarouselNavButtonProps extends Omit<ButtonProps, 'children'> {
   side?: 'start' | 'end';
 }
 
+const carouselNavButtonStyles = style<
+  ButtonRenderProps & {isInModal: boolean; side?: 'start' | 'end'}
+>({
+  ...focusRing(),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  size: 32,
+  flexShrink: 0,
+  padding: 0,
+  borderRadius: 'full',
+  borderStyle: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: baseColor('gray-100'),
+    isDisabled: 'disabled',
+    isInModal: {
+      default: 'white/10',
+      isHovered: 'white/20',
+      isPressed: 'white/20',
+      isFocusVisible: 'white/20',
+      isDisabled: 'white/10'
+    },
+    forcedColors: {
+      default: 'ButtonText',
+      isHovered: 'Highlight',
+      isDisabled: 'GrayText'
+    }
+  },
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    isInModal: {
+      default: 'white',
+      isDisabled: 'white/40'
+    },
+    forcedColors: {
+      default: 'ButtonFace',
+      isDisabled: 'HighlightText'
+    }
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    isInModal: 'white',
+    forcedColors: 'Highlight'
+  },
+  forcedColorAdjust: 'none',
+  disableTapHighlight: true,
+  order: {
+    default: 2,
+    side: {
+      start: 0
+    }
+  }
+});
+
 function CarouselNavButton(props: CarouselNavButtonProps) {
   let {side, ...otherProps} = props;
   let isInModal = useContext(LightboxTriggerContext) != null;
+  let isDisabled = props['aria-disabled'] === true || props['aria-disabled'] === 'true';
+  let ref = useRef<HTMLButtonElement | null>(null);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let Icon = side === 'start' ? ChevronLeft : ChevronRight;
+  // oxlint-disable react/react-compiler
   return (
     <Button
       {...otherProps}
-      variant="secondary"
-      styles={style({
-        order: {
-          default: 2,
-          side: {
-            start: 0
-          }
-        }
-      })({side})}
-      staticColor={isInModal ? 'white' : undefined}
+      ref={ref}
+      onPress={isDisabled ? undefined : props.onPress}
+      style={pressScale(ref, {})}
+      className={renderProps =>
+        carouselNavButtonStyles({...renderProps, side, isInModal, isDisabled})
+      }
       aria-label={stringFormatter.format(
         side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
       )}>
       <Icon />
     </Button>
   );
+  // oxlint-enable react/react-compiler
 }
 
 interface CarouselState {
