@@ -163,9 +163,6 @@ export function useAutocomplete<T>(
   let [shouldUseVirtualFocus, setShouldUseVirtualFocus] = useState(
     !isMobileScreenReader && !disableVirtualFocus
   );
-  // Tracks if a collection has been connected to the autocomplete. If false, we don't want to add various attributes to the autocomplete input
-  // since it isn't attached to a filterable collection (e.g. Tabs)
-  let [hasCollection, setHasCollection] = useState(false);
   let [autoFocusOnMount, setAutoFocusOnMount] = useState(false);
 
   useEffect(() => {
@@ -217,6 +214,8 @@ export function useAutocomplete<T>(
   });
 
   let [collectionNode, setCollectionNode] = useState<HTMLElement | null>(null);
+  // If no collection is connected, don't add collection-specific attributes to the autocomplete input (e.g. Tabs).
+  let hasCollection = collectionNode != null;
   let callbackRef = useCallback(node => {
     setCollectionNode(node);
     if (node != null) {
@@ -226,9 +225,6 @@ export function useAutocomplete<T>(
       if (node.getAttribute('tabindex') != null) {
         setShouldUseVirtualFocus(false);
       }
-      setHasCollection(true);
-    } else {
-      setHasCollection(false);
     }
   }, []);
   useLayoutEffect(() => {
