@@ -19,10 +19,15 @@ import {
   renderv3 as render
 } from '@react-spectrum/test-utils-internal';
 import {ColorWheel} from '../../src/color/ColorWheel';
-import {ControlledHSLRender} from '../../stories/color/ColorWheel.stories';
+import {composeStory} from '@storybook/react';
+import Meta, {
+  ControlledHSLRender as ControlledHSLRenderStory
+} from '../../stories/color/ColorWheel.stories';
 import {parseColor} from 'react-stately/Color';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+
+const ControlledHSLRender = composeStory(ControlledHSLRenderStory, Meta);
 
 const SIZE = 160;
 const CENTER = SIZE / 2;

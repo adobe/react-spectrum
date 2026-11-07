@@ -23,7 +23,7 @@ import {isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
 import {ListBox} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import {Popover} from '../src/Popover';
 import React, {JSX, ReactNode, useCallback, useRef, useState} from 'react';
@@ -53,7 +53,7 @@ export default {
   excludeStories: ['TreeExampleStaticRender', 'TreeWithTextField', 'VirtualizedTreeInShadowDOM']
 } as Meta<typeof Tree>;
 
-export type TreeStory = StoryFn<typeof Tree>;
+export type TreeStory = StoryObj<typeof Tree>;
 
 interface StaticTreeItemProps extends TreeItemProps {
   title?: string;
@@ -298,35 +298,37 @@ const TreeExampleStaticNoActionsRender = <T extends any>(args: TreeProps<T>): JS
   </Tree>
 );
 
-export const WithDescriptions: TreeStory = args => (
-  <Tree {...args} aria-label="Files" className={styles.tree} selectionMode="single">
-    <TreeItem id="projects" textValue="Projects" className={styles['tree-item']}>
-      <TreeItemContent>
-        {({isExpanded}) => (
-          <>
-            <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>
+export const WithDescriptions: TreeStory = {
+  render: args => (
+    <Tree {...args} aria-label="Files" className={styles.tree} selectionMode="single">
+      <TreeItem id="projects" textValue="Projects" className={styles['tree-item']}>
+        <TreeItemContent>
+          {({isExpanded}) => (
+            <>
+              <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>
+              <div>
+                <Text>Projects</Text>
+                <Text slot="description" style={{display: 'block'}}>
+                  Shared project files
+                </Text>
+              </div>
+            </>
+          )}
+        </TreeItemContent>
+        <TreeItem id="report" textValue="Report" className={styles['tree-item']}>
+          <TreeItemContent>
             <div>
-              <Text>Projects</Text>
+              <Text>Report</Text>
               <Text slot="description" style={{display: 'block'}}>
-                Shared project files
+                Last updated today
               </Text>
             </div>
-          </>
-        )}
-      </TreeItemContent>
-      <TreeItem id="report" textValue="Report" className={styles['tree-item']}>
-        <TreeItemContent>
-          <div>
-            <Text>Report</Text>
-            <Text slot="description" style={{display: 'block'}}>
-              Last updated today
-            </Text>
-          </div>
-        </TreeItemContent>
+          </TreeItemContent>
+        </TreeItem>
       </TreeItem>
-    </TreeItem>
-  </Tree>
-);
+    </Tree>
+  )
+};
 
 export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
   render: args => <TreeExampleStaticRender {...args} />,
@@ -929,33 +931,35 @@ function renderEmptyLoader({isLoading}) {
   return isLoading ? 'Root level loading spinner' : 'Nothing in tree';
 }
 
-export const PopulateFocusedEmptyTree = () => {
-  let [items, setItems] = useState<Array<{id: string; name: string}>>([]);
+export const PopulateFocusedEmptyTree = {
+  render: function PopulateFocusedEmptyTree() {
+    let [items, setItems] = useState<Array<{id: string; name: string}>>([]);
 
-  return (
-    <div
-      onKeyDownCapture={event => {
-        if (event.key === 'Enter' && items.length === 0) {
-          setItems([
-            {id: 'one', name: 'One'},
-            {id: 'two', name: 'Two'}
-          ]);
-        }
-      }}>
-      <p>Tab to the empty tree, press Enter to add items, then use the arrow keys to navigate.</p>
-      <Tree
-        aria-label="Files"
-        className={styles.tree}
-        items={items}
-        renderEmptyState={() => 'No files'}>
-        {item => (
-          <TreeItem id={item.id} textValue={item.name}>
-            <TreeItemContent>{item.name}</TreeItemContent>
-          </TreeItem>
-        )}
-      </Tree>
-    </div>
-  );
+    return (
+      <div
+        onKeyDownCapture={event => {
+          if (event.key === 'Enter' && items.length === 0) {
+            setItems([
+              {id: 'one', name: 'One'},
+              {id: 'two', name: 'Two'}
+            ]);
+          }
+        }}>
+        <p>Tab to the empty tree, press Enter to add items, then use the arrow keys to navigate.</p>
+        <Tree
+          aria-label="Files"
+          className={styles.tree}
+          items={items}
+          renderEmptyState={() => 'No files'}>
+          {item => (
+            <TreeItem id={item.id} textValue={item.name}>
+              <TreeItemContent>{item.name}</TreeItemContent>
+            </TreeItem>
+          )}
+        </Tree>
+      </div>
+    );
+  }
 };
 
 const EmptyTreeStatic = <T extends any>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element => (

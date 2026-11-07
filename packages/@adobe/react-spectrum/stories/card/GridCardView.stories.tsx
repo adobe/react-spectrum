@@ -597,63 +597,65 @@ export function CustomLayout(props: SpectrumCardViewProps<object> & LayoutOption
   );
 }
 
-export function ResizeObserverCrash(): JSX.Element {
-  const shots = [
-    {id: 1, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'foo', label: 'foo'},
-    {id: 2, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'bar', label: 'bar'},
-    {id: 3, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'baz', label: 'baz'},
-    {id: 4, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'qux', label: 'qux'},
-    {id: 5, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'foobar', label: 'foobar'},
-    {id: 6, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'foobaz', label: 'foobaz'}
-  ];
+export const ResizeObserverCrash = {
+  render: function ResizeObserverCrash(): JSX.Element {
+    const shots = [
+      {id: 1, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'foo', label: 'foo'},
+      {id: 2, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'bar', label: 'bar'},
+      {id: 3, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'baz', label: 'baz'},
+      {id: 4, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'qux', label: 'qux'},
+      {id: 5, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'foobar', label: 'foobar'},
+      {id: 6, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'foobaz', label: 'foobaz'}
+    ];
 
-  return (
-    <View backgroundColor="gray-75" width="100vw" height="100vh">
-      <div style={{position: 'relative', height: '100%', width: '100%'}}>
-        <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-          <React.Fragment key="foo">
-            <Flex alignItems="center" gap="size-200" margin="size-350">
-              <Heading level={3} margin="size-0">
-                My Demo Asset
-              </Heading>
-            </Flex>
-            <CardView
-              items={shots}
-              width="100%"
-              flex
-              position="relative"
-              layout={GridLayout}
-              selectionMode="none">
-              {(shot: any) => (
-                <Card key={shot.id}>
-                  <Flex
-                    UNSAFE_style={{
-                      position: 'absolute'
-                    }}
-                    direction="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    gap="size-150"
-                    width="100%"
-                    height="calc(100% - 78px)">
-                    <Image src={shot.src} alt={shot.alt} width="200px" height="200px" />
-                  </Flex>
-                  <Flex direction="column" alignItems="start" marginTop="size-100">
-                    <Heading
-                      level={4}
-                      alignSelf="auto"
+    return (
+      <View backgroundColor="gray-75" width="100vw" height="100vh">
+        <div style={{position: 'relative', height: '100%', width: '100%'}}>
+          <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+            <React.Fragment key="foo">
+              <Flex alignItems="center" gap="size-200" margin="size-350">
+                <Heading level={3} margin="size-0">
+                  My Demo Asset
+                </Heading>
+              </Flex>
+              <CardView
+                items={shots}
+                width="100%"
+                flex
+                position="relative"
+                layout={GridLayout}
+                selectionMode="none">
+                {(shot: any) => (
+                  <Card key={shot.id}>
+                    <Flex
                       UNSAFE_style={{
-                        fontWeight: 500
-                      }}>
-                      {shot.label}
-                    </Heading>
-                  </Flex>
-                </Card>
-              )}
-            </CardView>
-          </React.Fragment>
+                        position: 'absolute'
+                      }}
+                      direction="column"
+                      alignItems="center"
+                      justifyContent="center"
+                      gap="size-150"
+                      width="100%"
+                      height="calc(100% - 78px)">
+                      <Image src={shot.src} alt={shot.alt} width="200px" height="200px" />
+                    </Flex>
+                    <Flex direction="column" alignItems="start" marginTop="size-100">
+                      <Heading
+                        level={4}
+                        alignSelf="auto"
+                        UNSAFE_style={{
+                          fontWeight: 500
+                        }}>
+                        {shot.label}
+                      </Heading>
+                    </Flex>
+                  </Card>
+                )}
+              </CardView>
+            </React.Fragment>
+          </div>
         </div>
-      </div>
-    </View>
-  );
-}
+      </View>
+    );
+  }
+};

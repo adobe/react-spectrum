@@ -33,7 +33,7 @@ import {GridCollection} from 'react-stately/private/grid/GridCollection';
 import {Heading} from '@adobe/react-spectrum/Heading';
 import {Item} from 'react-stately/Item';
 import {mergeProps} from '../../src/utils/mergeProps';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {PressResponder} from '../../src/interactions/PressResponder';
 import React, {JSX, useRef} from 'react';
@@ -73,19 +73,21 @@ const meta = {
 
 export default meta;
 
-export type DnDStory = StoryFn<typeof Droppable>;
+export type DnDStory = StoryObj<typeof Droppable>;
 export type DnDStoryObj = StoryObj<typeof Droppable>;
 
-export const Default: DnDStory = () => (
-  <Flex direction="column" gap="size-200" alignItems="center">
-    <Draggable />
-    <Droppable />
-    <input aria-label="test input 1" />
-    <Droppable type="text/html" />
-    <input aria-label="test input 2" />
-    <Droppable />
-  </Flex>
-);
+export const Default: DnDStory = {
+  render: () => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <Draggable />
+      <Droppable />
+      <input aria-label="test input 1" />
+      <Droppable type="text/html" />
+      <input aria-label="test input 2" />
+      <Droppable />
+    </Flex>
+  )
+};
 
 export const NestedDropRegions: DnDStoryObj = {
   render: () => (
@@ -272,7 +274,9 @@ export const MultipleCollectionDropTargets: DnDStoryObj = {
   name: 'Multiple collection drop targets'
 };
 
-export const Reorderable: DnDStory = () => <ReorderableGridExample />;
+export const Reorderable: DnDStory = {
+  render: () => <ReorderableGridExample />
+};
 
 export const DraggableDisabled: DnDStoryObj = {
   render: () => <Draggable isDisabled />,
@@ -323,10 +327,10 @@ export let Draggable = ({isDisabled = false}: {isDisabled?: boolean}): JSX.Eleme
   );
 };
 
-export let DraggableStory: DnDStory = ({isDisabled = false}: {isDisabled?: boolean}) => (
-  <Draggable isDisabled={isDisabled} />
-);
-DraggableStory.storyName = 'Draggable';
+export let DraggableStory: DnDStory = {
+  render: ({isDisabled = false}: {isDisabled?: boolean}) => <Draggable isDisabled={isDisabled} />,
+  name: 'Draggable'
+};
 
 export let Droppable = ({type, children, actionId = ''}: any): JSX.Element => {
   let ref = React.useRef(null);
@@ -361,10 +365,12 @@ export let Droppable = ({type, children, actionId = ''}: any): JSX.Element => {
   );
 };
 
-export let DroppableStory: DnDStory = ({type, children, actionId = ''}: any) => (
-  <Droppable type={type} children={children} actionId={actionId} />
-);
-DroppableStory.storyName = 'Droppable';
+export let DroppableStory: DnDStory = {
+  render: ({type, children, actionId = ''}: any) => (
+    <Droppable type={type} children={children} actionId={actionId} />
+  ),
+  name: 'Droppable'
+};
 
 function DialogButton({children}) {
   let [isOpen, setOpen] = React.useState(false);

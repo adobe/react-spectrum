@@ -11,7 +11,7 @@
  */
 
 import {FocusScope, FocusScopeProps} from '../../src/focus/FocusScope';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX, ReactNode, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 
@@ -34,7 +34,7 @@ const meta = {
 
 export default meta;
 
-export type FocusScopeStory = StoryFn<typeof Example>;
+export type FocusScopeStory = StoryObj<typeof Example>;
 export type FocusScopeStoryObj = StoryObj<typeof Example>;
 
 function MaybePortal({children, isPortaled}: {children: ReactNode; isPortaled: boolean}) {
@@ -120,8 +120,10 @@ export let Example = ({isPortaled, contain}: FocusScopeProps & StoryProps): JSX.
   );
 };
 
-export let ExampleStory: FocusScopeStory = args => <Example {...args} />;
-ExampleStory.storyName = 'Example';
+export let ExampleStory: FocusScopeStory = {
+  render: args => <Example {...args} />,
+  name: 'Example'
+};
 
 function FocusableFirstInScopeExample() {
   let [contentIndex, setContentIndex] = useState(0);

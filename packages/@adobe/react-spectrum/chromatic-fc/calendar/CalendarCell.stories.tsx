@@ -12,21 +12,21 @@
 
 import {AllStates} from '../../chromatic/calendar/CalendarCell.stories';
 import {Flex} from '../../src/layout/Flex';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
   title: 'CalendarCell'
 } as Meta<typeof AllStates>;
 
-export type AllStatesStory = StoryFn<typeof AllStates>;
+export type AllStatesStory = StoryObj<typeof AllStates>;
 
-export const All: AllStatesStory = () => (
-  <Flex gap="size-100" direction={'column'}>
-    <h2>All States</h2>
-    <AllStates />
-  </Flex>
-);
-All.story = {
+export const All: AllStatesStory = {
+  render: () => (
+    <Flex gap="size-100" direction={'column'}>
+      <h2>All States</h2>
+      <AllStates />
+    </Flex>
+  ),
   name: 'all'
 };

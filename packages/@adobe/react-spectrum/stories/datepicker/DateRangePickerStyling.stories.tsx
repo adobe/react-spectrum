@@ -14,7 +14,7 @@ import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {DateRangePicker} from '../../src/datepicker/DateRangePicker';
 import {Heading} from '../../src/text/Heading';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {parseDate, toZoned} from '@internationalized/date';
 import React from 'react';
 import {render} from './DateRangePicker.stories';
@@ -26,145 +26,115 @@ export default {
   decorators: [BlockDecorator]
 } as Meta<typeof DateRangePicker>;
 
-export type DateRangePickerStory = StoryFn<typeof DateRangePicker>;
+export type DateRangePickerStory = StoryObj<typeof DateRangePicker>;
 
-export const IsQuiet: DateRangePickerStory = () => render({isQuiet: true});
-
-IsQuiet.story = {
+export const IsQuiet: DateRangePickerStory = {
+  render: () => render({isQuiet: true}),
   name: 'isQuiet'
 };
 
-export const LabelPositionSide: DateRangePickerStory = args =>
-  render({labelPosition: 'side', ...args});
-
-LabelPositionSide.story = {
+export const LabelPositionSide: DateRangePickerStory = {
+  render: args => render({labelPosition: 'side', ...args}),
   name: 'labelPosition: side'
 };
 
-export const LabelAlignEnd: DateRangePickerStory = args =>
-  render({labelPosition: 'top', labelAlign: 'end', ...args});
-
-LabelAlignEnd.story = {
+export const LabelAlignEnd: DateRangePickerStory = {
+  render: args => render({labelPosition: 'top', labelAlign: 'end', ...args}),
   name: 'labelAlign: end'
 };
 
-export const Required: DateRangePickerStory = args => render({isRequired: true, ...args});
-
-Required.story = {
+export const Required: DateRangePickerStory = {
+  render: args => render({isRequired: true, ...args}),
   name: 'required'
 };
 
-export const RequiredWithLabel: DateRangePickerStory = args =>
-  render({isRequired: true, necessityIndicator: 'label', ...args});
-
-RequiredWithLabel.story = {
+export const RequiredWithLabel: DateRangePickerStory = {
+  render: args => render({isRequired: true, necessityIndicator: 'label', ...args}),
   name: 'required with label'
 };
 
-export const Optional: DateRangePickerStory = args =>
-  render({necessityIndicator: 'label', ...args});
-
-Optional.story = {
+export const Optional: DateRangePickerStory = {
+  render: args => render({necessityIndicator: 'label', ...args}),
   name: 'optional'
 };
 
-export const NoVisibleLabel: DateRangePickerStory = args =>
-  render({'aria-label': 'Date range', label: null, ...args});
-
-NoVisibleLabel.story = {
+export const NoVisibleLabel: DateRangePickerStory = {
+  render: args => render({'aria-label': 'Date range', label: null, ...args}),
   name: 'no visible label'
 };
 
-export const QuietNoVisibleLabel: DateRangePickerStory = args =>
-  render({isQuiet: true, 'aria-label': 'Date range', label: null, ...args});
-
-QuietNoVisibleLabel.story = {
+export const QuietNoVisibleLabel: DateRangePickerStory = {
+  render: args => render({isQuiet: true, 'aria-label': 'Date range', label: null, ...args}),
   name: 'quiet no visible label'
 };
 
-export const CustomWidth: DateRangePickerStory = args => render({width: 'size-4600', ...args});
-
-CustomWidth.story = {
+export const CustomWidth: DateRangePickerStory = {
+  render: args => render({width: 'size-4600', ...args}),
   name: 'custom width'
 };
 
-export const QuietCustomWidth: DateRangePickerStory = args =>
-  render({isQuiet: true, width: 'size-4600', ...args});
-
-QuietCustomWidth.story = {
+export const QuietCustomWidth: DateRangePickerStory = {
+  render: args => render({isQuiet: true, width: 'size-4600', ...args}),
   name: 'quiet custom width'
 };
 
-export const CustomWidthNoVisibleLabel: DateRangePickerStory = args =>
-  render({width: 'size-4600', label: null, 'aria-label': 'Date range', ...args});
-
-CustomWidthNoVisibleLabel.story = {
+export const CustomWidthNoVisibleLabel: DateRangePickerStory = {
+  render: args => render({width: 'size-4600', label: null, 'aria-label': 'Date range', ...args}),
   name: 'custom width no visible label'
 };
 
-export const CustomWidthLabelPositionSide: DateRangePickerStory = args =>
-  render({width: 'size-4600', labelPosition: 'side', ...args});
-
-CustomWidthLabelPositionSide.story = {
+export const CustomWidthLabelPositionSide: DateRangePickerStory = {
+  render: args => render({width: 'size-4600', labelPosition: 'side', ...args}),
   name: 'custom width, labelPosition=side'
 };
 
-export const Description: DateRangePickerStory = args =>
-  render({description: 'Help text', ...args});
-
-Description.story = {
+export const Description: DateRangePickerStory = {
+  render: args => render({description: 'Help text', ...args}),
   name: 'description'
 };
 
-export const ErrorMessage: DateRangePickerStory = args =>
-  render({errorMessage: 'Dates must be after today', validationState: 'invalid', ...args});
-
-ErrorMessage.story = {
+export const ErrorMessage: DateRangePickerStory = {
+  render: args =>
+    render({errorMessage: 'Dates must be after today', validationState: 'invalid', ...args}),
   name: 'errorMessage'
 };
 
-export const InvalidWithTime: DateRangePickerStory = args =>
-  render({
-    validationState: 'invalid',
-    granularity: 'minute',
-    defaultValue: {
-      start: toZoned(parseDate('2020-02-03'), 'America/New_York'),
-      end: toZoned(parseDate('2020-02-12'), 'America/Los_Angeles')
-    },
-    ...args
-  });
-
-InvalidWithTime.story = {
+export const InvalidWithTime: DateRangePickerStory = {
+  render: args =>
+    render({
+      validationState: 'invalid',
+      granularity: 'minute',
+      defaultValue: {
+        start: toZoned(parseDate('2020-02-03'), 'America/New_York'),
+        end: toZoned(parseDate('2020-02-12'), 'America/Los_Angeles')
+      },
+      ...args
+    }),
   name: 'invalid with time'
 };
 
-export const _ContextualHelp: DateRangePickerStory = () =>
-  render({
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>
-          Segments identify who your visitors are, what devices and services they use, where they
-          navigated from, and much more.
-        </Content>
-      </ContextualHelp>
-    )
-  });
-
-_ContextualHelp.story = {
+export const _ContextualHelp: DateRangePickerStory = {
+  render: () =>
+    render({
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    }),
   name: 'contextual help'
 };
 
-export const InScrollableContainer: DateRangePickerStory = () => (
-  <div style={{height: '200vh'}}>{render({granularity: 'second'})}</div>
-);
-
-InScrollableContainer.story = {
+export const InScrollableContainer: DateRangePickerStory = {
+  render: () => <div style={{height: '200vh'}}>{render({granularity: 'second'})}</div>,
   name: 'in scrollable container'
 };
 
-export const ShouldFlipFalse: DateRangePickerStory = args => render({shouldFlip: false, ...args});
-
-ShouldFlipFalse.story = {
+export const ShouldFlipFalse: DateRangePickerStory = {
+  render: args => render({shouldFlip: false, ...args}),
   name: 'shouldFlip: false'
 };

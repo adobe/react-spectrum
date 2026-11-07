@@ -12,7 +12,7 @@
 
 import {Label} from '../src/Label';
 
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Meter} from '../src/Meter';
 import React from 'react';
 import './styles.css';
@@ -30,20 +30,22 @@ export default {
   }
 } as Meta<typeof Meter>;
 
-export type MeterStory = StoryFn<typeof Meter>;
+export type MeterStory = StoryObj<typeof Meter>;
 
-export const MeterExample: MeterStory = args => {
-  return (
-    <Meter {...args}>
-      {({percentage, valueText}) => (
-        <>
-          <Label>Storage space</Label>
-          <span className="value">{valueText}</span>
-          <div className="bar">
-            <div className="fill" style={{width: percentage + '%'}} />
-          </div>
-        </>
-      )}
-    </Meter>
-  );
+export const MeterExample: MeterStory = {
+  render: args => {
+    return (
+      <Meter {...args}>
+        {({percentage, valueText}) => (
+          <>
+            <Label>Storage space</Label>
+            <span className="value">{valueText}</span>
+            <div className="bar">
+              <div className="fill" style={{width: percentage + '%'}} />
+            </div>
+          </>
+        )}
+      </Meter>
+    );
+  }
 };

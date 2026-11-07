@@ -13,33 +13,32 @@
 import {Calendar} from '../../src/calendar/Calendar';
 import {CalendarDate} from '@internationalized/date';
 import {Flex} from '../../src/layout/Flex';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 export default {
   title: 'Calendar'
 } as Meta<typeof Calendar>;
 
-export type CalendarStory = StoryFn<typeof Calendar>;
+export type CalendarStory = StoryObj<typeof Calendar>;
 
 const date = new CalendarDate(2022, 2, 3);
 
-export const All: CalendarStory = () => (
-  <Flex gap="size-100" direction={'column'}>
-    <h2>Selected</h2>
-    <Calendar value={date} />
-    <h2>Min Max</h2>
-    <Calendar minValue={new CalendarDate(2022, 2, 10)} maxValue={new CalendarDate(2022, 2, 20)} />
-    <h2>Disabled</h2>
-    <Calendar isDisabled value={date} />
-    <h2>Unavailable</h2>
-    <Calendar focusedValue={date} isDateUnavailable={date => date.day >= 10 && date.day <= 20} />
-    <h2>Error Message</h2>
-    <Calendar value={date} isInvalid errorMessage="Selection invalid." />
-    <h2>Disabled Invalid</h2>
-    <Calendar value={date} minValue={new CalendarDate(2022, 2, 5)} />
-  </Flex>
-);
-
-All.story = {
+export const All: CalendarStory = {
+  render: () => (
+    <Flex gap="size-100" direction={'column'}>
+      <h2>Selected</h2>
+      <Calendar value={date} />
+      <h2>Min Max</h2>
+      <Calendar minValue={new CalendarDate(2022, 2, 10)} maxValue={new CalendarDate(2022, 2, 20)} />
+      <h2>Disabled</h2>
+      <Calendar isDisabled value={date} />
+      <h2>Unavailable</h2>
+      <Calendar focusedValue={date} isDateUnavailable={date => date.day >= 10 && date.day <= 20} />
+      <h2>Error Message</h2>
+      <Calendar value={date} isInvalid errorMessage="Selection invalid." />
+      <h2>Disabled Invalid</h2>
+      <Calendar value={date} minValue={new CalendarDate(2022, 2, 5)} />
+    </Flex>
+  ),
   name: 'all'
 };
