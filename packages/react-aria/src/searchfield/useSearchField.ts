@@ -97,10 +97,11 @@ export function useSearchField(
     }
   };
 
-  let onPressStart = () => {
-    // this is in PressStart for mobile so that touching the clear button doesn't remove focus from
-    // the input and close the keyboard
-    inputRef.current?.focus();
+  let onPressStart: AriaButtonProps['onPressStart'] = e => {
+    // so that AT focus isn't lost after the button disappears
+    if (e.pointerType === 'virtual') {
+      inputRef.current?.focus();
+    }
   };
 
   let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField(

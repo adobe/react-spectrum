@@ -22,7 +22,6 @@ describe('useSearchField hook', () => {
   let state = {};
   let setValue = jest.fn();
   let ref = React.createRef();
-  let focus = jest.fn();
   let onClear = jest.fn();
 
   let renderSearchHook = (props, wrapper) => {
@@ -37,12 +36,10 @@ describe('useSearchField hook', () => {
     state.value = '';
     state.setValue = setValue;
     ref.current = document.createElement('input');
-    focus = jest.spyOn(ref.current, 'focus');
   });
 
   afterEach(() => {
     setValue.mockClear();
-    focus.mockClear();
     onClear.mockClear();
   });
 
@@ -154,23 +151,19 @@ describe('useSearchField hook', () => {
 
     describe('with specific onPress behavior', () => {
       let mockEvent = {blah: 1};
-      it('sets the state to "" and focuses the search field', () => {
+      it('sets the state to ""', () => {
         let {clearButtonProps} = renderSearchHook({});
-        clearButtonProps.onPressStart(mockEvent);
         clearButtonProps.onPress(mockEvent);
         expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(state.setValue).toHaveBeenCalledWith('');
-        expect(ref.current.focus).toHaveBeenCalledTimes(1);
       });
 
       it('calls the user provided onClear if provided', () => {
         let {clearButtonProps} = renderSearchHook({onClear});
-        clearButtonProps.onPressStart(mockEvent);
         clearButtonProps.onPress(mockEvent);
         // Verify that onClearButtonClick stuff still triggers
         expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(state.setValue).toHaveBeenCalledWith('');
-        expect(ref.current.focus).toHaveBeenCalledTimes(1);
         // Verify that props.onClear is triggered as well with the same event
         expect(onClear).toHaveBeenCalledTimes(1);
         expect(onClear).toHaveBeenCalledWith();
