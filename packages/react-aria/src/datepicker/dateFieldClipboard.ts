@@ -23,12 +23,13 @@ import {
   parseZonedDateTime,
   TimeFields,
   toCalendar,
-  toTimeZone
+  toTimeZone,
+  ZonedDateTime
 } from '@internationalized/date';
 import {DateFieldState} from 'react-stately/useDateFieldState';
 import {NumberParser} from '@internationalized/number';
 
-export type DateFieldValues = DateFields & TimeFields;
+export type DateFieldValues = DateFields & TimeFields & {offset?: number};
 
 const NUMERIC_SEGMENTS = new Set(['year', 'month', 'day', 'hour', 'minute', 'second']);
 const BIDI_ISOLATES = /[\u2066-\u2069]/g;
@@ -105,7 +106,10 @@ function parseISOText(text: string, state: DateFieldState): DateFieldValues | nu
     return null;
   }
 
-  let date = toCalendar(value as CalendarDate, state.calendar) as AnyDateTime | CalendarDate;
+  let date = toCalendar(value as CalendarDate, state.calendar) as
+    | AnyDateTime
+    | CalendarDate
+    | ZonedDateTime;
   let fields: DateFieldValues = {
     era: date.era,
     year: date.year,
@@ -116,6 +120,11 @@ function parseISOText(text: string, state: DateFieldState): DateFieldValues | nu
     fields.hour = date.hour;
     fields.minute = date.minute;
     fields.second = date.second;
+  }
+  // Keep the offset so ambiguous times (e.g. during a daylight saving time transition) resolve
+  // to the pasted instant.
+  if ('offset' in date) {
+    fields.offset = date.offset;
   }
 
   return fields;
@@ -133,6 +142,13 @@ function parseDisplayText(
 
   for (let segment of state.segments) {
     if (segment.type === 'literal') {
+      // Separators are skipped below, but literals can also contain localized text that must be
+      // consumed, e.g. the "г." after the year in bg-BG.
+      let literal = segment.text.replace(/[^\p{L}\p{Nd}]/gu, '');
+      let end = literal ? matchLoose(text, skipSeparators(text, pos), literal) : -1;
+      if (end >= 0) {
+        pos = end;
+      }
       continue;
     }
 
