@@ -16,7 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # required for build:api-published to find the last Publish commit
+          # Full history is required to (a) resolve the last release tag's commit
+          # for the baseline, (b) let `get-ref-api` `git archive` that commit, and
+          # (c) find the last `Publish` commit for the delta bookkeeping below.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -25,16 +28,33 @@ jobs:
 
       - run: yarn --immutable
 
-      # Build current main API (~2 min, always fresh)
-      - name: Build current API snapshot
-        run: yarn build:api-branch
+      # Build the tsdiff binary (the current extractor + differ). ubuntu
+      # runners ship a Rust toolchain, so no separate setup step is needed.
+      - name: Build tsdiff
+        run: cd packages/dev/tsdiff && cargo build --release
 
-      # Build release baseline using the last minor/major release commit (skips patch-only releases)
+      # Build current main API (~2 min, always fresh): build the checkout in
+      # place, then extract its type API into dist/branch-api.
+      - name: Build current API snapshot
+        run: |
+          yarn build
+          packages/dev/tsdiff/target/release/tsdiff get-local-api --repo-root . --output dist/branch-api
+
+      # Build the release baseline from the last minor/major release commit
+      # (skips patch-only releases). get-ref-api snapshots that commit with
+      # `git archive`, builds it in a temp dir, and extracts into dist/base-api.
       - name: Build release baseline
-        run: yarn build:api-published
+        run: |
+          BASELINE_REF=$(git rev-list -n 1 $(git tag -l 'react-aria-components@*' | grep -E '@[0-9]+\.[0-9]+\.0$' | sort -V | tail -1))
+          echo "Baseline ref (last react-aria-components minor/major release): $BASELINE_REF"
+          packages/dev/tsdiff/target/release/tsdiff get-ref-api --repo-root . --ref "$BASELINE_REF" --output dist/base-api
 
       - name: Generate diff
-        run: yarn compare:apis --isCI > /tmp/diff-current.md || true
+        run: |
+          packages/dev/tsdiff/target/release/tsdiff compare \
+            --base-api-dir dist/base-api \
+            --branch-api-dir dist/branch-api \
+            --ci > /tmp/diff-current.md || true
 
       # Check out snapshots repo so we can read the previous diff and commit the new one
       - uses: actions/checkout@v4
@@ -73,16 +93,30 @@ jobs:
 
           NEW_RELEASE="${NEW_RELEASE:-false}"
 
+          # Week-over-week delta: the ts diff from last week's main commit to the
+          # current main, computed directly with the new tool (both sides are
+          # Rust-extracted). We record main's HEAD in the snapshots repo so we
+          # know where "last week" was. The first run just seeds that hash (no
+          # delta); every run after produces a clean commit-to-commit diff. This
+          # replaces diffing against the (old Node-format) diff text in storage.
+          CURRENT_MAIN=$(git rev-parse HEAD)
+          PREV_MAIN=$(cat snapshots/last-main-hash.txt 2>/dev/null || echo "")
+
           if [ "$NEW_RELEASE" != "true" ]; then
-            # Compare against the last diff in the snapshots repo
-            PREV=$(ls snapshots/diffs/*.md 2>/dev/null | sort -r | head -1)
             echo ""
-            echo "=== Delta computation ==="
-            echo "Comparing against: ${PREV:-(none, first run)}"
-            if [ -n "$PREV" ]; then
-              diff "$PREV" /tmp/diff-current.md > /tmp/weekly-delta.txt || true
+            echo "=== Delta computation (ts diff: last week's main -> current main) ==="
+            echo "PREV_MAIN=${PREV_MAIN:-(none)}"
+            echo "CURRENT_MAIN=$CURRENT_MAIN"
+            if [ -z "$PREV_MAIN" ]; then
+              echo "(no stored main hash yet — seeding it this run, no delta)" > /tmp/weekly-delta.txt
+            elif [ "$PREV_MAIN" = "$CURRENT_MAIN" ]; then
+              : > /tmp/weekly-delta.txt   # main unchanged since last run
             else
-              echo "(first run — no previous diff to compare against)" > /tmp/weekly-delta.txt
+              packages/dev/tsdiff/target/release/tsdiff get-ref-api --repo-root . --ref "$PREV_MAIN" --output dist/last-week-api
+              packages/dev/tsdiff/target/release/tsdiff compare \
+                --base-api-dir dist/last-week-api \
+                --branch-api-dir dist/branch-api \
+                --ci > /tmp/weekly-delta.txt || true
             fi
           fi
 
@@ -102,19 +136,10 @@ jobs:
             echo "Committing diff to snapshots repo"
             cp /tmp/diff-current.md snapshots/diffs/$TODAY.md
             mkdir -p snapshots/deltas
+            # The delta is now the ts diff (last week's main -> current main),
+            # which is already "what changed on main this week" — store it as-is.
             if [ -s /tmp/weekly-delta.txt ]; then
-              # Save processed delta: strip > / < markers and line-number markers,
-              # split into two labeled sections so it can be passed directly to the model
-              {
-                echo "=== NEW API CHANGES THIS WEEK (not in last week's diff) ==="
-                grep '^> ' /tmp/weekly-delta.txt | sed 's/^> //'
-                RELEASED=$(grep '^< ' /tmp/weekly-delta.txt | sed 's/^< //')
-                if [ -n "$RELEASED" ]; then
-                  echo ""
-                  echo "=== API CHANGES RELEASED SINCE LAST WEEK (were in last week's diff, now gone) ==="
-                  echo "$RELEASED"
-                fi
-              } > snapshots/deltas/$TODAY.md
+              cp /tmp/weekly-delta.txt snapshots/deltas/$TODAY.md
             fi
             cd snapshots
             git config user.email "github-actions@github.com"
@@ -123,6 +148,9 @@ jobs:
             [ -f deltas/$TODAY.md ] && git add deltas/$TODAY.md
             echo "$CURRENT_PUBLISH" > last-publish-hash.txt
             git add last-publish-hash.txt
+            # Record main's HEAD so next week's delta can diff from here.
+            echo "$CURRENT_MAIN" > last-main-hash.txt
+            git add last-main-hash.txt
             echo "=== Staged changes ==="
             git diff --cached --stat
             git diff --cached --quiet || (git commit -m "weekly api diff $TODAY" && git push)
