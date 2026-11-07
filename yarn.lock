@@ -25451,6 +25451,7 @@ __metadata:
     tailwind-variants: "patch:tailwind-variants@npm%3A0.3.1#~/.yarn/patches/tailwind-variants-npm-0.3.1-48888516de.patch"
     tailwindcss: "npm:^4.0.0"
     tempy: "npm:^0.5.0"
+    tla-ts: "npm:0.0.3"
     tw-animate-css: "npm:^1.4.0"
     typescript: "npm:^7.0.2"
     unplugin-parcel-macros: "npm:^0.1.1"
@@ -28417,6 +28418,15 @@ __metadata:
   version: 4.0.4
   resolution: "tinyspy@npm:4.0.4"
   checksum: 10c0/a8020fc17799251e06a8398dcc352601d2770aa91c556b9531ecd7a12581161fd1c14e81cbdaff0c1306c93bfdde8ff6d1c1a3f9bbe6d91604f0fd4e01e2f1eb
+  languageName: node
+  linkType: hard
+
+"tla-ts@npm:0.0.3":
+  version: 0.0.3
+  resolution: "tla-ts@npm:0.0.3"
+  bin:
+    tla-ts: dist/cli.js
+  checksum: 10c0/42dbdbdefb1351af749bd49be8dd44e9790a8dfb1ae6b2c7d34413dacfa39f79ee4db9f37b367e75d845db155efb7e1cef90d4d916fbf0594b866451f6cf60d8
   languageName: node
   linkType: hard
 

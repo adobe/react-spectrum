@@ -43,7 +43,13 @@
       "/*": ["./*"]
     }
   },
-  "include": ["packages", "lib/svg.d.ts", "lib/viewTransitions.d.ts", "lib/css.d.ts"],
+  "include": [
+    "packages",
+    "verification",
+    "lib/svg.d.ts",
+    "lib/viewTransitions.d.ts",
+    "lib/css.d.ts"
+  ],
   "exclude": [
     "**/node_modules",
     "packages/dev/optimize-locales-plugin",
@@ -53,6 +59,9 @@
     // Pulls in playwright-core's Protocol types, which use deprecated `module`
     // syntax that TypeScript 7 now reports as an error (TS1540). Not part of
     // the library's public API surface, so safe to exclude from type-checking.
-    "packages/dev/s2-docs/scripts/testAccessibility.mjs"
+    "packages/dev/s2-docs/scripts/testAccessibility.mjs",
+    // Imports Playwright's CDP types (TS1540, as above) and vitest.browser.config.ts,
+    // which is not type-checked either.
+    "verification/targets.config.ts"
   ]
 }
