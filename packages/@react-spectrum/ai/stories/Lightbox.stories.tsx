@@ -130,7 +130,7 @@ function AttachmentDialogExample() {
           </Attachment>
         </AttachmentList>
       </div>
-      <LightboxCarousel isInfinite>
+      <LightboxCarousel>
         <LightboxPicker aria-label="Choose photo">
           <LightboxPickerItem id="amsterdam" aria-label="Amsterdam">
             <Image
