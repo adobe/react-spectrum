@@ -41,6 +41,7 @@ import {
   TabsProps
 } from 'react-aria-components/Tabs';
 import {scrollFade} from './style/style-macro' with {type: 'macro'};
+import {scrollIntoView} from 'react-aria/private/utils/scrollIntoView';
 import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
@@ -228,10 +229,51 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
 export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
   let ctx = useContext(LightboxTriggerContext);
   let state = useContext(TabListStateContext);
+  let ref = useRef<HTMLDivElement | null>(null);
+  let previousSelectedKey = useRef<Key | null>(null);
+  let selectedKey = state?.selectedKey;
+  let manager = state?.selectionManager;
+  let focusedKey = manager?.focusedKey;
+
+  useLayoutEffect(() => {
+    let tabList = ref.current;
+    if (!tabList || selectedKey == null || !manager) {
+      return;
+    }
+
+    if (previousSelectedKey.current == null) {
+      if (focusedKey != null) {
+        previousSelectedKey.current = selectedKey;
+      }
+      return;
+    }
+
+    if (previousSelectedKey.current === selectedKey) {
+      return;
+    }
+
+    let selectedTab = tabList.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
+    if (!selectedTab) {
+      return;
+    }
+
+    previousSelectedKey.current = selectedKey;
+    if (
+      manager.isFocused &&
+      focusedKey !== selectedKey &&
+      nodeContains(tabList, getActiveElement(tabList.ownerDocument))
+    ) {
+      manager.setFocusedKey(selectedKey);
+    }
+
+    scrollIntoView(tabList, selectedTab);
+  }, [selectedKey, focusedKey, manager]);
+
   let picker = (
     <div className={style({display: 'flex', justifyContent: 'center', order: 1})}>
       <RACTabList
         {...props}
+        ref={ref}
         className={renderProps => pickerStyles(renderProps) + ' ' + scrollFade({x: 16})}
       />
     </div>
