@@ -20,11 +20,12 @@ import {
   getParentElement,
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
-import {getInteractionModality} from '../interactions/useFocusVisible';
+import {getInteractionModality, Modality} from '../interactions/useFocusVisible';
 import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {isAndroid, isChrome} from '../utils/platform';
 import {isFocusable, isTabbable} from '../utils/isFocusable';
 import React, {JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
 export interface FocusScopeProps {
@@ -40,8 +41,16 @@ export interface FocusScopeProps {
   /**
    * Whether to restore focus back to the element that was focused
    * when the focus scope mounted, after the focus scope unmounts.
+   *
+   * Pass a ref to restore focus to that element instead. Pass a function to choose
+   * at restore time: it receives the current interaction modality, and returns an element,
+   * `true` for the default target, or `false` to leave focus where it is.
+   * Focus is only restored when it would otherwise be lost, not when the user moved it elsewhere.
    */
-  restoreFocus?: boolean;
+  restoreFocus?:
+    | boolean
+    | RefObject<FocusableElement | null>
+    | ((modality: Modality | null) => FocusableElement | boolean | null);
 
   /** Whether to auto focus the first focusable element in the focus scope on mount. */
   autoFocus?: boolean;
@@ -150,7 +159,7 @@ export function FocusScope(props: FocusScopeProps): JSX.Element {
     };
   }, [children]);
 
-  useActiveScopeTracker(scopeRef, restoreFocus, contain);
+  useActiveScopeTracker(scopeRef, !!restoreFocus, contain);
   useFocusContainment(scopeRef, contain);
   useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
@@ -631,9 +640,11 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
 
 function useRestoreFocus(
   scopeRef: RefObject<Element[] | null>,
-  restoreFocus?: boolean,
+  restoreFocusProp: FocusScopeProps['restoreFocus'],
   contain?: boolean
 ) {
+  let restoreFocus = !!restoreFocusProp;
+  let getRestoreFocusProp = useEffectEvent(() => restoreFocusProp);
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
 
   const nodeToRestoreRef = useRef(
@@ -780,12 +791,13 @@ function useRestoreFocus(
         return;
       }
       let nodeToRestore = treeNode.nodeToRestore;
+      let hasRestoreTarget = typeof getRestoreFocusProp() !== 'boolean';
 
       // if we already lost focus to the body and this was the active scope, then we should attempt to restore
       let activeElement = getActiveElement(ownerDocument);
       if (
         restoreFocus &&
-        nodeToRestore &&
+        (nodeToRestore || hasRestoreTarget) &&
         ((activeElement && isElementInChildScope(activeElement, scopeRef)) ||
           (activeElement === ownerDocument.body && shouldRestoreFocus(scopeRef)))
       ) {
@@ -794,6 +806,15 @@ function useRestoreFocus(
         requestAnimationFrame(() => {
           // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
           if (ownerDocument.activeElement === ownerDocument.body) {
+            let target = resolveRestoreFocus(getRestoreFocusProp());
+            if (target === false) {
+              return;
+            }
+            if (target !== true && target.isConnected) {
+              focusElement(target);
+              return;
+            }
+
             // look up the tree starting with our scope to find a nodeToRestore still in the DOM
             let treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
@@ -831,6 +852,18 @@ function useRestoreFocus(
       }
     };
   }, [scopeRef, restoreFocus]);
+}
+
+function resolveRestoreFocus(
+  restoreFocus: FocusScopeProps['restoreFocus']
+): FocusableElement | boolean {
+  if (typeof restoreFocus === 'function') {
+    return restoreFocus(getInteractionModality()) ?? true;
+  }
+  if (restoreFocus && typeof restoreFocus === 'object') {
+    return restoreFocus.current ?? true;
+  }
+  return !!restoreFocus;
 }
 
 function restoreFocusToElement(node: FocusableElement) {
