@@ -42,6 +42,14 @@ export interface AriaDateFieldProps<T extends DateValue>
    * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
   autoComplete?: string;
+  /**
+   * Whether pressing the Tab key moves focus into and out of each individual segment
+   * (`'arrow'`), or into and out of the field as a single unit, with the Left/Right arrow
+   * keys used to move between segments (`'tab'`).
+   *
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab';
 }
 
 // Allows this hook to also be used with TimeField
@@ -72,6 +80,7 @@ interface HookData {
   ariaLabelledBy?: string;
   ariaDescribedBy?: string;
   focusManager: FocusManager;
+  keyboardNavigationBehavior: 'arrow' | 'tab';
 }
 
 export const hookData: WeakMap<DateFieldState, HookData> = new WeakMap<DateFieldState, HookData>();
@@ -151,7 +160,8 @@ export function useDateField<T extends DateValue>(
     ariaLabelledBy:
       [labelProps.id, props['aria-labelledby']].filter(Boolean).join(' ') || undefined,
     ariaDescribedBy: describedBy,
-    focusManager
+    focusManager,
+    keyboardNavigationBehavior: props.keyboardNavigationBehavior || 'arrow'
   });
 
   let autoFocusRef = useRef(props.autoFocus);
