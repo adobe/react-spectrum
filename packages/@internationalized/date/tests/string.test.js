@@ -360,6 +360,13 @@ describe('string conversion', function () {
       expect(date).toEqual(expected);
     });
 
+    it('should parse negative offsets with a zero hour component', function () {
+      let date = parseZonedDateTime('1960-01-01T00:00:00-00:44:30[Africa/Monrovia]');
+      let expected = new ZonedDateTime(1960, 1, 1, 'Africa/Monrovia', -2670000, 0, 0, 0);
+      expect(date).toEqual(expected);
+      expect(parseZonedDateTime(date.toString())).toEqual(date);
+    });
+
     it('should error if parsing a date with an invalid offset', function () {
       expect(() =>
         parseZonedDateTime('2020-02-03T12:24:45.12-04:00[America/Los_Angeles]')
@@ -457,6 +464,20 @@ describe('string conversion', function () {
 
       date = parseAbsolute('2021-11-07T01:00+0000', 'America/Los_Angeles');
       expected = new ZonedDateTime(2021, 11, 6, 'America/Los_Angeles', -25200000, 18, 0, 0);
+      expect(date).toEqual(expected);
+    });
+
+    it('should parse negative offsets with a minutes component', function () {
+      let date = parseAbsolute('2021-11-07T07:45:00-03:30', 'UTC');
+      let expected = new ZonedDateTime(2021, 11, 7, 'UTC', 0, 11, 15, 0);
+      expect(date).toEqual(expected);
+
+      date = parseAbsolute('2021-11-07T07:45:00-0930', 'UTC');
+      expected = new ZonedDateTime(2021, 11, 7, 'UTC', 0, 17, 15, 0);
+      expect(date).toEqual(expected);
+
+      date = parseAbsolute('2021-11-07T07:45:00-00:30', 'UTC');
+      expected = new ZonedDateTime(2021, 11, 7, 'UTC', 0, 8, 15, 0);
       expect(date).toEqual(expected);
     });
 
