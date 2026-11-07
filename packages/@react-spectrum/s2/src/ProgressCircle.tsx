@@ -200,14 +200,14 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(
       }>
       {({percentage, isIndeterminate}) => (
         <svg fill="none" width="100%" height="100%" style={{display: 'block'}}>
-          <circle cx="50%" cy="50%" r={radius} className={hcmStroke({size})} />
-          <circle cx="50%" cy="50%" r={radius} className={track({isStaticColor, size})} />
+          <circle cx="50%" cy="50%" style={{r: radius}} className={hcmStroke({size})} />
+          <circle cx="50%" cy="50%" style={{r: radius}} className={track({isStaticColor, size})} />
           <circle
             cx="50%"
             cy="50%"
-            r={radius}
             className={fill({isStaticColor, size})}
             style={{
+              r: radius,
               // These cubic-bezier timing functions were derived from the previous animation keyframes
               // using a best fit algorithm, and then manually adjusted to approximate the original animation.
               animation: isIndeterminate
