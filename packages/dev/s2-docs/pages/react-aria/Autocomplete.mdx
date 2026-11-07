@@ -1210,6 +1210,8 @@ function Example() {
         isNonModal
         placement="bottom start"
         trigger="MenuTrigger"
+        // Keep Menu as the only scrollport (nested Popover overflow glitches).
+        style={{maxHeight: 240}}
         /*- begin highlight -*/
         // Calculate the position of the popover relative to the anchor character.
         getTargetRect={target => {
@@ -1220,6 +1222,7 @@ function Example() {
         {/*- end highlight -*/}
         <Menu
           items={usernames}
+          style={{maxHeight: 'inherit'}}
           renderEmptyState={() => 'No results found.'}
           onAction={value => {
             /*- begin highlight -*/

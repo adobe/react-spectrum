@@ -19,6 +19,8 @@
   &[data-trigger='MenuTrigger'],
   &[data-trigger='SubmenuTrigger'] {
     padding: 0;
+    /* Menu scrolls via overflow:auto + max-height:inherit; nested overflow:auto glitches. */
+    overflow: hidden;
   }
 
   .react-aria-OverlayArrow svg {
