@@ -175,6 +175,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     keyboardDelegate: delegate,
     disallowTypeAhead: true,
     disallowEmptySelection: true,
+    // Mod+A should select input text, not try to selectAll() options (ignored by ComboBox state).
+    disallowSelectAll: true,
     shouldFocusWrap,
     ref: inputRef,
     // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
