@@ -253,14 +253,16 @@ class NumberParserImpl {
       value = value.replace('-', this.symbols.minusSign);
     }
 
-    // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
-    // instead they use the , (44) character or apparently the (1548) character.
+    // Allow keyboard alternatives for arab separators without replacing locale-native symbols.
     if (this.options.numberingSystem === 'arab') {
       if (this.symbols.decimal) {
-        value = replaceAll(value, ',', this.symbols.decimal);
-        value = replaceAll(value, String.fromCharCode(1548), this.symbols.decimal);
+        for (let symbol of [',', '\u060C']) {
+          if (symbol !== this.symbols.group) {
+            value = replaceAll(value, symbol, this.symbols.decimal);
+          }
+        }
       }
-      if (this.symbols.group && isGroupSymbolAllowed) {
+      if (this.symbols.group && isGroupSymbolAllowed && this.symbols.decimal !== '.') {
         value = replaceAll(value, '.', this.symbols.group);
       }
     }

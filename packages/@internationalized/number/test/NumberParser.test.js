@@ -12,6 +12,7 @@
 
 import fc from 'fast-check';
 import messages from 'react-aria/intl/numberfield/*.json';
+import {NumberFormatter} from '../src/NumberFormatter';
 import {NumberParser} from '../src/NumberParser';
 
 // for some reason hu-HU isn't supported in jsdom/node
@@ -29,6 +30,60 @@ describe('NumberParser', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('-10.5')).toBe(-10.5);
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('.5')).toBe(0.5);
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('-.5')).toBe(-0.5);
+    });
+
+    it.each([
+      ['sd', {}, 1234.5],
+      ['sd', {style: 'currency', currency: 'USD'}, 12.5],
+      ['pa-u-nu-arab', {}, 0.25],
+      ['ur-u-nu-arab', {}, 1234.5],
+      ['ar', {}, 1234.5],
+      ['ar-u-nu-arab', {}, 1234.5]
+    ])('should round trip formatted numbers in %s with %j', (locale, options, value) => {
+      let formatted = new NumberFormatter(locale, options).format(value);
+      expect(new NumberParser(locale, options).parse(formatted)).toBe(value);
+    });
+
+    it.each(['sd', 'pa-u-nu-arab', 'ur-u-nu-arab', 'ar-u-nu-arab'])(
+      'should preserve native Arabic number separators across formats in %s',
+      locale => {
+        expect(Intl.NumberFormat.supportedLocalesOf([locale])).toEqual([locale]);
+        for (let options of [
+          {},
+          {useGrouping: false},
+          {style: 'currency', currency: 'USD'},
+          {style: 'percent', maximumFractionDigits: 2},
+          {style: 'unit', unit: 'liter'}
+        ]) {
+          let formatter = new NumberFormatter(locale, options);
+          let parser = new NumberParser(locale, options);
+          expect(formatter.resolvedOptions().numberingSystem).toBe('arab');
+          for (let value of [-1234.5, -0.25, 0.25]) {
+            let formatted = formatter.format(value);
+            expect(parser.parse(formatted)).toBe(value);
+            expect(parser.isValidPartialNumber(formatted)).toBe(true);
+            expect(parser.getNumberingSystem(formatted)).toBe('arab');
+          }
+        }
+      }
+    );
+
+    it.each([
+      ['sd', '١٬٢٣٤.٥', 1234.5],
+      ['sd', '١٬٢٣٤,٥', 1234.5],
+      ['sd', '١٬٢٣٤،٥', 1234.5],
+      ['pa-u-nu-arab', '١,٢٣٤.٥', 1234.5],
+      ['pa-u-nu-arab', '١,٢٣٤،٥', 1234.5],
+      ['ur-u-nu-arab', '١,٢٣٤،٥', 1234.5],
+      ['ur-u-nu-arab', '١.٢٣٤،٥', 1234.5],
+      ['ar-u-nu-arab', '١٬٢٣٤٫٥', 1234.5],
+      ['ar-u-nu-arab', '١.٢٣٤,٥', 1234.5],
+      ['ar-u-nu-arab', '١.٢٣٤،٥', 1234.5]
+    ])('should parse native and keyboard separators in %s: %s', (locale, input, value) => {
+      let parser = new NumberParser(locale);
+      expect(parser.parse(input)).toBe(value);
+      expect(parser.parse('-' + input)).toBe(-value);
+      expect(parser.isValidPartialNumber(input)).toBe(true);
     });
 
     it('should support group characters', function () {
@@ -608,6 +663,26 @@ describe('NumberParser', function () {
   });
 
   describe('isValidPartialNumber', function () {
+    it.each([
+      ['sd', '.'],
+      ['sd', ','],
+      ['sd', '،'],
+      ['pa-u-nu-arab', '.'],
+      ['ur-u-nu-arab', '،'],
+      ['ar-u-nu-arab', '٫'],
+      ['ar-u-nu-arab', ','],
+      ['ar-u-nu-arab', '،']
+    ])('should allow editing Arabic fractions in %s with %s', (locale, decimal) => {
+      let parser = new NumberParser(locale);
+      for (let input of [decimal, '-' + decimal, '١' + decimal]) {
+        expect(parser.isValidPartialNumber(input)).toBe(true);
+      }
+      expect(parser.parse(decimal)).toBeNaN();
+      expect(parser.parse(decimal + '٥')).toBe(0.5);
+      expect(parser.parse('-' + decimal + '٥')).toBe(-0.5);
+      expect(parser.isValidPartialNumber('١' + decimal + '٢' + decimal)).toBe(false);
+    });
+
     it('should support basic numbers', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('10')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-10')).toBe(true);
