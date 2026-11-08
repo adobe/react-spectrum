@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getParentElement} from './shadowdom/DOMFunctions';
 import {isScrollable} from './isScrollable';
 
 export function getScrollParents(node: Element, checkForOverflow?: boolean): Element[] {
@@ -23,7 +24,7 @@ export function getScrollParents(node: Element, checkForOverflow?: boolean): Ele
     if (node === root) {
       break;
     }
-    node = node.parentElement as Element;
+    node = getParentElement(node) as Element;
   }
 
   return parentElements;

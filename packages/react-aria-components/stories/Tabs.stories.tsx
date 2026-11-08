@@ -12,12 +12,12 @@
 
 import {Button} from '../src/Button';
 
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Orientation} from '@react-types/shared';
 import {OverlayArrow} from '../src/OverlayArrow';
 import React, {useState} from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
-import {Tab, TabList, TabPanel, TabProps, Tabs} from '../src/Tabs';
+import {Tab, TabList, TabPanel, TabPanels, TabProps, Tabs} from '../src/Tabs';
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import './styles.css';
 
@@ -26,113 +26,119 @@ export default {
   component: Tabs
 } as Meta<typeof Tabs>;
 
-export type TabsStory = StoryFn<typeof Tabs>;
+export type TabsStory = StoryObj<typeof Tabs>;
 
-export const DisableSelectedTab: TabsStory = () => {
-  let [isBuilding, setBuilding] = useState(false);
-  return (
-    <>
-      <Button onPress={() => setBuilding(value => !value)}>
-        {isBuilding ? 'Finish build' : 'Re-run build'}
-      </Button>
-      <Tabs defaultSelectedKey="artifacts">
-        <TabList aria-label="Build" style={{display: 'flex', gap: 8}}>
-          <Tab id="logs">Logs</Tab>
-          <Tab id="artifacts" isDisabled={isBuilding}>
-            Artifacts
-          </Tab>
-        </TabList>
-        <TabPanel id="logs">Build logs</TabPanel>
-        <TabPanel id="artifacts">Build artifacts</TabPanel>
-      </Tabs>
-    </>
-  );
+export const DisableSelectedTab: TabsStory = {
+  render: function DisableSelectedTab() {
+    let [isBuilding, setBuilding] = useState(false);
+    return (
+      <>
+        <Button onPress={() => setBuilding(value => !value)}>
+          {isBuilding ? 'Finish build' : 'Re-run build'}
+        </Button>
+        <Tabs defaultSelectedKey="artifacts">
+          <TabList aria-label="Build" style={{display: 'flex', gap: 8}}>
+            <Tab id="logs">Logs</Tab>
+            <Tab id="artifacts" isDisabled={isBuilding}>
+              Artifacts
+            </Tab>
+          </TabList>
+          <TabPanel id="logs">Build logs</TabPanel>
+          <TabPanel id="artifacts">Build artifacts</TabPanel>
+        </Tabs>
+      </>
+    );
+  }
 };
 
-export const TabsExample: TabsStory = () => {
-  let [url, setUrl] = useState('/FoR');
+export const TabsExample: TabsStory = {
+  render: function TabsExample() {
+    let [url, setUrl] = useState('/FoR');
 
-  return (
-    <RouterProvider navigate={setUrl}>
-      <Tabs selectedKey={url}>
-        <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
-          <CustomTab id="/FoR" href="/FoR">
-            Founding of Rome
-          </CustomTab>
-          <CustomTab id="/MaR" href="/MaR">
-            Monarchy and Republic
-          </CustomTab>
-          <TooltipTrigger>
-            <CustomTab id="/Emp" href="/Emp">
-              Empire
+    return (
+      <RouterProvider navigate={setUrl}>
+        <Tabs selectedKey={url}>
+          <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
+            <CustomTab id="/FoR" href="/FoR">
+              Founding of Rome
             </CustomTab>
-            <Tooltip
-              offset={5}
-              style={{
-                background: 'Canvas',
-                color: 'CanvasText',
-                border: '1px solid gray',
-                padding: 5,
-                borderRadius: 4
-              }}>
-              <OverlayArrow style={{transform: 'translateX(-50%)'}}>
-                <svg width="8" height="8" style={{display: 'block'}}>
-                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-                </svg>
-              </OverlayArrow>
-              I am a tooltip
-            </Tooltip>
-          </TooltipTrigger>
-        </TabList>
-        <TabPanel id="/FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
-        <TabPanel id="/MaR">Senatus Populusque Romanus.</TabPanel>
-        <TabPanel id="/Emp">Alea jacta est.</TabPanel>
-      </Tabs>
-    </RouterProvider>
-  );
+            <CustomTab id="/MaR" href="/MaR">
+              Monarchy and Republic
+            </CustomTab>
+            <TooltipTrigger>
+              <CustomTab id="/Emp" href="/Emp">
+                Empire
+              </CustomTab>
+              <Tooltip
+                offset={5}
+                style={{
+                  background: 'Canvas',
+                  color: 'CanvasText',
+                  border: '1px solid gray',
+                  padding: 5,
+                  borderRadius: 4
+                }}>
+                <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+                  <svg width="8" height="8" style={{display: 'block'}}>
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                  </svg>
+                </OverlayArrow>
+                I am a tooltip
+              </Tooltip>
+            </TooltipTrigger>
+          </TabList>
+          <TabPanel id="/FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
+          <TabPanel id="/MaR">Senatus Populusque Romanus.</TabPanel>
+          <TabPanel id="/Emp">Alea jacta est.</TabPanel>
+        </Tabs>
+      </RouterProvider>
+    );
+  }
 };
 
 // Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
-export const TabsRenderProps: TabsStory = () => {
-  const [tabOrientation, setTabOrientation] = useState<Orientation>('vertical');
+export const TabsRenderProps: TabsStory = {
+  render: function TabsRenderProps() {
+    const [tabOrientation, setTabOrientation] = useState<Orientation>('vertical');
 
-  return (
-    <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
-      <Button
-        onPress={() =>
-          setTabOrientation(current => (current === 'vertical' ? 'horizontal' : 'vertical'))
-        }>
-        Change Orientation
-      </Button>
-      <Tabs orientation={tabOrientation}>
-        {({orientation}) => (
-          <div>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: orientation === 'vertical' ? 'row' : 'column',
-                gap: 8
-              }}>
-              <TabList
-                aria-label="History of Ancient Rome"
+    return (
+      <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
+        <Button
+          onPress={() =>
+            setTabOrientation(current => (current === 'vertical' ? 'horizontal' : 'vertical'))
+          }>
+          Change Orientation
+        </Button>
+        <Tabs orientation={tabOrientation}>
+          {({orientation}) => (
+            <div>
+              <div
                 style={{
                   display: 'flex',
-                  flexDirection: orientation === 'vertical' ? 'column' : 'row',
+                  flexDirection: orientation === 'vertical' ? 'row' : 'column',
                   gap: 8
                 }}>
-                <CustomTab id="FoR">Founding of Rome</CustomTab>
-                <CustomTab id="MaR">Monarchy and Republic</CustomTab>
-                <CustomTab id="Emp">Empire</CustomTab>
-              </TabList>
-              <TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
-              <TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel>
-              <TabPanel id="Emp">Alea jacta est.</TabPanel>
+                <TabList
+                  aria-label="History of Ancient Rome"
+                  style={{
+                    display: 'flex',
+                    flexDirection: orientation === 'vertical' ? 'column' : 'row',
+                    gap: 8
+                  }}>
+                  <CustomTab id="FoR">Founding of Rome</CustomTab>
+                  <CustomTab id="MaR">Monarchy and Republic</CustomTab>
+                  <CustomTab id="Emp">Empire</CustomTab>
+                </TabList>
+                <TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
+                <TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel>
+                <TabPanel id="Emp">Alea jacta est.</TabPanel>
+              </div>
             </div>
-          </div>
-        )}
-      </Tabs>
-    </div>
-  );
+          )}
+        </Tabs>
+      </div>
+    );
+  }
 };
 
 const CustomTab = (props: TabProps) => {
@@ -146,22 +152,76 @@ const CustomTab = (props: TabProps) => {
   );
 };
 
-export const NestedTabs: TabsStory = () => (
+export const NestedTabs: TabsStory = {
+  render: () => (
+    <Tabs>
+      <TabList style={{display: 'flex', gap: 8}}>
+        <CustomTab id="foo">Foo</CustomTab>
+        <CustomTab id="bar">Bar</CustomTab>
+      </TabList>
+      <TabPanel id="foo">
+        <Tabs>
+          <TabList style={{display: 'flex', gap: 8}}>
+            <CustomTab id="one">One</CustomTab>
+            <CustomTab id="two">Two</CustomTab>
+          </TabList>
+          <TabPanel id="one">One</TabPanel>
+          <TabPanel id="two">Two</TabPanel>
+        </Tabs>
+      </TabPanel>
+      <TabPanel id="bar">Bar</TabPanel>
+    </Tabs>
+  )
+};
+
+const animatedPanelsStyle = {
+  height: 'var(--tab-panel-height)',
+  transition: 'height 400ms',
+  overflow: 'clip',
+  background: 'rgba(106, 90, 205, 0.1)'
+};
+
+const InnerTabs = () => (
   <Tabs>
-    <TabList style={{display: 'flex', gap: 8}}>
-      <CustomTab id="foo">Foo</CustomTab>
-      <CustomTab id="bar">Bar</CustomTab>
+    <TabList aria-label="Inner tabs" style={{display: 'flex', gap: 8}}>
+      <CustomTab id="one">One</CustomTab>
+      <CustomTab id="two">Two</CustomTab>
     </TabList>
-    <TabPanel id="foo">
-      <Tabs>
-        <TabList style={{display: 'flex', gap: 8}}>
-          <CustomTab id="one">One</CustomTab>
-          <CustomTab id="two">Two</CustomTab>
-        </TabList>
-        <TabPanel id="one">One</TabPanel>
-        <TabPanel id="two">Two</TabPanel>
-      </Tabs>
-    </TabPanel>
-    <TabPanel id="bar">Bar</TabPanel>
+    <TabPanels style={animatedPanelsStyle}>
+      <TabPanel id="one">
+        <p>Senatus Populusque Romanus.</p>
+      </TabPanel>
+      <TabPanel id="two">
+        <p>Arma virumque cano, Troiae qui primus ab oris.</p>
+        <p>Italiam fato profugus, Laviniaque venit litora.</p>
+        <p>Multum ille et terris iactatus et alto.</p>
+      </TabPanel>
+    </TabPanels>
   </Tabs>
 );
+
+export const NestedTabsAnimated: TabsStory = {
+  render: () => (
+    <div style={{height: '300px', width: '300px'}}>
+      <Tabs>
+        <TabList aria-label="Outer tabs" style={{display: 'flex', gap: 8}}>
+          <CustomTab id="foo">Foo</CustomTab>
+          <CustomTab id="bar">Bar</CustomTab>
+          <CustomTab id="baz">Baz</CustomTab>
+        </TabList>
+        <TabPanels style={animatedPanelsStyle}>
+          <TabPanel id="foo">
+            <p>Alea jacta est.</p>
+          </TabPanel>
+          <TabPanel id="bar">
+            <InnerTabs />
+          </TabPanel>
+          <TabPanel id="baz">
+            <p>Veni, vidi, vici.</p>
+            <InnerTabs />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </div>
+  )
+};

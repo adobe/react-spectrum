@@ -2523,6 +2523,39 @@ describe('keyboard modifier keys', () => {
       expect(document.activeElement).toBe(options[1]);
     });
 
+    it('does not activate an element focused during selection with Enter', async () => {
+      let onClick = jest.fn();
+      let triggerRef = React.createRef();
+      let {getByRole} = render(
+        <>
+          <button ref={triggerRef} onClick={onClick}>
+            Trigger
+          </button>
+          <ListBox
+            aria-label="Favorite Animal"
+            selectionMode="single"
+            onSelectionChange={() => {
+              // oxlint-disable-next-line rsp-rules/act-events-test
+              triggerRef.current.focus();
+            }}>
+            <ListBoxItem id="cat">Cat</ListBoxItem>
+            <ListBoxItem id="dog">Dog</ListBoxItem>
+          </ListBox>
+        </>
+      );
+
+      let options = within(getByRole('listbox')).getAllByRole('option');
+      act(() => options[0].focus());
+
+      // Selection moves focus to the trigger during keydown. Unless Enter's default is
+      // prevented, the browser dispatches the activation click to the newly focused
+      // element.
+      await user.keyboard('{Enter}');
+
+      expect(triggerRef.current).toHaveFocus();
+      expect(onClick).not.toHaveBeenCalled();
+    });
+
     describe('multiple selection, replace behavior', () => {
       it('replaces selection as focus moves with arrow keys', async () => {
         let onSelectionChange = jest.fn();
@@ -2597,6 +2630,27 @@ describe('keyboard modifier keys', () => {
       expect(onSelectionChange).toHaveBeenLastCalledWith('all');
     });
 
+    it('extends selection with Meta+Shift+End and Meta+Shift+Home', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = renderListbox({
+        selectionMode: 'multiple',
+        defaultSelectedKeys: ['cat'],
+        onSelectionChange
+      });
+      let options = within(getByRole('listbox')).getAllByRole('option');
+      await user.tab();
+      await user.keyboard('{Meta>}{Shift>}{End}{/Shift}{/Meta}');
+      expect(document.activeElement).toBe(options[2]);
+      expect(onSelectionChange).toHaveBeenLastCalledWith(
+        new Selection(['cat', 'kangaroo'], 'kangaroo', 'kangaroo')
+      );
+      await user.keyboard('{Meta>}{Shift>}{Home}{/Shift}{/Meta}');
+      expect(document.activeElement).toBe(options[0]);
+      expect(onSelectionChange).toHaveBeenLastCalledWith(
+        new Selection(['cat', 'dog', 'kangaroo'], 'kangaroo', 'cat')
+      );
+    });
+
     it('does not select all with Mod+A when selection mode is single', async () => {
       let onSelectionChange = jest.fn();
       renderListbox({selectionMode: 'single', onSelectionChange});
@@ -2663,6 +2717,18 @@ describe('keyboard modifier keys', () => {
       await user.tab();
       await user.keyboard('{Control>}a{/Control}');
       expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+    });
+  });
+
+  describe('navigation keys prevent default without selecting', () => {
+    it.each(['Home', 'End', 'PageUp', 'PageDown'])('%s prevents the default', async key => {
+      renderListbox({selectionMode: 'multiple'});
+      await user.tab();
+      let event = new KeyboardEvent('keydown', {key, bubbles: true, cancelable: true});
+      act(() => {
+        document.activeElement.dispatchEvent(event);
+      });
+      expect(event.defaultPrevented).toBe(true);
     });
   });
 });

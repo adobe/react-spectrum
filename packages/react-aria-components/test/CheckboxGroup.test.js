@@ -19,6 +19,7 @@ import {
   CheckboxGroupContext
 } from '../src/Checkbox';
 import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
 import {Label} from '../src/Label';
 import React, {forwardRef} from 'react';
 import {Text} from '../src/Text';
@@ -70,6 +71,27 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', comp => {
 
   let renderGroup = (groupProps, checkboxProps) =>
     render(<TestCheckboxGroup {...{groupProps, checkboxProps}} />);
+
+  it('clears all selected checkboxes when the form resets', async () => {
+    let {getAllByRole, getByRole} = render(
+      <form>
+        <TestCheckboxGroup groupProps={{name: 'letters'}} />
+        <button type="reset">Reset</button>
+      </form>
+    );
+
+    let checkboxes = getAllByRole('checkbox');
+    await user.click(checkboxes[0]);
+    await user.click(checkboxes[1]);
+
+    expect(checkboxes[0]).toBeChecked();
+    expect(checkboxes[1]).toBeChecked();
+
+    await user.click(getByRole('button', {name: 'Reset'}));
+
+    expect(checkboxes[0]).not.toBeChecked();
+    expect(checkboxes[1]).not.toBeChecked();
+  });
 
   it('should render a checkbox group with default classes', () => {
     let {getByRole, getAllByRole} = renderGroup();
@@ -323,6 +345,67 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', comp => {
       expect(findRoot(checkbox)).not.toHaveAttribute('data-invalid');
     }
   });
+
+  it.each([
+    ['form', 'form'],
+    ['Form', Form]
+  ])(
+    'should inherit validationBehavior="aria" from the group inside %s',
+    async (_, FormComponent) => {
+      let {getByRole} = render(
+        <FormComponent>
+          <CheckboxGroup isRequired validationBehavior="aria" aria-label="Contact">
+            <Checkbox value="email">Email</Checkbox>
+          </CheckboxGroup>
+        </FormComponent>
+      );
+
+      let checkbox = getByRole('checkbox');
+      expect(checkbox).not.toHaveAttribute('required');
+      expect(checkbox).toHaveAttribute('aria-required', 'true');
+
+      let validity;
+      act(() => {
+        validity = checkbox.form.checkValidity();
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(validity).toBe(true);
+    }
+  );
+
+  it.each([
+    ['aria', 'native', true],
+    ['native', 'aria', false]
+  ])(
+    'should allow a %s checkbox to override a %s group inside Form',
+    async (validationBehavior, groupValidationBehavior, isValid) => {
+      let {getByRole} = render(
+        <Form>
+          <CheckboxGroup
+            isRequired
+            validationBehavior={groupValidationBehavior}
+            aria-label="Contact">
+            <Checkbox value="email" validationBehavior={validationBehavior}>
+              Email
+            </Checkbox>
+          </CheckboxGroup>
+        </Form>
+      );
+
+      let checkbox = getByRole('checkbox');
+      expect(checkbox.required).toBe(!isValid);
+      let validity;
+      act(() => {
+        validity = checkbox.form.checkValidity();
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(validity).toBe(isValid);
+    }
+  );
 
   it('should support focus events', async () => {
     let onBlur = jest.fn();

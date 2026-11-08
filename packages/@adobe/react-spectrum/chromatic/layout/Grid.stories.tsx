@@ -47,46 +47,44 @@ export default {
 
 export type GridStory = StoryObj<typeof Grid>;
 
-export const ExplicitGrid: GridStory = () => (
-  <Grid
-    areas={['header  header', 'sidebar content', 'footer  footer']}
-    columns={['size-3000', 'auto']}
-    rows={['size-1000', 'auto', 'size-1000']}
-    height="size-6000"
-    width="80%"
-    gap="size-100">
-    <View backgroundColor="celery-600" gridArea="header" padding="size-100">
-      Header
-    </View>
-    <View backgroundColor="blue-600" gridArea="sidebar" padding="size-100">
-      Sidebar
-    </View>
-    <View backgroundColor="purple-600" gridArea="content" padding="size-100">
-      Content
-    </View>
-    <View backgroundColor="magenta-600" gridArea="footer" padding="size-100">
-      Footer
-    </View>
-  </Grid>
-);
-
-ExplicitGrid.story = {
+export const ExplicitGrid: GridStory = {
+  render: () => (
+    <Grid
+      areas={['header  header', 'sidebar content', 'footer  footer']}
+      columns={['size-3000', 'auto']}
+      rows={['size-1000', 'auto', 'size-1000']}
+      height="size-6000"
+      width="80%"
+      gap="size-100">
+      <View backgroundColor="celery-600" gridArea="header" padding="size-100">
+        Header
+      </View>
+      <View backgroundColor="blue-600" gridArea="sidebar" padding="size-100">
+        Sidebar
+      </View>
+      <View backgroundColor="purple-600" gridArea="content" padding="size-100">
+        Content
+      </View>
+      <View backgroundColor="magenta-600" gridArea="footer" padding="size-100">
+        Footer
+      </View>
+    </Grid>
+  ),
   name: 'Explicit grid'
 };
 
-export const ImplicitGrid: GridStory = () => (
-  <Grid
-    columns={repeat('auto-fit', 'size-800')}
-    autoRows="size-800"
-    justifyContent="center"
-    width="80%"
-    gap="size-100">
-    {colors.map(color => (
-      <View key={String(color)} backgroundColor={color} />
-    ))}
-  </Grid>
-);
-
-ImplicitGrid.story = {
+export const ImplicitGrid: GridStory = {
+  render: () => (
+    <Grid
+      columns={repeat('auto-fit', 'size-800')}
+      autoRows="size-800"
+      justifyContent="center"
+      width="80%"
+      gap="size-100">
+      {colors.map(color => (
+        <View key={String(color)} backgroundColor={color} />
+      ))}
+    </Grid>
+  ),
   name: 'Implicit grid'
 };

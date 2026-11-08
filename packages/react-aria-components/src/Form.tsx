@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, dom, DOMProps, DOMRenderProps, useContextProps} from './utils';
+import {
+  ContextValue,
+  dom,
+  DOMProps,
+  DOMRenderProps,
+  useContextProps,
+  useSlottedContext
+} from './utils';
 import {FormValidationContext} from 'react-stately/private/form/useFormValidationState';
 import {GlobalDOMAttributes, FormProps as SharedFormProps} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
@@ -40,12 +47,18 @@ export interface FormProps
 
 export const FormContext = createContext<ContextValue<FormProps, HTMLFormElement>>(null);
 
+const IS_FORM = Symbol('isForm');
+
 /**
  * A form is a group of inputs that allows users to submit data to a server,
  * with support for providing field validation errors.
  */
 export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
-  [props, ref] = useContextProps(props, ref, FormContext);
+  // A nested Form is independent, so don't inherit the props of a parent Form.
+  // FormContext values provided by other means are still merged.
+  let ctx = useSlottedContext(FormContext);
+  let isNested = ctx != null && IS_FORM in ctx;
+  [props, ref] = useContextProps(isNested ? {...props, slot: null} : props, ref, FormContext);
   let {validationErrors, validationBehavior = 'native', children, className, ...domProps} = props;
   return (
     <dom.form
@@ -53,7 +66,7 @@ export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef
       {...domProps}
       ref={ref}
       className={className || 'react-aria-Form'}>
-      <FormContext.Provider value={{...props, validationBehavior}}>
+      <FormContext.Provider value={{...props, validationBehavior, [IS_FORM]: true} as FormProps}>
         <FormValidationContext.Provider value={validationErrors ?? {}}>
           {children}
         </FormValidationContext.Provider>

@@ -20,7 +20,7 @@ import {
   useMemo,
   useRef
 } from 'react';
-import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getParentNode, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality, setInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
 import {getScrollParents} from '../utils/getScrollParents';
@@ -665,8 +665,8 @@ function getPosition(container: Element, node: Node, offset: number, isRangeEnd 
   }
 
   let originalNode = node;
-  while (node.parentNode !== container) {
-    node = node.parentNode!;
+  while (getParentNode(node) !== container) {
+    node = getParentNode(node)!;
   }
 
   let index = indexOfNode(node);
@@ -721,7 +721,6 @@ export function setTokenFieldSelection(
     // anchor comes after the current position (backward selections).
     let [anchorNode, anchorOffset] = getDOMPosition(root, selectedRange.anchor);
     let [focusNode, focusOffset] = getDOMPosition(root, selectedRange.current);
-    root[isProgrammaticSelectionChange] = !fireEvent;
 
     // Only set selection if it has changed, because this can clobber the browser's selection direction.
     if (
@@ -730,6 +729,9 @@ export function setTokenFieldSelection(
       selection.focusNode !== focusNode ||
       selection.focusOffset !== focusOffset
     ) {
+      // Only flag the change when the selection actually moves. Otherwise no selectionchange
+      // event fires to consume the flag, and the next user selection change would be ignored.
+      root[isProgrammaticSelectionChange] = !fireEvent;
       selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
     }
   }
@@ -773,7 +775,7 @@ function scrollCaretIntoView(root: HTMLElement): void {
       // Otherwise find the next sibling element (e.g. trailing <br>) and use its rect in this case.
       let nextSibling = node === root ? null : node.nextSibling;
       while (node && node !== root && !nextSibling) {
-        node = node.parentNode as Node | null;
+        node = getParentNode(node);
         nextSibling = node && node !== root ? node.nextSibling : null;
       }
 

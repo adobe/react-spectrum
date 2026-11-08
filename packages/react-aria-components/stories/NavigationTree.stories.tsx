@@ -92,24 +92,26 @@ function Item(props: {href?: string; title: string; children?: ReactNode}) {
   );
 }
 
-export const Example = (args: any) => (
-  <RoutedNavigationTree defaultSelectedRoute="/files">
-    {({selectedRoute}) => (
-      <NavigationTree
-        aria-label="Example"
-        selectedRoute={selectedRoute}
-        className={styles.tree}
-        {...args}>
-        <Item href="/files" title="Your files" />
-        <Item title="Your libraries">
-          <Item href="/projects-1" title="Projects 1" />
-          <Item href="/projects-2" title="Projects 2" />
-        </Item>
-        <Item href="/shared" title="Shared with you">
-          <Item href="/projects-3" title="Projects 3" />
-          <Item href="/projects-4" title="Projects 4" />
-        </Item>
-      </NavigationTree>
-    )}
-  </RoutedNavigationTree>
-);
+export const Example = {
+  render: (args: any) => (
+    <RoutedNavigationTree defaultSelectedRoute="/files">
+      {({selectedRoute}) => (
+        <NavigationTree
+          aria-label="Example"
+          selectedRoute={selectedRoute}
+          className={styles.tree}
+          {...args}>
+          <Item href="/files" title="Your files" />
+          <Item title="Your libraries">
+            <Item href="/projects-1" title="Projects 1" />
+            <Item href="/projects-2" title="Projects 2" />
+          </Item>
+          <Item href="/shared" title="Shared with you">
+            <Item href="/projects-3" title="Projects 3" />
+            <Item href="/projects-4" title="Projects 4" />
+          </Item>
+        </NavigationTree>
+      )}
+    </RoutedNavigationTree>
+  )
+};

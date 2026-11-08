@@ -27,7 +27,7 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '../../src/layout/Grid';
 import {Heading} from '../../src/text/Heading';
 import {IllustratedMessage} from '../../src/illustratedmessage/IllustratedMessage';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import {View} from '../../src/view/View';
 
@@ -257,16 +257,18 @@ export const NestedColumns: TableViewStory = {
   args: {columns: nestedColumns, items}
 };
 
-export const MaxHeight: StoryFn<SpectrumTableProps<object>> = () => (
-  <TableView maxHeight="size-1200">
-    <TableHeader columns={columns}>
-      {(column: any) => <Column key={column.key}>{column.name}</Column>}
-    </TableHeader>
-    <TableBody items={items}>
-      {(item: any) => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
-    </TableBody>
-  </TableView>
-);
+export const MaxHeight: StoryObj<SpectrumTableProps<object>> = {
+  render: () => (
+    <TableView maxHeight="size-1200">
+      <TableHeader columns={columns}>
+        {(column: any) => <Column key={column.key}>{column.name}</Column>}
+      </TableHeader>
+      <TableBody items={items}>
+        {(item: any) => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
+      </TableBody>
+    </TableView>
+  )
+};
 
 export const Empty: TableViewStory = {
   render: args => <EmptyTemplate {...args} />,

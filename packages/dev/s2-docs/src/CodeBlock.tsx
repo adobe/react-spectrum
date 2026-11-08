@@ -1,6 +1,6 @@
 // @ts-ignore
 import assets from 'url:../pages/**/*.{png,jpg,svg}' with {env: 'react-client'};
-import {cache, ReactElement, ReactNode} from 'react';
+import {cache, createElement, ReactElement, ReactNode} from 'react';
 import {Code, ICodeProps} from './Code';
 import {CodePlatter, FileProvider, Pre, ShadcnProvider} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
@@ -71,7 +71,8 @@ const STARTER_DIRS: {[alias: string]: string} = {
 const STARTER_ALIAS_RE = new RegExp(`(${Object.keys(STARTER_DIRS).join('|')})/`, 'g');
 
 interface CodeBlockProps extends VisualExampleProps {
-  render?: ReactNode;
+  /** The code block's default export: a component, or a value to render as is. */
+  render?: any;
   children: string;
   dir?: string;
   files?: string[];
@@ -107,13 +108,21 @@ export function CodeBlock({
     );
   }
 
+  // Client components (client references) are rendered by ExampleOutput, which passes them props from
+  // controls. Server components can't be passed to the client, so they're rendered here.
+  if (typeof render === 'function') {
+    render = createElement(render);
+  }
+
   let resolveFrom = path.resolve(
     baseDir,
     'packages/dev/s2-docs/pages',
     dir || (props.type === 's2' ? 's2' : 'react-aria'),
     'index.tsx'
   );
-  let downloadFiles = getExampleFiles(resolveFrom, children, props.type);
+  let downloadFiles = hideCode
+    ? {files: {}, deps: {}}
+    : getExampleFiles(resolveFrom, children, props.type);
 
   let code = (
     <TruncatedCode maxLines={expanded ? Infinity : 6} {...props}>
@@ -129,6 +138,7 @@ export function CodeBlock({
         files={files}
         downloadFiles={downloadFiles}
         code={code}
+        hideCode={hideCode}
       />
     );
   }

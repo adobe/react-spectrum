@@ -159,6 +159,8 @@ export function useGridList<T>(
     layoutDelegate,
     isVirtualized,
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
+    allowsTabNavigation: state.collection.size === 0,
+    disallowSelectAll: state.collection.size === 0,
     shouldFocusWrap: props.shouldFocusWrap,
     linkBehavior,
     disallowTypeAhead,
@@ -194,8 +196,10 @@ export function useGridList<T>(
       'aria-multiselectable':
         state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
-    state.collection.size === 0 ? {tabIndex: hasTabbableChild ? -1 : 0} : listProps,
+    listProps,
+    // Keep the collection's focus handlers when empty so arriving items can receive keyboard focus.
+    // Make the grid tabbable unless the empty state contains a tabbable element.
+    state.collection.size === 0 ? {tabIndex: hasTabbableChild ? -1 : 0} : undefined,
     descriptionProps
   );
 

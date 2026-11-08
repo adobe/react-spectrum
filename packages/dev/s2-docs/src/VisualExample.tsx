@@ -99,6 +99,7 @@ export interface VisualExampleProps {
   propsObject?: string;
   showCoachMark?: boolean;
   hideShadcn?: boolean;
+  hideCode?: boolean;
 }
 
 export interface PropControl extends Omit<TProperty, 'description'> {
@@ -131,7 +132,8 @@ export function VisualExample({
   type,
   propsObject,
   showCoachMark,
-  hideShadcn
+  hideShadcn,
+  hideCode
 }: VisualExampleProps) {
   let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
@@ -222,15 +224,17 @@ export function VisualExample({
                 ))}
               </div>
             )}
-            <div style={{gridArea: 'files', overflow: 'hidden'}}>
-              {files ? (
-                <Files files={files} downloadFiles={downloadFiles.files} type={type}>
-                  {output}
-                </Files>
-              ) : (
-                output
-              )}
-            </div>
+            {!hideCode && (
+              <div style={{gridArea: 'files', overflow: 'hidden'}}>
+                {files ? (
+                  <Files files={files} downloadFiles={downloadFiles.files} type={type}>
+                    {output}
+                  </Files>
+                ) : (
+                  output
+                )}
+              </div>
+            )}
           </div>
         </ShadcnProvider>
       </FileProvider>

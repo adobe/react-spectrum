@@ -322,14 +322,16 @@ export const CardViewWithTextField: Story = {
   }
 };
 
-export function NestedCards() {
-  return (
-    <CardView aria-label="Nature photos" size="XL" styles={style({width: 'full', height: 600})}>
-      <ProjectCard />
-      <ProjectCard />
-    </CardView>
-  );
-}
+export const NestedCards = {
+  render: function NestedCards() {
+    return (
+      <CardView aria-label="Nature photos" size="XL" styles={style({width: 'full', height: 600})}>
+        <ProjectCard />
+        <ProjectCard />
+      </CardView>
+    );
+  }
+};
 
 function ProjectCard() {
   return (

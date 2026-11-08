@@ -209,7 +209,6 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
       className,
       style,
       render,
-      focusMode,
       ...rest
     } = props;
     let {selectedRoute, treeRef} = useContext(InternalNavigationTreeContext);
@@ -260,7 +259,7 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
           {...rest}
           ref={objRef}
           href={href}
-          focusMode={focusMode ?? (hasLink ? 'child' : undefined)}
+          focusMode={hasLink ? 'child' : undefined}
           allowsArrowNavigation
           data-current={isCurrent || undefined}
           className={

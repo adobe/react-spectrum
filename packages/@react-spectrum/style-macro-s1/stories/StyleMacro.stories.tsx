@@ -17,18 +17,20 @@ export default {
   title: 'S1 Style Macro'
 };
 
-export function Example() {
-  return (
-    <div
-      className={style({
-        backgroundColor: 'orange-500',
-        color: 'black',
-        fontSize: 'lg',
-        paddingX: 8,
-        paddingY: 4,
-        borderRadius: 'default'
-      })()}>
-      Test
-    </div>
-  );
-}
+export const Example = {
+  render: function Example() {
+    return (
+      <div
+        className={style({
+          backgroundColor: 'orange-500',
+          color: 'black',
+          fontSize: 'lg',
+          paddingX: 8,
+          paddingY: 4,
+          borderRadius: 'default'
+        })()}>
+        Test
+      </div>
+    );
+  }
+};

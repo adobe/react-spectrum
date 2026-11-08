@@ -13,10 +13,12 @@
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {Dialog, DialogTrigger} from '../src/Dialog';
+import {ListBox, ListBoxItem} from '../src/ListBox';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
 import {Pressable} from 'react-aria/Pressable';
 import React, {useRef} from 'react';
+import {Select, SelectValue} from '../src/Select';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
 
@@ -79,6 +81,35 @@ describe('Popover', () => {
     expect(dialog).toBeInTheDocument();
     expect(button).toHaveAttribute('aria-controls');
     expect(dialog).toHaveAttribute('id', button.getAttribute('aria-controls'));
+  });
+
+  it('prefers aria-label over the trigger label on a standalone popover', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Open products menu</Button>
+        <Popover aria-label="Products menu">Popover content</Popover>
+      </DialogTrigger>
+    );
+
+    await user.click(getByRole('button'));
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-label', 'Products menu');
+    expect(dialog).not.toHaveAttribute('aria-labelledby');
+    expect(dialog).toHaveAccessibleName('Products menu');
+  });
+
+  it('labels a standalone popover by its trigger when no aria-label is provided', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Open products menu</Button>
+        <Popover>Popover content</Popover>
+      </DialogTrigger>
+    );
+
+    await user.click(getByRole('button'));
+
+    expect(getByRole('dialog')).toHaveAccessibleName('Open products menu');
   });
 
   it('should handle focus', async () => {
@@ -148,6 +179,40 @@ describe('Popover', () => {
     fireEvent.mouseUp(document.body, {button: 0});
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('should not leak PopoverContext to nested popovers', () => {
+    function NestedPopover() {
+      let triggerRef = useRef(null);
+      return (
+        <>
+          <button ref={triggerRef}>anchor</button>
+          <Popover triggerRef={triggerRef} isOpen isNonModal data-testid="nested">
+            {({trigger}) => `nested trigger=${String(trigger)}`}
+          </Popover>
+        </>
+      );
+    }
+
+    let {getByTestId} = render(
+      <Select aria-label="Select" defaultOpen>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover data-testid="outer">
+          <ListBox>
+            <ListBoxItem id="a">a</ListBoxItem>
+          </ListBox>
+          <NestedPopover />
+        </Popover>
+      </Select>
+    );
+
+    expect(getByTestId('outer')).toHaveAttribute('data-trigger', 'Select');
+    let nested = getByTestId('nested');
+    expect(nested).toHaveTextContent('nested trigger=null');
+    expect(nested).not.toHaveAttribute('data-trigger');
+    expect(nested).not.toHaveAttribute('aria-labelledby');
   });
 
   it('isOpen and defaultOpen should override state from context', () => {

@@ -27,13 +27,17 @@ import type {
   Value
 } from './types';
 import fs from 'fs';
-import * as propertyInfo from './properties.json';
+import propertyInfo from './properties.json';
 
-// Postfix all class names with version for now.
+// Postfix all class names with version for now. Omitted in tests so that class names in snapshots
+// do not change with every release.
 const json = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
-const POSTFIX = json.version.includes('nightly')
-  ? json.version.match(/-nightly-(.*)/)[1]
-  : json.version.replace(/[0.]/g, '');
+const POSTFIX =
+  process.env.NODE_ENV === 'test'
+    ? ''
+    : json.version.includes('nightly')
+      ? json.version.match(/-nightly-(.*)/)[1]
+      : json.version.replace(/[0.]/g, '');
 
 export class ArbitraryProperty<T extends Value> implements Property<T> {
   property: string;

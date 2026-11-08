@@ -164,7 +164,13 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   props: PopoverProps,
   ref: ForwardedRef<HTMLElement>
 ) {
+  let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, PopoverContext);
+  // aria-labelledby from context labels the popover by its trigger as a fallback.
+  // An aria-label passed via props should take precedence over it.
+  if (props['aria-label'] && !originalAriaLabelledby) {
+    props = {...props, 'aria-labelledby': undefined};
+  }
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
   let state =
@@ -301,10 +307,8 @@ function PopoverInner({
 
   let children = useMemo(() => {
     let children = renderProps.children;
-    if (clearContexts) {
-      for (let Context of clearContexts) {
-        children = <Context.Provider value={null}>{children}</Context.Provider>;
-      }
+    for (let Context of [PopoverContext, ...(clearContexts ?? [])]) {
+      children = <Context.Provider value={null}>{children}</Context.Provider>;
     }
     return children;
   }, [renderProps.children, clearContexts]);

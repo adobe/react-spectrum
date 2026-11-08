@@ -31,6 +31,12 @@ export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
    * @default 'dialog'
    */
   role?: 'dialog' | 'alertdialog';
+  /**
+   * Whether the dialog is currently performing an entry animation. Focus is not moved into the
+   * dialog until the animation completes, since moving the screen reader cursor may cause scrolling
+   * that interrupts the animation.
+   */
+  isEntering?: boolean;
 }
 
 export interface DialogAria {
@@ -52,7 +58,7 @@ export function useDialog(
   props: AriaDialogProps,
   ref: RefObject<FocusableElement | null>
 ): DialogAria {
-  let {role = 'dialog'} = props;
+  let {role = 'dialog', isEntering} = props;
   let titleId: string | undefined = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
 
@@ -61,9 +67,9 @@ export function useDialog(
 
   let isRefocusing = useRef(false);
 
-  // Focus the dialog itself on mount, unless a child element is already focused.
+  // Focus the dialog itself on mount (or once it has entered), unless a child element is already focused.
   useEffect(() => {
-    if (ref.current && !isFocusWithin(ref.current)) {
+    if (!isEntering && ref.current && !isFocusWithin(ref.current)) {
       focusSafely(ref.current);
 
       // Safari on iOS does not move the VoiceOver cursor to the dialog
@@ -85,7 +91,7 @@ export function useDialog(
         clearTimeout(timeout);
       };
     }
-  }, [ref]);
+  }, [ref, isEntering]);
 
   useOverlayFocusContain();
 

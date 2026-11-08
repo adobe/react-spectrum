@@ -86,6 +86,7 @@ interface PressState {
   userSelect?: string;
   metaKeyEvents?: Map<string, globalThis.KeyboardEvent>;
   disposables: Array<() => void>;
+  defaultKeyboardClickEvent: globalThis.KeyboardEvent | null;
 }
 
 interface EventBase {
@@ -217,7 +218,8 @@ export function usePress(props: PressHookProps): PressResult {
     target: null,
     isOverTarget: false,
     pointerType: null,
-    disposables: []
+    disposables: [],
+    defaultKeyboardClickEvent: null
   });
 
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
@@ -391,7 +393,12 @@ export function usePress(props: PressHookProps): PressResult {
           isValidKeyboardEvent(e.nativeEvent, e.currentTarget as Element) &&
           nodeContains(e.currentTarget as Element, getEventTarget(e) as Element)
         ) {
-          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
+          // If the key's default behavior is allowed, the browser performs the element's
+          // activation behavior and fires its own click event. Enter does this on key down;
+          // Space does it on key up (see below).
+          state.defaultKeyboardClickEvent = e.key === 'Enter' ? e.nativeEvent : null;
+
+          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e)) {
             e.preventDefault();
           }
 
@@ -457,10 +464,17 @@ export function usePress(props: PressHookProps): PressResult {
             e.preventDefault();
           }
 
+          // A click fired by the browser as a key's default behavior is indistinguishable from a
+          // virtual click, so skip the virtual handling below. It only occurs if nothing prevented
+          // the key event's default behavior, and unlike element.click() it is always trusted.
+          let isDefaultKeyboardClick =
+            e.nativeEvent.isTrusted && state.defaultKeyboardClickEvent?.defaultPrevented === false;
+
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
           if (
             !state.ignoreEmulatedMouseEvents &&
+            !isDefaultKeyboardClick &&
             !state.isPressed &&
             (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))
           ) {
@@ -488,6 +502,7 @@ export function usePress(props: PressHookProps): PressResult {
           }
 
           state.ignoreEmulatedMouseEvents = false;
+          state.defaultKeyboardClickEvent = null;
           if (shouldStopPropagation) {
             e.stopPropagation();
           }
@@ -497,12 +512,18 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && state.target && isValidKeyboardEvent(e, state.target)) {
-        if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
+        if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e)) {
           e.preventDefault();
         }
-
         let target = getEventTarget(e);
         let wasPressed = nodeContains(state.target, target as Element);
+
+        // Space performs the element's activation behavior on key up. This listener is capturing,
+        // so another handler may still prevent the default behavior. Store the event and read
+        // defaultPrevented later, once it has finished propagating. Only store it if the key
+        // was released on the pressed target, where the browser can fire its click.
+        state.defaultKeyboardClickEvent = e.key !== 'Enter' && wasPressed ? e : null;
+
         triggerPressEndEvent(createEvent(state.target, e), 'keyboard', wasPressed);
         if (wasPressed) {
           triggerSyntheticClick(e, state.target);
@@ -1161,9 +1182,13 @@ function shouldPreventDefaultUp(target: Element) {
   return true;
 }
 
-function shouldPreventDefaultKeyboard(target: Element, key: string) {
-  // Don't prevent the contextmenu shortcut on mac.
-  if (isMac() && key === 'Enter') {
+function shouldPreventDefaultKeyboard(
+  target: Element,
+  event: Pick<KeyboardEvent, 'key' | 'ctrlKey'>
+) {
+  let {key} = event;
+  // Don't prevent the contextmenu shortcut (Control + Enter) on mac.
+  if (isMac() && key === 'Enter' && event.ctrlKey) {
     return false;
   }
 

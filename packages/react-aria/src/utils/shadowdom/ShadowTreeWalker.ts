@@ -90,6 +90,7 @@ export class ShadowTreeWalker implements TreeWalker {
 
         curNode = currentWalkerCurrentNode = shadowRoot.host;
       } else {
+        // eslint-disable-next-line rsp-rules/shadow-safe-parent-node
         curNode = curNode.parentNode;
       }
     }

@@ -365,3 +365,28 @@ describe('keyboard', function () {
     });
   });
 });
+
+describe('keyboard without screen.orientation', function () {
+  let nodeEnv = process.env.NODE_ENV;
+  let descriptor = Object.getOwnPropertyDescriptor(window.screen, 'orientation');
+
+  afterEach(() => {
+    process.env.NODE_ENV = nodeEnv;
+
+    if (descriptor) {
+      Object.defineProperty(window.screen, 'orientation', descriptor);
+    } else {
+      Reflect.deleteProperty(window.screen, 'orientation');
+    }
+  });
+
+  it('does not throw on import when screen.orientation is unavailable', function () {
+    // Outside of NODE_ENV=test, the jsdom orientation shim is not installed.
+    process.env.NODE_ENV = 'production';
+    Reflect.deleteProperty(window.screen, 'orientation');
+
+    jest.isolateModules(() => {
+      expect(() => require('../../src/utils/keyboard')).not.toThrow();
+    });
+  });
+});

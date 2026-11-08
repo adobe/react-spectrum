@@ -13,7 +13,7 @@
 import {ColorThumb} from '../src/ColorThumb';
 
 import {ColorWheel, ColorWheelTrack} from '../src/ColorWheel';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';
 
@@ -22,25 +22,27 @@ export default {
   component: ColorWheel
 } as Meta<typeof ColorWheel>;
 
-export type ColorWheelStory = StoryFn<typeof ColorWheel>;
+export type ColorWheelStory = StoryObj<typeof ColorWheel>;
 
 const RADIUS = 100;
 const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
-export const ColorWheelExample: ColorWheelStory = args => (
-  <ColorWheel {...args} outerRadius={RADIUS} innerRadius={RADIUS - TRACK_THICKNESS}>
-    <ColorWheelTrack />
-    <ColorThumb
-      style={({isFocusVisible, color}) => ({
-        border: '2px solid white',
-        boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
-        width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
-        height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
-        borderRadius: '50%',
-        boxSizing: 'border-box',
-        background: color.toString()
-      })}
-    />
-  </ColorWheel>
-);
+export const ColorWheelExample: ColorWheelStory = {
+  render: args => (
+    <ColorWheel {...args} outerRadius={RADIUS} innerRadius={RADIUS - TRACK_THICKNESS}>
+      <ColorWheelTrack />
+      <ColorThumb
+        style={({isFocusVisible, color}) => ({
+          border: '2px solid white',
+          boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+          width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+          height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+          borderRadius: '50%',
+          boxSizing: 'border-box',
+          background: color.toString()
+        })}
+      />
+    </ColorWheel>
+  )
+};

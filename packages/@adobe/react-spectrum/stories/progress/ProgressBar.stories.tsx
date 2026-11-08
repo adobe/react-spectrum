@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {ProgressBar} from '../../src/progress/ProgressBar';
 import React, {CSSProperties} from 'react';
 import {SpectrumProgressBarProps} from '../../src/progress/ProgressBarBase';
@@ -44,239 +44,197 @@ export default {
   }
 } as Meta<SpectrumProgressBarProps>;
 
-export type ProgressBarStory = StoryFn<SpectrumProgressBarProps>;
+export type ProgressBarStory = StoryObj<SpectrumProgressBarProps>;
 
-export const Default: ProgressBarStory = args => render(args);
-export const Value50: ProgressBarStory = () => render({value: 50});
-
-Value50.story = {
+export const Default: ProgressBarStory = {
+  render: args => render(args)
+};
+export const Value50: ProgressBarStory = {
+  render: () => render({value: 50}),
   name: 'value: 50'
 };
 
-export const Value100: ProgressBarStory = () => render({value: 100});
-
-Value100.story = {
+export const Value100: ProgressBarStory = {
+  render: () => render({value: 100}),
   name: 'value: 100'
 };
 
-export const SizeS: ProgressBarStory = args => render({size: 'S', ...args});
-
-SizeS.story = {
+export const SizeS: ProgressBarStory = {
+  render: args => render({size: 'S', ...args}),
   name: 'size: S'
 };
 
-export const ShowValueLabelTrue: ProgressBarStory = args => render({showValueLabel: true, ...args});
-
-ShowValueLabelTrue.story = {
+export const ShowValueLabelTrue: ProgressBarStory = {
+  render: args => render({showValueLabel: true, ...args}),
   name: 'showValueLabel: true'
 };
 
-export const ShowValueLabelFalse: ProgressBarStory = args =>
-  render({showValueLabel: false, ...args});
-
-ShowValueLabelFalse.story = {
+export const ShowValueLabelFalse: ProgressBarStory = {
+  render: args => render({showValueLabel: false, ...args}),
   name: 'showValueLabel: false'
 };
 
-export const ValueLabel1Of4: ProgressBarStory = () => render({value: 25, valueLabel: '1 of 4'});
-
-ValueLabel1Of4.story = {
+export const ValueLabel1Of4: ProgressBarStory = {
+  render: () => render({value: 25, valueLabel: '1 of 4'}),
   name: 'valueLabel: 1 of 4'
 };
 
-export const UsingNumberFormatOptionsWithCurrencyStyle: ProgressBarStory = args =>
-  render({
-    ...args,
-    showValueLabel: true,
-    formatOptions
-  });
-
-UsingNumberFormatOptionsWithCurrencyStyle.story = {
+export const UsingNumberFormatOptionsWithCurrencyStyle: ProgressBarStory = {
+  render: args =>
+    render({
+      ...args,
+      showValueLabel: true,
+      formatOptions
+    }),
   name: 'Using number formatOptions with currency style'
 };
 
-export const NoVisibleLabel: ProgressBarStory = args =>
-  render({label: null, 'aria-label': 'Loading…', ...args});
-
-NoVisibleLabel.story = {
+export const NoVisibleLabel: ProgressBarStory = {
+  render: args => render({label: null, 'aria-label': 'Loading…', ...args}),
   name: 'no visible label'
 };
 
-export const LabelPositionSide: ProgressBarStory = args => render({labelPosition: 'side', ...args});
-
-LabelPositionSide.story = {
+export const LabelPositionSide: ProgressBarStory = {
+  render: args => render({labelPosition: 'side', ...args}),
   name: 'labelPosition: side'
 };
 
-export const LabelPositionTop: ProgressBarStory = args => render({labelPosition: 'top', ...args});
-
-LabelPositionTop.story = {
+export const LabelPositionTop: ProgressBarStory = {
+  render: args => render({labelPosition: 'top', ...args}),
   name: 'labelPosition: top'
 };
 
-export const LongLabel: ProgressBarStory = args =>
-  render({label: 'Super long progress bar label. Sample label copy. Loading...', ...args});
-
-LongLabel.story = {
+export const LongLabel: ProgressBarStory = {
+  render: args =>
+    render({label: 'Super long progress bar label. Sample label copy. Loading...', ...args}),
   name: 'long label'
 };
 
-export const LongLabelLabelPositionSide: ProgressBarStory = args =>
-  render({
-    labelPosition: 'side',
-    label: 'Super long progress bar label. Sample label copy. Loading...',
-    ...args
-  });
-
-LongLabelLabelPositionSide.story = {
+export const LongLabelLabelPositionSide: ProgressBarStory = {
+  render: args =>
+    render({
+      labelPosition: 'side',
+      label: 'Super long progress bar label. Sample label copy. Loading...',
+      ...args
+    }),
   name: 'long label, labelPosition: side'
 };
 
-export const IsIndeterminateTrue: ProgressBarStory = args =>
-  render({isIndeterminate: true, ...args});
-
-IsIndeterminateTrue.story = {
+export const IsIndeterminateTrue: ProgressBarStory = {
+  render: args => render({isIndeterminate: true, ...args}),
   name: 'isIndeterminate: true'
 };
 
-export const IsIndeterminateTrueSizeS: ProgressBarStory = () =>
-  render({isIndeterminate: true, size: 'S'});
-
-IsIndeterminateTrueSizeS.story = {
+export const IsIndeterminateTrueSizeS: ProgressBarStory = {
+  render: () => render({isIndeterminate: true, size: 'S'}),
   name: 'isIndeterminate: true, size: S'
 };
 
-export const VariantOverBackground: ProgressBarStory = args => (
-  <div style={grayedBoxStyle}>{render({variant: 'overBackground', ...args})}</div>
-);
-
-VariantOverBackground.story = {
+export const VariantOverBackground: ProgressBarStory = {
+  render: args => <div style={grayedBoxStyle}>{render({variant: 'overBackground', ...args})}</div>,
   name: 'variant: overBackground'
 };
 
-export const StaticColorWhite: ProgressBarStory = args => (
-  <div style={grayedBoxStyle}>{render({staticColor: 'white', ...args})}</div>
-);
-
-StaticColorWhite.story = {
+export const StaticColorWhite: ProgressBarStory = {
+  render: args => <div style={grayedBoxStyle}>{render({staticColor: 'white', ...args})}</div>,
   name: 'staticColor: white'
 };
 
-export const StaticColorBlack: ProgressBarStory = args => (
-  <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>
-    {render({staticColor: 'black', ...args})}
-  </div>
-);
-
-StaticColorBlack.story = {
+export const StaticColorBlack: ProgressBarStory = {
+  render: args => (
+    <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>
+      {render({staticColor: 'black', ...args})}
+    </div>
+  ),
   name: 'staticColor: black'
 };
 
-export const ParentWidth100: ProgressBarStory = () => (
-  <span style={{width: '100%'}}>{render()}</span>
-);
-
-ParentWidth100.story = {
+export const ParentWidth100: ProgressBarStory = {
+  render: () => <span style={{width: '100%'}}>{render()}</span>,
   name: 'parent width 100%'
 };
 
-export const ParentWidth100Px: ProgressBarStory = () => (
-  <span style={{width: '100px'}}>{render()}</span>
-);
-
-ParentWidth100Px.story = {
+export const ParentWidth100Px: ProgressBarStory = {
+  render: () => <span style={{width: '100px'}}>{render()}</span>,
   name: 'parent width 100px'
 };
 
-export const Width300Px: ProgressBarStory = () => render({width: '300px', value: 100});
-
-Width300Px.story = {
+export const Width300Px: ProgressBarStory = {
+  render: () => render({width: '300px', value: 100}),
   name: 'width: 300px'
 };
 
-export const Width300PxIsIndeterminateTrue: ProgressBarStory = () =>
-  render({width: '300px', isIndeterminate: true});
-
-Width300PxIsIndeterminateTrue.story = {
+export const Width300PxIsIndeterminateTrue: ProgressBarStory = {
+  render: () => render({width: '300px', isIndeterminate: true}),
   name: 'width: 300px, isIndeterminate: true'
 };
 
-export const Width300PxLabelPositionSide: ProgressBarStory = () =>
-  render({width: '300px', labelPosition: 'side'});
-
-Width300PxLabelPositionSide.story = {
+export const Width300PxLabelPositionSide: ProgressBarStory = {
+  render: () => render({width: '300px', labelPosition: 'side'}),
   name: 'width: 300px, labelPosition: side'
 };
 
-export const Width300PxLabelPositionSideIsIndeterminateTrue: ProgressBarStory = () =>
-  render({width: '300px', labelPosition: 'side', isIndeterminate: true});
-
-Width300PxLabelPositionSideIsIndeterminateTrue.story = {
+export const Width300PxLabelPositionSideIsIndeterminateTrue: ProgressBarStory = {
+  render: () => render({width: '300px', labelPosition: 'side', isIndeterminate: true}),
   name: 'width: 300px, labelPosition: side, isIndeterminate: true'
 };
 
-export const Width30Px: ProgressBarStory = () => render({width: '30px'});
-
-Width30Px.story = {
+export const Width30Px: ProgressBarStory = {
+  render: () => render({width: '30px'}),
   name: 'width: 30px'
 };
 
-export const Width30PxSizeS: ProgressBarStory = () => render({width: '30px', size: 'S'});
-
-Width30PxSizeS.story = {
+export const Width30PxSizeS: ProgressBarStory = {
+  render: () => render({width: '30px', size: 'S'}),
   name: 'width: 30px, size: S'
 };
 
-export const Width30PxLabelPositionSideLongLabel: ProgressBarStory = () =>
-  render({
-    width: '30px',
-    labelPosition: 'side',
-    label: 'Super long progress bar label. Sample label copy. Loading...'
-  });
-
-Width30PxLabelPositionSideLongLabel.story = {
+export const Width30PxLabelPositionSideLongLabel: ProgressBarStory = {
+  render: () =>
+    render({
+      width: '30px',
+      labelPosition: 'side',
+      label: 'Super long progress bar label. Sample label copy. Loading...'
+    }),
   name: 'width: 30px, labelPosition: side, long label'
 };
 
 export const Width30PxLabelPositionSideIsIndeterminateTrueLongLabelButtonOnRight: ProgressBarStory =
-  () => (
-    <>
-      {render({
-        width: '30px',
-        labelPosition: 'side',
-        isIndeterminate: true,
-        label: 'Super long progress bar label. Sample label copy. Loading...'
-      })}
-      <button>Confirm</button>
-    </>
-  );
+  {
+    render: () => (
+      <>
+        {render({
+          width: '30px',
+          labelPosition: 'side',
+          isIndeterminate: true,
+          label: 'Super long progress bar label. Sample label copy. Loading...'
+        })}
+        <button>Confirm</button>
+      </>
+    ),
+    name: 'width: 30px, labelPosition: side, isIndeterminate: true, long label, button on right'
+  };
 
-Width30PxLabelPositionSideIsIndeterminateTrueLongLabelButtonOnRight.story = {
-  name: 'width: 30px, labelPosition: side, isIndeterminate: true, long label, button on right'
-};
-
-export const UsingRawValuesForMinValueMaxValueAndValue: ProgressBarStory = () =>
-  render({
-    showValueLabel: true,
-    labelPosition: 'top',
-    maxValue: 2147483648,
-    value: 715827883
-  });
-
-UsingRawValuesForMinValueMaxValueAndValue.story = {
+export const UsingRawValuesForMinValueMaxValueAndValue: ProgressBarStory = {
+  render: () =>
+    render({
+      showValueLabel: true,
+      labelPosition: 'top',
+      maxValue: 2147483648,
+      value: 715827883
+    }),
   name: 'Using raw values for minValue, maxValue, and value'
 };
 
-export const UsingRawValuesWithNumberFormatter: ProgressBarStory = () =>
-  render({
-    showValueLabel: true,
-    labelPosition: 'top',
-    maxValue: 2147483648,
-    value: 715827883,
-    formatOptions
-  });
-
-UsingRawValuesWithNumberFormatter.story = {
+export const UsingRawValuesWithNumberFormatter: ProgressBarStory = {
+  render: () =>
+    render({
+      showValueLabel: true,
+      labelPosition: 'top',
+      maxValue: 2147483648,
+      value: 715827883,
+      formatOptions
+    }),
   name: 'Using raw values with number formatter'
 };
 
