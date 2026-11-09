@@ -207,7 +207,7 @@ function AttachmentDialogExample() {
               alt=""
             />
           </LightboxPickerItem>
-                    <LightboxPickerItem id="foyles-war" aria-label="Foyle's War">
+          <LightboxPickerItem id="foyles-war" aria-label="Foyle's War">
             <Image
               src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/foyleswarslide__800x600.jpg"
               alt=""
