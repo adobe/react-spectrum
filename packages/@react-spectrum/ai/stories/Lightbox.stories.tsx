@@ -11,6 +11,8 @@
  */
 
 import {Attachment, AttachmentList, AttachmentPreview} from '../src/AttachmentList';
+import {Button} from '@react-spectrum/s2/Button';
+import {ButtonGroup} from '@react-spectrum/s2/ButtonGroup';
 import {Image} from '@react-spectrum/s2/Image';
 import {
   LightboxCarousel,
@@ -20,8 +22,11 @@ import {
   LightboxPickerItem,
   LightboxTrigger
 } from '../src/Lightbox';
+import {Link} from '@react-spectrum/s2/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2/SegmentedControl';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {TextField} from '@react-spectrum/s2/TextField';
 
 const meta: Meta<typeof LightboxCarousel> = {
   title: 'AI/Lightbox',
@@ -73,6 +78,24 @@ export const Basic: Story = {
               alt=""
             />
           </LightboxPickerItem>
+          <LightboxPickerItem id="foyles-war" aria-label="Foyle's War">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/foyleswarslide__800x600.jpg"
+              alt=""
+            />
+          </LightboxPickerItem>
+          <LightboxPickerItem id="great-britain-vote" aria-label="Great Britain Vote">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/britcomdavidslide__800x600.jpg"
+              alt=""
+            />
+          </LightboxPickerItem>
+          <LightboxPickerItem id="mid-american-gardener" aria-label="Mid-American Gardener">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/mag800-2__800x600.jpg"
+              alt=""
+            />
+          </LightboxPickerItem>
         </LightboxPicker>
         <LightboxItems>
           <LightboxItem id="amsterdam">
@@ -93,6 +116,24 @@ export const Basic: Story = {
               alt="Trust television series promotion"
             />
           </LightboxItem>
+          <LightboxItem id="foyles-war">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/foyleswarslide__800x600.jpg"
+              alt="A man in a suit and fedora and a woman with coiffed hair look sternly into the camera."
+            />
+          </LightboxItem>
+          <LightboxItem id="great-britain-vote">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/britcomdavidslide__800x600.jpg"
+              alt="British flag with WILL-TV host David Thiel."
+            />
+          </LightboxItem>
+          <LightboxItem id="mid-american-gardener">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/mag800-2__800x600.jpg"
+              alt="Mid-American Gardener panelists on the set"
+            />
+          </LightboxItem>
         </LightboxItems>
       </LightboxCarousel>
     </div>
@@ -101,6 +142,8 @@ export const Basic: Story = {
     defaultSelectedKey: 'amsterdam'
   }
 };
+
+const samplePdfUrl = 'https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf';
 
 function AttachmentDialogExample() {
   return (
@@ -126,6 +169,27 @@ function AttachmentDialogExample() {
               mimeType="image/jpg"
               slot="thumbnail"
               src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/trustslide-2__800x600.jpg"
+            />
+          </Attachment>
+          <Attachment id="foyles-war" textValue="foyles-war.jpg">
+            <AttachmentPreview
+              mimeType="image/jpg"
+              slot="thumbnail"
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/foyleswarslide__800x600.jpg"
+            />
+          </Attachment>
+          <Attachment id="great-britain-vote" textValue="great-britain-vote.jpg">
+            <AttachmentPreview
+              mimeType="image/jpg"
+              slot="thumbnail"
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/britcomdavidslide__800x600.jpg"
+            />
+          </Attachment>
+          <Attachment id="mid-american-gardener" textValue="mid-american-gardener.jpg">
+            <AttachmentPreview
+              mimeType="image/jpg"
+              slot="thumbnail"
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/mag800-2__800x600.jpg"
             />
           </Attachment>
         </AttachmentList>
@@ -168,6 +232,24 @@ function AttachmentDialogExample() {
             <Image
               src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/trustslide-2__800x600.jpg"
               alt="Trust television series promotion"
+            />
+          </LightboxItem>
+          <LightboxItem id="foyles-war">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/foyleswarslide__800x600.jpg"
+              alt="A man in a suit and fedora and a woman with coiffed hair look sternly into the camera."
+            />
+          </LightboxItem>
+          <LightboxItem id="great-britain-vote">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/britcomdavidslide__800x600.jpg"
+              alt="British flag with WILL-TV host David Thiel."
+            />
+          </LightboxItem>
+          <LightboxItem id="mid-american-gardener">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/mag800-2__800x600.jpg"
+              alt="Mid-American Gardener panelists on the set"
             />
           </LightboxItem>
         </LightboxItems>
