@@ -805,9 +805,9 @@ describe('ComboBox', () => {
     expect(formData.getAll('combobox')).toEqual(['']);
   });
 
-  it('allows Mod+A to select input text when multi-select popover is open', async () => {
+  it('selects and replaces input text with Ctrl+A while the multi-select popover is open', async () => {
     // eslint-disable-next-line no-unused-vars
-    using _spy = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+    using _platform = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
     let onChange = jest.fn();
     let {container} = render(
       <TestComboBox selectionMode="multiple" defaultInputValue="an" onChange={onChange} />
@@ -816,27 +816,24 @@ describe('ComboBox', () => {
     await comboboxTester.open();
     let input = comboboxTester.getCombobox();
     expect(input).toHaveValue('an');
+    expect(input).toHaveFocus();
+    await user.keyboard('{ArrowRight}');
+    expect(input.selectionStart).toBe(2);
+    expect(input.selectionEnd).toBe(2);
 
-    // useSelectableCollection owns Mod+A while the popover is open. Without disallowSelectAll it
-    // preventDefaults after a no-op selectAll(); with it, the browser can select the input text.
-    let defaultPrevented = false;
-    let onKeyDown = e => {
-      if (e.target === input && e.key === 'a' && e.metaKey) {
-        defaultPrevented = e.defaultPrevented;
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
-    try {
-      await user.keyboard('{Meta>}a{/Meta}');
-    } finally {
-      document.removeEventListener('keydown', onKeyDown);
-    }
-
-    expect(defaultPrevented).toBe(false);
+    await user.keyboard('{Control>}a{/Control}');
+    expect(input.selectionStart).toBe(0);
+    expect(input.selectionEnd).toBe(2);
     expect(onChange).not.toHaveBeenCalled();
     for (let option of comboboxTester.getOptions()) {
       expect(option).toHaveAttribute('aria-selected', 'false');
     }
+
+    await user.keyboard('do');
+    expect(input).toHaveValue('do');
+    expect(comboboxTester.getOptions()).toHaveLength(1);
+    expect(comboboxTester.getOptions()[0]).toHaveTextContent('Dog');
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it('should support deselection if multiple selection is enabled', async () => {
