@@ -749,9 +749,15 @@ describe('Table', () => {
     await user.keyboard('{/Shift}');
     expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1', '2', '3']));
 
+    // Shift-clicking another row extends the range from the same anchor row.
+    await user.keyboard('{Shift>}');
+    await user.click(checkboxes[2]);
+    await user.keyboard('{/Shift}');
+    expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['1', '2']));
+
     // The range selection should not break normal checkbox toggling.
     await user.click(checkboxes[3]);
-    expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['1', '2']));
+    expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['1', '2', '3']));
   });
 
   it('should extend checkbox selection from the last selected row when selectedKeys is controlled as a plain Set', async () => {
@@ -763,11 +769,12 @@ describe('Table', () => {
           tableProps={{
             selectionMode: 'multiple',
             selectedKeys: new Set(selected),
-            onSelectionChange: (keys) => {
+            onSelectionChange: keys => {
               setSelected(keys === 'all' ? ['1', '2', '3'] : Array.from(keys));
               onSelectionChange(keys);
             }
-          }} />
+          }}
+        />
       );
     }
 
@@ -779,6 +786,12 @@ describe('Table', () => {
     await user.click(checkboxes[3]);
     await user.keyboard('{/Shift}');
     expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1', '2', '3']));
+
+    // Shift-clicking another row extends the range from the same anchor row.
+    await user.keyboard('{Shift>}');
+    await user.click(checkboxes[2]);
+    await user.keyboard('{/Shift}');
+    expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['1', '2']));
   });
 
   it('should not render checkboxes for selection with selectionBehavior=replace', async () => {
