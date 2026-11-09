@@ -144,6 +144,12 @@ function AttachmentDialogExample() {
               alt=""
             />
           </LightboxPickerItem>
+          <LightboxPickerItem id="trust" aria-label="Trust">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/trustslide-2__800x600.jpg"
+              alt=""
+            />
+          </LightboxPickerItem>
         </LightboxPicker>
         <LightboxItems>
           <LightboxItem id="amsterdam">
