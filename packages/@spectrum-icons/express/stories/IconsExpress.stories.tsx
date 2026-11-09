@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import Add from '../Add';
 import Alert from '../Alert';
 import Bell from '../Bell';
@@ -20,45 +20,33 @@ export default {
   title: 'Icons/Express'
 } as Meta<typeof Add>;
 
-export const IconAddWithSizes: StoryFn<typeof Add> = () =>
-  renderIconSizes(Add, {'aria-label': 'Add'});
-
-IconAddWithSizes.story = {
+export const IconAddWithSizes: StoryObj<typeof Add> = {
+  render: () => renderIconSizes(Add, {'aria-label': 'Add'}),
   name: 'icon: Add with sizes'
 };
 
-export const IconBellWithSizes: StoryFn<typeof Bell> = () =>
-  renderIconSizes(Bell, {'aria-label': 'Bell'});
-
-IconBellWithSizes.story = {
+export const IconBellWithSizes: StoryObj<typeof Bell> = {
+  render: () => renderIconSizes(Bell, {'aria-label': 'Bell'}),
   name: 'icon: Bell with sizes'
 };
 
-export const IconAlertNegative: StoryFn<typeof Alert> = () =>
-  renderIconSizes(Alert, {'aria-label': 'Alert', color: 'negative'});
-
-IconAlertNegative.story = {
+export const IconAlertNegative: StoryObj<typeof Alert> = {
+  render: () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'negative'}),
   name: 'icon: Alert negative'
 };
 
-export const IconAlertInformative: StoryFn<typeof Alert> = () =>
-  renderIconSizes(Alert, {'aria-label': 'Alert', color: 'informative'});
-
-IconAlertInformative.story = {
+export const IconAlertInformative: StoryObj<typeof Alert> = {
+  render: () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'informative'}),
   name: 'icon: Alert informative'
 };
 
-export const IconAlertPositive: StoryFn<typeof Alert> = () =>
-  renderIconSizes(Alert, {'aria-label': 'Alert', color: 'positive'});
-
-IconAlertPositive.story = {
+export const IconAlertPositive: StoryObj<typeof Alert> = {
+  render: () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'positive'}),
   name: 'icon: Alert positive'
 };
 
-export const IconAlertNotice: StoryFn<typeof Alert> = () =>
-  renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'});
-
-IconAlertNotice.story = {
+export const IconAlertNotice: StoryObj<typeof Alert> = {
+  render: () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'}),
   name: 'icon: Alert notice'
 };
 

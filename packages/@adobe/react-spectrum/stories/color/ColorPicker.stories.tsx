@@ -18,7 +18,7 @@ import {ColorSwatch} from '../../src/color/ColorSwatch';
 import {ColorSwatchPicker} from '../../src/color/ColorSwatchPicker';
 import {ColorWheel} from '../../src/color/ColorWheel';
 import {Flex} from '../../src/layout/Flex';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -42,41 +42,47 @@ export default {
   }
 } as Meta<SpectrumColorPickerProps>;
 
-export type ColorPickerStory = StoryFn<typeof ColorPicker>;
+export type ColorPickerStory = StoryObj<typeof ColorPicker>;
 
-export const Default: ColorPickerStory = args => (
-  <ColorPicker defaultValue="#f00" {...args}>
-    <ColorEditor />
-  </ColorPicker>
-);
-
-export const Custom: ColorPickerStory = args => (
-  <ColorPicker defaultValue="#f00" {...args}>
-    <ColorWheel />
-    <ColorArea
-      colorSpace="hsb"
-      xChannel="saturation"
-      yChannel="brightness"
-      size="size-400"
-      position="absolute"
-      top="calc(50% - size-400)"
-      left="calc(50% - size-400)"
-    />
-  </ColorPicker>
-);
-
-export const Swatches: ColorPickerStory = args => (
-  <ColorPicker defaultValue="#A00" {...args}>
-    <Flex direction="column" gap="size-300">
+export const Default: ColorPickerStory = {
+  render: args => (
+    <ColorPicker defaultValue="#f00" {...args}>
       <ColorEditor />
-      <ColorSwatchPicker>
-        <ColorSwatch color="#A00" />
-        <ColorSwatch color="#f80" />
-        <ColorSwatch color="#080" />
-        <ColorSwatch color="#08f" />
-        <ColorSwatch color="#088" />
-        <ColorSwatch color="#008" />
-      </ColorSwatchPicker>
-    </Flex>
-  </ColorPicker>
-);
+    </ColorPicker>
+  )
+};
+
+export const Custom: ColorPickerStory = {
+  render: args => (
+    <ColorPicker defaultValue="#f00" {...args}>
+      <ColorWheel />
+      <ColorArea
+        colorSpace="hsb"
+        xChannel="saturation"
+        yChannel="brightness"
+        size="size-400"
+        position="absolute"
+        top="calc(50% - size-400)"
+        left="calc(50% - size-400)"
+      />
+    </ColorPicker>
+  )
+};
+
+export const Swatches: ColorPickerStory = {
+  render: args => (
+    <ColorPicker defaultValue="#A00" {...args}>
+      <Flex direction="column" gap="size-300">
+        <ColorEditor />
+        <ColorSwatchPicker>
+          <ColorSwatch color="#A00" />
+          <ColorSwatch color="#f80" />
+          <ColorSwatch color="#080" />
+          <ColorSwatch color="#08f" />
+          <ColorSwatch color="#088" />
+          <ColorSwatch color="#008" />
+        </ColorSwatchPicker>
+      </Flex>
+    </ColorPicker>
+  )
+};

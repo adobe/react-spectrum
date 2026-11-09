@@ -17,7 +17,7 @@ import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 import {TextField} from '../src/TextField';
@@ -28,37 +28,38 @@ export default {
   component: TextField
 } as Meta<typeof TextField>;
 
-export type TextFieldStory = StoryFn<typeof TextField>;
+export type TextFieldStory = StoryObj<typeof TextField>;
 
-export const TextfieldExample: TextFieldStory = () => {
-  return (
-    <TextField data-testid="textfield-example">
-      <Label>First name</Label>
-      <Input />
-    </TextField>
-  );
-};
-
-export const TextFieldSubmitExample: TextFieldStory = args => {
-  return (
-    <Form>
-      <TextField
-        className={classNames(styles, 'textfieldExample')}
-        name="email"
-        type="email"
-        isRequired
-        {...args}>
-        <Label>Email</Label>
+export const TextfieldExample: TextFieldStory = {
+  render: () => {
+    return (
+      <TextField data-testid="textfield-example">
+        <Label>First name</Label>
         <Input />
-        <FieldError className={classNames(styles, 'errorMessage')} />
       </TextField>
-      <Button type="submit">Submit</Button>
-      <Button type="reset">Reset</Button>
-    </Form>
-  );
+    );
+  }
 };
 
-TextFieldSubmitExample.story = {
+export const TextFieldSubmitExample: TextFieldStory = {
+  render: args => {
+    return (
+      <Form>
+        <TextField
+          className={classNames(styles, 'textfieldExample')}
+          name="email"
+          type="email"
+          isRequired
+          {...args}>
+          <Label>Email</Label>
+          <Input />
+          <FieldError className={classNames(styles, 'errorMessage')} />
+        </TextField>
+        <Button type="submit">Submit</Button>
+        <Button type="reset">Reset</Button>
+      </Form>
+    );
+  },
   argTypes: {
     isInvalid: {
       control: {
