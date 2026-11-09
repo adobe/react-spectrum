@@ -21,12 +21,13 @@ type Message = string | {'aria-labelledby': string};
 
 /**
  * Announces the message using screen reader technology.
+ * Returns a function that removes the announcement before its timeout.
  */
 export function announce(
   message: Message,
   assertiveness: Assertiveness = 'assertive',
   timeout: number = LIVEREGION_TIMEOUT_DELAY
-): void {
+): () => void {
   if (!liveAnnouncer) {
     liveAnnouncer = new LiveAnnouncer();
     // wait for the live announcer regions to be added to the dom, then announce
@@ -43,17 +44,21 @@ export function announce(
           IS_REACT_ACT_ENVIRONMENT
         : typeof jest !== 'undefined')
     ) {
+      let isRemoved = false;
+      let remove = () => {};
       setTimeout(() => {
-        if (liveAnnouncer?.isAttached()) {
-          liveAnnouncer?.announce(message, assertiveness, timeout);
+        if (!isRemoved && liveAnnouncer?.isAttached()) {
+          remove = liveAnnouncer.announce(message, assertiveness, timeout);
         }
       }, 100);
-    } else {
-      liveAnnouncer.announce(message, assertiveness, timeout);
+      return () => {
+        isRemoved = true;
+        remove();
+      };
     }
-  } else {
-    liveAnnouncer.announce(message, assertiveness, timeout);
   }
+
+  return liveAnnouncer.announce(message, assertiveness, timeout);
 }
 
 /**
@@ -135,9 +140,13 @@ class LiveAnnouncer {
     this.node = null;
   }
 
-  announce(message: Message, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) {
+  announce(
+    message: Message,
+    assertiveness = 'assertive',
+    timeout = LIVEREGION_TIMEOUT_DELAY
+  ): () => void {
     if (!this.node) {
-      return;
+      return () => {};
     }
 
     let node = document.createElement('div');
@@ -155,11 +164,17 @@ class LiveAnnouncer {
       this.politeLog?.appendChild(node);
     }
 
+    let timer: ReturnType<typeof setTimeout> | undefined;
     if (message !== '') {
-      setTimeout(() => {
+      timer = setTimeout(() => {
         node.remove();
       }, timeout);
     }
+
+    return () => {
+      clearTimeout(timer);
+      node.remove();
+    };
   }
 
   clear(assertiveness: Assertiveness) {

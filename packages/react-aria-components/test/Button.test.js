@@ -273,6 +273,37 @@ describe('Button', () => {
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('does not leave its pending announcement behind when it unmounts', async function () {
+    function TestComponent() {
+      let [pending, setPending] = useState(false);
+      return (
+        <Button onPress={() => setPending(true)} isPending={pending}>
+          Save
+        </Button>
+      );
+    }
+    let {getByRole, unmount} = render(<TestComponent />);
+    await user.click(getByRole('button'));
+
+    let announcements = document.querySelectorAll('[data-live-announcer] [aria-labelledby]');
+    expect(announcements).toHaveLength(1);
+    for (let id of announcements[0].getAttribute('aria-labelledby').split(' ')) {
+      expect(document.getElementById(id)).not.toBeNull();
+    }
+
+    unmount();
+    expect(document.querySelectorAll('[data-live-announcer] [aria-labelledby]')).toHaveLength(0);
+  });
+
+  it('replaces its pending announcement when the pending state ends', function () {
+    let {getByRole, rerender} = render(<Button>Save</Button>);
+    act(() => getByRole('button').focus());
+    rerender(<Button isPending>Save</Button>);
+    expect(document.querySelectorAll('[data-live-announcer] [aria-labelledby]')).toHaveLength(1);
+    rerender(<Button>Save</Button>);
+    expect(document.querySelectorAll('[data-live-announcer] [aria-labelledby]')).toHaveLength(1);
+  });
+
   // isPending anchor element
   it('removes href attribute from anchor element when isPending is true', () => {
     let {getByRole} = render(

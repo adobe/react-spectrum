@@ -145,16 +145,19 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(
     }
   }
 
+  // The announcement refers to this button's label by id, so a newer announcement replaces it
+  // and it is removed when the button unmounts, rather than referring to elements that are gone.
   let wasPending = useRef(isPending);
+  let removeAnnouncement = useRef<(() => void) | null>(null);
   useEffect(() => {
     let message = {'aria-labelledby': ariaLabelledby || buttonId};
-    if (!wasPending.current && isFocused && isPending) {
-      announce(message, 'assertive');
-    } else if (wasPending.current && isFocused && !isPending) {
-      announce(message, 'assertive');
+    if (isFocused && wasPending.current !== isPending) {
+      removeAnnouncement.current?.();
+      removeAnnouncement.current = announce(message, 'assertive');
     }
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
+  useEffect(() => () => removeAnnouncement.current?.(), []);
 
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.onClick;
