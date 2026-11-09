@@ -207,6 +207,24 @@ function AttachmentDialogExample() {
               alt=""
             />
           </LightboxPickerItem>
+                    <LightboxPickerItem id="foyles-war" aria-label="Foyle's War">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/foyleswarslide__800x600.jpg"
+              alt=""
+            />
+          </LightboxPickerItem>
+          <LightboxPickerItem id="great-britain-vote" aria-label="Great Britain Vote">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/britcomdavidslide__800x600.jpg"
+              alt=""
+            />
+          </LightboxPickerItem>
+          <LightboxPickerItem id="mid-american-gardener" aria-label="Mid-American Gardener">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/mag800-2__800x600.jpg"
+              alt=""
+            />
+          </LightboxPickerItem>
         </LightboxPicker>
         <LightboxItems>
           <LightboxItem id="amsterdam">
