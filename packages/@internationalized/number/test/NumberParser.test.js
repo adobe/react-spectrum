@@ -70,12 +70,8 @@ describe('NumberParser', function () {
 
     it.each([
       ['sd', '١٬٢٣٤.٥', 1234.5],
-      ['sd', '١٬٢٣٤,٥', 1234.5],
-      ['sd', '١٬٢٣٤،٥', 1234.5],
       ['pa-u-nu-arab', '١,٢٣٤.٥', 1234.5],
-      ['pa-u-nu-arab', '١,٢٣٤،٥', 1234.5],
       ['ur-u-nu-arab', '١,٢٣٤،٥', 1234.5],
-      ['ur-u-nu-arab', '١.٢٣٤،٥', 1234.5],
       ['ar-u-nu-arab', '١٬٢٣٤٫٥', 1234.5],
       ['ar-u-nu-arab', '١.٢٣٤,٥', 1234.5],
       ['ar-u-nu-arab', '١.٢٣٤،٥', 1234.5]
@@ -84,6 +80,44 @@ describe('NumberParser', function () {
       expect(parser.parse(input)).toBe(value);
       expect(parser.parse('-' + input)).toBe(-value);
       expect(parser.isValidPartialNumber(input)).toBe(true);
+    });
+
+    it.each([
+      ['sd', ','],
+      ['sd', '،'],
+      ['pa-u-nu-arab', '،'],
+      ['ur-u-nu-arab', '.']
+    ])('should reject non-native Arabic separator alternatives in %s: %s', (locale, separator) => {
+      for (let options of [
+        {},
+        {style: 'currency', currency: 'USD'},
+        {style: 'percent', maximumFractionDigits: 2}
+      ]) {
+        let parser = new NumberParser(locale, options);
+        for (let input of [
+          separator + '٥',
+          '١' + separator,
+          '١' + separator + '٢',
+          '١' + separator + '٢٣٤'
+        ]) {
+          for (let value of [input, '-' + input]) {
+            expect(parser.parse(value)).toBeNaN();
+            expect(parser.isValidPartialNumber(value)).toBe(false);
+          }
+        }
+      }
+    });
+
+    it.each([
+      ['sd', '١٬٢٣٤,٥'],
+      ['sd', '١٬٢٣٤،٥'],
+      ['pa-u-nu-arab', '١,٢٣٤،٥'],
+      ['ur-u-nu-arab', '١.٢٣٤،٥']
+    ])('should reject mixed native and non-native separators in %s: %s', (locale, input) => {
+      let parser = new NumberParser(locale);
+      expect(parser.parse(input)).toBeNaN();
+      expect(parser.parse('-' + input)).toBeNaN();
+      expect(parser.isValidPartialNumber(input)).toBe(false);
     });
 
     it('should support group characters', function () {
@@ -665,8 +699,6 @@ describe('NumberParser', function () {
   describe('isValidPartialNumber', function () {
     it.each([
       ['sd', '.'],
-      ['sd', ','],
-      ['sd', '،'],
       ['pa-u-nu-arab', '.'],
       ['ur-u-nu-arab', '،'],
       ['ar-u-nu-arab', '٫'],

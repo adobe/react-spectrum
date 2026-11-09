@@ -177,6 +177,15 @@ class NumberParserImpl {
       fullySanitizedValue = fullySanitizedValue.replaceAll(this.symbols.group!, '');
     }
 
+    // Prevent JavaScript from accepting a non-native period as a decimal separator.
+    if (
+      this.options.numberingSystem === 'arab' &&
+      this.symbols.decimal !== '.' &&
+      fullySanitizedValue.includes('.')
+    ) {
+      return NaN;
+    }
+
     if (this.symbols.decimal) {
       fullySanitizedValue = fullySanitizedValue.replace(this.symbols.decimal!, '.');
     }
@@ -253,16 +262,15 @@ class NumberParserImpl {
       value = value.replace('-', this.symbols.minusSign);
     }
 
-    // Allow keyboard alternatives for arab separators without replacing locale-native symbols.
-    if (this.options.numberingSystem === 'arab') {
-      if (this.symbols.decimal) {
-        for (let symbol of [',', '\u060C']) {
-          if (symbol !== this.symbols.group) {
-            value = replaceAll(value, symbol, this.symbols.decimal);
-          }
-        }
-      }
-      if (this.symbols.group && isGroupSymbolAllowed && this.symbols.decimal !== '.') {
+    // Keyboard alternatives apply only to the standard arab separators, not other locale-native symbols.
+    if (
+      this.options.numberingSystem === 'arab' &&
+      this.symbols.decimal === '\u066B' &&
+      this.symbols.group === '\u066C'
+    ) {
+      value = replaceAll(value, ',', this.symbols.decimal);
+      value = replaceAll(value, '\u060C', this.symbols.decimal);
+      if (isGroupSymbolAllowed) {
         value = replaceAll(value, '.', this.symbols.group);
       }
     }

@@ -309,6 +309,29 @@ describe('NumberField', () => {
     expect(onChange).toHaveBeenCalledWith(0);
   });
 
+  it.each([
+    ['sd', '١,٢٣٤'],
+    ['sd', '١،٢٣٤'],
+    ['pa-u-nu-arab', '١,٢٣٤،٥'],
+    ['ur-u-nu-arab', '١.٢٣٤،٥']
+  ])('preserves the value after pasting non-native separators in %s: %s', async (locale, value) => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <I18nProvider locale={locale}>
+        <TestNumberField defaultValue={42} onChange={onChange} />
+      </I18nProvider>
+    );
+    let input = getByRole('textbox');
+    let formatted = new Intl.NumberFormat(locale).format(42);
+    expect(input).toHaveValue(formatted);
+    await user.tab();
+    act(() => input.select());
+    await user.paste(value);
+    await user.tab();
+    expect(input).toHaveValue(formatted);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it('supports pasting value in another numbering system', async () => {
     let {getByRole, rerender} = render(<TestNumberField />);
     let input = getByRole('textbox');
