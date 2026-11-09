@@ -11,8 +11,6 @@
  */
 
 import {Attachment, AttachmentList, AttachmentPreview} from '../src/AttachmentList';
-import {Button} from '@react-spectrum/s2/Button';
-import {ButtonGroup} from '@react-spectrum/s2/ButtonGroup';
 import {Image} from '@react-spectrum/s2/Image';
 import {
   LightboxCarousel,
@@ -22,11 +20,8 @@ import {
   LightboxPickerItem,
   LightboxTrigger
 } from '../src/Lightbox';
-import {Link} from '@react-spectrum/s2/Link';
 import type {Meta, StoryObj} from '@storybook/react';
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2/SegmentedControl';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {TextField} from '@react-spectrum/s2/TextField';
 
 const meta: Meta<typeof LightboxCarousel> = {
   title: 'AI/Lightbox',
@@ -142,8 +137,6 @@ export const Basic: Story = {
     defaultSelectedKey: 'amsterdam'
   }
 };
-
-const samplePdfUrl = 'https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf';
 
 function AttachmentDialogExample() {
   return (
