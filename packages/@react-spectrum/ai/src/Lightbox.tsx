@@ -137,6 +137,7 @@ const itemsStyles = style({
 
 const itemStyles = style({
   display: 'flex',
+  containerType: 'size',
   alignItems: 'center',
   justifyContent: 'center',
   minWidth: 0,
@@ -720,12 +721,20 @@ function reducer(state: CarouselState, action: Action) {
 
 const imageStyles = style({
   ...focusRing(),
+  borderRadius: 'lg',
   display: 'block',
   width: 'fit',
-  height: 'full',
-  maxHeight: 'full',
+  height: 'fit',
+  flexShrink: 0,
   objectFit: 'contain',
   backgroundColor: 'transparent'
+});
+
+const innerImageStyles = style({
+  width: 'auto',
+  height: 'auto',
+  maxWidth: '100cqw',
+  maxHeight: '100cqh'
 });
 
 interface InfiniteLightboxItemsProps<T> extends Omit<LightboxItemsProps<T>, 'children'> {
@@ -868,7 +877,8 @@ export function LightboxItem(props: LightboxItemProps) {
   return (
     <RACTabPanel {...props} shouldForceMount className={itemStyles}>
       {renderProps => (
-        <ImageContext.Provider value={{styles: imageStyles({...renderProps})}}>
+        <ImageContext.Provider
+          value={{styles: imageStyles({...renderProps}), imgStyles: innerImageStyles}}>
           {typeof props.children === 'function' ? props.children(renderProps) : props.children}
         </ImageContext.Provider>
       )}
