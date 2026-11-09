@@ -86,6 +86,11 @@ export const WithLongTitle: Story = {
         </Accordion>
       </div>
     );
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
@@ -107,18 +112,11 @@ export const WithDisabledItem: Story = {
         </Accordion>
       </div>
     );
-  }
-};
-
-WithLongTitle.parameters = {
-  docs: {
-    disable: true
-  }
-};
-
-WithDisabledItem.parameters = {
-  docs: {
-    disable: true
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
@@ -144,12 +142,11 @@ function ControlledAccordion(props) {
 }
 
 export const Controlled: Story = {
-  render: () => <ControlledAccordion />
-};
-
-Controlled.parameters = {
-  docs: {
-    disable: true
+  render: () => <ControlledAccordion />,
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
@@ -169,12 +166,11 @@ export const ControlledOpen: Story = {
         </AccordionItem>
       </Accordion>
     );
-  }
-};
-
-ControlledOpen.parameters = {
-  docs: {
-    disable: true
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 

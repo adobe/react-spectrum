@@ -13,7 +13,7 @@
 import {classNames} from '../../src/utils/classNames';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '../../src/layout/Grid';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useProvider} from '../../src/provider/Provider';
@@ -39,41 +39,49 @@ let states = [
   {isUnavailable: true}
 ];
 
-export type AllStatesStory = StoryFn<typeof AllStates>;
+export type AllStatesStory = StoryObj<typeof AllStates>;
 
-export const LightMedium: AllStatesStory = () => <AllStates />;
-LightMedium.parameters = {
-  chromaticProvider: {
-    locales: ['en-US'],
-    colorSchemes: ['light'],
-    scales: ['medium']
+export const LightMedium: AllStatesStory = {
+  render: () => <AllStates />,
+  parameters: {
+    chromaticProvider: {
+      locales: ['en-US'],
+      colorSchemes: ['light'],
+      scales: ['medium']
+    }
   }
 };
 
-export const LightLarge: AllStatesStory = () => <AllStates />;
-LightLarge.parameters = {
-  chromaticProvider: {
-    locales: ['en-US'],
-    colorSchemes: ['light'],
-    scales: ['large']
+export const LightLarge: AllStatesStory = {
+  render: () => <AllStates />,
+  parameters: {
+    chromaticProvider: {
+      locales: ['en-US'],
+      colorSchemes: ['light'],
+      scales: ['large']
+    }
   }
 };
 
-export const DarkMedium: AllStatesStory = () => <AllStates />;
-DarkMedium.parameters = {
-  chromaticProvider: {
-    locales: ['en-US'],
-    colorSchemes: ['dark'],
-    scales: ['medium']
+export const DarkMedium: AllStatesStory = {
+  render: () => <AllStates />,
+  parameters: {
+    chromaticProvider: {
+      locales: ['en-US'],
+      colorSchemes: ['dark'],
+      scales: ['medium']
+    }
   }
 };
 
-export const DarkLarge: AllStatesStory = () => <AllStates />;
-DarkLarge.parameters = {
-  chromaticProvider: {
-    locales: ['en-US'],
-    colorSchemes: ['dark'],
-    scales: ['large']
+export const DarkLarge: AllStatesStory = {
+  render: () => <AllStates />,
+  parameters: {
+    chromaticProvider: {
+      locales: ['en-US'],
+      colorSchemes: ['dark'],
+      scales: ['large']
+    }
   }
 };
 

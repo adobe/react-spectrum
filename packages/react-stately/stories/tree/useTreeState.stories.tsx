@@ -12,7 +12,7 @@
 
 import {Collection, Key, Node} from '@react-types/shared';
 import {Item} from '../../src/collections/Item';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX, useMemo, useRef} from 'react';
 import {TreeCollection} from '../../src/tree/TreeCollection';
 import {usePress} from 'react-aria/usePress';
@@ -24,7 +24,9 @@ export default {
   title: 'useTreeState'
 } as Meta<typeof TreeExample>;
 
-export const KeyboardNavigation: StoryFn<typeof TreeExample> = () => <TreeExample />;
+export const KeyboardNavigation: StoryObj<typeof TreeExample> = {
+  render: () => <TreeExample />
+};
 
 function TreeExample(props = {}): JSX.Element {
   return (

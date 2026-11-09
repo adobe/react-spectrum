@@ -12,7 +12,7 @@
 
 import {Flex} from '../../src/layout/Flex';
 import Info from '@spectrum-icons/workflow/Info';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {render} from './Textfield.stories';
 import {TextField} from '../../src/textfield/TextField';
@@ -30,31 +30,27 @@ export default {
   }
 } as Meta<typeof TextField>;
 
-export type TextFieldStory = StoryFn<typeof TextField>;
+export type TextFieldStory = StoryObj<typeof TextField>;
 
-export const Diacritics: TextFieldStory = () => (
-  <Flex gap="size-200" direction="row" wrap>
-    <TextField label="Label" value="value" />
-    <TextField label="رِفِتـــانٍ خانٍِ" value="رِفِتـــانٍ خانٍِ" />
-    <TextField label="Ç" value="Ç" />
-    <TextField label="Äpfel" value="Äpfel" />
-  </Flex>
-);
-
-Diacritics.story = {
+export const Diacritics: TextFieldStory = {
+  render: () => (
+    <Flex gap="size-200" direction="row" wrap>
+      <TextField label="Label" value="value" />
+      <TextField label="رِفِتـــانٍ خانٍِ" value="رِفِتـــانٍ خانٍِ" />
+      <TextField label="Ç" value="Ç" />
+      <TextField label="Äpfel" value="Äpfel" />
+    </Flex>
+  ),
   name: 'diacritics'
 };
 
-export const Value測試IconInfoLabelPositionSideValidationStateValid: TextFieldStory = () =>
-  render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'});
-
-Value測試IconInfoLabelPositionSideValidationStateValid.story = {
+export const Value測試IconInfoLabelPositionSideValidationStateValid: TextFieldStory = {
+  render: () =>
+    render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'}),
   name: 'value: 測試, icon: Info, labelPosition: side, validationState: valid'
 };
 
-export const ValueاختبارIsRequiredFalseNecessityIndicatorLabel: TextFieldStory = () =>
-  render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'});
-
-ValueاختبارIsRequiredFalseNecessityIndicatorLabel.story = {
+export const ValueاختبارIsRequiredFalseNecessityIndicatorLabel: TextFieldStory = {
+  render: () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'}),
   name: 'value: اختبار, isRequired: false, necessityIndicator: label'
 };

@@ -11,7 +11,7 @@
  */
 
 import {Checkbox, SpectrumCheckboxProps} from '../../src/checkbox/Checkbox';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import {View} from '../../src/view/View';
 
@@ -20,72 +20,59 @@ export default {
   excludeStories: ['Render', 'RenderCustomLabel', 'RenderNoLabel']
 } as Meta<typeof Checkbox>;
 
-export type CheckboxStory = StoryFn<typeof Checkbox>;
+export type CheckboxStory = StoryObj<typeof Checkbox>;
 
-export const Default: CheckboxStory = () => <Render />;
-export const ValidationStateInvalid: CheckboxStory = () => <Render isInvalid />;
-
-ValidationStateInvalid.story = {
+export const Default: CheckboxStory = {
+  render: () => <Render />
+};
+export const ValidationStateInvalid: CheckboxStory = {
+  render: () => <Render isInvalid />,
   name: 'validationState: "invalid"'
 };
 
-export const IsDisabledTrue: CheckboxStory = () => <Render isDisabled />;
-
-IsDisabledTrue.story = {
+export const IsDisabledTrue: CheckboxStory = {
+  render: () => <Render isDisabled />,
   name: 'isDisabled: true'
 };
 
-export const IsEmphasizedTrue: CheckboxStory = () => <Render isEmphasized />;
-
-IsEmphasizedTrue.story = {
+export const IsEmphasizedTrue: CheckboxStory = {
+  render: () => <Render isEmphasized />,
   name: 'isEmphasized: true'
 };
 
-export const IsEmphasizedTrueValidationStateInvalid: CheckboxStory = () => (
-  <Render isEmphasized isInvalid />
-);
-
-IsEmphasizedTrueValidationStateInvalid.story = {
+export const IsEmphasizedTrueValidationStateInvalid: CheckboxStory = {
+  render: () => <Render isEmphasized isInvalid />,
   name: 'isEmphasized: true, validationState: "invalid"'
 };
 
-export const IsEmphasizedTrueIsDisabledTrue: CheckboxStory = () => (
-  <Render isEmphasized isDisabled />
-);
-
-IsEmphasizedTrueIsDisabledTrue.story = {
+export const IsEmphasizedTrueIsDisabledTrue: CheckboxStory = {
+  render: () => <Render isEmphasized isDisabled />,
   name: 'isEmphasized: true, isDisabled: true'
 };
 
-export const IsReadOnlyTrue: CheckboxStory = () => <Render isReadOnly />;
-
-IsReadOnlyTrue.story = {
+export const IsReadOnlyTrue: CheckboxStory = {
+  render: () => <Render isReadOnly />,
   name: 'isReadOnly: true'
 };
 
-export const CustomLabel: CheckboxStory = () => <RenderCustomLabel />;
-
-CustomLabel.story = {
+export const CustomLabel: CheckboxStory = {
+  render: () => <RenderCustomLabel />,
   name: 'custom label'
 };
 
-export const LongLabel: CheckboxStory = () => (
-  <View width="size-2000">
-    <Checkbox>
-      Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
-    </Checkbox>
-  </View>
-);
-
-LongLabel.story = {
+export const LongLabel: CheckboxStory = {
+  render: () => (
+    <View width="size-2000">
+      <Checkbox>
+        Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
+      </Checkbox>
+    </View>
+  ),
   name: 'long label'
 };
 
-export const NoLabel: CheckboxStory = () => (
-  <RenderNoLabel aria-label="This checkbox has no visible label" />
-);
-
-NoLabel.story = {
+export const NoLabel: CheckboxStory = {
+  render: () => <RenderNoLabel aria-label="This checkbox has no visible label" />,
   name: 'no label'
 };
 

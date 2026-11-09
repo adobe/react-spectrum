@@ -56,6 +56,7 @@ import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../src/Virtualizer';
 
 let {
+  DndTableExample,
   RenderEmptyStateStory: EmptyLoadingTable,
   TableLoadingBodyWrapperStory: LoadingMoreTable,
   TableCellColSpanWithVariousSpansExample: TableCellColSpan,
@@ -2039,7 +2040,6 @@ describe('Table', () => {
     });
 
     it('support drop target keyboard navigation', async () => {
-      const DndTableExample = stories.DndTableExample;
       render(<DndTableExample />);
       await user.tab();
       await user.keyboard('{ArrowRight}');
@@ -2120,7 +2120,6 @@ describe('Table', () => {
     });
 
     it('should select dropped item', async () => {
-      const DndTableExample = stories.DndTableExample;
       let {getAllByRole} = render(<DndTableExample />);
       let tableTester = testUtilUser.createTester('Table', {root: getAllByRole('grid')[1]});
       expect(tableTester.getRows()).toHaveLength(7);

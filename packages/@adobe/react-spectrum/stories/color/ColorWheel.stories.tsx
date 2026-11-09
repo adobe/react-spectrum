@@ -14,7 +14,7 @@ import {action} from 'storybook/actions';
 import {ColorSwatch} from '../../src/color/ColorSwatch';
 import {ColorWheel, SpectrumColorWheelProps} from '../../src/color/ColorWheel';
 import {Flex} from '../../src/layout/Flex';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {parseColor} from 'react-stately/Color';
 import React, {JSX, useState} from 'react';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -56,31 +56,33 @@ export const Default: ColorWheelStory = {
 export const Controlled: ColorWheelStory = {
   render: args => (
     <Flex gap={'size-500'} direction="row" alignItems="center">
-      <ControlledHSLRender {...args} />
+      <ControlledHSLRender.render {...args} />
     </Flex>
   )
 };
 
-export const ControlledHSLRender = (props: SpectrumColorWheelProps): JSX.Element => {
-  let {locale} = useLocale();
-  let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
-  let onChangeEnd = color => {
-    props.onChangeEnd && props.onChangeEnd(color);
-    setColor(color);
-  };
-  let onChange = color => {
-    props.onChange && props.onChange(color);
-    setColor(color);
-  };
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 4}}>
-      <ColorWheel onChange={onChange} onChangeEnd={onChangeEnd} value={color.toString('hsl')} />
-      <ColorSwatch color={color} size="L" />
-      <div>{color.getColorName(locale)}</div>
-    </div>
-  );
+export const ControlledHSLRender = {
+  render: function ControlledHSLRender(props: SpectrumColorWheelProps): JSX.Element {
+    let {locale} = useLocale();
+    let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
+    let onChangeEnd = color => {
+      props.onChangeEnd && props.onChangeEnd(color);
+      setColor(color);
+    };
+    let onChange = color => {
+      props.onChange && props.onChange(color);
+      setColor(color);
+    };
+    return (
+      <div style={{display: 'flex', flexDirection: 'column', gap: 4}}>
+        <ColorWheel onChange={onChange} onChangeEnd={onChangeEnd} value={color.toString('hsl')} />
+        <ColorSwatch color={color} size="L" />
+        <div>{color.getColorName(locale)}</div>
+      </div>
+    );
+  }
 };
 
-export const ControlledHSL: StoryFn<typeof ColorWheel> = props => (
-  <ControlledHSLRender {...props} />
-);
+export const ControlledHSL: StoryObj<typeof ColorWheel> = {
+  render: props => <ControlledHSLRender.render {...props} />
+};
