@@ -527,6 +527,37 @@ describe('Tabs', () => {
     }
   );
 
+  it('notifies once per fallback across repeated focused collection updates', async () => {
+    let onSelectionChange = jest.fn();
+    function Example({disabledKeys = []}) {
+      return (
+        <Tabs disabledKeys={disabledKeys} onSelectionChange={onSelectionChange}>
+          <TabList aria-label="Build">
+            <Tab id="a">A</Tab>
+            <Tab id="b">B</Tab>
+            <Tab id="c">C</Tab>
+          </TabList>
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+          <TabPanel id="c">C</TabPanel>
+        </Tabs>
+      );
+    }
+    let {getAllByRole, rerender} = render(<Example />);
+    await user.click(getAllByRole('tab')[1]);
+    onSelectionChange.mockClear();
+    rerender(<Example disabledKeys={['b']} />);
+    expect(getAllByRole('tab')[0]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(getAllByRole('tab')[0]);
+    expect(onSelectionChange.mock.calls).toEqual([['a']]);
+    await user.click(getAllByRole('tab')[2]);
+    onSelectionChange.mockClear();
+    rerender(<Example disabledKeys={['b', 'c']} />);
+    expect(getAllByRole('tab')[0]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(getAllByRole('tab')[0]);
+    expect(onSelectionChange.mock.calls).toEqual([['a']]);
+  });
+
   it('recovers when a newly selected tab is disabled immediately', async () => {
     let onSelectionChange = jest.fn();
     function Example() {
