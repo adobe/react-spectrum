@@ -734,6 +734,53 @@ describe('Table', () => {
     expect(checkbox2).toBeChecked();
   });
 
+  it('should support range selection with shift+click on row checkboxes', async () => {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = renderTable({
+      tableProps: {selectionMode: 'multiple', onSelectionChange}
+    });
+
+    let checkboxes = getAllByRole('checkbox');
+    await user.click(checkboxes[1]);
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
+
+    await user.keyboard('{Shift>}');
+    await user.click(checkboxes[3]);
+    await user.keyboard('{/Shift}');
+    expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1', '2', '3']));
+
+    // The range selection should not break normal checkbox toggling.
+    await user.click(checkboxes[3]);
+    expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['1', '2']));
+  });
+
+  it('should extend checkbox selection from the last selected row when selectedKeys is controlled as a plain Set', async () => {
+    let onSelectionChange = jest.fn();
+    function ControlledTable() {
+      let [selected, setSelected] = useState([]);
+      return (
+        <TestTable
+          tableProps={{
+            selectionMode: 'multiple',
+            selectedKeys: new Set(selected),
+            onSelectionChange: (keys) => {
+              setSelected(keys === 'all' ? ['1', '2', '3'] : Array.from(keys));
+              onSelectionChange(keys);
+            }
+          }} />
+      );
+    }
+
+    let {getAllByRole} = render(<ControlledTable />);
+    let checkboxes = getAllByRole('checkbox');
+    await user.click(checkboxes[1]);
+
+    await user.keyboard('{Shift>}');
+    await user.click(checkboxes[3]);
+    await user.keyboard('{/Shift}');
+    expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1', '2', '3']));
+  });
+
   it('should not render checkboxes for selection with selectionBehavior=replace', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {

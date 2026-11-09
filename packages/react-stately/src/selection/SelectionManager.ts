@@ -240,7 +240,7 @@ export class SelectionManager implements MultipleSelectionManager {
       selection = new Selection([mappedToKey], mappedToKey, mappedToKey);
     } else {
       let selectedKeys = this.state.selectedKeys as Selection;
-      let anchorKey = selectedKeys.anchorKey ?? mappedToKey;
+      let anchorKey = selectedKeys.anchorKey ?? this.lastSelectedKey ?? mappedToKey;
       selection = new Selection(selectedKeys, anchorKey, mappedToKey);
       for (let key of this.getKeyRange(anchorKey, selectedKeys.currentKey ?? mappedToKey)) {
         selection.delete(key);

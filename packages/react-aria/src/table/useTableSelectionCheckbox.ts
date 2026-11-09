@@ -44,12 +44,26 @@ export function useTableSelectionCheckbox<T>(
   state: TableState<T>
 ): TableSelectionCheckboxAria {
   let {key} = props;
+  let isShiftClick = false;
   const {checkboxProps} = useGridSelectionCheckbox(props, state);
 
   return {
     checkboxProps: {
       ...checkboxProps,
-      'aria-labelledby': `${checkboxProps.id} ${getRowLabelledBy(state, key)}`
+      'aria-labelledby': `${checkboxProps.id} ${getRowLabelledBy(state, key)}`,
+      // onChange does not receive the event, so track whether the triggering
+      // click had the shift key held in order to support range selection.
+      onClickCapture: (e) => {
+        isShiftClick = e.shiftKey;
+      },
+      onChange: () => {
+        if (isShiftClick) {
+          state.selectionManager.extendSelection(key);
+        } else {
+          state.selectionManager.toggleSelection(key);
+        }
+        isShiftClick = false;
+      }
     }
   };
 }
