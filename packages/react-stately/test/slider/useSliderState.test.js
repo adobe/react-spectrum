@@ -193,4 +193,31 @@ describe('useSliderState', () => {
     expect(onChangeSpy).not.toHaveBeenCalled();
     expect(onChangeEndSpy).not.toHaveBeenCalled();
   });
+
+  it('should not call onChange repeatedly when value is unchanged in controlled slider', () => {
+    let onChangeSpy = jest.fn();
+    let value = [0];
+    let {result, rerender} = renderHook(
+      (props) =>
+        useSliderState({
+          value: props.value,
+          onChange: (v) => {
+            onChangeSpy(v);
+            value = v;
+          },
+          numberFormatter
+        }),
+      {initialProps: {value}}
+    );
+
+    act(() => result.current.setThumbDragging(0, true));
+    act(() => result.current.setThumbValue(0, 50));
+    rerender({value});
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenLastCalledWith([50]);
+
+    act(() => result.current.setThumbValue(0, 50));
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    act(() => result.current.setThumbDragging(0, false));
+  });
 });
