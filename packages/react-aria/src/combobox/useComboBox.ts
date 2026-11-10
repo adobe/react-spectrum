@@ -175,7 +175,6 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     keyboardDelegate: delegate,
     disallowTypeAhead: true,
     disallowEmptySelection: true,
-    // Mod+A should select input text, not try to selectAll() options (ignored by ComboBox state).
     disallowSelectAll: true,
     shouldFocusWrap,
     ref: inputRef,
