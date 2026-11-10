@@ -217,7 +217,7 @@ describe('useSliderState', () => {
     expect(onChangeSpy).toHaveBeenLastCalledWith([50]);
 
     act(() => result.current.setThumbValue(0, 50));
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
     act(() => result.current.setThumbDragging(0, false));
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 });
