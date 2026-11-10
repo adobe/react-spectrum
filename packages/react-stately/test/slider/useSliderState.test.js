@@ -198,10 +198,10 @@ describe('useSliderState', () => {
     let onChangeSpy = jest.fn();
     let value = [0];
     let {result, rerender} = renderHook(
-      (props) =>
+      props =>
         useSliderState({
           value: props.value,
-          onChange: (v) => {
+          onChange: v => {
             onChangeSpy(v);
             value = v;
           },
