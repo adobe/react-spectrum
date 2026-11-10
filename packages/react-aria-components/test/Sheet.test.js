@@ -463,14 +463,22 @@ describe('Sheet', () => {
   describe('visibility', () => {
     let observe;
     let observer;
+    let time = 0;
     beforeEach(() => {
+      time = 0;
       observe = jest.fn();
       observer = setupIntersectionObserverMock({observe});
     });
 
     function intersect(intersectionRatio) {
       act(() => {
-        observer.instance.triggerCallback([{intersectionRatio}]);
+        observer.instance.triggerCallback([{intersectionRatio, time: ++time}]);
+      });
+    }
+
+    function triggerEntries(entries) {
+      act(() => {
+        observer.instance.triggerCallback(entries.map(entry => ({time: ++time, ...entry})));
       });
     }
 
@@ -565,6 +573,136 @@ describe('Sheet', () => {
       intersect(0);
       expect(onOpenChange).not.toHaveBeenCalledWith(false);
       expect(tree.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    it('handles single entry callbacks sequentially', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
+      await open(tree);
+
+      triggerEntries([{intersectionRatio: 1, time: 100}]);
+      expect(tree.getByTestId('sheet')).toHaveAttribute('data-expanded', 'true');
+      expect(onOpenChange).not.toHaveBeenCalledWith(false);
+
+      triggerEntries([{intersectionRatio: 0, time: 200}]);
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
+    it('processes the latest entry when multiple entries are delivered in chronological order', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
+      await open(tree);
+
+      intersect(1);
+      triggerEntries([
+        {intersectionRatio: 0.5, time: 100},
+        {intersectionRatio: 0, time: 200}
+      ]);
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
+    it('selects the entry with the greatest timestamp when entries are in non-chronological array order', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
+      await open(tree);
+
+      intersect(1);
+      triggerEntries([
+        {intersectionRatio: 0.5, time: 100},
+        {intersectionRatio: 0, time: 300},
+        {intersectionRatio: 0.2, time: 200}
+      ]);
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
+    it('selects the latest zero-intersection entry in reverse array order to complete exit', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
+      await open(tree);
+
+      intersect(1);
+      triggerEntries([
+        {intersectionRatio: 0, time: 200},
+        {intersectionRatio: 0.5, time: 100}
+      ]);
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
+    it('does not close when the latest chronological entry has a positive intersection ratio', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
+      await open(tree);
+
+      intersect(1);
+      triggerEntries([
+        {intersectionRatio: 0, time: 100},
+        {intersectionRatio: 0.5, time: 200}
+      ]);
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).not.toHaveBeenCalledWith(false);
+      expect(tree.getByRole('dialog')).toBeInTheDocument();
+      expect(tree.getByTestId('sheet')).not.toHaveAttribute('data-expanded');
+    });
+
+    it('ignores entries belonging to unrelated targets and processes the valid target entry', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
+      await open(tree);
+
+      expect(observe).toHaveBeenCalled();
+      let validTarget = observe.mock.calls[0][0];
+      let invalidTarget = document.createElement('div');
+
+      intersect(0.5);
+      expect(tree.getByTestId('sheet')).not.toHaveAttribute('data-expanded');
+
+      // Unrelated target entry with ratio 0 (newer time) must not close the sheet;
+      // valid target entry with ratio 1 (older time) must mark the sheet as expanded.
+      triggerEntries([
+        {target: invalidTarget, intersectionRatio: 0, time: 300},
+        {target: validTarget, intersectionRatio: 1, time: 200}
+      ]);
+      expect(tree.getByTestId('sheet')).toHaveAttribute('data-expanded', 'true');
+      expect(onOpenChange).not.toHaveBeenCalledWith(false);
+      expect(tree.getByRole('dialog')).toBeInTheDocument();
+
+      // Unrelated target entry with ratio 1 (newer time) must not prevent exit;
+      // valid target entry with ratio 0 (older time) must complete closing.
+      triggerEntries([
+        {target: invalidTarget, intersectionRatio: 1, time: 500},
+        {target: validTarget, intersectionRatio: 0, time: 400}
+      ]);
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
+    it('ignores callbacks where all entries belong to unrelated targets', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
+      await open(tree);
+
+      let invalidTarget = document.createElement('div');
+      intersect(0.5);
+      expect(tree.getByTestId('sheet')).not.toHaveAttribute('data-expanded');
+
+      triggerEntries([
+        {target: invalidTarget, intersectionRatio: 0, time: 200},
+        {target: invalidTarget, intersectionRatio: 1, time: 300}
+      ]);
+      act(() => jest.runAllTimers());
+
+      expect(onOpenChange).not.toHaveBeenCalledWith(false);
+      expect(tree.getByRole('dialog')).toBeInTheDocument();
+      expect(tree.getByTestId('sheet')).not.toHaveAttribute('data-expanded');
     });
   });
 
