@@ -57,4 +57,32 @@ describe('Separator', () => {
     let separator = getByRole('separator');
     expect(separator).toHaveAttribute('aria-label', 'label');
   });
+
+  it('should not add a redundant role to the default hr element', () => {
+    let {getByRole} = render(<Separator />);
+    let separator = getByRole('separator');
+    expect(separator.tagName).toBe('HR');
+    expect(separator).not.toHaveAttribute('role');
+    expect(separator).not.toHaveAttribute('aria-orientation');
+  });
+
+  it('should add role to a horizontal div element', () => {
+    let {getByRole} = render(<Separator elementType="div" />);
+    let separator = getByRole('separator');
+    expect(separator.tagName).toBe('DIV');
+    expect(separator).toHaveAttribute('role', 'separator');
+    expect(separator).not.toHaveAttribute('aria-orientation');
+  });
+
+  it.each([
+    ['default', {}],
+    ['hr', {elementType: 'hr'}],
+    ['div', {elementType: 'div'}]
+  ])('should expose role and orientation for a vertical separator (%s element)', (_, props) => {
+    let {getByRole} = render(<Separator {...props} orientation="vertical" />);
+    let separator = getByRole('separator');
+    expect(separator.tagName).toBe('DIV');
+    expect(separator).toHaveAttribute('role', 'separator');
+    expect(separator).toHaveAttribute('aria-orientation', 'vertical');
+  });
 });
