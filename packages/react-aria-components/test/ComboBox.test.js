@@ -806,8 +806,6 @@ describe('ComboBox', () => {
   });
 
   it('selects and replaces input text with Ctrl+A while the multi-select popover is open', async () => {
-    // eslint-disable-next-line no-unused-vars
-    using _platform = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
     let onChange = jest.fn();
     let {container} = render(
       <TestComboBox selectionMode="multiple" defaultInputValue="an" onChange={onChange} />
