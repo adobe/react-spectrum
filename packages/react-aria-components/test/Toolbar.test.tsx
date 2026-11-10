@@ -335,7 +335,11 @@ describe('Toolbar', () => {
       expect(after).toHaveFocus();
       act(() => {
         setInteractionModality('virtual');
+      });
+      act(() => {
         first.focus();
+      });
+      act(() => {
         setInteractionModality('keyboard');
       });
       expect(first).toHaveFocus();
