@@ -13,7 +13,6 @@
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {StepList, StepListContext, StepListItem, StepListItemContent} from '../src/StepList';
-import {Step} from '/packages/dev/s2-docs/src/Step';
 
 let steps = [
   {id: 'domain', label: 'Domain'},
