@@ -1,0 +1,179 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import {FunctionAPI} from '../../src/FunctionAPI';
+
+export const tags = ['stepper', 'steps', 'multi-step', 'form', 'flow'];
+export const version = 'alpha';
+export const description = 'Guides users through a multi-step process one step at a time.';
+
+# Wizard
+
+<PageDescription>{docs.exports.Wizard.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.Wizard} links={docs.links} props={['allowsRandomAccess']} type="vanilla" files={["starters/docs/src/Wizard.tsx", "starters/docs/src/Wizard.css"]}
+  "use client";
+  import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel, WizardButtons} from 'vanilla-starter/Wizard';
+
+  <Wizard/* PROPS */>
+    <WizardStepList aria-label="Create project">
+      <WizardStep id="details">Details</WizardStep>
+      <WizardStep id="members">Members</WizardStep>
+      <WizardStep id="review">Review</WizardStep>
+    </WizardStepList>
+    <WizardPanels>
+      <WizardPanel id="details">Name your project and choose who can see it.</WizardPanel>
+      <WizardPanel id="members">Invite people to work on the project with you.</WizardPanel>
+      <WizardPanel id="review">Check the details, then create the project.</WizardPanel>
+    </WizardPanels>
+    <WizardButtons />
+  </Wizard>
+  ```
+
+  ```tsx render docs={docs.exports.Wizard} links={docs.links} props={['allowsRandomAccess']} type="tailwind" files={["starters/tailwind/src/Wizard.tsx"]}
+  "use client";
+  import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel, WizardButtons} from 'tailwind-starter/Wizard';
+
+  <Wizard/* PROPS */>
+    <WizardStepList aria-label="Create project">
+      <WizardStep id="details">Details</WizardStep>
+      <WizardStep id="members">Members</WizardStep>
+      <WizardStep id="review">Review</WizardStep>
+    </WizardStepList>
+    <WizardPanels>
+      <WizardPanel id="details">Name your project and choose who can see it.</WizardPanel>
+      <WizardPanel id="members">Invite people to work on the project with you.</WizardPanel>
+      <WizardPanel id="review">Check the details, then create the project.</WizardPanel>
+    </WizardPanels>
+    <WizardButtons />
+  </Wizard>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`WizardStepList` and `WizardPanels` follow the [Collection Components API](collections?component=WizardStepList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render
+"use client";
+import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel, WizardButtons} from 'vanilla-starter/Wizard';
+
+let steps = [
+  {id: 'account', label: 'Account', content: 'Choose a username and password.'},
+  {id: 'profile', label: 'Profile', content: 'Add a photo and a short bio.'},
+  {id: 'settings', label: 'Settings', content: 'Choose which notifications you receive.'},
+  {id: 'confirm', label: 'Confirm', content: 'Check your details, then create your account.'}
+];
+
+<Wizard>
+  <WizardStepList
+    aria-label="Sign up"
+    /*- begin highlight -*/
+    items={steps}>
+    {/*- end highlight -*/}
+    {step => <WizardStep>{step.label}</WizardStep>}
+  </WizardStepList>
+  <WizardPanels
+    /*- begin highlight -*/
+    items={steps}>
+    {/*- end highlight -*/}
+    {step => <WizardPanel>{step.content}</WizardPanel>}
+  </WizardPanels>
+  <WizardButtons />
+</Wizard>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Provide an `aria-label` or `aria-labelledby` on the `WizardStepList` that describes the process, such as "Sign up". Each step announces whether it is completed, so hide visual indicators such as step numbers and checkmarks with `aria-hidden`. Steps are selected with the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key rather than when they receive focus, so keyboard users can review the steps without leaving the current one.</Content>
+</InlineAlert>
+
+## Current step
+
+Use the `defaultSelectedKey` or `selectedKey` prop to set the current step. The selected key corresponds to the `id` prop of a `<WizardStep>`. Steps before the current step are marked as completed, and steps the user hasn't reached yet are disabled.
+
+```tsx render
+"use client";
+import type {Key} from 'react-aria-components/Wizard';
+import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel, WizardButtons} from 'vanilla-starter/Wizard';
+import {useState} from 'react';
+
+function Example() {
+  let [step, setStep] = useState<Key>('members');
+
+  return (
+    <div>
+      <Wizard
+        ///- begin highlight -///
+        selectedKey={step}
+        onSelectionChange={setStep}
+        ///- end highlight -///
+      >
+        <WizardStepList aria-label="Create project">
+          <WizardStep id="details">Details</WizardStep>
+          <WizardStep id="members">Members</WizardStep>
+          <WizardStep id="review">Review</WizardStep>
+        </WizardStepList>
+        <WizardPanels>
+          <WizardPanel id="details">Name your project and choose who can see it.</WizardPanel>
+          <WizardPanel id="members">Invite people to work on the project with you.</WizardPanel>
+          <WizardPanel id="review">Check the details, then create the project.</WizardPanel>
+        </WizardPanels>
+        <WizardButtons />
+      </Wizard>
+      <p>Current step: {step}</p>
+    </div>
+  );
+}
+```
+
+Users can go back to any step they have reached, and return to where they left off. Set `allowsRandomAccess` to let users select any step. To restore saved progress, set `defaultLastCompletedStep` to the last step the user completed, or control it with the `lastCompletedStep` and `onLastCompletedStepChange` props.
+
+## Wizard vs. StepList
+
+Use a `Wizard` when the content of each step is shown on the same page, and users move between the steps they have reached. When each step is a separate page or route, use a [StepList](StepList) instead to show the user's progress through the process.
+
+## API
+
+```tsx links={{Wizard: '#wizard', WizardStepList: '#wizardsteplist', WizardStep: '#wizardstep', WizardPanels: '#wizardpanels', WizardPanel: '#wizardpanel'}}
+<Wizard>
+  <WizardStepList>
+    <WizardStep />
+  </WizardStepList>
+  <WizardPanels>
+    <WizardPanel />
+  </WizardPanels>
+</Wizard>
+```
+
+### Wizard
+
+<PropTable component={docs.exports.Wizard} links={docs.links} showDescription />
+
+### WizardStepList
+
+<PropTable component={docs.exports.WizardStepList} links={docs.links} showDescription />
+
+### WizardStep
+
+<PropTable component={docs.exports.WizardStep} links={docs.links} showDescription />
+
+### WizardPanels
+
+<PropTable
+  component={docs.exports.WizardPanels}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--tab-panel-width': 'The width of the active panel in pixels. Useful for animations. Set when width, inline-size, or all is used in the CSS transition.',
+    '--tab-panel-height': 'The height of the active panel in pixels. Useful for animations. Set when height, block-size, or all is used in the CSS transition.'
+  }} />
+
+### WizardPanel
+
+<PropTable component={docs.exports.WizardPanel} links={docs.links} showDescription />

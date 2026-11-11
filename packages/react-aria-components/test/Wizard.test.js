@@ -133,6 +133,34 @@ describe('Wizard', () => {
     expect(tabs[0]).toHaveAttribute('aria-controls', panel.id);
   });
 
+  it('should render with default classes', () => {
+    let tree = render(<WizardExample />);
+    let stepList = tree.getByRole('tablist');
+    expect(stepList.parentElement).toHaveClass('react-aria-Wizard');
+    expect(stepList).toHaveClass('react-aria-WizardStepList');
+    for (let step of within(stepList).getAllByRole('tab')) {
+      expect(step).toHaveClass('react-aria-WizardStep');
+    }
+
+    let panel = tree.getByRole('tabpanel');
+    expect(panel.parentElement).toHaveClass('react-aria-WizardPanels');
+    expect(panel).toHaveClass('react-aria-WizardPanel');
+  });
+
+  it('should pass the default class name to className functions', () => {
+    let tree = render(
+      <WizardExample
+        className={({defaultClassName}) => `${defaultClassName} wizard`}
+        stepProps={{className: ({defaultClassName}) => `${defaultClassName} step`}}
+      />
+    );
+    let stepList = tree.getByRole('tablist');
+    expect(stepList.parentElement).toHaveClass('react-aria-Wizard', 'wizard');
+    for (let step of within(stepList).getAllByRole('tab')) {
+      expect(step).toHaveClass('react-aria-WizardStep', 'step');
+    }
+  });
+
   it('should support uncontrolled selection', async () => {
     let onSelectionChange = jest.fn();
     let tree = render(

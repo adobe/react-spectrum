@@ -5,7 +5,7 @@
   --overlap: 12px;
   --padding: 12px;
 
-  .react-aria-TabList {
+  .react-aria-WizardStepList {
     display: flex;
     overflow-x: auto;
     overflow-y: hidden;
@@ -13,7 +13,7 @@
     background: var(--spectrum-global-color-gray-300);
   }
 
-  .react-aria-Tab {
+  .react-aria-WizardStep {
     display: flex;
     flex: 1 1 0;
     align-items: center;

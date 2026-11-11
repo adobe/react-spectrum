@@ -264,6 +264,7 @@ export {
   TreeSection,
   TreeStateContext
 } from '../src/Tree';
+export {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel} from '../src/Wizard';
 export {useDrag} from 'react-aria/useDrag';
 export {
   useDrop,
@@ -566,6 +567,16 @@ export type {
   TreeLoadMoreItemProps,
   TreeLoadMoreItemRenderProps
 } from '../src/Tree';
+export type {
+  WizardProps,
+  WizardStepListProps,
+  WizardStepProps,
+  WizardPanelsProps,
+  WizardPanelProps,
+  WizardStepAria,
+  WizardState,
+  WizardStateOptions
+} from '../src/Wizard';
 export type {DragOptions, DragResult} from 'react-aria/useDrag';
 export type {
   DragAndDropHooks,

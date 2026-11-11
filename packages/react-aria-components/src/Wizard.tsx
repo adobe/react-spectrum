@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {ClassNameOrFunction} from './utils';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
 import {forwardRefType} from '@react-types/shared';
 import {Collection as ICollection, Key, Node} from '@react-types/shared';
@@ -26,14 +27,18 @@ import {
   Tab,
   TabList,
   TabListProps,
+  TabListRenderProps,
   TabListStateContext,
   TabPanel,
   TabPanelProps,
+  TabPanelRenderProps,
   TabPanels,
   TabPanelsProps,
   TabProps,
+  TabRenderProps,
   Tabs,
-  TabsProps
+  TabsProps,
+  TabsRenderProps
 } from './Tabs';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
@@ -42,6 +47,13 @@ import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 export interface WizardProps extends Omit<TabsProps, 'children' | 'selectedKey'> {
   /** The children of the component (a `WizardStepList` and optional `WizardPanels`). */
   children?: ReactNode;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-Wizard'
+   */
+  className?: ClassNameOrFunction<TabsRenderProps>;
   /** The currently selected step (controlled). */
   selectedKey?: Key | null;
   /** The initially selected step (uncontrolled). */
@@ -68,7 +80,8 @@ export interface WizardProps extends Omit<TabsProps, 'children' | 'selectedKey'>
 }
 
 /**
- * A Wizard displays a sequence of steps.
+ * A Wizard guides users through a multi-step process one step at a time, and allows them to
+ * navigate between the steps they have reached.
  */
 export const Wizard = /*#__PURE__*/ forwardRef(function Wizard(
   props: WizardProps,
@@ -81,6 +94,17 @@ export const Wizard = /*#__PURE__*/ forwardRef(function Wizard(
     </CollectionBuilder>
   );
 });
+
+// Passes the wizard's default class name to className functions, rather than the one of the
+// Tabs component it wraps.
+function withDefaultClassName<T>(
+  className: ClassNameOrFunction<T> | undefined,
+  defaultClassName: string
+): ClassNameOrFunction<T> {
+  return typeof className === 'function'
+    ? values => className({...values, defaultClassName})
+    : (className ?? defaultClassName);
+}
 
 interface WizardInnerProps {
   props: WizardProps;
@@ -216,6 +240,7 @@ export function useWizardState(options: WizardStateOptions): WizardState {
 function WizardInner({props, collection, tabsRef: ref}: WizardInnerProps) {
   let {
     children,
+    className,
     selectedKey,
     defaultSelectedKey,
     onSelectionChange,
@@ -248,6 +273,7 @@ function WizardInner({props, collection, tabsRef: ref}: WizardInnerProps) {
   return (
     <Tabs
       {...tabsProps}
+      className={withDefaultClassName(className, 'react-aria-Wizard')}
       keyboardActivation="manual"
       ref={ref}
       selectedKey={state.selectedKey!}
@@ -258,16 +284,41 @@ function WizardInner({props, collection, tabsRef: ref}: WizardInnerProps) {
   );
 }
 
-export interface WizardStepListProps<T> extends TabListProps<T> {}
+export interface WizardStepListProps<T> extends TabListProps<T> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-WizardStepList'
+   */
+  className?: ClassNameOrFunction<TabListRenderProps>;
+}
 
-/** The list of steps within a `Wizard` (wraps `TabList`). */
+/**
+ * A WizardStepList groups the steps within a `<Wizard>`. The ids of its steps must match up with a
+ * corresponding `<WizardPanel>` inside the `<WizardPanels>`.
+ */
 export const WizardStepList = /*#__PURE__*/ (forwardRef as forwardRefType)(function WizardStepList<
   T extends object
 >(props: WizardStepListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
-  return <TabList {...props} ref={ref} />;
+  return (
+    <TabList
+      {...props}
+      ref={ref}
+      className={withDefaultClassName(props.className, 'react-aria-WizardStepList')}
+    />
+  );
 });
 
-export interface WizardStepProps extends TabProps {}
+export interface WizardStepProps extends TabProps {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-WizardStep'
+   */
+  className?: ClassNameOrFunction<TabRenderProps>;
+}
 
 export interface WizardStepAria {
   /** Whether this step is the current (selected) step. */
@@ -326,13 +377,20 @@ function WizardStepState({stepKey, children}: {stepKey: Key | undefined; childre
   );
 }
 
+/**
+ * A WizardStep represents an individual step within a `<WizardStepList>`.
+ */
 export const WizardStep = /*#__PURE__*/ forwardRef(function WizardStep(
   props: WizardStepProps,
   ref: ForwardedRef<HTMLDivElement>
 ) {
-  let {children, ...otherProps} = props;
+  let {children, className, ...otherProps} = props;
   return (
-    <Tab {...otherProps} ref={ref} aria-current="step">
+    <Tab
+      {...otherProps}
+      ref={ref}
+      className={withDefaultClassName(className, 'react-aria-WizardStep')}
+      aria-current="step">
       {renderProps => (
         <WizardStepState stepKey={props.id}>
           {typeof children === 'function' ? children(renderProps) : children}
@@ -342,19 +400,49 @@ export const WizardStep = /*#__PURE__*/ forwardRef(function WizardStep(
   );
 }) as (props: WizardStepProps & {ref?: ForwardedRef<HTMLDivElement>}) => ReactElement;
 
-export interface WizardPanelsProps<T> extends TabPanelsProps<T> {}
+export interface WizardPanelsProps<T> extends TabPanelsProps<T> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
+   * @default 'react-aria-WizardPanels'
+   */
+  className?: string;
+}
 
+/**
+ * Groups multiple `<WizardPanel>` elements, and provides CSS variables for animated transitions.
+ */
 export const WizardPanels = /*#__PURE__*/ (forwardRef as forwardRefType)(function WizardPanels<
   T extends object
 >(props: WizardPanelsProps<T>, ref: ForwardedRef<HTMLDivElement>) {
-  return <TabPanels {...props} ref={ref} />;
+  return (
+    <TabPanels {...props} ref={ref} className={props.className ?? 'react-aria-WizardPanels'} />
+  );
 });
 
-export interface WizardPanelProps extends TabPanelProps {}
+export interface WizardPanelProps extends TabPanelProps {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-WizardPanel'
+   */
+  className?: ClassNameOrFunction<TabPanelRenderProps>;
+}
 
+/**
+ * A WizardPanel provides the content for a step.
+ */
 export const WizardPanel = /*#__PURE__*/ forwardRef(function WizardPanel(
   props: WizardPanelProps,
   ref: ForwardedRef<HTMLDivElement>
 ) {
-  return <TabPanel {...props} ref={ref} />;
+  return (
+    <TabPanel
+      {...props}
+      ref={ref}
+      className={withDefaultClassName(props.className, 'react-aria-WizardPanel')}
+    />
+  );
 });
