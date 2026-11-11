@@ -71,6 +71,7 @@ export class Virtualizer<T extends object, V> {
   private _isScrolling: boolean;
   private _invalidationContext: InvalidationContext;
   private _overscanManager: OverscanManager;
+  private _persistedKeyAncestors: Set<Key> | null;
 
   private _scrollAnchor: ScrollAnchorTracker;
   // Together they classify whether the changed content was at the anchored (e.g. bottom) edge to avoid
@@ -92,6 +93,7 @@ export class Virtualizer<T extends object, V> {
     this._isScrolling = false;
     this._invalidationContext = {};
     this._overscanManager = new OverscanManager();
+    this._persistedKeyAncestors = null;
     this._scrollAnchor = new ScrollAnchorTracker();
     this._hadItemResize = false;
     this._batchIncludedEdgeContent = false;
@@ -104,23 +106,24 @@ export class Virtualizer<T extends object, V> {
       return true;
     }
 
-    // If not, check if the key is an ancestor of any of the persisted keys.
-    for (let k of this.persistedKeys) {
-      while (k != null) {
-        let layoutInfo = this.layout.getLayoutInfo(k);
-        if (!layoutInfo || layoutInfo.parentKey == null) {
-          break;
-        }
-
-        k = layoutInfo.parentKey;
-
-        if (k === key) {
-          return true;
-        }
-      }
+    if (this.persistedKeys.size === 0) {
+      return false;
     }
 
-    return false;
+    if (!this._persistedKeyAncestors) {
+      let ancestors = new Set<Key>();
+      for (let persistedKey of this.persistedKeys) {
+        let layoutInfo = this.layout.getLayoutInfo(persistedKey);
+        while (layoutInfo?.parentKey != null) {
+          let parentKey = layoutInfo.parentKey;
+          ancestors.add(parentKey);
+          layoutInfo = this.layout.getLayoutInfo(parentKey);
+        }
+      }
+      this._persistedKeyAncestors = ancestors;
+    }
+
+    return this._persistedKeyAncestors.has(key);
   }
 
   private getParentView(layoutInfo: LayoutInfo): ReusableView<T, V> | undefined {
@@ -177,6 +180,7 @@ export class Virtualizer<T extends object, V> {
   }
 
   private relayout(context: InvalidationContext = {}) {
+    this._persistedKeyAncestors = null;
     // @ts-ignore
     let anchorInfo = this.layout.UNSTABLE_getScrollAnchorInfo?.(context.layoutOptions) ?? null;
 
@@ -368,6 +372,7 @@ export class Virtualizer<T extends object, V> {
 
     if (opts.persistedKeys && !isSetEqual(opts.persistedKeys, this.persistedKeys)) {
       mutableThis.persistedKeys = opts.persistedKeys;
+      this._persistedKeyAncestors = null;
       needsUpdate = true;
     }
 
