@@ -45,12 +45,6 @@ export interface FocusScopeProps {
 
   /** Whether to auto focus the first focusable element in the focus scope on mount. */
   autoFocus?: boolean;
-
-  /**
-   * Whether the focus scope is currently performing an exit animation.
-   * When true, focus is restored immediately if focus is currently within the scope.
-   */
-  isExiting?: boolean;
 }
 
 export interface FocusManagerOptions {
@@ -97,7 +91,7 @@ let activeScope: ScopeRef = null;
  * to user events.
  */
 export function FocusScope(props: FocusScopeProps): JSX.Element {
-  let {children, contain, restoreFocus, autoFocus, isExiting} = props;
+  let {children, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>(null);
   let endRef = useRef<HTMLSpanElement>(null);
   let scopeRef = useRef<Element[]>([]);
@@ -158,7 +152,7 @@ export function FocusScope(props: FocusScopeProps): JSX.Element {
 
   useActiveScopeTracker(scopeRef, restoreFocus, contain);
   useFocusContainment(scopeRef, contain);
-  useRestoreFocus(scopeRef, restoreFocus, contain, isExiting);
+  useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
 
   // This needs to be an effect so that activeScope is updated after the FocusScope tree is complete.
@@ -638,8 +632,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
 function useRestoreFocus(
   scopeRef: RefObject<Element[] | null>,
   restoreFocus?: boolean,
-  contain?: boolean,
-  isExiting?: boolean
+  contain?: boolean
 ) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
 
@@ -838,30 +831,6 @@ function useRestoreFocus(
       }
     };
   }, [scopeRef, restoreFocus]);
-
-  useLayoutEffect(() => {
-    const ownerDocument = getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined);
-
-    if (!restoreFocus || !isExiting) {
-      return;
-    }
-
-    let treeNode = focusScopeTree.getTreeNode(scopeRef);
-    if (!treeNode) {
-      return;
-    }
-
-    let nodeToRestore = treeNode.nodeToRestore;
-    let activeElement = getActiveElement(ownerDocument);
-    if (
-      nodeToRestore &&
-      nodeToRestore.isConnected &&
-      activeElement &&
-      isElementInChildScope(activeElement, scopeRef)
-    ) {
-      restoreFocusToElement(nodeToRestore);
-    }
-  }, [scopeRef, restoreFocus, isExiting]);
 }
 
 function restoreFocusToElement(node: FocusableElement) {

@@ -408,14 +408,12 @@ export class MenuTester {
           throw new Error(
             `Expected the document.activeElement after closing the menu to be the menu trigger but got ${document.activeElement}`
           );
-        } else {
-          return true;
         }
+        if (document.contains(menu)) {
+          throw new Error('Expected the menu to not be in the document after closing it.');
+        }
+        return true;
       });
-
-      if (document.contains(menu)) {
-        throw new Error('Expected the menu to not be in the document after closing it.');
-      }
     }
   }
 

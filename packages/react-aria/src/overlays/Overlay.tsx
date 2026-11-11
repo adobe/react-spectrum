@@ -12,8 +12,12 @@
 
 import {ClearPressResponder} from '../interactions/PressResponder';
 import {FocusableContext} from '../interactions/useFocusable';
+import {FocusableElement} from '@react-types/shared';
+import {focusSafely} from '../interactions/focusSafely';
 import {FocusScope} from '../focus/FocusScope';
-import React, {ReactNode, useContext, useMemo, useState} from 'react';
+import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getOwnerDocument} from '../utils/domHelpers';
+import React, {ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '../ssr/SSRProvider';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
@@ -63,6 +67,38 @@ export function Overlay(props: OverlayProps): React.ReactPortal | null {
   let [contain, setContain] = useState(false);
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
 
+  let overlayRef = useRef<HTMLDivElement>(null);
+  let nodeToRestoreRef = useRef<FocusableElement | null>(
+    typeof document !== 'undefined'
+      ? (getActiveElement(getOwnerDocument(portalContainer)) as FocusableElement)
+      : null
+  );
+
+  useLayoutEffect(() => {
+    if (!isExiting || props.disableFocusManagement) {
+      return;
+    }
+
+    let nodeToRestore = nodeToRestoreRef.current;
+    let ownerDocument = getOwnerDocument(overlayRef.current ? overlayRef.current : undefined);
+    let activeElement = getActiveElement(ownerDocument);
+
+    if (
+      nodeToRestore &&
+      nodeToRestore.isConnected &&
+      activeElement &&
+      nodeContains(overlayRef.current, activeElement)
+    ) {
+      if (
+        nodeToRestore.dispatchEvent(
+          new CustomEvent('react-aria-focus-scope-restore', {bubbles: true, cancelable: true})
+        )
+      ) {
+        focusSafely(nodeToRestore);
+      }
+    }
+  }, [isExiting, props.disableFocusManagement]);
+
   let {getContainer} = useUNSAFE_PortalContext();
   if (!props.portalContainer && getContainer) {
     portalContainer = getContainer();
@@ -75,10 +111,7 @@ export function Overlay(props: OverlayProps): React.ReactPortal | null {
   let contents = props.children;
   if (!props.disableFocusManagement) {
     contents = (
-      <FocusScope
-        restoreFocus
-        contain={(props.shouldContainFocus || contain) && !isExiting}
-        isExiting={isExiting}>
+      <FocusScope restoreFocus contain={(props.shouldContainFocus || contain) && !isExiting}>
         {contents}
       </FocusScope>
     );
@@ -87,7 +120,11 @@ export function Overlay(props: OverlayProps): React.ReactPortal | null {
   contents = (
     <OverlayContext.Provider value={contextValue}>
       <ClearPressResponder>
-        <FocusableContext.Provider value={null}>{contents}</FocusableContext.Provider>
+        <FocusableContext.Provider value={null}>
+          <div ref={overlayRef} style={{display: 'contents'}}>
+            {contents}
+          </div>
+        </FocusableContext.Provider>
       </ClearPressResponder>
     </OverlayContext.Provider>
   );
