@@ -640,7 +640,7 @@ describe('Sheet', () => {
   });
 
   describe('stacking', () => {
-    function NestedSheets() {
+    function NestedSheets({childContentProps = {}}) {
       return (
         <TestSheet
           overlayProps={{'data-testid': 'parent-overlay'}}
@@ -655,7 +655,7 @@ describe('Sheet', () => {
             <SheetOverlay data-testid="child-overlay">
               <SheetBackdrop data-testid="child-backdrop" />
               <Sheet data-testid="child-sheet" stackAnimation="scaleBack">
-                <SheetContent>
+                <SheetContent {...childContentProps}>
                   {({close}) => (
                     <>
                       <Heading slot="title">Child sheet</Heading>
@@ -698,11 +698,56 @@ describe('Sheet', () => {
       }
     });
 
+    it('gives a nested sheet its own timeline before it registers in the stack', async () => {
+      let timelines = [];
+      let tree = render(
+        <NestedSheets
+          childContentProps={{
+            ref: element => {
+              if (element) {
+                timelines.push(element.style.viewTimelineName);
+              }
+            }
+          }}
+        />
+      );
+      let parent = await open(tree);
+      let parentTimeline = parent.style.viewTimelineName;
+      await user.click(tree.getByRole('button', {name: 'Open child'}));
+      let childTimeline = tree.getByRole('dialog', {name: 'Child sheet'}).style.viewTimelineName;
+      expect(timelines.length).toBeGreaterThan(0);
+      for (let timeline of timelines) {
+        expect(timeline).toBe(childTimeline);
+        expect(timeline).not.toBe(parentTimeline);
+      }
+    });
+
+    it('keeps a sheet timeline when an earlier sheet is removed', async () => {
+      let sheets = firstOpen => (
+        <>
+          <StandaloneSheet key="first" isOpen={firstOpen} data-testid="first-overlay" />
+          <StandaloneSheet key="second" defaultOpen data-testid="second-overlay" />
+        </>
+      );
+      let tree = render(sheets(true));
+      let second = tree.getByTestId('second-overlay');
+      let dialog = within(second).getByRole('dialog', {hidden: true});
+      let timeline = dialog.style.viewTimelineName;
+      expect(second).toHaveAttribute('data-stack-index', '1');
+
+      tree.rerender(sheets(false));
+      act(() => jest.runAllTimers());
+      expect(second).toHaveAttribute('data-stack-index', '0');
+      expect(dialog.style.viewTimelineName).toBe(timeline);
+      expect(document.documentElement.style.getPropertyValue('timeline-scope')).toBe(timeline);
+    });
+
     it('tracks the stack index and descendants of nested sheets', async () => {
       let tree = render(<NestedSheets />);
-      await open(tree);
+      let parent = await open(tree);
+      let parentTimeline = parent.style.viewTimelineName;
       expect(document.documentElement.style.getPropertyValue('timeline-scope')).toBe(
-        '--sheet-timeline-0'
+        parentTimeline
       );
 
       await user.click(tree.getByRole('button', {name: 'Open child'}));
@@ -720,7 +765,7 @@ describe('Sheet', () => {
         expect(el).not.toHaveAttribute('data-has-descendants');
       }
       expect(document.documentElement.style.getPropertyValue('timeline-scope')).toBe(
-        '--sheet-timeline-0, --sheet-timeline-1'
+        `${parentTimeline}, ${child.style.viewTimelineName}`
       );
 
       await user.click(within(child).getByRole('button', {name: 'Close child'}));
@@ -730,7 +775,7 @@ describe('Sheet', () => {
         expect(tree.getByTestId(testId)).not.toHaveAttribute('data-has-descendants');
       }
       expect(document.documentElement.style.getPropertyValue('timeline-scope')).toBe(
-        '--sheet-timeline-0'
+        parentTimeline
       );
 
       await user.keyboard('{Escape}');
@@ -741,14 +786,17 @@ describe('Sheet', () => {
 
     it('animates parent sheets along the view timelines of their descendants', async () => {
       let tree = render(<NestedSheets />);
-      await open(tree);
+      let parent = await open(tree);
+      let parentTimeline = parent.style.viewTimelineName;
       let parentSheet = tree.getByTestId('parent-sheet');
       expect(parentSheet.style.animationName).toBe('radius');
-      expect(parentSheet.style.animationTimeline).toBe('--sheet-timeline-0');
+      expect(parentSheet.style.animationTimeline).toBe(parentTimeline);
 
       await user.click(tree.getByRole('button', {name: 'Open child'}));
       expect(parentSheet.style.animationName).toBe('radius, scaleBack');
-      expect(parentSheet.style.animationTimeline).toBe('--sheet-timeline-0, --sheet-timeline-1');
+      expect(parentSheet.style.animationTimeline).toBe(
+        `${parentTimeline}, ${tree.getByRole('dialog', {name: 'Child sheet'}).style.viewTimelineName}`
+      );
       expect(parentSheet.style.animationRange).toBe('entry 0% entry 100%, entry');
       expect(parentSheet.style.animationDirection).toBe('normal, normal');
       expect(parentSheet.style.animationComposition).toBe('replace, accumulate');
@@ -759,7 +807,7 @@ describe('Sheet', () => {
       await user.click(tree.getByRole('button', {name: 'Close child'}));
       act(() => jest.runAllTimers());
       expect(parentSheet.style.animationName).toBe('radius');
-      expect(parentSheet.style.animationTimeline).toBe('--sheet-timeline-0');
+      expect(parentSheet.style.animationTimeline).toBe(parentTimeline);
     });
 
     it('closes only the topmost sheet on Escape', async () => {
@@ -838,7 +886,7 @@ describe('Sheet', () => {
         ]) {
           let style = tree.getByTestId(testId).style;
           expect(style.animationName).toBe(name);
-          expect(style.animationTimeline).toBe('--sheet-timeline-0');
+          expect(style.animationTimeline).toBe(tree.getByRole('dialog').style.viewTimelineName);
           expect(style.animationRange).toBe(range);
           expect(style.animationDirection).toBe(direction);
           expect(style.animationIterationCount).toBe(iterations);
@@ -870,10 +918,10 @@ describe('Sheet', () => {
   });
 
   describe('view timelines', () => {
-    it('names the view timeline on SheetContent by stack index', async () => {
+    it('names the view timeline on SheetContent', async () => {
       let tree = render(<TestSheet />);
       let dialog = await open(tree);
-      expect(dialog.style.viewTimelineName).toBe('--sheet-timeline-0');
+      expect(dialog.style.viewTimelineName).toMatch(/^--sheet-timeline-/);
       expect(dialog.style.viewTimelineAxis).toBe('y');
     });
 
