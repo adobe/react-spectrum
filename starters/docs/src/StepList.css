@@ -2,9 +2,7 @@
 
 .react-aria-StepList {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacing-2);
+  max-width: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -13,9 +11,14 @@
 }
 
 .react-aria-StepListItem {
+  position: relative;
+  /* Steps share the available width equally, with a preferred width of 96px. */
+  flex: 1;
+  width: calc(var(--spacing) * 24);
+  box-sizing: border-box;
+  padding-inline: var(--spacing-1);
   display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
+  justify-content: center;
 
   .marker {
     display: flex;
@@ -41,13 +44,31 @@
     font-weight: 600;
   }
 
-  /* Connector line between steps. */
-  &:not(:last-child)::after {
+  /* Connector lines. Each step draws the lines on either side of its marker,
+     so they stay centered when steps have different widths. */
+  &::before,
+  &::after {
     content: '';
-    width: var(--spacing-6);
+    position: absolute;
+    top: var(--spacing-3);
     border-top: 1px solid var(--border-color);
   }
 
+  &::before {
+    inset-inline: 0 calc(50% + var(--spacing-5));
+  }
+
+  &::after {
+    inset-inline: calc(50% + var(--spacing-5)) 0;
+  }
+
+  &:first-child::before,
+  &:last-child::after {
+    display: none;
+  }
+
+  &[data-current]::before,
+  &[data-completed]::before,
   &[data-completed]::after {
     border-color: var(--highlight-background);
   }
@@ -55,8 +76,10 @@
 
 .react-aria-StepListItemContent {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: var(--spacing-2);
+  text-align: center;
   color: inherit;
   text-decoration: none;
   border-radius: var(--radius-sm);

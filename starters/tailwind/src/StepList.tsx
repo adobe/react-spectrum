@@ -24,7 +24,7 @@ export function StepList<T>({
       <AriaStepList
         {...props}
         className={twMerge(
-          'flex flex-wrap items-center gap-2 font-sans text-sm text-neutral-800 dark:text-neutral-200',
+          'flex max-w-full m-0 p-0 list-none font-sans text-sm text-neutral-800 dark:text-neutral-200',
           props.className
         )}
       />
@@ -55,8 +55,8 @@ export function StepListItem({children, href, ...props}: StepListItemProps) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        // The ::after element draws a connector line between steps.
-        'flex items-center gap-2 current:font-semibold after:w-6 after:border-t after:border-neutral-400 data-completed:after:border-blue-600 last:after:hidden'
+        // The ::before and ::after elements draw the connector lines on either side of the marker.
+        'relative box-border flex w-24 flex-1 justify-center px-1 current:font-semibold before:absolute before:start-0 before:end-[calc(50%+--spacing(5))] before:top-3 before:border-t before:border-neutral-400 first:before:hidden current:before:border-blue-600 data-completed:before:border-blue-600 after:absolute after:start-[calc(50%+--spacing(5))] after:end-0 after:top-3 after:border-t after:border-neutral-400 data-completed:after:border-blue-600 last:after:hidden'
       )}>
       {({isCurrent, isCompleted, stepNumber}) => {
         // Only completed steps are links, so users can go back but not skip ahead.
@@ -65,7 +65,7 @@ export function StepListItem({children, href, ...props}: StepListItemProps) {
           <AriaStepListItemContent
             href={isLink ? href : undefined}
             render={isLink ? renderLink : undefined}
-            className="flex items-center gap-2 rounded-xs text-current no-underline outline-0 outline-offset-2 outline-blue-600 dark:outline-blue-500 forced-colors:outline-[Highlight] data-hovered:underline data-focus-visible:outline-2 [-webkit-tap-highlight-color:transparent]">
+            className="flex flex-col items-center gap-2 text-center rounded-xs text-current no-underline outline-0 outline-offset-2 outline-blue-600 dark:outline-blue-500 forced-colors:outline-[Highlight] data-hovered:underline data-focus-visible:outline-2 [-webkit-tap-highlight-color:transparent]">
             <span className={markerStyles({isUpcoming: !isCurrent && !isCompleted})} aria-hidden>
               {isCompleted ? <Check className="size-3.5" /> : stepNumber}
             </span>

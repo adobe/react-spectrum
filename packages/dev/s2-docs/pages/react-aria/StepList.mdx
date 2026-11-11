@@ -51,7 +51,7 @@ import {StepList, StepListItem} from 'vanilla-starter/StepList';
 let steps = [
   {id: 'account', label: 'Account'},
   {id: 'profile', label: 'Profile'},
-  {id: 'preferences', label: 'Preferences'},
+  {id: 'settings', label: 'Settings'},
   {id: 'confirm', label: 'Confirm'}
 ];
 
@@ -126,7 +126,7 @@ function Example() {
   let [index, setIndex] = useState(1);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 16}}>
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 16, maxWidth: '100%'}}>
       <StepList
         aria-label="Checkout"
         items={steps}
