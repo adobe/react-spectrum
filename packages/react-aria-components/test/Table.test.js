@@ -760,17 +760,19 @@ describe('Table', () => {
     expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['1', '2', '3']));
   });
 
-  it('should extend checkbox selection from the last selected row when selectedKeys is controlled as a plain Set', async () => {
+  it('should extend checkbox selection when selectedKeys is controlled', async () => {
     let onSelectionChange = jest.fn();
     function ControlledTable() {
-      let [selected, setSelected] = useState([]);
+      // Pass the Selection object received from onSelectionChange back through
+      // selectedKeys so its range anchor is preserved between renders.
+      let [selected, setSelected] = useState(new Set());
       return (
         <TestTable
           tableProps={{
             selectionMode: 'multiple',
-            selectedKeys: new Set(selected),
+            selectedKeys: selected,
             onSelectionChange: keys => {
-              setSelected(keys === 'all' ? ['1', '2', '3'] : Array.from(keys));
+              setSelected(keys);
               onSelectionChange(keys);
             }
           }}

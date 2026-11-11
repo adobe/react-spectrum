@@ -111,21 +111,6 @@ export function useMultipleSelectionState(
     }
   }, [selectionBehaviorProp]);
 
-  // Selections created internally (e.g. by the selection manager) carry the
-  // anchor and current keys used for range selection. When a controlled parent
-  // echoes the same keys back as a new Set (e.g. `selectedKeys={new Set(keys)}`),
-  // keep the internal Selection so the range anchor is not lost. Discard it when
-  // the parent supplies a different selection.
-  let [lastSelection, setLastSelection] = useState<Selection | null>(null);
-  let effectiveSelectedKeys = selectedKeys;
-  if (lastSelection != null) {
-    if (selectedKeys !== 'all' && equalSets(selectedKeys, lastSelection)) {
-      effectiveSelectedKeys = lastSelection;
-    } else {
-      setLastSelection(null);
-    }
-  }
-
   return {
     selectionMode,
     disallowEmptySelection,
@@ -149,10 +134,9 @@ export function useMultipleSelectionState(
       childFocusStrategyRef.current = childFocusStrategy;
       setFocusedKey(k);
     },
-    selectedKeys: effectiveSelectedKeys,
+    selectedKeys,
     setSelectedKeys(keys) {
-      if (allowDuplicateSelectionEvents || !equalSets(keys, effectiveSelectedKeys)) {
-        setLastSelection(keys !== 'all' && keys instanceof Selection ? keys : null);
+      if (allowDuplicateSelectionEvents || !equalSets(keys, selectedKeys)) {
         setSelectedKeys(keys);
       }
     },
