@@ -1,56 +1,220 @@
-| Issue | Severity | Reproduction? | Solvable without changes? | Ready for review? | Would label | Would comment | Would close / duplicate of | Confidence |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [#10925](https://github.com/adobe/react-spectrum/issues/10925) - iOS searchable Select cannot scroll after autofocus | medium, touch interaction blocked | StackBlitz supplied; detailed steps and environment; not opened or executed | Not established; manual refocus reportedly restores scrolling | Yes | Would apply `bug`, `RAC`, `Select`, `Autocomplete`, `Popover`, `needs investigation`, `mobile testing`, `ready for review`, `ai-reviewed` | Would acknowledge the complete report, distinguish related issues and request native-device maintainer investigation | Would not close; no confirmed duplicate | medium |
+# Issue triage digest — 2026-11-05
 
-# Issue triage digest - 2026-11-05
+> Presentation-only revision of the original digest. This is not a fresh triage run; no historical proposal is executed or newly authorized by this rewrite.
 
-**Git synchronization:** Verified `/Users/darobins/dev/react-spectrum-triage` on `triage_support`, an empty index, no in-progress merge, no other active triage session, and no existing target digest. Only the local `.github/triage/setup.md` adaptation was modified. `git fetch origin` and `git merge origin/main --no-edit` succeeded without conflicts. Merged baseline: `36f3adde26ccd12f3cc18c9d0293ece0f10e94c7`, verified as an ancestor of HEAD. The setup adaptation remains unstaged. No push or GitHub write is performed.
+## At a glance
 
-**Scope:** Open issues created since the previous issue digest commit, `78269e78c4db46642fb943836e4d6dcddcefc1b7`, at `2026-11-04T16:05:22Z`, through the supplied run timestamp, `2026-11-05T16:17:25Z`. The digest date uses the supplied local date. A broader discovery query and an exact-window query both returned two open issues. Only #10925 qualifies: it remained unlabeled and had no comments on the final eligibility read. [#10924](https://github.com/adobe/react-spectrum/issues/10924) is excluded because its `bug` label is not a component label; its later maintainer confirmation does not change that scope rule. No query reached its result limit.
+- One report: iOS searchable Select ignores swipes after autofocus.
+- Medium severity and ready for native-device investigation, with no confirmed shared cause.
+- The supplied StackBlitz and video were not opened; no new reproduction was needed.
 
-**Read-only boundary:** GitHub was read only through `gh issue list/view`, `gh pr list/view` and `gh api --method GET`. No issue-supplied URL, attachment or reproduction was opened, fetched or executed. Source and documentation evidence below comes exclusively from the merged `origin/main` baseline. Runtime claims remain author reports, not independently reproduced results.
+## Issues
 
-## #10925 - iOS searchable Select cannot scroll after autofocus
+### [#10925](https://github.com/adobe/react-spectrum/issues/10925) — iOS searchable Select scrolling
 
-**Evidence and severity:** The [report](https://github.com/adobe/react-spectrum/issues/10925) says, "A swipe on the list moves the page behind it instead, and the popover jumps around" and "Once the keyboard is hidden and the search field is tapped again, the same swipe scrolls the list." Would classify **medium**: the primary touch path to choices is blocked on the reported iPhone/Safari configuration, but manual refocus reportedly restores it. No data loss, crash, screen-reader failure or universal inability to select is established. The claimed downstream HeroUI impact is not independently verified.
+**Decision:** Ready for review: keep separate and investigate with the native iOS keyboard.
+**Impact / severity:** Medium.
+**Complexity:** Not assessed in the original run.
+**Confidence:** Medium.
 
-**Reproduction:** The author supplies a [StackBlitz](https://stackblitz.com/github/aNNexatioN/react-aria-ios-keyboard-repro), five concrete steps, expected versus actual behaviour, RAC 1.22.1 / hooks package 3.53.1, React 19.3.1, and iOS 26.7.2 on an iPhone 16 Pro using Safari. The video timing is described in text; the video itself was not opened. These details are sufficient for maintainer investigation, although the reproduction's availability and contents cannot be verified under the URL prohibition. Would not ask the author to supply another StackBlitz before a maintainer attempts the existing one.
+#### What matters
 
-**Existing APIs / source:** This composition is supported in principle: the [Select documentation](https://github.com/adobe/react-spectrum/blob/36f3adde26ccd12f3cc18c9d0293ece0f10e94c7/packages/dev/s2-docs/pages/react-aria/Select.mdx#L105-L107) says, "`Select` can include additional components as siblings of the `ListBox`" and describes an `Autocomplete` with a `SearchField`. The [popover hook](https://github.com/adobe/react-spectrum/blob/36f3adde26ccd12f3cc18c9d0293ece0f10e94c7/packages/react-aria/src/overlays/usePopover.ts#L128-L130) enables scroll prevention for an open modal popover. The [iOS WebKit implementation](https://github.com/adobe/react-spectrum/blob/36f3adde26ccd12f3cc18c9d0293ece0f10e94c7/packages/react-aria/src/overlays/usePreventScroll.ts#L109-L192) handles touch scroll containers and overscroll containment, while its [focus override](https://github.com/adobe/react-spectrum/blob/36f3adde26ccd12f3cc18c9d0293ece0f10e94c7/packages/react-aria/src/overlays/usePreventScroll.ts#L223-L245) uses `preventScroll` and keyboard-transition handling. These identify investigation paths, not a proven root cause or proof that the reproduction uses the default modal configuration.
+- The visible list reportedly ignores swipes after autofocus, while the background moves.
+- Manual refocus reportedly restores scrolling; no complete accessible workaround or root cause was established.
+- The supplied StackBlitz and video were not opened; related zero-height/anchoring reports are not proven duplicates.
 
-The author reports avoiding `autoFocus` on coarse-pointer devices as a workaround. Would not present pointer-type detection as a verified, complete fix or recommend copying the issue's code: focus behaviour across touch, keyboard and assistive technology still needs checking. Would not apply `has workaround` yet. No source-backed public API change is established that resolves the reported behaviour while preserving the intended automatic focus. No code example is proposed because a safe, verified API-only solution has not been identified.
+#### Would have done
 
-**Duplicates / fixes:** Searches covered open and closed issues for `iOS scroll keyboard` and `autoFocus scroll`, and open, closed and merged PRs for `iOS scroll keyboard` and `preventScroll iOS`. Would link the following as related evidence, not close as a duplicate:
+**Labels (proposed)**
 
-- [#10891](https://github.com/adobe/react-spectrum/issues/10891) reports that "only its search field was visible" and the popover received "`max-height: 0`." In contrast, #10925 reports a visible list that ignores swipes until refocus. [#10892](https://github.com/adobe/react-spectrum/pull/10892), still open and unmerged when read, says it fixes the viewport mismatch that "reduces the popover's `max-height` to zero." Would not claim it fixes #10925 without matching geometry and device verification. Its claimed test results were not rerun or independently verified.
+- Would apply `bug` (reported touch scrolling failure)
+- `RAC` (component layer)
+- `Select` (owning composition)
+- `Autocomplete` (searchable list composition)
+- `Popover` (overlay and scroll containment)
+- `needs investigation` (root cause unconfirmed)
+- `mobile testing` (native iOS keyboard/touch verification)
+- `ready for review` (complete actionable report)
+- `ai-reviewed` (automated triage completed, not approval). Would remove none. All proposed labels exist in the live repository label set
+- no label creation is proposed.
+
+**Maintainer next step**
+
+- Use the existing reproduction on a real iPhone; compare autofocus/refocus, scrollable area, modal configuration and page movement.
+- Historical comment proposal only: maintainer-reviewed wording is retained in the #10925 evidence appendix; nothing was posted by this revision.
+
+## Evidence and verification appendix
+
+### #10925 — Evidence and verification
+
+#### Evidence and severity
+
+The [report](https://github.com/adobe/react-spectrum/issues/10925) says, "A swipe on the list moves the page behind it instead, and the popover jumps around" and "Once the keyboard is hidden and the search field is tapped again, the same swipe scrolls the list." Would classify **medium**: the primary touch path to choices is blocked on the reported iPhone/Safari configuration, but manual refocus reportedly restores it.
+
+No data loss, crash, screen-reader failure or universal inability to select is established.
+
+The claimed downstream HeroUI impact is not independently verified.
+
+#### Reproduction
+
+The author supplies a [StackBlitz](https://stackblitz.com/github/aNNexatioN/react-aria-ios-keyboard-repro), five concrete steps, expected versus actual behaviour, RAC 1.22.1 / hooks package 3.53.1, React 19.3.1, and iOS 26.7.2 on an iPhone 16 Pro using Safari.
+
+The video timing is described in text; the video itself was not opened.
+
+These details are sufficient for maintainer investigation, although the reproduction's availability and contents cannot be verified under the URL prohibition.
+
+Would not ask the author to supply another StackBlitz before a maintainer attempts the existing one.
+
+#### Existing APIs / source
+
+This composition is supported in principle: the [Select documentation](https://github.com/adobe/react-spectrum/blob/36f3adde26ccd12f3cc18c9d0293ece0f10e94c7/packages/dev/s2-docs/pages/react-aria/Select.mdx#L105-L107) says, "`Select` can include additional components as siblings of the `ListBox`" and describes an `Autocomplete` with a `SearchField`.
+
+The [popover hook](https://github.com/adobe/react-spectrum/blob/36f3adde26ccd12f3cc18c9d0293ece0f10e94c7/packages/react-aria/src/overlays/usePopover.ts#L128-L130) enables scroll prevention for an open modal popover.
+
+The [iOS WebKit implementation](https://github.com/adobe/react-spectrum/blob/36f3adde26ccd12f3cc18c9d0293ece0f10e94c7/packages/react-aria/src/overlays/usePreventScroll.ts#L109-L192) handles touch scroll containers and overscroll containment, while its [focus override](https://github.com/adobe/react-spectrum/blob/36f3adde26ccd12f3cc18c9d0293ece0f10e94c7/packages/react-aria/src/overlays/usePreventScroll.ts#L223-L245) uses `preventScroll` and keyboard-transition handling.
+
+These identify investigation paths, not a proven root cause or proof that the reproduction uses the default modal configuration.
+
+The author reports avoiding `autoFocus` on coarse-pointer devices as a workaround.
+
+Would not present pointer-type detection as a verified, complete fix or recommend copying the issue's code: focus behaviour across touch, keyboard and assistive technology still needs checking.
+
+Would not apply `has workaround` yet.
+
+No source-backed public API change is established that resolves the reported behaviour while preserving the intended automatic focus.
+
+No code example is proposed because a safe, verified API-only solution has not been identified.
+
+#### Duplicates / fixes
+
+Searches covered open and closed issues for `iOS scroll keyboard` and `autoFocus scroll`, and open, closed and merged PRs for `iOS scroll keyboard` and `preventScroll iOS`.
+
+Would link the following as related evidence, not close as a duplicate:
+
+- [#10891](https://github.com/adobe/react-spectrum/issues/10891) reports that "only its search field was visible" and the popover received "`max-height: 0`." In contrast, #10925 reports a visible list that ignores swipes until refocus.
+
+- [#10892](https://github.com/adobe/react-spectrum/pull/10892), still open and unmerged when read, says it fixes the viewport mismatch that "reduces the popover's `max-height` to zero." Would not claim it fixes #10925 without matching geometry and device verification.
+
+- Its claimed test results were not rerun or independently verified.
 - [#10497](https://github.com/adobe/react-spectrum/issues/10497) says, "The selected element ends up below the keyboard." That concerns selection scroll anchoring after keyboard resize, not demonstrated loss of manual list scrolling.
-- Closed [#6604](https://github.com/adobe/react-spectrum/issues/6604) says autofocus causes "the windows scrolls to the bottom" and lists desktop browsers on macOS with RAC 1.2.0. It does not establish the same iOS touch-scroll defect. Would not recommend its comment's separate-render focus workaround.
+- Closed [#6604](https://github.com/adobe/react-spectrum/issues/6604) says autofocus causes "the windows scrolls to the bottom" and lists desktop browsers on macOS with RAC 1.2.0.
 
-**Regression / readiness:** No previously working version or release boundary is provided, so would not apply `regression`. Would have added `ready for review`: **yes**. Description, expected/actual behaviour, supplied reproduction, steps, package versions, browser and OS are present, consistent with the [bug form](https://github.com/adobe/react-spectrum/blob/36f3adde26ccd12f3cc18c9d0293ece0f10e94c7/.github/ISSUE_TEMPLATE/Bug_Report.yml). No confirmed duplicate or verified API-only resolution blocks maintainer review. Would not apply `browser bug` merely because the symptom is Safari-specific: attribution to WebKit versus library behaviour remains unresolved.
+- It does not establish the same iOS touch-scroll defect.
 
-### Would have done
+- Would not recommend its comment's separate-render focus workaround.
 
-- **Labels:** Would apply `bug` (reported touch scrolling failure), `RAC` (component layer), `Select` (owning composition), `Autocomplete` (searchable list composition), `Popover` (overlay and scroll containment), `needs investigation` (root cause unconfirmed), `mobile testing` (native iOS keyboard/touch verification), `ready for review` (complete actionable report), and `ai-reviewed` (automated triage completed, not approval). Would remove none. All proposed labels exist in the live repository label set; no label creation is proposed.
-- **Ready for review:** Would have added `ready for review`: yes. No blocking author-information gap; runtime verification and reproduction-link availability remain unverified, not proven missing.
-- **Comment:** Would comment:
+#### Regression / readiness
 
-  > The report includes a StackBlitz, device and package versions, and a useful comparison between autofocus on opening and focusing the search field again after dismissing the keyboard. That is enough detail for a maintainer to investigate on iOS Safari.
-  >
-  > #10891 and its open PR #10892 concern an upward popover receiving `max-height: 0` while the keyboard is open. #10497 concerns a selected item ending up below the keyboard. Your report describes a visible list that does not respond to swipes until refocus, so I would keep this separate unless device testing establishes the same cause.
-  >
-  > I have not opened or run the reproduction or watched the attachment. The existing touch-scroll prevention and keyboard-focus handling are investigation paths, not a confirmed diagnosis. The next step is to check the supplied reproduction with the native keyboard open, including whether the list still has a nonzero scrollable area before and after refocusing. I would not treat disabling autofocus based on pointer type as a complete fix without checking focus behaviour for keyboard and assistive-technology users.
+No previously working version or release boundary is provided, so would not apply `regression`.
 
-- **Close / link:** Would not close or mark duplicate; would keep #10925 as its own report. Would link #10891, #10892 and #10497 as related, with the symptom distinctions above. No issue is selected to supersede #10925.
-- **Other:** Would request maintainer investigation on a real iPhone with the native software keyboard, comparing initial autofocus and subsequent manual focus, list scrollability, modal configuration and background page movement. No new reproduction request, API review or design escalation is needed yet.
-- **Confidence:** Medium. Confidence would increase after native-device confirmation; matching zero-height geometry, a proven shared fix, or reproduction evidence of a custom non-modal/style configuration could change the duplicate, severity or resolution decision.
-- **Feedback prompt:** Is a supplied but intentionally unopened StackBlitz plus complete device steps sufficient for `ready for review`?
+Would have added `ready for review`: **yes**.
 
-## Rule feedback
+Description, expected/actual behaviour, supplied reproduction, steps, package versions, browser and OS are present, consistent with the [bug form](https://github.com/adobe/react-spectrum/blob/36f3adde26ccd12f3cc18c9d0293ece0f10e94c7/.github/ISSUE_TEMPLATE/Bug_Report.yml).
 
-- **Scope boundary:** Used the previous issue digest's commit timestamp rather than a strict rolling 24-hour window, to avoid a gap since that digest. The review endpoint is the supplied run timestamp, not the later wall clock during retrieval. Current labels/comments were read live; GitHub does not provide an atomic historical snapshot here.
+No confirmed duplicate or verified API-only resolution blocks maintainer review.
+
+Would not apply `browser bug` merely because the symptom is Safari-specific: attribution to WebKit versus library behaviour remains unresolved.
+
+#### Original readiness qualifications
+
+Would have added `ready for review`: yes. No blocking author-information gap; runtime verification and reproduction-link availability remain unverified, not proven missing.
+
+#### Confidence and decision-changing evidence
+
+Medium.
+
+Confidence would increase after native-device confirmation; matching zero-height geometry, a proven shared fix, or reproduction evidence of a custom non-modal/style configuration could change the duplicate, severity or resolution decision.
+
+#### Historical proposed comment (not posted by this revision)
+
+Would comment:
+
+> The report includes a StackBlitz, device and package versions, and a useful comparison between autofocus on opening and focusing the search field again after dismissing the keyboard.
+>
+> That is enough detail for a maintainer to investigate on iOS Safari.
+> #10891 and its open PR #10892 concern an upward popover receiving `max-height: 0` while the keyboard is open. #10497 concerns a selected item ending up below the keyboard.
+>
+> Your report describes a visible list that does not respond to swipes until refocus, so I would keep this separate unless device testing establishes the same cause.
+> I have not opened or run the reproduction or watched the attachment.
+>
+> The existing touch-scroll prevention and keyboard-focus handling are investigation paths, not a confirmed diagnosis.
+>
+> The next step is to check the supplied reproduction with the native keyboard open, including whether the list still has a nonzero scrollable area before and after refocusing.
+>
+> I would not treat disabling autofocus based on pointer type as a complete fix without checking focus behaviour for keyboard and assistive-technology users.
+
+#### Historical closure and escalation proposals
+
+- Close / link: Would not close or mark duplicate; would keep #10925 as its own report.
+- Close / link: Would link #10891, #10892 and #10497 as related, with the symptom distinctions above.
+- Close / link: No issue is selected to supersede #10925.
+- Other: Would request maintainer investigation on a real iPhone with the native software keyboard, comparing initial autofocus and subsequent manual focus, list scrollability, modal configuration and background page movement.
+- Other: No new reproduction request, API review or design escalation is needed yet.
+
+## Run notes
+
+#### Git synchronization
+
+Verified `/Users/darobins/dev/react-spectrum-triage` on `triage_support`, an empty index, no in-progress merge, no other active triage session, and no existing target digest.
+
+Only the local `.github/triage/setup.md` adaptation was modified. `git fetch origin` and `git merge origin/main --no-edit` succeeded without conflicts.
+
+Merged baseline: `36f3adde26ccd12f3cc18c9d0293ece0f10e94c7`, verified as an ancestor of HEAD.
+
+The setup adaptation remains unstaged.
+
+No push or GitHub write is performed.
+
+#### Scope
+
+Open issues created since the previous issue digest commit, `78269e78c4db46642fb943836e4d6dcddcefc1b7`, at `2026-11-04T16:05:22Z`, through the supplied run timestamp, `2026-11-05T16:17:25Z`.
+
+The digest date uses the supplied local date.
+
+A broader discovery query and an exact-window query both returned two open issues.
+
+Only #10925 qualifies: it remained unlabeled and had no comments on the final eligibility read. [#10924](https://github.com/adobe/react-spectrum/issues/10924) is excluded because its `bug` label is not a component label; its later maintainer confirmation does not change that scope rule.
+
+No query reached its result limit.
+
+#### Read-only boundary
+
+GitHub was read only through `gh issue list/view`, `gh pr list/view` and `gh api --method GET`.
+
+No issue-supplied URL, attachment or reproduction was opened, fetched or executed.
+
+Source and documentation evidence below comes exclusively from the merged `origin/main` baseline.
+
+Runtime claims remain author reports, not independently reproduced results.
+
+#### Rule feedback — #10925
+
+Is a supplied but intentionally unopened StackBlitz plus complete device steps sufficient for `ready for review`?
+
+### Rule feedback from the original run
+
+- **Scope boundary:** Used the previous issue digest's commit timestamp rather than a strict rolling 24-hour window, to avoid a gap since that digest.
+
+- The review endpoint is the supplied run timestamp, not the later wall clock during retrieval.
+
+- Current labels/comments were read live; GitHub does not provide an atomic historical snapshot here.
 - **Already-triaged exclusion:** The literal "no label other than component labels" rule excludes #10924 because it has `bug`, even though it lacks `ai-reviewed`. No proposed actions are included for that out-of-scope issue.
-- **Reproduction and attachments:** The rules require assessing reproduction quality but prohibit opening issue-supplied URLs. Completeness was judged from the supplied link, textual steps and environment only. Link validity, actual reproduction contents, video evidence and runtime behaviour were not verified. No issue code, dependency installation or browser tests were run.
-- **Label spelling:** The instructions name `waiting for author`, but the live label is `waiting on author`. Neither is needed here. Unlike the prior digest's label inventory, `ai-reviewed` now exists; this run uses the live two-page label inventory, not yesterday's assumption.
-- **Workaround and attribution:** Author-reported manual refocus and optional autofocus avoidance justify medium rather than high severity, but are not enough to endorse a complete accessible workaround, apply `has workaround`, or attribute the defect to WebKit. No regression range is established.
+- **Reproduction and attachments:** The rules require assessing reproduction quality but prohibit opening issue-supplied URLs.
+
+- Completeness was judged from the supplied link, textual steps and environment only.
+
+- Link validity, actual reproduction contents, video evidence and runtime behaviour were not verified.
+
+- No issue code, dependency installation or browser tests were run.
+- **Label spelling:** The instructions name `waiting for author`, but the live label is `waiting on author`.
+
+- Neither is needed here.
+
+- Unlike the prior digest's label inventory, `ai-reviewed` now exists; this run uses the live two-page label inventory, not yesterday's assumption.
+- **Workaround and attribution:** Author-reported manual refocus and optional autofocus avoidance justify medium rather than high severity, but are not enough to endorse a complete accessible workaround, apply `has workaround`, or attribute the defect to WebKit.
+
+- No regression range is established.
 - **Search limitations:** Searches covered both issue states and all PR states without reaching result limits. They reduce duplicate risk but do not prove that no differently worded report or fix exists.
-- **Local operations:** Routine non-destructive shell checks and trusted `git show origin/main:...` reads were used under the user's standing authorization, in addition to setup-prescribed fetch/merge and digest-only staging/commit. The local setup adaptation and all other existing files are left untouched by digest authoring.
+- **Local operations:** Routine non-destructive shell checks and trusted `git show origin/main:...` reads were used under the user's standing authorization, in addition to setup-prescribed fetch/merge and digest-only staging/commit.
+
+- The local setup adaptation and all other existing files are left untouched by digest authoring.
