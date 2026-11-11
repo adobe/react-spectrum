@@ -273,7 +273,10 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
       disallowEmptySelection: true,
       linkBehavior: 'selection',
       onBlur: e => {
-        if (nodeContains(e.currentTarget, e.relatedTarget as Node)) {
+        if (
+          nodeContains(e.currentTarget, e.relatedTarget as Node) ||
+          nodeContains(ref.current, e.relatedTarget as Node)
+        ) {
           return;
         }
 

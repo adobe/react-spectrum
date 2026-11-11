@@ -298,6 +298,23 @@ export class MenuTester {
             return true;
           }
         });
+
+        if (closesOnSelect && option?.getAttribute('aria-haspopup') == null) {
+          await waitFor(() => {
+            let rootMenu = this._isSubmenu ? this._rootMenu : menu;
+            if (rootMenu && document.contains(rootMenu)) {
+              throw new Error(
+                'Expected the menu to not be in the document after selecting an option.'
+              );
+            } else if (menu && document.contains(menu)) {
+              throw new Error(
+                'Expected the menu to not be in the document after selecting an option.'
+              );
+            } else {
+              return true;
+            }
+          });
+        }
       }
     } else {
       throw new Error("Attempted to select a option in the menu, but menu wasn't found.");

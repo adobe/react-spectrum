@@ -116,16 +116,14 @@ export class SelectTester {
         throw new Error(
           `Expected the document.activeElement after closing the select dropdown to be the select component trigger but got ${document.activeElement}`
         );
-      } else {
-        return true;
       }
+      if (listbox && document.contains(listbox)) {
+        throw new Error(
+          'Expected the select element listbox to not be in the document after closing the dropdown.'
+        );
+      }
+      return true;
     });
-
-    if (listbox && document.contains(listbox)) {
-      throw new Error(
-        'Expected the select element listbox to not be in the document after closing the dropdown.'
-      );
-    }
   }
 
   /**
@@ -221,16 +219,14 @@ export class SelectTester {
           throw new Error(
             `Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`
           );
-        } else {
-          return true;
         }
+        if (document.contains(listbox)) {
+          throw new Error(
+            'Expected select element listbox to not be in the document after selecting an option'
+          );
+        }
+        return true;
       });
-
-      if (document.contains(listbox)) {
-        throw new Error(
-          'Expected select element listbox to not be in the document after selecting an option'
-        );
-      }
     }
   }
 

@@ -494,7 +494,8 @@ function isElementInScope(element?: Element | null, scope?: Element[] | null) {
   return scope.some(node => nodeContains(node, element));
 }
 
-function isElementInChildScope(element: Element, scope: ScopeRef = null) {
+/** @private */
+export function isElementInChildScope(element: Element, scope: ScopeRef = null) {
   // If the element is within a top layer element (e.g. toasts), always allow moving focus there.
   if (element instanceof Element && element.closest('[data-react-aria-top-layer]')) {
     return true;
@@ -833,7 +834,8 @@ function useRestoreFocus(
   }, [scopeRef, restoreFocus]);
 }
 
-function restoreFocusToElement(node: FocusableElement) {
+/** @private */
+export function restoreFocusToElement(node: FocusableElement) {
   // Dispatch a custom event that parent elements can intercept to customize focus restoration.
   // For example, virtualized collection components reuse DOM elements, so the original element
   // might still exist in the DOM but representing a different item.
