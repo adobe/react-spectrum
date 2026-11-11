@@ -75,7 +75,10 @@ export function Overlay(props: OverlayProps): React.ReactPortal | null {
   let contents = props.children;
   if (!props.disableFocusManagement) {
     contents = (
-      <FocusScope restoreFocus contain={(props.shouldContainFocus || contain) && !isExiting}>
+      <FocusScope
+        restoreFocus
+        contain={(props.shouldContainFocus || contain) && !isExiting}
+        isExiting={isExiting}>
         {contents}
       </FocusScope>
     );

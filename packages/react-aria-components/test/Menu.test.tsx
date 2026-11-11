@@ -2202,6 +2202,288 @@ describe('Menu', () => {
       expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe('exit animation focus restoration', () => {
+    let originalGetAnimations;
+
+    beforeEach(() => {
+      originalGetAnimations = Element.prototype.getAnimations;
+    });
+
+    afterEach(() => {
+      if (originalGetAnimations) {
+        Element.prototype.getAnimations = originalGetAnimations;
+      } else {
+        delete (Element.prototype as any).getAnimations;
+      }
+    });
+
+    it('restores focus to trigger immediately on Escape during exit animation without invoking onAction', async () => {
+      let resolveAnimation;
+      let animationPromise = new Promise<void>(resolve => {
+        resolveAnimation = resolve;
+      });
+
+      Element.prototype.getAnimations = function () {
+        if (this.getAttribute('data-exiting') != null) {
+          return [{playState: 'running', finished: animationPromise} as unknown as Animation];
+        }
+        return [];
+      };
+
+      let onActionA = jest.fn();
+      let {getByRole} = render(
+        <MenuTrigger>
+          <Button>Menu 2</Button>
+          <Popover>
+            <Menu>
+              <MenuItem id="a" onAction={onActionA}>
+                MenuItem A
+              </MenuItem>
+              <MenuItem id="b">MenuItem B</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let menuTrigger = getByRole('button', {name: 'Menu 2'});
+      await user.tab();
+      expect(document.activeElement).toBe(menuTrigger);
+      await user.keyboard('{Enter}');
+
+      let itemA = getByRole('menuitem', {name: 'MenuItem A'});
+      expect(document.activeElement).toBe(itemA);
+
+      await user.keyboard('{Escape}');
+
+      let popover = document.querySelector('[data-exiting]');
+      expect(popover).not.toBeNull();
+      expect(document.activeElement).toBe(menuTrigger);
+
+      // Pressing Enter while focus is on the trigger reopens the menu instead of activating Item A
+      await user.keyboard('{Enter}');
+      expect(onActionA).not.toHaveBeenCalled();
+      expect(menuTrigger).toHaveAttribute('aria-expanded', 'true');
+
+      await act(async () => {
+        resolveAnimation();
+      });
+    });
+
+    it('unmounts normally after exit animation completes and preserves trigger focus', async () => {
+      let resolveAnimation;
+      let animationPromise = new Promise<void>(resolve => {
+        resolveAnimation = resolve;
+      });
+
+      Element.prototype.getAnimations = function () {
+        if (this.getAttribute('data-exiting') != null) {
+          return [{playState: 'running', finished: animationPromise} as unknown as Animation];
+        }
+        return [];
+      };
+
+      let {getByRole} = render(
+        <MenuTrigger>
+          <Button>Menu</Button>
+          <Popover>
+            <Menu>
+              <MenuItem id="a">MenuItem A</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let menuTrigger = getByRole('button', {name: 'Menu'});
+      await user.tab();
+      await user.keyboard('{Enter}');
+
+      let itemA = getByRole('menuitem', {name: 'MenuItem A'});
+      expect(document.activeElement).toBe(itemA);
+
+      await user.keyboard('{Escape}');
+
+      let popover = document.querySelector('[data-exiting]');
+      expect(popover).not.toBeNull();
+      expect(document.activeElement).toBe(menuTrigger);
+
+      await act(async () => {
+        resolveAnimation();
+      });
+
+      expect(popover).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(menuTrigger);
+    });
+
+    it('restores focus to parent submenu item when nested submenu is dismissed with Escape during exit animation', async () => {
+      let resolveSubmenuAnimation;
+      let submenuAnimationPromise = new Promise<void>(resolve => {
+        resolveSubmenuAnimation = resolve;
+      });
+
+      Element.prototype.getAnimations = function () {
+        if (this.getAttribute('data-exiting') != null) {
+          return [
+            {playState: 'running', finished: submenuAnimationPromise} as unknown as Animation
+          ];
+        }
+        return [];
+      };
+
+      let {getByRole} = render(
+        <MenuTrigger>
+          <Button>Root Menu</Button>
+          <Popover>
+            <Menu>
+              <MenuItem id="open">Open</MenuItem>
+              <SubmenuTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Popover>
+                  <Menu>
+                    <MenuItem id="email">Email</MenuItem>
+                  </Menu>
+                </Popover>
+              </SubmenuTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let rootButton = getByRole('button', {name: 'Root Menu'});
+      await user.tab();
+      expect(document.activeElement).toBe(rootButton);
+      await user.keyboard('{Enter}');
+
+      let shareItem = getByRole('menuitem', {name: 'Share…'});
+      fireEvent.keyDown(shareItem, {key: 'ArrowDown'});
+      fireEvent.keyUp(shareItem, {key: 'ArrowDown'});
+      expect(document.activeElement).toBe(shareItem);
+
+      fireEvent.keyDown(shareItem, {key: 'ArrowRight'});
+      fireEvent.keyUp(shareItem, {key: 'ArrowRight'});
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let emailItem = getByRole('menuitem', {name: 'Email'});
+      expect(document.activeElement).toBe(emailItem);
+
+      await user.keyboard('{Escape}');
+
+      let submenuPopover = emailItem.closest('.react-aria-Popover');
+      expect(submenuPopover).toHaveAttribute('data-exiting');
+      expect(document.activeElement).toBe(shareItem);
+
+      await act(async () => {
+        resolveSubmenuAnimation();
+      });
+
+      expect(submenuPopover).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(shareItem);
+    });
+
+    it('preserves focus on an external input when clicked to dismiss menu during exit animation', async () => {
+      let resolveAnimation;
+      let animationPromise = new Promise<void>(resolve => {
+        resolveAnimation = resolve;
+      });
+
+      Element.prototype.getAnimations = function () {
+        if (this.getAttribute('data-exiting') != null) {
+          return [{playState: 'running', finished: animationPromise} as unknown as Animation];
+        }
+        return [];
+      };
+
+      let {getByRole, getByTestId} = render(
+        <div>
+          <input data-testid="external-input" />
+          <MenuTrigger>
+            <Button>Menu</Button>
+            <Popover>
+              <Menu>
+                <MenuItem id="a">MenuItem A</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        </div>
+      );
+
+      let menuTrigger = getByRole('button', {name: 'Menu'});
+      let externalInput = getByTestId('external-input');
+
+      await user.click(menuTrigger);
+      let menu = getByRole('menu');
+      expect(document.activeElement).toBe(menu);
+
+      await user.click(externalInput);
+
+      let popover = document.querySelector('[data-exiting]');
+      expect(popover).not.toBeNull();
+      expect(document.activeElement).toBe(externalInput);
+
+      await act(async () => {
+        resolveAnimation();
+      });
+
+      expect(popover).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(externalInput);
+    });
+
+    it('does not restore focus back to trigger after Menu is reopened during exit animation and animation completes', async () => {
+      let resolveAnimation;
+      let animationPromise = new Promise<void>(resolve => {
+        resolveAnimation = resolve;
+      });
+
+      Element.prototype.getAnimations = function () {
+        if (this.getAttribute('data-exiting') != null) {
+          return [{playState: 'running', finished: animationPromise} as unknown as Animation];
+        }
+        return [];
+      };
+
+      let {getByRole} = render(
+        <MenuTrigger>
+          <Button>Menu</Button>
+          <Popover>
+            <Menu>
+              <MenuItem id="a">MenuItem A</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let menuTrigger = getByRole('button', {name: 'Menu'});
+      await user.tab();
+      expect(document.activeElement).toBe(menuTrigger);
+      await user.keyboard('{Enter}');
+
+      let itemA = getByRole('menuitem', {name: 'MenuItem A'});
+      expect(document.activeElement).toBe(itemA);
+
+      // Press Escape: starts exit animation and restores focus to trigger immediately
+      await user.keyboard('{Escape}');
+      expect(document.activeElement).toBe(menuTrigger);
+      let popover = document.querySelector('[data-exiting]');
+      expect(popover).not.toBeNull();
+
+      // Reopen while exit animation is running
+      await user.keyboard('{Enter}');
+      expect(menuTrigger).toHaveAttribute('aria-expanded', 'true');
+      let activeElementAfterReopen = document.activeElement;
+
+      // Resolve the exit animation promise
+      await act(async () => {
+        resolveAnimation();
+      });
+
+      // Reopened Menu remains open and the old exit animation does not steal focus or restore focus unexpectedly
+      let menu = getByRole('menu');
+      expect(menu).toBeInTheDocument();
+      expect(document.activeElement).toBe(activeElementAfterReopen);
+    });
+  });
 });
 
 // better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?

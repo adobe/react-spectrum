@@ -460,6 +460,74 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(outside);
     });
 
+    it('should restore focus immediately when isExiting becomes true while still mounted', function () {
+      function Test({show, isExiting}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            {show && (
+              <FocusScope restoreFocus autoFocus isExiting={isExiting}>
+                <input data-testid="input1" />
+                <input data-testid="input2" />
+              </FocusScope>
+            )}
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let outside = getByTestId('outside');
+      act(() => {
+        outside.focus();
+      });
+
+      rerender(<Test show />);
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      rerender(<Test show isExiting />);
+
+      expect(document.activeElement).toBe(outside);
+      expect(getByTestId('input1')).toBeInTheDocument();
+    });
+
+    it('should not disturb focus when isExiting becomes true if focus is already outside', function () {
+      function Test({show, isExiting}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <input data-testid="external" />
+            {show && (
+              <FocusScope restoreFocus isExiting={isExiting}>
+                <input data-testid="input1" />
+              </FocusScope>
+            )}
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let outside = getByTestId('outside');
+      act(() => {
+        outside.focus();
+      });
+
+      rerender(<Test show />);
+
+      let external = getByTestId('external');
+      act(() => {
+        external.focus();
+      });
+      expect(document.activeElement).toBe(external);
+
+      rerender(<Test show isExiting />);
+
+      expect(document.activeElement).toBe(external);
+    });
+
     it('should restore focus to the previously focused node after a child with autoFocus unmounts', function () {
       function Test({show}) {
         return (

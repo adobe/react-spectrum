@@ -584,6 +584,42 @@ describe('Dialog', () => {
       await act(async () => exit.resolve());
       expect(modal).not.toBeInTheDocument();
     });
+
+    it('restores focus to trigger immediately on Escape during exit animation', async () => {
+      let exit = deferred();
+      let onConfirm = jest.fn();
+      let {getByRole, getByTestId} = render(
+        <DialogTrigger>
+          <Button>Open</Button>
+          <ModalOverlay isDismissable data-testid="overlay">
+            <Modal data-testid="modal" onExit={() => exit.promise}>
+              <Dialog aria-label="Modal">
+                <Button autoFocus onPress={onConfirm}>
+                  Confirm
+                </Button>
+              </Dialog>
+            </Modal>
+          </ModalOverlay>
+        </DialogTrigger>
+      );
+
+      let trigger = getByRole('button', {name: 'Open'});
+      await user.click(trigger);
+
+      let confirmButton = getByRole('button', {name: 'Confirm'});
+      expect(document.activeElement).toBe(confirmButton);
+
+      await user.keyboard('{Escape}');
+
+      let modal = getByTestId('modal');
+      expect(modal).toHaveAttribute('data-exiting');
+      expect(document.activeElement).toBe(trigger);
+
+      await act(async () => exit.resolve());
+      expect(modal).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(trigger);
+      expect(onConfirm).not.toHaveBeenCalled();
+    });
   });
 
   describe('portalProvider', () => {

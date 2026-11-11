@@ -376,7 +376,7 @@ function PopoverInner({
       <Overlay
         {...props}
         shouldContainFocus={isDialog && props.trigger !== 'PreviewTrigger'}
-        isExiting={isExiting}
+        isExiting={!state.isOpen && isExiting}
         portalContainer={UNSTABLE_portalContainer}>
         {/* oxlint-disable-next-line react/react-compiler */}
         {!props.isNonModal && state.isOpen && (
@@ -398,7 +398,7 @@ function PopoverInner({
     <Overlay
       {...props}
       shouldContainFocus={isDialog && props.trigger !== 'PreviewTrigger'}
-      isExiting={isExiting}
+      isExiting={!state.isOpen && isExiting}
       portalContainer={UNSTABLE_portalContainer ?? groupCtx?.current ?? undefined}>
       {overlay}
     </Overlay>

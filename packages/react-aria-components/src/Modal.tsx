@@ -318,7 +318,9 @@ function ModalOverlayInner({
 
   // oxlint-disable react/react-compiler
   return (
-    <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
+    <Overlay
+      isExiting={!state.isOpen && props.isExiting}
+      portalContainer={UNSTABLE_portalContainer}>
       <dom.div
         {...mergeProps(filterDOMProps(props, {global: true}), underlayProps)}
         {...renderProps}
