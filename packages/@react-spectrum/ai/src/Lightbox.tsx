@@ -388,7 +388,6 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     // Retarget an existing selection-driven animation even if its intermediate
     // position already rounds to the newly selected page.
     // if (selectedIndex === currentIndex && !isScrollingToSelection.current) {
-    //   console.log('hey');
     //   return;
     // }
 
@@ -397,15 +396,6 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
 
     // Keep the chosen selection authoritative while the viewport catches up.
     isScrollingToSelection.current = el.scrollLeft !== left;
-
-    console.log('Lightbox scrollTo', {
-      previousIndex,
-      selectedIndex,
-      currentIndex,
-      scrollLeft: el.scrollLeft,
-      targetLeft: left,
-      isAdjacent
-    });
 
     // Distant selections may have unmounted pages between them.
     el.scrollTo({
