@@ -286,21 +286,16 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
       let hasEntered = false;
       let observer = new IntersectionObserver(
         entries => {
-          let latestEntry: IntersectionObserverEntry | undefined;
-          for (let entry of entries) {
-            if (entry.target && entry.target !== el) {
-              continue;
-            }
+          let matchingEntries = entries
+            .filter(entry => !entry.target || entry.target === el)
+            .sort((a, b) => a.time - b.time);
 
-            hasEntered ||= entry.intersectionRatio > 0;
-            if (!latestEntry || entry.time >= latestEntry.time) {
-              latestEntry = entry;
-            }
-          }
-
+          let latestEntry = matchingEntries.at(-1);
           if (!latestEntry) {
             return;
           }
+
+          hasEntered ||= matchingEntries.some(entry => entry.intersectionRatio > 0);
 
           // Expose whether the sheet is resting at its fully-entered detent (all of it revealed). Apps
           // can use `[data-expanded]` to only make the sheet's inner content scrollable once expanded,

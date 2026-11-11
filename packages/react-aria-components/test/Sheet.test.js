@@ -621,12 +621,14 @@ describe('Sheet', () => {
       expect(tree.queryByRole('dialog')).toBeNull();
     });
 
-    it('selects the latest zero-intersection entry in reverse array order to complete exit', async () => {
+    it('tracks entrance cumulatively and closes when entering and exiting in reverse order within a single callback', async () => {
       let onOpenChange = jest.fn();
       let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
       await open(tree);
 
-      intersect(1);
+      // The sheet has not yet entered the viewport. An entry with positive ratio (time: 100)
+      // marks the sheet as entered via cumulative tracking, while the latest chronological
+      // entry (time: 200, ratio: 0) completes exit even though entries arrive in reverse array order.
       triggerEntries([
         {intersectionRatio: 0, time: 200},
         {intersectionRatio: 0.5, time: 100}
@@ -685,7 +687,7 @@ describe('Sheet', () => {
       expect(tree.queryByRole('dialog')).toBeNull();
     });
 
-    it('ignores callbacks where all entries belong to unrelated targets', async () => {
+    it('returns early without modifying state when all callback entries belong to unrelated targets', async () => {
       let onOpenChange = jest.fn();
       let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
       await open(tree);
@@ -694,6 +696,8 @@ describe('Sheet', () => {
       intersect(0.5);
       expect(tree.getByTestId('sheet')).not.toHaveAttribute('data-expanded');
 
+      // Exercises the early return guard (`if (!latestEntry) return;`) when all entries
+      // belong to other targets, ensuring no TypeError is thrown and existing state is retained.
       triggerEntries([
         {target: invalidTarget, intersectionRatio: 0, time: 200},
         {target: invalidTarget, intersectionRatio: 1, time: 300}
