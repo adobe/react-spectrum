@@ -177,7 +177,8 @@ class NumberParserImpl {
       fullySanitizedValue = fullySanitizedValue.replaceAll(this.symbols.group!, '');
     }
 
-    // Prevent JavaScript from accepting a non-native period as a decimal separator.
+    // Reject any remaining "." when it is not the locale's decimal separator,
+    // so Number() cannot interpret invalid punctuation as a decimal point.
     if (
       this.options.numberingSystem === 'arab' &&
       this.symbols.decimal !== '.' &&
