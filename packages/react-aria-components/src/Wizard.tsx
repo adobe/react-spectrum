@@ -9,12 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ClassNameOrFunction} from './utils';
+import {ClassNameOrFunction, PossibleLinkDOMRenderProps, RenderProps} from './utils';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
-import {forwardRefType} from '@react-types/shared';
+import {FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
 import {Collection as ICollection, Key, Node} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import React, {
+  createContext,
   ForwardedRef,
   forwardRef,
   ReactElement,
@@ -28,7 +29,6 @@ import {
   TabList,
   TabListProps,
   TabListRenderProps,
-  TabListStateContext,
   TabPanel,
   TabPanelProps,
   TabPanelRenderProps,
@@ -42,6 +42,7 @@ import {
 } from './Tabs';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useObjectRef} from 'react-aria/useObjectRef';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface WizardProps extends Omit<TabsProps, 'children' | 'selectedKey'> {
@@ -112,9 +113,13 @@ interface WizardInnerProps {
   tabsRef: ForwardedRef<HTMLDivElement>;
 }
 
-export interface WizardStateOptions {
-  /** Ordered list of step keys, in collection order. */
-  keys: Key[];
+// Steps are rendered into the collection outside of the TabListStateContext, so the wizard provides
+// its state to them directly.
+const WizardStateContext = createContext<WizardState<unknown> | null>(null);
+
+export interface WizardStateOptions<T> {
+  /** The collection of steps, in order. */
+  collection: ICollection<Node<T>>;
   /** The currently selected step (controlled). */
   selectedKey?: Key | null;
   /** The initially selected step (uncontrolled). */
@@ -136,7 +141,9 @@ export interface WizardStateOptions {
   disabledKeys?: Iterable<Key>;
 }
 
-export interface WizardState {
+export interface WizardState<T> {
+  /** The collection of steps. */
+  collection: ICollection<Node<T>>;
   /** The current (selected) step. */
   selectedKey: Key | null;
   /** Sets the current (selected) step. */
@@ -161,19 +168,23 @@ export interface WizardState {
  * the same event as `onSelectionChange`, so a controlled last completed step can be updated along
  * with the selection.
  */
-export function useWizardState(options: WizardStateOptions): WizardState {
+export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> {
   let {
-    keys,
+    collection,
     allowsRandomAccess = false,
     disabledKeys: disabledStepKeys,
     onSelectionChange,
     onLastCompletedStepChange
-  } = options;
+  } = props;
+
+  // TODO: revist
+  // Don't have access to the keyboard delegate here, so just rely on the collection order.
+  let keys = useMemo(() => [...collection].map(item => item.key), [collection]);
   let firstKey = keys.length > 0 ? keys[0] : null;
 
   let [selectedKeyState, setSelectedKeyState] = useControlledState<Key | null>(
-    options.selectedKey,
-    options.defaultSelectedKey ?? null,
+    props.selectedKey,
+    props.defaultSelectedKey ?? null,
     onSelectionChange
       ? key => {
           if (key != null) {
@@ -186,12 +197,12 @@ export function useWizardState(options: WizardStateOptions): WizardState {
   let selectedKey = selectedKeyState ?? firstKey;
   let selectedIndex = selectedKey != null ? keys.indexOf(selectedKey) : -1;
 
-  let isLastCompletedStepControlled = options.lastCompletedStep !== undefined;
+  let isLastCompletedStepControlled = props.lastCompletedStep !== undefined;
   let [lastCompletedStepState, setLastCompletedStepState] = useState<Key | null>(
-    options.defaultLastCompletedStep ?? null
+    props.defaultLastCompletedStep ?? null
   );
   let lastCompletedStep = isLastCompletedStepControlled
-    ? (options.lastCompletedStep ?? null)
+    ? (props.lastCompletedStep ?? null)
     : lastCompletedStepState;
   let lastCompletedIndex = lastCompletedStep != null ? keys.indexOf(lastCompletedStep) : -1;
 
@@ -230,6 +241,7 @@ export function useWizardState(options: WizardStateOptions): WizardState {
   }, [keys, selectedKey, lastCompletedIndex, allowsRandomAccess, disabledStepKeys]);
 
   return {
+    collection,
     selectedKey,
     setSelectedKey,
     lastCompletedStep,
@@ -252,12 +264,8 @@ function WizardInner({props, collection, tabsRef: ref}: WizardInnerProps) {
     ...tabsProps
   } = props;
 
-  // TODO: revist
-  // Don't have access to the keyboard delegate here, so just rely on the collection order.
-  let keys = useMemo(() => [...collection].map(item => item.key), [collection]);
-
   let state = useWizardState({
-    keys,
+    collection,
     selectedKey,
     defaultSelectedKey,
     onSelectionChange,
@@ -271,16 +279,18 @@ function WizardInner({props, collection, tabsRef: ref}: WizardInnerProps) {
   // Tabs treats null as a controlled empty selection, so passing it rather than undefined keeps Tabs
   // controlled while there is no selected step (e.g. before the collection is populated).
   return (
-    <Tabs
-      {...tabsProps}
-      className={withDefaultClassName(className, 'react-aria-Wizard')}
-      keyboardActivation="manual"
-      ref={ref}
-      selectedKey={state.selectedKey!}
-      onSelectionChange={state.setSelectedKey}
-      disabledKeys={state.disabledKeys}>
-      {children}
-    </Tabs>
+    <WizardStateContext.Provider value={state}>
+      <Tabs
+        {...tabsProps}
+        className={withDefaultClassName(className, 'react-aria-Wizard')}
+        keyboardActivation="manual"
+        ref={ref}
+        selectedKey={state.selectedKey!}
+        onSelectionChange={state.setSelectedKey}
+        disabledKeys={state.disabledKeys}>
+        {children}
+      </Tabs>
+    </WizardStateContext.Provider>
   );
 }
 
@@ -310,14 +320,35 @@ export const WizardStepList = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   );
 });
 
-export interface WizardStepProps extends TabProps {
+export interface WizardStepRenderProps extends TabRenderProps {
+  /**
+   * Whether the step is the current step.
+   *
+   * @selector [data-current]
+   */
+  isCurrent: boolean;
+  /**
+   * Whether the step is rendered before the current step.
+   *
+   * @selector [data-completed]
+   */
+  isCompleted: boolean;
+  /** The position of the step within the `WizardStepList`, starting from 1. */
+  stepNumber: number;
+}
+
+export interface WizardStepProps
+  extends
+    Omit<TabProps, 'className' | 'style' | 'children' | 'render'>,
+    Omit<RenderProps<WizardStepRenderProps>, 'render'>,
+    PossibleLinkDOMRenderProps<'div', WizardStepRenderProps> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element. A function may be provided to compute the class based on component state.
    *
    * @default 'react-aria-WizardStep'
    */
-  className?: ClassNameOrFunction<TabRenderProps>;
+  className?: ClassNameOrFunction<WizardStepRenderProps>;
 }
 
 export interface WizardStepAria {
@@ -325,56 +356,35 @@ export interface WizardStepAria {
   isCurrent: boolean;
   /** Whether this step has been completed (precedes the current step). */
   isCompleted: boolean;
+  /** The position of the step within the wizard, starting from 1. */
+  stepNumber: number;
+}
+
+interface AriaWizardStepProps {
+  /** The key of the step. */
+  key: Key;
 }
 
 /**
- * Returns whether the step with the given key is the current step of the enclosing `Wizard`, and
- * whether it has already been completed (it is rendered before the current step).
+ * Provides the state of a step within a wizard: whether it is the current step, whether it has
+ * already been completed (it is rendered before the current step), and its position.
  */
-export function useWizardStep(key: Key | undefined): WizardStepAria {
-  let state = useContext(TabListStateContext);
+export function useWizardStep<T>(
+  props: AriaWizardStepProps,
+  state: WizardState<T>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ref: RefObject<FocusableElement | null>
+): WizardStepAria {
+  let {key} = props;
+  let {collection, selectedKey} = state;
+  let index = collection.getItem(key)?.index ?? -1;
+  let selectedIndex = selectedKey != null ? (collection.getItem(selectedKey)?.index ?? -1) : -1;
 
-  if (state == null || key == null || state.selectedKey == null) {
-    return {isCurrent: false, isCompleted: false};
-  }
-
-  let isCurrent = state.selectedKey === key;
-
-  // Walk backwards from the current step. If we reach this step, it precedes the current
-  // step and is therefore completed.
-  // Should be ok for performance, wizards are generally short.
-  let isCompleted = false;
-  let cursor = state.collection.getKeyBefore(state.selectedKey);
-  while (cursor != null) {
-    if (cursor === key) {
-      isCompleted = true;
-      break;
-    }
-    cursor = state.collection.getKeyBefore(cursor);
-  }
-
-  return {isCurrent, isCompleted};
-}
-
-function WizardStepState({stepKey, children}: {stepKey: Key | undefined; children: ReactNode}) {
-  let {isCurrent, isCompleted} = useWizardStep(stepKey);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
-
-  let stateText = isCurrent
-    ? stringFormatter.format('stepListItemCurrent')
-    : isCompleted
-      ? stringFormatter.format('stepListItemCompleted')
-      : stringFormatter.format('stepListItemNotCompleted');
-
-  return (
-    <span
-      style={{display: 'contents'}}
-      data-current={isCurrent || undefined}
-      data-completed={isCompleted || undefined}>
-      {!isCurrent && <VisuallyHidden elementType="span">{stateText}</VisuallyHidden>}
-      {children}
-    </span>
-  );
+  return {
+    isCurrent: index >= 0 && index === selectedIndex,
+    isCompleted: index >= 0 && index < selectedIndex,
+    stepNumber: index + 1
+  };
 }
 
 /**
@@ -384,21 +394,61 @@ export const WizardStep = /*#__PURE__*/ forwardRef(function WizardStep(
   props: WizardStepProps,
   ref: ForwardedRef<HTMLDivElement>
 ) {
-  let {children, className, ...otherProps} = props;
+  let state = useContext(WizardStateContext);
+  // The Wizard renders its steps before its state exists to build the collection the state is
+  // computed from, which only needs the keys of the steps.
+  if (!state) {
+    return <Tab id={props.id} />;
+  }
+
+  return <WizardStepInner props={props} state={state} stepRef={ref} />;
+}) as (props: WizardStepProps & {ref?: ForwardedRef<HTMLDivElement>}) => ReactElement;
+
+interface WizardStepInnerProps {
+  props: WizardStepProps;
+  state: WizardState<unknown>;
+  stepRef: ForwardedRef<HTMLDivElement>;
+}
+
+function WizardStepInner({props, state, stepRef}: WizardStepInnerProps) {
+  let {children, className, style, render, ...otherProps} = props;
+  let ref = useObjectRef(stepRef);
+  let {isCurrent, isCompleted, stepNumber} = useWizardStep({key: props.id!}, state, ref);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
+  let stateText = isCompleted
+    ? stringFormatter.format('stepListItemCompleted')
+    : stringFormatter.format('stepListItemNotCompleted');
+
+  // Adds the step state to the render props that Tab provides.
+  let getRenderProps = <R extends TabRenderProps>(renderProps: R): R & WizardStepRenderProps => ({
+    ...renderProps,
+    isCurrent,
+    isCompleted,
+    stepNumber
+  });
+
   return (
     <Tab
       {...otherProps}
       ref={ref}
-      className={withDefaultClassName(className, 'react-aria-WizardStep')}
-      aria-current="step">
+      className={withDefaultClassName<TabRenderProps>(
+        typeof className === 'function' ? values => className(getRenderProps(values)) : className,
+        'react-aria-WizardStep'
+      )}
+      style={typeof style === 'function' ? values => style(getRenderProps(values)) : style}
+      render={render ? (domProps, values) => render(domProps, getRenderProps(values)) : undefined}
+      aria-current="step"
+      data-current={isCurrent || undefined}
+      data-completed={isCompleted || undefined}>
       {renderProps => (
-        <WizardStepState stepKey={props.id}>
-          {typeof children === 'function' ? children(renderProps) : children}
-        </WizardStepState>
+        <>
+          {!isCurrent && <VisuallyHidden elementType="span">{stateText}</VisuallyHidden>}
+          {typeof children === 'function' ? children(getRenderProps(renderProps)) : children}
+        </>
       )}
     </Tab>
   );
-}) as (props: WizardStepProps & {ref?: ForwardedRef<HTMLDivElement>}) => ReactElement;
+}
 
 export interface WizardPanelsProps<T> extends TabPanelsProps<T> {
   /**

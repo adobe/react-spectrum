@@ -12,7 +12,7 @@
 
 import {Meta, StoryObj} from '@storybook/react';
 import React, {ReactNode} from 'react';
-import {useWizardStep, Wizard, WizardStep, WizardStepList} from '../src/Wizard';
+import {Wizard, WizardStep, WizardStepList} from '../src/Wizard';
 import './Wizard.css';
 
 const steps = [
@@ -47,11 +47,16 @@ function CheckIcon(): ReactNode {
 
 // The number and check mark repeat the label and the state that `WizardStep` already announces,
 // so they are decorative.
-function StepMarker({stepId, index}: {stepId: string; index: number}): ReactNode {
-  let {isCompleted} = useWizardStep(stepId);
+function StepMarker({
+  isCompleted,
+  stepNumber
+}: {
+  isCompleted: boolean;
+  stepNumber: number;
+}): ReactNode {
   return (
     <span className="marker" aria-hidden="true">
-      {isCompleted ? <CheckIcon /> : index + 1}
+      {isCompleted ? <CheckIcon /> : stepNumber}
     </span>
   );
 }
@@ -66,15 +71,19 @@ export const WizardExample: WizardStory = {
         defaultSelectedKey="dns"
         defaultLastCompletedStep="domain">
         <WizardStepList aria-label="Email domain setup">
-          {steps.map((step, index) => (
+          {steps.map(step => (
             <WizardStep key={step.id} id={step.id}>
-              <StepMarker stepId={step.id} index={index} />
-              <span className="text">
-                <span className="label">{step.label}</span>
-                <span className="position">
-                  Step {index + 1} of {steps.length}
-                </span>
-              </span>
+              {({isCompleted, stepNumber}) => (
+                <>
+                  <StepMarker isCompleted={isCompleted} stepNumber={stepNumber} />
+                  <span className="text">
+                    <span className="label">{step.label}</span>
+                    <span className="position">
+                      Step {stepNumber} of {steps.length}
+                    </span>
+                  </span>
+                </>
+              )}
             </WizardStep>
           ))}
         </WizardStepList>

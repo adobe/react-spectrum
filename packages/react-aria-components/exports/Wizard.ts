@@ -19,6 +19,7 @@ export type {
   WizardProps,
   WizardStepListProps,
   WizardStepProps,
+  WizardStepRenderProps,
   WizardPanelsProps,
   WizardPanelProps,
   WizardStepAria,

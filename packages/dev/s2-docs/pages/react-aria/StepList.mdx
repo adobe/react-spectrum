@@ -82,7 +82,7 @@ import {Router, Link as RouterLink} from './Router';
 <Router defaultSelectedRoute="/review">
   {({selectedRoute}) => (
     /*- begin highlight -*/
-    <StepList aria-label="Checkout" selectedKey={selectedRoute} renderLink={props => <RouterLink {...props} />}>
+    <StepList aria-label="Checkout" selectedKey={selectedRoute} renderLink={props => 'href' in props ? <RouterLink {...props} /> : <div {...props} />}>
       {/*- end highlight -*/}
       <StepListItem id="/cart" href="/cart">Cart</StepListItem>
       <StepListItem id="/shipping" href="/shipping">Shipping</StepListItem>

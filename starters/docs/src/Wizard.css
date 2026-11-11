@@ -41,7 +41,7 @@
   }
 
   &[data-selected] .marker,
-  .marker[data-completed] {
+  &[data-completed] .marker {
     background: var(--highlight-background);
     border-color: var(--highlight-background);
     color: var(--highlight-foreground);
@@ -90,8 +90,8 @@
   }
 
   &[data-selected]::before,
-  &:has(.marker[data-completed])::before,
-  &:has(.marker[data-completed])::after {
+  &[data-completed]::before,
+  &[data-completed]::after {
     border-color: var(--highlight-background);
   }
 }

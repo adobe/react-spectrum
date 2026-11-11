@@ -10,19 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, renderHook, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React, {useContext, useState} from 'react';
 import {TabListStateContext} from '../src/Tabs';
 import userEvent from '@testing-library/user-event';
-import {
-  useWizardState,
-  useWizardStep,
-  Wizard,
-  WizardPanel,
-  WizardPanels,
-  WizardStep,
-  WizardStepList
-} from '../src/Wizard';
+import {Wizard, WizardPanel, WizardPanels, WizardStep, WizardStepList} from '../src/Wizard';
 
 let steps = [
   {id: 'domain', label: 'Domain'},
@@ -225,13 +217,12 @@ describe('Wizard', () => {
       'Advanced',
       'Not completedReview'
     ]);
-    let states = tabs.map(tab => tab.firstElementChild);
-    expect(states[0]).toHaveAttribute('data-completed');
-    expect(states[1]).toHaveAttribute('data-completed');
-    expect(states[2]).toHaveAttribute('data-current');
-    expect(states[2]).not.toHaveAttribute('data-completed');
-    expect(states[3]).not.toHaveAttribute('data-completed');
-    expect(states[3]).not.toHaveAttribute('data-current');
+    expect(tabs[0]).toHaveAttribute('data-completed');
+    expect(tabs[1]).toHaveAttribute('data-completed');
+    expect(tabs[2]).toHaveAttribute('data-current');
+    expect(tabs[2]).not.toHaveAttribute('data-completed');
+    expect(tabs[3]).not.toHaveAttribute('data-completed');
+    expect(tabs[3]).not.toHaveAttribute('data-current');
 
     // Completion follows the selection, so steps after the selected step are not completed after
     // navigating back, even though they are still navigable.
@@ -242,38 +233,45 @@ describe('Wizard', () => {
       'Not completedAdvanced',
       'Not completedReview'
     ]);
+    expect(tabs[0]).toHaveAttribute('data-current');
+    expect(tabs[1]).not.toHaveAttribute('data-completed');
     expect(getNavigableSteps(tree)).toEqual(['domain', 'dns', 'advanced']);
   });
 
-  it('should provide the step state to useWizardStep', async () => {
-    function StepState({id}) {
-      let {isCurrent, isCompleted} = useWizardStep(id);
-      return <span>{isCurrent ? 'current' : isCompleted ? 'completed' : 'upcoming'}</span>;
-    }
-
+  it('should provide the step state as render props', async () => {
     let tree = render(
       <Wizard defaultSelectedKey="dns">
         <WizardStepList aria-label="Setup">
           {steps.map(step => (
-            <WizardStep key={step.id} id={step.id}>
-              <StepState id={step.id} />
+            <WizardStep
+              key={step.id}
+              id={step.id}
+              className={({isCurrent, isCompleted}) =>
+                isCurrent ? 'current' : isCompleted ? 'completed' : 'upcoming'
+              }>
+              {({stepNumber}) => `${stepNumber}. ${step.label}`}
             </WizardStep>
           ))}
         </WizardStepList>
       </Wizard>
     );
 
-    let getStates = () =>
-      tree.getAllByRole('tab').map(tab => tab.firstElementChild.lastChild.textContent);
-    expect(getStates()).toEqual(['completed', 'current', 'upcoming', 'upcoming']);
+    let tabs = tree.getAllByRole('tab');
+    expect(tabs.map(tab => tab.className)).toEqual([
+      'completed',
+      'current',
+      'upcoming',
+      'upcoming'
+    ]);
+    expect(tabs.map(tab => tab.textContent)).toEqual([
+      'Completed1. Domain',
+      '2. DNS',
+      'Not completed3. Advanced',
+      'Not completed4. Review'
+    ]);
 
-    await user.click(tree.getAllByRole('tab')[0]);
-    expect(getStates()).toEqual(['current', 'upcoming', 'upcoming', 'upcoming']);
-  });
-
-  it('should return a default step state from useWizardStep outside of a Wizard', () => {
-    let {result} = renderHook(() => useWizardStep('domain'));
-    expect(result.current).toEqual({isCurrent: false, isCompleted: false});
+    await user.click(tabs[0]);
+    expect(tabs.map(tab => tab.className)).toEqual(['current', 'upcoming', 'upcoming', 'upcoming']);
   });
 
   it('should support render props on steps', () => {
@@ -378,13 +376,29 @@ describe('Wizard', () => {
 
     it('should complete the steps before the default selected step', () => {
       let onLastCompletedStepChange = jest.fn();
+      // Records every step that is rendered as disabled.
+      let disabledSteps = new Set();
       let tree = render(
-        <WizardExample
-          defaultSelectedKey="advanced"
-          onLastCompletedStepChange={onLastCompletedStepChange}
-        />
+        <Wizard defaultSelectedKey="advanced" onLastCompletedStepChange={onLastCompletedStepChange}>
+          <WizardStepList aria-label="Setup">
+            {steps.map(step => (
+              <WizardStep key={step.id} id={step.id}>
+                {({isDisabled}) => {
+                  if (isDisabled) {
+                    disabledSteps.add(step.id);
+                  }
+                  return step.label;
+                }}
+              </WizardStep>
+            ))}
+          </WizardStepList>
+        </Wizard>
       );
       expect(getNavigableSteps(tree)).toEqual(['domain', 'dns', 'advanced']);
+
+      // The last completed step is derived during render rather than synced in an effect, so the
+      // completed steps are never rendered as disabled.
+      expect(disabledSteps).toEqual(new Set(['review']));
       // Like other default values, the derived last completed step doesn't call the change handler.
       expect(onLastCompletedStepChange).not.toHaveBeenCalled();
     });
@@ -580,92 +594,5 @@ describe('Wizard', () => {
       await user.click(tree.getAllByRole('tab')[1]);
       expect(getSelectedStep(tree)).toBe('domain');
     });
-  });
-});
-
-describe('useWizardState', () => {
-  it('should select the first step and complete no steps by default', () => {
-    let {result} = renderHook(() => useWizardState({keys}));
-    expect(result.current.selectedKey).toBe('domain');
-    expect(result.current.lastCompletedStep).toBeNull();
-    expect(result.current.disabledKeys).toEqual(new Set(['dns', 'advanced', 'review']));
-  });
-
-  it('should support defaultLastCompletedStep', () => {
-    let {result} = renderHook(() => useWizardState({keys, defaultLastCompletedStep: 'dns'}));
-    expect(result.current.selectedKey).toBe('domain');
-    expect(result.current.lastCompletedStep).toBe('dns');
-    expect(result.current.disabledKeys).toEqual(new Set(['review']));
-  });
-
-  it('should complete the steps before the default selected step', () => {
-    let onLastCompletedStepChange = jest.fn();
-    let renders = [];
-    let {result} = renderHook(() => {
-      let state = useWizardState({keys, defaultSelectedKey: 'advanced', onLastCompletedStepChange});
-      renders.push(state);
-      return state;
-    });
-    expect(result.current.selectedKey).toBe('advanced');
-    expect(result.current.lastCompletedStep).toBe('dns');
-    expect(result.current.disabledKeys).toEqual(new Set(['review']));
-
-    // The last completed step is derived during render rather than synced in an effect, so it's
-    // already correct on the first render. Like other default values, it doesn't call the change
-    // handler.
-    expect(renders[0].lastCompletedStep).toBe('dns');
-    expect(renders[0].disabledKeys).toEqual(new Set(['review']));
-    expect(onLastCompletedStepChange).not.toHaveBeenCalled();
-  });
-
-  it('should advance the last completed step with the selection and never roll it back', () => {
-    let onLastCompletedStepChange = jest.fn();
-    let {result} = renderHook(() => useWizardState({keys, onLastCompletedStepChange}));
-
-    act(() => result.current.setSelectedKey('dns'));
-    expect(result.current.lastCompletedStep).toBe('domain');
-    expect(result.current.disabledKeys).toEqual(new Set(['advanced', 'review']));
-    expect(onLastCompletedStepChange).toHaveBeenCalledTimes(1);
-    expect(onLastCompletedStepChange).toHaveBeenLastCalledWith('domain');
-
-    // Skipping ahead completes every step before the selected step.
-    act(() => result.current.setSelectedKey('review'));
-    expect(result.current.lastCompletedStep).toBe('advanced');
-    expect(result.current.disabledKeys).toEqual(new Set());
-    expect(onLastCompletedStepChange).toHaveBeenCalledTimes(2);
-    expect(onLastCompletedStepChange).toHaveBeenLastCalledWith('advanced');
-
-    act(() => result.current.setSelectedKey('domain'));
-    expect(result.current.selectedKey).toBe('domain');
-    expect(result.current.lastCompletedStep).toBe('advanced');
-    expect(result.current.disabledKeys).toEqual(new Set());
-    expect(onLastCompletedStepChange).toHaveBeenCalledTimes(2);
-  });
-
-  it('should support a controlled lastCompletedStep', () => {
-    let onLastCompletedStepChange = jest.fn();
-    let {result, rerender} = renderHook(
-      ({lastCompletedStep}) => useWizardState({keys, lastCompletedStep, onLastCompletedStepChange}),
-      {initialProps: {lastCompletedStep: 'advanced'}}
-    );
-    expect(result.current.lastCompletedStep).toBe('advanced');
-    expect(result.current.disabledKeys).toEqual(new Set());
-
-    rerender({lastCompletedStep: 'domain'});
-    expect(result.current.lastCompletedStep).toBe('domain');
-    expect(result.current.disabledKeys).toEqual(new Set(['advanced', 'review']));
-
-    act(() => result.current.setSelectedKey('advanced'));
-    expect(onLastCompletedStepChange).toHaveBeenCalledTimes(1);
-    expect(onLastCompletedStepChange).toHaveBeenLastCalledWith('dns');
-    expect(result.current.lastCompletedStep).toBe('domain');
-    expect(result.current.disabledKeys).toEqual(new Set(['review']));
-  });
-
-  it('should always disable steps in disabledKeys', () => {
-    let {result} = renderHook(() =>
-      useWizardState({keys, allowsRandomAccess: true, disabledKeys: ['dns']})
-    );
-    expect(result.current.disabledKeys).toEqual(new Set(['dns']));
   });
 });

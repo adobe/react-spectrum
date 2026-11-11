@@ -1,7 +1,5 @@
 'use client';
 import {
-  type Key,
-  useWizardStep,
   Wizard as RACWizard,
   WizardPanel as RACWizardPanel,
   type WizardPanelProps,
@@ -31,26 +29,16 @@ export function WizardStepList<T extends object>(props: WizardStepListProps<T>) 
 export function WizardStep(props: WizardStepProps) {
   return (
     <RACWizardStep {...props}>
-      {composeRenderProps(props.children, children => (
+      {composeRenderProps(props.children, (children, {isCompleted, stepNumber}) => (
         <>
-          <StepMarker id={props.id} />
+          {/* The step already announces whether it is completed, so the marker is hidden. */}
+          <span className="marker" aria-hidden>
+            {isCompleted ? <Check size={14} /> : stepNumber}
+          </span>
           {children}
         </>
       ))}
     </RACWizardStep>
-  );
-}
-
-// The step already announces its label and whether it is completed, so the marker is hidden
-// from assistive technology.
-function StepMarker({id}: {id?: Key}) {
-  let state = useContext(TabListStateContext);
-  let {isCompleted} = useWizardStep(id);
-  let node = id != null ? state?.collection.getItem(id) : null;
-  return (
-    <span className="marker" data-completed={isCompleted || undefined} aria-hidden>
-      {isCompleted ? <Check size={14} /> : (node?.index ?? 0) + 1}
-    </span>
   );
 }
 

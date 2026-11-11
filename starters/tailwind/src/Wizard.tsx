@@ -4,8 +4,6 @@ import React, {useContext} from 'react';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {TabListStateContext} from 'react-aria-components/Tabs';
 import {
-  type Key,
-  useWizardStep,
   Wizard as AriaWizard,
   WizardPanel as AriaWizardPanel,
   type WizardPanelProps,
@@ -42,25 +40,6 @@ export function WizardStepList<T extends object>(props: WizardStepListProps<T>) 
   );
 }
 
-export function WizardStep(props: WizardStepProps) {
-  return (
-    <AriaWizardStep
-      {...props}
-      className={composeTailwindRenderProps(
-        props.className,
-        // The ::before and ::after elements draw the connector lines on either side of the marker.
-        'relative box-border flex flex-1 flex-col items-center gap-2 px-1 text-center text-neutral-800 dark:text-neutral-200 cursor-default outline-0 [-webkit-tap-highlight-color:transparent] selected:font-semibold disabled:text-neutral-300 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] before:absolute before:start-0 before:end-[calc(50%+--spacing(5))] before:top-3 before:border-t before:border-neutral-400 forced-colors:before:border-[ButtonBorder] first:before:hidden selected:before:border-blue-600 has-data-completed:before:border-blue-600 after:absolute after:start-[calc(50%+--spacing(5))] after:end-0 after:top-3 after:border-t after:border-neutral-400 forced-colors:after:border-[ButtonBorder] has-data-completed:after:border-blue-600 last:after:hidden'
-      )}>
-      {composeRenderProps(props.children, (children, {isSelected, isFocusVisible}) => (
-        <>
-          <StepMarker id={props.id} isSelected={isSelected} isFocusVisible={isFocusVisible} />
-          {children}
-        </>
-      ))}
-    </AriaWizardStep>
-  );
-}
-
 const markerStyles = tv({
   extend: focusRing,
   base: 'flex items-center justify-center size-6 shrink-0 rounded-full border text-xs',
@@ -73,25 +52,30 @@ const markerStyles = tv({
   }
 });
 
-interface StepMarkerProps {
-  id?: Key;
-  isSelected: boolean;
-  isFocusVisible: boolean;
-}
-
-// The step already announces its label and whether it is completed, so the marker is hidden
-// from assistive technology.
-function StepMarker({id, isSelected, isFocusVisible}: StepMarkerProps) {
-  let state = useContext(TabListStateContext);
-  let {isCompleted} = useWizardStep(id);
-  let node = id != null ? state?.collection.getItem(id) : null;
+export function WizardStep(props: WizardStepProps) {
   return (
-    <span
-      className={markerStyles({isUpcoming: !isSelected && !isCompleted, isFocusVisible})}
-      data-completed={isCompleted || undefined}
-      aria-hidden>
-      {isCompleted ? <Check className="size-3.5" /> : (node?.index ?? 0) + 1}
-    </span>
+    <AriaWizardStep
+      {...props}
+      className={composeTailwindRenderProps(
+        props.className,
+        // The ::before and ::after elements draw the connector lines on either side of the marker.
+        'relative box-border flex flex-1 flex-col items-center gap-2 px-1 text-center text-neutral-800 dark:text-neutral-200 cursor-default outline-0 [-webkit-tap-highlight-color:transparent] selected:font-semibold disabled:text-neutral-300 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] before:absolute before:start-0 before:end-[calc(50%+--spacing(5))] before:top-3 before:border-t before:border-neutral-400 forced-colors:before:border-[ButtonBorder] first:before:hidden selected:before:border-blue-600 data-completed:before:border-blue-600 after:absolute after:start-[calc(50%+--spacing(5))] after:end-0 after:top-3 after:border-t after:border-neutral-400 forced-colors:after:border-[ButtonBorder] data-completed:after:border-blue-600 last:after:hidden'
+      )}>
+      {composeRenderProps(
+        props.children,
+        (children, {isSelected, isCompleted, isFocusVisible, stepNumber}) => (
+          <>
+            {/* The step already announces whether it is completed, so the marker is hidden. */}
+            <span
+              className={markerStyles({isUpcoming: !isSelected && !isCompleted, isFocusVisible})}
+              aria-hidden>
+              {isCompleted ? <Check className="size-3.5" /> : stepNumber}
+            </span>
+            {children}
+          </>
+        )
+      )}
+    </AriaWizardStep>
   );
 }
 
