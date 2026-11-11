@@ -24,6 +24,7 @@ import {
   dom,
   DOMProps,
   DOMRenderProps,
+  PossibleLinkDOMRenderProps,
   RenderProps,
   SlotProps,
   StyleProps,
@@ -80,7 +81,7 @@ interface StepListState {
 const InternalStepListContext = createContext<StepListState | null>(null);
 
 /**
- * A StepList displays the steps of a multi step process, and which of them the user has completed.
+ * A StepList displays the steps of a multi-step process, and which of them the user has completed.
  */
 export const StepList = /*#__PURE__*/ (forwardRef as forwardRefType)(function StepList<T>(
   props: StepListProps<T>,
@@ -209,45 +210,69 @@ export interface StepListItemContentProps
     DOMProps,
     LinkDOMProps,
     AriaLabelingProps,
+    PossibleLinkDOMRenderProps<'div', undefined>,
     Omit<GlobalDOMAttributes<HTMLElement>, 'onClick'> {}
 
 const StepListItemContext = createContext<{hiddenId: string | undefined} | undefined>(undefined);
 
+/**
+ * A StepListItemContent renders the content of a `<StepListItem>`, optionally as a link to the
+ * step.
+ */
 export const StepListItemContent = /*#__PURE__*/ (forwardRef as forwardRefType)(
   function StepListItemContent(
     props: StepListItemContentProps,
     ref: ForwardedRef<HTMLAnchorElement | HTMLDivElement>
   ) {
-    let context = useContext(StepListItemContext);
-    let objRef = useObjectRef(ref);
-    let id = useId();
-    // A step is only navigable when it is given an `href`. Otherwise `role="img"` is applied to a
-    // non-focusable element purely so that screen readers treat the contents as a single unit.
-    let isLink = props.href != null;
-    let elementType = isLink ? 'a' : 'div';
-    let {linkProps} = useLink({...props, elementType}, objRef);
-    let ElementType = dom[elementType];
-    // Only a link is interactive, so a plain `div` never reports hover or focus.
-    let {hoverProps, isHovered} = useHover({isDisabled: !isLink});
-    let {focusProps, isFocusVisible} = useFocusRing();
-    let DOMProps = filterDOMProps(props, {global: true, labelable: true, isLink});
-    delete DOMProps.id;
-
+    // Remount when switching between a link and a plain `div`. A focused link that is removed never
+    // receives a blur event, so its focus state would otherwise carry over to the new element.
     return (
-      <ElementType
-        {...mergeProps(
-          DOMProps,
-          isLink ? mergeProps(linkProps, focusProps) : {role: 'img'},
-          hoverProps
-        )}
-        ref={objRef}
-        id={id}
-        className="react-aria-StepListItemContent"
-        aria-labelledby={`${context?.hiddenId} ${id}`}
-        data-hovered={isHovered || undefined}
-        data-focus-visible={isFocusVisible || undefined}>
-        {props.children}
-      </ElementType>
+      <StepListItemContentInner
+        key={props.href != null ? 'link' : 'content'}
+        props={props}
+        contentRef={ref}
+      />
     );
   }
 );
+
+interface StepListItemContentInnerProps {
+  props: StepListItemContentProps;
+  contentRef: ForwardedRef<HTMLAnchorElement | HTMLDivElement>;
+}
+
+function StepListItemContentInner({props, contentRef: ref}: StepListItemContentInnerProps) {
+  let context = useContext(StepListItemContext);
+  let objRef = useObjectRef(ref);
+  let id = useId();
+  // A step is only navigable when it is given an `href`. Otherwise `role="img"` is applied to a
+  // non-focusable element purely so that screen readers treat the contents as a single unit.
+  let isLink = props.href != null;
+  let elementType = isLink ? 'a' : 'div';
+  let {linkProps} = useLink({...props, elementType}, objRef);
+  let ElementType = dom[elementType];
+  // Only a link is interactive, so a plain `div` never reports hover or focus.
+  let {hoverProps, isHovered} = useHover({isDisabled: !isLink});
+  let {focusProps, isFocusVisible} = useFocusRing();
+  let DOMProps = filterDOMProps(props, {global: true, labelable: true, isLink});
+  delete DOMProps.id;
+
+  return (
+    <ElementType
+      {...mergeProps(
+        DOMProps,
+        isLink ? mergeProps(linkProps, focusProps) : {role: 'img'},
+        hoverProps
+      )}
+      ref={objRef}
+      render={props.render}
+      id={id}
+      style={props.style}
+      className={props.className ?? 'react-aria-StepListItemContent'}
+      aria-labelledby={`${context?.hiddenId} ${id}`}
+      data-hovered={isHovered || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
+      {props.children}
+    </ElementType>
+  );
+}

@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils-internal';
 import {StepList, StepListContext, StepListItem, StepListItemContent} from '../src/StepList';
+import userEvent from '@testing-library/user-event';
 
 let steps = [
   {id: 'domain', label: 'Domain'},
@@ -32,6 +33,11 @@ let renderStepList = (listProps, itemProps) =>
   );
 
 describe('StepList', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render with default classes', () => {
     let {getByRole, getAllByRole} = renderStepList();
     expect(getByRole('list')).toHaveClass('react-aria-StepList');
@@ -259,6 +265,64 @@ describe('StepList', () => {
     expect(contentId).toBe(step.id);
   });
 
+  it('should support className and style on StepListItemContent', () => {
+    let {getByRole, rerender} = render(
+      <StepList selectedKey="a" aria-label="Setup">
+        <StepListItem id="a">
+          <StepListItemContent>Step A</StepListItemContent>
+        </StepListItem>
+      </StepList>
+    );
+
+    expect(getByRole('img')).toHaveClass('react-aria-StepListItemContent');
+
+    rerender(
+      <StepList selectedKey="a" aria-label="Setup">
+        <StepListItem id="a">
+          <StepListItemContent className="content" style={{color: 'red'}}>
+            Step A
+          </StepListItemContent>
+        </StepListItem>
+      </StepList>
+    );
+
+    let content = getByRole('img');
+    expect(content).toHaveClass('content');
+    expect(content).not.toHaveClass('react-aria-StepListItemContent');
+    expect(content.style.color).toBe('red');
+  });
+
+  it('should support custom render function on StepListItemContent', () => {
+    let {getByRole} = render(
+      <StepList selectedKey="b" aria-label="Setup">
+        <StepListItem id="a">
+          <StepListItemContent
+            href="#a"
+            render={props => {
+              if ('href' in props) {
+                // eslint-disable-next-line jsx-a11y/anchor-has-content
+                return <a {...props} data-custom="link" />;
+              }
+              return <div {...props} />;
+            }}>
+            Step A
+          </StepListItemContent>
+        </StepListItem>
+        <StepListItem id="b">
+          <StepListItemContent render={props => <div {...props} data-custom="content" />}>
+            Step B
+          </StepListItemContent>
+        </StepListItem>
+      </StepList>
+    );
+
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('data-custom', 'link');
+    expect(link).toHaveAttribute('href', '#a');
+    expect(link).toHaveClass('react-aria-StepListItemContent');
+    expect(getByRole('img')).toHaveAttribute('data-custom', 'content');
+  });
+
   it('should render StepListItemContent as a non-focusable div without an href', () => {
     let {getByRole} = render(
       <StepList selectedKey="a" aria-label="Setup">
@@ -304,5 +368,37 @@ describe('StepList', () => {
       expect(content).toHaveAttribute('role', 'img');
       expect(content).not.toHaveAttribute('href');
     }
+  });
+
+  it('should reset focus state when a focused link is replaced by a non-link', async () => {
+    let renderSteps = selectedKey => (
+      <StepList selectedKey={selectedKey} aria-label="Setup" items={steps}>
+        {step => (
+          <StepListItem>
+            {({isCompleted}) => (
+              <StepListItemContent href={isCompleted ? `#${step.id}` : undefined}>
+                {step.label}
+              </StepListItemContent>
+            )}
+          </StepListItem>
+        )}
+      </StepList>
+    );
+    let {getByRole, getAllByRole, rerender} = render(renderSteps('dns'));
+
+    await user.tab();
+    let link = getByRole('link');
+    expect(document.activeElement).toBe(link);
+    expect(link).toHaveAttribute('data-focus-visible', 'true');
+
+    // Navigating to the focused step makes it current, so it is no longer a link.
+    rerender(renderSteps('domain'));
+    for (let content of getAllByRole('img')) {
+      expect(content).not.toHaveAttribute('data-focus-visible');
+    }
+
+    // The step becomes a link again, but is not focused.
+    rerender(renderSteps('dns'));
+    expect(getByRole('link')).not.toHaveAttribute('data-focus-visible');
   });
 });

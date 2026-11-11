@@ -196,6 +196,7 @@ export {
   SliderFillContext,
   SliderStateContext
 } from '../src/Slider';
+export {StepList, StepListContext, StepListItem, StepListItemContent} from '../src/StepList';
 export {Switch, SwitchField, SwitchButton, SwitchContext, SwitchFieldContext} from '../src/Switch';
 export {
   TableLoadMoreItem,
@@ -472,6 +473,12 @@ export type {
   SliderFillRenderProps,
   SliderThumbRenderProps
 } from '../src/Slider';
+export type {
+  StepListProps,
+  StepListItemProps,
+  StepListItemRenderProps,
+  StepListItemContentProps
+} from '../src/StepList';
 export type {
   SwitchProps,
   SwitchRenderProps,

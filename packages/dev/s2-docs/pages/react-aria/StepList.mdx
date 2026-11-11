@@ -1,0 +1,167 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+
+export const tags = ['wizard', 'stepper', 'steps', 'progress', 'steplist'];
+export const version = 'alpha';
+export const description = 'Displays the steps of a multi-step process, and which of them the user has completed.';
+
+# StepList
+
+<PageDescription>{docs.exports.StepList.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.StepList} links={docs.links} props={[]} type="vanilla" files={["starters/docs/src/StepList.tsx", "starters/docs/src/StepList.css"]}
+  "use client";
+  import {StepList, StepListItem} from 'vanilla-starter/StepList';
+
+  <StepList aria-label="Checkout" selectedKey="payment">
+    <StepListItem id="cart">Cart</StepListItem>
+    <StepListItem id="shipping">Shipping</StepListItem>
+    <StepListItem id="payment">Payment</StepListItem>
+    <StepListItem id="review">Review</StepListItem>
+  </StepList>
+  ```
+
+  ```tsx render docs={docs.exports.StepList} links={docs.links} props={[]} type="tailwind" files={["starters/tailwind/src/StepList.tsx"]}
+  "use client";
+  import {StepList, StepListItem} from 'tailwind-starter/StepList';
+
+  <StepList aria-label="Checkout" selectedKey="payment">
+    <StepListItem id="cart">Cart</StepListItem>
+    <StepListItem id="shipping">Shipping</StepListItem>
+    <StepListItem id="payment">Payment</StepListItem>
+    <StepListItem id="review">Review</StepListItem>
+  </StepList>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`StepList` follows the [Collection Components API](collections?component=StepList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render
+"use client";
+import {StepList, StepListItem} from 'vanilla-starter/StepList';
+
+let steps = [
+  {id: 'account', label: 'Account'},
+  {id: 'profile', label: 'Profile'},
+  {id: 'preferences', label: 'Preferences'},
+  {id: 'confirm', label: 'Confirm'}
+];
+
+<StepList
+  aria-label="Sign up"
+  /*- begin highlight -*/
+  items={steps}
+  /*- end highlight -*/
+  selectedKey="profile">
+  {step => <StepListItem>{step.label}</StepListItem>}
+</StepList>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Provide an `aria-label` or `aria-labelledby` that describes the process, such as "Checkout". Each step announces whether it is completed, current, or not completed, and the current step is marked with `aria-current="step"`.</Content>
+</InlineAlert>
+
+### Links
+
+Use the `href` prop on a `<StepListItemContent>` to create a link to a step. In this example, only completed steps are links, so users can go back to a previous step, but not skip ahead.
+
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/Router.tsx"]}
+"use client";
+import {StepList, StepListItem} from 'vanilla-starter/StepList';
+import {Router, Link as RouterLink} from './Router';
+
+<Router defaultSelectedRoute="/review">
+  {({selectedRoute}) => (
+    /*- begin highlight -*/
+    <StepList aria-label="Checkout" selectedKey={selectedRoute} renderLink={props => <RouterLink {...props} />}>
+      {/*- end highlight -*/}
+      <StepListItem id="/cart" href="/cart">Cart</StepListItem>
+      <StepListItem id="/shipping" href="/shipping">Shipping</StepListItem>
+      <StepListItem id="/payment" href="/payment">Payment</StepListItem>
+      <StepListItem id="/review" href="/review">Review</StepListItem>
+    </StepList>
+  )}
+</Router>
+```
+
+By default, links are rendered as an `<a>` element. Use the `render` prop to integrate your framework's link component.
+
+```tsx
+<StepListItemContent
+  href="/shipping"
+  render={domProps =>
+    'href' in domProps
+      ? <RouterLink {...domProps} />
+      : <div {...domProps} />
+  } />
+```
+
+## Current step
+
+Use the `selectedKey` prop to set the current step. The current step is marked with `aria-current="step"`, and the steps before it are marked as completed. Use the `data-current` and `data-completed` attributes to style them.
+
+```tsx render
+"use client";
+import {StepList, StepListItem} from 'vanilla-starter/StepList';
+import {Button} from 'vanilla-starter/Button';
+import {useState} from 'react';
+
+let steps = [
+  {id: 'cart', label: 'Cart'},
+  {id: 'shipping', label: 'Shipping'},
+  {id: 'payment', label: 'Payment'},
+  {id: 'review', label: 'Review'}
+];
+
+function Example() {
+  let [index, setIndex] = useState(1);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 16}}>
+      <StepList
+        aria-label="Checkout"
+        items={steps}
+        /*- begin highlight -*/
+        selectedKey={steps[index].id}>
+        {/*- end highlight -*/}
+        {step => <StepListItem>{step.label}</StepListItem>}
+      </StepList>
+      <div style={{display: 'flex', gap: 8}}>
+        <Button isDisabled={index === 0} onPress={() => setIndex(index - 1)}>Back</Button>
+        <Button isDisabled={index === steps.length - 1} onPress={() => setIndex(index + 1)}>Next</Button>
+      </div>
+    </div>
+  );
+}
+```
+
+## API
+
+```tsx links={{StepList: '#steplist', StepListItem: '#steplistitem', StepListItemContent: '#steplistitemcontent'}}
+<StepList>
+  <StepListItem>
+    <StepListItemContent />
+  </StepListItem>
+</StepList>
+```
+
+### StepList
+
+<PropTable component={docs.exports.StepList} links={docs.links} showDescription />
+
+### StepListItem
+
+<PropTable component={docs.exports.StepListItem} links={docs.links} showDescription />
+
+### StepListItemContent
+
+<PropTable component={docs.exports.StepListItemContent} links={docs.links} showDescription />

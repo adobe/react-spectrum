@@ -1,0 +1,74 @@
+@import './theme.css';
+
+.react-aria-StepList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--font-size) system-ui;
+  color: var(--text-color);
+}
+
+.react-aria-StepListItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+
+  .marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    font-size: var(--font-size-sm);
+  }
+
+  &[data-current] .marker,
+  &[data-completed] .marker {
+    background: var(--highlight-background);
+    border-color: var(--highlight-background);
+    color: var(--highlight-foreground);
+    forced-color-adjust: none;
+  }
+
+  &[data-current] {
+    font-weight: 600;
+  }
+
+  /* Connector line between steps. */
+  &:not(:last-child)::after {
+    content: '';
+    width: var(--spacing-6);
+    border-top: 1px solid var(--border-color);
+  }
+
+  &[data-completed]::after {
+    border-color: var(--highlight-background);
+  }
+}
+
+.react-aria-StepListItemContent {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &[data-hovered] {
+    text-decoration: underline;
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+}
