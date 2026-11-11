@@ -21,7 +21,7 @@ import {
 } from '../focus/FocusScope';
 import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from '../utils/domHelpers';
-import React, {ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import React, {ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '../ssr/SSRProvider';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
@@ -82,47 +82,55 @@ export function Overlay(props: OverlayProps): React.ReactPortal | null {
       : null
   );
 
+  let isDismissedByEscapeRef = useRef(false);
+
+  useEffect(() => {
+    let ownerDocument = getOwnerDocument(portalContainer);
+    let onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        isDismissedByEscapeRef.current = true;
+        queueMicrotask(() => {
+          isDismissedByEscapeRef.current = false;
+        });
+      }
+    };
+    ownerDocument.addEventListener('keydown', onKeyDown, true);
+    return () => {
+      ownerDocument.removeEventListener('keydown', onKeyDown, true);
+    };
+  }, [portalContainer]);
+
   useLayoutEffect(() => {
-    if (!isExiting || props.disableFocusManagement) {
+    if (!isExiting || props.disableFocusManagement || !isDismissedByEscapeRef.current) {
       return;
     }
+    isDismissedByEscapeRef.current = false;
 
-    let isCancelled = false;
     let nodeToRestore = nodeToRestoreRef.current;
     if (!nodeToRestore || !nodeToRestore.isConnected) {
       return;
     }
 
     let ownerDocument = getOwnerDocument(portalContainer);
-    queueMicrotask(() => {
-      if (isCancelled) {
-        return;
-      }
+    let activeElement = getActiveElement(ownerDocument);
+    if (!activeElement) {
+      return;
+    }
 
-      let activeElement = getActiveElement(ownerDocument);
-      if (!activeElement) {
-        return;
+    let isFocusedInOverlay = false;
+    for (let node of focusScopeTree.traverse()) {
+      if (
+        node.nodeToRestore === nodeToRestore &&
+        isElementInChildScope(activeElement, node.scopeRef)
+      ) {
+        isFocusedInOverlay = true;
+        break;
       }
+    }
 
-      let isFocusedInOverlay = false;
-      for (let node of focusScopeTree.traverse()) {
-        if (
-          node.nodeToRestore === nodeToRestore &&
-          isElementInChildScope(activeElement, node.scopeRef)
-        ) {
-          isFocusedInOverlay = true;
-          break;
-        }
-      }
-
-      if (isFocusedInOverlay) {
-        restoreFocusToElement(nodeToRestore);
-      }
-    });
-
-    return () => {
-      isCancelled = true;
-    };
+    if (isFocusedInOverlay) {
+      restoreFocusToElement(nodeToRestore);
+    }
   }, [isExiting, props.disableFocusManagement, portalContainer]);
 
   if (!portalContainer) {
