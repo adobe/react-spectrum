@@ -17,16 +17,17 @@ import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {createContext, ReactNode, useContext, useEffect, useReducer, useRef, useState} from 'react';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
-import {FocusScope, useFocusManager} from 'react-aria/FocusScope';
+import {FocusableElement, Key} from '@react-types/shared';
+import {FocusScope} from 'react-aria/FocusScope';
+import {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
 import {
   getActiveElement,
   getEventTarget,
   nodeContains
 } from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import intlMessages from '../intl/*.json';
-// @ts-ignore
-import {Key} from '@react-types/shared';
 import type {KeyboardEvent} from 'react';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {
@@ -46,6 +47,7 @@ import {scrollIntoView} from 'react-aria/private/utils/scrollIntoView';
 import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {composeStepRunners} from 'storybook/internal/preview-api';
 
 export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
   isInfinite?: boolean;
@@ -81,7 +83,8 @@ const carouselStyles = style({
 
 const pickerStyles = style({
   display: 'flex',
-  maxWidth: 600,
+  // TODO: update max width based on device width?
+  maxWidth: 300,
   overflowX: 'auto',
   flexDirection: {
     orientation: {
@@ -145,8 +148,8 @@ const itemStyles = style({
   width: 'full',
   height: 'full',
   flexShrink: 0,
-  scrollSnapAlign: 'start',
-  scrollSnapStop: 'always',
+  // scrollSnapAlign: 'start',
+  // scrollSnapStop: 'always',
   paddingX: 16,
   paddingY: 4,
   boxSizing: 'border-box',
@@ -350,12 +353,11 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   let {children: renderPage, ...otherProps} = props;
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
-  let keyboardScroll = useRef(false);
-  let selectionScroll = useRef(false);
+  let shouldMoveFocusOnScroll = useRef(false);
+  let isScrollingToSelection = useRef(false);
   let previousSelectedIndex = useRef<number | null>(null);
   let keyboardIntentTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  let focusAfterSelection = useRef(false);
-  let focusManager = useFocusManager();
+  let pendingFocus = useRef(false);
 
   let selectedKey = state?.selectedKey;
   let selectedIndex = state?.selectedItem?.index ?? null;
@@ -369,10 +371,8 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     };
   }, []);
 
+  // Update scroll position based on selected key
   useLayoutEffect(() => {
-    let moveFocus = focusAfterSelection.current;
-    focusAfterSelection.current = false;
-
     let el = ref.current;
     if (!el || selectedIndex == null) {
       return;
@@ -380,24 +380,49 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
 
     let previousIndex = previousSelectedIndex.current;
     previousSelectedIndex.current = selectedIndex;
-
-    let currentIndex = Math.round(el.scrollLeft / el.offsetWidth);
-    if (
-      selectedIndex !== previousIndex &&
-      (selectedIndex !== currentIndex || selectionScroll.current)
-    ) {
-      let isAdjacent = previousIndex !== null && Math.abs(selectedIndex - previousIndex) === 1;
-      let left = el.offsetWidth * selectedIndex;
-      selectionScroll.current = isAdjacent && el.scrollLeft !== left;
-
-      // Distant selections may have unmounted pages between them.
-      el.scrollTo({
-        left,
-        behavior: isAdjacent ? 'auto' : 'instant'
-      });
+    if (selectedIndex === previousIndex) {
+      return;
     }
 
-    if (!moveFocus) {
+    let currentIndex = Math.round(el.scrollLeft / el.offsetWidth);
+    // Retarget an existing selection-driven animation even if its intermediate
+    // position already rounds to the newly selected page.
+    // if (selectedIndex === currentIndex && !isScrollingToSelection.current) {
+    //   console.log('hey');
+    //   return;
+    // }
+
+    let left = el.offsetWidth * selectedIndex;
+    let isAdjacent = previousIndex !== null && Math.abs(selectedIndex - previousIndex) === 1;
+
+    // Keep the chosen selection authoritative while the viewport catches up.
+    isScrollingToSelection.current = el.scrollLeft !== left;
+
+    console.log('Lightbox scrollTo', {
+      previousIndex,
+      selectedIndex,
+      currentIndex,
+      scrollLeft: el.scrollLeft,
+      targetLeft: left,
+      isAdjacent
+    });
+
+    // Distant selections may have unmounted pages between them.
+    el.scrollTo({
+      left,
+      behavior: isAdjacent ? 'smooth' : 'instant'
+    });
+  }, [selectedIndex]);
+
+  // Update focus to the new slide if we were focused on the tab panel to begin with
+  useLayoutEffect(() => {
+    if (!pendingFocus.current) {
+      return;
+    }
+
+    pendingFocus.current = false;
+    let el = ref.current;
+    if (!el || selectedIndex == null) {
       return;
     }
 
@@ -408,31 +433,43 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
 
     // Once the new slide is active, focus its first tabbable control or the panel.
     let panel = el.querySelector<HTMLElement>('[role="tabpanel"]');
-    let control = focusManager?.focusFirst({
-      tabbable: true,
-      accept: element => element !== panel && nodeContains(panel, element)
-    });
-    if (!control) {
-      focusManager?.focusFirst({
-        tabbable: true,
-        accept: element => element === panel
-      });
+    if (panel) {
+      let walker = getFocusableTreeWalker(panel, {tabbable: true});
+      let control = walker.nextNode() as FocusableElement | null;
+      // Don't let focusing the incoming content initiate a competing scroll.
+      focusWithoutScrolling(control ?? panel);
     }
-  }, [selectedIndex, selectedKey, focusManager]);
+  }, [selectedIndex, selectedKey]);
 
   let size = state.collection.size;
 
-  let scrollToPage = (index: number): boolean => {
-    let el = ref.current;
-    if (!el || index < 0 || index >= size) {
-      return false;
+  let selectPageFromButton = (index: number) => {
+    if (index < 0 || index >= size) {
+      return;
     }
 
-    el.scrollLeft = el.offsetWidth * index;
-    return true;
+    let key = [...state.collection].at(index)?.key;
+    if (key != null && key !== selectedKey) {
+      state.setSelectedKey(key);
+    }
   };
 
-  let updateSelection = (moveFocus = false) => {
+  let prepareFocusForSelectionChange = (el: HTMLElement, moveFocus: boolean) => {
+    let panel = el.querySelector<HTMLElement>('[role="tabpanel"]');
+    let activeElement = getActiveElement(el.ownerDocument);
+    if (
+      activeElement &&
+      nodeContains(panel, activeElement) &&
+      'blur' in activeElement &&
+      typeof activeElement.blur === 'function'
+    ) {
+      pendingFocus.current = moveFocus;
+      // Blur before deselection removes the panel's focus handlers.
+      activeElement.blur();
+    }
+  };
+
+  let updateSelectionFromScroll = () => {
     let el = ref.current;
     if (!el) {
       return;
@@ -444,19 +481,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       return;
     }
 
-    let panel = el.querySelector<HTMLElement>('[role="tabpanel"]');
-    let activeElement = getActiveElement(el.ownerDocument);
-    if (
-      activeElement &&
-      nodeContains(panel, activeElement) &&
-      'blur' in activeElement &&
-      typeof activeElement.blur === 'function'
-    ) {
-      focusAfterSelection.current = moveFocus;
-      // Blur before deselection removes the panel's focus handlers.
-      activeElement.blur();
-    }
-
+    prepareFocusForSelectionChange(el, shouldMoveFocusOnScroll.current);
     state.setSelectedKey(key);
   };
 
@@ -467,27 +492,39 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     }
   };
 
-  // Keep the focused panel non-inert until keyboard scrolling finishes.
+  // Native keyboard scrolling transfers focus as soon as the selected page changes.
   let onScroll = () => {
+    // If scrolling was triggered by left/right arrow keys inside tab panel
     if (keyboardIntentTimeout.current !== null) {
       clearKeyboardIntent();
-      keyboardScroll.current = true;
+      shouldMoveFocusOnScroll.current = true;
     }
 
-    if (!keyboardScroll.current && !selectionScroll.current) {
-      updateSelection();
+    // If we are scrolling to the selectedKey, we don't need to update selection since that has already been done
+    if (isScrollingToSelection.current) {
+      return;
     }
+
+    // If we are swiping between slides, then we update the selected key based on scroll position. Otherwise, we generally use selectedKey as source of truth
+    updateSelectionFromScroll();
   };
 
   let onScrollEnd = () => {
-    let moveFocus = keyboardScroll.current;
-    let shouldUpdateSelection = moveFocus || selectionScroll.current;
-    keyboardScroll.current = false;
-    selectionScroll.current = false;
-
-    if (shouldUpdateSelection) {
-      updateSelection(moveFocus);
+    let el = ref.current;
+    // Rapid arrow presses on a tab panel can make Safari fire scrollend before the
+    // latest scroll finishes. Keep scroll-driven selection suppressed until the viewport
+    // maps to selectedIndex, so intermediate scroll events cannot overwrite selectedKey.
+    if (
+      isScrollingToSelection.current &&
+      el &&
+      selectedIndex != null &&
+      Math.round(el.scrollLeft / el.offsetWidth) !== selectedIndex
+    ) {
+      return;
     }
+
+    shouldMoveFocusOnScroll.current = false;
+    isScrollingToSelection.current = false;
   };
 
   // Only handle arrows from the panel itself, preserving keyboard behavior
@@ -509,11 +546,27 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       return false;
     }
 
-    if (selectedIndex == null || keyboardScroll.current) {
+    if (selectedIndex == null) {
       return;
     }
 
-    keyboardScroll.current = scrollToPage(selectedIndex + delta);
+    let nextIndex = selectedIndex + delta;
+    if (nextIndex < 0 || nextIndex >= size) {
+      return;
+    }
+
+    let key = [...state.collection].at(nextIndex)?.key;
+    if (key != null) {
+      // Selection drives the animation, so repeated arrows use the latest destination.
+      shouldMoveFocusOnScroll.current = false;
+      let el = ref.current;
+      if (!el || key === selectedKey) {
+        return;
+      }
+
+      prepareFocusForSelectionChange(el, true);
+      state.setSelectedKey(key);
+    }
   };
 
   let {keyboardProps} = useKeyboard({
@@ -576,14 +629,14 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       </div>
       <CarouselNavButton
         onPress={() => {
-          scrollToPage(selectedIndex - 1);
+          selectPageFromButton(selectedIndex - 1);
         }}
         side="start"
         aria-disabled={selectedIndex === 0}
       />
       <CarouselNavButton
         onPress={() => {
-          scrollToPage(selectedIndex + 1);
+          selectPageFromButton(selectedIndex + 1);
         }}
         side="end"
         aria-disabled={selectedIndex === size - 1}
