@@ -48,7 +48,7 @@ Use a linked PR number and short descriptive title as a third-level heading. Do 
 3. **Would have done:** use a fourth-level heading with separate **Labels (proposed)** and **Maintainer next step** groups. List exact additions/removals once, with brief reasons, including exactly one `merge-risk:` label and `ai-reviewed` for analyzed PRs; separate bot-eligible labels from maintainer-only recommendations such as `ready for review`. Break review tasks into short bullets or numbered steps rather than a semicolon-heavy paragraph. Preserve existing labels unless there is evidence to remove them.
 4. **Evidence and verification:** put detailed diff/test analysis, version/browser inventories, related-but-not-duplicate comparisons, and longer workaround explanations in a later section keyed by PR number. Keep paragraphs short and split distinct topics under descriptive subheadings. Preserve supporting links and material uncertainty without repeating the recommendation or entire label list.
 
-Omit empty sections and routine successful checks. Include confidence only when uncertainty could change a decision, explaining the missing evidence. **Would have done** is one action block, not a second summary repeating labels and next steps elsewhere. Put suggested author requests, API review, escalation, and closure recommendations there for maintainers; none are bot comments or assignments. Note unsigned CLA as a readiness blocker, but do not propose `waiting for author` for CLA alone. State the dry-run/no-GitHub-writes boundary once in **Run notes** unless a specific distinction needs clarification. Member PRs use only the one-line skipped entry in step 0, not this format.
+Omit empty sections and routine successful checks. Include confidence only when uncertainty could change a decision, explaining the missing evidence. **Would have done** is one action block, not a second summary repeating labels and next steps elsewhere. Put suggested author requests, API review, escalation, and closure recommendations there for maintainers; none are bot comments or assignments. Note unsigned CLA as a readiness blocker, but do not propose `waiting on author` for CLA alone. State the dry-run/no-GitHub-writes boundary once in **Run notes** unless a specific distinction needs clarification. Member PRs use only the one-line skipped entry in step 0, not this format.
 
 When reformatting an existing digest, preserve its findings, evidence links, label choices, and verification limits. Mark it as a presentation-only revision, not a new triage run; use "not assessed in the original run" for an absent rating instead of inventing one.
 
@@ -88,7 +88,7 @@ A high-complexity or high-risk PR is not automatically unwanted, rejected, or un
 - **Test quality:** is there a test? Does it exercise the real-world scenario from the issue (user interaction, rendered output) rather than implementation details (internal state, call counts, private helper behavior)? Would it fail before the change and pass after? Check by reasoning from the diff. Do not run the PR's tests, even with the source change reverted. Flag missing integration-level tests.
 - **Accessibility:** flag changes that regress or ignore accessibility (removed ARIA, broken keyboard support, focus handling hacks, color-only information).
 - **Workarounds:** flag weird hacks, DOM poking, reliance on browser quirks, or user-agent sniffing where a proper fix exists.
-- **CLA:** note if the CLA check has not been signed in the digest only. A separate automation handles CLA follow-up; never propose `waiting for author` or a CLA comment for this reason.
+- **CLA:** note if the CLA check has not been signed in the digest only. A separate automation handles CLA follow-up; never propose `waiting on author` or a CLA comment for this reason.
 
 ### 3. API and compatibility changes
 
@@ -123,7 +123,7 @@ Judge whether the PR is ready for a maintainer to spend review time on it. It is
 - It is not a duplicate of a better PR, and the underlying issue is not one the team has said should not be fixed or is waiting on a decision.
 - It is not a draft.
 
-For every analyzed PR, summarize readiness and specific blockers in the digest's **Maintainer next step** bullet. An unsigned CLA still blocks readiness, but is informational for this triage: do not propose `waiting for author` or any other waiting label solely because of CLA. If it is the only blocker, say "Otherwise ready; CLA handled by separate automation." Other blockers can map to `waiting for author` (a specific non-CLA author task), `needs decision` or `on hold` (team question), or `waiting for maintainer`. Recommend `ready for review` for maintainers to apply; do not apply it automatically.
+For every analyzed PR, summarize readiness and specific blockers in the digest's **Maintainer next step** bullet. An unsigned CLA still blocks readiness, but is informational for this triage: do not propose `waiting on author` or any other waiting label solely because of CLA. If it is the only blocker, say "Otherwise ready; CLA handled by separate automation." Other blockers can map to `waiting on author` (a specific non-CLA author task), `needs decision` or `on hold` (team question), or `waiting on maintainer`. Recommend `ready for review` for maintainers to apply; do not apply it automatically.
 
 ### 6. Labels (proposed only)
 
@@ -150,8 +150,8 @@ Other labels:
 | `needs decision` | A specific product, scope, compatibility, or architecture question remains unresolved. State the question explicitly. | Bot or maintainer; maintainer resolves it |
 | `needs initial review` (proposed) | Author marked the PR ready, but a maintainer hasn't assessed scope, direction, and reviewability. | Maintainer does an initial pass and assigns the next state |
 | `ready for review` | Initial triage is complete, direction is established, and the next step is substantive code review or re-review. Readiness marker only; see step 5. | Maintainer reviews or re-reviews |
-| `waiting for maintainer` | A maintainer needs to assess new information, clarify requirements, or finish triage. Includes untouched PRs and author responses awaiting assessment. | n/a |
-| `waiting for author` | Progress depends on a specific non-CLA author action (code, tests, reproduction details, or an answer to a blocking question). Document the request in the digest; unsigned CLA never triggers this label. | Author addresses it or explains disagreement, then requests re-review |
+| `waiting on maintainer` | A maintainer needs to assess new information, clarify requirements, or finish triage. Includes untouched PRs and author responses awaiting assessment. | n/a |
+| `waiting on author` | Progress depends on a specific non-CLA author action (code, tests, reproduction details, or an answer to a blocking question). Document the request in the digest; unsigned CLA never triggers this label. | Author addresses it or explains disagreement, then requests re-review |
 | `on hold` | Progress depends on a team decision or dependency rather than an author task. Name the maintainer who should coordinate. | Named maintainer coordinates the decision |
 
 Existing repo labels such as `needs API review` may still be proposed for API changes. For every label proposed, give a one-line reason, and for `needs decision` state the question. List any proposed label that does not yet exist in the repo so it can be created. Do not use the old `risk`, `small/medium/large impact`, or `needs signoff` labels.
