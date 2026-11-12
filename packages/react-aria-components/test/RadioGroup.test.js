@@ -885,10 +885,11 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
   });
 
   it('should support implicit form submission from a focused radio on Enter', async () => {
+    let onChange = jest.fn();
     let onSubmit = jest.fn(e => e.preventDefault());
     let {getAllByRole} = render(
       <form onSubmit={onSubmit}>
-        <RadioGroup defaultValue="a">
+        <RadioGroup onChange={onChange}>
           <Label>Test</Label>
           <Radio value="a">A</Radio>
           <Radio value="b">B</Radio>
@@ -898,9 +899,10 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     );
 
     let radio = getAllByRole('radio')[0];
-    await user.click(radio);
+    await user.tab();
+    expect(radio).toHaveFocus();
     await user.keyboard('{Enter}');
-
+    expect(onChange).not.toHaveBeenCalled();
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 });
