@@ -309,11 +309,35 @@ describe('NumberField', () => {
     expect(onChange).toHaveBeenCalledWith(0);
   });
 
+  it.each(['sd', 'ur-u-nu-arab', 'pa-u-nu-arab'])(
+    'preserves the native formatted value through blur and increment in %s',
+    async locale => {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole} = render(
+        <I18nProvider locale={locale}>
+          <TestNumberField defaultValue={1234.5} step={0.1} onChange={onChange} />
+        </I18nProvider>
+      );
+      let input = getByRole('textbox');
+      let formatted = new Intl.NumberFormat(locale).format(1234.5);
+      expect(input).toHaveValue(formatted);
+      await user.tab();
+      await user.tab();
+      expect(input).toHaveValue(formatted);
+      expect(onChange).not.toHaveBeenCalled();
+      await user.click(getAllByRole('button')[1]);
+      expect(onChange).toHaveBeenLastCalledWith(1234.6);
+    }
+  );
+
   it.each([
     ['sd', '١,٢٣٤'],
     ['sd', '١،٢٣٤'],
     ['pa-u-nu-arab', '١,٢٣٤،٥'],
-    ['ur-u-nu-arab', '١.٢٣٤،٥']
+    ['ur-u-nu-arab', '١.٢٣٤،٥'],
+    ['ur-u-nu-arab', '١.٥'],
+    ['fr-FR', '1.000'],
+    ['fa-IR', '۱.۲۳۴']
   ])('preserves the value after pasting non-native separators in %s: %s', async (locale, value) => {
     let onChange = jest.fn();
     let {getByRole} = render(
@@ -327,6 +351,8 @@ describe('NumberField', () => {
     await user.tab();
     act(() => input.select());
     await user.paste(value);
+    expect(input).toHaveValue(formatted);
+    expect(onChange).not.toHaveBeenCalled();
     await user.tab();
     expect(input).toHaveValue(formatted);
     expect(onChange).not.toHaveBeenCalled();

@@ -120,6 +120,26 @@ describe('NumberParser', function () {
       expect(parser.isValidPartialNumber(input)).toBe(false);
     });
 
+    it.each([
+      ['fr-FR', '1.000', {}],
+      ['fa-IR', '۱.۲۳۴', {}],
+      ['pl-PL', '1.1 roku', {style: 'unit', unit: 'year', unitDisplay: 'long'}]
+    ])('should reject leftover periods in %s: %s', (locale, input, options) => {
+      let parser = new NumberParser(locale, options);
+      expect(parser.isValidPartialNumber(input)).toBe(false);
+      expect(parser.parse(input)).toBeNaN();
+    });
+
+    it.each(['sv-SE', 'nb-NO'])(
+      'should accept Arabic decimal keyboard aliases with the native grouping separator in %s',
+      locale => {
+        let parser = new NumberParser(locale);
+        expect(parser.isValidPartialNumber('١٢٣,٥')).toBe(true);
+        expect(parser.parse('١٢٣,٥')).toBe(123.5);
+        expect(parser.parse('١٢٣،٥')).toBe(123.5);
+      }
+    );
+
     it('should support group characters', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('1,000')).toBe(1000);
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('-1,000')).toBe(-1000);
@@ -371,7 +391,7 @@ describe('NumberParser', function () {
         ).toBe(37);
         expect(
           new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
-            '1.1 roku'
+            '1,1 roku'
           )
         ).toBe(1.1);
 

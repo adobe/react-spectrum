@@ -179,11 +179,7 @@ class NumberParserImpl {
 
     // Reject any remaining "." when it is not the locale's decimal separator,
     // so Number() cannot interpret invalid punctuation as a decimal point.
-    if (
-      this.options.numberingSystem === 'arab' &&
-      this.symbols.decimal !== '.' &&
-      fullySanitizedValue.includes('.')
-    ) {
+    if (this.symbols.decimal !== '.' && fullySanitizedValue.includes('.')) {
       return NaN;
     }
 
@@ -263,15 +259,11 @@ class NumberParserImpl {
       value = value.replace('-', this.symbols.minusSign);
     }
 
-    // Keyboard alternatives apply only to the standard arab separators, not other locale-native symbols.
-    if (
-      this.options.numberingSystem === 'arab' &&
-      this.symbols.decimal === '\u066B' &&
-      this.symbols.group === '\u066C'
-    ) {
+    // Accept keyboard alternatives for the Arabic decimal separator without replacing other native decimals.
+    if (this.options.numberingSystem === 'arab' && this.symbols.decimal === '\u066B') {
       value = replaceAll(value, ',', this.symbols.decimal);
       value = replaceAll(value, '\u060C', this.symbols.decimal);
-      if (isGroupSymbolAllowed) {
+      if (this.symbols.group && isGroupSymbolAllowed) {
         value = replaceAll(value, '.', this.symbols.group);
       }
     }
