@@ -250,6 +250,10 @@ export default defineConfig({
   test: {
     globals: true,
     pool: 'threads',
+    // Concurrent test files contend for page focus, and an unfocused page makes browsers
+    // (Firefox especially) skip native keyboard activation behavior, e.g. a Space press on a
+    // submit button never fires its click and the form is never submitted.
+    fileParallelism: false,
     setupFiles: ['./test/browser/setup.ts'],
     include: ['packages/**/test/**/*.browser.test.{ts,tsx}'],
     browser: {

@@ -39,6 +39,6 @@
   "resolutions": {
     "terser-webpack-plugin": "4.2.3"
   },
-  "packageManager": "yarn@4.2.2",
+  "packageManager": "yarn@4.18.0",
   "NOTE": "Do not update Jest. The old version is used for testing."
 }

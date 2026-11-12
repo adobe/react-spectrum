@@ -20,6 +20,7 @@ import {
   getParentElement,
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
+import {getInteractionModality} from '../interactions/useFocusVisible';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
@@ -137,7 +138,9 @@ export function useToolbar(
       !nodeContains(e.currentTarget, e.relatedTarget) &&
       nodeContains(ref.current, getEventTarget(e))
     ) {
-      lastFocused.current?.focus();
+      if (getInteractionModality() === 'keyboard') {
+        lastFocused.current?.focus();
+      }
       lastFocused.current = null;
     }
   };

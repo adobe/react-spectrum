@@ -12,7 +12,7 @@
 
 import {Label} from '../src/Label';
 
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {ProgressBar} from '../src/ProgressBar';
 import React from 'react';
 import './styles.css';
@@ -30,20 +30,22 @@ export default {
   }
 } as Meta<typeof ProgressBar>;
 
-export type ProgressBarStory = StoryFn<typeof ProgressBar>;
+export type ProgressBarStory = StoryObj<typeof ProgressBar>;
 
-export const ProgressBarExample: ProgressBarStory = args => {
-  return (
-    <ProgressBar {...args}>
-      {({percentage, valueText}) => (
-        <>
-          <Label>Storage space</Label>
-          <span className="value">{valueText}</span>
-          <div className="bar">
-            <div className="fill" style={{width: percentage + '%'}} />
-          </div>
-        </>
-      )}
-    </ProgressBar>
-  );
+export const ProgressBarExample: ProgressBarStory = {
+  render: args => {
+    return (
+      <ProgressBar {...args}>
+        {({percentage, valueText}) => (
+          <>
+            <Label>Storage space</Label>
+            <span className="value">{valueText}</span>
+            <div className="bar">
+              <div className="fill" style={{width: percentage + '%'}} />
+            </div>
+          </>
+        )}
+      </ProgressBar>
+    );
+  }
 };

@@ -22,7 +22,7 @@ import {Heading} from '../../src/text/Heading';
 import {IllustratedMessage} from '../../src/illustratedmessage/IllustratedMessage';
 import {Item} from 'react-stately/Item';
 import {Link} from '../../src/link/Link';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import {
   SpectrumTreeViewProps,
@@ -49,7 +49,7 @@ export default {
   }
 } as Meta<typeof TreeView>;
 
-type TreeStory = StoryFn<typeof TreeView>;
+type TreeStory = StoryObj<typeof TreeView>;
 
 // TODO: This story crashes on save and story switch, not sure why or if only local...
 export const TreeExampleStatic: StoryObj<typeof TreeView> = {
@@ -234,9 +234,9 @@ let TreeExampleStaticNoActionsRender = (args: SpectrumTreeViewProps<unknown>): J
   </div>
 );
 
-export const TreeExampleStaticNoActions: TreeStory = (args: SpectrumTreeViewProps<unknown>) => (
-  <TreeExampleStaticNoActionsRender {...args} />
-);
+export const TreeExampleStaticNoActions: TreeStory = {
+  render: (args: SpectrumTreeViewProps<unknown>) => <TreeExampleStaticNoActionsRender {...args} />
+};
 
 export const ExampleNoActions: StoryObj<typeof TreeExampleStaticNoActionsRender> = {
   render: args => <TreeExampleStaticNoActionsRender {...args} />,
@@ -401,31 +401,29 @@ export const WithActions: StoryObj<typeof TreeExampleDynamic> = {
   name: 'Tree with actions'
 };
 
-export const WithLinks: TreeStory = (args: SpectrumTreeViewProps<unknown>) => (
-  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-    <TreeView
-      {...args}
-      disabledKeys={['reports-1AB']}
-      aria-label="test dynamic tree"
-      items={rows}
-      onExpandedChange={action('onExpandedChange')}
-      onSelectionChange={action('onSelectionChange')}>
-      {item => (
-        <DynamicTreeItem
-          id={item.id}
-          icon={item.icon}
-          childItems={item.childItems}
-          textValue={item.name}
-          name={item.name}
-          href="https://adobe.com/"
-        />
-      )}
-    </TreeView>
-  </div>
-);
-
-WithLinks.story = {
-  ...TreeExampleDynamic.story,
+export const WithLinks: TreeStory = {
+  render: (args: SpectrumTreeViewProps<unknown>) => (
+    <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+      <TreeView
+        {...args}
+        disabledKeys={['reports-1AB']}
+        aria-label="test dynamic tree"
+        items={rows}
+        onExpandedChange={action('onExpandedChange')}
+        onSelectionChange={action('onSelectionChange')}>
+        {item => (
+          <DynamicTreeItem
+            id={item.id}
+            icon={item.icon}
+            childItems={item.childItems}
+            textValue={item.name}
+            name={item.name}
+            href="https://adobe.com/"
+          />
+        )}
+      </TreeView>
+    </div>
+  ),
   name: 'Tree with links',
   parameters: {
     description: {
@@ -458,24 +456,26 @@ export const EmptyTree: StoryObj<typeof TreeExampleDynamic> = {
   name: 'Empty Tree'
 };
 
-export const WithActionMenu: TreeStory = (args: SpectrumTreeViewProps<unknown>) => (
-  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-    <TreeView
-      {...args}
-      disabledKeys={['reports-1AB']}
-      aria-label="test dynamic tree"
-      items={rows}
-      onExpandedChange={action('onExpandedChange')}
-      onSelectionChange={action('onSelectionChange')}>
-      {item => (
-        <DynamicTreeItem
-          id={item.id}
-          icon={item.icon}
-          childItems={item.childItems}
-          textValue={item.name}
-          name={item.name}
-        />
-      )}
-    </TreeView>
-  </div>
-);
+export const WithActionMenu: TreeStory = {
+  render: (args: SpectrumTreeViewProps<unknown>) => (
+    <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+      <TreeView
+        {...args}
+        disabledKeys={['reports-1AB']}
+        aria-label="test dynamic tree"
+        items={rows}
+        onExpandedChange={action('onExpandedChange')}
+        onSelectionChange={action('onSelectionChange')}>
+        {item => (
+          <DynamicTreeItem
+            id={item.id}
+            icon={item.icon}
+            childItems={item.childItems}
+            textValue={item.name}
+            name={item.name}
+          />
+        )}
+      </TreeView>
+    </div>
+  )
+};

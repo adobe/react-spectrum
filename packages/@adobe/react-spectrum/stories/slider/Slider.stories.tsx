@@ -16,7 +16,7 @@ import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {ErrorBoundary} from '@react-spectrum/story-utils';
 import {Flex} from '../../src/layout/Flex';
 import {Heading} from '../../src/text/Heading';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {Slider, SpectrumSliderProps} from '../../src/slider/Slider';
 
@@ -40,149 +40,132 @@ export default {
   }
 } as Meta<SpectrumSliderProps>;
 
-export type SliderStory = StoryFn<typeof Slider>;
+export type SliderStory = StoryObj<typeof Slider>;
 
-export const Default: SliderStory = args => render({...args, label: null, 'aria-label': 'Label'});
-export const Label: SliderStory = args => render(args);
-
-Label.story = {
+export const Default: SliderStory = {
+  render: args => render({...args, label: null, 'aria-label': 'Label'})
+};
+export const Label: SliderStory = {
+  render: args => render(args),
   name: 'label'
 };
 
-export const Multitouch: SliderStory = args => (
-  <Flex direction="column" gap="size-1000">
-    {render({...args, label: 'Label'})}
-    {render({...args, label: 'Label'})}
-  </Flex>
-);
-
-Multitouch.story = {
+export const Multitouch: SliderStory = {
+  render: args => (
+    <Flex direction="column" gap="size-1000">
+      {render({...args, label: 'Label'})}
+      {render({...args, label: 'Label'})}
+    </Flex>
+  ),
   name: 'multitouch'
 };
 
-export const CustomWidth: SliderStory = args => render({...args, width: '300px'});
-
-CustomWidth.story = {
+export const CustomWidth: SliderStory = {
+  render: args => render({...args, width: '300px'}),
   name: 'custom width'
 };
 
-export const CustomWidthSmall: SliderStory = args => render({...args, width: '30px'});
-
-CustomWidthSmall.story = {
+export const CustomWidthSmall: SliderStory = {
+  render: args => render({...args, width: '30px'}),
   name: 'custom width small'
 };
 
-export const LabelOverflow: SliderStory = args =>
-  render({
-    ...args,
-    label: 'This is a rather long label for this narrow slider element.',
-    maxValue: 1000,
-    width: '300px'
-  });
-
-LabelOverflow.story = {
+export const LabelOverflow: SliderStory = {
+  render: args =>
+    render({
+      ...args,
+      label: 'This is a rather long label for this narrow slider element.',
+      maxValue: 1000,
+      width: '300px'
+    }),
   name: 'label overflow'
 };
 
-export const ShowValueLabelFalse: SliderStory = args => render({...args, showValueLabel: false});
-
-ShowValueLabelFalse.story = {
+export const ShowValueLabelFalse: SliderStory = {
+  render: args => render({...args, showValueLabel: false}),
   name: 'showValueLabel: false'
 };
 
-export const FormatOptionsPercent: SliderStory = args =>
-  render({...args, minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}});
-
-FormatOptionsPercent.story = {
+export const FormatOptionsPercent: SliderStory = {
+  render: args =>
+    render({...args, minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}}),
   name: 'formatOptions percent'
 };
 
-export const FormatOptionsCentimeter: SliderStory = args =>
-  render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}});
-
-FormatOptionsCentimeter.story = {
+export const FormatOptionsCentimeter: SliderStory = {
+  render: args =>
+    render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}}),
   name: 'formatOptions centimeter'
 };
 
-export const CustomValueLabel: SliderStory = args =>
-  render({...args, getValueLabel: state => `A ${state} B`});
-
-CustomValueLabel.story = {
+export const CustomValueLabel: SliderStory = {
+  render: args => render({...args, getValueLabel: state => `A ${state} B`}),
   name: 'custom valueLabel'
 };
 
-export const CustomValueLabelWithLabelOverflow: SliderStory = args =>
-  render({
-    ...args,
-    label: 'This is a rather long label for this narrow slider element.',
-    getValueLabel: state => `A ${state} B`
-  });
-
-CustomValueLabelWithLabelOverflow.story = {
+export const CustomValueLabelWithLabelOverflow: SliderStory = {
+  render: args =>
+    render({
+      ...args,
+      label: 'This is a rather long label for this narrow slider element.',
+      getValueLabel: state => `A ${state} B`
+    }),
   name: 'custom valueLabel with label overflow'
 };
 
-export const MinMax: SliderStory = args => render({...args, minValue: 30, maxValue: 70});
-
-MinMax.story = {
+export const MinMax: SliderStory = {
+  render: args => render({...args, minValue: 30, maxValue: 70}),
   name: 'min/max'
 };
 
-export const Step: SliderStory = args => render({...args, minValue: 0, maxValue: 100, step: 5});
-
-Step.story = {
+export const Step: SliderStory = {
+  render: args => render({...args, minValue: 0, maxValue: 100, step: 5}),
   name: 'step'
 };
 
-export const IsFilledTrue: SliderStory = args => render({...args, isFilled: true});
-
-IsFilledTrue.story = {
+export const IsFilledTrue: SliderStory = {
+  render: args => render({...args, isFilled: true}),
   name: 'isFilled: true'
 };
 
-export const FillOffset: SliderStory = args =>
-  render({
-    ...args,
-    label: 'Exposure',
-    isFilled: true,
-    fillOffset: 0,
-    defaultValue: 0,
-    minValue: -7,
-    maxValue: 5
-  });
-
-FillOffset.story = {
+export const FillOffset: SliderStory = {
+  render: args =>
+    render({
+      ...args,
+      label: 'Exposure',
+      isFilled: true,
+      fillOffset: 0,
+      defaultValue: 0,
+      minValue: -7,
+      maxValue: 5
+    }),
   name: 'fillOffset'
 };
 
-export const TrackGradient: SliderStory = args => render({...args, trackGradient: ['blue', 'red']});
-
-TrackGradient.story = {
+export const TrackGradient: SliderStory = {
+  render: args => render({...args, trackGradient: ['blue', 'red']}),
   name: 'trackGradient'
 };
 
-export const TrackGradientWithFillOffset: SliderStory = args =>
-  render({...args, trackGradient: ['blue', 'red'], isFilled: true, fillOffset: 50});
-
-TrackGradientWithFillOffset.story = {
+export const TrackGradientWithFillOffset: SliderStory = {
+  render: args => render({...args, trackGradient: ['blue', 'red'], isFilled: true, fillOffset: 50}),
   name: 'trackGradient with fillOffset'
 };
 
-export const _ContextualHelp: SliderStory = args =>
-  render({
-    ...args,
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>
-          Segments identify who your visitors are, what devices and services they use, where they
-          navigated from, and much more.
-        </Content>
-      </ContextualHelp>
-    )
-  });
-
-_ContextualHelp.story = {
+export const _ContextualHelp: SliderStory = {
+  render: args =>
+    render({
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    }),
   name: 'contextual help'
 };
 

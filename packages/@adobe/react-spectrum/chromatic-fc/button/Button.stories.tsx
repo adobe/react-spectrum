@@ -15,38 +15,38 @@ import {Button} from '../../src/button/Button';
 import {Flex} from '../../src/layout/Flex';
 import React from 'react';
 import {Render} from '../../chromatic/button/Button.stories';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 import {Text} from '../../src/text/Text';
 
 export default {
   title: 'Button'
 };
 
-export type ButtonStory = StoryFn<typeof Render>;
+export type ButtonStory = StoryObj<typeof Render>;
 
-export const All: ButtonStory = () => (
-  <Flex gap="size-100" direction={'column'}>
-    <h2>Accent</h2>
-    <Render variant="accent" />
-    <h2>Primary</h2>
-    <Render variant="primary" />
-    <h2>Negative</h2>
-    <Render variant="negative" />
-    <h2>element a</h2>
-    <Render elementType="a" variant="primary" />
-    <h2>with icon</h2>
-    <Flex gap="size-200">
-      <Button variant="primary">
-        <Bell />
-        <Text>Default</Text>
-      </Button>
-      <Button isDisabled variant="primary">
-        <Text>Disabled</Text>
-        <Bell />
-      </Button>
+export const All: ButtonStory = {
+  render: () => (
+    <Flex gap="size-100" direction={'column'}>
+      <h2>Accent</h2>
+      <Render variant="accent" />
+      <h2>Primary</h2>
+      <Render variant="primary" />
+      <h2>Negative</h2>
+      <Render variant="negative" />
+      <h2>element a</h2>
+      <Render elementType="a" variant="primary" />
+      <h2>with icon</h2>
+      <Flex gap="size-200">
+        <Button variant="primary">
+          <Bell />
+          <Text>Default</Text>
+        </Button>
+        <Button isDisabled variant="primary">
+          <Text>Disabled</Text>
+          <Bell />
+        </Button>
+      </Flex>
     </Flex>
-  </Flex>
-);
-All.story = {
+  ),
   name: 'all'
 };

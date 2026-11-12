@@ -18,7 +18,7 @@ import {Dialog} from '../../src/dialog/Dialog';
 import {DialogTrigger} from '../../src/dialog/DialogTrigger';
 import {Flex} from '../../src/layout/Flex';
 import {Heading} from '../../src/text/Heading';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../../src/searchfield/SearchField';
@@ -68,137 +68,115 @@ export default {
   }
 } as Meta<typeof SearchField>;
 
-export type SearchFieldStory = StoryFn<typeof SearchField>;
+export type SearchFieldStory = StoryObj<typeof SearchField>;
 
-export const Default: SearchFieldStory = args => renderSearchLandmark(render(args));
-
-Default.story = {
+export const Default: SearchFieldStory = {
+  render: args => renderSearchLandmark(render(args)),
   parameters: {info}
 };
 
-export const DefaultValueUncontrolled: SearchFieldStory = args =>
-  renderSearchLandmark(render({...args, defaultValue: 'React'}));
-
-DefaultValueUncontrolled.story = {
+export const DefaultValueUncontrolled: SearchFieldStory = {
+  render: args => renderSearchLandmark(render({...args, defaultValue: 'React'})),
   name: 'defaultValue (uncontrolled)',
   parameters: {info}
 };
 
-export const ValueControlled: SearchFieldStory = args =>
-  renderSearchLandmark(render({...args, value: 'React'}));
-
-ValueControlled.story = {
+export const ValueControlled: SearchFieldStory = {
+  render: args => renderSearchLandmark(render({...args, value: 'React'})),
   name: 'value (controlled)',
   parameters: {info}
 };
 
-export const IconRefresh: SearchFieldStory = args =>
-  renderSearchLandmark(render({...args, defaultValue: 'React', icon: <Refresh />}));
-
-IconRefresh.story = {
+export const IconRefresh: SearchFieldStory = {
+  render: args => renderSearchLandmark(render({...args, defaultValue: 'React', icon: <Refresh />})),
   name: 'icon: refresh',
   parameters: {info}
 };
 
-export const IconNull: SearchFieldStory = args =>
-  renderSearchLandmark(render({...args, defaultValue: 'React', icon: null}));
-
-IconNull.story = {
+export const IconNull: SearchFieldStory = {
+  render: args => renderSearchLandmark(render({...args, defaultValue: 'React', icon: null})),
   name: 'icon: null',
   parameters: {info}
 };
 
-export const OnClear: SearchFieldStory = args =>
-  renderSearchLandmark(render({...args, onClear: action('clear')}));
-
-OnClear.story = {
+export const OnClear: SearchFieldStory = {
+  render: args => renderSearchLandmark(render({...args, onClear: action('clear')})),
   name: 'onClear',
   parameters: {info}
 };
 
-export const AutoFocus: SearchFieldStory = args =>
-  renderSearchLandmark(render({...args, autoFocus: true}));
-
-AutoFocus.story = {
+export const AutoFocus: SearchFieldStory = {
+  render: args => renderSearchLandmark(render({...args, autoFocus: true})),
   name: 'autoFocus',
   parameters: {info}
 };
 
-export const NoVisibleLabel: SearchFieldStory = args =>
-  render({...args, label: null, 'aria-label': 'Street address'});
-
-NoVisibleLabel.story = {
+export const NoVisibleLabel: SearchFieldStory = {
+  render: args => render({...args, label: null, 'aria-label': 'Street address'}),
   name: 'no visible label'
 };
 
-export const WithDescription: SearchFieldStory = args =>
-  render({...args, description: 'Enter a search term.'});
-
-WithDescription.story = {
+export const WithDescription: SearchFieldStory = {
+  render: args => render({...args, description: 'Enter a search term.'}),
   name: 'with description'
 };
 
-export const WithErrorMessage: SearchFieldStory = args =>
-  render({...args, errorMessage: 'Remove special characters.', validationState: 'invalid'});
-
-WithErrorMessage.story = {
+export const WithErrorMessage: SearchFieldStory = {
+  render: args =>
+    render({...args, errorMessage: 'Remove special characters.', validationState: 'invalid'}),
   name: 'with error message'
 };
 
-export const _ContextualHelp: SearchFieldStory = args =>
-  render({
-    ...args,
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>
-          Segments identify who your visitors are, what devices and services they use, where they
-          navigated from, and much more.
-        </Content>
-      </ContextualHelp>
-    )
-  });
-
-_ContextualHelp.story = {
+export const _ContextualHelp: SearchFieldStory = {
+  render: args =>
+    render({
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    }),
   name: 'contextual help'
 };
 
-export const CustomWidth: SearchFieldStory = args => render({...args, width: 300});
-
-CustomWidth.story = {
+export const CustomWidth: SearchFieldStory = {
+  render: args => render({...args, width: 300}),
   name: 'custom width'
 };
 
-export const CustomWidthAndNarrowContainer: SearchFieldStory = args => (
-  <Flex direction="column" width="30px">
-    {render({...args, defaultValue: 'React', validationState: 'valid'})}
-    {render({...args, defaultValue: 'React', width: 30})}
-    {render({...args, defaultValue: 'React', width: 30, validationState: 'valid'})}
-  </Flex>
-);
-
-CustomWidthAndNarrowContainer.story = {
+export const CustomWidthAndNarrowContainer: SearchFieldStory = {
+  render: args => (
+    <Flex direction="column" width="30px">
+      {render({...args, defaultValue: 'React', validationState: 'valid'})}
+      {render({...args, defaultValue: 'React', width: 30})}
+      {render({...args, defaultValue: 'React', width: 30, validationState: 'valid'})}
+    </Flex>
+  ),
   name: 'custom width and narrow container'
 };
 
-export const WithinAPopover: SearchFieldStory = args => (
-  <DialogTrigger type="popover">
-    <ActionButton>Trigger</ActionButton>
-    <Dialog>
-      <Heading>The Heading</Heading>
-      <Content>
-        <SearchField
-          label="Search"
-          {...args}
-          onChange={action('change')}
-          onSubmit={action('submit')}
-        />
-      </Content>
-    </Dialog>
-  </DialogTrigger>
-);
-
-WithinAPopover.story = {
+export const WithinAPopover: SearchFieldStory = {
+  render: args => (
+    <DialogTrigger type="popover">
+      <ActionButton>Trigger</ActionButton>
+      <Dialog>
+        <Heading>The Heading</Heading>
+        <Content>
+          <SearchField
+            label="Search"
+            {...args}
+            onChange={action('change')}
+            onSubmit={action('submit')}
+          />
+        </Content>
+      </Dialog>
+    </DialogTrigger>
+  ),
   name: 'within a popover'
 };
 

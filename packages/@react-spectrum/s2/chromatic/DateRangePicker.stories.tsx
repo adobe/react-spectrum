@@ -12,6 +12,7 @@
 
 import {CalendarDate, CalendarDateTime} from '@internationalized/date';
 import {DateRangePicker} from '../src/DateRangePicker';
+import {Form} from '../src/Form';
 import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent} from 'storybook/test';
 
@@ -122,6 +123,15 @@ export const OpenPickerWithTime: Story = {
       disableAnimations: true
     }
   }
+};
+
+export const OpenPickerWithTimeInForm: Story = {
+  ...OpenPickerWithTime,
+  render: args => (
+    <Form>
+      <DateRangePicker {...args} />
+    </Form>
+  )
 };
 
 export const FirstDayOfWeek: Story = {

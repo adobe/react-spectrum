@@ -31,11 +31,14 @@ export interface ScrollAnchorInfo {
   /** Distance (px) from `edge` within which the viewport is considered "following" it. */
   threshold: number;
   /**
-   * Optional classifier excluding structural/ephemeral layout infos (e.g. loaders) from being
-   * selected as the anchor. Defaults to allowing any layoutInfo.
+   * Whether a layout info can be selected as the scroll anchor.
+   * If omitted, any layout info can be selected.
    */
   isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
-  /** Whether an item's resize should follow the anchored edge. Defaults to allowing any key. */
+  /**
+   * Whether resizing an item should keep the viewport pinned to the anchored edge.
+   * If omitted, resizing any item can keep the viewport pinned to that edge.
+   */
   isEdgeContent?: (key: Key) => boolean;
 }
 

@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {View} from '../../src/view/View';
 
@@ -24,6 +24,6 @@ let meta = {
 
 export default meta;
 
-export const Default: StoryFn<typeof View> = args => (
-  <View {...args} width="single-line-width" height="size-500" elementType="span" />
-);
+export const Default: StoryObj<typeof View> = {
+  render: args => <View {...args} width="single-line-width" height="size-500" elementType="span" />
+};

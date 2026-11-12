@@ -121,7 +121,7 @@ import PaperAirplane from '../spectrum-illustrations/linear/Paperairplane';
 import Server from '../spectrum-illustrations/linear/Server';
 import StarFilled1 from '../spectrum-illustrations/linear/Star';
 import {style} from '../style' with {type: 'macro'};
-import {UNSAFE_PortalProvider} from 'react-aria';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import {useEffect, useRef, useState} from 'react';
 
 enableShadowDOM();

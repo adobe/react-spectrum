@@ -5178,74 +5178,74 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-darwin-arm64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-darwin-arm64@npm:0.0.6"
+"@parcel/parcel3-darwin-arm64@npm:3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "@parcel/parcel3-darwin-arm64@npm:3.0.0-alpha.2"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-darwin-x64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-darwin-x64@npm:0.0.6"
+"@parcel/parcel3-darwin-x64@npm:3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "@parcel/parcel3-darwin-x64@npm:3.0.0-alpha.2"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-arm64-musl@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-linux-arm64-musl@npm:0.0.6"
+"@parcel/parcel3-linux-arm64-musl@npm:3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "@parcel/parcel3-linux-arm64-musl@npm:3.0.0-alpha.2"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-arm64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-linux-arm64@npm:0.0.6"
+"@parcel/parcel3-linux-arm64@npm:3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "@parcel/parcel3-linux-arm64@npm:3.0.0-alpha.2"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-x64-musl@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-linux-x64-musl@npm:0.0.6"
+"@parcel/parcel3-linux-x64-musl@npm:3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "@parcel/parcel3-linux-x64-musl@npm:3.0.0-alpha.2"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-x64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-linux-x64@npm:0.0.6"
+"@parcel/parcel3-linux-x64@npm:3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "@parcel/parcel3-linux-x64@npm:3.0.0-alpha.2"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-win32-arm64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-win32-arm64@npm:0.0.6"
+"@parcel/parcel3-win32-arm64@npm:3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "@parcel/parcel3-win32-arm64@npm:3.0.0-alpha.2"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-win32-x64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-win32-x64@npm:0.0.6"
+"@parcel/parcel3-win32-x64@npm:3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "@parcel/parcel3-win32-x64@npm:3.0.0-alpha.2"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3@npm:0.0.6"
+"@parcel/parcel3@npm:^3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "@parcel/parcel3@npm:3.0.0-alpha.2"
   dependencies:
-    "@parcel/parcel3-darwin-arm64": "npm:0.0.6"
-    "@parcel/parcel3-darwin-x64": "npm:0.0.6"
-    "@parcel/parcel3-linux-arm64": "npm:0.0.6"
-    "@parcel/parcel3-linux-arm64-musl": "npm:0.0.6"
-    "@parcel/parcel3-linux-x64": "npm:0.0.6"
-    "@parcel/parcel3-linux-x64-musl": "npm:0.0.6"
-    "@parcel/parcel3-win32-arm64": "npm:0.0.6"
-    "@parcel/parcel3-win32-x64": "npm:0.0.6"
+    "@parcel/parcel3-darwin-arm64": "npm:3.0.0-alpha.2"
+    "@parcel/parcel3-darwin-x64": "npm:3.0.0-alpha.2"
+    "@parcel/parcel3-linux-arm64": "npm:3.0.0-alpha.2"
+    "@parcel/parcel3-linux-arm64-musl": "npm:3.0.0-alpha.2"
+    "@parcel/parcel3-linux-x64": "npm:3.0.0-alpha.2"
+    "@parcel/parcel3-linux-x64-musl": "npm:3.0.0-alpha.2"
+    "@parcel/parcel3-win32-arm64": "npm:3.0.0-alpha.2"
+    "@parcel/parcel3-win32-x64": "npm:3.0.0-alpha.2"
   dependenciesMeta:
     "@parcel/parcel3-darwin-arm64":
       optional: true
@@ -5265,7 +5265,7 @@ __metadata:
       optional: true
   bin:
     parcel3: bin/parcel3
-  checksum: 10c0/af2b9d4943a4d34e459cb68485c149aabe000066d65c45c2f7958f98358d38ac580afff98affb521617daa1ce0bb75fa16b8b3aa1a7d9200ff30395df038cd24
+  checksum: 10c0/7dcaf43e2e39e781de2f5fdb4df982bc22da99c3d1c23e21efef00bf7de5581697bb8d165dddceddd3d06db6bb74510255badfa875944b47307103c10f82c873
   languageName: node
   linkType: hard
 
@@ -5829,59 +5829,59 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-darwin-arm64@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-darwin-arm64@npm:0.0.2"
+"@parcel/transformer-storybook-darwin-arm64@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-darwin-arm64@npm:0.0.3"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-darwin-x64@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-darwin-x64@npm:0.0.2"
+"@parcel/transformer-storybook-darwin-x64@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-darwin-x64@npm:0.0.3"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-linux-arm64-gnu@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-linux-arm64-gnu@npm:0.0.2"
+"@parcel/transformer-storybook-linux-arm64-gnu@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-linux-arm64-gnu@npm:0.0.3"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-linux-arm64-musl@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-linux-arm64-musl@npm:0.0.2"
+"@parcel/transformer-storybook-linux-arm64-musl@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-linux-arm64-musl@npm:0.0.3"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-linux-x64-gnu@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-linux-x64-gnu@npm:0.0.2"
+"@parcel/transformer-storybook-linux-x64-gnu@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-linux-x64-gnu@npm:0.0.3"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-linux-x64-musl@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-linux-x64-musl@npm:0.0.2"
+"@parcel/transformer-storybook-linux-x64-musl@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-linux-x64-musl@npm:0.0.3"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-v3@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-v3@npm:0.0.2"
+"@parcel/transformer-storybook-v3@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-v3@npm:0.0.3"
   dependencies:
-    "@parcel/transformer-storybook-darwin-arm64": "npm:0.0.2"
-    "@parcel/transformer-storybook-darwin-x64": "npm:0.0.2"
-    "@parcel/transformer-storybook-linux-arm64-gnu": "npm:0.0.2"
-    "@parcel/transformer-storybook-linux-arm64-musl": "npm:0.0.2"
-    "@parcel/transformer-storybook-linux-x64-gnu": "npm:0.0.2"
-    "@parcel/transformer-storybook-linux-x64-musl": "npm:0.0.2"
-    "@parcel/transformer-storybook-win32-x64-msvc": "npm:0.0.2"
+    "@parcel/transformer-storybook-darwin-arm64": "npm:0.0.3"
+    "@parcel/transformer-storybook-darwin-x64": "npm:0.0.3"
+    "@parcel/transformer-storybook-linux-arm64-gnu": "npm:0.0.3"
+    "@parcel/transformer-storybook-linux-arm64-musl": "npm:0.0.3"
+    "@parcel/transformer-storybook-linux-x64-gnu": "npm:0.0.3"
+    "@parcel/transformer-storybook-linux-x64-musl": "npm:0.0.3"
+    "@parcel/transformer-storybook-win32-x64-msvc": "npm:0.0.3"
   dependenciesMeta:
     "@parcel/transformer-storybook-darwin-arm64":
       optional: true
@@ -5897,13 +5897,13 @@ __metadata:
       optional: true
     "@parcel/transformer-storybook-win32-x64-msvc":
       optional: true
-  checksum: 10c0/3ef62a1855956e579951c27bc701f3ee6964449d7c4458caa3063778b64a79abd9fd7fda1468cb159453aabe1af0a1c72c76ba55f71c0e1ec097f446fce86819
+  checksum: 10c0/6dbac6b7a99da36008fae7acfe81b343498946f32c6d43818031479547f476e71709b07ffb50f453d1c9bfae1013a9eaa33ec8a4c15319d4f3c319561da94f89
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-win32-x64-msvc@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-win32-x64-msvc@npm:0.0.2"
+"@parcel/transformer-storybook-win32-x64-msvc@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-win32-x64-msvc@npm:0.0.3"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -5946,66 +5946,66 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-darwin-arm64@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-darwin-arm64@npm:0.0.2"
+"@parcel/transformer-ts-doc-darwin-arm64@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-darwin-arm64@npm:0.0.3"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-darwin-x64@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-darwin-x64@npm:0.0.2"
+"@parcel/transformer-ts-doc-darwin-x64@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-darwin-x64@npm:0.0.3"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-linux-arm64-gnu@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-linux-arm64-gnu@npm:0.0.2"
+"@parcel/transformer-ts-doc-linux-arm64-gnu@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-linux-arm64-gnu@npm:0.0.3"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-linux-arm64-musl@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-linux-arm64-musl@npm:0.0.2"
+"@parcel/transformer-ts-doc-linux-arm64-musl@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-linux-arm64-musl@npm:0.0.3"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-linux-x64-gnu@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-linux-x64-gnu@npm:0.0.2"
+"@parcel/transformer-ts-doc-linux-x64-gnu@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-linux-x64-gnu@npm:0.0.3"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-linux-x64-musl@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-linux-x64-musl@npm:0.0.2"
+"@parcel/transformer-ts-doc-linux-x64-musl@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-linux-x64-musl@npm:0.0.3"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-win32-x64-msvc@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-win32-x64-msvc@npm:0.0.2"
+"@parcel/transformer-ts-doc-win32-x64-msvc@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-win32-x64-msvc@npm:0.0.3"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc@npm:0.0.2"
+"@parcel/transformer-ts-doc@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc@npm:0.0.3"
   dependencies:
-    "@parcel/transformer-ts-doc-darwin-arm64": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-darwin-x64": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-linux-arm64-gnu": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-linux-arm64-musl": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-linux-x64-gnu": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-linux-x64-musl": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-win32-x64-msvc": "npm:0.0.2"
+    "@parcel/transformer-ts-doc-darwin-arm64": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-darwin-x64": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-linux-arm64-gnu": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-linux-arm64-musl": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-linux-x64-gnu": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-linux-x64-musl": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-win32-x64-msvc": "npm:0.0.3"
   dependenciesMeta:
     "@parcel/transformer-ts-doc-darwin-arm64":
       optional: true
@@ -6021,7 +6021,7 @@ __metadata:
       optional: true
     "@parcel/transformer-ts-doc-win32-x64-msvc":
       optional: true
-  checksum: 10c0/4e1bfdcdac1b938412c296b1a219e83d6faca72cd71bccd6d3c9221385dd36f7e358920facfbeae22233b27f64a3b824ce96256c21a0ffefbc14c5834615cac1
+  checksum: 10c0/7b002d00a53d6fd781e93239653ab082448e3454aa931aadeed756faa01df899f0d7b10d0f33d044b86af0f4d534032edb1a27a35150aaaa3dc4c0257e915040
   languageName: node
   linkType: hard
 
@@ -9257,7 +9257,11 @@ __metadata:
   dependencies:
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   peerDependencies:
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -25177,8 +25181,12 @@ __metadata:
     react-stately: "npm:3.51.0"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -25200,8 +25208,12 @@ __metadata:
     react-stately: "npm:3.51.0"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -25318,13 +25330,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-server-dom-parcel@npm:canary":
-  version: 19.2.0-canary-bdb4a96f-20250801
-  resolution: "react-server-dom-parcel@npm:19.2.0-canary-bdb4a96f-20250801"
+"react-server-dom-parcel@npm:^19.1.1, react-server-dom-parcel@npm:^19.2.8":
+  version: 19.3.1
+  resolution: "react-server-dom-parcel@npm:19.3.1"
   peerDependencies:
-    react: 19.2.0-canary-bdb4a96f-20250801
-    react-dom: 19.2.0-canary-bdb4a96f-20250801
-  checksum: 10c0/987567a4773091ede967ecd86a188d7dcd56a4337dfcff5cfb2f5a5b5fa284ec2514bb684f43bda1b13f23bd05f7b5d110169880f9f6b62fab1a153293e2ae5c
+    react: ^19.3.1
+    react-dom: ^19.3.1
+  checksum: 10c0/7757e23f7e6def44798f136de40cf7b0c9197ba7813760e531b6164506aee0b80b1c54bea73439ee6972799d9330c9110c67f40876217bb23da5e8fa2ac47954
   languageName: node
   linkType: hard
 
@@ -25354,7 +25366,7 @@ __metadata:
     "@parcel/optimizer-terser": "npm:^2.16.3"
     "@parcel/packager-react-static": "npm:^2.16.3"
     "@parcel/packager-ts": "npm:^2.16.3"
-    "@parcel/parcel3": "npm:^0.0.6"
+    "@parcel/parcel3": "npm:^3.0.0-alpha.2"
     "@parcel/reporter-bundle-analyzer": "npm:^2.16.3"
     "@parcel/reporter-cli": "npm:^2.16.3"
     "@parcel/resolver-glob": "npm:^2.16.3"
@@ -25362,9 +25374,9 @@ __metadata:
     "@parcel/transformer-inline": "npm:^2.16.3"
     "@parcel/transformer-inline-string": "npm:^2.16.3"
     "@parcel/transformer-react-static": "npm:^2.16.3"
-    "@parcel/transformer-storybook-v3": "npm:^0.0.2"
+    "@parcel/transformer-storybook-v3": "npm:^0.0.3"
     "@parcel/transformer-svg-react": "npm:^2.16.3"
-    "@parcel/transformer-ts-doc": "npm:^0.0.2"
+    "@parcel/transformer-ts-doc": "npm:^0.0.3"
     "@parcel/transformer-typescript-types": "npm:^2.16.3"
     "@react-spectrum/parcel-namer-s2": "workspace:^"
     "@react-spectrum/s2-icon-builder": "workspace:^"
@@ -25478,7 +25490,11 @@ __metadata:
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
   languageName: unknown
   linkType: soft
 

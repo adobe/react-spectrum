@@ -2,10 +2,10 @@
 
 import {useState} from 'react';
 // @ts-ignore
-import icons from '/packages/@react-spectrum/s2/s2wf-icons/S2_Icon_[A-F]*.svg';
+import icons from '/packages/@react-spectrum/s2/s2wf-icons/S2_Icon_[A-F]*.svg?flat=true';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 // @ts-ignore
-import illustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/gradient/generic1/[A-G]*.tsx';
+import illustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/gradient/generic1/[A-G]*.tsx?flat=true';
 import {IllustrationContext} from '@react-spectrum/s2';
 
 export function Icons() {
@@ -64,6 +64,7 @@ function IconGrid({icons, size, radius = 4 * size, intensity = 0.5}: any) {
         }
       }}>
       {Object.values(icons).map((icon: any, i) => {
+        let Icon = icon.default || icon;
         let scale = 1;
         let opacity = 1;
         if (pos) {
@@ -95,7 +96,7 @@ function IconGrid({icons, size, radius = 4 * size, intensity = 0.5}: any) {
               opacity,
               transition: transition ? 'scale 150ms, opacity 250ms' : undefined
             }}>
-            {<icon.default size="S" />}
+            {<Icon size="S" />}
           </div>
         );
       })}
