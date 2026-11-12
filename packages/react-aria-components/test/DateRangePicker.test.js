@@ -20,6 +20,7 @@ import {Dialog} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {Group} from '../src/Group';
 import {Heading} from '../src/Heading';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
 import {Popover} from '../src/Popover';
 import React from 'react';
@@ -103,6 +104,20 @@ describe('DateRangePicker', () => {
     );
 
     expect(getByRole('grid')).toHaveClass('react-aria-CalendarGrid');
+  });
+
+  it('moves an overflowing digit from the start field into the end field', async () => {
+    let {getAllByRole} = render(
+      <I18nProvider locale="ja-JP">
+        <TestDateRangePicker />
+      </I18nProvider>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[0]);
+    await user.keyboard('2026532');
+    expect(segments.map(s => s.textContent)).toEqual(['2026', '5', '3', '2', '月', '日']);
+    expect(segments[3]).toHaveFocus();
   });
 
   it('should support the slot prop', () => {

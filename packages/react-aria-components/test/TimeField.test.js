@@ -210,6 +210,24 @@ describe('TimeField', () => {
     expect(group.closest('.react-aria-TimeField')).toHaveAttribute('data-required');
   });
 
+  it('moves an overflowing hour digit to the minute segment', async () => {
+    let onChange = jest.fn();
+    let {getAllByRole} = render(
+      <TimeField onChange={onChange}>
+        <Label>Time</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </TimeField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[0]);
+    await user.keyboard('135');
+    expect(segments[0]).toHaveTextContent('1');
+    expect(segments[1]).toHaveTextContent('35');
+    await user.keyboard('p');
+    expect(onChange).toHaveBeenLastCalledWith(new Time(13, 35));
+  });
+
   it('should support form value', () => {
     render(
       <TimeField name="time" form="test" value={new Time(8, 30)}>
