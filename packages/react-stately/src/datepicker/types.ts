@@ -43,8 +43,13 @@ export type MappedTimeValue<T> = T extends ZonedDateTime
       : never;
 
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
-interface DateFieldBase<T extends DateValue>
-  extends InputBase, Validation<MappedDateValue<T>>, FocusableProps, LabelableProps, HelpTextProps {
+interface DateFieldBase<T extends DateValue, Target extends Element = Element>
+  extends
+    InputBase,
+    Validation<MappedDateValue<T>>,
+    FocusableProps<Target>,
+    LabelableProps,
+    HelpTextProps {
   /** The minimum allowed date that a user may select. */
   minValue?: DateValue | null;
   /** The maximum allowed date that a user may select. */
@@ -85,7 +90,8 @@ interface DateFieldBase<T extends DateValue>
 export interface DateFieldProps<T extends DateValue>
   extends DateFieldBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
 
-interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {
+interface DatePickerBase<T extends DateValue, Target extends Element = Element>
+  extends DateFieldBase<T, Target>, OverlayTriggerProps {
   /**
    * Controls the behavior of paging. Pagination either works by advancing the visible page by
    * visibleDuration (default) or one unit of visibleDuration.
@@ -102,9 +108,9 @@ interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayT
 export interface DatePickerProps<T extends DateValue>
   extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
 
-export interface DateRangePickerProps<T extends DateValue>
+export interface DateRangePickerProps<T extends DateValue, Target extends Element = Element>
   extends
-    Omit<DatePickerBase<T>, 'validate' | 'isDateUnavailable'>,
+    Omit<DatePickerBase<T, Target>, 'validate' | 'isDateUnavailable'>,
     Validation<RangeValue<MappedDateValue<T>>>,
     ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>> | null> {
   /**
