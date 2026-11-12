@@ -162,20 +162,20 @@ starter:
 
 starter-zip: starter
 	cp LICENSE starters/docs/.
-	cd starters/docs && zip -r react-aria-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	cd starters/docs && node ../../scripts/packageStarter.mjs react-aria-starter.zip
 	cd starters/docs && yarn build-storybook
 
 tailwind-starter:
 	cp LICENSE starters/tailwind/.
 	cd starters/tailwind && yarn --no-immutable && yarn up react-aria-components && yarn up tailwindcss-react-aria-components && yarn tsc
 
-	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	cd starters/tailwind && node ../../scripts/packageStarter.mjs react-aria-tailwind-starter.zip
 	cd starters/tailwind && yarn build-storybook
 
 hooks-starter: sync-starter-css
 	cp LICENSE starters/hooks/.
 	cd starters/hooks && yarn --no-immutable && yarn up react-aria react-stately react-aria-components @internationalized/date && yarn tsc
-	cd starters/hooks && zip -r react-aria-hooks-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	cd starters/hooks && node ../../scripts/packageStarter.mjs react-aria-hooks-starter.zip
 	cd starters/hooks && yarn build-storybook
 
 s2-storybook-docs:

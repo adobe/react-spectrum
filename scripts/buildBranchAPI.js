@@ -68,7 +68,7 @@ async function build() {
   // Generate a package.json containing just what we need to build the website
   let pkg = {
     name: 'rsp-website',
-    packageManager: 'yarn@4.18.0',
+    packageManager: packageJSON.packageManager,
     version: '0.0.0',
     private: true,
     workspaces: [
