@@ -27,9 +27,59 @@ interface AriaHideOutsideOptions {
   shouldUseInert?: boolean;
 }
 
-// Keeps a ref count of all hidden elements. Added to when hiding an element, and
-// subtracted from when showing it again. When it reaches zero, aria-hidden is removed.
-let refCountMap = new WeakMap<Element, number>();
+type HideChannel = 'aria-hidden' | 'inert';
+
+interface HiddenState {
+  // The channel each active ariaHideOutside call (by id) hides this element with.
+  calls: Map<number, HideChannel>;
+  // The mark currently applied to the element, if any.
+  applied: HideChannel | null;
+  // The element's values before it was first hidden, restored once no call hides it.
+  ariaHidden: string | null;
+  inert: boolean;
+}
+
+// Tracks elements hidden by ariaHideOutside across concurrent calls, which may use different
+// channels. Inert wins while any call uses it; otherwise aria-hidden is applied.
+let hiddenStates = new WeakMap<Element, HiddenState>();
+let nextCallId = 0;
+
+function updateHidden(element: Element, state: HiddenState) {
+  let channel: HideChannel | null = null;
+  for (let callChannel of state.calls.values()) {
+    channel = callChannel;
+    if (channel === 'inert') {
+      break;
+    }
+  }
+
+  if (channel === state.applied) {
+    return;
+  }
+
+  // Only undo the mark that was applied. The other one is left as the app has it.
+  if (state.applied === 'inert') {
+    (element as HTMLElement).inert = state.inert;
+  } else if (state.applied === 'aria-hidden') {
+    if (state.ariaHidden == null) {
+      element.removeAttribute('aria-hidden');
+    } else {
+      element.setAttribute('aria-hidden', state.ariaHidden);
+    }
+  }
+
+  if (channel === 'inert') {
+    (element as HTMLElement).inert = true;
+  } else if (channel === 'aria-hidden') {
+    element.setAttribute('aria-hidden', 'true');
+  }
+
+  state.applied = channel;
+  if (channel == null) {
+    hiddenStates.delete(element);
+  }
+}
+
 interface ObserverWrapper {
   visibleNodes: Set<Element>;
   hiddenNodes: Set<Element>;
@@ -54,27 +104,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
   let shouldUseInert = opts?.shouldUseInert && supportsInert;
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
-
-  let getHidden = (element: Element) => {
-    return shouldUseInert && element instanceof windowObj.HTMLElement
-      ? element.inert
-      : element.getAttribute('aria-hidden') === 'true';
-  };
-
-  let setHidden = (element: Element, hidden: boolean) => {
-    if (shouldUseInert && element instanceof windowObj.HTMLElement) {
-      element.inert = hidden;
-    } else if (hidden) {
-      element.setAttribute('aria-hidden', 'true');
-    } else {
-      element.removeAttribute('aria-hidden');
-      if (element instanceof windowObj.HTMLElement) {
-        // We only ever call setHidden with hidden = false when the nodeCount is 1 aka
-        // we are trying to make the element visible to screen readers again, so remove inert as well
-        element.inert = false;
-      }
-    }
-  };
+  let callId = nextCallId++;
 
   let shadowRootsToWatch = new Set<ShadowRoot>();
   if (shadowDOM()) {
@@ -146,20 +176,31 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
   };
 
   let hide = (node: Element) => {
-    let refCount = refCountMap.get(node) ?? 0;
+    let channel: HideChannel =
+      shouldUseInert && node instanceof windowObj.HTMLElement ? 'inert' : 'aria-hidden';
+    let state = hiddenStates.get(node);
+    if (!state) {
+      // If the app already hid this element with the same mark, there's nothing for us to do.
+      let isHidden =
+        channel === 'inert'
+          ? (node as HTMLElement).inert
+          : node.getAttribute('aria-hidden') === 'true';
+      if (isHidden) {
+        return;
+      }
 
-    // If already aria-hidden, and the ref count is zero, then this element
-    // was already hidden and there's nothing for us to do.
-    if (getHidden(node) && refCount === 0) {
-      return;
+      state = {
+        calls: new Map(),
+        applied: null,
+        ariaHidden: node.getAttribute('aria-hidden'),
+        inert: Boolean((node as HTMLElement).inert)
+      };
+      hiddenStates.set(node, state);
     }
 
-    if (refCount === 0) {
-      setHidden(node, true);
-    }
-
+    state.calls.set(callId, channel);
+    updateHidden(node, state);
     hiddenNodes.add(node);
-    refCountMap.set(node, refCount + 1);
   };
 
   // If there is already a MutationObserver listening from a previous call,
@@ -273,15 +314,9 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     }
 
     for (let node of hiddenNodes) {
-      let count = refCountMap.get(node);
-      if (count == null) {
-        continue;
-      }
-      if (count === 1) {
-        setHidden(node, false);
-        refCountMap.delete(node);
-      } else {
-        refCountMap.set(node, count - 1);
+      let state = hiddenStates.get(node);
+      if (state?.calls.delete(callId)) {
+        updateHidden(node, state);
       }
     }
 
