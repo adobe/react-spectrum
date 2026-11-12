@@ -114,6 +114,21 @@ export interface PromptFieldProps {
    * Custom text for the AI usage disclaimer shown below the prompt field.
    */
   aiDisclaimer?: React.ReactNode;
+  /**
+   * Renders the single-line collapsed layout (AI icon, input, submit). The toolbar and
+   * attachments are hidden until isCollapsed is false, which animates to the full field.
+   */
+  isCollapsed?: boolean;
+  /**
+   * Renders an icon-only circle showing just the pixel logo. Pressing it calls onExpand;
+   * set isMinimized to false (and isCollapsed to true) to animate into the collapsed pill.
+   */
+  isMinimized?: boolean;
+  onExpand?: () => void;
+  /** Accessible label for the minimized circle. */
+  minimizedLabel?: string;
+  /** Called when focus enters or leaves the field. Use it to expand a collapsed field. */
+  onFocusChange?: (isFocused: boolean) => void;
 }
 
 interface PromptFieldState {
@@ -244,7 +259,9 @@ export class PromptFieldValue extends TokenFieldValue<PromptFieldTokenValue> {
   }
 }
 
-const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
+const PromptFieldContext = createContext<
+  PromptFieldState & {size: 'S' | 'M'; isCollapsed?: boolean}
+>({
   attachments: [],
   setAttachments: () => {},
   prompt: new PromptFieldValue([]),
@@ -280,8 +297,13 @@ export const PromptField = forwardRef(function PromptField(
     onRemoveAttachments,
     variant = 'balanced',
     brandColor,
-    size = 'M'
+    size = 'M',
+    isCollapsed: isCollapsedProp = false,
+    isMinimized = false,
+    onExpand,
+    minimizedLabel
   } = props;
+  let isCollapsed = isCollapsedProp || isMinimized;
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
   let inputRef = useRef<HTMLDivElement>(null);
@@ -323,7 +345,12 @@ export const PromptField = forwardRef(function PromptField(
 
   let [isListening, setListening] = useState(false);
   let {onFocusChange} = useContext(PromptFocusContext);
-  let {focusWithinProps} = useFocusWithin({onFocusWithinChange: onFocusChange});
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithinChange: isFocused => {
+      onFocusChange?.(isFocused);
+      props.onFocusChange?.(isFocused);
+    }
+  });
   let {setPromptFieldSize} = useContext(InternalChatContext);
   useLayoutEffect(() => {
     setPromptFieldSize(size);
@@ -364,7 +391,8 @@ export const PromptField = forwardRef(function PromptField(
         onStop,
         onAddAttachments,
         onRemoveAttachments,
-        size
+        size,
+        isCollapsed
       }}>
       <Provider
         values={[
@@ -385,9 +413,14 @@ export const PromptField = forwardRef(function PromptField(
             brandColor={brandColor}
             isGenerating={isGenerating ?? false}
             isDropTarget={isDropTarget}
-            inputRef={inputRef}>
+            inputRef={inputRef}
+            isCollapsed={isCollapsed}
+            isMinimized={isMinimized}
+            onExpand={onExpand}
+            minimizedLabel={minimizedLabel}>
             {children}
           </PromptFieldContainer>
+          {!isMinimized && (
           <p className={style({font: 'ui-sm', color: 'gray-600', textAlign: 'center'})}>
             {props.aiDisclaimer ?? (
               <>
@@ -404,6 +437,7 @@ export const PromptField = forwardRef(function PromptField(
               </>
             )}
           </p>
+          )}
         </div>
       </Provider>
     </PromptFieldContext.Provider>
@@ -419,9 +453,10 @@ export interface PromptFieldAttachmentListProps extends AttachmentListProps<Prom
  */
 export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps) {
   let {children} = props;
-  let {attachments, setAttachments, onRemoveAttachments, inputRef} = useContext(PromptFieldContext);
+  let {attachments, setAttachments, onRemoveAttachments, inputRef, isCollapsed} =
+    useContext(PromptFieldContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
-  if (attachments.length === 0) {
+  if (attachments.length === 0 || isCollapsed) {
     return null;
   }
 
@@ -567,6 +602,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
 
   return (
     <div
+      data-pf-input
       className={style({
         display: 'flex',
         gap: {
@@ -920,19 +956,45 @@ export interface PromptFieldToolbarProps {
   children: React.ReactNode;
 }
 
+// While collapsed, only the trailing group (voice + submit) shows; leading items fade out.
+const toolbarCollapsed = css(`
+  & > * {
+    transition: opacity 400ms ease-out, visibility 400ms;
+  }
+
+  &[data-collapsed] {
+    & > :not(:last-child) {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    & > :last-child {
+      pointer-events: auto;
+    }
+  }
+`);
+
 /**
  * PromptFieldToolbar contains action buttons related to the PromptField.
  */
 export function PromptFieldToolbar(props: PromptFieldToolbarProps) {
   let {children} = props;
+  let {isCollapsed} = useContext(PromptFieldContext);
   return (
     <div
-      className={style({
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 16
-      })}>
+      data-pf-toolbar
+      data-collapsed={isCollapsed || undefined}
+      className={
+        toolbarCollapsed +
+        style({
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: {default: 16, isCollapsed: 0},
+          // Lets clicks fall through to the input in the shared collapsed grid cell.
+          pointerEvents: {isCollapsed: 'none'}
+        })({isCollapsed})
+      }>
       {children}
     </div>
   );
