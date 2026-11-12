@@ -210,7 +210,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     }
 
     // Walk up the tree and update each parent to refer to the new children.
-    while (node && node.parentKey) {
+    while (node && node.parentKey != null) {
       let nextParent = map.get(node.parentKey)!;
       let copy: TreeNode<T> = {
         key: nextParent.key,
