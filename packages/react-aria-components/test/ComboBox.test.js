@@ -805,6 +805,35 @@ describe('ComboBox', () => {
     expect(formData.getAll('combobox')).toEqual(['']);
   });
 
+  it('selects and replaces input text with Ctrl+A while the multi-select popover is open', async () => {
+    let onChange = jest.fn();
+    let {container} = render(
+      <TestComboBox selectionMode="multiple" defaultInputValue="an" onChange={onChange} />
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    await comboboxTester.open();
+    let input = comboboxTester.getCombobox();
+    expect(input).toHaveValue('an');
+    expect(input).toHaveFocus();
+    await user.keyboard('{ArrowRight}');
+    expect(input.selectionStart).toBe(2);
+    expect(input.selectionEnd).toBe(2);
+
+    await user.keyboard('{Control>}a{/Control}');
+    expect(input.selectionStart).toBe(0);
+    expect(input.selectionEnd).toBe(2);
+    expect(onChange).not.toHaveBeenCalled();
+    for (let option of comboboxTester.getOptions()) {
+      expect(option).toHaveAttribute('aria-selected', 'false');
+    }
+
+    await user.keyboard('do');
+    expect(input).toHaveValue('do');
+    expect(comboboxTester.getOptions()).toHaveLength(1);
+    expect(comboboxTester.getOptions()[0]).toHaveTextContent('Dog');
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it('should support deselection if multiple selection is enabled', async () => {
     let onChange = jest.fn();
     let {container} = render(
