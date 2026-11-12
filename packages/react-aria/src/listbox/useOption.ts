@@ -14,7 +14,7 @@ import {chain} from '../utils/chain';
 
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
-import {getItemCount} from 'react-stately/private/collections/getItemCount';
+import {getItemCount, getItemIndex} from 'react-stately/private/collections/getItemCount';
 import {getItemId, listData} from './utils';
 import {isFocusVisible} from '../interactions/useFocusVisible';
 import {ListState} from 'react-stately/useListState';
@@ -128,8 +128,8 @@ export function useOption<T>(
 
   let item = state.collection.getItem(key);
   if (isVirtualized) {
-    let index = Number(item?.index);
-    optionProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
+    let index = getItemIndex(state.collection, key);
+    optionProps['aria-posinset'] = index == null ? undefined : index + 1;
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
