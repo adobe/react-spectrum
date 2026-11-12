@@ -10,8 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  EventHandler,
+  FocusEvent,
+  MouseEvent,
+  KeyboardEvent as ReactKeyboardEvent,
+  SyntheticEvent
+} from 'react';
 import {FocusableElement} from './dom';
-import {FocusEvent, MouseEvent, KeyboardEvent as ReactKeyboardEvent, SyntheticEvent} from 'react';
 
 // Type helper to extract the target element type from an event
 export type EventTargetType<T> = T extends SyntheticEvent<infer E, any> ? E : EventTarget;
@@ -198,3 +204,11 @@ export interface ScrollEvents {
   /** Handler that is called when the scroll wheel moves. */
   onScroll?: (e: ScrollEvent) => void;
 }
+
+export interface ReactSubmitEvent<T = Element> extends SyntheticEvent<T, SubmitEvent> {
+  submitter: HTMLElement | null;
+  // SubmitEvents are always targetted at HTMLFormElements.
+  target: EventTarget & HTMLFormElement;
+}
+
+export type ReactSubmitEventHandler<T = Element> = EventHandler<ReactSubmitEvent<T>>;
