@@ -47,7 +47,6 @@ import {scrollIntoView} from 'react-aria/private/utils/scrollIntoView';
 import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {composeStepRunners} from 'storybook/internal/preview-api';
 
 export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
   isInfinite?: boolean;
@@ -84,7 +83,7 @@ const carouselStyles = style({
 const pickerStyles = style({
   display: 'flex',
   // TODO: update max width based on device width?
-  maxWidth: 300,
+  maxWidth: 600,
   overflowX: 'auto',
   flexDirection: {
     orientation: {
@@ -354,7 +353,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
   let shouldMoveFocusOnScroll = useRef(false);
-  let isScrollingToSelection = useRef(false);
+  let isProgrammaticScroll = useRef(false);
   let previousSelectedIndex = useRef<number | null>(null);
   let keyboardIntentTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let pendingFocus = useRef(false);
@@ -385,22 +384,26 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     }
 
     let currentIndex = Math.round(el.scrollLeft / el.offsetWidth);
-    // Retarget an existing selection-driven animation even if its intermediate
-    // position already rounds to the newly selected page.
-    // if (selectedIndex === currentIndex && !isScrollingToSelection.current) {
-    //   return;
-    // }
+    // Avoid fighting the user's scroll by returning early
+    if (selectedIndex === currentIndex && !isProgrammaticScroll.current) {
+      return;
+    }
 
     let left = el.offsetWidth * selectedIndex;
     let isAdjacent = previousIndex !== null && Math.abs(selectedIndex - previousIndex) === 1;
 
-    // Keep the chosen selection authoritative while the viewport catches up.
-    isScrollingToSelection.current = el.scrollLeft !== left;
+    // We're about to scroll to the selected slide. Flag it so onScroll doesn't switch the
+    // selection back while the strip is still closer to the previous slide.
+    isProgrammaticScroll.current = el.scrollLeft !== left;
 
     // Distant selections may have unmounted pages between them.
     el.scrollTo({
       left,
+      // Safari ignores smooth scrolling after the scroll snap targets change. That means instead of adjacent slides smooth scrolling, they are instant.
+      // This is fixed in Safari Tech Preview
+      // https://bugs.webkit.org/show_bug.cgi?id=331157
       behavior: isAdjacent ? 'smooth' : 'instant'
+      // behavior: 'instant'
     });
   }, [selectedIndex]);
 
@@ -490,8 +493,8 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       shouldMoveFocusOnScroll.current = true;
     }
 
-    // If we are scrolling to the selectedKey, we don't need to update selection since that has already been done
-    if (isScrollingToSelection.current) {
+    // If we tab, button, or arrow key, we've already updated the selectedKey so we don't need to update selection
+    if (isProgrammaticScroll.current) {
       return;
     }
 
@@ -505,7 +508,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     // latest scroll finishes. Keep scroll-driven selection suppressed until the viewport
     // maps to selectedIndex, so intermediate scroll events cannot overwrite selectedKey.
     if (
-      isScrollingToSelection.current &&
+      isProgrammaticScroll.current &&
       el &&
       selectedIndex != null &&
       Math.round(el.scrollLeft / el.offsetWidth) !== selectedIndex
@@ -514,7 +517,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     }
 
     shouldMoveFocusOnScroll.current = false;
-    isScrollingToSelection.current = false;
+    isProgrammaticScroll.current = false;
   };
 
   // Only handle arrows from the panel itself, preserving keyboard behavior
