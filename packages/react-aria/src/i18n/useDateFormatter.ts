@@ -11,7 +11,7 @@
  */
 
 import {DateFormatter} from '@internationalized/date';
-import {useDeepMemo} from '../utils/useDeepMemo';
+import {isEqual, useDeepMemo} from '../utils/useDeepMemo';
 import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
 
@@ -30,24 +30,4 @@ export function useDateFormatter(options?: DateFormatterOptions): DateFormatter 
   options = useDeepMemo(options ?? {}, isEqual);
   let {locale} = useLocale();
   return useMemo(() => new DateFormatter(locale, options), [locale, options]);
-}
-
-function isEqual(a: DateFormatterOptions, b: DateFormatterOptions) {
-  if (a === b) {
-    return true;
-  }
-
-  let aKeys = Object.keys(a);
-  let bKeys = Object.keys(b);
-  if (aKeys.length !== bKeys.length) {
-    return false;
-  }
-
-  for (let key of aKeys) {
-    if (b[key] !== a[key]) {
-      return false;
-    }
-  }
-
-  return true;
 }
