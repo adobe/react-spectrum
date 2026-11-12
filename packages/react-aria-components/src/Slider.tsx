@@ -17,7 +17,7 @@ import {
   useSliderThumb
 } from 'react-aria/useSlider';
 
-import {clamp} from 'react-stately/private/utils/number';
+import {clamp, snapValueToStep} from 'react-stately/private/utils/number';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -35,6 +35,7 @@ import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/share
 import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
+import {NumberFieldContext, NumberFieldProps} from './NumberField';
 import React, {
   createContext,
   ForwardedRef,
@@ -126,13 +127,53 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
+  let getNumberFieldProps = (index: number): NumberFieldProps => ({
+    minValue: state.getThumbMinValue(index),
+    maxValue: state.getThumbMaxValue(index),
+    step: state.step,
+    formatOptions: props.formatOptions,
+    value: state.values[index],
+    defaultValue: state.defaultValues[index],
+    isDisabled: state.isDisabled || !state.isThumbEditable(index),
+    'aria-labelledby': labelProps.id ?? groupProps.id,
+    'aria-describedby': props['aria-describedby'],
+    'aria-details': props['aria-details'],
+    onChange(val) {
+      if (
+        Number.isNaN(val) ||
+        snapValueToStep(
+          val,
+          state.getThumbMinValue(index),
+          state.getThumbMaxValue(index),
+          state.step
+        ) === state.getThumbValue(index)
+      ) {
+        return;
+      }
+
+      state.setThumbDragging(index, true);
+      state.setThumbValue(index, val);
+      state.setThumbDragging(index, false);
+    }
+  });
+
+  let numberFieldContext: ContextValue<NumberFieldProps, HTMLDivElement> =
+    state.values.length === 1
+      ? getNumberFieldProps(0)
+      : {
+          slots: Object.fromEntries(
+            state.values.map((_, index) => [String(index), getNumberFieldProps(index)])
+          )
+        };
+
   return (
     <Provider
       values={[
         [SliderStateContext, state],
         [SliderTrackContext, {...trackProps, ref: trackRef}],
         [SliderOutputContext, outputProps],
-        [LabelContext, {...labelProps, ref: labelRef}]
+        [LabelContext, {...labelProps, ref: labelRef}],
+        [NumberFieldContext, numberFieldContext]
       ]}>
       <dom.div
         {...mergeProps(DOMProps, renderProps, groupProps)}

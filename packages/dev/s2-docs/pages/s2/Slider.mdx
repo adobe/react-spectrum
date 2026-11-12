@@ -15,7 +15,7 @@ export const description = 'Allows a user to select a numeric value within a ran
   component={Slider}
   docs={docs.exports.Slider}
   links={docs.links}
-  props={['label', 'trackStyle', 'thumbStyle', 'size', 'labelPosition', 'formatOptions', 'contextualHelp', 'isEmphasized', 'isDisabled']}
+  props={['label', 'isEditable', 'trackStyle', 'thumbStyle', 'size', 'labelPosition', 'formatOptions', 'contextualHelp', 'isEmphasized', 'isDisabled']}
   initialProps={{label: 'Cookies', defaultValue: 30}}
   type="s2"
   importSource="@react-spectrum/s2/Slider" />
@@ -70,6 +70,25 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
     step: 5,
     fillOffset: 75
   }} />
+
+### Editable
+
+Use the `isEditable` prop when users should be able to precisely input a value within a text field alongside the slider.
+
+```tsx render
+"use client";
+import {Slider} from '@react-spectrum/s2/Slider';
+
+<Slider
+  label="Opacity"
+  /*- begin highlight -*/
+  isEditable
+  /*- end highlight -*/
+  defaultValue={0.5}
+  maxValue={1}
+  step={0.01}
+  formatOptions={{style: 'percent'}} />
+```
 
 ## API
 

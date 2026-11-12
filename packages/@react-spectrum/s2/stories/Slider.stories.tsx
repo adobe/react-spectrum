@@ -27,6 +27,7 @@ const meta: Meta<typeof Slider> = {
   argTypes: {
     onChangeEnd: {table: {category: 'Events'}},
     label: {control: {type: 'text'}},
+    labelPosition: {control: 'radio', options: ['top', 'side']},
     contextualHelp: {table: {disable: true}}
   },
   title: 'Slider'
@@ -44,6 +45,22 @@ export const Example: Story = {
   args: {
     label: 'Cookies',
     defaultValue: 30
+  }
+};
+
+export const Editable: Story = {
+  render: args => (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+      <Slider {...args} />
+    </div>
+  ),
+  args: {
+    label: 'Opacity',
+    isEditable: true,
+    defaultValue: 0.5,
+    maxValue: 1,
+    step: 0.01,
+    formatOptions: {style: 'percent'}
   }
 };
 

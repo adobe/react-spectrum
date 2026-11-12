@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {NumberField as AriaNumberField} from 'react-aria-components/NumberField';
 import {
   Slider as AriaSlider,
   SliderProps as AriaSliderProps,
@@ -22,13 +23,15 @@ import {
 import {ContextValue} from 'react-aria-components/slots';
 import {
   controlFont,
+  controlSize,
   field,
   fieldInput,
   getAllowedOverrides,
   StyleProps
 } from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
-import {FieldLabel} from './Field';
+import {css} from '../style/style-macro' with {type: 'macro'};
+import {FieldGroup, FieldLabel, Input} from './Field';
 import {
   FocusableRef,
   FocusableRefValue,
@@ -40,6 +43,7 @@ import {focusRing, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
+import {snapValueToStep} from 'react-stately/private/utils/number';
 import {useFocusableRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -75,8 +79,6 @@ export interface SliderBaseProps<T>
    * @default 'default'
    */
   thumbStyle?: 'default' | 'precise';
-  // TODO
-  // isEditable?: boolean,
 }
 
 export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, InputDOMProps {
@@ -84,6 +86,10 @@ export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, 
    * The offset from which to start the fill.
    */
   fillOffset?: number;
+  /**
+   * Whether the value can be edited within a text field.
+   */
+  isEditable?: boolean;
 }
 
 export const SliderContext =
@@ -174,6 +180,7 @@ export let track = style({
   gridArea: 'track',
   position: 'relative',
   width: 'full',
+  minWidth: controlSize(),
   height: {
     size: {
       S: 24,
@@ -183,6 +190,67 @@ export let track = style({
     }
   }
 });
+
+const sliderControls = style({
+  ...fieldInput(),
+  display: 'inline-flex',
+  alignItems: 'center',
+  minWidth: {
+    default: controlSize(),
+    isEditable: {
+      default: 96,
+      size: {
+        S: 76,
+        L: 120,
+        XL: 144
+      }
+    }
+  },
+  gap: {
+    default: 16,
+    size: {
+      L: 20,
+      XL: 24
+    }
+  }
+});
+
+const editableFieldGroup = style({
+  contain: {
+    default: 'none',
+    '@supports (contain-intrinsic-width: 1px)': 'none'
+  },
+  width: 'auto',
+  minWidth: {
+    default: 48,
+    size: {
+      S: 36,
+      L: 60,
+      XL: 72
+    }
+  }
+});
+
+const editableInputSizer = css(`
+  display: inline-grid;
+  flex-grow: 1;
+  font-variant-numeric: tabular-nums;
+  &::before, &::after {
+    grid-area: 1 / 1;
+    visibility: hidden;
+    pointer-events: none;
+    white-space: pre;
+    height: 0;
+    overflow: hidden;
+    padding-inline-end: 6px;
+  }
+  &::before {
+    content: attr(data-min);
+  }
+  &::after {
+    content: attr(data-max);
+  }
+`);
 
 export let thumbContainer = style({
   size: {
@@ -358,7 +426,7 @@ export let filledTrack = style<{
 });
 
 export function SliderBase<T extends number | number[]>(
-  props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}
+  props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>; isEditable?: boolean}
 ): ReactNode {
   let formContext = useContext(FormContext);
   // oxlint-disable-next-line react/react-compiler
@@ -369,7 +437,8 @@ export function SliderBase<T extends number | number[]>(
     labelAlign = 'start',
     size = 'M',
     minValue = 0,
-    maxValue = 100
+    maxValue = 100,
+    isEditable
   } = props;
   let {direction} = useLocale();
 
@@ -387,24 +456,31 @@ export function SliderBase<T extends number | number[]>(
       }>
       {({state}) => {
         let maxLabelLength = 0;
+        let minStep = snapValueToStep(minValue + state.step, minValue, maxValue, state.step);
+        let maxStep = snapValueToStep(maxValue - state.step, minValue, maxValue, state.step);
+        let minFormatted = state.getFormattedValue(minValue);
+        let minStepFormatted = state.getFormattedValue(minStep);
+        let maxFormatted = state.getFormattedValue(maxValue);
+        let maxStepFormatted = state.getFormattedValue(maxStep);
+        let minSizer =
+          [...minStepFormatted].length > [...minFormatted].length ? minStepFormatted : minFormatted;
+        let maxSizer =
+          [...maxStepFormatted].length > [...maxFormatted].length ? maxStepFormatted : maxFormatted;
         switch (state.values.length) {
           case 1:
-            maxLabelLength = Math.max(
-              [...state.getFormattedValue(minValue)].length,
-              [...state.getFormattedValue(maxValue)].length
-            );
+            maxLabelLength = Math.max([...minSizer].length, [...maxSizer].length);
             break;
           case 2:
             maxLabelLength = Math.max(
-              [...state.getFormattedValue([minValue, minValue + (props.step || 1)])].length,
-              [...state.getFormattedValue([maxValue - (props.step || 1), maxValue])].length
+              [...state.getFormattedValue([minValue, minStep])].length,
+              [...state.getFormattedValue([maxStep, maxValue])].length
             );
             break;
           default:
             throw new Error('Only sliders with 1 or 2 handles are supported!');
         }
 
-        let outputValue = (
+        let outputValue = !isEditable ? (
           <SliderOutput
             style={{
               width: `${maxLabelLength}ch`,
@@ -413,30 +489,42 @@ export function SliderBase<T extends number | number[]>(
             }}
             className={output({direction, labelPosition, isInForm: !!formContext})}
           />
-        );
+        ) : null;
 
         return (
           <>
-            <div className={labelContainer({labelPosition, labelAlign})}>
-              <FieldLabel
-                isDisabled={props.isDisabled}
-                size={props.size}
-                labelPosition={labelPosition}
-                labelAlign={labelAlign}
-                contextualHelp={props.contextualHelp}>
-                {label}
-              </FieldLabel>
-              {labelPosition === 'top' && outputValue}
-            </div>
-            <div
-              className={style({
-                ...fieldInput(),
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: {default: 16, size: {L: 20, XL: 24}}
-              })({size})}>
+            {(label != null || (labelPosition === 'top' && !isEditable)) && (
+              <div className={labelContainer({labelPosition, labelAlign})}>
+                <FieldLabel
+                  isDisabled={props.isDisabled}
+                  size={props.size}
+                  labelPosition={labelPosition}
+                  labelAlign={labelAlign}
+                  contextualHelp={props.contextualHelp}>
+                  {label}
+                </FieldLabel>
+                {labelPosition === 'top' && outputValue}
+              </div>
+            )}
+            <div className={sliderControls({size, isEditable})}>
               {props.children}
               {labelPosition === 'side' && outputValue}
+              {isEditable && (
+                <AriaNumberField className={style({flexShrink: 0})}>
+                  <FieldGroup size={size} styles={editableFieldGroup({size})}>
+                    <div className={editableInputSizer} data-min={minSizer} data-max={maxSizer}>
+                      <Input
+                        styles={style({
+                          gridColumnStart: 1,
+                          gridRowStart: 1,
+                          width: 0,
+                          minWidth: 'full'
+                        })}
+                      />
+                    </div>
+                  </FieldGroup>
+                </AriaNumberField>
+              )}
             </div>
           </>
         );

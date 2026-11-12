@@ -12,9 +12,11 @@
 
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
-import {Slider} from '../src/Slider';
+import {shortName} from './utils';
+import {Slider, SliderProps} from '../src/Slider';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof Slider> = {
@@ -83,6 +85,52 @@ export const MinMaxValue: Story = {
     minValue: 1,
     maxValue: 5
   }
+};
+
+let editableStates = [
+  {isEditable: [false, true]},
+  {value: [0, 0.5, 1]},
+  {size: ['S', 'M', 'L', 'XL']},
+  {labelPosition: ['top', 'side']},
+  {isEmphasized: true},
+  {isDisabled: true}
+];
+
+let editableCombinations = generatePowerset(
+  editableStates,
+  v => v.isDisabled && (v.isEmphasized || v.value !== 0)
+);
+
+export const Editable: Story = {
+  render: (args: SliderProps) => (
+    <div
+      className={style({
+        display: 'grid',
+        gridTemplateColumns: 'repeat(6, minmax(0, 260px))',
+        gridAutoFlow: 'row',
+        alignItems: 'center',
+        justifyItems: 'start',
+        gap: 24,
+        width: '100vw'
+      })}>
+      {editableCombinations.map(c => {
+        let key = Object.keys(c)
+          .map(k => shortName(k, c[k]))
+          .join(' ');
+        return (
+          <Slider
+            key={key}
+            label="Label"
+            maxValue={1}
+            step={0.01}
+            formatOptions={{style: 'percent'}}
+            {...args}
+            {...c}
+          />
+        );
+      })}
+    </div>
+  )
 };
 
 export const ContextualHelpExample: Story = {

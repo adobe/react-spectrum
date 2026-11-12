@@ -99,6 +99,37 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
     fillOffset: 75
   }} />
 
+### Editable
+
+Place a [NumberField](NumberField) inside `<Slider>` to allow users to type an exact numeric value alongside dragging the thumb. For multi-thumb sliders, pass `slot` matching the thumb index (for example, `slot="0"` and `slot="1"`).
+
+```tsx render
+"use client";
+import {Input, Label, NumberField, Slider, SliderFill, SliderThumb, SliderTrack} from 'react-aria-components';
+import 'vanilla-starter/Slider.css';
+import 'vanilla-starter/Form.css';
+
+<Slider
+  defaultValue={0.5}
+  maxValue={1}
+  step={0.01}
+  formatOptions={{style: 'percent'}}
+  style={{display: 'grid', gridTemplateAreas: '"label ." "track input"', gridTemplateColumns: '1fr auto', alignItems: 'center', columnGap: 12, rowGap: 4, width: 240}}>
+  <Label style={{gridArea: 'label'}}>Opacity</Label>
+  <SliderTrack style={{gridArea: 'track'}}>
+    <div className="track inset">
+      <SliderFill />
+    </div>
+    <SliderThumb className="react-aria-SliderThumb indicator" />
+  </SliderTrack>
+  {/*- begin highlight -*/}
+  <NumberField style={{gridArea: 'input'}}>
+    <Input className="react-aria-Input inset" style={{width: '5ch'}} />
+  </NumberField>
+  {/*- end highlight -*/}
+</Slider>
+```
+
 ## Examples
 
 <ExampleList tag="slider" pages={props.pages} />
@@ -107,7 +138,7 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
 
 <Anatomy />
 
-```tsx links={{Slider: '#slider', SliderOutput: '#slideroutput', SliderTrack: '#slidertrack', SliderFill: '#sliderfill', SliderThumb: '#sliderthumb'}}
+```tsx links={{Slider: '#slider', SliderOutput: '#slideroutput', SliderTrack: '#slidertrack', SliderFill: '#sliderfill', SliderThumb: '#sliderthumb', NumberField: 'NumberField'}}
 <Slider>
   <Label />
   <SliderOutput />
@@ -118,6 +149,7 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
       <Label />
     </SliderThumb>
   </SliderTrack>
+  <NumberField />
 </Slider>
 ```
 
