@@ -186,17 +186,17 @@ function CollapsibleSideNavPanel() {
 
 ## Animations
 
-`SideNavPanel` and [SideNav](SideNav) animate themselves. The panel's width animates first, and its contents animate only once it has settled.
+`SideNavPanel` and [SideNav](SideNav) animate themselves. As the panel's width animates, its contents keep their expanded layout and the panel clips them, so nothing reflows. The labels fade out as the panel collapses, and back in as it expands.
 
-Because the contents wait for the width, the `isCollapsed` you read from `SideNavPanelContext` trails the panel itself while it is expanding.
+The `isCollapsed` you read from `SideNavPanelContext` becomes true once the panel has finished collapsing, and false as soon as it starts expanding. Anything laid out for the icon rail only appears once the panel is that narrow.
 
-`AccountFooter` in the example below reads `isCollapsed` from `SideNavPanelContext` and hides its name with `display: none` while the panel is collapsed.
+`AccountFooter` in the example below reads `isCollapsed` from `SideNavPanelContext` and hides its name with `display: none` once the panel is collapsed.
 
 <StaticTable
   headers={['Context value', 'Description']}
   codeColumns={[0]}
   rows={[
-    ["isCollapsed", "Whether the panel's contents are collapsed. This trails the panel itself while it is expanding, since its contents are only brought back once it has finished widening."],
+    ["isCollapsed", "Whether the panel is collapsed to its icon rail. This becomes true once the panel has finished collapsing, and false as soon as it starts expanding."],
     ['setCollapsed', 'Collapses or expands the panel. Useful for building your own expand and collapse trigger.']
   ]} />
 

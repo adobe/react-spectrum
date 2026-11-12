@@ -12,6 +12,16 @@
 
 import {ActionButton} from './ActionButton';
 import {AriaLabelingProps, DOMRef} from '@react-types/shared';
+import {
+  createContext,
+  forwardRef,
+  FunctionComponent,
+  ReactNode,
+  SVGProps,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {createIcon, IconProps} from './Icon';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {
@@ -19,19 +29,8 @@ import {
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
-import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {
-  createContext,
-  forwardRef,
-  FunctionComponent,
-  ReactNode,
-  SVGProps,
-  useMemo,
-  useState
-} from 'react';
-import sideNavCss from './SideNav.module.css';
 import {style} from '../style' with {type: 'macro'};
 import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
@@ -40,11 +39,7 @@ import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMediaQuery} from './useMediaQuery';
 
-const addTransitionType: (type: string) => void = React.addTransitionType ?? (() => {});
-const startTransition: (scope: () => void) => void =
-  React.startTransition ?? ((scope: () => void) => scope());
 const ANIMATION_DURATION = 200;
-const EXPAND_TRANSITION = sideNavCss['side-panel-expand'];
 
 export interface SideNavPanelProps extends AriaLabelingProps, UnsafeStyles {
   /** The content of the side panel. */
@@ -60,13 +55,30 @@ export interface SideNavPanelProps extends AriaLabelingProps, UnsafeStyles {
 }
 
 interface SideNavPanelContextValue {
-  /** Whether the side panel is currently collapsed. */
+  /**
+   * Whether the side panel is collapsed to its icon rail. This becomes true once the panel finishes
+   * collapsing, and false as soon as it starts expanding.
+   */
   isCollapsed?: boolean;
   /** Sets whether the side panel is collapsed. */
   setCollapsed?: (isCollapsed: boolean) => void;
 }
 
 export const SideNavPanelContext = createContext<SideNavPanelContextValue>({});
+
+interface InternalSideNavPanelContextValue {
+  /** Whether the panel is collapsed or collapsing. */
+  isCollapsed: boolean;
+  /** Whether the panel is changing width. */
+  isTransitioning: boolean;
+  /** Whether the panel's width is animating, with its contents held at their expanded width. */
+  isAnimating: boolean;
+  setCollapsed: (isCollapsed: boolean) => void;
+}
+
+export const InternalSideNavPanelContext = createContext<InternalSideNavPanelContextValue | null>(
+  null
+);
 
 const sideNavPanelStyle = style(
   {
@@ -110,55 +122,83 @@ export const SideNavPanel = /*#__PURE__*/ forwardRef(function SideNavPanel(
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
+  let contentRef = useRef<HTMLDivElement>(null);
   let [isCollapsed, setCollapsed] = useControlledState<boolean>(
     propIsCollapsed,
     defaultCollapsed ?? false,
     onCollapsedChange
   );
   let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
-  // The panel's width and its contents are never animated at the same time.
-  let [contentCollapsed, setContentCollapsed] = useState(isCollapsed);
 
-  // Apply content collapse in the same render that starts the width transition.
-  if (isCollapsed && !contentCollapsed) {
-    setContentCollapsed(true);
+  // While the width transitions, the contents are held at their expanded width so that nothing
+  // reflows, and the panel clips them.
+  let [prevCollapsed, setPrevCollapsed] = useState(isCollapsed);
+  let [transition, setTransition] = useState<{contentWidth?: number} | null>(null);
+  if (prevCollapsed !== isCollapsed) {
+    setPrevCollapsed(isCollapsed);
+    // Reversing part way through keeps the width that was already measured.
+    setTransition(reduceMotion ? null : t => t ?? {});
   }
+  let isTransitioning = transition != null;
+  let contentWidth = transition?.contentWidth;
 
   useLayoutEffect(() => {
-    if (isCollapsed || !contentCollapsed) {
+    if (!transition) {
       return;
     }
 
-    let expand = () => {
-      startTransition(() => {
-        addTransitionType(EXPAND_TRANSITION);
-        setContentCollapsed(false);
-      });
-    };
-
-    if (reduceMotion) {
-      expand();
+    let content = contentRef.current;
+    let animation = domRef.current
+      ?.getAnimations?.()
+      .find(a => (a as CSSTransition).transitionProperty === 'width');
+    if (!animation || !content) {
+      // Nothing is animating, e.g. the expanded width is the same as the collapsed width.
+      setTransition(null);
       return;
     }
 
-    let panel = domRef.current;
-    let onTransitionEnd = (e: TransitionEvent) => {
-      if (getEventTarget(e) === panel && e.propertyName === 'width') {
-        expand();
+    if (transition.contentWidth == null) {
+      let width = content.getBoundingClientRect().width;
+      if (!isCollapsed) {
+        // The contents are still at the collapsed width, so seek to the end of the transition to
+        // measure the expanded width, then rewind. Pausing while seeking stops WebKit from treating
+        // the transition as finished, which would start a second one.
+        let time = animation.currentTime;
+        let endTime = animation.effect?.getComputedTiming().endTime;
+        if (time != null && endTime != null) {
+          animation.pause();
+          animation.currentTime = endTime;
+          width = content.getBoundingClientRect().width;
+          animation.currentTime = time;
+          animation.play();
+        }
       }
-    };
-    panel?.addEventListener('transitionend', onTransitionEnd);
-    // The expanded width may equal the collapsed width, in which case no transitionend arrives.
-    let timeout = setTimeout(expand, ANIMATION_DURATION + 50);
-    return () => {
-      panel?.removeEventListener('transitionend', onTransitionEnd);
-      clearTimeout(timeout);
-    };
-  }, [isCollapsed, contentCollapsed, reduceMotion, domRef]);
+      setTransition({contentWidth: width});
+      return;
+    }
 
-  let context = useMemo(
-    () => ({isCollapsed: contentCollapsed, setCollapsed}),
-    [contentCollapsed, setCollapsed]
+    let isCancelled = false;
+    animation.finished.then(
+      () => {
+        if (!isCancelled) {
+          setTransition(null);
+        }
+      },
+      // Reversing replaces the transition, which rejects this promise.
+      () => {}
+    );
+    return () => {
+      isCancelled = true;
+    };
+  }, [isCollapsed, transition, domRef]);
+
+  // Consumers only see the rail once the panel has finished collapsing.
+  let isRail = isCollapsed && !isTransitioning;
+  let context = useMemo(() => ({isCollapsed: isRail, setCollapsed}), [isRail, setCollapsed]);
+  let isAnimating = contentWidth != null;
+  let internalContext = useMemo(
+    () => ({isCollapsed, isTransitioning, isAnimating, setCollapsed}),
+    [isCollapsed, isTransitioning, isAnimating, setCollapsed]
   );
 
   let filteredProps = filterDOMProps(otherProps, {labelable: true});
@@ -166,38 +206,44 @@ export const SideNavPanel = /*#__PURE__*/ forwardRef(function SideNavPanel(
   let hasLabel = filteredProps['aria-label'] != null || filteredProps['aria-labelledby'] != null;
   return (
     <SideNavPanelContext.Provider value={context}>
-      <div
-        {...filteredProps}
-        role={hasLabel ? 'region' : undefined}
-        ref={domRef}
-        // Allow children to hide via CSS instead of waiting for another state render.
-        data-side-panel-collapsed={contentCollapsed || undefined}
-        // Override the consumer's class-based width while collapsed.
-        style={{...UNSAFE_style, width: isCollapsed ? 'var(--collapsedWidth)' : undefined}}
-        className={UNSAFE_className + sideNavPanelStyle(null, styles)}>
+      <InternalSideNavPanelContext.Provider value={internalContext}>
         <div
-          className={style({
-            flexGrow: 1,
-            flexShrink: 1,
-            minHeight: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            height: 'full'
-          })}>
-          {children}
+          {...filteredProps}
+          role={hasLabel ? 'region' : undefined}
+          ref={domRef}
+          style={{
+            ...UNSAFE_style,
+            // Override the consumer's class-based width while collapsed.
+            width: isCollapsed ? 'var(--collapsedWidth)' : undefined,
+            overflowX: isTransitioning ? 'clip' : UNSAFE_style?.overflowX
+          }}
+          className={UNSAFE_className + sideNavPanelStyle(null, styles)}>
+          <div
+            ref={contentRef}
+            style={{width: contentWidth}}
+            className={style({
+              flexGrow: 1,
+              flexShrink: 1,
+              minHeight: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              height: 'full'
+            })}>
+            {children}
+          </div>
+          <div
+            className={style({
+              flexGrow: 0,
+              flexShrink: 0,
+              marginBottom: 4,
+              marginTop: 4,
+              display: 'flex',
+              marginStart: 4
+            })}>
+            <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
+          </div>
         </div>
-        <div
-          className={style({
-            flexGrow: 0,
-            flexShrink: 0,
-            marginBottom: 4,
-            marginTop: 4,
-            display: 'flex',
-            marginStart: 4
-          })}>
-          <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
-        </div>
-      </div>
+      </InternalSideNavPanelContext.Provider>
     </SideNavPanelContext.Provider>
   );
 });

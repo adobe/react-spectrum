@@ -40,9 +40,9 @@ interface SideNavPanelAppProps {
 }
 
 /**
- * A user avatar and account menu, shown at the bottom of the side panel. The name is hidden while
- * the panel is collapsed. `isCollapsed` trails the panel's width when expanding, so the name is
- * never in the layout while the panel is changing size and can't reflow as it narrows.
+ * A user avatar and account menu, shown at the bottom of the side panel. The name is hidden once
+ * the panel has collapsed. While the panel changes width, the footer keeps its expanded layout and
+ * the panel clips it, so the name doesn't reflow as the panel narrows.
  */
 export function AccountFooter(): ReactNode {
   let {isCollapsed = false} = useContext(SideNavPanelContext);
