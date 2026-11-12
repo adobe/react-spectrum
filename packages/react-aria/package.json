@@ -50,6 +50,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "prepack": "node ../../scripts/prepareForPublish.js prepare",
+    "postpack": "node ../../scripts/prepareForPublish.js restore"
+  },
   "dependencies": {
     "@internationalized/date": "^3.12.4",
     "@internationalized/number": "^3.6.9",
