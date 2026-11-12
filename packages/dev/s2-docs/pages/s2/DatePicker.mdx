@@ -51,6 +51,8 @@ function Example() {
 
 The date format is automatically determined based on the user's locale. `DatePicker` supports several props to control how values are displayed.
 
+For an initially empty field, use `placeholderValue` to specify the initial date, time, and time zone used when entering or selecting a value. For example, `placeholderValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')}` preserves the Los Angeles time zone in the selected value without pre-filling the field.
+
 ```tsx render docs={docs.exports.DatePicker} links={docs.links} props={['granularity', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Date'}} type="s2"
 "use client";
 import {parseZonedDateTime} from '@internationalized/date';
