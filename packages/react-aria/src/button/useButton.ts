@@ -57,6 +57,11 @@ export interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProp
    * element.
    */
   'aria-controls'?: string;
+  /**
+   * Identifies keyboard shortcuts that an author has implemented to activate or give focus to the
+   * element.
+   */
+  'aria-keyshortcuts'?: string;
   /** Indicates the current "pressed" state of toggle buttons. */
   'aria-pressed'?: boolean | 'true' | 'false' | 'mixed';
   /**
@@ -252,6 +257,7 @@ export function useButton(
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
       'aria-current': props['aria-current'],
+      'aria-keyshortcuts': props['aria-keyshortcuts'],
       'aria-disabled': props['aria-disabled']
     })
   };
