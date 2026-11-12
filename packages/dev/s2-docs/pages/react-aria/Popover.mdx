@@ -107,6 +107,30 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 ));
 ```
 
+## Custom overlay
+
+By default, `Popover` includes a transparent backdrop which blocks interaction with outside elements. Wrap it in a `PopoverOverlay` to customize the backdrop's `className`, `style`, or animations. For example, set its `z-index` above other positioned elements in your application, and place the popover above the backdrop.
+
+```tsx render
+"use client";
+import {DialogTrigger, PopoverOverlay} from 'react-aria-components/Popover';
+import {Popover} from 'vanilla-starter/Popover';
+import {Button} from 'vanilla-starter/Button';
+
+<DialogTrigger>
+  <Button>Open popover</Button>
+  <PopoverOverlay style={{background: '#0004', zIndex: 100}}>
+    <Popover style={{padding: 16, zIndex: 101}}>
+      This popover has a custom backdrop.
+    </Popover>
+  </PopoverOverlay>
+</DialogTrigger>
+```
+
+The backdrop and popover are rendered as sibling elements in the same portal, so they can be animated independently. Both support the `data-entering` and `data-exiting` attributes, and remain mounted until both exit animations have completed. When using CSS keyframe exit animations with different durations, set `animation-fill-mode: forwards` on the exit animations so an element keeps its final appearance while waiting for the other animation to finish. `PopoverOverlay` also supports `className` and `style` functions with `isEntering`, `isExiting`, and `state` render props.
+
+Keep positioning and dismissal options, such as `placement`, `triggerRef`, and `shouldCloseOnInteractOutside`, on `Popover`. Control the open state on the trigger, or use `isOpen`, `defaultOpen`, and `onOpenChange` on `PopoverOverlay` when used standalone. A custom overlay is not rendered for non-modal popovers, such as those used by `ComboBox`, or for submenus, which share their root popover's backdrop.
+
 ## Custom anchor
 
 To position a popover relative to a different element than its trigger, use the `triggerRef` and `isOpen` props instead of `<DialogTrigger>`. `onOpenChange` will be called when the user closes the popover.
@@ -170,6 +194,10 @@ function Example() {
     '--trigger-width': 'The width of the popover trigger element.',
     '--trigger-anchor-point': 'The position of the trigger relative to the popover. Use with `transform-origin` when applying scale transitions.'
   }} />
+
+### PopoverOverlay
+
+<PropTable component={docs.exports.PopoverOverlay} links={docs.links} showDescription />
 
 ### OverlayArrow
 
