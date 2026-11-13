@@ -475,7 +475,7 @@ describe('Slider', () => {
         <SliderTrack>
           <SliderThumb />
         </SliderTrack>
-        <NumberField>
+        <NumberField slot="0">
           <Input />
         </NumberField>
       </Slider>
@@ -548,7 +548,7 @@ describe('Slider', () => {
           <SliderTrack>
             <SliderThumb name="volume" />
           </SliderTrack>
-          <NumberField>
+          <NumberField slot="0">
             <Input />
           </NumberField>
         </Slider>
@@ -579,13 +579,67 @@ describe('Slider', () => {
         <SliderTrack>
           <SliderThumb name="volume" />
         </SliderTrack>
-        <NumberField>
+        <NumberField slot="0">
           <Input />
         </NumberField>
       </Slider>
     );
     expect(getByRole('slider', {name: 'Volume'})).toBeDisabled();
     expect(getByRole('textbox', {name: 'Volume'})).toBeDisabled();
+  });
+
+  it('labels the slotted NumberField and leaves an independent NumberField alone', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <>
+        <span id="volume-label">Volume</span>
+        <Slider aria-labelledby="volume-label" defaultValue={25} onChange={onChange}>
+          <SliderTrack>
+            <SliderThumb />
+          </SliderTrack>
+          <NumberField slot="0">
+            <Input />
+          </NumberField>
+          <NumberField aria-label="Example" defaultValue={5}>
+            <Input />
+          </NumberField>
+        </Slider>
+      </>
+    );
+
+    expect(getByRole('textbox', {name: 'Volume'})).toHaveValue('25');
+    let example = getByRole('textbox', {name: 'Example'});
+    expect(example).toHaveValue('5');
+    await user.click(example);
+    await user.clear(example);
+    await user.keyboard('9{Enter}');
+    expect(example).toHaveValue('9');
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('keeps the NumberField disabled state in sync with the thumb', () => {
+    function Example({isDisabled, isThumbDisabled}) {
+      return (
+        <Slider aria-label="Volume" isDisabled={isDisabled}>
+          <SliderTrack>
+            <SliderThumb isDisabled={isThumbDisabled} />
+          </SliderTrack>
+          <NumberField slot="0">
+            <Input />
+          </NumberField>
+        </Slider>
+      );
+    }
+
+    let {getByRole, rerender} = render(<Example isThumbDisabled />);
+    expect(getByRole('textbox')).toBeDisabled();
+    rerender(<Example isDisabled />);
+    expect(getByRole('textbox')).toBeDisabled();
+    rerender(<Example />);
+    expect(getByRole('slider')).toBeEnabled();
+    expect(getByRole('textbox')).toBeEnabled();
+    rerender(<Example isThumbDisabled />);
+    expect(getByRole('textbox')).toBeDisabled();
   });
 
   it('should support slotted NumberFields and boundary arrow navigation for multi-thumb Sliders', async () => {

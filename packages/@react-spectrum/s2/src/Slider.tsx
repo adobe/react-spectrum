@@ -19,6 +19,7 @@ import {
   SliderThumbRenderProps,
   SliderTrack
 } from 'react-aria-components/Slider';
+import {Children, createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {ContextValue} from 'react-aria-components/slots';
 import {
   controlFont,
@@ -28,7 +29,6 @@ import {
   getAllowedOverrides,
   StyleProps
 } from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {FieldLabel} from './Field';
 import {
   FocusableRef,
@@ -422,7 +422,8 @@ export function SliderBase<T extends number | number[]>(
     ...ariaProps
   } = props;
   let {direction} = useLocale();
-  let hasInput = children != null;
+  // Ignore empty children such as `{isEditable && <SliderInput />}`.
+  let hasInput = Children.toArray(children).length > 0;
 
   // oxlint-disable react/react-compiler
   return (

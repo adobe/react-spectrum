@@ -74,6 +74,24 @@ describe('Slider and RangeSlider with SliderInput', () => {
     expect(getByRole('textbox', {name: 'Opacity'})).toBeDisabled();
   });
 
+  it('shows the standard output when a conditional SliderInput is not rendered', () => {
+    function EditableSlider({isEditable}: {isEditable: boolean}) {
+      return (
+        <Slider label="Opacity" defaultValue={25}>
+          {isEditable && <SliderInput />}
+        </Slider>
+      );
+    }
+
+    let {queryByRole, getByRole, rerender} = render(<EditableSlider isEditable={false} />);
+    expect(getByRole('status')).toHaveTextContent('25');
+    rerender(<EditableSlider isEditable />);
+    expect(queryByRole('status')).not.toBeInTheDocument();
+    expect(getByRole('textbox')).toHaveValue('25');
+    rerender(<EditableSlider isEditable={false} />);
+    expect(getByRole('status')).toHaveTextContent('25');
+  });
+
   it('supports controlled editable Slider and Form integration without duplicate form entries', async () => {
     let entries: [string, FormDataEntryValue][] = [];
     function ControlledExample() {

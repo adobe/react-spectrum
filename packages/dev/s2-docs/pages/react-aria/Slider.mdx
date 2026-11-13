@@ -101,7 +101,7 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
 
 ### Editable
 
-Place a [NumberField](NumberField) inside `<Slider>` to allow users to type an exact numeric value alongside dragging the thumb.
+Place a [NumberField](NumberField) with `slot="0"` inside `<Slider>` to allow users to type an exact numeric value alongside dragging the thumb.
 
 ```tsx render
 "use client";
@@ -122,7 +122,7 @@ import 'vanilla-starter/Slider.css';
     <SliderThumb className="react-aria-SliderThumb indicator" />
   </SliderTrack>
   {/*- begin highlight -*/}
-  <NumberField>
+  <NumberField slot="0">
     <Input className="react-aria-Input inset" />
   </NumberField>
   {/*- end highlight -*/}
@@ -179,7 +179,7 @@ import 'vanilla-starter/Slider.css';
       <Label />
     </SliderThumb>
   </SliderTrack>
-  <NumberField />
+  <NumberField slot="0" />
 </Slider>
 ```
 

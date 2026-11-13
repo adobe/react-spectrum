@@ -21,6 +21,7 @@ import {clamp, snapValueToStep} from 'react-stately/private/utils/number';
 import {
   ClassNameOrFunction,
   ContextValue,
+  DEFAULT_SLOT,
   dom,
   Provider,
   RenderProps,
@@ -33,7 +34,11 @@ import {
 } from './utils';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
-import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {
+  getActiveElement,
+  getEventTarget,
+  nodeContains
+} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {GroupContext} from './Group';
 import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
@@ -144,7 +149,7 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
     value: state.values[index],
     defaultValue: state.defaultValues[index],
     isDisabled: state.isDisabled || !state.isThumbEditable(index),
-    'aria-labelledby': labelProps.id ?? groupProps.id,
+    'aria-labelledby': groupProps['aria-labelledby'] || groupProps.id,
     'aria-describedby': props['aria-describedby'],
     'aria-details': props['aria-details'],
     onKeyDown(e) {
@@ -152,10 +157,11 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
         return;
       }
 
-      let input = getEventTarget(e);
-      if (!(input instanceof HTMLInputElement)) {
+      let target = getEventTarget(e) as Element;
+      if (target.tagName !== 'INPUT') {
         return;
       }
+      let input = target as HTMLInputElement;
 
       let nextKey = direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
       let prevKey = direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
@@ -210,14 +216,36 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
     }
   });
 
-  let numberFieldContext: ContextValue<NumberFieldProps, HTMLDivElement> =
-    state.values.length === 1
-      ? getNumberFieldProps(0)
-      : {
-          slots: Object.fromEntries(
-            state.values.map((_, index) => [String(index), getNumberFieldProps(index)])
-          )
-        };
+  // Only NumberFields with an explicit thumb index slot are bound to the slider.
+  // NumberFields without a slot keep their own state.
+  let numberFieldContext = {
+    slots: {
+      [DEFAULT_SLOT]: {},
+      ...Object.fromEntries(
+        state.values.map((_, index) => [String(index), getNumberFieldProps(index)])
+      )
+    }
+  };
+
+  function onTrackPress(e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) {
+    if (
+      state.isDisabled ||
+      e.defaultPrevented ||
+      ('button' in e && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) ||
+      !nodeContains(trackRef.current, getEventTarget(e))
+    ) {
+      return;
+    }
+
+    // Commit pending text before the track handles the press and starts dragging.
+    let active = getActiveElement(e.currentTarget.ownerDocument);
+    if (
+      active?.tagName === 'INPUT' &&
+      numberFieldRefs.current.some(field => nodeContains(field, active))
+    ) {
+      (active as HTMLInputElement).blur();
+    }
+  }
 
   return (
     <Provider
@@ -230,7 +258,11 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
         [NumberFieldContext, numberFieldContext]
       ]}>
       <dom.div
-        {...mergeProps(DOMProps, renderProps, groupProps)}
+        {...mergeProps(DOMProps, renderProps, groupProps, {
+          onPointerDownCapture: onTrackPress,
+          onMouseDownCapture: onTrackPress,
+          onTouchStartCapture: onTrackPress
+        })}
         ref={ref}
         slot={props.slot || undefined}
         data-orientation={state.orientation}

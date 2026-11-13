@@ -30,6 +30,7 @@ import {useFormReset} from '../utils/useFormReset';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabel} from '../label/useLabel';
+import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
 import {useMove} from '../interactions/useMove';
 
@@ -213,8 +214,13 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
     }
   });
 
-  // Immediately register editability with the state
-  state.setThumbEditable(index, !isDisabled);
+  let {setThumbEditable} = state;
+  useLayoutEffect(() => {
+    if (opts.isDisabled) {
+      setThumbEditable(index, false);
+      return () => setThumbEditable(index, true);
+    }
+  }, [index, opts.isDisabled, setThumbEditable]);
 
   const {focusableProps} = useFocusable(
     mergeProps(opts, {

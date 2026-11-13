@@ -25,7 +25,7 @@ describe('Slider SSR', function () {
           <SliderTrack>
             <SliderThumb />
           </SliderTrack>
-          <NumberField>
+          <NumberField slot="0">
             <Input />
           </NumberField>
         </Slider>

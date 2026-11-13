@@ -259,7 +259,12 @@ export function useSliderState<T extends number | number[]>(
   const [isDraggings, setDraggingsState] = useState<boolean[]>(
     new Array(values.length).fill(false)
   );
-  const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
+  let [thumbEditability, setThumbEditability] = useState<Record<number, boolean>>({});
+  let setThumbEditable = useCallback((index: number, editable: boolean) => {
+    setThumbEditability(current =>
+      (current[index] ?? true) === editable ? current : {...current, [index]: editable}
+    );
+  }, []);
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
   const valuesRef = useRef<number[]>(values);
@@ -287,11 +292,7 @@ export function useSliderState<T extends number | number[]>(
   }
 
   function isThumbEditable(index: number) {
-    return isEditablesRef.current[index];
-  }
-
-  function setThumbEditable(index: number, editable: boolean) {
-    isEditablesRef.current[index] = editable;
+    return !isDisabled && index in values && (thumbEditability[index] ?? true);
   }
 
   function updateValue(index: number, value: number) {

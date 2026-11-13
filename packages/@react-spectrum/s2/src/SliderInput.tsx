@@ -130,6 +130,7 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
     return (
       <AriaNumberField
         {...domProps}
+        slot="0"
         ref={domRef}
         style={UNSAFE_style}
         className={UNSAFE_className + wrapperStyles(null, styles)}>
@@ -175,12 +176,13 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
                 e.stopPropagation();
                 let inputs = Array.from(e.currentTarget.querySelectorAll('input'));
                 if (inputs.length === 2) {
-                  let sepRect = e.currentTarget.querySelector('span')?.getBoundingClientRect();
-                  let target =
-                    sepRect && e.clientX >= sepRect.left + sepRect.width / 2
-                      ? inputs[1]
-                      : inputs[0];
-                  target.focus();
+                  let [start, end] = inputs;
+                  let startRect = start.getBoundingClientRect();
+                  let endRect = end.getBoundingClientRect();
+                  let startIsRight = startRect.left > endRect.left;
+                  let [left, right] = startIsRight ? [endRect, startRect] : [startRect, endRect];
+                  let clickedRight = e.clientX >= (left.right + right.left) / 2;
+                  (clickedRight === startIsRight ? start : end).focus();
                 }
               }
             }}
