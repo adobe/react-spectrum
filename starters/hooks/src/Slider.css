@@ -1,5 +1,6 @@
 @import './theme.css';
 @import './utilities.css';
+@import './TextField.css';
 
 .react-aria-Slider {
   display: grid;
@@ -11,6 +12,18 @@
   font: var(--font-size) system-ui;
   color: var(--text-color);
 
+  &:has(.react-aria-NumberField) {
+    grid-template-areas:
+      'label label'
+      'track input';
+    column-gap: var(--spacing-5);
+    align-items: center;
+
+    .react-aria-Label {
+      margin-bottom: var(--spacing-1);
+    }
+  }
+
   .react-aria-Label {
     grid-area: label;
   }
@@ -18,6 +31,18 @@
   .react-aria-SliderOutput {
     grid-area: output;
     font-size: var(--font-size);
+  }
+
+  .react-aria-NumberField {
+    grid-area: input;
+
+    .react-aria-Input {
+      width: calc(4.5ch + var(--spacing-5));
+      min-height: var(--spacing-7);
+      padding: 0 var(--spacing-2);
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+    }
   }
 
   .react-aria-SliderTrack {

@@ -50,13 +50,19 @@
     }
   }
 
+  .react-aria-Group .react-aria-Input {
+    outline: none;
+  }
+
   .react-aria-Input {
     z-index: 1;
-    outline: none;
     width: 5.25rem;
     flex: 1;
-    border-start-end-radius: 0;
-    border-end-end-radius: 0;
+
+    &:not(:only-child) {
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+    }
 
     &[data-invalid] {
       border-color: var(--border-color);

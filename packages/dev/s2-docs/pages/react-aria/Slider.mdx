@@ -105,26 +105,25 @@ Place a [NumberField](NumberField) inside `<Slider>` to allow users to type an e
 
 ```tsx render
 "use client";
-import {Input, Label, NumberField, Slider, SliderFill, SliderThumb, SliderTrack} from 'react-aria-components';
+import {Input, NumberField, Slider, SliderFill, SliderThumb, SliderTrack} from 'react-aria-components';
+import {Label} from 'vanilla-starter/Form';
 import 'vanilla-starter/Slider.css';
-import 'vanilla-starter/Form.css';
 
 <Slider
   defaultValue={0.5}
   maxValue={1}
   step={0.01}
-  formatOptions={{style: 'percent'}}
-  style={{display: 'grid', gridTemplateAreas: '"label ." "track input"', gridTemplateColumns: '1fr auto', alignItems: 'center', columnGap: 12, rowGap: 4, width: 240}}>
-  <Label style={{gridArea: 'label'}}>Opacity</Label>
-  <SliderTrack style={{gridArea: 'track'}}>
+  formatOptions={{style: 'percent'}}>
+  <Label>Opacity</Label>
+  <SliderTrack>
     <div className="track inset">
       <SliderFill />
     </div>
     <SliderThumb className="react-aria-SliderThumb indicator" />
   </SliderTrack>
   {/*- begin highlight -*/}
-  <NumberField style={{gridArea: 'input'}}>
-    <Input className="react-aria-Input inset" style={{width: '5ch'}} />
+  <NumberField>
+    <Input className="react-aria-Input inset" />
   </NumberField>
   {/*- end highlight -*/}
 </Slider>
