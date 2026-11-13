@@ -69,6 +69,12 @@ function getPanel() {
   return document.querySelector('[role=region]') as HTMLElement;
 }
 
+// S2 sizes are 1.25x larger without a fine pointer and hover, as in some headless browsers.
+function px(size: number) {
+  let scale = getComputedStyle(document.documentElement).getPropertyValue('--s2-scale');
+  return size * Number(scale);
+}
+
 function getRow(name: string) {
   return [...document.querySelectorAll('[aria-level]')].find(row => row.textContent === name) as
     | HTMLElement
@@ -111,7 +117,7 @@ it.each`
   let iconRect = icon.getBoundingClientRect().toJSON();
   let labelRect = label.getBoundingClientRect().toJSON();
   let contentWidth = content.getBoundingClientRect().width;
-  expect(panel.getBoundingClientRect().width).toBe(240);
+  expect(panel.getBoundingClientRect().width).toBe(px(240));
   expect(getState()).toBe('expanded');
 
   await userEvent.click(page.getByRole('button', {name: collapse}));
@@ -121,8 +127,8 @@ it.each`
 
   // The contents keep their expanded layout, and the panel clips them.
   let width = panel.getBoundingClientRect().width;
-  expect(width).toBeGreaterThan(42);
-  expect(width).toBeLessThan(240);
+  expect(width).toBeGreaterThan(px(42));
+  expect(width).toBeLessThan(px(240));
   expect(content.getBoundingClientRect().width).toBe(contentWidth);
   expect(label.getBoundingClientRect().toJSON()).toEqual(labelRect);
   expect(icon.getBoundingClientRect().toJSON()).toEqual(iconRect);
@@ -132,7 +138,7 @@ it.each`
   transition.play();
   await waitForSettle();
   expect(getState()).toBe('rail');
-  expect(panel.getBoundingClientRect().width).toBe(42);
+  expect(panel.getBoundingClientRect().width).toBe(px(42));
   expect(icon.getBoundingClientRect().toJSON()).toEqual(iconRect);
 });
 
@@ -142,7 +148,7 @@ it('measures the expanded width before the panel starts to expand', async () => 
   let content = panel.firstElementChild as HTMLElement;
   // Nothing animates on mount.
   expect(panel.getAnimations()).toHaveLength(0);
-  expect(panel.getBoundingClientRect().width).toBe(42);
+  expect(panel.getBoundingClientRect().width).toBe(px(42));
   expect(getState()).toBe('rail');
 
   await userEvent.click(page.getByRole('button', {name: 'Expand side panel'}));
@@ -156,14 +162,14 @@ it('measures the expanded width before the panel starts to expand', async () => 
   transition.pause();
   transition.currentTime = 100;
   let width = panel.getBoundingClientRect().width;
-  expect(width).toBeGreaterThan(42);
-  expect(width).toBeLessThan(240);
-  expect(content.getBoundingClientRect().width).toBe(240);
+  expect(width).toBeGreaterThan(px(42));
+  expect(width).toBeLessThan(px(240));
+  expect(content.getBoundingClientRect().width).toBe(px(240));
 
   transition.play();
   await waitForSettle();
-  expect(panel.getBoundingClientRect().width).toBe(240);
-  expect(content.getBoundingClientRect().width).toBe(240);
+  expect(panel.getBoundingClientRect().width).toBe(px(240));
+  expect(content.getBoundingClientRect().width).toBe(px(240));
 });
 
 it('reverses part way through', async () => {
@@ -184,13 +190,13 @@ it('reverses part way through', async () => {
   reversed.pause();
   // The panel turns around from where it was, and the contents keep the width they had.
   expect(panel.getBoundingClientRect().width).toBeGreaterThanOrEqual(width - 1);
-  expect(panel.getBoundingClientRect().width).toBeLessThan(240);
-  expect(content.getBoundingClientRect().width).toBe(240);
+  expect(panel.getBoundingClientRect().width).toBeLessThan(px(240));
+  expect(content.getBoundingClientRect().width).toBe(px(240));
 
   reversed.play();
   await waitForSettle();
   expect(getState()).toBe('expanded');
-  expect(panel.getBoundingClientRect().width).toBe(240);
+  expect(panel.getBoundingClientRect().width).toBe(px(240));
 });
 
 // Returns the row's height a quarter, half, and three quarters of the way through its animation.
