@@ -83,8 +83,10 @@ const carouselStyles = style({
 
 const pickerStyles = style({
   display: 'flex',
-  // TODO: update max width based on device width?
-  maxWidth: 600,
+  maxWidth: {
+    default: 300,
+    md: 600
+  },
   overflowX: 'auto',
   flexDirection: {
     orientation: {
@@ -95,7 +97,7 @@ const pickerStyles = style({
   scrollbarWidth: 'none',
   flexShrink: 0,
   order: 1,
-  gap: 4,
+  gap: 8,
   boxSizing: 'border-box',
   padding: 4,
   scrollPadding: 4
@@ -108,16 +110,25 @@ const pickerItemStyles = style({
   justifyContent: 'center',
   borderRadius: 'lg',
   cursor: 'default',
-  boxSizing: 'border-box',
-  borderWidth: 2,
-  borderStyle: 'solid',
-  borderColor: {
+  colorScheme: {
+    isInModal: 'light'
+  },
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid',
+    isSelected: 'solid'
+  },
+  outlineColor: {
     default: 'transparent',
     isSelected: {
       default: 'gray-800',
       isInModal: 'gray-100'
-    }
-  }
+    },
+    // Should we have a separate focus ring? That would mean a selected item would have one right indicating selection and another ring indicating focus
+    isFocusVisible: 'focus-ring'
+  },
+  outlineWidth: 2,
+  outlineOffset: 2
 });
 
 const itemsStyles = style({
@@ -128,7 +139,7 @@ const itemsStyles = style({
   height: 'full',
   // Cap the stage at a 16:9 image (plus the item padding) so short, wide viewports
   // don't leave large empty gutters between the image and the nav buttons.
-  maxWidth: 'calc((100cqh - 8px) * 16 / 9 + 32px)',
+  maxWidth: 'calc((100cqh - 8px) * 16 / 9 + 24px)',
   display: 'flex',
   order: 1,
   overflowX: 'auto',
@@ -151,8 +162,6 @@ const itemStyles = style({
   width: 'full',
   height: 'full',
   flexShrink: 0,
-  // scrollSnapAlign: 'start',
-  // scrollSnapStop: 'always',
   paddingX: 16,
   paddingY: 4,
   boxSizing: 'border-box',
@@ -229,7 +238,13 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
 
   return (
     <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
-      <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
+      <div
+        role="region"
+        aria-label={props['aria-label']}
+        aria-roledescription="carousel"
+        style={{width: '100%', height: '100%'}}>
+        <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
+      </div>
     </LightBoxCarouselContext.Provider>
   );
 }
@@ -343,7 +358,7 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
         flexGrow: 1,
         minWidth: 0,
         minHeight: 0,
-        gap: 28
+        gap: 16
       })}>
       {wrapper}
     </div>
@@ -389,13 +404,24 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     // selection back while the strip is still closer to the previous slide.
     isProgrammaticScroll.current = el.scrollLeft !== left;
 
-    // Distant selections may have unmounted pages between them.
+    // Distant selections may have unmounted pages between them, so jump instead.
+    // Also avoids distant selections from whipping through
+    if (!isAdjacent) {
+      // Briefly hiding overflow cancels a smooth scroll that's still running. Otherwise
+      // Safari keeps animating after the jump and lands on the wrong slide.
+      // Fixed in Safari 27, needed in Safari 26
+      el.style.overflowX = 'hidden';
+      el.scrollTo({left, behavior: 'instant'});
+      el.style.overflowX = '';
+      return;
+    }
+
     el.scrollTo({
       left,
       // Safari ignores smooth scrolling after the scroll snap targets change. That means instead of adjacent slides smooth scrolling, they are instant.
       // This is fixed in Safari Tech Preview
       // https://bugs.webkit.org/show_bug.cgi?id=331157
-      behavior: isAdjacent ? 'smooth' : 'instant'
+      behavior: 'smooth'
     });
   }, [selectedIndex]);
 
@@ -461,6 +487,14 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       return;
     }
 
+    // When a jump interrupts a smooth scroll (i.e. going from the last tab to the first tab), Chrome adds the smooth scroll's last few pixels
+    // after the jump and doesn't re-snap causing the slide to be incorrectly aligned. This stays on the selected slide, so it
+    // can't change the selection.
+    // https://issues.chromium.org/issues/40722572
+    if (isProgrammaticScroll.current && el && selectedIndex != null) {
+      el.scrollTo({left: selectedIndex * el.offsetWidth});
+    }
+
     isProgrammaticScroll.current = false;
   };
 
@@ -501,7 +535,8 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
         ref={ref}
         {...otherProps}
         {...keyboardProps}
-        className={itemsStyles}
+        role="group"
+        className={itemsStyles + ' ' + scrollFade({x: 16})}
         onScroll={onScroll}
         onScrollEnd={onScrollEnd}>
         <div
@@ -569,15 +604,15 @@ const carouselNavButtonStyles = style<
   borderRadius: 'full',
   borderStyle: 'none',
   transition: 'default',
+  colorScheme: {
+    isInModal: 'dark'
+  },
   backgroundColor: {
     default: baseColor('gray-100'),
     isDisabled: 'disabled',
     isInModal: {
-      default: 'white/10',
-      isHovered: 'white/20',
-      isPressed: 'white/20',
-      isFocusVisible: 'white/20',
-      isDisabled: 'white/10'
+      default: baseColor('gray-200'),
+      isDisabled: 'gray-100'
     },
     forcedColors: {
       default: 'ButtonText',
@@ -589,8 +624,8 @@ const carouselNavButtonStyles = style<
     default: baseColor('neutral'),
     isDisabled: 'disabled',
     isInModal: {
-      default: 'white',
-      isDisabled: 'white/40'
+      default: 'neutral',
+      isDisabled: 'disabled'
     },
     forcedColors: {
       default: 'ButtonFace',
@@ -835,7 +870,7 @@ function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
 
 export function LightboxItem(props: LightboxItemProps) {
   return (
-    <RACTabPanel {...props} shouldForceMount className={itemStyles}>
+    <RACTabPanel {...props} shouldForceMount className={itemStyles} aria-roledescription="slide">
       {renderProps => (
         <ImageContext.Provider
           value={{styles: imageStyles({...renderProps}), imgStyles: innerImageStyles}}>

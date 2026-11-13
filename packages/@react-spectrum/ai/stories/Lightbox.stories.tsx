@@ -41,9 +41,6 @@ export const Basic: Story = {
   },
   render: args => (
     <div
-      role="region"
-      aria-label="Photos"
-      aria-roledescription="carousel"
       className={style({
         width: 600,
         height: 400,
@@ -53,7 +50,7 @@ export const Basic: Story = {
         minWidth: 0,
         minHeight: 0
       })}>
-      <LightboxCarousel {...args}>
+      <LightboxCarousel {...args} aria-label="Photos">
         <LightboxPicker aria-label="Choose photo">
           <LightboxPickerItem id="amsterdam" aria-label="Amsterdam">
             <Image
