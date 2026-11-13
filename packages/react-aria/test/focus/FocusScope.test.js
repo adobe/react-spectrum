@@ -1003,6 +1003,100 @@ describe('FocusScope', function () {
     });
   });
 
+  describe('restore focus target', function () {
+    function Test({show, showTrigger = true, restoreFocus, listRef}) {
+      return (
+        <div>
+          <div data-testid="list" tabIndex={-1} ref={listRef} />
+          {showTrigger && <button data-testid="trigger">trigger</button>}
+          <button data-testid="other">other</button>
+          {show && (
+            <FocusScope restoreFocus={restoreFocus} autoFocus>
+              <input data-testid="input" />
+            </FocusScope>
+          )}
+        </div>
+      );
+    }
+
+    function openAndClose({restoreFocus, removeTrigger}) {
+      let listRef = React.createRef();
+      let props = {listRef, restoreFocus: restoreFocus(listRef)};
+      let {getByTestId, rerender} = render(<Test {...props} />);
+      act(() => getByTestId('trigger').focus());
+      rerender(<Test {...props} show />);
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(getByTestId('input'));
+      rerender(<Test {...props} showTrigger={!removeTrigger} />);
+      act(() => jest.runAllTimers());
+      return {list: getByTestId('list'), getByTestId};
+    }
+
+    it('loses focus to the body when the element focused at mount was removed', function () {
+      openAndClose({restoreFocus: () => true, removeTrigger: true});
+      expect(document.activeElement).toBe(document.body);
+    });
+
+    it.each([true, false])(
+      'restores focus to the given ref (trigger removed: %s)',
+      function (removeTrigger) {
+        let {list} = openAndClose({restoreFocus: listRef => listRef, removeTrigger});
+        expect(document.activeElement).toBe(list);
+      }
+    );
+
+    it('restores focus to the default target when the ref is empty', function () {
+      let {getByTestId} = openAndClose({
+        restoreFocus: () => ({current: null}),
+        removeTrigger: false
+      });
+      expect(document.activeElement).toBe(getByTestId('trigger'));
+    });
+
+    it.each([
+      ['an element', listRef => listRef.current, 'list'],
+      ['true', () => true, 'trigger'],
+      ['null', () => null, 'trigger'],
+      ['false', () => false, null]
+    ])('restores focus according to a function that returns %s', function (_, result, expected) {
+      let fn = jest.fn();
+      let {getByTestId} = openAndClose({
+        restoreFocus: listRef => {
+          fn.mockImplementation(() => result(listRef));
+          return fn;
+        },
+        removeTrigger: false
+      });
+      expect(fn).toHaveBeenCalledTimes(1);
+      expect(document.activeElement).toBe(expected ? getByTestId(expected) : document.body);
+    });
+
+    it('passes the interaction modality to the function', async function () {
+      let restoreFocus = jest.fn(() => true);
+      let {getByTestId, rerender} = render(<Test restoreFocus={restoreFocus} />);
+      await user.tab();
+      expect(document.activeElement).toBe(getByTestId('trigger'));
+      rerender(<Test restoreFocus={restoreFocus} show />);
+      act(() => jest.runAllTimers());
+      rerender(<Test restoreFocus={restoreFocus} />);
+      act(() => jest.runAllTimers());
+      expect(restoreFocus).toHaveBeenCalledTimes(1);
+      expect(restoreFocus).toHaveBeenCalledWith('keyboard');
+      expect(document.activeElement).toBe(getByTestId('trigger'));
+    });
+
+    it('does not move focus to the given ref when the user moved focus elsewhere', function () {
+      let listRef = React.createRef();
+      let {getByTestId, rerender} = render(<Test listRef={listRef} restoreFocus={listRef} />);
+      act(() => getByTestId('trigger').focus());
+      rerender(<Test listRef={listRef} restoreFocus={listRef} show />);
+      act(() => getByTestId('other').focus());
+      rerender(<Test listRef={listRef} restoreFocus={listRef} />);
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(getByTestId('other'));
+    });
+  });
+
   describe('auto focus', function () {
     it('should auto focus the first tabbable element in the scope on mount', function () {
       let {getByTestId} = render(
