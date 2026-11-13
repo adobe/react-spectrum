@@ -1,0 +1,6 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {"skipLibCheck": true, "types": ["node", "jest", "css-module-types"]},
+  "include": ["app/**/*.ts", "app/**/*.tsx", "../lib/svg.d.ts", "../lib/css.d.ts"],
+  "exclude": [".local", "node_modules"]
+}
