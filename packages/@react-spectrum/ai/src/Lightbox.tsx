@@ -50,11 +50,12 @@ import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
-  isInfinite?: boolean;
+  // TODO: Support infinite carousel
+  // isInfinite?: boolean;
 }
 
 export interface LightboxPickerProps<T> extends Omit<TabListProps<T>, 'className'> {}
-export interface LightboxPickerItemProps extends Omit<TabProps, 'className' | 'children'> {
+export interface LightboxPickerItemProps extends Omit<TabProps, 'className' | 'children' | 'orientation'> {
   children: ReactNode;
 }
 export interface LightboxItemsProps<T> extends Omit<TabPanelsProps<T>, 'className'> {
@@ -168,9 +169,9 @@ const itemStyles = style({
   outlineStyle: 'none'
 });
 
-interface LightboxCarouselContextProps {
-  isInfinite?: boolean;
-}
+// interface LightboxCarouselContextProps {
+//   isInfinite?: boolean;
+// }
 
 let LightBoxCarouselContext = createContext<LightboxCarouselContextProps>({});
 
@@ -220,14 +221,14 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
                   onPress={close}
                   styles={style({justifySelf: 'end'})}
                 />
-                <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
+                {/* <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}> */}
                   <RACTabs
                     {...props}
                     selectedKey={ctx?.activeKey}
                     onSelectionChange={ctx?.setActiveKey}
                     className={renderProps => carouselStyles(renderProps)}
                   />
-                </LightBoxCarouselContext.Provider>
+                {/* </LightBoxCarouselContext.Provider> */}
               </>
             )}
           </Dialog>
@@ -237,15 +238,15 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
   }
 
   return (
-    <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
+    // <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
       <div
         role="region"
         aria-label={props['aria-label']}
-        aria-roledescription="carousel"
+        aria-roledescription="slide"
         style={{width: '100%', height: '100%'}}>
         <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
       </div>
-    </LightBoxCarouselContext.Provider>
+    // </LightBoxCarouselContext.Provider>
   );
 }
 
@@ -332,22 +333,28 @@ export function LightboxPickerItem(props: LightboxPickerItemProps) {
 
 export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
-  let {isInfinite} = useContext(LightBoxCarouselContext);
+  // let {isInfinite} = useContext(LightBoxCarouselContext);
 
   if (state?.selectedItem == null) {
     return null;
   }
 
-  let wrapper: ReactNode = isInfinite ? (
-    <InfiniteLightboxItems>
-      {index => props.children?.at(getWrappedIndex(index, state.collection.size))}
-    </InfiniteLightboxItems>
-  ) : (
+  // let wrapper: ReactNode = isInfinite ? (
+  //   <InfiniteLightboxItems>
+  //     {index => props.children?.at(getWrappedIndex(index, state.collection.size))}
+  //   </InfiniteLightboxItems>
+  // ) : (
+  //   <FocusScope>
+  //     <FiniteLightboxItems>{index => props.children?.at(index)}</FiniteLightboxItems>
+  //   </FocusScope>
+  // );
+
+  let wrapper = (
     <FocusScope>
       <FiniteLightboxItems>{index => props.children?.at(index)}</FiniteLightboxItems>
     </FocusScope>
   );
-
+  
   return (
     <div
       className={style({
@@ -535,7 +542,6 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
         ref={ref}
         {...otherProps}
         {...keyboardProps}
-        role="group"
         className={itemsStyles + ' ' + scrollFade({x: 16})}
         onScroll={onScroll}
         onScrollEnd={onScrollEnd}>
