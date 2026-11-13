@@ -1,0 +1,112 @@
+@import './theme.css';
+
+.react-aria-Wizard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: calc(var(--spacing) * 100);
+  max-width: 100%;
+  font: var(--font-size) system-ui;
+  color: var(--text-color);
+}
+
+.react-aria-WizardStepList {
+  display: flex;
+}
+
+.react-aria-WizardStep {
+  position: relative;
+  flex: 1;
+  box-sizing: border-box;
+  padding-inline: var(--spacing-1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  text-align: center;
+  outline: none;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+
+  .marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    font-size: var(--font-size-sm);
+  }
+
+  &[data-selected] .marker,
+  &[data-completed] .marker {
+    background: var(--highlight-background);
+    border-color: var(--highlight-background);
+    color: var(--highlight-foreground);
+    forced-color-adjust: none;
+  }
+
+  &[data-selected] {
+    font-weight: 600;
+  }
+
+  &[data-hovered] {
+    color: var(--text-color-hover);
+  }
+
+  /* Steps the user hasn't reached yet. */
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+
+  &[data-focus-visible] .marker {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  /* Connector lines. Each step draws the lines on either side of its marker,
+     so they stay centered when steps have different widths. */
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: var(--spacing-3);
+    border-top: 1px solid var(--border-color);
+  }
+
+  &::before {
+    inset-inline: 0 calc(50% + var(--spacing-5));
+  }
+
+  &::after {
+    inset-inline: calc(50% + var(--spacing-5)) 0;
+  }
+
+  &:first-child::before,
+  &:last-child::after {
+    display: none;
+  }
+
+  &[data-selected]::before,
+  &[data-completed]::before,
+  &[data-completed]::after {
+    border-color: var(--highlight-background);
+  }
+}
+
+.react-aria-WizardPanel {
+  padding: var(--spacing-3);
+  border-radius: var(--radius);
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+  }
+}
+
+.wizard-buttons {
+  display: flex;
+  justify-content: space-between;
+}
