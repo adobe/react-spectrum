@@ -18,6 +18,16 @@ import {NumberParser} from '../src/NumberParser';
 // for some reason hu-HU isn't supported in jsdom/node
 let locales = Object.keys(messages).filter(locale => locale !== 'hu-HU');
 
+function expectRoundTrip(locale, options, value, expected = value) {
+  let formatter = new NumberFormatter(locale, options);
+  let parser = new NumberParser(locale, options);
+  let formatted = formatter.format(value);
+  let parsed = parser.parse(formatted);
+  expect(parsed).toBe(expected);
+  expect(formatter.format(parsed)).toBe(formatted);
+  expect(parser.isValidPartialNumber(formatted)).toBe(true);
+}
+
 describe('NumberParser', function () {
   describe('parse', function () {
     it('should support basic numbers', function () {
@@ -508,14 +518,8 @@ describe('NumberParser', function () {
         'should round trip compound units surrounding the number in %s',
         locale => {
           for (let unit of ['meter-per-second', 'kilometer-per-hour']) {
-            let options = {style: 'unit', unit, unitDisplay: 'long'};
-            let formatter = new NumberFormatter(locale, options);
-            let parser = new NumberParser(locale, options);
             for (let value of [5, -5, 1.5]) {
-              let formatted = formatter.format(value);
-              let parsed = parser.parse(formatted);
-              expect(parsed).toBe(value);
-              expect(formatter.format(parsed)).toBe(formatted);
+              expectRoundTrip(locale, {style: 'unit', unit, unitDisplay: 'long'}, value);
             }
           }
         }
@@ -528,13 +532,7 @@ describe('NumberParser', function () {
         ['ar-EG', 'hour', 2],
         ['he-IL', 'hour', 2]
       ])('should round trip unit-only quantities in %s: %s %s', (locale, unit, value) => {
-        let options = {style: 'unit', unit, unitDisplay: 'long'};
-        let formatter = new NumberFormatter(locale, options);
-        let parser = new NumberParser(locale, options);
-        let formatted = formatter.format(value);
-        let parsed = parser.parse(formatted);
-        expect(parsed).toBe(value);
-        expect(formatter.format(parsed)).toBe(formatted);
+        expectRoundTrip(locale, {style: 'unit', unit, unitDisplay: 'long'}, value);
       });
 
       it.each([
@@ -542,14 +540,8 @@ describe('NumberParser', function () {
         ['pl-PL', 'meter', [1, 2, 5, 21, 1.5, -1.5]],
         ['en-US', 'hour', [1, 2, 1.5, -1.5]]
       ])('should round trip integer and fractional unit forms in %s', (locale, unit, values) => {
-        let options = {style: 'unit', unit, unitDisplay: 'long'};
-        let formatter = new NumberFormatter(locale, options);
-        let parser = new NumberParser(locale, options);
         for (let value of values) {
-          let formatted = formatter.format(value);
-          let parsed = parser.parse(formatted);
-          expect(parsed).toBe(value);
-          expect(formatter.format(parsed)).toBe(formatted);
+          expectRoundTrip(locale, {style: 'unit', unit, unitDisplay: 'long'}, value);
         }
       });
 
@@ -562,12 +554,7 @@ describe('NumberParser', function () {
         'should round trip unit forms after applying precision in %s with %j',
         (locale, precision, value, expected) => {
           let options = {style: 'unit', unit: 'hour', unitDisplay: 'long', ...precision};
-          let formatter = new NumberFormatter(locale, options);
-          let parser = new NumberParser(locale, options);
-          let formatted = formatter.format(value);
-          let parsed = parser.parse(formatted);
-          expect(parsed).toBe(expected);
-          expect(formatter.format(parsed)).toBe(formatted);
+          expectRoundTrip(locale, options, value, expected);
         }
       );
 
@@ -579,13 +566,8 @@ describe('NumberParser', function () {
             currencySign: 'accounting',
             currencyDisplay
           };
-          let formatter = new NumberFormatter(locale, options);
-          let parser = new NumberParser(locale, options);
           for (let value of [-5, -0, 0, 5]) {
-            let formatted = formatter.format(value);
-            let parsed = parser.parse(formatted);
-            expect(parsed).toBe(value);
-            expect(formatter.format(parsed)).toBe(formatted);
+            expectRoundTrip(locale, options, value);
           }
         }
       });
@@ -593,28 +575,15 @@ describe('NumberParser', function () {
       it.each([0.5, -0.5, 0, -0, 0.005])(
         'should round trip a leading percent sign in Turkish for %s',
         value => {
-          let options = {style: 'percent', maximumFractionDigits: 1};
-          let formatter = new NumberFormatter('tr-TR', options);
-          let parser = new NumberParser('tr-TR', options);
-          let formatted = formatter.format(value);
-          let parsed = parser.parse(formatted);
-          expect(parsed).toBe(value);
-          expect(formatter.format(parsed)).toBe(formatted);
-          expect(parser.isValidPartialNumber(formatted)).toBe(true);
+          expectRoundTrip('tr-TR', {style: 'percent', maximumFractionDigits: 1}, value);
         }
       );
 
       it.each(['ar-EG', 'ar-EG-u-nu-latn'])(
         'should round trip signed units with bidi literals in %s',
         locale => {
-          let options = {style: 'unit', unit: 'meter', unitDisplay: 'long'};
-          let formatter = new NumberFormatter(locale, options);
-          let parser = new NumberParser(locale, options);
           for (let value of [-5, -1.5]) {
-            let formatted = formatter.format(value);
-            let parsed = parser.parse(formatted);
-            expect(parsed).toBe(value);
-            expect(formatter.format(parsed)).toBe(formatted);
+            expectRoundTrip(locale, {style: 'unit', unit: 'meter', unitDisplay: 'long'}, value);
           }
         }
       );
@@ -638,12 +607,7 @@ describe('NumberParser', function () {
             notation: 'compact',
             compactDisplay
           };
-          let formatter = new NumberFormatter(locale, options);
-          let parser = new NumberParser(locale, options);
-          let formatted = formatter.format(value);
-          let parsed = parser.parse(formatted);
-          expect(parsed).toBe(value);
-          expect(formatter.format(parsed)).toBe(formatted);
+          expectRoundTrip(locale, options, value);
         }
       );
 
@@ -666,13 +630,7 @@ describe('NumberParser', function () {
           notation,
           maximumSignificantDigits: 3
         };
-        let formatter = new NumberFormatter(locale, options);
-        let parser = new NumberParser(locale, options);
-        let formatted = formatter.format(value);
-        let parsed = parser.parse(formatted);
-        expect(parsed).toBe(value);
-        expect(formatter.format(parsed)).toBe(formatted);
-        expect(parser.isValidPartialNumber(formatted)).toBe(true);
+        expectRoundTrip(locale, options, value);
       });
     });
 
@@ -711,6 +669,8 @@ describe('NumberParser', function () {
           },
           10000
         ],
+        // "K" is both the kina currency symbol and the compact symbol for thousand: "K 10K".
+        ['en-PG', {notation: 'compact', style: 'currency', currency: 'PGK'}, 10000],
         [
           'en-US',
           {notation: 'compact', style: 'currency', currency: 'USD', currencySign: 'accounting'},
@@ -727,13 +687,7 @@ describe('NumberParser', function () {
         ],
         ['fa-IR', {notation: 'scientific', maximumSignificantDigits: 3}, -0.000123]
       ])('should round trip %s with %j for %s', (locale, options, value) => {
-        let formatter = new NumberFormatter(locale, options);
-        let parser = new NumberParser(locale, options);
-        let formatted = formatter.format(value);
-        let parsed = parser.parse(formatted);
-        expect(parsed).toBe(value);
-        expect(formatter.format(parsed)).toBe(formatted);
-        expect(parser.isValidPartialNumber(formatted)).toBe(true);
+        expectRoundTrip(locale, options, value);
       });
 
       it.each(['1E', '1E-', '1E+'])('should allow an incomplete exponent in %s', value => {
@@ -761,11 +715,7 @@ describe('NumberParser', function () {
         'should round percentages using %s notation',
         (notation, maximumFractionDigits, value, expected) => {
           let options = {notation, maximumFractionDigits, style: 'percent'};
-          let formatter = new NumberFormatter('en-US', options);
-          let parser = new NumberParser('en-US', options);
-          let formatted = formatter.format(value);
-          expect(parser.parse(formatted)).toBe(expected);
-          expect(formatter.format(parser.parse(formatted))).toBe(formatted);
+          expectRoundTrip('en-US', options, value, expected);
         }
       );
 
@@ -784,6 +734,26 @@ describe('NumberParser', function () {
           let parser = new NumberParser('en-US', {notation: 'compact'});
           expect(parser.isValidPartialNumber(value)).toBe(false);
           expect(parser.parse(value)).toBeNaN();
+        }
+      );
+
+      // In af-ZA, "m" is both the narrow unit for meter and the compact symbol for million (miljoen),
+      // and both appear after the number. The formatter writes 5 meters as "5 m", 1500 meters as
+      // "1,5 k m", and 5 million meters as "5 m m".
+      it.skip.each([
+        ['5 m', 5],
+        ['1,5 k m', 1500],
+        ['5 m m', 5000000]
+      ])(
+        'should not read the meter unit as the compact million symbol in af-ZA: %s',
+        (value, expected) => {
+          let parser = new NumberParser('af-ZA', {
+            notation: 'compact',
+            style: 'unit',
+            unit: 'meter',
+            unitDisplay: 'narrow'
+          });
+          expect(parser.parse(value)).toBe(expected);
         }
       );
 

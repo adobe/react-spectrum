@@ -10,6 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+interface CompactSymbol {
+  /** The power of ten that the symbol represents, e.g. 3 for "K" in "1.5K". */
+  exponent: number;
+  /** Whether the symbol is displayed before the number. */
+  prefix: boolean;
+  /** Whether the same text is also used as another literal, such as a currency symbol. */
+  literal: boolean;
+}
+
 interface Symbols {
   minusSign?: string;
   plusSign?: string;
@@ -22,7 +31,7 @@ interface Symbols {
   noNumeralUnits: Array<{unit: string; value: number}>;
   exponentSeparator?: string;
   exponentMinusSign?: string;
-  compact: Map<string, {exponent: number; prefix: boolean; literal: boolean}>;
+  compact: Map<string, CompactSymbol>;
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
@@ -162,28 +171,21 @@ class NumberParserImpl {
     }
   }
 
-  parse(value: string, roundPercent = true) {
+  parse(value: string): number {
+    let number = this.parseUnrounded(value);
+    // Round percentages to the precision displayed by the formatter.
+    if (this.options.style === 'percent' && !isNaN(number)) {
+      number = this.parseUnrounded(this.formatter.format(number));
+    }
+    return number;
+  }
+
+  private parseUnrounded(value: string): number {
     let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
     // to parse the number, we need to remove anything that isn't actually part of the number, for example we want '-10.40' not '-10.40 USD'
-    let {value: fullySanitizedValue, exponent} = this.sanitize(value);
-    if (
-      isNaN(exponent) ||
-      (exponent !== 0 && fullySanitizedValue.search(this.symbols.numeral) === -1)
-    ) {
+    let {value: fullySanitizedValue, compactExponent} = this.sanitize(value);
+    if (!this.isValidNotation(fullySanitizedValue, compactExponent, false)) {
       return NaN;
-    }
-    if (
-      this.symbols.exponentSeparator &&
-      fullySanitizedValue.includes(this.symbols.exponentSeparator)
-    ) {
-      let parts = fullySanitizedValue.split(this.symbols.exponentSeparator);
-      if (
-        parts.length !== 2 ||
-        parts[0].search(this.symbols.numeral) === -1 ||
-        !this.isValidExponent(parts[1])
-      ) {
-        return NaN;
-      }
     }
 
     // Return NaN if there is a group symbol but useGrouping is false
@@ -217,6 +219,7 @@ class NumberParserImpl {
     }
     fullySanitizedValue = fullySanitizedValue.replace(this.symbols.numeral, this.symbols.index);
 
+    let exponent = compactExponent;
     if (this.options.style === 'percent') {
       exponent -= 2;
       // Preserve incomplete percent input containing only a sign or decimal separator as zero.
@@ -224,22 +227,11 @@ class NumberParserImpl {
         fullySanitizedValue = fullySanitizedValue.startsWith('-') ? '-0' : '0';
       }
     }
-
-    // Apply scaling to the string to avoid introducing floating point errors.
-    if (exponent !== 0) {
-      fullySanitizedValue = fullySanitizedValue.replace(
-        /(?:e([+-]?\d+))?$/i,
-        (_, existingExponent = '0') => `e${Number(existingExponent) + exponent}`
-      );
-    }
+    fullySanitizedValue = scaleByPowerOfTen(fullySanitizedValue, exponent);
 
     let newValue = fullySanitizedValue ? +fullySanitizedValue : NaN;
     if (isNaN(newValue)) {
       return NaN;
-    }
-
-    if (this.options.style === 'percent' && roundPercent) {
-      return this.parse(this.formatter.format(newValue), false);
     }
 
     // accounting will always be stripped to a positive number, so if it's accounting and has a () around everything, then we need to make it negative again
@@ -249,35 +241,17 @@ class NumberParserImpl {
     return newValue;
   }
 
-  sanitize(value: string) {
+  sanitize(value: string): {value: string; compactExponent: number} {
     let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
-    let exponent = 0;
     // If the value is only a unit and it matches one of the formatted numbers where the value is part of the unit and doesn't have any numerals, then
     // return the known value for that case.
-    if (
-      this.symbols.noNumeralUnits.length > 0 &&
-      this.symbols.noNumeralUnits.find(obj => obj.unit === value)
-    ) {
-      return {
-        value: this.symbols.noNumeralUnits.find(obj => obj.unit === value)!.value.toString(),
-        exponent
-      };
+    let noNumeralUnit = this.symbols.noNumeralUnits.find(obj => obj.unit === value);
+    if (noNumeralUnit) {
+      return {value: noNumeralUnit.value.toString(), compactExponent: 0};
     }
 
-    let numberStart = value.search(this.symbols.numeral);
-    let hasCompact = false;
-    value = value.replace(this.symbols.literals, (literal, offset) => {
-      let compact = this.symbols.compact.get(literal);
-      let isPrefix = offset < numberStart;
-      if (compact && compact.prefix === isPrefix) {
-        exponent = hasCompact ? NaN : compact.exponent;
-        hasCompact = true;
-      } else if (compact && !compact.literal) {
-        exponent = NaN;
-        hasCompact = true;
-      }
-      return '';
-    });
+    let compactExponent = this.getCompactExponent(value);
+    value = value.replace(this.symbols.literals, '');
 
     // Replace the ASCII minus sign with the minus sign used in the current locale
     // so that both are allowed in case the user's keyboard doesn't have the locale's minus sign.
@@ -312,17 +286,67 @@ class NumberParserImpl {
       value = replaceAll(value, /\u00A0/g, this.symbols.group);
     }
 
-    return {value, exponent};
+    return {value, compactExponent};
   }
 
-  private isValidExponent(value: string, partial = false): boolean {
+  /**
+   * Returns the power of ten represented by the compact symbol in the value (e.g. 3 for "1.5K"),
+   * 0 if there is none, or NaN if compact symbols are misplaced or repeated.
+   */
+  private getCompactExponent(value: string): number {
+    if (this.symbols.compact.size === 0) {
+      return 0;
+    }
+
+    let numberStart = value.search(this.symbols.numeral);
+    let exponents: number[] = [];
+    for (let match of value.matchAll(this.symbols.literals)) {
+      let compact = this.symbols.compact.get(match[0]);
+      if (!compact) {
+        continue;
+      }
+      let isPrefix = match.index < numberStart;
+      if (compact.prefix === isPrefix) {
+        exponents.push(compact.exponent);
+      } else if (!compact.literal) {
+        // A misplaced compact symbol is only allowed when it is also another literal, e.g. a currency symbol.
+        return NaN;
+      }
+    }
+
+    return exponents.length > 1 ? NaN : (exponents[0] ?? 0);
+  }
+
+  /** Validates the compact symbol and exponent (e.g. "E3") of a sanitized value. */
+  private isValidNotation(value: string, compactExponent: number, isPartial: boolean): boolean {
+    if (
+      isNaN(compactExponent) ||
+      (compactExponent !== 0 && value.search(this.symbols.numeral) === -1)
+    ) {
+      return false;
+    }
+
+    let {exponentSeparator} = this.symbols;
+    if (exponentSeparator && value.includes(exponentSeparator)) {
+      let parts = value.split(exponentSeparator);
+      return (
+        parts.length === 2 &&
+        parts[0].search(this.symbols.numeral) !== -1 &&
+        this.isValidExponent(parts[1], isPartial)
+      );
+    }
+
+    return true;
+  }
+
+  private isValidExponent(value: string, isPartial: boolean): boolean {
     let minusSign = this.symbols.exponentMinusSign ?? '-';
     if (value.startsWith(minusSign)) {
       value = value.slice(minusSign.length);
     } else if (value.startsWith('+') || value.startsWith('-')) {
       value = value.slice(1);
     }
-    return (partial || value.length > 0) && value.replace(this.symbols.numeral, '').length === 0;
+    return (isPartial || value.length > 0) && value.replace(this.symbols.numeral, '').length === 0;
   }
 
   isValidPartialNumber(
@@ -331,26 +355,15 @@ class NumberParserImpl {
     maxValue: number = Infinity
   ): boolean {
     let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
-    let sanitized = this.sanitize(value);
-    value = sanitized.value;
-    if (
-      isNaN(sanitized.exponent) ||
-      (sanitized.exponent !== 0 && value.search(this.symbols.numeral) === -1)
-    ) {
+    let {value: sanitizedValue, compactExponent} = this.sanitize(value);
+    if (!this.isValidNotation(sanitizedValue, compactExponent, true)) {
       return false;
     }
 
-    if (this.symbols.exponentSeparator && value.includes(this.symbols.exponentSeparator)) {
-      let parts = value.split(this.symbols.exponentSeparator);
-      if (
-        parts.length !== 2 ||
-        parts[0].search(this.symbols.numeral) === -1 ||
-        !this.isValidExponent(parts[1], true)
-      ) {
-        return false;
-      }
-      value = parts[0];
-    }
+    // The notation is valid, so only the significand remains to be checked, e.g. "1.5" in "1.5E3".
+    value = this.symbols.exponentSeparator
+      ? sanitizedValue.split(this.symbols.exponentSeparator)[0]
+      : sanitizedValue;
 
     // Remove minus or plus sign, which must be at the start of the string.
     if (this.symbols.minusSign && value.startsWith(this.symbols.minusSign) && minValue < 0) {
@@ -359,7 +372,8 @@ class NumberParserImpl {
       value = value.slice(this.symbols.plusSign.length);
     }
 
-    // Numbers that can't have any decimal values fail if a decimal character is typed
+    // Numbers that can't have any decimal values fail if a decimal character is typed.
+    // Significant digits can still allow decimals, e.g. "1.5K" in compact notation.
     if (
       this.symbols.decimal &&
       value.indexOf(this.symbols.decimal) > -1 &&
@@ -458,6 +472,7 @@ function getSymbols(
   let decimal = decimalParts.find(p => p.type === 'decimal')?.value;
   let group = allParts.find(p => p.type === 'group')?.value;
 
+  // Format a negative exponent, e.g. "1E-3", to find the exponent symbols.
   let exponentParts =
     intlOptions.notation === 'scientific' || intlOptions.notation === 'engineering'
       ? formatter.formatToParts(0.001)
@@ -473,45 +488,13 @@ function getSymbols(
   let numeral = new RegExp(`[${numerals.join('')}]`, 'g');
   let index = (d: string) => String(indexes.get(d));
 
-  let compact: Symbols['compact'] = new Map();
-  let compactParts: Intl.NumberFormatPart[][] = [];
-  if (intlOptions.notation === 'compact') {
-    let compactFormatter = new Intl.NumberFormat(locale, {
-      ...intlOptions,
-      ...symbolFormatter.resolvedOptions(),
-      notation: 'compact'
-    });
-    // CLDR compact patterns cover powers of ten through 10^14.
-    for (let power = 0; power <= 14; power++) {
-      for (let plural of pluralNumbers) {
-        if (plural === 0) {
-          continue;
-        }
-        let value = plural * 10 ** power;
-        let parts = compactFormatter.formatToParts(value);
-        compactParts.push(parts);
-        let compactIndex = parts.findIndex(p => p.type === 'compact');
-        if (compactIndex === -1) {
-          continue;
-        }
-        let significand = Number(
-          parts
-            .filter(p => p.type === 'integer' || p.type === 'decimal' || p.type === 'fraction')
-            .map(p => (p.type === 'decimal' ? '.' : p.value.replace(numeral, index)))
-            .join('')
-        );
-        if (significand > 0) {
-          compact.set(parts[compactIndex].value, {
-            exponent: Math.round(
-              Math.log10((value * (intlOptions.style === 'percent' ? 100 : 1)) / significand)
-            ),
-            prefix: compactIndex < parts.findIndex(p => p.type === 'integer'),
-            literal: false
-          });
-        }
-      }
-    }
-  }
+  let {compact, compactParts} = getCompactSymbols(
+    locale,
+    intlOptions,
+    symbolFormatter,
+    numeral,
+    index
+  );
 
   // this set is also for a regex, it's all literals that might be in the string we want to eventually parse that
   // don't contribute to the numerical value
@@ -520,8 +503,8 @@ function getSymbols(
     p.filter(p => !nonLiteralParts.has(p.type)).map(p => p.value)
   );
   let literalSymbols = new Set([...allPartsLiterals, ...pluralPartsLiterals]);
-  for (let [symbol, info] of compact) {
-    info.literal = literalSymbols.has(symbol);
+  for (let [symbol, compactSymbol] of compact) {
+    compactSymbol.literal = literalSymbols.has(symbol);
   }
   let sortedLiterals = [...new Set([...literalSymbols, ...compact.keys()])].sort(
     (a, b) => b.length - a.length
@@ -547,6 +530,77 @@ function getSymbols(
     exponentMinusSign,
     compact
   };
+}
+
+/**
+ * Finds the symbols used by compact notation and the power of ten that each represents.
+ * Also returns the formatted parts, which can contain other literals such as units.
+ */
+function getCompactSymbols(
+  locale: string,
+  intlOptions: Intl.ResolvedNumberFormatOptions,
+  symbolFormatter: Intl.NumberFormat,
+  numeral: RegExp,
+  index: (d: string) => string
+): {compact: Map<string, CompactSymbol>; compactParts: Intl.NumberFormatPart[][]} {
+  let compact = new Map<string, CompactSymbol>();
+  let compactParts: Intl.NumberFormatPart[][] = [];
+  if (intlOptions.notation !== 'compact') {
+    return {compact, compactParts};
+  }
+
+  // Use full precision so that each formatted significand can be compared to the original value.
+  let compactFormatter = new Intl.NumberFormat(locale, {
+    ...symbolFormatter.resolvedOptions(),
+    notation: 'compact',
+    compactDisplay: intlOptions.compactDisplay
+  });
+  // Percentages are multiplied by 100 when formatted.
+  let scale = intlOptions.style === 'percent' ? 100 : 1;
+
+  // CLDR compact patterns cover powers of ten through 10^14.
+  for (let power = 0; power <= 14; power++) {
+    for (let plural of pluralNumbers) {
+      if (plural === 0) {
+        continue;
+      }
+      let value = plural * 10 ** power;
+      let parts = compactFormatter.formatToParts(value);
+      compactParts.push(parts);
+      let compactIndex = parts.findIndex(p => p.type === 'compact');
+      if (compactIndex === -1) {
+        continue;
+      }
+      // The significand is the displayed number, e.g. 1.5 in "1.5K".
+      let significand = Number(
+        parts
+          .filter(p => p.type === 'integer' || p.type === 'decimal' || p.type === 'fraction')
+          .map(p => (p.type === 'decimal' ? '.' : p.value.replace(numeral, index)))
+          .join('')
+      );
+      if (significand > 0) {
+        compact.set(parts[compactIndex].value, {
+          exponent: Math.round(Math.log10((value * scale) / significand)),
+          prefix: compactIndex < parts.findIndex(p => p.type === 'integer'),
+          // Set by getSymbols once all literals are known.
+          literal: false
+        });
+      }
+    }
+  }
+
+  return {compact, compactParts};
+}
+
+/** Multiplies a numeric string by a power of ten without introducing floating point errors. */
+function scaleByPowerOfTen(value: string, exponent: number): string {
+  if (exponent === 0) {
+    return value;
+  }
+  return value.replace(
+    /(?:e([+-]?\d+))?$/i,
+    (_, existingExponent = '0') => `e${Number(existingExponent) + exponent}`
+  );
 }
 
 function replaceAll(str: string, find: string | RegExp, replace: string) {
