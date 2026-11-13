@@ -55,7 +55,10 @@ export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
 }
 
 export interface LightboxPickerProps<T> extends Omit<TabListProps<T>, 'className'> {}
-export interface LightboxPickerItemProps extends Omit<TabProps, 'className' | 'children' | 'orientation'> {
+export interface LightboxPickerItemProps extends Omit<
+  TabProps,
+  'className' | 'children' | 'orientation'
+> {
   children: ReactNode;
 }
 export interface LightboxItemsProps<T> extends Omit<TabPanelsProps<T>, 'className'> {
@@ -173,7 +176,7 @@ const itemStyles = style({
 //   isInfinite?: boolean;
 // }
 
-let LightBoxCarouselContext = createContext<LightboxCarouselContextProps>({});
+// let LightBoxCarouselContext = createContext<LightboxCarouselContextProps>({});
 
 export function LightboxCarousel(props: LightboxCarouselProps) {
   let ctx = useContext(LightboxTriggerContext);
@@ -222,12 +225,12 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
                   styles={style({justifySelf: 'end'})}
                 />
                 {/* <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}> */}
-                  <RACTabs
-                    {...props}
-                    selectedKey={ctx?.activeKey}
-                    onSelectionChange={ctx?.setActiveKey}
-                    className={renderProps => carouselStyles(renderProps)}
-                  />
+                <RACTabs
+                  {...props}
+                  selectedKey={ctx?.activeKey}
+                  onSelectionChange={ctx?.setActiveKey}
+                  className={renderProps => carouselStyles(renderProps)}
+                />
                 {/* </LightBoxCarouselContext.Provider> */}
               </>
             )}
@@ -239,13 +242,13 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
 
   return (
     // <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
-      <div
-        role="region"
-        aria-label={props['aria-label']}
-        aria-roledescription="slide"
-        style={{width: '100%', height: '100%'}}>
-        <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
-      </div>
+    <div
+      role="region"
+      aria-label={props['aria-label']}
+      aria-roledescription="slide"
+      style={{width: '100%', height: '100%'}}>
+      <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
+    </div>
     // </LightBoxCarouselContext.Provider>
   );
 }
@@ -354,7 +357,7 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
       <FiniteLightboxItems>{index => props.children?.at(index)}</FiniteLightboxItems>
     </FocusScope>
   );
-  
+
   return (
     <div
       className={style({
@@ -738,141 +741,141 @@ const innerImageStyles = style({
   maxHeight: '100cqh'
 });
 
-interface InfiniteLightboxItemsProps<T> extends Omit<LightboxItemsProps<T>, 'children'> {
-  children: (page: number) => ReactNode;
-}
+// interface InfiniteLightboxItemsProps<T> extends Omit<LightboxItemsProps<T>, 'children'> {
+//   children: (page: number) => ReactNode;
+// }
 
-function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
-  let {children: renderPage} = props;
-  let state = useContext(TabListStateContext)!;
-  let ref = useRef<HTMLDivElement | null>(null);
+// function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
+//   let {children: renderPage} = props;
+//   let state = useContext(TabListStateContext)!;
+//   let ref = useRef<HTMLDivElement | null>(null);
 
-  let selectedIndex = state?.selectedItem?.index ?? null;
+//   let selectedIndex = state?.selectedItem?.index ?? null;
 
-  let [{centerPage, currentPage}, dispatch] = useReducer(reducer, null, () => ({
-    centerPage: selectedIndex ?? 0,
-    currentPage: PAGES
-  }));
+//   let [{centerPage, currentPage}, dispatch] = useReducer(reducer, null, () => ({
+//     centerPage: selectedIndex ?? 0,
+//     currentPage: PAGES
+//   }));
 
-  // if the selected tab changes (like if you were to click one), update the centered page
-  if (
-    selectedIndex != null &&
-    currentPage === PAGES &&
-    selectedIndex !== getWrappedIndex(centerPage, state.collection.size)
-  ) {
-    dispatch({
-      type: 'SET_CENTER_PAGE',
-      page: selectedIndex
-    });
-  }
+//   // if the selected tab changes (like if you were to click one), update the centered page
+//   if (
+//     selectedIndex != null &&
+//     currentPage === PAGES &&
+//     selectedIndex !== getWrappedIndex(centerPage, state.collection.size)
+//   ) {
+//     dispatch({
+//       type: 'SET_CENTER_PAGE',
+//       page: selectedIndex
+//     });
+//   }
 
-  // when the center page changes, reset the scroll position
-  useLayoutEffect(() => {
-    if (!ref.current) {
-      return;
-    }
+//   // when the center page changes, reset the scroll position
+//   useLayoutEffect(() => {
+//     if (!ref.current) {
+//       return;
+//     }
 
-    ref.current.scrollTo({
-      left: ref.current.offsetWidth * PAGES,
-      behavior: 'instant'
-    });
-  }, [centerPage]);
+//     ref.current.scrollTo({
+//       left: ref.current.offsetWidth * PAGES,
+//       behavior: 'instant'
+//     });
+//   }, [centerPage]);
 
-  if (selectedIndex == null || state.collection.size === 0) {
-    return null;
-  }
+//   if (selectedIndex == null || state.collection.size === 0) {
+//     return null;
+//   }
 
-  let visiblePage = centerPage + currentPage - PAGES;
-  let pages = [visiblePage - 1, visiblePage, visiblePage + 1];
+//   let visiblePage = centerPage + currentPage - PAGES;
+//   let pages = [visiblePage - 1, visiblePage, visiblePage + 1];
 
-  let prevItem = () => {
-    if (!ref.current) {
-      return;
-    }
+//   let prevItem = () => {
+//     if (!ref.current) {
+//       return;
+//     }
 
-    ref.current!.scrollLeft = ref.current!.offsetWidth * (PAGES - 1);
-  };
+//     ref.current!.scrollLeft = ref.current!.offsetWidth * (PAGES - 1);
+//   };
 
-  let nextItem = () => {
-    if (!ref.current) {
-      return;
-    }
+//   let nextItem = () => {
+//     if (!ref.current) {
+//       return;
+//     }
 
-    ref.current!.scrollLeft = ref.current!.offsetWidth * (PAGES + 1);
-  };
+//     ref.current!.scrollLeft = ref.current!.offsetWidth * (PAGES + 1);
+//   };
 
-  // update selected tab while scrolling
-  let onScroll = () => {
-    let el = ref.current;
-    // Scroll events can arrive while the carousel is hidden.
-    if (!el || el.offsetWidth === 0) {
-      return;
-    }
+//   // update selected tab while scrolling
+//   let onScroll = () => {
+//     let el = ref.current;
+//     // Scroll events can arrive while the carousel is hidden.
+//     if (!el || el.offsetWidth === 0) {
+//       return;
+//     }
 
-    let index = Math.round(el.scrollLeft / el.offsetWidth); // this is not the collection index, this is the pages index
-    let collectionIndex = centerPage + index - PAGES; // this is the actual collection index
-    if (currentPage !== index) {
-      // actually update the selected key (so that the tabs actually reflect what is in the viewport)
-      let key = [...state.collection].at(
-        getWrappedIndex(collectionIndex, state.collection.size)
-      )?.key;
-      if (key != null) {
-        state.setSelectedKey(key);
-      }
-      // keeps track of how much we have scrolled from the center page
-      dispatch({
-        type: 'SCROLL',
-        page: index
-      });
-    }
-  };
+//     let index = Math.round(el.scrollLeft / el.offsetWidth); // this is not the collection index, this is the pages index
+//     let collectionIndex = centerPage + index - PAGES; // this is the actual collection index
+//     if (currentPage !== index) {
+//       // actually update the selected key (so that the tabs actually reflect what is in the viewport)
+//       let key = [...state.collection].at(
+//         getWrappedIndex(collectionIndex, state.collection.size)
+//       )?.key;
+//       if (key != null) {
+//         state.setSelectedKey(key);
+//       }
+//       // keeps track of how much we have scrolled from the center page
+//       dispatch({
+//         type: 'SCROLL',
+//         page: index
+//       });
+//     }
+//   };
 
-  let onScrollEnd = () => {
-    // update the centered page once scrolling is done
-    dispatch({type: 'SCROLL_END'});
-  };
+//   let onScrollEnd = () => {
+//     // update the centered page once scrolling is done
+//     dispatch({type: 'SCROLL_END'});
+//   };
 
-  return (
-    <>
-      <div ref={ref} onScroll={onScroll} onScrollEnd={onScrollEnd} className={itemsStyles}>
-        {/* Placeholder to hold space in the scroll width for more pages. */}
-        <div
-          style={{
-            width: (currentPage - 1) * 100 + '%',
-            flexShrink: 0,
-            contain: 'strict'
-          }}
-        />
-        {pages.map(page => (
-          <div
-            // Keep each slide mounted when it moves to a new position.
-            // Recreating S2 Image can make it flash, even if the image is already cached.
-            key={page}
-            inert={page !== visiblePage}
-            style={{
-              width: '100%',
-              height: '100%',
-              flexShrink: 0,
-              contain: page !== visiblePage ? 'inline-size' : undefined,
-              scrollSnapAlign: 'start',
-              scrollSnapStop: 'always'
-            }}>
-            {renderPage(page)}
-          </div>
-        ))}
-        <div
-          style={{
-            width: (PAGES * 2 - currentPage - 1) * 100 + '%',
-            flexShrink: 0,
-            contain: 'strict'
-          }}
-        />
-      </div>
-      <CarouselNavButton onPress={prevItem} side="start" />
-      <CarouselNavButton onPress={nextItem} side="end" />
-    </>
-  );
-}
+//   return (
+//     <>
+//       <div ref={ref} onScroll={onScroll} onScrollEnd={onScrollEnd} className={itemsStyles}>
+//         {/* Placeholder to hold space in the scroll width for more pages. */}
+//         <div
+//           style={{
+//             width: (currentPage - 1) * 100 + '%',
+//             flexShrink: 0,
+//             contain: 'strict'
+//           }}
+//         />
+//         {pages.map(page => (
+//           <div
+//             // Keep each slide mounted when it moves to a new position.
+//             // Recreating S2 Image can make it flash, even if the image is already cached.
+//             key={page}
+//             inert={page !== visiblePage}
+//             style={{
+//               width: '100%',
+//               height: '100%',
+//               flexShrink: 0,
+//               contain: page !== visiblePage ? 'inline-size' : undefined,
+//               scrollSnapAlign: 'start',
+//               scrollSnapStop: 'always'
+//             }}>
+//             {renderPage(page)}
+//           </div>
+//         ))}
+//         <div
+//           style={{
+//             width: (PAGES * 2 - currentPage - 1) * 100 + '%',
+//             flexShrink: 0,
+//             contain: 'strict'
+//           }}
+//         />
+//       </div>
+//       <CarouselNavButton onPress={prevItem} side="start" />
+//       <CarouselNavButton onPress={nextItem} side="end" />
+//     </>
+//   );
+// }
 
 export function LightboxItem(props: LightboxItemProps) {
   return (
