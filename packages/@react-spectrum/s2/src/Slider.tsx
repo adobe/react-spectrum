@@ -117,7 +117,7 @@ const slider = style(
     },
     columnGap: {
       size: {
-        S: 16,
+        S: 12,
         M: 16,
         L: 20,
         XL: 24
@@ -187,7 +187,17 @@ export let track = style({
   gridArea: 'track',
   position: 'relative',
   width: 'full',
-  minWidth: controlSize(),
+  minWidth: {
+    default: controlSize(),
+    isRange: {
+      default: 56,
+      size: {
+        S: 48,
+        L: 68,
+        XL: 80
+      }
+    }
+  },
   height: {
     size: {
       S: 24,
@@ -207,14 +217,14 @@ const sliderControls = style({
     hasInput: {
       default: 96,
       size: {
-        S: 76,
+        S: 72,
         L: 120,
         XL: 144
       },
       isRange: {
         default: 152,
         size: {
-          S: 128,
+          S: 124,
           L: 184,
           XL: 216
         }
@@ -224,6 +234,7 @@ const sliderControls = style({
   gap: {
     default: 16,
     size: {
+      S: 12,
       L: 20,
       XL: 24
     }

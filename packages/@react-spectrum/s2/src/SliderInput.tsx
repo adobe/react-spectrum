@@ -59,6 +59,9 @@ const editableInputSizer = css(`
   display: inline-grid;
   flex-grow: 1;
   font-variant-numeric: tabular-nums;
+  & input {
+    font-variant-numeric: tabular-nums;
+  }
   &::before, &::after {
     grid-area: 1 / 1;
     visibility: hidden;
@@ -105,6 +108,23 @@ function RangeAutoWidthInput(): ReactNode {
       />
     </div>
   );
+}
+
+function focusClosestRangeInput(container: HTMLElement, clientX: number) {
+  let inputs = Array.from(container.querySelectorAll('input'));
+  if (inputs.length === 2) {
+    let [start, end] = inputs;
+    let startRect = start.getBoundingClientRect();
+    let endRect = end.getBoundingClientRect();
+    let startIsRight = startRect.left > endRect.left;
+    let [left, right] = startIsRight ? [endRect, startRect] : [startRect, endRect];
+    let clickedRight = clientX >= (left.right + right.left) / 2;
+    let target = clickedRight === startIsRight ? start : end;
+    if (target.disabled) {
+      target = target === start ? end : start;
+    }
+    target.focus();
+  }
 }
 
 /**
@@ -167,25 +187,26 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
         role="presentation"
         isDisabled={state.isDisabled}
         size={size}
-        styles={editableFieldGroup({size, isRange: true})}>
+        styles={editableFieldGroup({size, isRange: true})}
+        onPointerDownCapture={e => {
+          if (
+            !state.isDisabled &&
+            e.pointerType === 'mouse' &&
+            !(getEventTarget(e) as Element).closest('input')
+          ) {
+            e.preventDefault();
+            focusClosestRangeInput(e.currentTarget, e.clientX);
+          }
+        }}
+        onTouchEndCapture={e => {
+          let touch = e.changedTouches[0];
+          if (!state.isDisabled && touch && !(getEventTarget(e) as Element).closest('input')) {
+            e.preventDefault();
+            focusClosestRangeInput(e.currentTarget, touch.clientX);
+          }
+        }}>
         <div className={editableInputSizer} data-min={rangeMinSizer} data-max={rangeMaxSizer}>
           <div
-            onPointerDown={e => {
-              if (e.pointerType === 'mouse' && !(getEventTarget(e) as Element).closest('input')) {
-                e.preventDefault();
-                e.stopPropagation();
-                let inputs = Array.from(e.currentTarget.querySelectorAll('input'));
-                if (inputs.length === 2) {
-                  let [start, end] = inputs;
-                  let startRect = start.getBoundingClientRect();
-                  let endRect = end.getBoundingClientRect();
-                  let startIsRight = startRect.left > endRect.left;
-                  let [left, right] = startIsRight ? [endRect, startRect] : [startRect, endRect];
-                  let clickedRight = e.clientX >= (left.right + right.left) / 2;
-                  (clickedRight === startIsRight ? start : end).focus();
-                }
-              }
-            }}
             className={style({
               gridColumnStart: 1,
               gridRowStart: 1,
@@ -193,8 +214,7 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
               minWidth: 'full',
               overflow: 'hidden',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              alignItems: 'center'
             })}>
             <AriaNumberField
               slot="0"

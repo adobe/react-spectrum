@@ -95,7 +95,8 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(
       onChangeEnd={v => props.onChangeEnd?.({start: v[0], end: v[1]})}
       sliderRef={domRef}
       track={
-        <SliderTrack className={track({size, labelPosition, isInForm: !!formContext})}>
+        <SliderTrack
+          className={track({size, labelPosition, isInForm: !!formContext, isRange: true})}>
           {({state, isDisabled}) => (
             <>
               <div className={upperTrack({isDisabled, trackStyle})}>

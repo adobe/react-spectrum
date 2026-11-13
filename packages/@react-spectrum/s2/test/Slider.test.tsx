@@ -10,8 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render
+} from '@react-spectrum/test-utils-internal';
 import {Form} from '../src/Form';
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {RangeSlider} from '../src/RangeSlider';
 import {Slider} from '../src/Slider';
 import {SliderInput} from '../src/SliderInput';
@@ -19,6 +24,7 @@ import userEvent from '@testing-library/user-event';
 import {useState} from 'react';
 
 describe('Slider and RangeSlider with SliderInput', () => {
+  installPointerEvent();
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -178,5 +184,42 @@ describe('Slider and RangeSlider with SliderInput', () => {
       ['minPrice', '50'],
       ['maxPrice', '50']
     ]);
+
+    // Clicking or tapping in the FieldGroup padding focuses the nearest range input
+    let fieldGroup = getByRole('presentation');
+    jest.spyOn(minInput, 'getBoundingClientRect').mockReturnValue({
+      left: 100,
+      right: 120,
+      top: 0,
+      bottom: 32,
+      width: 20,
+      height: 32,
+      x: 100,
+      y: 0,
+      toJSON: () => ({})
+    });
+    jest.spyOn(maxInput, 'getBoundingClientRect').mockReturnValue({
+      left: 132,
+      right: 152,
+      top: 0,
+      bottom: 32,
+      width: 20,
+      height: 32,
+      x: 132,
+      y: 0,
+      toJSON: () => ({})
+    });
+
+    await user.click(minInput);
+    fireEvent.pointerDown(fieldGroup, {pointerType: 'mouse', clientX: 160});
+    expect(document.activeElement).toBe(maxInput);
+
+    fireEvent.pointerDown(fieldGroup, {pointerType: 'mouse', clientX: 92});
+    expect(document.activeElement).toBe(minInput);
+
+    fireEvent.touchEnd(fieldGroup, {changedTouches: [{clientX: 160}]});
+    expect(document.activeElement).toBe(maxInput);
+
+    jest.restoreAllMocks();
   });
 });
