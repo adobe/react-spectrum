@@ -29,6 +29,8 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 
 export interface SliderInputProps extends DOMProps, StyleProps {}
 
+const wrapperStyles = style({flexShrink: 0}, getAllowedOverrides());
+
 const editableFieldGroup = style({
   contain: {
     default: 'none',
@@ -130,7 +132,7 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
         {...domProps}
         ref={domRef}
         style={UNSAFE_style}
-        className={UNSAFE_className + style({flexShrink: 0}, getAllowedOverrides())({}, styles)}>
+        className={UNSAFE_className + wrapperStyles(null, styles)}>
         <FieldGroup
           role="presentation"
           isDisabled={state.isDisabled}
@@ -159,7 +161,7 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
       {...domProps}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style({flexShrink: 0}, getAllowedOverrides())({}, styles)}>
+      className={UNSAFE_className + wrapperStyles(null, styles)}>
       <FieldGroup
         role="presentation"
         isDisabled={state.isDisabled}
