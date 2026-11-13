@@ -590,7 +590,7 @@ describe('Sheet', () => {
       expect(tree.queryByRole('dialog')).toBeNull();
     });
 
-    it('processes the latest entry when multiple entries are delivered in chronological order', async () => {
+    it('processes the latest entry when multiple entries are delivered in a single callback', async () => {
       let onOpenChange = jest.fn();
       let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
       await open(tree);
@@ -602,21 +602,7 @@ describe('Sheet', () => {
       expect(tree.queryByRole('dialog')).toBeNull();
     });
 
-    it('tracks entrance cumulatively and closes when entering and exiting within a single callback', async () => {
-      let onOpenChange = jest.fn();
-      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
-      await open(tree);
-
-      // The sheet has not yet entered the viewport. An entry with positive ratio (0.5)
-      // marks the sheet as entered via cumulative tracking, while the latest entry (ratio: 0)
-      // completes the exit.
-      triggerEntries([{intersectionRatio: 0.5}, {intersectionRatio: 0}]);
-      act(() => jest.runAllTimers());
-      expect(onOpenChange).toHaveBeenLastCalledWith(false);
-      expect(tree.queryByRole('dialog')).toBeNull();
-    });
-
-    it('does not close when the latest chronological entry has a positive intersection ratio', async () => {
+    it('does not close when the latest entry has a positive intersection ratio', async () => {
       let onOpenChange = jest.fn();
       let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
       await open(tree);

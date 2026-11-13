@@ -281,28 +281,23 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
       // iOS displays content outside the reported viewport, e.g. behind the browser toolbar.
       // Add additional margin to account for that so that the sheet disappears only when it is entirely invisible.
       let rootMargin = `0px 0px ${calcToPx(viewportPadding(after, axis))} 0px`;
-      let el = element.querySelector('[data-sheet-content]');
 
       let hasEntered = false;
       let observer = new IntersectionObserver(
         entries => {
-          let latestEntry: IntersectionObserverEntry | undefined;
-          for (let entry of entries) {
-            hasEntered ||= entry.intersectionRatio > 0;
-            latestEntry = entry;
-          }
-
-          if (!latestEntry) {
+          let entry = entries.at(-1);
+          if (!entry) {
             return;
           }
 
           // Expose whether the sheet is resting at its fully-entered detent (all of it revealed). Apps
           // can use `[data-expanded]` to only make the sheet's inner content scrollable once expanded,
           // so that at a partial detent a swipe on the content expands the sheet instead (like iOS).
-          setExpanded(latestEntry.intersectionRatio >= 1);
-          isVisible.current = latestEntry.intersectionRatio > 0;
+          setExpanded(entry.intersectionRatio >= 1);
+          isVisible.current = entry.intersectionRatio > 0;
 
-          if (hasEntered && latestEntry.intersectionRatio <= 0) {
+          hasEntered ||= entry.intersectionRatio > 0;
+          if (hasEntered && entry.intersectionRatio <= 0) {
             // eslint-disable-next-line react/react-compiler
             onCloseEvent();
             element.dispatchEvent(new CustomEvent('react-aria-sheet-close'));
@@ -311,6 +306,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
         {threshold: [0, 1], rootMargin}
       );
 
+      let el = element.querySelector('[data-sheet-content]');
       if (el) {
         observer.observe(el);
       }
