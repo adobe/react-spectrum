@@ -128,6 +128,20 @@ parser.parse('12 in'); // NaN (partial unit)
 parser.parse('23 ft'); // NaN (different unit)
 ```
 
+### Notation
+
+The `notation` option supports compact, scientific, and engineering notation. Compact symbols are interpreted according to the locale and `compactDisplay` option, including their numeric scale. Scientific and engineering notation support localized exponent separators, signs, and digits.
+
+```tsx
+let compactParser = new NumberParser('en-US', {notation: 'compact'});
+compactParser.parse('1.5K'); // 1500
+
+let scientificParser = new NumberParser('de-DE', {notation: 'scientific'});
+scientificParser.parse('1,23E-4'); // 0.000123
+```
+
+Parsing a formatted number recovers the displayed value, which may have been rounded by the formatter, rather than the original unrounded value.
+
 ## Validation
 
 `NumberParser` can also be used to validate partial user input using the `isValidPartialNumber` method, for example, as the user types into an input field. The `parse` method only accepts complete input, whereas `isValidPartialNumber` determines if the given input _might_ be valid but incomplete. For example, only entering a decimal point is invalid when passed to `parse`, but accepted by `isValidPartialNumber`.
