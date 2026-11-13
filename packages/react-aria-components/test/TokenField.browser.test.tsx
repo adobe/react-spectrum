@@ -45,6 +45,7 @@ import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import React from 'react';
 import {render} from 'vitest-browser-react';
 import {Token, TokenField, TokenInput} from '../src/TokenField';
+import {tokenFieldPositionToDOMRange} from 'react-aria/useTokenField';
 
 const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
@@ -959,6 +960,60 @@ describeOrSkip('TokenField browser interactions', () => {
       } finally {
         await commands.unlockClipboard();
       }
+    });
+  });
+
+  describe('tokenFieldPositionToDOMRange', () => {
+    it.each([
+      {
+        name: 'at the start of text',
+        value: abTokCd,
+        position: {index: 0, offset: 0},
+        container: (root: Element) => root.firstChild,
+        offset: 0
+      },
+      {
+        name: 'at the end of text',
+        value: abTokCd,
+        position: {index: 2, offset: 2},
+        container: (root: Element) => root.lastChild,
+        offset: 2
+      },
+      {
+        name: 'before a token',
+        value: abTokCd,
+        position: {index: 1, offset: 0},
+        container: (root: Element) => root.childNodes[1].firstChild,
+        offset: 0
+      },
+      {
+        name: 'after a token',
+        value: abTokCd,
+        position: {index: 1, offset: 3},
+        container: (root: Element) => root.childNodes[1].lastChild,
+        offset: 1
+      },
+      {
+        name: 'after a trailing token',
+        value: segments(text('ab'), token('TOK')),
+        position: {index: 2, offset: 0},
+        container: (root: Element) => root.lastChild!.lastChild,
+        offset: 1
+      },
+      {
+        name: 'before a trailing line break',
+        value: segments(text('ab\n')),
+        position: {index: 1, offset: 0},
+        container: (root: Element) => root,
+        offset: 1
+      }
+    ])('returns a collapsed range $name', async ({value, position, container, offset}) => {
+      let {textbox} = await renderControlledTokenField(value, {allowsNewlines: true});
+      let root = textbox.element();
+      let range = tokenFieldPositionToDOMRange(root, position);
+      expect(range.collapsed).toBe(true);
+      expect(range.startContainer).toBe(container(root));
+      expect(range.startOffset).toBe(offset);
     });
   });
 
