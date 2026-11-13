@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {NumberField as AriaNumberField} from 'react-aria-components/NumberField';
 import {
   Slider as AriaSlider,
   SliderProps as AriaSliderProps,
@@ -30,8 +29,7 @@ import {
   StyleProps
 } from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
-import {css} from '../style/style-macro' with {type: 'macro'};
-import {FieldGroup, FieldLabel, Input} from './Field';
+import {FieldLabel} from './Field';
 import {
   FocusableRef,
   FocusableRefValue,
@@ -43,6 +41,7 @@ import {focusRing, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
+import type {SliderState} from 'react-stately/useSliderState';
 import {snapValueToStep} from 'react-stately/private/utils/number';
 import {useFocusableRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -56,6 +55,9 @@ export interface SliderBaseProps<T>
     >,
     Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>,
     StyleProps {
+  /**
+   * An optional `<SliderInput />` to allow editing the slider value within a text field.
+   */
   children?: ReactNode;
   /**
    * The size of the Slider.
@@ -81,16 +83,21 @@ export interface SliderBaseProps<T>
   thumbStyle?: 'default' | 'precise';
 }
 
-export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, InputDOMProps {
+export interface SliderProps extends SliderBaseProps<number>, InputDOMProps {
   /**
    * The offset from which to start the fill.
    */
   fillOffset?: number;
-  /**
-   * Whether the value can be edited within a text field.
-   */
-  isEditable?: boolean;
 }
+
+export interface SliderInternalContextValue {
+  size: 'S' | 'M' | 'L' | 'XL';
+  state: SliderState;
+  minSizer: string;
+  maxSizer: string;
+}
+
+export const SliderInternalContext = createContext<SliderInternalContextValue | null>(null);
 
 export const SliderContext =
   createContext<ContextValue<Partial<SliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
@@ -197,12 +204,20 @@ const sliderControls = style({
   alignItems: 'center',
   minWidth: {
     default: controlSize(),
-    isEditable: {
+    hasInput: {
       default: 96,
       size: {
         S: 76,
         L: 120,
         XL: 144
+      },
+      isRange: {
+        default: 152,
+        size: {
+          S: 128,
+          L: 184,
+          XL: 216
+        }
       }
     }
   },
@@ -214,43 +229,6 @@ const sliderControls = style({
     }
   }
 });
-
-const editableFieldGroup = style({
-  contain: {
-    default: 'none',
-    '@supports (contain-intrinsic-width: 1px)': 'none'
-  },
-  width: 'auto',
-  minWidth: {
-    default: 48,
-    size: {
-      S: 36,
-      L: 60,
-      XL: 72
-    }
-  }
-});
-
-const editableInputSizer = css(`
-  display: inline-grid;
-  flex-grow: 1;
-  font-variant-numeric: tabular-nums;
-  &::before, &::after {
-    grid-area: 1 / 1;
-    visibility: hidden;
-    pointer-events: none;
-    white-space: pre;
-    height: 0;
-    overflow: hidden;
-    padding-inline-end: 6px;
-  }
-  &::before {
-    content: attr(data-min);
-  }
-  &::after {
-    content: attr(data-max);
-  }
-`);
 
 export let thumbContainer = style({
   size: {
@@ -426,7 +404,7 @@ export let filledTrack = style<{
 });
 
 export function SliderBase<T extends number | number[]>(
-  props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>; isEditable?: boolean}
+  props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>; track: ReactNode}
 ): ReactNode {
   let formContext = useContext(FormContext);
   // oxlint-disable-next-line react/react-compiler
@@ -438,15 +416,21 @@ export function SliderBase<T extends number | number[]>(
     size = 'M',
     minValue = 0,
     maxValue = 100,
-    isEditable
+    children,
+    track: trackElement,
+    sliderRef,
+    ...ariaProps
   } = props;
   let {direction} = useLocale();
+  let hasInput = children != null;
 
   // oxlint-disable react/react-compiler
   return (
     <AriaSlider
-      {...props}
-      ref={props.sliderRef}
+      {...ariaProps}
+      minValue={minValue}
+      maxValue={maxValue}
+      ref={sliderRef}
       className={renderProps =>
         (props.UNSAFE_className || '') +
         mergeStyles(
@@ -480,7 +464,7 @@ export function SliderBase<T extends number | number[]>(
             throw new Error('Only sliders with 1 or 2 handles are supported!');
         }
 
-        let outputValue = !isEditable ? (
+        let outputValue = !hasInput ? (
           <SliderOutput
             style={{
               width: `${maxLabelLength}ch`,
@@ -493,7 +477,7 @@ export function SliderBase<T extends number | number[]>(
 
         return (
           <>
-            {(label != null || (labelPosition === 'top' && !isEditable)) && (
+            {(label != null || (labelPosition === 'top' && !hasInput)) && (
               <div className={labelContainer({labelPosition, labelAlign})}>
                 <FieldLabel
                   isDisabled={props.isDisabled}
@@ -506,24 +490,18 @@ export function SliderBase<T extends number | number[]>(
                 {labelPosition === 'top' && outputValue}
               </div>
             )}
-            <div className={sliderControls({size, isEditable})}>
-              {props.children}
+            <div
+              className={sliderControls({
+                size,
+                hasInput,
+                isRange: state.values.length > 1
+              })}>
+              {trackElement}
               {labelPosition === 'side' && outputValue}
-              {isEditable && (
-                <AriaNumberField className={style({flexShrink: 0})}>
-                  <FieldGroup size={size} styles={editableFieldGroup({size})}>
-                    <div className={editableInputSizer} data-min={minSizer} data-max={maxSizer}>
-                      <Input
-                        styles={style({
-                          gridColumnStart: 1,
-                          gridRowStart: 1,
-                          width: 0,
-                          minWidth: 'full'
-                        })}
-                      />
-                    </div>
-                  </FieldGroup>
-                </AriaNumberField>
+              {hasInput && (
+                <SliderInternalContext.Provider value={{size, state, minSizer, maxSizer}}>
+                  {children}
+                </SliderInternalContext.Provider>
               )}
             </div>
           </>
@@ -560,45 +538,49 @@ export const Slider = /*#__PURE__*/ forwardRef(function Slider(
   let isStaticColor = props['PRIVATE_staticColor'];
 
   return (
-    <SliderBase {...props} sliderRef={domRef}>
-      <SliderTrack className={track({size, labelPosition, isInForm: !!formContext})}>
-        {({isDisabled}) => {
-          return (
-            <>
-              <div className={upperTrack({isDisabled, isStaticColor, trackStyle})}>
-                <SliderFill
-                  offset={fillOffset}
-                  className={filledTrack({isDisabled, isEmphasized, trackStyle})}
-                />
-              </div>
-              <SliderThumb
-                className={thumbContainer}
-                index={0}
-                name={props.name}
-                form={props.form}
-                ref={thumbRef}
-                style={renderProps =>
-                  pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({
-                    ...renderProps,
-                    isPressed: renderProps.isDragging
-                  })
-                }>
-                {renderProps => (
-                  <div className={thumbHitArea({size})}>
-                    <div
-                      className={thumb({
-                        ...renderProps,
-                        size,
-                        thumbStyle
-                      })}
-                    />
-                  </div>
-                )}
-              </SliderThumb>
-            </>
-          );
-        }}
-      </SliderTrack>
-    </SliderBase>
+    <SliderBase
+      {...props}
+      sliderRef={domRef}
+      track={
+        <SliderTrack className={track({size, labelPosition, isInForm: !!formContext})}>
+          {({isDisabled}) => {
+            return (
+              <>
+                <div className={upperTrack({isDisabled, isStaticColor, trackStyle})}>
+                  <SliderFill
+                    offset={fillOffset}
+                    className={filledTrack({isDisabled, isEmphasized, trackStyle})}
+                  />
+                </div>
+                <SliderThumb
+                  className={thumbContainer}
+                  index={0}
+                  name={props.name}
+                  form={props.form}
+                  ref={thumbRef}
+                  style={renderProps =>
+                    pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({
+                      ...renderProps,
+                      isPressed: renderProps.isDragging
+                    })
+                  }>
+                  {renderProps => (
+                    <div className={thumbHitArea({size})}>
+                      <div
+                        className={thumb({
+                          ...renderProps,
+                          size,
+                          thumbStyle
+                        })}
+                      />
+                    </div>
+                  )}
+                </SliderThumb>
+              </>
+            );
+          }}
+        </SliderTrack>
+      }
+    />
   );
 });

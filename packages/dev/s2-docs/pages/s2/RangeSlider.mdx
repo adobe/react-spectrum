@@ -73,6 +73,36 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
     step: 5
   }} />
 
+### Editable
+
+Place a `<SliderInput />` inside `<RangeSlider>` when users should be able to precisely input start and end values within a text field alongside the slider.
+
+```tsx render docs={docs.exports.RangeSlider} links={docs.links} props={['size', 'labelPosition', 'isEmphasized', 'isDisabled']} type="s2"
+"use client";
+import {RangeSlider, SliderInput} from '@react-spectrum/s2/RangeSlider';
+
+<RangeSlider
+  label="Range"
+  defaultValue={{start: 25, end: 75}}
+  /* PROPS */>
+  {/*- begin highlight -*/}
+  <SliderInput />
+  {/*- end highlight -*/}
+</RangeSlider>
+```
+
 ## API
 
+```tsx links={{RangeSlider: '#rangeslider', SliderInput: '#sliderinput'}}
+<RangeSlider>
+  <SliderInput />
+</RangeSlider>
+```
+
+### RangeSlider
+
 <PropTable component={docs.exports.RangeSlider} links={docs.links} />
+
+### SliderInput
+
+<PropTable component={docs.exports.SliderInput} links={docs.links} showDescription />

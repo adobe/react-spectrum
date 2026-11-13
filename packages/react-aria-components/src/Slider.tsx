@@ -28,10 +28,13 @@ import {
   useContextProps,
   useRenderProps,
   useSlot,
-  useSlottedContext
+  useSlottedContext,
+  WithRef
 } from './utils';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {GroupContext} from './Group';
 import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
@@ -48,6 +51,7 @@ import React, {
 import {SliderState, useSliderState} from 'react-stately/useSliderState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
@@ -105,6 +109,8 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
 >(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SliderContext);
   let trackRef = useRef<HTMLDivElement>(null);
+  let numberFieldRefs = useRef<(HTMLDivElement | null)[]>([]);
+  let {direction} = useLocale();
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
@@ -127,7 +133,10 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
-  let getNumberFieldProps = (index: number): NumberFieldProps => ({
+  let getNumberFieldProps = (index: number): WithRef<NumberFieldProps, HTMLDivElement> => ({
+    ref: el => {
+      numberFieldRefs.current[index] = el;
+    },
     minValue: state.getThumbMinValue(index),
     maxValue: state.getThumbMaxValue(index),
     step: state.step,
@@ -138,6 +147,50 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
     'aria-labelledby': labelProps.id ?? groupProps.id,
     'aria-describedby': props['aria-describedby'],
     'aria-details': props['aria-details'],
+    onKeyDown(e) {
+      if (state.values.length <= 1 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
+        return;
+      }
+
+      let input = getEventTarget(e);
+      if (!(input instanceof HTMLInputElement)) {
+        return;
+      }
+
+      let nextKey = direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
+      let prevKey = direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
+      if (
+        e.key === nextKey &&
+        index < state.values.length - 1 &&
+        input.selectionStart === input.value.length &&
+        input.selectionEnd === input.value.length
+      ) {
+        for (let next = index + 1; next < state.values.length; next++) {
+          let nextInput = numberFieldRefs.current[next]?.querySelector('input');
+          if (nextInput && !nextInput.disabled) {
+            e.preventDefault();
+            nextInput.focus();
+            nextInput.setSelectionRange(0, 0);
+            break;
+          }
+        }
+      } else if (
+        e.key === prevKey &&
+        index > 0 &&
+        input.selectionStart === 0 &&
+        input.selectionEnd === 0
+      ) {
+        for (let prev = index - 1; prev >= 0; prev--) {
+          let prevInput = numberFieldRefs.current[prev]?.querySelector('input');
+          if (prevInput && !prevInput.disabled) {
+            e.preventDefault();
+            prevInput.focus();
+            prevInput.setSelectionRange(prevInput.value.length, prevInput.value.length);
+            break;
+          }
+        }
+      }
+    },
     onChange(val) {
       if (
         Number.isNaN(val) ||
@@ -173,6 +226,7 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
         [SliderTrackContext, {...trackProps, ref: trackRef}],
         [SliderOutputContext, outputProps],
         [LabelContext, {...labelProps, ref: labelRef}],
+        [GroupContext, {isDisabled: state.isDisabled}],
         [NumberFieldContext, numberFieldContext]
       ]}>
       <dom.div

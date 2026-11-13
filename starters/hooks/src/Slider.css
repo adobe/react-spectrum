@@ -33,13 +33,39 @@
     font-size: var(--font-size);
   }
 
-  .react-aria-NumberField {
+  > .react-aria-NumberField {
     grid-area: input;
 
     .react-aria-Input {
       width: calc(4.5ch + var(--spacing-5));
       min-height: var(--spacing-7);
       padding: 0 var(--spacing-2);
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+    }
+  }
+
+  > .react-aria-Group {
+    grid-area: input;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    border-radius: var(--radius);
+    padding: 0 var(--spacing-2);
+    min-height: var(--spacing-7);
+
+    &[data-focus-within] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
+    }
+
+    .react-aria-Input {
+      width: 3ch;
+      min-height: 0;
+      padding: 0;
+      background: none;
+      box-shadow: none;
+      outline: none;
       font-variant-numeric: tabular-nums;
       text-align: center;
     }

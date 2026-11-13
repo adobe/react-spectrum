@@ -12,30 +12,32 @@
 
 import {Form} from '../src/Form';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {RangeSlider} from '../src/RangeSlider';
 import {Slider} from '../src/Slider';
+import {SliderInput} from '../src/SliderInput';
 import userEvent from '@testing-library/user-event';
 import {useState} from 'react';
 
-describe('Slider', () => {
+describe('Slider and RangeSlider with SliderInput', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
-  it('renders an editable number input without steppers or status output when isEditable is true', async () => {
+  it('renders an editable number input without steppers or status output when SliderInput is provided', async () => {
     let onChange = jest.fn();
     let onChangeEnd = jest.fn();
     let {getByRole, queryByRole, queryAllByRole, rerender} = render(
       <Slider
         label="Opacity"
-        isEditable
         defaultValue={0.5}
         maxValue={1}
         step={0.01}
         formatOptions={{style: 'percent'}}
         onChange={onChange}
-        onChangeEnd={onChangeEnd}
-      />
+        onChangeEnd={onChangeEnd}>
+        <SliderInput />
+      </Slider>
     );
 
     expect(queryByRole('status')).not.toBeInTheDocument();
@@ -59,13 +61,13 @@ describe('Slider', () => {
       <Slider
         label="Opacity"
         labelPosition="side"
-        isEditable
         isDisabled
         defaultValue={0.5}
         maxValue={1}
         step={0.01}
-        formatOptions={{style: 'percent'}}
-      />
+        formatOptions={{style: 'percent'}}>
+        <SliderInput />
+      </Slider>
     );
     expect(queryByRole('status')).not.toBeInTheDocument();
     expect(getByRole('slider', {name: 'Opacity'})).toBeDisabled();
@@ -83,7 +85,9 @@ describe('Slider', () => {
             e.preventDefault();
             entries = Array.from(new FormData(e.currentTarget).entries());
           }}>
-          <Slider label="Cookies" name="cookies" isEditable value={value} onChange={setValue} />
+          <Slider label="Cookies" name="cookies" value={value} onChange={setValue}>
+            <SliderInput />
+          </Slider>
           <button type="submit">Submit</button>
         </Form>
       );
@@ -102,5 +106,59 @@ describe('Slider', () => {
 
     await user.click(getByRole('button', {name: 'Submit'}));
     expect(entries).toEqual([['cookies', '45']]);
+  });
+
+  it('supports RangeSlider with SliderInput, arrow handoff, equal bounds, and Form submission', async () => {
+    let onChange = jest.fn();
+    let onChangeEnd = jest.fn();
+    let entries: [string, FormDataEntryValue][] = [];
+    let {getByRole, queryByRole} = render(
+      <Form
+        onSubmit={e => {
+          e.preventDefault();
+          entries = Array.from(new FormData(e.currentTarget).entries());
+        }}>
+        <RangeSlider
+          label="Price"
+          startName="minPrice"
+          endName="maxPrice"
+          defaultValue={{start: 25, end: 75}}
+          onChange={onChange}
+          onChangeEnd={onChangeEnd}>
+          <SliderInput />
+        </RangeSlider>
+        <button type="submit">Submit</button>
+      </Form>
+    );
+
+    expect(queryByRole('status')).not.toBeInTheDocument();
+    let minSlider = getByRole('slider', {name: 'Minimum Price'});
+    let maxSlider = getByRole('slider', {name: 'Maximum Price'});
+    let minInput = getByRole('textbox', {name: 'Minimum Price'});
+    let maxInput = getByRole('textbox', {name: 'Maximum Price'});
+    expect(minInput).toHaveValue('25');
+    expect(maxInput).toHaveValue('75');
+
+    // Edit start input and arrow right into end input
+    await user.click(minInput);
+    await user.clear(minInput);
+    await user.keyboard('50{ArrowRight}');
+    expect(document.activeElement).toBe(maxInput);
+    expect(minSlider).toHaveValue('50');
+    expect(onChange).toHaveBeenLastCalledWith({start: 50, end: 75});
+    expect(onChangeEnd).toHaveBeenLastCalledWith({start: 50, end: 75});
+
+    // Setting end equal to start keeps two distinct editable values
+    await user.clear(maxInput);
+    await user.keyboard('50{Enter}');
+    expect(maxSlider).toHaveValue('50');
+    expect(minInput).toHaveValue('50');
+    expect(maxInput).toHaveValue('50');
+
+    await user.click(getByRole('button', {name: 'Submit'}));
+    expect(entries).toEqual([
+      ['minPrice', '50'],
+      ['maxPrice', '50']
+    ]);
   });
 });

@@ -15,6 +15,7 @@ import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Slider} from '../src/Slider';
+import {SliderInput} from '../src/SliderInput';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Slider> = {
@@ -51,12 +52,13 @@ export const Example: Story = {
 export const Editable: Story = {
   render: args => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-      <Slider {...args} />
+      <Slider {...args}>
+        <SliderInput />
+      </Slider>
     </div>
   ),
   args: {
     label: 'Opacity',
-    isEditable: true,
     defaultValue: 0.5,
     maxValue: 1,
     step: 0.01,

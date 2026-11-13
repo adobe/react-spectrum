@@ -101,7 +101,7 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
 
 ### Editable
 
-Place a [NumberField](NumberField) inside `<Slider>` to allow users to type an exact numeric value alongside dragging the thumb. For multi-thumb sliders, pass `slot` matching the thumb index (for example, `slot="0"` and `slot="1"`).
+Place a [NumberField](NumberField) inside `<Slider>` to allow users to type an exact numeric value alongside dragging the thumb.
 
 ```tsx render
 "use client";
@@ -125,6 +125,37 @@ import 'vanilla-starter/Slider.css';
   <NumberField>
     <Input className="react-aria-Input inset" />
   </NumberField>
+  {/*- end highlight -*/}
+</Slider>
+```
+
+For multi-thumb sliders, wrap slotted `<NumberField>`s (`slot="0"`, `slot="1"`, …) inside a `<Group>` to present them as a single range field. Pressing <Keyboard>ArrowRight</Keyboard> or <Keyboard>ArrowLeft</Keyboard> at an input boundary moves focus across thumbs.
+
+```tsx render
+"use client";
+import {Group, Input, NumberField, Slider, SliderFill, SliderThumb, SliderTrack} from 'react-aria-components';
+import {Label} from 'vanilla-starter/Form';
+import 'vanilla-starter/Slider.css';
+
+<Slider defaultValue={[25, 75]}>
+  <Label>Range</Label>
+  <SliderTrack>
+    <div className="track inset">
+      <SliderFill />
+    </div>
+    <SliderThumb index={0} aria-label="Minimum" className="react-aria-SliderThumb indicator" />
+    <SliderThumb index={1} aria-label="Maximum" className="react-aria-SliderThumb indicator" />
+  </SliderTrack>
+  {/*- begin highlight -*/}
+  <Group className="react-aria-Group inset">
+    <NumberField slot="0" aria-label="Minimum">
+      <Input className="react-aria-Input" />
+    </NumberField>
+    <span aria-hidden="true">–</span>
+    <NumberField slot="1" aria-label="Maximum">
+      <Input className="react-aria-Input" />
+    </NumberField>
+  </Group>
   {/*- end highlight -*/}
 </Slider>
 ```

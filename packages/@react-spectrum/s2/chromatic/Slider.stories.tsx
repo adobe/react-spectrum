@@ -17,6 +17,7 @@ import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {shortName} from './utils';
 import {Slider, SliderProps} from '../src/Slider';
+import {SliderInput} from '../src/SliderInput';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof Slider> = {
@@ -114,6 +115,7 @@ export const Editable: Story = {
         width: '100vw'
       })}>
       {editableCombinations.map(c => {
+        let {isEditable, ...sliderProps} = c;
         let key = Object.keys(c)
           .map(k => shortName(k, c[k]))
           .join(' ');
@@ -125,8 +127,9 @@ export const Editable: Story = {
             step={0.01}
             formatOptions={{style: 'percent'}}
             {...args}
-            {...c}
-          />
+            {...sliderProps}>
+            {isEditable ? <SliderInput /> : null}
+          </Slider>
         );
       })}
     </div>

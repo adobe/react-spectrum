@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Group} from '../src/Group';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {NumberField} from '../src/NumberField';
@@ -587,20 +588,22 @@ describe('Slider', () => {
     expect(getByRole('textbox', {name: 'Volume'})).toBeDisabled();
   });
 
-  it('should support slotted NumberFields for multi-thumb Sliders', async () => {
-    let {getAllByRole, getByRole} = render(
+  it('should support slotted NumberFields and boundary arrow navigation for multi-thumb Sliders', async () => {
+    let {getAllByRole, getByRole, getByTestId, rerender} = render(
       <Slider defaultValue={[20, 60]}>
         <Label>Price</Label>
         <SliderTrack>
           <SliderThumb index={0} aria-label="Minimum" />
           <SliderThumb index={1} aria-label="Maximum" />
         </SliderTrack>
-        <NumberField slot="0" aria-label="Minimum">
-          <Input />
-        </NumberField>
-        <NumberField slot="1" aria-label="Maximum">
-          <Input />
-        </NumberField>
+        <Group data-testid="range-group">
+          <NumberField slot="0" aria-label="Minimum">
+            <Input />
+          </NumberField>
+          <NumberField slot="1" aria-label="Maximum">
+            <Input />
+          </NumberField>
+        </Group>
       </Slider>
     );
 
@@ -616,5 +619,48 @@ describe('Slider', () => {
     await user.keyboard('80{Enter}');
     expect(sliders[0]).toHaveValue('60');
     expect(minInput).toHaveValue('60');
+
+    // ArrowRight at end of minInput moves focus to start of maxInput (committing edits)
+    await user.clear(minInput);
+    await user.keyboard('35');
+    expect(minInput.selectionStart).toBe(2);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(maxInput);
+    expect(sliders[0]).toHaveValue('35');
+    expect(maxInput.selectionStart).toBe(0);
+
+    // ArrowRight inside maxInput moves caret without leaving maxInput
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(maxInput);
+    expect(maxInput.selectionStart).toBe(1);
+
+    // ArrowLeft back to start, then ArrowLeft moves focus back to end of minInput
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(maxInput);
+    expect(maxInput.selectionStart).toBe(0);
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(minInput);
+    expect(minInput.selectionStart).toBe(2);
+
+    await user.tab();
+    await user.tab();
+    rerender(
+      <Slider defaultValue={[20, 60]} isDisabled>
+        <Label>Price</Label>
+        <SliderTrack>
+          <SliderThumb index={0} aria-label="Minimum" />
+          <SliderThumb index={1} aria-label="Maximum" />
+        </SliderTrack>
+        <Group data-testid="range-group">
+          <NumberField slot="0" aria-label="Minimum">
+            <Input />
+          </NumberField>
+          <NumberField slot="1" aria-label="Maximum">
+            <Input />
+          </NumberField>
+        </Group>
+      </Slider>
+    );
+    expect(getByTestId('range-group')).toHaveAttribute('data-disabled', 'true');
   });
 });

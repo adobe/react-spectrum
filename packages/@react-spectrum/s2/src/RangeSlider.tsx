@@ -31,7 +31,7 @@ import {useFocusableRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number>>, 'children'> {
+export interface RangeSliderProps extends SliderBaseProps<RangeValue<number>> {
   /**
    * The name of the start input element, used when submitting an HTML form. See
    * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
@@ -93,65 +93,67 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(
       defaultValue={defaultThumbValues}
       onChange={v => props.onChange?.({start: v[0], end: v[1]})}
       onChangeEnd={v => props.onChangeEnd?.({start: v[0], end: v[1]})}
-      sliderRef={domRef}>
-      <SliderTrack className={track({size, labelPosition, isInForm: !!formContext})}>
-        {({state, isDisabled}) => (
-          <>
-            <div className={upperTrack({isDisabled, trackStyle})}>
-              <SliderFill className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
-            </div>
-            <SliderThumb
-              className={thumbContainer}
-              index={0}
-              name={props.startName}
-              form={props.form}
-              aria-label={stringFormatter.format('slider.minimum')}
-              ref={lowerThumbRef}
-              style={renderProps =>
-                pressScale(lowerThumbRef, {
-                  transform: 'translate(-50%, -50%)',
-                  zIndex: state.getThumbPercent(0) === 1 ? 1 : undefined
-                })({...renderProps, isPressed: renderProps.isDragging})
-              }>
-              {renderProps => (
-                <div className={thumbHitArea({size})}>
-                  <div
-                    className={thumb({
-                      ...renderProps,
-                      size,
-                      thumbStyle
-                    })}
-                  />
-                </div>
-              )}
-            </SliderThumb>
-            <SliderThumb
-              className={thumbContainer}
-              index={1}
-              name={props.endName}
-              form={props.form}
-              aria-label={stringFormatter.format('slider.maximum')}
-              ref={upperThumbRef}
-              style={renderProps =>
-                pressScale(upperThumbRef, {
-                  transform: 'translate(-50%, -50%)'
-                })({...renderProps, isPressed: renderProps.isDragging})
-              }>
-              {renderProps => (
-                <div className={thumbHitArea({size})}>
-                  <div
-                    className={thumb({
-                      ...renderProps,
-                      size,
-                      thumbStyle
-                    })}
-                  />
-                </div>
-              )}
-            </SliderThumb>
-          </>
-        )}
-      </SliderTrack>
-    </SliderBase>
+      sliderRef={domRef}
+      track={
+        <SliderTrack className={track({size, labelPosition, isInForm: !!formContext})}>
+          {({state, isDisabled}) => (
+            <>
+              <div className={upperTrack({isDisabled, trackStyle})}>
+                <SliderFill className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
+              </div>
+              <SliderThumb
+                className={thumbContainer}
+                index={0}
+                name={props.startName}
+                form={props.form}
+                aria-label={stringFormatter.format('slider.minimum')}
+                ref={lowerThumbRef}
+                style={renderProps =>
+                  pressScale(lowerThumbRef, {
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: state.getThumbPercent(0) === 1 ? 1 : undefined
+                  })({...renderProps, isPressed: renderProps.isDragging})
+                }>
+                {renderProps => (
+                  <div className={thumbHitArea({size})}>
+                    <div
+                      className={thumb({
+                        ...renderProps,
+                        size,
+                        thumbStyle
+                      })}
+                    />
+                  </div>
+                )}
+              </SliderThumb>
+              <SliderThumb
+                className={thumbContainer}
+                index={1}
+                name={props.endName}
+                form={props.form}
+                aria-label={stringFormatter.format('slider.maximum')}
+                ref={upperThumbRef}
+                style={renderProps =>
+                  pressScale(upperThumbRef, {
+                    transform: 'translate(-50%, -50%)'
+                  })({...renderProps, isPressed: renderProps.isDragging})
+                }>
+                {renderProps => (
+                  <div className={thumbHitArea({size})}>
+                    <div
+                      className={thumb({
+                        ...renderProps,
+                        size,
+                        thumbStyle
+                      })}
+                    />
+                  </div>
+                )}
+              </SliderThumb>
+            </>
+          )}
+        </SliderTrack>
+      }
+    />
   );
 });
