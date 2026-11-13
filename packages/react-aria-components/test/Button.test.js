@@ -49,23 +49,29 @@ describe('Button', () => {
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
 
-  it('should not pass native drag props through from props', () => {
+  it('should support native drag props', () => {
     let onDragStart = jest.fn();
+    let onDrag = jest.fn();
+    let onDragEnd = jest.fn();
     let {getByRole} = render(
-      <Button draggable onDragStart={onDragStart}>
+      <Button draggable onDragStart={onDragStart} onDrag={onDrag} onDragEnd={onDragEnd}>
         Test
       </Button>
     );
     let button = getByRole('button');
-    expect(button).not.toHaveAttribute('draggable');
+    expect(button).toHaveAttribute('draggable', 'true');
     fireEvent.dragStart(button);
-    expect(onDragStart).not.toHaveBeenCalled();
+    expect(onDragStart).toHaveBeenCalledTimes(1);
+    fireEvent.drag(button);
+    expect(onDrag).toHaveBeenCalledTimes(1);
+    fireEvent.dragEnd(button);
+    expect(onDragEnd).toHaveBeenCalledTimes(1);
   });
 
   it('should support native drag props from context', () => {
     let onDragStart = jest.fn();
     let {getByRole} = render(
-      <ButtonContext.Provider value={{nativeDragProps: {draggable: true, onDragStart}}}>
+      <ButtonContext.Provider value={{draggable: true, onDragStart}}>
         <Button>Test</Button>
       </ButtonContext.Provider>
     );

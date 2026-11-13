@@ -78,7 +78,8 @@ export interface ButtonProps
     HoverEvents,
     SlotProps,
     RenderProps<ButtonRenderProps, 'button'>,
-    Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
+    Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'>,
+    Pick<HTMLAttributes<HTMLButtonElement>, 'draggable' | 'onDragStart' | 'onDrag' | 'onDragEnd'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element. A function may be provided to compute the class based on component state.
@@ -93,18 +94,13 @@ export interface ButtonProps
   isPending?: boolean;
 }
 
-export type ButtonNativeDragProps = Pick<HTMLAttributes<HTMLElement>, 'draggable'>;
-
 interface ButtonContextValue extends ButtonProps {
   isPressed?: boolean;
-  /**
-   * Native drag props, only provided via context by collection items whose drag button is the
-   * native drag source (e.g. pointerDragSource="handle"). Drag event handlers remain on the item.
-   */
-  nativeDragProps?: ButtonNativeDragProps;
 }
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
+
+const dragPropNames = new Set(['draggable', 'onDragStart', 'onDrag', 'onDragEnd']);
 
 /**
  * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
@@ -163,19 +159,12 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
-  let DOMProps = filterDOMProps(props, {global: true});
+  let DOMProps = filterDOMProps(props, {global: true, propNames: dragPropNames});
   delete DOMProps.onClick;
 
   return (
     <dom.button
-      {...mergeProps(
-        DOMProps,
-        ctx.nativeDragProps,
-        renderProps,
-        buttonProps,
-        focusProps,
-        hoverProps
-      )}
+      {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
       // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
       // We do this by changing the button's type to button.
       type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}

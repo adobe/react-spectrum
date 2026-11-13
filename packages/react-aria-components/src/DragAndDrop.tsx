@@ -11,7 +11,7 @@
  */
 import type {DropIndicatorProps as AriaDropIndicatorProps} from 'react-aria/useDroppableCollection';
 
-import type {ButtonNativeDragProps} from './Button';
+import type {ButtonProps} from './Button';
 import type {ClassNameOrFunction, RenderProps} from './utils';
 import type {DragAndDropHooks} from './useDragAndDrop';
 import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
@@ -160,10 +160,10 @@ interface DraggableItemSlotProps {
   /** Props to merge onto the draggable item element. */
   itemProps: HTMLAttributes<HTMLElement> | undefined;
   /** Props to provide to the item's `<Button slot="drag">`. */
-  dragButtonProps: DraggableItemResult['dragButtonProps'] & {
-    nativeDragProps?: ButtonNativeDragProps;
-    style?: CSSProperties;
-  };
+  dragButtonProps: DraggableItemResult['dragButtonProps'] &
+    Pick<ButtonProps, 'draggable'> & {
+      style?: CSSProperties;
+    };
 }
 
 /**
@@ -232,7 +232,7 @@ export function getDraggableItemSlotProps(
     },
     dragButtonProps: {
       ...draggableItem?.dragButtonProps,
-      nativeDragProps: {draggable}
+      draggable
     }
   };
 }
