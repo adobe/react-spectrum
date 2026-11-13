@@ -29,7 +29,7 @@ import '../../../starters/docs/src/Tree.css';
 const itDrag = it.skipIf(/firefox/i.test(navigator.userAgent)).each(['GridList', 'Table', 'Tree']);
 
 // Native drag and drop is occasionally flaky in WebKit under CI load.
-itDrag('should drag from styled %s handles', {retry: 2}, async component => {
+itDrag('should only drag from styled %s handles', {retry: 2}, async component => {
   let onDragStart = vi.fn();
   let onDragEnd = vi.fn();
   let onRootDrop = vi.fn();
@@ -37,16 +37,29 @@ itDrag('should drag from styled %s handles', {retry: 2}, async component => {
   function Example() {
     let {dragAndDropHooks} = useDragAndDrop({
       pointerDragSource: 'handle',
-      getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
+      getItems: keys =>
+        [...keys].map(key => ({'text/plain': String(key), 'cat-item': String(key)})),
       getAllowedDropOperations: () => ['copy'],
       onDragStart,
       onDragEnd
     });
-    let {dragAndDropHooks: dropHooks} = useDragAndDrop({onRootDrop, onDropEnter});
+    let {dragAndDropHooks: dropHooks} = useDragAndDrop({
+      acceptedDragTypes: ['cat-item'],
+      onRootDrop,
+      onDropEnter
+    });
     let dragButton = (
       <Button slot="drag" className={component === 'Table' ? 'drag-button' : undefined}>
         ≡
       </Button>
+    );
+    let itemContent = (
+      <>
+        <span>Cat</span>
+        <a href="#details" onClick={e => e.preventDefault()}>
+          Details
+        </a>
+      </>
     );
     let source;
     if (component === 'GridList') {
@@ -54,7 +67,7 @@ itDrag('should drag from styled %s handles', {retry: 2}, async component => {
         <GridList aria-label="Source" layout="grid" dragAndDropHooks={dragAndDropHooks}>
           <GridListItem id="cat" textValue="Cat">
             {dragButton}
-            Cat
+            {itemContent}
           </GridListItem>
         </GridList>
       );
@@ -68,7 +81,7 @@ itDrag('should drag from styled %s handles', {retry: 2}, async component => {
           <TableBody>
             <Row id="cat" textValue="Cat">
               <Cell>{dragButton}</Cell>
-              <Cell>Cat</Cell>
+              <Cell>{itemContent}</Cell>
             </Row>
           </TableBody>
         </Table>
@@ -79,7 +92,7 @@ itDrag('should drag from styled %s handles', {retry: 2}, async component => {
           <TreeItem id="cat" textValue="Cat">
             <TreeItemContent>
               {dragButton}
-              Cat
+              {itemContent}
             </TreeItemContent>
           </TreeItem>
         </Tree>
@@ -101,6 +114,7 @@ itDrag('should drag from styled %s handles', {retry: 2}, async component => {
 
   await render(<Example />);
   let button = page.getByRole('button', {name: /^Drag /});
+  let target = page.getByRole('grid', {name: 'Target'});
   await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grab');
 
   await server.commands.mouseDownOnElement('button[slot="drag"]');
@@ -114,11 +128,25 @@ itDrag('should drag from styled %s handles', {retry: 2}, async component => {
   await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grab');
   expect(onDragStart).not.toHaveBeenCalled();
 
+  await userEvent.dragAndDrop(page.getByText('Cat'), target);
+  await server.commands.mouseUp();
+  expect(onDragStart).not.toHaveBeenCalled();
+  expect(onDropEnter).not.toHaveBeenCalled();
+  expect(onRootDrop).not.toHaveBeenCalled();
+  expect(onDragEnd).not.toHaveBeenCalled();
+
+  await userEvent.dragAndDrop(page.getByRole('link', {name: 'Details'}), target);
+  await server.commands.mouseUp();
+  expect(onDragStart).not.toHaveBeenCalled();
+  expect(onDropEnter).not.toHaveBeenCalled();
+  expect(onRootDrop).not.toHaveBeenCalled();
+  expect(onDragEnd).not.toHaveBeenCalled();
+
   onDropEnter.mockImplementation(() => ({
     cursor: getComputedStyle(button.element()).cursor,
     isPressed: button.element().hasAttribute('data-pressed')
   }));
-  await userEvent.dragAndDrop(button, page.getByRole('grid', {name: 'Target'}));
+  await userEvent.dragAndDrop(button, target);
   // Reset WebKit's pointer state after the native drag before the next test.
   await server.commands.mouseUp();
   expect(onDragStart).toHaveBeenCalledTimes(1);
