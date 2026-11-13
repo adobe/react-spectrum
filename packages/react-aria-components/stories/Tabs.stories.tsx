@@ -28,6 +28,29 @@ export default {
 
 export type TabsStory = StoryObj<typeof Tabs>;
 
+export const DisableSelectedTab: TabsStory = {
+  render: function DisableSelectedTab() {
+    let [isBuilding, setBuilding] = useState(false);
+    return (
+      <>
+        <Button onPress={() => setBuilding(value => !value)}>
+          {isBuilding ? 'Finish build' : 'Re-run build'}
+        </Button>
+        <Tabs defaultSelectedKey="artifacts">
+          <TabList aria-label="Build" style={{display: 'flex', gap: 8}}>
+            <Tab id="logs">Logs</Tab>
+            <Tab id="artifacts" isDisabled={isBuilding}>
+              Artifacts
+            </Tab>
+          </TabList>
+          <TabPanel id="logs">Build logs</TabPanel>
+          <TabPanel id="artifacts">Build artifacts</TabPanel>
+        </Tabs>
+      </>
+    );
+  }
+};
+
 export const TabsExample: TabsStory = {
   render: function TabsExample() {
     let [url, setUrl] = useState('/FoR');
