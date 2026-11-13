@@ -144,6 +144,16 @@ describe('Slider', () => {
     expect(thumb).not.toHaveClass('focus');
   });
 
+  it('should show the focus ring on the thumb when clicking the label', async () => {
+    let {getByRole, getByText} = renderSlider();
+    let slider = getByRole('slider');
+    let thumb = slider.closest('.react-aria-SliderThumb');
+
+    await user.click(getByText('Opacity'));
+    expect(document.activeElement).toBe(slider);
+    expect(thumb).toHaveAttribute('data-focus-visible', 'true');
+  });
+
   it('should support dragging state', () => {
     let {getByRole} = renderSlider(
       {},
