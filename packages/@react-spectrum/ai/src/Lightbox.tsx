@@ -15,8 +15,9 @@ import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Butt
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
-import {createContext, ReactNode, useContext, useEffect, useReducer, useRef, useState} from 'react';
+import {createContext, ReactNode, useContext, useReducer, useRef, useState} from 'react';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
+import {flushSync} from 'react-dom';
 import {FocusableElement, Key} from '@react-types/shared';
 import {FocusScope} from 'react-aria/FocusScope';
 import {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
@@ -125,6 +126,9 @@ const itemsStyles = style({
   borderRadius: 'lg',
   width: 'full',
   height: 'full',
+  // Cap the stage at a 16:9 image (plus the item padding) so short, wide viewports
+  // don't leave large empty gutters between the image and the nav buttons.
+  maxWidth: 'calc((100cqh - 8px) * 16 / 9 + 32px)',
   display: 'flex',
   order: 1,
   overflowX: 'auto',
@@ -334,6 +338,8 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
       className={style({
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'center',
+        containerType: 'size',
         flexGrow: 1,
         minWidth: 0,
         minHeight: 0,
@@ -352,25 +358,12 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   let {children: renderPage, ...otherProps} = props;
   let state = useContext(TabListStateContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
-  let shouldMoveFocusOnScroll = useRef(false);
   let isProgrammaticScroll = useRef(false);
   let previousSelectedIndex = useRef<number | null>(null);
-  let keyboardIntentTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  let pendingFocus = useRef(false);
 
   let selectedKey = state?.selectedKey;
   let selectedIndex = state?.selectedItem?.index ?? null;
 
-  useEffect(() => {
-    return () => {
-      if (keyboardIntentTimeout.current !== null) {
-        clearTimeout(keyboardIntentTimeout.current);
-        keyboardIntentTimeout.current = null;
-      }
-    };
-  }, []);
-
-  // Update scroll position based on selected key
   useLayoutEffect(() => {
     let el = ref.current;
     if (!el || selectedIndex == null) {
@@ -403,28 +396,37 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       // This is fixed in Safari Tech Preview
       // https://bugs.webkit.org/show_bug.cgi?id=331157
       behavior: isAdjacent ? 'smooth' : 'instant'
-      // behavior: 'instant'
     });
   }, [selectedIndex]);
 
-  // Update focus to the new slide if we were focused on the tab panel to begin with
-  useLayoutEffect(() => {
-    if (!pendingFocus.current) {
-      return;
-    }
+  let size = state.collection.size;
 
-    pendingFocus.current = false;
+  // Arrow keys, the nav buttons, and scrolling all change slides through here.
+  let selectIndex = (index: number) => {
     let el = ref.current;
-    if (!el || selectedIndex == null) {
+    if (!el || index < 0 || index >= size) {
       return;
     }
 
-    let activeElement = getActiveElement(el.ownerDocument);
-    if (activeElement && activeElement !== el.ownerDocument.body) {
+    let key = [...state.collection].at(index)?.key;
+    if (key == null || key === selectedKey) {
       return;
     }
 
-    // Once the new slide is active, focus its first tabbable control or the panel.
+    let activeElement = getActiveElement(el.ownerDocument) as FocusableElement | null;
+    if (!nodeContains(el.querySelector('[role="tabpanel"]'), activeElement)) {
+      state.setSelectedKey(key);
+      return;
+    }
+
+    // Focus is in the current slide, so move it to the new one.
+    // Blur first: deselecting removes the panel's focus handlers.
+    activeElement?.blur();
+    // Re-render synchronously so the new slide is active before we focus it.
+    flushSync(() => {
+      state.setSelectedKey(key);
+    });
+
     let panel = el.querySelector<HTMLElement>('[role="tabpanel"]');
     if (panel) {
       let walker = getFocusableTreeWalker(panel, {tabbable: true});
@@ -432,74 +434,17 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       // Don't let focusing the incoming content initiate a competing scroll.
       focusWithoutScrolling(control ?? panel);
     }
-  }, [selectedIndex, selectedKey]);
-
-  let size = state.collection.size;
-
-  let selectPageFromButton = (index: number) => {
-    if (index < 0 || index >= size) {
-      return;
-    }
-
-    let key = [...state.collection].at(index)?.key;
-    if (key != null && key !== selectedKey) {
-      state.setSelectedKey(key);
-    }
   };
 
-  let prepareFocusForSelectionChange = (el: HTMLElement, moveFocus: boolean) => {
-    let panel = el.querySelector<HTMLElement>('[role="tabpanel"]');
-    let activeElement = getActiveElement(el.ownerDocument);
-    if (
-      activeElement &&
-      nodeContains(panel, activeElement) &&
-      'blur' in activeElement &&
-      typeof activeElement.blur === 'function'
-    ) {
-      pendingFocus.current = moveFocus;
-      // Blur before deselection removes the panel's focus handlers.
-      activeElement.blur();
-    }
-  };
-
-  let updateSelectionFromScroll = () => {
-    let el = ref.current;
-    if (!el) {
-      return;
-    }
-
-    let currentIndex = Math.max(0, Math.min(size - 1, Math.round(el.scrollLeft / el.offsetWidth)));
-    let key = [...state.collection].at(currentIndex)?.key;
-    if (key == null || key === selectedKey) {
-      return;
-    }
-
-    prepareFocusForSelectionChange(el, shouldMoveFocusOnScroll.current);
-    state.setSelectedKey(key);
-  };
-
-  let clearKeyboardIntent = () => {
-    if (keyboardIntentTimeout.current !== null) {
-      clearTimeout(keyboardIntentTimeout.current);
-      keyboardIntentTimeout.current = null;
-    }
-  };
-
-  // Native keyboard scrolling transfers focus as soon as the selected page changes.
   let onScroll = () => {
-    // If scrolling was triggered by left/right arrow keys inside tab panel
-    if (keyboardIntentTimeout.current !== null) {
-      clearKeyboardIntent();
-      shouldMoveFocusOnScroll.current = true;
-    }
-
+    let el = ref.current;
     // If we tab, button, or arrow key, we've already updated the selectedKey so we don't need to update selection
-    if (isProgrammaticScroll.current) {
+    if (!el || isProgrammaticScroll.current) {
       return;
     }
 
-    // If we are swiping between slides, then we update the selected key based on scroll position. Otherwise, we generally use selectedKey as source of truth
-    updateSelectionFromScroll();
+    // If we are swiping between slides, then we update the selected key based on scroll position
+    selectIndex(Math.round(el.scrollLeft / el.offsetWidth));
   };
 
   let onScrollEnd = () => {
@@ -516,49 +461,18 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       return;
     }
 
-    shouldMoveFocusOnScroll.current = false;
     isProgrammaticScroll.current = false;
   };
 
-  // Only handle arrows from the panel itself, preserving keyboard behavior
-  // in text fields and other child controls.
+  // Only handle arrows from the panel itself, preserving keyboard behavior in text fields and other child controls.
   let handleArrow = (e: KeyboardEvent, delta: -1 | 1) => {
-    clearKeyboardIntent();
-
-    if (e.isDefaultPrevented()) {
-      return false;
-    }
-
     let panel = ref.current?.querySelector('[role="tabpanel"]');
-    if (getEventTarget(e) !== panel) {
-      // Clear the ref if the panel does not scroll
-      keyboardIntentTimeout.current = setTimeout(() => {
-        keyboardIntentTimeout.current = null;
-      }, 100);
-
+    if (e.isDefaultPrevented() || getEventTarget(e) !== panel) {
       return false;
     }
 
-    if (selectedIndex == null) {
-      return;
-    }
-
-    let nextIndex = selectedIndex + delta;
-    if (nextIndex < 0 || nextIndex >= size) {
-      return;
-    }
-
-    let key = [...state.collection].at(nextIndex)?.key;
-    if (key != null) {
-      // Selection drives the animation, so repeated arrows use the latest destination.
-      shouldMoveFocusOnScroll.current = false;
-      let el = ref.current;
-      if (!el || key === selectedKey) {
-        return;
-      }
-
-      prepareFocusForSelectionChange(el, true);
-      state.setSelectedKey(key);
+    if (selectedIndex != null) {
+      selectIndex(selectedIndex + delta);
     }
   };
 
@@ -622,14 +536,14 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       </div>
       <CarouselNavButton
         onPress={() => {
-          selectPageFromButton(selectedIndex - 1);
+          selectIndex(selectedIndex - 1);
         }}
         side="start"
         aria-disabled={selectedIndex === 0}
       />
       <CarouselNavButton
         onPress={() => {
-          selectPageFromButton(selectedIndex + 1);
+          selectIndex(selectedIndex + 1);
         }}
         side="end"
         aria-disabled={selectedIndex === size - 1}
