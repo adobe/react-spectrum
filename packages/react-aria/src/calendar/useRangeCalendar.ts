@@ -96,6 +96,13 @@ export function useRangeCalendar<T extends DateValue>(
       return;
     }
 
+    // Ignore blur events bubbling through portals, and focus moving from an expanded trigger
+    // into its popup, e.g. the popover of a month or year picker.
+    let target = getEventTarget(e) as Element;
+    if (!nodeContains(ref.current, target) || target.getAttribute('aria-expanded') === 'true') {
+      return;
+    }
+
     if ((!e.relatedTarget || !nodeContains(ref.current, e.relatedTarget)) && state.anchorDate) {
       commitBehaviorMapping[commitBehavior]();
     }
