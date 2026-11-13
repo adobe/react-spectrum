@@ -130,6 +130,9 @@ const rowStyles = tv({
   base: 'group/row relative cursor-default select-none -outline-offset-2 text-neutral-900 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 text-sm hover:bg-neutral-100 pressed:bg-neutral-100 dark:hover:bg-neutral-800 dark:pressed:bg-neutral-800 selected:bg-blue-100 selected:hover:bg-blue-200 selected:pressed:bg-blue-200 dark:selected:bg-blue-700/30 dark:selected:hover:bg-blue-700/40 dark:selected:pressed:bg-blue-700/40 last:rounded-b-lg'
 });
 
+const dragButtonStyles =
+  "[&[draggable=true]]:cursor-grab [&[draggable=true]]:pressed:cursor-grabbing [&[draggable=true]]:[-webkit-user-drag:element] [&[draggable=true]]:[@media_not_((hover:hover)_and_(pointer:fine))]:before:content-[''] [&[draggable=true]]:[@media_not_((hover:hover)_and_(pointer:fine))]:before:absolute [&[draggable=true]]:[@media_not_((hover:hover)_and_(pointer:fine))]:before:inset-0";
+
 export function Row<T>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
@@ -137,9 +140,7 @@ export function Row<T>({id, columns, children, ...otherProps}: RowProps<T>) {
     <AriaRow id={id} {...otherProps} className={rowStyles}>
       {allowsDragging && (
         <Cell>
-          <Button
-            slot="drag"
-            className="[&[draggable=true]]:cursor-grab [&[draggable=true]]:pressed:cursor-grabbing [&[draggable=true]]:[-webkit-user-drag:element]">
+          <Button slot="drag" className={dragButtonStyles}>
             ≡
           </Button>
         </Cell>
@@ -156,7 +157,7 @@ export function Row<T>({id, columns, children, ...otherProps}: RowProps<T>) {
 
 const cellStyles = tv({
   extend: focusRing,
-  base: 'box-border [-webkit-tap-highlight-color:transparent] border-b border-b-neutral-200 dark:border-b-neutral-700 group-last/row:border-b-0 [--selected-border:var(--color-blue-200)] dark:[--selected-border:var(--color-blue-900)] group-selected/row:border-(--selected-border) [:is(:has(+[data-selected])_*)]:border-(--selected-border) p-2 truncate -outline-offset-2 group-last/row:first:rounded-bl-lg group-last/row:last:rounded-br-lg'
+  base: 'relative box-border [-webkit-tap-highlight-color:transparent] border-b border-b-neutral-200 dark:border-b-neutral-700 group-last/row:border-b-0 [--selected-border:var(--color-blue-200)] dark:[--selected-border:var(--color-blue-900)] group-selected/row:border-(--selected-border) [:is(:has(+[data-selected])_*)]:border-(--selected-border) p-2 truncate -outline-offset-2 group-last/row:first:rounded-bl-lg group-last/row:last:rounded-br-lg'
 });
 
 const expandButton = tv({

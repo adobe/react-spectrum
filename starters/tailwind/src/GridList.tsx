@@ -56,7 +56,7 @@ const itemStyles = tv({
 });
 
 const dragButtonStyles =
-  '[&[draggable=true]]:cursor-grab [&[draggable=true]]:pressed:cursor-grabbing [&[draggable=true]]:[-webkit-user-drag:element]';
+  "relative [&[draggable=true]]:cursor-grab [&[draggable=true]]:pressed:cursor-grabbing [&[draggable=true]]:[-webkit-user-drag:element] [&[draggable=true]]:[@media_not_((hover:hover)_and_(pointer:fine))]:before:content-[''] [&[draggable=true]]:[@media_not_((hover:hover)_and_(pointer:fine))]:before:absolute [&[draggable=true]]:[@media_not_((hover:hover)_and_(pointer:fine))]:before:-inset-y-2 [&[draggable=true]]:[@media_not_((hover:hover)_and_(pointer:fine))]:before:-inset-x-3";
 
 export function GridListItem({children, ...props}: GridListItemProps) {
   let textValue = typeof children === 'string' ? children : undefined;

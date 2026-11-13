@@ -252,6 +252,14 @@
       &[data-pressed] {
         cursor: grabbing;
       }
+
+      @media not ((hover: hover) and (pointer: fine)) {
+        &::before {
+          content: '';
+          position: absolute;
+          inset: calc(-1 * var(--spacing-2));
+        }
+      }
     }
 
     &[data-focus-visible] {

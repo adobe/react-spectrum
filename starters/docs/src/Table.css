@@ -130,6 +130,14 @@
       &[data-pressed] {
         cursor: grabbing;
       }
+
+      @media not ((hover: hover) and (pointer: fine)) {
+        &::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+        }
+      }
     }
 
     &[data-focus-visible] {
@@ -150,6 +158,7 @@
   text-align: left;
   outline: none;
   box-sizing: border-box;
+  position: relative;
   -webkit-tap-highlight-color: transparent;
 
   div& {
