@@ -414,8 +414,9 @@ describe('DateField', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
 
-    act(() => {
+    await act(async () => {
       getByTestId('form').checkValidity();
+      await Promise.resolve();
     });
 
     expect(group).toHaveAttribute('aria-describedby');
@@ -457,8 +458,9 @@ describe('DateField', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
 
-    act(() => {
+    await act(async () => {
       getByTestId('form').checkValidity();
+      await Promise.resolve();
     });
 
     expect(input.validity.valid).toBe(false);
@@ -556,6 +558,83 @@ describe('DateField', () => {
     let segmentTypes = segments.map(s => s.getAttribute('data-type'));
     expect(segmentTypes).toEqual(['year', 'literal', 'month', 'day']);
   });
+
+  it('does not crash when a calendar has an era with no localized name', async () => {
+    // The Coptic 'BCE' era has no name in CLDR, so Intl omits the era part when formatting it.
+    let {getByRole} = render(
+      <I18nProvider locale="ar-EG-u-ca-coptic">
+        <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+          <Label>Birth date</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    let eraSegment = getByRole('group').querySelector('[data-type=era]');
+    expect(eraSegment).toHaveTextContent('AM');
+  });
+
+  it('does not crash for locales whose 12-hour time has no day period', async () => {
+    let {getByRole, getAllByRole, unmount} = render(
+      <I18nProvider locale="fr-CM">
+        <DateField>
+          <Label>Birthdate</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    let input = getByRole('group');
+    expect(input).toHaveTextContent('jj/mm/aaaa');
+    let segments = getAllByRole('spinbutton');
+    expect(segments.map(segment => segment.getAttribute('data-type'))).toEqual([
+      'day',
+      'month',
+      'year'
+    ]);
+
+    await user.click(segments[0]);
+    await user.keyboard('15');
+    expect(segments[0]).toHaveTextContent('15');
+    unmount();
+
+    let filled = render(
+      <I18nProvider locale="fr-CM">
+        <DateField defaultValue={new CalendarDate(2019, 2, 3)}>
+          <Label>Birthdate</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+    expect(filled.getByRole('group')).toHaveTextContent('03/02/2019');
+  });
+
+  it.each([['fr-FR'], ['de-DE'], ['ja-JP'], ['ar-EG'], ['th-TH']])(
+    'renders a date field in %s',
+    async locale => {
+      let {getAllByRole} = render(
+        <I18nProvider locale={locale}>
+          <DateField>
+            <Label>Birthdate</Label>
+            <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          </DateField>
+        </I18nProvider>
+      );
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments.map(segment => segment.getAttribute('data-type')).sort()).toEqual([
+        'day',
+        'month',
+        'year'
+      ]);
+
+      let day = segments.find(segment => segment.getAttribute('data-type') === 'day');
+      let before = day.textContent;
+      await user.click(day);
+      await user.keyboard('15');
+      expect(day.textContent).not.toBe(before);
+    }
+  );
 
   it('should support autofill', async () => {
     let {getByRole} = render(

@@ -21,7 +21,7 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
 
   /**
    * The delay time for the tooltip to show up. [See
-   * guidelines](https://spectrum.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
+   * guidelines](https://spectrum.adobe.com/web/rsp/components/tooltip#behaviors).
    *
    * @default 1500
    */
@@ -29,7 +29,7 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
 
   /**
    * The delay time for the tooltip to close. [See
-   * guidelines](https://spectrum.adobe.com/page/tooltip/#Warmup-and-cooldown).
+   * guidelines](https://spectrum.adobe.com/web/rsp/components/tooltip#behaviors).
    *
    * @default 500
    */

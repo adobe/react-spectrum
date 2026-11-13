@@ -19,7 +19,7 @@ import {Heading} from '../src/Heading';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox} from '../src/ListBox';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Modal, ModalOverlay} from '../src/Modal';
 import {MyListBoxItem} from './utils';
 import {Popover} from '../src/Popover';
@@ -33,112 +33,117 @@ export default {
   component: Modal
 } as Meta<typeof Modal>;
 
-export type ModalStory = StoryFn<typeof Modal>;
+export type ModalStory = StoryObj<typeof Modal>;
 
-export const ModalExample: ModalStory = () => (
-  <DialogTrigger>
-    <Button>Open modal</Button>
-    <ModalOverlay
-      style={{
-        position: 'fixed',
-        zIndex: 100,
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
-        background: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-      <Modal
+export const ModalExample: ModalStory = {
+  render: () => (
+    <DialogTrigger>
+      <Button>Open modal</Button>
+      <ModalOverlay
         style={{
-          background: 'Canvas',
-          color: 'CanvasText',
-          border: '1px solid gray',
-          padding: 30
+          position: 'fixed',
+          zIndex: 100,
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}>
-        <Dialog>
-          {({close}) => (
-            <form style={{display: 'flex', flexDirection: 'column'}}>
-              <Heading slot="title" style={{marginTop: 0}}>
-                Sign up
-              </Heading>
-              <label>
-                First Name: <input placeholder="John" />
-              </label>
-              <label>
-                Last Name: <input placeholder="Smith" />
-              </label>
-              <Button onPress={close} style={{marginTop: 10}}>
-                Submit
-              </Button>
-            </form>
-          )}
-        </Dialog>
-      </Modal>
-    </ModalOverlay>
-  </DialogTrigger>
-);
-
-export const SheetExample: ModalStory = () => (
-  <div style={{display: 'flex', flexDirection: 'column'}}>
-    <div style={{display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center'}}>
-      <DialogTrigger>
-        <Button>Open modal</Button>
-        <ModalOverlay
+        <Modal
           style={{
-            position: 'fixed',
-            zIndex: 100,
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            background: 'rgba(0, 0, 0, 0.5)'
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 30
           }}>
-          <Modal
+          <Dialog>
+            {({close}) => (
+              <form style={{display: 'flex', flexDirection: 'column'}}>
+                <Heading slot="title" style={{marginTop: 0}}>
+                  Sign up
+                </Heading>
+                <label>
+                  First Name: <input placeholder="John" />
+                </label>
+                <label>
+                  Last Name: <input placeholder="Smith" />
+                </label>
+                <Button onPress={close} style={{marginTop: 10}}>
+                  Submit
+                </Button>
+              </form>
+            )}
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </DialogTrigger>
+  )
+};
+
+export const SheetExample: ModalStory = {
+  render: () => (
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <div
+        style={{display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center'}}>
+        <DialogTrigger>
+          <Button>Open modal</Button>
+          <ModalOverlay
             style={{
-              position: 'sticky',
+              position: 'fixed',
+              zIndex: 100,
+              top: 0,
               left: 0,
-              width: '300px',
-              /* Extra padding to account for iOS floating browser UI. */
-              top: '-100px',
-              height: 'calc(100dvh + 200px)',
-              padding: '100px 0',
-              marginLeft: 'auto',
-              background: 'white',
-              outline: 'none',
-              backgroundColor: 'lightgray',
-              borderLeft: '1px solid black',
-              boxShadow: '-8px 0 20px rgba(0, 0, 0, 0.1)',
-              fontFamily: 'system-ui',
-              fontSize: '0.875rem'
+              bottom: 0,
+              right: 0,
+              background: 'rgba(0, 0, 0, 0.5)'
             }}>
-            <Dialog>
-              {({close}) => (
-                <form style={{display: 'flex', flexDirection: 'column'}}>
-                  <Heading slot="title" style={{marginTop: 0}}>
-                    Sign up
-                  </Heading>
-                  <label>
-                    First Name: <input placeholder="John" />
-                  </label>
-                  <label>
-                    Last Name: <input placeholder="Smith" />
-                  </label>
-                  <Button onPress={close} style={{marginTop: 10}}>
-                    Submit
-                  </Button>
-                </form>
-              )}
-            </Dialog>
-          </Modal>
-        </ModalOverlay>
-      </DialogTrigger>
+            <Modal
+              style={{
+                position: 'sticky',
+                left: 0,
+                width: '300px',
+                /* Extra padding to account for iOS floating browser UI. */
+                top: '-100px',
+                height: 'calc(100dvh + 200px)',
+                padding: '100px 0',
+                marginLeft: 'auto',
+                background: 'white',
+                outline: 'none',
+                backgroundColor: 'lightgray',
+                borderLeft: '1px solid black',
+                boxShadow: '-8px 0 20px rgba(0, 0, 0, 0.1)',
+                fontFamily: 'system-ui',
+                fontSize: '0.875rem'
+              }}>
+              <Dialog>
+                {({close}) => (
+                  <form style={{display: 'flex', flexDirection: 'column'}}>
+                    <Heading slot="title" style={{marginTop: 0}}>
+                      Sign up
+                    </Heading>
+                    <label>
+                      First Name: <input placeholder="John" />
+                    </label>
+                    <label>
+                      Last Name: <input placeholder="Smith" />
+                    </label>
+                    <Button onPress={close} style={{marginTop: 10}}>
+                      Submit
+                    </Button>
+                  </form>
+                )}
+              </Dialog>
+            </Modal>
+          </ModalOverlay>
+        </DialogTrigger>
+      </div>
+      <div style={{height: '100vh'}} />
     </div>
-    <div style={{height: '100vh'}} />
-  </div>
-);
+  )
+};
 
 function InertTest() {
   return (
@@ -248,7 +253,7 @@ function DateRangePickerInsideModal() {
           }}>
           <Dialog>
             {/* @ts-ignore */}
-            <DateRangePickerExample />
+            <DateRangePickerExample.render />
           </Dialog>
         </Modal>
       </ModalOverlay>

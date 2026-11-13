@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useMemo, useRef, useState} from 'react';
 import './styles.global.css';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
@@ -34,7 +34,7 @@ export default {
   tags: ['autodocs']
 } as Meta<typeof TokenField>;
 
-export type TokenFieldStory = StoryFn<typeof TokenField>;
+export type TokenFieldStory = StoryObj<typeof TokenField>;
 
 class TokenizingFieldValue extends TokenFieldValue {
   tokenRegex: RegExp;
@@ -85,33 +85,37 @@ class TokenizingFieldValue extends TokenFieldValue {
   }
 }
 
-export const AutoTokenize: TokenFieldStory = () => {
-  return (
-    <TokenField
-      allowsNewlines
-      defaultValue={TokenizingFieldValue.tokenize(
-        'This example automatically tokenizes #hashtags and @usernames in the text.',
-        /(?<=\s|^)[#@]\S+(?=\s)/g
-      )}>
-      <Label>Message</Label>
-      <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
-      <Text slot="description">Type #hashtags or @usernames to create tokens.</Text>
-    </TokenField>
-  );
+export const AutoTokenize: TokenFieldStory = {
+  render: () => {
+    return (
+      <TokenField
+        allowsNewlines
+        defaultValue={TokenizingFieldValue.tokenize(
+          'This example automatically tokenizes #hashtags and @usernames in the text.',
+          /(?<=\s|^)[#@]\S+(?=\s)/g
+        )}>
+        <Label>Message</Label>
+        <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
+        <Text slot="description">Type #hashtags or @usernames to create tokens.</Text>
+      </TokenField>
+    );
+  }
 };
 
-export const Template: TokenFieldStory = () => {
-  return (
-    <TokenField
-      allowsNewlines
-      defaultValue={TokenizingFieldValue.tokenize(
-        "Hello {{firstName}}, it's nice to meet you!",
-        /(?<=\s|^)\{\{.+?\}\}/g
-      )}>
-      <Label>Message</Label>
-      <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
-    </TokenField>
-  );
+export const Template: TokenFieldStory = {
+  render: () => {
+    return (
+      <TokenField
+        allowsNewlines
+        defaultValue={TokenizingFieldValue.tokenize(
+          "Hello {{firstName}}, it's nice to meet you!",
+          /(?<=\s|^)\{\{.+?\}\}/g
+        )}>
+        <Label>Message</Label>
+        <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
+      </TokenField>
+    );
+  }
 };
 
 const usernames = [
@@ -166,81 +170,83 @@ const slashCommands = [
 
 type Item = {username: string} | {command: string; description: string};
 
-export const WithAutocomplete: TokenFieldStory = () => {
-  let inputRef = useRef(null);
-  let [value, setValue] = useState(
-    new TokenFieldValue([
-      {type: 'text', text: 'This example has autocomplete for '},
-      {type: 'token', text: '@usernames'},
-      {type: 'text', text: ' and '},
-      {type: 'token', text: '/commands'}
-    ])
-  );
-
-  let [filterAnchor, filterValue] = useMemo(() => {
-    let filterAnchor = value.findText(
-      value.caretPosition,
-      TokenFieldValue.Direction.Backward,
-      /(?<=^|\s)[@/]/
+export const WithAutocomplete: TokenFieldStory = {
+  render: function WithAutocomplete() {
+    let inputRef = useRef(null);
+    let [value, setValue] = useState(
+      new TokenFieldValue([
+        {type: 'text', text: 'This example has autocomplete for '},
+        {type: 'token', text: '@usernames'},
+        {type: 'text', text: ' and '},
+        {type: 'token', text: '/commands'}
+      ])
     );
-    if (filterAnchor != null) {
-      let filterValue = value.slice(filterAnchor, value.caretPosition).toString();
-      return [filterAnchor, filterValue];
+
+    let [filterAnchor, filterValue] = useMemo(() => {
+      let filterAnchor = value.findText(
+        value.caretPosition,
+        TokenFieldValue.Direction.Backward,
+        /(?<=^|\s)[@/]/
+      );
+      if (filterAnchor != null) {
+        let filterValue = value.slice(filterAnchor, value.caretPosition).toString();
+        return [filterAnchor, filterValue];
+      }
+      return [null, null];
+    }, [value]);
+
+    let items: Item[] = [];
+    if (filterValue != null && filterValue.startsWith('/')) {
+      items = slashCommands.filter(item => item.command.includes(filterValue.slice(1)));
+    } else if (filterValue != null && filterValue.startsWith('@')) {
+      items = usernames.filter(item => item.username.includes(filterValue.slice(1)));
     }
-    return [null, null];
-  }, [value]);
 
-  let items: Item[] = [];
-  if (filterValue != null && filterValue.startsWith('/')) {
-    items = slashCommands.filter(item => item.command.includes(filterValue.slice(1)));
-  } else if (filterValue != null && filterValue.startsWith('@')) {
-    items = usernames.filter(item => item.username.includes(filterValue.slice(1)));
+    return (
+      <Autocomplete>
+        <TokenField value={value} onChange={setValue}>
+          <Label>Message</Label>
+          <TokenInput ref={inputRef}>{segment => <Token>{segment.text}</Token>}</TokenInput>
+        </TokenField>
+        <Popover
+          triggerRef={inputRef}
+          isOpen={filterAnchor != null && items.length > 0}
+          isNonModal
+          hideArrow
+          placement="bottom start"
+          trigger="MenuTrigger"
+          getTargetRect={target => {
+            return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
+          }}>
+          <Menu items={items} dependencies={[filterAnchor]}>
+            {item => (
+              <MenuItem
+                id={'username' in item ? item.username : item.command}
+                onAction={() => {
+                  setValue(value =>
+                    value.replaceRangeWithSegments(
+                      filterAnchor!,
+                      value.caretPosition,
+                      [
+                        {
+                          type: 'token',
+                          text: 'username' in item ? '@' + item.username : item.command
+                        },
+                        {type: 'text', text: ' '}
+                      ],
+                      false // Don't coalesce in undo/redo history.
+                    )
+                  );
+                }}>
+                <Text slot="label">{'username' in item ? item.username : item.command}</Text>
+                {'description' in item ? <Text slot="description">{item.description}</Text> : null}
+              </MenuItem>
+            )}
+          </Menu>
+        </Popover>
+      </Autocomplete>
+    );
   }
-
-  return (
-    <Autocomplete>
-      <TokenField value={value} onChange={setValue}>
-        <Label>Message</Label>
-        <TokenInput ref={inputRef}>{segment => <Token>{segment.text}</Token>}</TokenInput>
-      </TokenField>
-      <Popover
-        triggerRef={inputRef}
-        isOpen={filterAnchor != null && items.length > 0}
-        isNonModal
-        hideArrow
-        placement="bottom start"
-        trigger="MenuTrigger"
-        getTargetRect={target => {
-          return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
-        }}>
-        <Menu items={items} dependencies={[filterAnchor]}>
-          {item => (
-            <MenuItem
-              id={'username' in item ? item.username : item.command}
-              onAction={() => {
-                setValue(value =>
-                  value.replaceRangeWithSegments(
-                    filterAnchor!,
-                    value.caretPosition,
-                    [
-                      {
-                        type: 'token',
-                        text: 'username' in item ? '@' + item.username : item.command
-                      },
-                      {type: 'text', text: ' '}
-                    ],
-                    false // Don't coalesce in undo/redo history.
-                  )
-                );
-              }}>
-              <Text slot="label">{'username' in item ? item.username : item.command}</Text>
-              {'description' in item ? <Text slot="description">{item.description}</Text> : null}
-            </MenuItem>
-          )}
-        </Menu>
-      </Popover>
-    </Autocomplete>
-  );
 };
 
 class TagFieldValue extends TokenFieldValue {
@@ -265,105 +271,128 @@ class TagFieldValue extends TokenFieldValue {
   }
 }
 
-export const TagField: TokenFieldStory = () => {
-  return (
-    <TokenField
-      allowsNewlines
-      defaultValue={
-        new TagFieldValue([
-          {type: 'token', text: 'Architecture'},
-          {type: 'token', text: 'Design'},
-          {type: 'token', text: 'Development'},
-          {type: 'token', text: 'Marketing'},
-          {type: 'token', text: 'Sales'}
-        ])
-      }>
-      <Label>Categories</Label>
-      <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
-    </TokenField>
-  );
+export const TagField: TokenFieldStory = {
+  render: () => {
+    return (
+      <TokenField
+        allowsNewlines
+        defaultValue={
+          new TagFieldValue([
+            {type: 'token', text: 'Architecture'},
+            {type: 'token', text: 'Design'},
+            {type: 'token', text: 'Development'},
+            {type: 'token', text: 'Marketing'},
+            {type: 'token', text: 'Sales'}
+          ])
+        }>
+        <Label>Categories</Label>
+        <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
+      </TokenField>
+    );
+  }
 };
 
-export const Search: TokenFieldStory = () => {
-  let inputRef = useRef(null);
-  let [value, setValue] = useState(
-    new TokenFieldValue([{type: 'token', text: 'From: Alice Smith'}])
-  );
+export const ScrollableTagField: TokenFieldStory = {
+  render: TagField.render,
+  decorators: [
+    Story => (
+      <div
+        ref={element => {
+          if (element) {
+            element.scrollTop = 450;
+          }
+        }}
+        style={{height: 180, overflow: 'auto', marginTop: 200}}>
+        <div style={{height: 500}} />
+        <Story />
+        <div style={{height: 500}} />
+      </div>
+    )
+  ]
+};
 
-  let last = value.segments.at(-1);
-  let filterText = last?.type === 'text' ? last.text : null;
-  let suggestions: {name: string; items: string[]}[] = [];
-  if (filterText != null) {
-    let users = usernames
-      .filter(item => item.username.includes(filterText))
-      .map(u => u.username)
-      .slice(0, 5);
-    if (users.length > 0) {
-      if (
-        !value.segments.some(
-          segment => segment.type === 'token' && segment.text.startsWith('From: ')
-        )
-      ) {
+export const Search: TokenFieldStory = {
+  render: function SearchRender() {
+    let inputRef = useRef(null);
+    let [value, setValue] = useState(
+      new TokenFieldValue([{type: 'token', text: 'From: Alice Smith'}])
+    );
+
+    let last = value.segments.at(-1);
+    let filterText = last?.type === 'text' ? last.text : null;
+    let suggestions: {name: string; items: string[]}[] = [];
+    if (filterText != null) {
+      let users = usernames
+        .filter(item => item.username.includes(filterText))
+        .map(u => u.username)
+        .slice(0, 5);
+      if (users.length > 0) {
+        if (
+          !value.segments.some(
+            segment => segment.type === 'token' && segment.text.startsWith('From: ')
+          )
+        ) {
+          suggestions.push({
+            name: 'From',
+            items: users
+          });
+        }
+
         suggestions.push({
-          name: 'From',
+          name: 'To',
           items: users
         });
       }
 
       suggestions.push({
-        name: 'To',
-        items: users
+        name: 'Subject',
+        items: [filterText]
       });
     }
 
-    suggestions.push({
-      name: 'Subject',
-      items: [filterText]
-    });
+    return (
+      <Autocomplete>
+        <TokenField value={value} onChange={setValue} role="searchbox">
+          <Label>Search</Label>
+          <TokenInput ref={inputRef}>{segment => <Token>{segment.text}</Token>}</TokenInput>
+        </TokenField>
+        <Popover
+          triggerRef={inputRef}
+          isOpen={suggestions.length > 0}
+          isNonModal
+          hideArrow
+          placement="bottom start"
+          style={{width: 'var(--trigger-width)'}}
+          trigger="MenuTrigger">
+          <Menu items={suggestions}>
+            {section => (
+              <MenuSection>
+                <Header>{section.name}</Header>
+                <Collection items={section.items}>
+                  {item => (
+                    <MenuItem
+                      id={section.name + '-' + item}
+                      onAction={() => {
+                        setValue(value =>
+                          value.replaceRangeWithSegments(
+                            {index: value.caretPosition.index, offset: 0},
+                            value.caretPosition,
+                            [{type: 'token', text: section.name + ': ' + item}],
+                            false
+                          )
+                        );
+                      }}>
+                      {item}
+                    </MenuItem>
+                  )}
+                </Collection>
+              </MenuSection>
+            )}
+          </Menu>
+        </Popover>
+      </Autocomplete>
+    );
   }
-
-  return (
-    <Autocomplete>
-      <TokenField value={value} onChange={setValue} role="searchbox">
-        <Label>Search</Label>
-        <TokenInput ref={inputRef}>{segment => <Token>{segment.text}</Token>}</TokenInput>
-      </TokenField>
-      <Popover
-        triggerRef={inputRef}
-        isOpen={suggestions.length > 0}
-        isNonModal
-        hideArrow
-        placement="bottom start"
-        style={{width: 'var(--trigger-width)'}}
-        trigger="MenuTrigger">
-        <Menu items={suggestions}>
-          {section => (
-            <MenuSection>
-              <Header>{section.name}</Header>
-              <Collection items={section.items}>
-                {item => (
-                  <MenuItem
-                    id={section.name + '-' + item}
-                    onAction={() => {
-                      setValue(value =>
-                        value.replaceRangeWithSegments(
-                          {index: value.caretPosition.index, offset: 0},
-                          value.caretPosition,
-                          [{type: 'token', text: section.name + ': ' + item}],
-                          false
-                        )
-                      );
-                    }}>
-                    {item}
-                  </MenuItem>
-                )}
-              </Collection>
-            </MenuSection>
-          )}
-        </Menu>
-      </Popover>
-    </Autocomplete>
-  );
 };
 
 class ComboBoxTokenFieldValue extends TokenFieldValue<Key> {
@@ -427,32 +456,34 @@ class ComboBoxTokenFieldValue extends TokenFieldValue<Key> {
   }
 }
 
-export const ComboBoxExample: TokenFieldStory = () => {
-  let [value, setValue] = useState(new ComboBoxTokenFieldValue([]));
+export const ComboBoxExample: TokenFieldStory = {
+  render: function ComboBoxExample() {
+    let [value, setValue] = useState(new ComboBoxTokenFieldValue([]));
 
-  return (
-    <ComboBox
-      selectionMode="multiple"
-      style={{width: 500}}
-      value={value.getSelectedKeys()}
-      inputValue={value.getInputValue()}
-      onChange={keys => setValue(value.setSelectedKeys(keys))}>
-      <Label>Users</Label>
-      <div className="combobox-field">
-        <TokenField value={value} onChange={setValue}>
-          <TokenInput style={{paddingInlineEnd: 36}}>
-            {segment => <Token>{segment.text}</Token>}
-          </TokenInput>
-        </TokenField>
-        <FieldButton>
-          <ChevronDown />
-        </FieldButton>
-      </div>
-      <Popover hideArrow className="combobox-popover">
-        <ComboBoxListBox items={usernames}>
-          {state => <ComboBoxItem id={state.username}>{state.username}</ComboBoxItem>}
-        </ComboBoxListBox>
-      </Popover>
-    </ComboBox>
-  );
+    return (
+      <ComboBox
+        selectionMode="multiple"
+        style={{width: 500}}
+        value={value.getSelectedKeys()}
+        inputValue={value.getInputValue()}
+        onChange={keys => setValue(value.setSelectedKeys(keys))}>
+        <Label>Users</Label>
+        <div className="combobox-field">
+          <TokenField value={value} onChange={setValue}>
+            <TokenInput style={{paddingInlineEnd: 36}}>
+              {segment => <Token>{segment.text}</Token>}
+            </TokenInput>
+          </TokenField>
+          <FieldButton>
+            <ChevronDown />
+          </FieldButton>
+        </div>
+        <Popover hideArrow className="combobox-popover">
+          <ComboBoxListBox items={usernames}>
+            {state => <ComboBoxItem id={state.username}>{state.username}</ComboBoxItem>}
+          </ComboBoxListBox>
+        </Popover>
+      </ComboBox>
+    );
+  }
 };

@@ -68,7 +68,18 @@ export class NumberParser {
    * locale is returned.
    */
   getNumberingSystem(value: string): string {
-    return getNumberParserImpl(this.locale, this.options, value).options.numberingSystem;
+    let parser = getNumberParserImpl(this.locale, this.options, value);
+    let sanitizedValue = parser.sanitize(value);
+
+    // Without numerals or a supported decimal separator, the input does not identify a numbering system.
+    if (
+      sanitizedValue.search(parser.symbols.numeral) === -1 &&
+      (!parser.symbols.decimal || !sanitizedValue.includes(parser.symbols.decimal))
+    ) {
+      return getCachedNumberParser(this.locale, this.options).options.numberingSystem;
+    }
+
+    return parser.options.numberingSystem;
   }
 }
 
@@ -166,6 +177,12 @@ class NumberParserImpl {
       fullySanitizedValue = fullySanitizedValue.replaceAll(this.symbols.group!, '');
     }
 
+    // Reject any remaining "." when it is not the locale's decimal separator,
+    // so Number() cannot interpret invalid punctuation as a decimal point.
+    if (this.symbols.decimal !== '.' && fullySanitizedValue.includes('.')) {
+      return NaN;
+    }
+
     if (this.symbols.decimal) {
       fullySanitizedValue = fullySanitizedValue.replace(this.symbols.decimal!, '.');
     }
@@ -242,13 +259,10 @@ class NumberParserImpl {
       value = value.replace('-', this.symbols.minusSign);
     }
 
-    // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
-    // instead they use the , (44) character or apparently the (1548) character.
-    if (this.options.numberingSystem === 'arab') {
-      if (this.symbols.decimal) {
-        value = replaceAll(value, ',', this.symbols.decimal);
-        value = replaceAll(value, String.fromCharCode(1548), this.symbols.decimal);
-      }
+    // Accept keyboard alternatives for the Arabic decimal separator without replacing other native decimals.
+    if (this.options.numberingSystem === 'arab' && this.symbols.decimal === '\u066B') {
+      value = replaceAll(value, ',', this.symbols.decimal);
+      value = replaceAll(value, '\u060C', this.symbols.decimal);
       if (this.symbols.group && isGroupSymbolAllowed) {
         value = replaceAll(value, '.', this.symbols.group);
       }

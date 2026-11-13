@@ -18,6 +18,7 @@ import Meta, {ToolbarExample as ToolbarExampleStory} from '../stories/Toolbar.st
 import {pointerMap} from '@react-spectrum/test-utils-internal';
 
 import React, {createRef} from 'react';
+import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {Text} from '../src/Text';
 import {Toolbar, ToolbarContext} from '../src/Toolbar';
 import userEvent from '@testing-library/user-event';
@@ -299,6 +300,82 @@ describe('Toolbar', () => {
     // Other keys don't affect focus
     await user.keyboard('{Enter}');
     expect(zoomOut).toHaveFocus();
+  });
+
+  it.each(['React Aria', 'native'])(
+    'restores focus only on keyboard entry with %s buttons',
+    async type => {
+      const TestButton = type === 'native' ? 'button' : Button;
+      render(
+        <>
+          <Toolbar aria-label="Tools">
+            <TestButton>First</TestButton>
+            <TestButton>Second</TestButton>
+          </Toolbar>
+          <TestButton>After</TestButton>
+        </>
+      );
+
+      let first = screen.getByRole('button', {name: 'First'});
+      let second = screen.getByRole('button', {name: 'Second'});
+      let after = screen.getByRole('button', {name: 'After'});
+
+      await user.click(second);
+      await user.tab();
+      expect(after).toHaveFocus();
+      await user.click(first);
+      expect(first).toHaveFocus();
+
+      await user.click(after);
+      await user.tab({shift: true});
+      expect(first).toHaveFocus();
+
+      await user.keyboard('{ArrowRight}');
+      await user.tab();
+      expect(after).toHaveFocus();
+      act(() => {
+        setInteractionModality('virtual');
+      });
+      act(() => {
+        first.focus();
+      });
+      act(() => {
+        setInteractionModality('keyboard');
+      });
+      expect(first).toHaveFocus();
+    }
+  );
+
+  it('scrolls the newly focused item into view when navigating with arrow keys', async () => {
+    let scrollIntoView = jest.fn();
+    let originalScrollIntoView = window.HTMLElement.prototype.scrollIntoView;
+    window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(
+        <Toolbar aria-label="Tools">
+          <Button>First</Button>
+          <Button>Last</Button>
+        </Toolbar>
+      );
+      let first = screen.getByRole('button', {name: 'First'});
+      let last = screen.getByRole('button', {name: 'Last'});
+
+      await user.tab();
+      expect(first).toHaveFocus();
+
+      scrollIntoView.mockClear();
+      await user.keyboard('{ArrowRight}');
+      expect(last).toHaveFocus();
+      expect(scrollIntoView).toHaveBeenCalledWith({block: 'nearest'});
+      expect(scrollIntoView.mock.instances[0]).toBe(last);
+
+      scrollIntoView.mockClear();
+      await user.keyboard('{ArrowLeft}');
+      expect(first).toHaveFocus();
+      expect(scrollIntoView.mock.instances[0]).toBe(first);
+    } finally {
+      window.HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
+    }
   });
 
   it('supports keyboard navigation with orientation vertical', async () => {

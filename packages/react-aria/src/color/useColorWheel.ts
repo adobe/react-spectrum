@@ -306,7 +306,7 @@ export function useColorWheel(
 
   let forcedColorAdjustNoneStyle = {
     forcedColorAdjust: 'none'
-  };
+  } as const;
 
   let {visuallyHiddenProps} = useVisuallyHidden({
     style: {

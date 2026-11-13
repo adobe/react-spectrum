@@ -16,7 +16,7 @@ import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {Flex} from '../../src/layout/Flex';
 import {Heading} from '../../src/text/Heading';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Provider} from '../../src/provider/Provider';
 import {Radio} from '../../src/radio/Radio';
 import {RadioGroup} from '../../src/radio/RadioGroup';
@@ -56,108 +56,88 @@ export default {
   }
 } as Meta<typeof RadioGroup>;
 
-export type RadioGroupStory = StoryFn<typeof RadioGroup>;
+export type RadioGroupStory = StoryObj<typeof RadioGroup>;
 
-export const Default: RadioGroupStory = args => render(args);
-
-Default.story = {
+export const Default: RadioGroupStory = {
+  render: args => render(args),
   name: 'default'
 };
 
-export const DefaultValueDragons: RadioGroupStory = args =>
-  render({...args, defaultValue: 'dragons'});
-
-DefaultValueDragons.story = {
+export const DefaultValueDragons: RadioGroupStory = {
+  render: args => render({...args, defaultValue: 'dragons'}),
   name: 'defaultValue: dragons'
 };
 
-export const ControlledDragons: RadioGroupStory = args => render({...args, value: 'dragons'});
-
-ControlledDragons.story = {
+export const ControlledDragons: RadioGroupStory = {
+  render: args => render({...args, value: 'dragons'}),
   name: 'controlled: dragons'
 };
 
-export const IsDisabledOnOneRadio: RadioGroupStory = args =>
-  render(args, [{}, {isDisabled: true}, {}]);
-
-IsDisabledOnOneRadio.story = {
+export const IsDisabledOnOneRadio: RadioGroupStory = {
+  render: args => render(args, [{}, {isDisabled: true}, {}]),
   name: 'isDisabled on one radio'
 };
 
-export const WithDescription: RadioGroupStory = args =>
-  render({...args, description: 'Please select a pet.'});
-
-WithDescription.story = {
+export const WithDescription: RadioGroupStory = {
+  render: args => render({...args, description: 'Please select a pet.'}),
   name: 'with description'
 };
 
-export const WithErrorMessage: RadioGroupStory = args =>
-  render({...args, errorMessage: 'Please select a pet.', isInvalid: true});
-
-WithErrorMessage.story = {
+export const WithErrorMessage: RadioGroupStory = {
+  render: args => render({...args, errorMessage: 'Please select a pet.', isInvalid: true}),
   name: 'with error message'
 };
 
-export const WithErrorMessageAndErrorIcon: RadioGroupStory = args =>
-  render({
-    ...args,
-    errorMessage: 'Please select a pet.',
-    isInvalid: true,
-    showErrorIcon: true
-  });
-
-WithErrorMessageAndErrorIcon.story = {
+export const WithErrorMessageAndErrorIcon: RadioGroupStory = {
+  render: args =>
+    render({
+      ...args,
+      errorMessage: 'Please select a pet.',
+      isInvalid: true,
+      showErrorIcon: true
+    }),
   name: 'with error message and error icon'
 };
 
-export const WithDescriptionErrorMessageAndValidationFixedWidth: RadioGroupStory = args =>
-  renderWithDescriptionErrorMessageAndValidation(args);
-
-WithDescriptionErrorMessageAndValidationFixedWidth.story = {
+export const WithDescriptionErrorMessageAndValidationFixedWidth: RadioGroupStory = {
+  render: args => renderWithDescriptionErrorMessageAndValidation(args),
   name: 'with description, error message and validation, fixed width'
 };
 
-export const _ContextualHelp: RadioGroupStory = args =>
-  render({
-    ...args,
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>
-          Segments identify who your visitors are, what devices and services they use, where they
-          navigated from, and much more.
-        </Content>
-      </ContextualHelp>
-    )
-  });
-
-_ContextualHelp.story = {
+export const _ContextualHelp: RadioGroupStory = {
+  render: args =>
+    render({
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    }),
   name: 'contextual help'
 };
 
-export const NoVisibleLabel: RadioGroupStory = args =>
-  render({...args, label: null, 'aria-label': 'Favorite pet'});
-
-NoVisibleLabel.story = {
+export const NoVisibleLabel: RadioGroupStory = {
+  render: args => render({...args, label: null, 'aria-label': 'Favorite pet'}),
   name: 'no visible label'
 };
 
-export const LongRadioLabel: RadioGroupStory = args => renderLongLabel(args);
-
-LongRadioLabel.story = {
+export const LongRadioLabel: RadioGroupStory = {
+  render: args => renderLongLabel(args),
   name: 'long radio label'
 };
 
-export const ProviderControlIsDisabled: RadioGroupStory = () => renderFormControl();
-
-ProviderControlIsDisabled.story = {
+export const ProviderControlIsDisabled: RadioGroupStory = {
+  render: () => renderFormControl(),
   name: 'provider control: isDisabled'
 };
 
-export const AutoFocusOnOneRadio: RadioGroupStory = args =>
-  render(args, [{}, {autoFocus: true}, {}]);
-
-AutoFocusOnOneRadio.story = {
+export const AutoFocusOnOneRadio: RadioGroupStory = {
+  render: args => render(args, [{}, {autoFocus: true}, {}]),
   name: 'autoFocus on one radio'
 };
 
@@ -246,26 +226,26 @@ function renderWithDescriptionErrorMessageAndValidation(props) {
   return <Example />;
 }
 
-export const ControlledRovingTab: RadioGroupStory = () => {
-  const [selected, setSelected] = useState('1');
+export const ControlledRovingTab: RadioGroupStory = {
+  render: function ControlledRovingTab() {
+    const [selected, setSelected] = useState('1');
 
-  return (
-    <Flex direction="column" gap="16px" alignItems="center" margin="16px">
-      <Button variant="primary" onPress={() => setSelected('2')}>
-        Make it "Two"
-      </Button>
-      <RadioGroup label="Lucky number? (controlled)" value={selected} onChange={setSelected}>
-        <Radio value="1">One</Radio>
-        <Radio value="2">Two</Radio>
-        <Radio value="3">Three</Radio>
-        <Radio value="4">Four</Radio>
-      </RadioGroup>
-      <Button variant="primary" onPress={() => setSelected('3')}>
-        Make it "Three"
-      </Button>
-    </Flex>
-  );
-};
-ControlledRovingTab.story = {
+    return (
+      <Flex direction="column" gap="16px" alignItems="center" margin="16px">
+        <Button variant="primary" onPress={() => setSelected('2')}>
+          Make it "Two"
+        </Button>
+        <RadioGroup label="Lucky number? (controlled)" value={selected} onChange={setSelected}>
+          <Radio value="1">One</Radio>
+          <Radio value="2">Two</Radio>
+          <Radio value="3">Three</Radio>
+          <Radio value="4">Four</Radio>
+        </RadioGroup>
+        <Button variant="primary" onPress={() => setSelected('3')}>
+          Make it "Three"
+        </Button>
+      </Flex>
+    );
+  },
   name: 'controlled roving tab'
 };

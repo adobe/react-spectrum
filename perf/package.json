@@ -1,0 +1,11 @@
+{
+  "name": "react-aria-local-benchmarks",
+  "private": true,
+  "dependencies": {
+    "@parcel/core": "^2.16.3",
+    "playwright": "^1.45.3",
+    "react": "^19.3.0",
+    "react-aria-components": "1.22.1",
+    "react-dom": "^19.3.0"
+  }
+}

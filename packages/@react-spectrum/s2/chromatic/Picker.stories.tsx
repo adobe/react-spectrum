@@ -105,6 +105,23 @@ export const ContextualHelp: Story = {
   }
 };
 
+export const WithLoadMore: Story = {
+  render: () => (
+    <Picker label="Loading more" loadingState="loadingMore">
+      <PickerItem>Chocolate</PickerItem>
+      <PickerItem>Mint</PickerItem>
+      <PickerItem>Strawberry</PickerItem>
+    </Picker>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let listbox = await within(body).findByRole('listbox');
+    await within(listbox).findByRole('progressbar', {hidden: true});
+  }
+};
+
 export const EmptyAndLoading: Story = {
   render: () => (
     <Picker label="loading" loadingState="loading">

@@ -236,6 +236,9 @@ const bg = css(`
   }
 `);
 
+/**
+ * An AIButton triggers an AI-powered action with a customizable branded appearance.
+ */
 export function AIButton({size = 'M', brandColor, children, ...otherProps}: AIButtonProps) {
   let ref = useRef<HTMLButtonElement | null>(null);
   return (

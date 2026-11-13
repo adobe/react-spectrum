@@ -19,9 +19,29 @@ This repo does **not** use the conventional JS toolchain — use these, don't sw
 - **Don't run `yarn chromatic` / `yarn chromatic:forced-colors`** — maintainers run the VRT suites.
 - All commonly used commands live in the root `package.json` scripts.
 
+## Visual verification with Storybook and docs
+
+When you need to inspect a component or verify a visual/interaction change, use the Parcel 3 development commands. They start much faster than their non-Parcel-3 counterparts:
+
+- **React Spectrum v3 / React Aria Components Storybook:** `yarn start-parcel3` → <http://localhost:9003/>
+- **Spectrum 2 Storybook:** `yarn start:s2-parcel3` → <http://localhost:6006/>
+- **Spectrum 2 and React Aria docs:** `yarn start:s2-docs-parcel3` → <http://localhost:1234/>. Source pages map directly to extensionless routes, for example <http://localhost:1234/s2/Accordion> and <http://localhost:1234/react-aria/Button>.
+
+Prefer a Storybook story's isolation URL over the manager UI when verifying a specific example. It loads only the story canvas, which is faster and easier to inspect or automate:
+
+```text
+http://localhost:9003/iframe.html?id=accordion--default&viewMode=story
+http://localhost:6006/iframe.html?id=accordion--example&viewMode=story
+```
+
+Story IDs usually follow `<title>--<export-name>`, so use the obvious ID when it is clear. If the title/name is customized, the ID is uncertain, or the story does not render, look up the exact `id` in the relevant Storybook's `/index.json`. Filter the index locally instead of printing the whole file. Keep the URL quoted when passing it to a shell command because it contains `&`.
+
+Run only one of the Parcel 3 Storybooks at a time: both public Storybook servers use an internal Parcel server on port 3000. There is currently no Parcel 3 counterpart for the legacy React Spectrum docs command (`yarn start:docs`), so use that only when those legacy docs are specifically needed.
+
 ## Contributing
 
 - **Match the surrounding code** — follow the naming, structure, and patterns of neighboring files.
+- **Before committing** — run `yarn format <changed-file-paths>` to format the files you changed, and include the formatting fixes in your commit. Then run `yarn format:check` to verify formatting. CI runs this check as part of `yarn lint`.
 - **Commit format** — use conventional-commit prefixes (`fix:`, `feat:`, `chore:`, `docs:`) as seen in the git history.
 
 ## Filing GitHub issues
@@ -46,6 +66,7 @@ This repository uses GitHub issue **forms** defined in [`.github/ISSUE_TEMPLATE/
 Read the relevant file before starting that kind of work (other agents: read the file directly; Claude will surface it):
 
 - Writing or running tests → [`docs/contributing/testing.md`](docs/contributing/testing.md)
+- Performance-sensitive changes, performance investigations, or benchmark harness updates → [`perf/README.md`](perf/README.md)
 - Tooling details (format/lint/type-check/build, Storybook, workspaces) → [`docs/contributing/tooling.md`](docs/contributing/tooling.md)
 - Styling S2 components → [`docs/contributing/s2-styling.md`](docs/contributing/s2-styling.md)
 - Adding user-facing strings → [`docs/contributing/i18n-strings.md`](docs/contributing/i18n-strings.md)

@@ -42,7 +42,8 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonStyleProps {
   /**
-   * The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button.
+   * The [visual style](https://spectrum.adobe.com/web/rsp/components/button#component-options) of
+   * the button.
    *
    * @default 'primary'
    */

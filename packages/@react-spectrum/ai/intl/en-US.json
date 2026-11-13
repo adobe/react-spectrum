@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "New message",
   "chat.scrollToBottom": "Scroll to bottom",
   "messagefeedback.thumbDown": "Bad response",
@@ -12,9 +16,11 @@
   "promptfield.aiDisclaimer": "Responses are generated using AI, and may be inaccurate. Check before using.",
   "promptfield.aiUserGuidlines": "AI User Guidelines",
   "promptfield.attachments": "Attachments",
-  "promptfield.label": "Prompt",
-  "promptfield.stopButton": "Stop",
-  "promptfield.submitButton": "Send",
+  "promptfield.label": "AI Prompt",
+  "promptfield.stopButton": "Stop AI prompt",
+  "promptfield.submitButton": "Submit AI prompt",
   "promptfield.insertButton": "Add",
-  "promptfield.uploading": "Uploading"
+  "promptfield.uploading": "Uploading",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

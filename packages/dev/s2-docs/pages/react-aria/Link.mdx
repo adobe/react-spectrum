@@ -38,23 +38,25 @@ export const description = 'Allows a user to navigate to another page or resourc
 
 By default, links with an `href` are handled by the browser as regular page navigations. To integrate with a client side router, use the `render` prop to delegate to your router's link component. This supports features like prefetching on hover and avoids full page reloads.
 
-```tsx
-import {Link} from 'react-aria-components/Link';
-import NextLink from 'next/link';
+<ExampleSwitcher type="framework" examples={['Next.js', 'React Router']}>
+  ```tsx
+  import {Link} from 'react-aria-components/Link';
+  import NextLink from 'next/link';
 
-<Link href="/about" render={props => <NextLink {...props} />}>
-  About
-</Link>
-```
+  <Link href="/about" render={props => <NextLink {...props} />}>
+    About
+  </Link>
+  ```
 
-```tsx
-import {Link} from 'react-aria-components/Link';
-import {Link as RouterLink} from 'react-router';
+  ```tsx
+  import {Link} from 'react-aria-components/Link';
+  import {Link as RouterLink} from 'react-router';
 
-<Link href="/about" render={props => <RouterLink {...props} to={props.href} />}>
-  About
-</Link>
-```
+  <Link href="/about" render={props => <RouterLink {...props} to={props.href} />}>
+    About
+  </Link>
+  ```
+</ExampleSwitcher>
 
 See the [customization](customization#dom-elements) guide for more details on the `render` prop.
 

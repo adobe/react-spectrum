@@ -348,6 +348,244 @@ describe('Dialog', () => {
     expect(modal).not.toBeInTheDocument();
   });
 
+  describe('onEnter and onExit', () => {
+    beforeEach(() => {
+      // jsdom skips enter and exit animations unless getAnimations is implemented.
+      Element.prototype.getAnimations = () => [];
+    });
+
+    afterEach(() => {
+      delete Element.prototype.getAnimations;
+    });
+
+    function deferred() {
+      let resolve;
+      let promise = new Promise(r => (resolve = r));
+      return {promise, resolve};
+    }
+
+    function TestModal({overlayProps = {}, modalProps = {}}) {
+      return (
+        <DialogTrigger>
+          <Button>Open</Button>
+          <ModalOverlay data-testid="overlay" {...overlayProps}>
+            <Modal data-testid="modal" {...modalProps}>
+              <Dialog aria-label="Modal">
+                <Button slot="close">Close</Button>
+              </Dialog>
+            </Modal>
+          </ModalOverlay>
+        </DialogTrigger>
+      );
+    }
+
+    it('calls onEnter on ModalOverlay and Modal with their elements when opening', async () => {
+      let onOverlayEnter = jest.fn();
+      let onModalEnter = jest.fn();
+      let {getByRole, getByTestId} = render(
+        <TestModal overlayProps={{onEnter: onOverlayEnter}} modalProps={{onEnter: onModalEnter}} />
+      );
+
+      expect(onOverlayEnter).not.toHaveBeenCalled();
+      expect(onModalEnter).not.toHaveBeenCalled();
+
+      await user.click(getByRole('button'));
+
+      let overlay = getByTestId('overlay');
+      let modal = getByTestId('modal');
+      expect(onOverlayEnter).toHaveBeenCalledTimes(1);
+      expect(onOverlayEnter).toHaveBeenCalledWith(overlay);
+      expect(onModalEnter).toHaveBeenCalledTimes(1);
+      expect(onModalEnter).toHaveBeenCalledWith(modal);
+
+      // Synchronous callbacks complete the entry immediately.
+      expect(overlay).not.toHaveAttribute('data-entering');
+      expect(modal).not.toHaveAttribute('data-entering');
+    });
+
+    it('remains entering until the promise returned by ModalOverlay onEnter resolves', async () => {
+      let {promise, resolve} = deferred();
+      let onEnter = jest.fn(() => promise);
+      let {getByRole, getByTestId} = render(<TestModal overlayProps={{onEnter}} />);
+
+      await user.click(getByRole('button'));
+
+      let overlay = getByTestId('overlay');
+      expect(onEnter).toHaveBeenCalledTimes(1);
+      expect(overlay).toHaveAttribute('data-entering');
+      expect(getByTestId('modal')).not.toHaveAttribute('data-entering');
+
+      await act(async () => resolve());
+      expect(overlay).not.toHaveAttribute('data-entering');
+      expect(onEnter).toHaveBeenCalledTimes(1);
+    });
+
+    it('remains entering until the promise returned by Modal onEnter resolves', async () => {
+      let {promise, resolve} = deferred();
+      let onEnter = jest.fn(() => promise);
+      let {getByRole, getByTestId} = render(<TestModal modalProps={{onEnter}} />);
+
+      await user.click(getByRole('button'));
+
+      let modal = getByTestId('modal');
+      expect(onEnter).toHaveBeenCalledTimes(1);
+      expect(modal).toHaveAttribute('data-entering');
+      expect(getByTestId('overlay')).not.toHaveAttribute('data-entering');
+
+      await act(async () => resolve());
+      expect(modal).not.toHaveAttribute('data-entering');
+      expect(onEnter).toHaveBeenCalledTimes(1);
+    });
+
+    it('calls onExit on ModalOverlay and Modal with their elements when closing', async () => {
+      let onOverlayExit = jest.fn();
+      let onModalExit = jest.fn();
+      let {getByRole, getByTestId, queryByTestId} = render(
+        <TestModal overlayProps={{onExit: onOverlayExit}} modalProps={{onExit: onModalExit}} />
+      );
+
+      await user.click(getByRole('button'));
+      let overlay = getByTestId('overlay');
+      let modal = getByTestId('modal');
+      expect(onOverlayExit).not.toHaveBeenCalled();
+      expect(onModalExit).not.toHaveBeenCalled();
+
+      await user.click(getByRole('button', {name: 'Close'}));
+
+      expect(onOverlayExit).toHaveBeenCalledTimes(1);
+      expect(onOverlayExit).toHaveBeenCalledWith(overlay);
+      expect(onModalExit).toHaveBeenCalledTimes(1);
+      expect(onModalExit).toHaveBeenCalledWith(modal);
+
+      // Synchronous callbacks complete the exit immediately.
+      expect(queryByTestId('overlay')).toBeNull();
+    });
+
+    it('remains mounted until the promise returned by ModalOverlay onExit resolves', async () => {
+      let {promise, resolve} = deferred();
+      let onExit = jest.fn(() => promise);
+      let {getByRole, getByTestId} = render(<TestModal overlayProps={{onExit}} />);
+
+      await user.click(getByRole('button'));
+      let overlay = getByTestId('overlay');
+      let modal = getByTestId('modal');
+
+      await user.click(getByRole('button', {name: 'Close'}));
+      expect(onExit).toHaveBeenCalledTimes(1);
+      expect(onExit).toHaveBeenCalledWith(overlay);
+      expect(overlay).toBeInTheDocument();
+      expect(overlay).toHaveAttribute('data-exiting');
+      expect(modal).toHaveAttribute('data-exiting');
+
+      await act(async () => resolve());
+      expect(overlay).not.toBeInTheDocument();
+      expect(onExit).toHaveBeenCalledTimes(1);
+    });
+
+    it('remains mounted until the promise returned by Modal onExit resolves', async () => {
+      let {promise, resolve} = deferred();
+      let onExit = jest.fn(() => promise);
+      let {getByRole, getByTestId} = render(<TestModal modalProps={{onExit}} />);
+
+      await user.click(getByRole('button'));
+      let overlay = getByTestId('overlay');
+      let modal = getByTestId('modal');
+
+      await user.click(getByRole('button', {name: 'Close'}));
+      expect(onExit).toHaveBeenCalledTimes(1);
+      expect(onExit).toHaveBeenCalledWith(modal);
+      expect(overlay).toBeInTheDocument();
+      expect(overlay).toHaveAttribute('data-exiting');
+      expect(modal).toHaveAttribute('data-exiting');
+
+      await act(async () => resolve());
+      expect(overlay).not.toBeInTheDocument();
+      expect(onExit).toHaveBeenCalledTimes(1);
+    });
+
+    it('waits for both ModalOverlay and Modal onExit promises before unmounting', async () => {
+      let overlayExit = deferred();
+      let modalExit = deferred();
+      let {getByRole, getByTestId} = render(
+        <TestModal
+          overlayProps={{onExit: () => overlayExit.promise}}
+          modalProps={{onExit: () => modalExit.promise}}
+        />
+      );
+
+      await user.click(getByRole('button'));
+      let overlay = getByTestId('overlay');
+
+      await user.click(getByRole('button', {name: 'Close'}));
+      await act(async () => overlayExit.resolve());
+      expect(overlay).toBeInTheDocument();
+      expect(overlay).toHaveAttribute('data-exiting');
+
+      await act(async () => modalExit.resolve());
+      expect(overlay).not.toBeInTheDocument();
+    });
+
+    it('calls the latest onEnter and onExit callbacks', async () => {
+      let enterPromise = deferred();
+      let exitPromise = deferred();
+      let initialEnter = jest.fn(() => enterPromise.promise);
+      let initialExit = jest.fn(() => exitPromise.promise);
+      let {getByRole, getByTestId, queryByTestId, rerender} = render(
+        <TestModal modalProps={{onEnter: initialEnter, onExit: initialExit}} />
+      );
+
+      await user.click(getByRole('button'));
+      expect(initialEnter).toHaveBeenCalledTimes(1);
+
+      // Re-rendering during the entry does not restart it.
+      let onEnter = jest.fn();
+      let onExit = jest.fn();
+      rerender(<TestModal modalProps={{onEnter, onExit}} />);
+      expect(onEnter).not.toHaveBeenCalled();
+      expect(getByTestId('modal')).toHaveAttribute('data-entering');
+
+      await act(async () => enterPromise.resolve());
+      expect(getByTestId('modal')).not.toHaveAttribute('data-entering');
+
+      await user.click(getByRole('button', {name: 'Close'}));
+      expect(initialExit).not.toHaveBeenCalled();
+      expect(onExit).toHaveBeenCalledTimes(1);
+      expect(queryByTestId('overlay')).toBeNull();
+    });
+
+    it('supports onEnter and onExit on a standalone Modal', async () => {
+      let enter = deferred();
+      let exit = deferred();
+      let onEnter = jest.fn(() => enter.promise);
+      let onExit = jest.fn(() => exit.promise);
+      function StandaloneModal(props) {
+        return (
+          <Modal data-testid="modal" onEnter={onEnter} onExit={onExit} {...props}>
+            <Dialog aria-label="Modal">A modal</Dialog>
+          </Modal>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<StandaloneModal isOpen />);
+      let modal = getByTestId('modal');
+      expect(onEnter).toHaveBeenCalledTimes(1);
+      expect(onEnter).toHaveBeenCalledWith(modal);
+      expect(modal).toHaveAttribute('data-entering');
+
+      await act(async () => enter.resolve());
+      expect(modal).not.toHaveAttribute('data-entering');
+
+      rerender(<StandaloneModal isOpen={false} />);
+      expect(onExit).toHaveBeenCalledTimes(1);
+      expect(onExit).toHaveBeenCalledWith(modal);
+      expect(modal).toBeInTheDocument();
+      expect(modal).toHaveAttribute('data-exiting');
+
+      await act(async () => exit.resolve());
+      expect(modal).not.toBeInTheDocument();
+    });
+  });
+
   describe('portalProvider', () => {
     function InfoDialog() {
       return (

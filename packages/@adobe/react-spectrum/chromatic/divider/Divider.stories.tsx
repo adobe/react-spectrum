@@ -14,7 +14,7 @@ import {ActionButton} from '../../src/button/ActionButton';
 import Copy from '@spectrum-icons/workflow/Copy';
 import {Divider} from '../../src/divider/Divider';
 import Edit from '@spectrum-icons/workflow/Edit';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import Properties from '@spectrum-icons/workflow/Properties';
 import React from 'react';
 import Select from '@spectrum-icons/workflow/Select';
@@ -23,36 +23,40 @@ export default {
   title: 'Divider'
 } as Meta<typeof Divider>;
 
-export type DividerStory = StoryFn<typeof Divider>;
+export type DividerStory = StoryObj<typeof Divider>;
 
-export const Horizontal: DividerStory = () => (
-  <section>
-    <h1>Large</h1>
-    <Divider />
-    <p>Page or Section Titles.</p>
-    <Divider size="M" />
-    <p>Divide subsections or groups of elements.</p>
-    <Divider size="S" />
-    <p>Divide like-elements.</p>
-  </section>
-);
+export const Horizontal: DividerStory = {
+  render: () => (
+    <section>
+      <h1>Large</h1>
+      <Divider />
+      <p>Page or Section Titles.</p>
+      <Divider size="M" />
+      <p>Divide subsections or groups of elements.</p>
+      <Divider size="S" />
+      <p>Divide like-elements.</p>
+    </section>
+  )
+};
 
-export const Vertical: DividerStory = () => (
-  <section style={{display: 'flex'}}>
-    <ActionButton aria-label="Properties" isQuiet>
-      <Properties />
-    </ActionButton>
-    <Divider orientation="vertical" />
-    <ActionButton aria-label="Select" isQuiet>
-      <Select />
-    </ActionButton>
-    <Divider orientation="vertical" size="M" />
-    <ActionButton aria-label="Edit" isQuiet>
-      <Edit />
-    </ActionButton>
-    <Divider orientation="vertical" size="S" />
-    <ActionButton aria-label="Copy" isQuiet>
-      <Copy />
-    </ActionButton>
-  </section>
-);
+export const Vertical: DividerStory = {
+  render: () => (
+    <section style={{display: 'flex'}}>
+      <ActionButton aria-label="Properties" isQuiet>
+        <Properties />
+      </ActionButton>
+      <Divider orientation="vertical" />
+      <ActionButton aria-label="Select" isQuiet>
+        <Select />
+      </ActionButton>
+      <Divider orientation="vertical" size="M" />
+      <ActionButton aria-label="Edit" isQuiet>
+        <Edit />
+      </ActionButton>
+      <Divider orientation="vertical" size="S" />
+      <ActionButton aria-label="Copy" isQuiet>
+        <Copy />
+      </ActionButton>
+    </section>
+  )
+};

@@ -1303,6 +1303,7 @@ export const style = createTheme({
       'zoom-out'
     ] as const,
     resize: ['none', 'vertical', 'horizontal', 'both'] as const,
+    scrollbarGutter: ['auto', 'stable', 'stable both-edges'] as const,
     scrollSnapType: ['x', 'y', 'both', 'x mandatory', 'y mandatory', 'both mandatory'] as const,
     scrollSnapAlign: ['start', 'end', 'center', 'none'] as const,
     scrollSnapStop: ['normal', 'always'] as const,

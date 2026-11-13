@@ -121,7 +121,7 @@ export function useColorAreaGradient({
       x = 1 - x;
     }
 
-    let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'};
+    let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'} as const;
 
     return {
       colorAreaStyleProps: {

@@ -12,9 +12,15 @@
 
 import {FocusableElement} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
-import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
-import {getOwnerWindow, isShadowRoot} from '../utils/domHelpers';
+import {
+  getActiveElement,
+  getEventTarget,
+  getParentElement,
+  nodeContains
+} from '../utils/shadowdom/DOMFunctions';
+import {getOwnerWindow} from '../utils/domHelpers';
 import {isFocusable} from '../utils/isFocusable';
+import {isNode, isShadowRoot} from '../utils/typeHelpers';
 import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
@@ -121,7 +127,7 @@ export let ignoreFocusEvent = false;
 export function preventFocus(target: FocusableElement | null): (() => void) | undefined {
   // The browser will focus the nearest focusable ancestor of our target.
   while (target && !isFocusable(target, {skipVisibilityCheck: true})) {
-    target = target.parentElement;
+    target = getParentElement(target) as FocusableElement | null;
   }
 
   let ownerWindow = getOwnerWindow(target);
@@ -138,12 +144,12 @@ export function preventFocus(target: FocusableElement | null): (() => void) | un
   // Focus is "moving to target" when it moves to the button or to a descendant of the button
   // (e.g. SVG icon)
   let isFocusMovingToTarget = (focusTarget: Element | null) =>
-    focusTarget === target || (focusTarget != null && nodeContains(target, focusTarget));
+    focusTarget === target || (isNode(focusTarget) && nodeContains(target, focusTarget));
   // Blur/focusout events have their target as the element losing focus. Stop propagation when
   // that is the previously focused element (activeElement) or a descendant (e.g. in shadow DOM).
   let isBlurFromActiveElement = (eventTarget: Element | null) =>
     eventTarget === activeElement ||
-    (activeElement != null && eventTarget != null && nodeContains(activeElement, eventTarget));
+    (activeElement != null && isNode(eventTarget) && nodeContains(activeElement, eventTarget));
 
   ignoreFocusEvent = true;
   let isRefocusing = false;

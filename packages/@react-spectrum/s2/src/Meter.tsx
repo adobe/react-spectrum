@@ -26,7 +26,8 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface MeterStyleProps {
   /**
-   * The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter.
+   * The [visual style](https://spectrum.adobe.com/web/rsp/components/meter#component-options) of
+   * the Meter.
    *
    * @default 'informative'
    */

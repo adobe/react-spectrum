@@ -15,6 +15,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-1);
+  flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
 
   > svg {

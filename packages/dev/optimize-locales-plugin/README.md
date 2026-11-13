@@ -1,6 +1,6 @@
 # @react-aria/optimize-locales-plugin
 
-A build plugin to optimize React Aria to only include translated strings for locales that your app supports. It currently supports Vite, Rollup, Webpack, and esbuild via [unplugin](https://github.com/unjs/unplugin). For Parcel, please use `@react-aria/parcel-resolver-optimize-locales`.
+A build plugin to optimize React Aria to only include translated strings for locales that your app supports. It currently supports Vite, Rollup, Webpack, and esbuild via [unplugin](https://github.com/unjs/unplugin), as well as Turbopack via a webpack loader. For Parcel, please use `@react-aria/parcel-resolver-optimize-locales`.
 
 ## Configuration
 
@@ -38,6 +38,55 @@ module.exports = {
     return config;
   }
 };
+```
+
+When using Turbopack, spread the plugin's rules into the existing `turbopack.rules` configuration.
+This requires Next.js 15.4 or newer, because the rule matches files using glob syntax that earlier
+versions of Turbopack do not implement.
+
+```ts
+// next.config.ts
+import type {NextConfig} from 'next';
+import optimizeLocales from '@react-aria/optimize-locales-plugin';
+
+const localeOptimization = optimizeLocales.turbopack({
+  locales: ['en-US', 'fr-FR']
+});
+
+const config: NextConfig = {
+  turbopack: {
+    rules: {
+      '*.css': {
+        loaders: ['@tailwindcss/turbopack'],
+        as: '*.css'
+      },
+      ...localeOptimization.rules
+    }
+  }
+};
+
+export default config;
+```
+
+The object form above includes the configured locales in every module graph. This is useful when
+the application relies on the locale strings bundled with React Aria components.
+
+On Next.js 16 and newer, where Turbopack supports loader conditions, an array can be provided to
+configure different locales for individual module graphs. For example, when using `LocalizedStringProvider`, keep the supported
+locales on the server and exclude them from the browser bundle because the provider injects the
+current locale's strings into the initial HTML:
+
+```ts
+const localeOptimization = optimizeLocales.turbopack([
+  {
+    locales: [],
+    condition: 'browser'
+  },
+  {
+    locales: ['en-US', 'fr-FR'],
+    condition: {not: 'browser'}
+  }
+]);
 ```
 
 ### Vite

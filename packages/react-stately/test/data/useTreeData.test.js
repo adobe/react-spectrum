@@ -47,6 +47,66 @@ describe('useTreeData', function () {
     expect(result.current.selectedKeys).toEqual(new Set(['John', 'Stacy']));
   });
 
+  describe.each([0, ''])('with parent key %p', parentKey => {
+    let initialItems;
+    beforeEach(() => {
+      initialItems = [
+        {id: 'root', children: [{id: parentKey, children: [{id: 'child', name: 'Before'}]}]}
+      ];
+    });
+
+    it('should update a descendant throughout the tree', () => {
+      let {result} = renderHook(() => useTreeData({initialItems}));
+      let previousItems = result.current.items;
+      act(() => {
+        result.current.update('child', {id: 'child', name: 'After'});
+      });
+
+      let parent = result.current.items[0].children[0];
+      expect(parent.children[0].value.name).toBe('After');
+      expect(parent).toBe(result.current.getItem(parentKey));
+      expect(parent.children[0]).toBe(result.current.getItem('child'));
+      expect(previousItems[0].children[0].children[0].value.name).toBe('Before');
+    });
+
+    it('should remove a descendant throughout the tree and clear its selection', () => {
+      let {result} = renderHook(() => useTreeData({initialItems, initialSelectedKeys: ['child']}));
+      act(() => {
+        result.current.remove('child');
+      });
+
+      let parent = result.current.items[0].children[0];
+      expect(parent.children).toEqual([]);
+      expect(parent).toBe(result.current.getItem(parentKey));
+      expect(result.current.getItem('child')).toBeUndefined();
+      expect(result.current.selectedKeys).toEqual(new Set());
+    });
+
+    it('should insert into a descendant throughout the tree', () => {
+      let {result} = renderHook(() => useTreeData({initialItems}));
+      act(() => {
+        result.current.append('child', {id: 'grandchild'});
+      });
+
+      let child = result.current.items[0].children[0].children[0];
+      expect(child.children.map(node => node.key)).toEqual(['grandchild']);
+      expect(child).toBe(result.current.getItem('child'));
+      expect(child.children[0]).toBe(result.current.getItem('grandchild'));
+    });
+
+    it('should move a descendant to the root without leaving it in its old parent', () => {
+      let {result} = renderHook(() => useTreeData({initialItems}));
+      act(() => {
+        result.current.move('child', null, 1);
+      });
+
+      expect(result.current.items.map(node => node.key)).toEqual(['root', 'child']);
+      expect(result.current.items[0].children[0].children).toEqual([]);
+      expect(result.current.items[1]).toBe(result.current.getItem('child'));
+      expect(result.current.items[1].parentKey).toBeNull();
+    });
+  });
+
   it('should get a node by key', function () {
     let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
     expect(result.current.getItem('Sam').value).toBe(initial[0].children[1]);
@@ -903,7 +963,7 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0].children.length).toEqual(3);
   });
 
-  describe('moveBefore error', function () {
+  describe('move errors', function () {
     const consoleError = console.error;
     beforeEach(() => {
       console.error = jest.fn();
@@ -913,15 +973,50 @@ describe('useTreeData', function () {
       console.error = consoleError;
     });
 
-    it('cannot move an item within itself', function () {
-      const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
-
-      let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
-      try {
-        act(() => result.current.moveBefore('Suzie', ['John', 'Sam', 'Eli']));
-      } catch (e) {
-        expect(e.toString()).toContain('Cannot move an item to be a child of itself.');
+    let reactMajor = parseInt(React.version, 10);
+    let expectMoveError = (result, action) => {
+      if (reactMajor >= 18) {
+        expect(() => act(action)).toThrow('Cannot move an item to be a child of itself.');
+      } else {
+        act(action);
+        expect(result.error?.message).toContain('Cannot move an item to be a child of itself.');
       }
+    };
+
+    it('cannot move an item before a child inside itself', function () {
+      const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+      let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
+      expectMoveError(result, () => result.current.moveBefore('Suzie', ['John', 'Sam', 'Eli']));
+    });
+
+    it('cannot move a root-level item before any of its children', function () {
+      const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+      let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
+      expectMoveError(result, () => result.current.moveBefore('Suzie', ['David']));
+    });
+
+    it('cannot move an item after a child inside itself', function () {
+      const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+      let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
+      expectMoveError(result, () => result.current.moveAfter('Suzie', ['John']));
+    });
+
+    it('cannot move a root-level item after any of its children', function () {
+      const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+      let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
+      expectMoveError(result, () => result.current.moveAfter('Suzie', ['David']));
+    });
+
+    it('cannot move an item into itself', function () {
+      const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+      let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
+      expectMoveError(result, () => result.current.move('John', 'Suzie', 0));
+    });
+
+    it('cannot move a root-level item into itself', function () {
+      const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+      let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
+      expectMoveError(result, () => result.current.move('David', 'Suzie', 0));
     });
   });
 

@@ -17,205 +17,170 @@ import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {Heading} from '../../src/text/Heading';
 import React from 'react';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 
 export default {
   title: 'CheckboxGroup'
 };
 
-export type CheckboxGroupStory = StoryFn<typeof CheckboxGroup>;
+export type CheckboxGroupStory = StoryObj<typeof CheckboxGroup>;
 
-export const Default: CheckboxGroupStory = () => render();
-export const DefaultValueDragons: CheckboxGroupStory = () => render({defaultValue: ['dragons']});
-
-DefaultValueDragons.story = {
+export const Default: CheckboxGroupStory = {
+  render: () => render()
+};
+export const DefaultValueDragons: CheckboxGroupStory = {
+  render: () => render({defaultValue: ['dragons']}),
   name: 'defaultValue: dragons'
 };
 
-export const LabelPositionSide: CheckboxGroupStory = () => render({labelPosition: 'side'});
-
-LabelPositionSide.story = {
+export const LabelPositionSide: CheckboxGroupStory = {
+  render: () => render({labelPosition: 'side'}),
   name: 'labelPosition: side'
 };
 
-export const LabelAlignEnd: CheckboxGroupStory = () => render({labelAlign: 'end'});
-
-LabelAlignEnd.story = {
+export const LabelAlignEnd: CheckboxGroupStory = {
+  render: () => render({labelAlign: 'end'}),
   name: 'labelAlign: end'
 };
 
-export const Horizontal: CheckboxGroupStory = () => render({orientation: 'horizontal'});
-
-Horizontal.story = {
+export const Horizontal: CheckboxGroupStory = {
+  render: () => render({orientation: 'horizontal'}),
   name: 'horizontal'
 };
 
-export const HorizontalLabelPositionSide: CheckboxGroupStory = () =>
-  render({orientation: 'horizontal', labelPosition: 'side'});
-
-HorizontalLabelPositionSide.story = {
+export const HorizontalLabelPositionSide: CheckboxGroupStory = {
+  render: () => render({orientation: 'horizontal', labelPosition: 'side'}),
   name: 'horizontal, labelPosition: side'
 };
 
-export const HorizontalLabelAlignEnd: CheckboxGroupStory = () =>
-  render({orientation: 'horizontal', labelAlign: 'end'});
-
-HorizontalLabelAlignEnd.story = {
+export const HorizontalLabelAlignEnd: CheckboxGroupStory = {
+  render: () => render({orientation: 'horizontal', labelAlign: 'end'}),
   name: 'horizontal, labelAlign: end'
 };
 
-export const IsDisabled: CheckboxGroupStory = () => render({isDisabled: true});
-
-IsDisabled.story = {
+export const IsDisabled: CheckboxGroupStory = {
+  render: () => render({isDisabled: true}),
   name: 'isDisabled'
 };
 
-export const IsDisabledOnOneCheckbox: CheckboxGroupStory = () =>
-  render({}, [{}, {isDisabled: true}, {}]);
-
-IsDisabledOnOneCheckbox.story = {
+export const IsDisabledOnOneCheckbox: CheckboxGroupStory = {
+  render: () => render({}, [{}, {isDisabled: true}, {}]),
   name: 'isDisabled on one checkbox'
 };
 
-export const IsDisabledTwoCheckboxesAndOneChecked: CheckboxGroupStory = () =>
-  render({defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}]);
-
-IsDisabledTwoCheckboxesAndOneChecked.story = {
+export const IsDisabledTwoCheckboxesAndOneChecked: CheckboxGroupStory = {
+  render: () => render({defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}]),
   name: 'isDisabled two checkboxes and one checked'
 };
 
-export const IsEmphasizedIsDisabledTwoCheckboxesAndOneChecked: CheckboxGroupStory = () =>
-  render({isEmphasized: true, defaultValue: ['dragons']}, [
-    {},
-    {isDisabled: true},
-    {isDisabled: true}
-  ]);
-
-IsEmphasizedIsDisabledTwoCheckboxesAndOneChecked.story = {
+export const IsEmphasizedIsDisabledTwoCheckboxesAndOneChecked: CheckboxGroupStory = {
+  render: () =>
+    render({isEmphasized: true, defaultValue: ['dragons']}, [
+      {},
+      {isDisabled: true},
+      {isDisabled: true}
+    ]),
   name: 'isEmphasized, isDisabled two checkboxes and one checked'
 };
 
-export const IsDisabledOnOneCheckboxHorizontal: CheckboxGroupStory = () =>
-  render({orientation: 'horizontal'}, [{}, {isDisabled: true}, {}]);
-
-IsDisabledOnOneCheckboxHorizontal.story = {
+export const IsDisabledOnOneCheckboxHorizontal: CheckboxGroupStory = {
+  render: () => render({orientation: 'horizontal'}, [{}, {isDisabled: true}, {}]),
   name: 'isDisabled on one checkbox horizontal'
 };
 
-export const IsRequired: CheckboxGroupStory = () => render({isRequired: true});
-
-IsRequired.story = {
+export const IsRequired: CheckboxGroupStory = {
+  render: () => render({isRequired: true}),
   name: 'isRequired'
 };
 
-export const IsRequiredNecessityIndicatorLabel: CheckboxGroupStory = () =>
-  render({isRequired: true, necessityIndicator: 'label'});
-
-IsRequiredNecessityIndicatorLabel.story = {
+export const IsRequiredNecessityIndicatorLabel: CheckboxGroupStory = {
+  render: () => render({isRequired: true, necessityIndicator: 'label'}),
   name: 'isRequired, necessityIndicator: label'
 };
 
-export const NecessityIndicatorLabelLabelPositionSide: CheckboxGroupStory = () =>
-  render({necessityIndicator: 'label', labelPosition: 'side'});
-
-NecessityIndicatorLabelLabelPositionSide.story = {
+export const NecessityIndicatorLabelLabelPositionSide: CheckboxGroupStory = {
+  render: () => render({necessityIndicator: 'label', labelPosition: 'side'}),
   name: 'necessityIndicator: label, labelPosition: side'
 };
 
-export const IsReadOnly: CheckboxGroupStory = () => render({isReadOnly: true});
-
-IsReadOnly.story = {
+export const IsReadOnly: CheckboxGroupStory = {
+  render: () => render({isReadOnly: true}),
   name: 'isReadOnly'
 };
 
-export const IsEmphasized: CheckboxGroupStory = () => render({isEmphasized: true});
-
-IsEmphasized.story = {
+export const IsEmphasized: CheckboxGroupStory = {
+  render: () => render({isEmphasized: true}),
   name: 'isEmphasized'
 };
 
-export const ValidationStateInvalid: CheckboxGroupStory = () => render({isInvalid: true});
-
-ValidationStateInvalid.story = {
+export const ValidationStateInvalid: CheckboxGroupStory = {
+  render: () => render({isInvalid: true}),
   name: 'validationState: "invalid"'
 };
 
-export const ValidationStateInvalidOnOneCheckbox: CheckboxGroupStory = () =>
-  render({}, [{}, {isInvalid: true}, {}]);
-
-ValidationStateInvalidOnOneCheckbox.story = {
+export const ValidationStateInvalidOnOneCheckbox: CheckboxGroupStory = {
+  render: () => render({}, [{}, {isInvalid: true}, {}]),
   name: 'validationState: "invalid" on one checkbox'
 };
 
-export const WithDescription: CheckboxGroupStory = () =>
-  render({description: 'Please select some pets.'});
-
-WithDescription.story = {
+export const WithDescription: CheckboxGroupStory = {
+  render: () => render({description: 'Please select some pets.'}),
   name: 'with description'
 };
 
-export const WithErrorMessage: CheckboxGroupStory = () =>
-  render({
-    errorMessage: 'Please select a valid combination of pets.',
-    isInvalid: true
-  });
-
-WithErrorMessage.story = {
+export const WithErrorMessage: CheckboxGroupStory = {
+  render: () =>
+    render({
+      errorMessage: 'Please select a valid combination of pets.',
+      isInvalid: true
+    }),
   name: 'with error message'
 };
 
-export const WithErrorMessageAndErrorIcon: CheckboxGroupStory = () =>
-  render({
-    errorMessage: 'Please select a valid combination of pets.',
-    isInvalid: true,
-    showErrorIcon: true
-  });
-
-WithErrorMessageAndErrorIcon.story = {
+export const WithErrorMessageAndErrorIcon: CheckboxGroupStory = {
+  render: () =>
+    render({
+      errorMessage: 'Please select a valid combination of pets.',
+      isInvalid: true,
+      showErrorIcon: true
+    }),
   name: 'with error message and error icon'
 };
 
-export const _ContextualHelp: CheckboxGroupStory = args =>
-  render({
-    ...args,
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>
-          Segments identify who your visitors are, what devices and services they use, where they
-          navigated from, and much more.
-        </Content>
-      </ContextualHelp>
-    )
-  });
-
-_ContextualHelp.story = {
+export const _ContextualHelp: CheckboxGroupStory = {
+  render: args =>
+    render({
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    }),
   name: 'contextual help'
 };
 
-export const NoVisibleLabel: CheckboxGroupStory = () => render({label: null, 'aria-label': 'Pets'});
-
-NoVisibleLabel.story = {
+export const NoVisibleLabel: CheckboxGroupStory = {
+  render: () => render({label: null, 'aria-label': 'Pets'}),
   name: 'no visible label'
 };
 
-export const AutoFocusOnOneCheckbox: CheckboxGroupStory = () =>
-  render({}, [{}, {autoFocus: true}, {}]);
-
-AutoFocusOnOneCheckbox.story = {
+export const AutoFocusOnOneCheckbox: CheckboxGroupStory = {
+  render: () => render({}, [{}, {autoFocus: true}, {}]),
   name: 'autoFocus on one checkbox'
 };
 
-export const FormName: CheckboxGroupStory = () => render({name: 'pets'});
-
-FormName.story = {
+export const FormName: CheckboxGroupStory = {
+  render: () => render({name: 'pets'}),
   name: 'form name'
 };
 
-export const ShowErrorIcon: CheckboxGroupStory = () =>
-  render({isInvalid: true, errorMessage: 'Error message.', showErrorIcon: true});
-
-ShowErrorIcon.story = {
+export const ShowErrorIcon: CheckboxGroupStory = {
+  render: () => render({isInvalid: true, errorMessage: 'Error message.', showErrorIcon: true}),
   name: 'show error icon'
 };
 

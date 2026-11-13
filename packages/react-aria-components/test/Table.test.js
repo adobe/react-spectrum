@@ -56,6 +56,7 @@ import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../src/Virtualizer';
 
 let {
+  DndTableExample,
   RenderEmptyStateStory: EmptyLoadingTable,
   TableLoadingBodyWrapperStory: LoadingMoreTable,
   TableCellColSpanWithVariousSpansExample: TableCellColSpan,
@@ -455,6 +456,69 @@ describe('Table', () => {
     jest.clearAllMocks();
   });
 
+  it('should restore focus to the associated dialog trigger inside a cell', async () => {
+    let tree = render(
+      <>
+        <button>Before</button>
+        <Table aria-label="Files" selectionMode="multiple">
+          <MyTableHeader>
+            <MyColumn id="name" isRowHeader>
+              Name
+            </MyColumn>
+            <MyColumn>Type</MyColumn>
+            <MyColumn>Date Modified</MyColumn>
+          </MyTableHeader>
+          <TableBody>
+            <MyRow id="1" textValue="Games">
+              <Cell>Games</Cell>
+              <Cell>File folder</Cell>
+              <Cell>
+                <DialogTrigger>
+                  <Button>Open 1</Button>
+                  <Modal>
+                    <Dialog>
+                      <Checkbox>
+                        <Label>Agree 1</Label>
+                      </Checkbox>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+                <DialogTrigger>
+                  <Button>Open 2</Button>
+                  <Modal>
+                    <Dialog>
+                      <Checkbox>
+                        <Label>Agree 2</Label>
+                      </Checkbox>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+                <DialogTrigger>
+                  <Button>Open 3</Button>
+                  <Modal>
+                    <Dialog>
+                      <Checkbox>
+                        <Label>Agree 3</Label>
+                      </Checkbox>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+              </Cell>
+            </MyRow>
+          </TableBody>
+        </Table>
+        <button>After</button>
+      </>
+    );
+    await user.click(tree.getByRole('button', {name: 'Open 2'}));
+    let dialog = tree.getByRole('dialog');
+    expect(document.activeElement).toBe(dialog);
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    expect(dialog).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(tree.getByRole('button', {name: 'Open 2'}));
+  });
+
   it('should render with default classes', () => {
     let {getByRole} = renderTable();
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
@@ -753,6 +817,116 @@ describe('Table', () => {
     await user.hover(column);
     expect(column).not.toHaveAttribute('data-hovered');
     expect(column).not.toHaveClass('hover');
+  });
+
+  describe('row focus events', () => {
+    it('should report row focus transitions using the keyboard', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let {getAllByRole, getByRole} = render(
+        <>
+          <button>Before</button>
+          <TestTable
+            rowProps={{
+              onFocus: e => onFocus(e.target),
+              onBlur: e => onBlur(e.target),
+              onFocusChange
+            }}
+          />
+          <button>After</button>
+        </>
+      );
+      let rows = getAllByRole('row').slice(1);
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      expect(rows[0]).toHaveAttribute('data-focused', 'true');
+      expect(rows[0]).toHaveAttribute('data-focus-visible', 'true');
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onFocus).toHaveBeenLastCalledWith(rows[0]);
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[1]);
+      expect(rows[0]).not.toHaveAttribute('data-focused');
+      expect(rows[0]).not.toHaveAttribute('data-focus-visible');
+      expect(rows[1]).toHaveAttribute('data-focused', 'true');
+      expect(rows[1]).toHaveAttribute('data-focus-visible', 'true');
+      expect(onFocus).toHaveBeenCalledTimes(2);
+      expect(onFocus).toHaveBeenLastCalledWith(rows[1]);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenLastCalledWith(rows[0]);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false], [true]]);
+
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'After'}));
+      expect(onBlur).toHaveBeenCalledTimes(2);
+      expect(onBlur).toHaveBeenLastCalledWith(rows[1]);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false], [true], [false]]);
+    });
+
+    it('should not report focus changes when a focused row rerenders', async () => {
+      let onFocusChange = jest.fn();
+      let {rerender, getAllByRole} = renderTable({rowProps: {onFocusChange}});
+      await user.tab();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+      rerender(<TestTable rowProps={{onFocusChange, 'aria-label': 'Updated row'}} />);
+      expect(document.activeElement).toBe(getAllByRole('row')[1]);
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+    });
+
+    it('should not report cell or descendant focus as row focus', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let {getByRole} = render(
+        <Table aria-label="Files">
+          <TableHeader>
+            <Column isRowHeader>Name</Column>
+            <Column>Actions</Column>
+          </TableHeader>
+          <TableBody>
+            <Row onFocus={onFocus} onBlur={onBlur} onFocusChange={onFocusChange}>
+              <Cell>Cat</Cell>
+              <Cell>
+                <Button>First action</Button>
+                <Button>Second action</Button>
+              </Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+      await user.tab();
+      let row = getByRole('row', {name: 'Cat'});
+      expect(document.activeElement).toBe(row);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('rowheader'));
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+
+      onFocus.mockClear();
+      onBlur.mockClear();
+      onFocusChange.mockClear();
+
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'First action'}));
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Second action'}));
+      expect(row).toHaveAttribute('data-focus-visible-within', 'true');
+      await user.click(getByRole('rowheader'));
+      expect(document.activeElement).toBe(getByRole('rowheader'));
+      expect(row).not.toHaveAttribute('data-focus-visible');
+      expect(onFocus).not.toHaveBeenCalled();
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange).not.toHaveBeenCalled();
+    });
   });
 
   it('should support hover', async () => {
@@ -1866,7 +2040,6 @@ describe('Table', () => {
     });
 
     it('support drop target keyboard navigation', async () => {
-      const DndTableExample = stories.DndTableExample;
       render(<DndTableExample />);
       await user.tab();
       await user.keyboard('{ArrowRight}');
@@ -1947,7 +2120,6 @@ describe('Table', () => {
     });
 
     it('should select dropped item', async () => {
-      const DndTableExample = stories.DndTableExample;
       let {getAllByRole} = render(<DndTableExample />);
       let tableTester = testUtilUser.createTester('Table', {root: getAllByRole('grid')[1]});
       expect(tableTester.getRows()).toHaveLength(7);
@@ -2361,6 +2533,37 @@ describe('Table', () => {
 
       expect(() => render(<StaticRowDynamicCell />)).toThrow(
         'No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.'
+      );
+    });
+
+    it('should throw an error if two rows share an id', () => {
+      function DuplicateRowIds() {
+        return (
+          <Table aria-label="Files">
+            <TableHeader>
+              <Column isRowHeader>Name</Column>
+              <Column>Type</Column>
+            </TableHeader>
+            <TableBody>
+              <Row id="1">
+                <Cell>Games</Cell>
+                <Cell>File folder</Cell>
+              </Row>
+              <Row id="1">
+                <Cell>Program Files</Cell>
+                <Cell>File folder</Cell>
+              </Row>
+              <Row id="2">
+                <Cell>bootmgr</Cell>
+                <Cell>System file</Cell>
+              </Row>
+            </TableBody>
+          </Table>
+        );
+      }
+
+      expect(() => render(<DuplicateRowIds />)).toThrow(
+        'Duplicate key "1" found in collection. Every item in a collection must have a unique key.'
       );
     });
   });

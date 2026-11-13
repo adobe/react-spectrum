@@ -21,24 +21,29 @@ import {
 import AudioWave from '@react-spectrum/s2/icons/AudioWave';
 import {
   baseColor,
-  color,
+  css,
   focusRing,
   iconStyle,
   lightDark,
+  space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Button} from 'react-aria-components/Button';
+import {Button, ButtonProps} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
+import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
+import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {ContentContext} from '@react-spectrum/s2/Content';
-import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {createContext, CSSProperties, forwardRef, ReactNode, useContext, useRef} from 'react';
 import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import File from '@react-spectrum/s2/icons/File';
 import FileText from '@react-spectrum/s2/icons/FileText';
+import {getMimeTypeLabel, matchMimeType} from './mimeType';
 import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
 import intlMessages from '../intl/*.json';
+import {keyframes, scrollFade} from './style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
@@ -54,11 +59,12 @@ import {
 } from 'react-aria-components/TagGroup';
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
-interface AttachmentRenderProps {
-  /** The size of the Card. */
-  size: 'XS' | 'S' | 'M' | 'L' | 'XL';
+/** Whether an attachment is still uploading, shared by Attachment and AttachmentGridItem. */
+export function isAttachmentLoading(uploadProgress?: number): boolean {
+  return uploadProgress != null && uploadProgress < 100;
 }
 
 const controlSizeM = {
@@ -111,6 +117,7 @@ const closeButton = style<{
   disableTapHighlight: true
 });
 
+const hasContent = ':has([data-slot=content])';
 const onlyPreview = ':not(:has([data-slot=content])):not(:has([data-slot=preview]))';
 
 const container = {
@@ -118,8 +125,7 @@ const container = {
     default: lightDark('black/3', 'white/3'),
     isInvalid: 'red-700/8',
     forcedColors: 'ButtonFace'
-  },
-  boxShadow: `[0 8px 32px 0 light-dark(${color('transparent-black-50')}, ${color('transparent-white-50')})]`
+  }
 } as const;
 
 const attachmentCard = style({
@@ -134,6 +140,7 @@ const attachmentCard = style({
   outlineColor: {
     default: lightDark('black/3', 'white/3'),
     isLoading: lightDark('black/2', 'white/2'),
+    isDisabled: lightDark('black/2', 'white/2'),
     forcedColors: 'ButtonBorder',
     isInvalid: {
       default: 'negative-900',
@@ -212,10 +219,17 @@ const attachmentCard = style({
       default: '[3px]',
       [onlyPreview]: 'lg'
     }
+  },
+  '--badge-visibility': {
+    type: 'visibility',
+    value: {
+      default: 'hidden',
+      [onlyPreview]: 'visible'
+    }
   }
 });
 
-const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isDisabled: boolean}>({
   font: 'title',
   fontSize: {
     size: {
@@ -226,11 +240,19 @@ const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
       XL: 'title-lg'
     }
   },
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
+    }
+  },
   lineClamp: 1,
   gridArea: 'title'
 });
 
-const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isDisabled: boolean}>({
   font: 'body',
   fontSize: {
     size: {
@@ -239,6 +261,14 @@ const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
       M: 'body-xs',
       L: 'body-sm',
       XL: 'body'
+    }
+  },
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
     }
   },
   lineClamp: 1,
@@ -261,6 +291,25 @@ const attachmentContent = style({
   paddingEnd: {
     default: 'calc(var(--card-spacing) * 1.5 / 2)',
     ':last-child': 0
+  }
+});
+
+const imageThumbnailStyles = style({
+  position: 'relative',
+  alignSelf: 'center',
+  flexShrink: 0,
+  pointerEvents: 'none',
+  userSelect: 'none',
+  size: '--image-size',
+  borderRadius: '--image-border-radius',
+  objectFit: 'cover',
+  outlineStyle: 'solid',
+  outlineWidth: 1,
+  outlineColor: 'gray-800/10',
+  outlineOffset: -1,
+  opacity: {
+    default: 1,
+    isDisabled: 0.3
   }
 });
 
@@ -309,27 +358,200 @@ export interface AttachmentListProps<T>
   styles?: StyleString;
 }
 
+const flexRow = {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center'
+} as const;
+
+const tagListStyles = style({
+  ...flexRow,
+  flexGrow: 1,
+  gap: 8,
+  overflowX: 'auto',
+  overflowY: 'clip',
+  scrollbarWidth: {
+    '@supports (animation-timeline: scroll())': 'none'
+  },
+  scrollSnapType: 'x mandatory',
+  // padding for focus ring
+  padding: 16,
+  margin: -16,
+  boxSizing: 'border-box',
+  scrollPaddingX: {
+    default: 16,
+    '@supports (animation-timeline: scroll())': 64
+  }
+});
+
+const buttonFade = keyframes(`
+  from { opacity: 0; visibility: hidden }
+  to { opacity: 1; visibility: visible }
+`);
+
+const carouselNavButtonStyles = style<{
+  isDisabled: boolean;
+  isHovered: boolean;
+  isFocusVisible: boolean;
+  isPressed: boolean;
+  direction: 'ltr' | 'rtl';
+  side: 'start' | 'end';
+}>({
+  ...focusRing(),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  size: controlSizeM,
+  flexShrink: 0,
+  borderRadius: 'full',
+  borderStyle: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: baseColor('transparent-overlay-100'),
+    forcedColors: 'ButtonFace'
+  },
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
+    }
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
+  scale: {
+    direction: {
+      rtl: -1
+    }
+  },
+  disableTapHighlight: true,
+  position: 'absolute',
+  zIndex: 1,
+  insetEnd: {
+    side: {
+      end: 0
+    }
+  },
+  opacity: {
+    default: 0,
+    isFocusVisible: 1
+  },
+  visibility: {
+    default: 'hidden',
+    isFocusVisible: 'visible'
+  },
+  animation: {
+    '@supports (animation-timeline: scroll())': buttonFade,
+    isFocusVisible: 'none'
+  },
+  animationDuration: 1,
+  animationTimingFunction: 'in-out',
+  animationFillMode: 'both',
+  animationDirection: {
+    side: {
+      start: 'normal',
+      end: 'reverse'
+    }
+  }
+});
+
+function CarouselNavButton({side, ...otherProps}: ButtonProps & {side: 'start' | 'end'}) {
+  let ref = useRef(null);
+  let {direction} = useLocale();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+  let Icon = side === 'start' ? ChevronLeft : ChevronRight;
+  // oxlint-disable react/react-compiler
+  return (
+    <Button
+      {...otherProps}
+      ref={ref}
+      aria-label={stringFormatter.format(
+        side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
+      )}
+      style={pressScale(ref, {
+        animationTimeline: '--carousel-scroll',
+        animationRange: side === 'start' ? '0px 32px' : 'calc(100% - 32px) 100%'
+      } as CSSProperties)}
+      className={renderProps => carouselNavButtonStyles({...renderProps, direction, side})}>
+      <Icon />
+    </Button>
+  );
+  // oxlint-enable react/react-compiler
+}
+
+/**
+ * An AttachmentList displays removable file attachments with previews and upload states.
+ */
 export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
   props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {styles, items, children, dependencies, ...otherProps} = props;
   let domRef = useDOMRef(ref);
+  let scrollRef = useRef<HTMLDivElement>(null);
+  let {direction} = useLocale();
+  let scroll = (dir: 1 | -1) => {
+    let el = scrollRef.current;
+    if (!el) {
+      return;
+    }
+
+    // RTL flips the scroll direction convention; flip the sign to match.
+    let sign = direction === 'rtl' ? -1 : 1;
+    el.scrollTo({
+      left: Math.max(
+        0,
+        Math.min(
+          el.scrollWidth - el.clientWidth,
+          el.scrollLeft + sign * dir * (el.clientWidth - 64 * 2)
+        )
+      ),
+      behavior: 'smooth'
+    });
+  };
+
   return (
-    <TagGroup {...otherProps} className={styles} ref={domRef}>
+    <TagGroup
+      {...otherProps}
+      className={mergeStyles(style({...flexRow, gap: 8, position: 'relative'}), styles)}
+      style={
+        {
+          timelineScope: '--carousel-scroll'
+        } as CSSProperties
+      }
+      ref={domRef}>
+      <CarouselNavButton side="start" onPress={() => scroll(-1)} />
       <TagList
+        ref={scrollRef}
         items={items}
         dependencies={dependencies}
-        className={style({
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 16,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          width: 'full'
-        })}>
+        className={
+          tagListStyles +
+          ' ' +
+          scrollFade({x: 32, inset: 56}) +
+          ' ' +
+          // Hack to keep scroll fade visible when the buttons are focused.
+          // 88px = 32 + 56
+          css(
+            `&:is(button[data-focus-visible]+*){--scroll-fade-left: 88px !important} &:has(+ button[data-focus-visible]){--scroll-fade-right: calc(100% - 88px) !important}`
+          )
+        }
+        style={
+          {
+            scrollTimelineName: '--carousel-scroll',
+            scrollTimelineAxis: 'inline'
+          } as CSSProperties
+        }>
         {children}
       </TagList>
+      <CarouselNavButton side="end" onPress={() => scroll(1)} />
     </TagGroup>
   );
 });
@@ -341,9 +563,9 @@ export interface AttachmentProps
       'styles' | 'UNSAFE_className' | 'UNSAFE_style' | 'allowsArrowNavigation' | 'focusMode'
     >,
     AriaLabelingProps,
-    Pick<TagProps, 'id' | 'textValue' | 'render'> {
+    Pick<TagProps, 'id' | 'textValue' | 'render' | 'isDisabled'> {
   /** The children of the Attachment. */
-  children: ReactNode | ((renderProps: AttachmentRenderProps) => ReactNode);
+  children: ReactNode;
   uploadProgress?: number;
   /** Whether the attachment has an error. */
   isInvalid?: boolean;
@@ -356,28 +578,36 @@ export interface AttachmentProps
 const tagStyles = style({
   flexShrink: 0,
   flexGrow: 0,
+  flexBasis: {
+    default: '0%',
+    [hasContent]: 'auto'
+  },
   position: 'relative',
   ...focusRing(),
   borderRadius: 'lg',
-  maxWidth: 'full'
+  maxWidth: 'calc(100% - 52px * 2)',
+  scrollSnapAlign: 'start'
 });
 interface AttachmentCardProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   isInvalid?: boolean;
   isLoading?: boolean;
+  isDisabled?: boolean;
   children: ReactNode;
 }
 
-function AttachmentCard({
+export function AttachmentCard({
   size = 'M',
   isInvalid = false,
   isLoading = false,
+  isDisabled = false,
   children
 }: AttachmentCardProps) {
   return (
     <div
       aria-invalid={isInvalid || undefined}
-      className={attachmentCard({size, isInvalid, isLoading})}>
+      aria-disabled={isDisabled || undefined}
+      className={attachmentCard({size, isInvalid, isLoading, isDisabled})}>
       <Provider
         values={[
           [
@@ -386,20 +616,7 @@ function AttachmentCard({
               slots: {
                 thumbnail: {
                   alt: '',
-                  styles: style({
-                    position: 'relative',
-                    alignSelf: 'center',
-                    flexShrink: 0,
-                    pointerEvents: 'none',
-                    userSelect: 'none',
-                    size: '--image-size',
-                    borderRadius: '--image-border-radius',
-                    objectFit: 'cover',
-                    outlineStyle: 'solid',
-                    outlineWidth: 1,
-                    outlineColor: 'gray-800/10',
-                    outlineOffset: -1
-                  })
+                  styles: imageThumbnailStyles({isDisabled})
                 }
               }
             }
@@ -409,8 +626,8 @@ function AttachmentCard({
             {
               slots: {
                 [DEFAULT_SLOT]: {},
-                title: {styles: attachmentTitle({size})},
-                description: {styles: attachmentDescription({size})}
+                title: {styles: attachmentTitle({size, isDisabled})},
+                description: {styles: attachmentDescription({size, isDisabled})}
               }
             }
           ],
@@ -429,6 +646,9 @@ function AttachmentCard({
   );
 }
 
+/**
+ * Attachment displays an individual file attachment within a PromptFieldAttachmentList.
+ */
 export const Attachment = forwardRef(function Attachment(
   props: AttachmentProps,
   ref: DOMRef<HTMLDivElement>
@@ -440,25 +660,37 @@ export const Attachment = forwardRef(function Attachment(
     'aria-labelledby': ariaLabelledby,
     'aria-describedby': ariaDescribedby,
     styles,
-    isInvalid,
+    isInvalid: isInvalidProp = false,
+    isDisabled = false,
     children,
     size = 'M'
   } = props;
   let domRef = useDOMRef(ref);
-  let isLoading = props.uploadProgress != null && props.uploadProgress < 100;
+  let isLoading = !isDisabled && isAttachmentLoading(props.uploadProgress);
+  let isInvalid = isInvalidProp && !isDisabled;
   return (
     <Tag
       id={id}
       textValue={textValue}
+      isDisabled={isDisabled}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
       aria-describedby={ariaDescribedby}
       ref={domRef}
       className={renderProps => mergeStyles(tagStyles({...renderProps}), styles)}>
-      <AttachmentCard size={size} isInvalid={isInvalid} isLoading={isLoading}>
+      <AttachmentCard
+        size={size}
+        isInvalid={isInvalid}
+        isLoading={isLoading}
+        isDisabled={isDisabled}>
         <AttachmentPreviewContext.Provider
-          value={{isInvalid: !!isInvalid, uploadProgress: props.uploadProgress ?? 100, size}}>
-          {typeof children === 'function' ? children({size}) : children}
+          value={{
+            isInvalid,
+            isDisabled,
+            uploadProgress: isDisabled ? 100 : (props.uploadProgress ?? 100),
+            size
+          }}>
+          {children}
         </AttachmentPreviewContext.Provider>
       </AttachmentCard>
       {/** Definitely not a close button, though looks like one. */}
@@ -467,9 +699,9 @@ export const Attachment = forwardRef(function Attachment(
           position: 'absolute',
           top: 0,
           insetEnd: 0,
-          transform: 'translate(50%, -50%)'
+          transform: 'translate(30%, -30%)'
         })}>
-        <CloseButton size="XS" />
+        <CloseButton size="XS" isDisabled={isDisabled} />
       </div>
     </Tag>
   );
@@ -480,83 +712,172 @@ const attachmentPreviewWrapper = style({
   height: 32,
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  opacity: {
+    default: 1,
+    isDisabled: 0.3
+  }
 });
 
-const AttachmentPreviewContext = createContext({
+function AttachmentPreviewWrapper({
+  children,
+  isDisabled
+}: {
+  children: ReactNode;
+  isDisabled: boolean;
+}) {
+  return <div className={attachmentPreviewWrapper({isDisabled})}>{children}</div>;
+}
+
+export const AttachmentPreviewContext = createContext({
   isInvalid: false,
+  isDisabled: false,
   uploadProgress: 100,
   size: 'S' as 'XS' | 'S' | 'M' | 'L' | 'XL'
 });
 
 export interface AttachmentPreviewProps extends ImageProps {
-  mimeType: string;
+  /**
+   * The MIME type of the attachment. Determines the fallback icon, and enables the file-type badge
+   * on large thumbnail variants.
+   */
+  mimeType?: string;
 }
 
+const previewIcons = {
+  audio: AudioWave,
+  video: Play,
+  image: ImageIcon,
+  text: FileText,
+  file: File
+};
+
+function getPreviewKind(mimeType?: string): keyof typeof previewIcons {
+  if (matchMimeType(mimeType, ['audio/*'])) {
+    return 'audio';
+  }
+
+  if (matchMimeType(mimeType, ['video/*'])) {
+    return 'video';
+  }
+
+  if (matchMimeType(mimeType, ['image/*'])) {
+    return 'image';
+  }
+
+  if (matchMimeType(mimeType, ['text/*'])) {
+    return 'text';
+  }
+
+  return 'file';
+}
+
+/**
+ * AttachmentPreview renders a preview of a file attachment.
+ */
 export function AttachmentPreview(props: AttachmentPreviewProps) {
   let {mimeType, ...otherProps} = props;
-  let {isInvalid, uploadProgress, size} = useContext(AttachmentPreviewContext)!;
+  let {isInvalid, isDisabled, uploadProgress, size} = useContext(AttachmentPreviewContext)!;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
   if (isInvalid) {
     return (
-      <div className={attachmentPreviewWrapper}>
+      <AttachmentPreviewWrapper isDisabled={isDisabled}>
         <AlertTriangleIcon size={size} />
-      </div>
+      </AttachmentPreviewWrapper>
     );
   }
 
   if (uploadProgress < 100) {
     return (
-      <div className={attachmentPreviewWrapper}>
+      <AttachmentPreviewWrapper isDisabled={isDisabled}>
         <ProgressCircle
           aria-label={stringFormatter.format('promptfield.uploading')}
           value={uploadProgress}
           size="S"
         />
-      </div>
+      </AttachmentPreviewWrapper>
     );
   }
 
   if (otherProps.src) {
-    return <Image {...otherProps} slot="thumbnail" />;
-  }
-
-  if (mimeType.startsWith('audio/')) {
+    // Only large thumbnail variants should display the MIME type badge, and only if a
+    // mimeType was provided.
     return (
-      <div className={attachmentPreviewWrapper}>
-        <AudioWave />
-      </div>
+      <>
+        <Image {...otherProps} slot="thumbnail" />
+        {(size === 'L' || size === 'XL') && mimeType && (
+          <AttachmentBadge mimeType={mimeType} isDisabled={isDisabled} />
+        )}
+      </>
     );
   }
 
-  if (mimeType.startsWith('video/')) {
-    return (
-      <div className={attachmentPreviewWrapper}>
-        <Play />
-      </div>
-    );
-  }
-
-  if (mimeType.startsWith('image/')) {
-    return (
-      <div className={attachmentPreviewWrapper}>
-        <ImageIcon />
-      </div>
-    );
-  }
-
-  if (mimeType.startsWith('text/')) {
-    return (
-      <div className={attachmentPreviewWrapper}>
-        <FileText />
-      </div>
-    );
-  }
+  let previewKind = getPreviewKind(mimeType);
+  let Icon = previewIcons[previewKind];
 
   return (
-    <div className={attachmentPreviewWrapper}>
-      <File />
+    <AttachmentPreviewWrapper isDisabled={isDisabled}>
+      <Icon />
+    </AttachmentPreviewWrapper>
+  );
+}
+
+const attachmentBadge = style<{isDisabled: boolean}>({
+  position: 'absolute',
+  bottom: 4,
+  insetStart: 4,
+  display: 'inline-flex',
+  alignItems: 'center',
+  boxSizing: 'border-box',
+  minWidth: 0,
+  minHeight: 24,
+  maxWidth: 72,
+  paddingX: space(10),
+  paddingY: space(4),
+  borderRadius: 'calc(var(--image-border-radius) - 3px)',
+  overflow: 'hidden',
+  pointerEvents: 'none',
+  visibility: '--badge-visibility',
+  opacity: {
+    default: 1,
+    isDisabled: 0.5
+  }
+});
+
+const attachmentBadgeBackground = style({
+  position: 'absolute',
+  inset: 0,
+  backgroundColor: {
+    default: 'neutral-subtle',
+    forcedColors: 'ButtonFace'
+  }
+});
+
+const attachmentBadgeLabel = style({
+  position: 'relative',
+  minWidth: 0,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  color: {
+    default: 'gray-1000',
+    forcedColors: 'ButtonText'
+  },
+  font: 'body-xs',
+  fontWeight: 'medium',
+  lineHeight: '[16px]'
+});
+
+function AttachmentBadge({mimeType, isDisabled = false}: {mimeType: string; isDisabled?: boolean}) {
+  let label = getMimeTypeLabel(mimeType);
+  if (!label) {
+    return null;
+  }
+  return (
+    <div className={attachmentBadge({isDisabled})}>
+      <div aria-hidden className={attachmentBadgeBackground} />
+      <div className={attachmentBadgeLabel}>{label}</div>
     </div>
   );
 }

@@ -3,15 +3,19 @@ import {
   convertColor,
   defaultBrand,
   defineProperties,
-  keyframes,
   outerBorderStops,
   stops,
   token
 } from './tokens.macro' with {type: 'macro'};
 import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {
+  getEventTarget,
+  getParentElement,
+  nodeContains
+} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
+import {keyframes} from './style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {useState} from 'react';
 
@@ -375,14 +379,17 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       data-variant={variant}
       data-state={isGenerating ? 'generating' : 'idle'}
       data-focused={isFocused || undefined}
-      className={(size === 'M' ? outerBorder : '') + style({containerType: 'inline-size'})}
+      className={
+        (size === 'M' ? outerBorder : '') +
+        style({containerType: 'inline-size', flexGrow: 1, display: 'flex'})
+      }
       style={{
         ...props.style,
         // @ts-ignore
         '--brand': brandColor
       }}
       onFocus={e => {
-        if (e.isTrusted) {
+        if (e.isTrusted && nodeContains(inputRef.current, getEventTarget(e))) {
           setFocused(true);
         }
       }}
@@ -395,7 +402,7 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
         // If not clicking on something focusable within the prompt field, focus the input.
         let target = getEventTarget(e) as Element | null;
         while (target && target !== e.currentTarget && !isFocusable(target)) {
-          target = target.parentElement;
+          target = getParentElement(target);
         }
 
         if (target === e.currentTarget) {
@@ -423,6 +430,7 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                 },
                 position: 'relative',
                 overflow: 'clip',
+                width: 'full',
                 outlineStyle: 'solid',
                 outlineColor: {
                   default: 'transparent', // for WHCM
@@ -503,7 +511,9 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                 flexDirection: 'column',
                 gap: 16,
                 padding: 16,
-                cursor: 'text'
+                cursor: 'text',
+                height: 'full',
+                boxSizing: 'border-box'
               }) + (props.className || '')
             }>
             {props.children}

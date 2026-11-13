@@ -14,8 +14,7 @@ jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
-import {Button} from 'react-aria-components';
-import {Chat, Thread, ThreadItem, ThreadScrollButton} from '../src/Chat';
+import {Chat, Thread, ThreadItem} from '../src/Chat';
 import {PromptField, PromptTokenField} from '../src/PromptField';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -29,9 +28,6 @@ interface Message {
 function TestThread({messages}: {messages: Message[]}) {
   return (
     <Chat>
-      <ThreadScrollButton>
-        <Button slot="scroll">Scroll to bottom</Button>
-      </ThreadScrollButton>
       <Thread items={messages} aria-label="Chat">
         {(item: Message) => (
           <ThreadItem textValue={item.text} isStreaming={item.isStreaming}>
@@ -199,7 +195,9 @@ describeOrSkip('Thread', () => {
 
   describe('scroll button', () => {
     it('appears when scrolled above the -100px threshold', async () => {
-      let {queryByText, getByRole} = render(<TestThread messages={[{id: '1', text: 'Hello'}]} />);
+      let {queryByLabelText, getByRole} = render(
+        <TestThread messages={[{id: '1', text: 'Hello'}]} />
+      );
 
       let grid = getByRole('grid');
       Object.defineProperty(grid, 'scrollTop', {value: -200, writable: true, configurable: true});
@@ -207,11 +205,13 @@ describeOrSkip('Thread', () => {
         fireEvent.scroll(grid);
       });
 
-      expect(queryByText('Scroll to bottom')).toBeInTheDocument();
+      expect(queryByLabelText('Scroll to bottom')).toBeInTheDocument();
     });
 
     it('stays hidden when scroll is within the -100px threshold', async () => {
-      let {queryByText, getByRole} = render(<TestThread messages={[{id: '1', text: 'Hello'}]} />);
+      let {queryByLabelText, getByRole} = render(
+        <TestThread messages={[{id: '1', text: 'Hello'}]} />
+      );
 
       let grid = getByRole('grid');
       Object.defineProperty(grid, 'scrollTop', {value: -50, writable: true, configurable: true});
@@ -219,11 +219,13 @@ describeOrSkip('Thread', () => {
         fireEvent.scroll(grid);
       });
 
-      expect(queryByText('Scroll to bottom')).not.toBeInTheDocument();
+      expect(queryByLabelText('Scroll to bottom')).not.toBeInTheDocument();
     });
 
     it('calls scrollTo on the list when clicked', async () => {
-      let {getByText, getByRole} = render(<TestThread messages={[{id: '1', text: 'Hello'}]} />);
+      let {getByLabelText, getByRole} = render(
+        <TestThread messages={[{id: '1', text: 'Hello'}]} />
+      );
 
       let grid = getByRole('grid');
       let scrollTo = jest.fn();
@@ -234,7 +236,7 @@ describeOrSkip('Thread', () => {
         fireEvent.scroll(grid);
       });
 
-      await user.click(getByText('Scroll to bottom'));
+      await user.click(getByLabelText('Scroll to bottom'));
       expect(scrollTo).toHaveBeenCalledWith({top: 0, behavior: 'smooth'});
     });
   });

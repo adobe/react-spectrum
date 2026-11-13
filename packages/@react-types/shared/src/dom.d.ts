@@ -301,6 +301,12 @@ export interface GlobalDOMAttributes<T = Element> extends GlobalDOMEvents<T> {
   hidden?: boolean | undefined;
   inert?: boolean | undefined;
   translate?: 'yes' | 'no' | undefined;
+  /**
+   * A React-only flag that suppresses the warning React normally logs when an element's
+   * server-rendered content doesn't match the client render during hydration. See [React
+   * docs](https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors).
+   */
+  suppressHydrationWarning?: boolean | undefined;
 }
 
 /**

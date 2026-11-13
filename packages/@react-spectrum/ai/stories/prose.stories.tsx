@@ -65,7 +65,9 @@ function ProseStory() {
   );
 }
 
-export const Example = () => <ProseStory />;
+export const Example = {
+  render: () => <ProseStory />
+};
 
 // Spectrum tokens applied to each prose element (see style/prose.ts). When a
 // font isn't specified the element inherits `body`; when a margin isn't
@@ -584,7 +586,7 @@ const chatMessages: ChatMessage[] = [
   {id: 1, type: 'prose'}
 ];
 
-function SidePanelExample() {
+function SideNavPanelExample() {
   let [fontSize, setFontSize] = useState(14);
 
   return (
@@ -732,8 +734,8 @@ function SidePanelExample() {
     </div>
   );
 }
-export const SidePanel = {
-  render: () => <SidePanelExample />,
+export const SideNavPanel = {
+  render: () => <SideNavPanelExample />,
   parameters: {
     layout: 'fullscreen'
   }

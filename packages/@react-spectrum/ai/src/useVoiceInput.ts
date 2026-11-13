@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference path="./speech-recognition.d.ts" />
+
 import {
   Dispatch,
   RefObject,

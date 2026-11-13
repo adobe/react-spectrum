@@ -28,7 +28,7 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '../../src/layout/Grid';
 import {Heading} from '../../src/text/Heading';
 import {IllustratedMessage} from '../../src/illustratedmessage/IllustratedMessage';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import {View} from '../../src/view/View';
 
@@ -353,20 +353,22 @@ export const NestedColumnsPt3: TreeGridTableStory = {
   args: {combos: combo3, columns: nestedColumns, items: nestedItems}
 };
 
-export const MaxHeight: StoryFn<SpectrumTableProps<object>> = () => (
-  <TableView maxHeight="size-1200" UNSTABLE_allowsExpandableRows>
-    <TableHeader columns={columns}>
-      {(column: any) => <Column key={column.key}>{column.name}</Column>}
-    </TableHeader>
-    <TableBody items={nestedItems}>
-      {(item: any) => (
-        <Row key={item.foo} UNSTABLE_childItems={item.childRows}>
-          {key => <Cell>{item[key]}</Cell>}
-        </Row>
-      )}
-    </TableBody>
-  </TableView>
-);
+export const MaxHeight: StoryObj<SpectrumTableProps<object>> = {
+  render: () => (
+    <TableView maxHeight="size-1200" UNSTABLE_allowsExpandableRows>
+      <TableHeader columns={columns}>
+        {(column: any) => <Column key={column.key}>{column.name}</Column>}
+      </TableHeader>
+      <TableBody items={nestedItems}>
+        {(item: any) => (
+          <Row key={item.foo} UNSTABLE_childItems={item.childRows}>
+            {key => <Cell>{item[key]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  )
+};
 
 export const Empty: TreeGridTableStory = {
   render: args => <EmptyTemplate {...args} />,
