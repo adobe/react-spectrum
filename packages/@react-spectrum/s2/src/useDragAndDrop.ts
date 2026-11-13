@@ -21,7 +21,15 @@ export type {DragAndDrop};
 export interface DragAndDropOptions<T = object> extends Omit<
   RACDragAndDropOptions<T>,
   'renderDropIndicator'
-> {}
+> {
+  /**
+   * Whether mouse and touch dragging can start from the entire item or only from its drag handle.
+   * Keyboard and screen reader dragging are unaffected.
+   *
+   * @default 'item'
+   */
+  pointerDragSource?: 'item' | 'handle';
+}
 
 /**
  * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible

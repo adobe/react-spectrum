@@ -123,6 +123,23 @@
       height: var(--spacing-4);
     }
 
+    &[draggable='true'] {
+      cursor: grab;
+      -webkit-user-drag: element;
+
+      &[data-pressed] {
+        cursor: grabbing;
+      }
+
+      @media not ((hover: hover) and (pointer: fine)) {
+        &::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+        }
+      }
+    }
+
     &[data-focus-visible] {
       border-radius: 4px;
       outline: 2px solid var(--focus-ring-color);
@@ -141,6 +158,7 @@
   text-align: left;
   outline: none;
   box-sizing: border-box;
+  position: relative;
   -webkit-tap-highlight-color: transparent;
 
   div& {
