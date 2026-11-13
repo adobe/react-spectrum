@@ -326,7 +326,7 @@ for (let i = 0; imageOptions.length < 500; i++) {
 
 ### Grid
 
-`GridLayout` supports layout of items in an equal size grid. The items are sized between a minimum and maximum size depending on the width of the container. Make sure to set `layout="grid"` on the `ListBox` or `GridList` component as well so that keyboard navigation behavior is correct.
+`GridLayout` supports layout of items in an equal size grid. The items are sized between a minimum and maximum size depending on the width of the container. Make sure to set `layout="grid"` on the `ListBox` or `GridList` component as well so that keyboard navigation behavior is correct. Sections are also supported, with section headers laid out as full width rows between the grid items. Use the `headingSize` option to provide a fixed header height, or `estimatedHeadingSize` if header heights are variable.
 
 ```tsx render docs={docs.exports.GridLayoutOptions} links={docs.links} props={['minItemSize', 'maxItemSize', 'minSpace', 'maxColumns', 'preserveAspectRatio']} initialProps={{minItemSize: {width: 100, height: 140}, minSpace: {width: 8, height: 8}}} propsObject="layoutOptions" wide
 "use client";
