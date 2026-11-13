@@ -39,6 +39,7 @@ import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMediaQuery} from './useMediaQuery';
 
+// Keep in sync with ANIMATION_DURATION in SideNav.tsx.
 const ANIMATION_DURATION = 200;
 
 export interface SideNavPanelProps extends AriaLabelingProps, UnsafeStyles {
@@ -67,12 +68,23 @@ interface SideNavPanelContextValue {
 export const SideNavPanelContext = createContext<SideNavPanelContextValue>({});
 
 interface InternalSideNavPanelContextValue {
-  /** Whether the panel is collapsed or collapsing. */
-  isCollapsed: boolean;
+  /**
+   * Whether the panel is collapsed or collapsing. Unlike SideNavPanelContext's isCollapsed, this
+   * becomes true as soon as the panel starts to collapse.
+   */
+  isCollapsedOrCollapsing: boolean;
+  /**
+   * Whether the panel has finished collapsing to its icon rail. This is SideNavPanelContext's
+   * isCollapsed.
+   */
+  isRail: boolean;
   /** Whether the panel is changing width. */
   isTransitioning: boolean;
-  /** Whether the panel's width is animating, with its contents held at their expanded width. */
-  isAnimating: boolean;
+  /**
+   * Whether the contents are pinned at their expanded width while the panel changes width. This
+   * becomes true just after isTransitioning, once the panel has measured that width.
+   */
+  isContentPinned: boolean;
   setCollapsed: (isCollapsed: boolean) => void;
 }
 
@@ -130,7 +142,7 @@ export const SideNavPanel = /*#__PURE__*/ forwardRef(function SideNavPanel(
   );
   let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
-  // While the width transitions, the contents are held at their expanded width so that nothing
+  // While the width transitions, the contents are pinned at their expanded width so that nothing
   // reflows, and the panel clips them.
   let [prevCollapsed, setPrevCollapsed] = useState(isCollapsed);
   let [transition, setTransition] = useState<{contentWidth?: number} | null>(null);
@@ -177,16 +189,16 @@ export const SideNavPanel = /*#__PURE__*/ forwardRef(function SideNavPanel(
       return;
     }
 
+    // Cancelling the transition part way through rejects this promise. When the panel reverses,
+    // this effect has already re-run for the new transition, but in other cases, e.g. when the
+    // panel is hidden or its expanded width changes, the contents are unpinned straight away.
     let isCancelled = false;
-    animation.finished.then(
-      () => {
-        if (!isCancelled) {
-          setTransition(null);
-        }
-      },
-      // Reversing replaces the transition, which rejects this promise.
-      () => {}
-    );
+    let onEnd = () => {
+      if (!isCancelled) {
+        setTransition(null);
+      }
+    };
+    animation.finished.then(onEnd, onEnd);
     return () => {
       isCancelled = true;
     };
@@ -195,10 +207,16 @@ export const SideNavPanel = /*#__PURE__*/ forwardRef(function SideNavPanel(
   // Consumers only see the rail once the panel has finished collapsing.
   let isRail = isCollapsed && !isTransitioning;
   let context = useMemo(() => ({isCollapsed: isRail, setCollapsed}), [isRail, setCollapsed]);
-  let isAnimating = contentWidth != null;
+  let isContentPinned = contentWidth != null;
   let internalContext = useMemo(
-    () => ({isCollapsed, isTransitioning, isAnimating, setCollapsed}),
-    [isCollapsed, isTransitioning, isAnimating, setCollapsed]
+    () => ({
+      isCollapsedOrCollapsing: isCollapsed,
+      isRail,
+      isTransitioning,
+      isContentPinned,
+      setCollapsed
+    }),
+    [isCollapsed, isRail, isTransitioning, isContentPinned, setCollapsed]
   );
 
   let filteredProps = filterDOMProps(otherProps, {labelable: true});

@@ -4,13 +4,14 @@
  * and section header. SideNavPanel's collapse and expand doesn't use one: the panel's width is a
  * plain CSS transition, so the rest of the page reflows along with it. */
 
+/* Keep in sync with ANIMATION_DURATION and ANIMATION_EASING in SideNav.tsx. */
 ::view-transition-group(.item) {
   animation-duration: 200ms;
   animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1);
 }
 
-/* Anything outside the rows stays live rather than cross-fading, including the item that was
- * pressed, which keeps its press animation. */
+/* The rest of the page stays live rather than cross-fading. SideNavItemRow also keeps the item that
+ * was pressed live, so that it keeps its press animation. */
 :root:active-view-transition-type(toggle) {
   view-transition-name: none;
 }

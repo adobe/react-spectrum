@@ -76,9 +76,7 @@ function px(size: number) {
 }
 
 function getRow(name: string) {
-  return [...document.querySelectorAll('[aria-level]')].find(row => row.textContent === name) as
-    | HTMLElement
-    | undefined;
+  return document.querySelector<HTMLElement>(`[aria-level][aria-label="${name}"]`) ?? undefined;
 }
 
 function getState() {
@@ -199,6 +197,27 @@ it('reverses part way through', async () => {
   expect(panel.getBoundingClientRect().width).toBe(px(240));
 });
 
+it('unpins the contents if the transition is cancelled', async () => {
+  await render(<Example defaultExpandedKeys={['categories']} />);
+  let panel = getPanel();
+
+  await userEvent.click(page.getByRole('button', {name: 'Collapse side panel'}));
+  let transition = getWidthTransition(panel)!;
+  transition.pause();
+  transition.currentTime = 100;
+
+  // Hiding the panel cancels its transition.
+  panel.style.display = 'none';
+  expect(getComputedStyle(panel).display).toBe('none');
+  expect(transition.playState).toBe('idle');
+  await expect.poll(getState).toBe('rail');
+
+  panel.style.display = '';
+  await waitForSettle();
+  expect(panel.getBoundingClientRect().width).toBe(px(42));
+  expect(getRow('Archive')).toBeUndefined();
+});
+
 // Returns the row's height a quarter, half, and three quarters of the way through its animation.
 function sampleHeights(row: HTMLElement) {
   let animation = getRowAnimation(row)!;
@@ -238,6 +257,29 @@ it('closes nested items as the panel collapses, and opens them again as it expan
   await waitForSettle();
   expect(row.getAnimations()).toHaveLength(0);
   expect(row.getBoundingClientRect().height).toBe(height);
+});
+
+it('closes an item that is pressed while the panel collapses', async () => {
+  await render(<Example defaultExpandedKeys={['categories']} />);
+  let panel = getPanel();
+
+  await userEvent.click(page.getByRole('button', {name: 'Collapse side panel'}));
+  let transition = getWidthTransition(panel)!;
+  transition.pause();
+
+  // The panel keeps collapsing, rather than expanding again.
+  await userEvent.click(page.getByText('Categories'));
+  expect(getRow('Archive')).toBeUndefined();
+  expect(getWidthTransition(panel)).toBe(transition);
+
+  transition.play();
+  await waitForSettle();
+  expect(getState()).toBe('rail');
+
+  await userEvent.click(page.getByRole('button', {name: 'Expand side panel'}));
+  await waitForSettle();
+  expect(getRow('Categories')!.getAttribute('aria-expanded')).toBe('false');
+  expect(getRow('Archive')).toBeUndefined();
 });
 
 // React only animates with view transitions that support types.
@@ -285,7 +327,7 @@ it.skipIf(!('ViewTransitionTypeSet' in window))(
           row.matches('[aria-level]') &&
           (row.style.viewTransitionName || record.oldValue?.includes('view-transition-name'))
         ) {
-          named.add(row.textContent);
+          named.add(row.getAttribute('aria-label'));
         }
       }
     });
@@ -306,9 +348,12 @@ it.skipIf(!('ViewTransitionTypeSet' in window))(
   }
 );
 
+// Unmounting cancels the transitions, which mustn't cause errors or unhandled rejections.
 it('can unmount while animating', async () => {
   let {unmount} = await render(<Example defaultExpandedKeys={['categories']} />);
   await userEvent.click(page.getByRole('button', {name: 'Collapse side panel'}));
+  expect(getWidthTransition(getPanel())?.playState).toBe('running');
+  expect(getRowAnimation(getRow('Archive')!)?.playState).toBe('running');
   await unmount();
   await new Promise(resolve => setTimeout(resolve, 300));
 });

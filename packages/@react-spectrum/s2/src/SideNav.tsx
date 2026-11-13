@@ -74,27 +74,33 @@ const addTransitionType: (type: string) => void = React.addTransitionType ?? (()
 const startTransition: (scope: () => void) => void =
   React.startTransition ?? ((scope: () => void) => scope());
 
-// Matches SideNavPanel's width transition, and SideNav.module.css.
+// Keep in sync with ANIMATION_DURATION in SideNavPanel.tsx, and with SideNav.module.css.
 const ANIMATION_DURATION = 200;
 const ANIMATION_EASING = 'cubic-bezier(0.45, 0, 0.4, 1)';
 
+// NavigationTree sets aria-level on every item's row. The rail only shows the top level.
+const NESTED_ROW_SELECTOR = '[aria-level]:not([aria-level="1"])';
+
 interface InternalSideNavContextValue {
   /** Whether the panel is collapsed or collapsing. */
-  isCollapsed: boolean;
+  isCollapsedOrCollapsing: boolean;
   /** Whether the panel is changing width, with the rows keeping their expanded layout. */
   isTransitioning: boolean;
   /** Whether the panel has finished collapsing to its icon rail. */
   isRail: boolean;
   /** The class for the <ViewTransition> around each row and header. */
   viewTransition: ViewTransitionClass;
-  /** The items that were just expanded or collapsed. */
+  /**
+   * The items that the latest toggle expanded or collapsed. These aren't cleared afterwards, but
+   * only matter during that toggle's view transition.
+   */
   toggledKeys: Set<Key>;
   /** Clips an item's view transition to the nav. */
   clip?: () => (() => void) | undefined;
 }
 
 const InternalSideNavContext = createContext<InternalSideNavContextValue>({
-  isCollapsed: false,
+  isCollapsedOrCollapsing: false,
   isTransitioning: false,
   isRail: false,
   viewTransition: 'none',
@@ -187,14 +193,15 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
 
   let domRef = useDOMRef(ref);
   let panel = useContext(InternalSideNavPanelContext);
+  // A custom panel can provide SideNavPanelContext instead, but the rows won't animate as its width
+  // changes.
   let publicPanel = useContext(SideNavPanelContext) ?? {};
   let isInSideNavPanel = panel != null || publicPanel.isCollapsed !== undefined;
-  // Whether the panel is collapsed or collapsing.
-  let isCollapsed = panel ? panel.isCollapsed : !!publicPanel.isCollapsed;
+  let isRail = panel ? panel.isRail : !!publicPanel.isCollapsed;
+  let isCollapsedOrCollapsing = panel ? panel.isCollapsedOrCollapsing : isRail;
   let isTransitioning = panel?.isTransitioning ?? false;
-  let isAnimating = panel?.isAnimating ?? false;
+  let isContentPinned = panel?.isContentPinned ?? false;
   let setCollapsed = panel ? panel.setCollapsed : publicPanel.setCollapsed;
-  let isRail = isCollapsed && !isTransitioning;
 
   let [expandedKeys, setExpandedKeys] = useControlledState(
     propExpandedKeys ? new Set(propExpandedKeys) : undefined,
@@ -213,9 +220,11 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   let [toggledKeys, setToggledKeys] = useState(() => new Set<Key>());
 
   let toggleExpandedKeys = (keys: Set<Key>) => {
-    if (isCollapsed) {
-      // The rail has no room for an item's children, so activating an item that isn't a link
-      // expands the panel to reveal them.
+    // The rail has no room for an item's children, so opening an item while the panel is collapsed
+    // or collapsing expands the panel to reveal them. Closing one as the panel collapses just
+    // closes it.
+    let isOpening = [...keys].some(key => !visibleExpandedKeys.has(key));
+    if (isRail || (isCollapsedOrCollapsing && isOpening)) {
       let mergedKeys = new Set([...expandedKeys, ...keys]);
       if (mergedKeys.size > expandedKeys.size) {
         setExpandedKeys(mergedKeys);
@@ -224,6 +233,8 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       return;
     }
 
+    // A view transition shows snapshots of the rows, so items open and close without animating
+    // while the panel changes width.
     if (reduceMotion || isTransitioning) {
       setExpandedKeys(keys);
       return;
@@ -274,7 +285,8 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   }, [domRef]);
 
   // A view transition shows snapshots of the rows, so end any that are still animating before the
-  // panel starts to change width.
+  // panel starts to change width. Only one view transition runs at a time, and clipRef is only set
+  // during this nav's, so all of these animations belong to it.
   useLayoutEffect(() => {
     if (!clipRef.current) {
       return;
@@ -290,14 +302,15 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
         }
       }
     }
-  }, [isCollapsed]);
+  }, [isCollapsedOrCollapsing]);
 
   // The rows keep their expanded layout while the panel changes width, so nested rows close as the
-  // panel collapses, and open as it expands.
+  // panel collapses, and open as it expands. This waits for the panel to pin its contents, since
+  // until then, an expanding panel's rows are laid out at its collapsed width.
   let nestedRowAnimations = useRef(new Map<Element, Animation>());
   useLayoutEffect(() => {
     let animations = nestedRowAnimations.current;
-    if (!isAnimating) {
+    if (!isContentPinned) {
       for (let animation of animations.values()) {
         animation.cancel();
       }
@@ -305,34 +318,40 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       return;
     }
 
-    for (let row of domRef.current?.querySelectorAll('[aria-level]:not([aria-level="1"])') ?? []) {
-      let animation = animations.get(row);
-      if (animation) {
-        // The panel turned around part way through.
-        animation.reverse();
-        continue;
-      }
+    // The panel turned around part way through.
+    for (let animation of animations.values()) {
+      animation.reverse();
+    }
 
-      let open = {
-        height: `${(row as HTMLElement).offsetHeight}px`,
-        minHeight: 0,
-        marginTop: getComputedStyle(row).marginTop,
-        opacity: 1,
-        clipPath: 'inset(0)'
-      };
-      let closed = {height: 0, minHeight: 0, marginTop: 0, opacity: 0, clipPath: 'inset(0)'};
-      animation = row.animate(isCollapsed ? [open, closed] : [closed, open], {
+    // Measure every new row before animating any of them, so that the page is only laid out once.
+    let rows = domRef.current?.querySelectorAll<HTMLElement>(NESTED_ROW_SELECTOR) ?? [];
+    let newRows = [...rows]
+      .filter(row => !animations.has(row))
+      .map(row => ({
+        row,
+        open: {
+          height: `${row.offsetHeight}px`,
+          minHeight: 0,
+          marginTop: getComputedStyle(row).marginTop,
+          opacity: 1,
+          clipPath: 'inset(0)'
+        }
+      }));
+
+    let closed = {height: 0, minHeight: 0, marginTop: 0, opacity: 0, clipPath: 'inset(0)'};
+    for (let {row, open} of newRows) {
+      let animation = row.animate(isCollapsedOrCollapsing ? [open, closed] : [closed, open], {
         duration: ANIMATION_DURATION,
         easing: ANIMATION_EASING,
         fill: 'both'
       });
       animations.set(row, animation);
     }
-  }, [isAnimating, isCollapsed, domRef]);
+  }, [isContentPinned, isCollapsedOrCollapsing, domRef]);
 
   let context = useMemo(
     () => ({
-      isCollapsed,
+      isCollapsedOrCollapsing,
       isTransitioning,
       isRail,
       // Only this nav's item toggles animate its rows. A class without a default is "auto".
@@ -340,7 +359,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       toggledKeys,
       clip
     }),
-    [isCollapsed, isTransitioning, isRail, reduceMotion, navType, toggledKeys, clip]
+    [isCollapsedOrCollapsing, isTransitioning, isRail, reduceMotion, navType, toggledKeys, clip]
   );
 
   return (
@@ -429,7 +448,7 @@ const treeIcon = style({
 });
 
 interface CollapsibleProps {
-  isCollapsed?: boolean;
+  isCollapsedOrCollapsing?: boolean;
   isTransitioning?: boolean;
   isRail?: boolean;
 }
@@ -440,13 +459,13 @@ const treeContent = style<CollapsibleProps>({
   flexShrink: 1,
   minWidth: 0,
   opacity: {
-    isCollapsed: 0
+    isCollapsedOrCollapsing: 0
   },
   transition: {
     default: 'none',
     isTransitioning: 'opacity'
   },
-  transitionDuration: 200,
+  transitionDuration: ANIMATION_DURATION,
   // The rail has no room for the label, but it still names the item.
   position: {
     isRail: 'absolute'
@@ -504,8 +523,10 @@ const fadeUnmarkedChildren = css(
   '& > :not([data-do-not-hide], [data-rsp-slot=text]) {opacity: 0; visibility: hidden;}'
 );
 const transitionUnmarkedChildren = css(
-  '& > :not([data-do-not-hide], [data-rsp-slot=text]) {transition: opacity 200ms cubic-bezier(0.45, 0, 0.4, 1), visibility 200ms cubic-bezier(0.45, 0, 0.4, 1);}'
+  `& > :not([data-do-not-hide], [data-rsp-slot=text]) {transition: opacity ${ANIMATION_DURATION}ms ${ANIMATION_EASING}, visibility ${ANIMATION_DURATION}ms ${ANIMATION_EASING};}`
 );
+// The rail takes them out of the row's layout. Unlike display: none, this lets them fade back in as
+// the panel expands.
 const removeUnmarkedChildren = css(
   '& > :not([data-do-not-hide], [data-rsp-slot=text]) {position: absolute; inset: 0; overflow: hidden;}'
 );
@@ -538,8 +559,9 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
   );
 };
 
-// The tree renders each row with the props that SideNavItem rendered before this update, so the
-// row reads the toggled items itself, in time for the view transition.
+// NavigationTree renders each row from its collection, which only receives SideNavItem's new props
+// once this update has committed. Reading the toggled items from context instead includes them in
+// the update that starts the view transition.
 function SideNavItemRow({id, domProps}: {id: Key; domProps: ComponentProps<'div'>}) {
   let {viewTransition, toggledKeys, clip} = useContext(InternalSideNavContext);
   return (
@@ -576,7 +598,7 @@ const indicator = style<{
     default: 'none',
     isTransitioning: 'opacity'
   },
-  transitionDuration: 200,
+  transitionDuration: ANIMATION_DURATION,
   backgroundColor: {
     default: 'gray-800',
     isHovered: 'gray-400',
@@ -618,7 +640,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
 };
 
 const SideNavItemContentInner = props => {
-  let {isCollapsed, isTransitioning, isRail} = useContext(InternalSideNavContext);
+  let {isCollapsedOrCollapsing, isTransitioning, isRail} = useContext(InternalSideNavContext);
   let {
     isExpanded,
     hasChildItems,
@@ -648,7 +670,7 @@ const SideNavItemContentInner = props => {
             isSelected: isCurrent,
             isDescendantSelected: isCurrentAncestor && !isExpanded
           }) +
-          (isCollapsed ? ' ' + fadeUnmarkedChildren : '') +
+          (isCollapsedOrCollapsing ? ' ' + fadeUnmarkedChildren : '') +
           (isTransitioning ? ' ' + transitionUnmarkedChildren : '') +
           (isRail ? ' ' + removeUnmarkedChildren : '')
         }>
@@ -661,7 +683,7 @@ const SideNavItemContentInner = props => {
             isSelected:
               isCurrent ||
               (isCurrentAncestor && !isExpanded) ||
-              (level === 1 && isCurrentAncestor && isCollapsed),
+              (level === 1 && isCurrentAncestor && isCollapsedOrCollapsing),
             isHovered,
             isTransitioning
           })}
@@ -678,7 +700,7 @@ const SideNavItemContentInner = props => {
             [
               TextContext,
               {
-                styles: treeContent({isCollapsed, isTransitioning, isRail})
+                styles: treeContent({isCollapsedOrCollapsing, isTransitioning, isRail})
               }
             ],
             [
@@ -705,7 +727,7 @@ const SideNavItemContentInner = props => {
         </Provider>
       </div>
       <ExpandableRowChevron
-        isCollapsed={isCollapsed}
+        isCollapsedOrCollapsing={isCollapsedOrCollapsing}
         isTransitioning={isTransitioning}
         isRail={isRail}
         isDisabled={isDisabled}
@@ -750,7 +772,7 @@ const expandButton = style<ExpandableRowChevronProps>({
   },
   padding: 0,
   opacity: {
-    isCollapsed: 0
+    isCollapsedOrCollapsing: 0
   },
   transition: {
     default: 'default',
@@ -758,14 +780,14 @@ const expandButton = style<ExpandableRowChevronProps>({
   },
   transitionDuration: {
     default: 150,
-    isTransitioning: 200
+    isTransitioning: ANIMATION_DURATION
   },
   backgroundColor: 'transparent',
   borderStyle: 'none',
   disableTapHighlight: true,
   visibility: {
     isHidden: 'hidden',
-    isCollapsed: 'hidden'
+    isCollapsedOrCollapsing: 'hidden'
   },
   position: {
     isRail: 'absolute'
@@ -785,7 +807,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
     expandButtonRef,
     ButtonContext
   );
-  let {isExpanded, scale, isHidden, isCollapsed, isTransitioning, isRail} = fullProps;
+  let {isExpanded, scale, isHidden, isCollapsedOrCollapsing, isTransitioning, isRail} = fullProps;
   let {direction} = useLocale();
 
   return (
@@ -797,7 +819,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
         expandButton({
           ...renderProps,
           isExpanded,
-          isCollapsed,
+          isCollapsedOrCollapsing,
           isTransitioning,
           isRail,
           isRTL: direction === 'rtl',
@@ -854,13 +876,13 @@ const headerStyle = style({
 
 const headerText = style<CollapsibleProps>({
   opacity: {
-    isCollapsed: 0
+    isCollapsedOrCollapsing: 0
   },
   transition: {
     default: 'none',
     isTransitioning: 'opacity'
   },
-  transitionDuration: 200,
+  transitionDuration: ANIMATION_DURATION,
   position: {
     isRail: 'absolute'
   },
@@ -881,38 +903,41 @@ const headerDivider = style<CollapsibleProps>({
   width: 26,
   opacity: {
     default: 0,
-    isCollapsed: 1
+    isCollapsedOrCollapsing: 1
   },
   transition: {
     default: 'none',
     isTransitioning: 'opacity'
   },
-  transitionDuration: 200,
+  transitionDuration: ANIMATION_DURATION,
   pointerEvents: 'none'
 });
 
 export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
-  let {isCollapsed, isTransitioning, isRail, viewTransition} = useContext(InternalSideNavContext);
+  let {isCollapsedOrCollapsing, isTransitioning, isRail, viewTransition, clip} =
+    useContext(InternalSideNavContext);
   let id = useId();
   return (
     <NavigationTreeHeader
       id={id}
       className={headerStyle}
       render={domProps => (
-        <ViewTransition default={viewTransition}>
+        <ViewTransition default={viewTransition} onEnter={clip} onExit={clip} onUpdate={clip}>
           <div {...domProps}>
             {domProps.children}
             <div
               aria-hidden
               className={mergeStyles(
                 divider({size: 'M', orientation: 'horizontal', isStaticColor: false}),
-                headerDivider({isCollapsed, isTransitioning})
+                headerDivider({isCollapsedOrCollapsing, isTransitioning})
               )}
             />
           </div>
         </ViewTransition>
       )}>
-      <span className={headerText({isCollapsed, isTransitioning, isRail})}>{props.children}</span>
+      <span className={headerText({isCollapsedOrCollapsing, isTransitioning, isRail})}>
+        {props.children}
+      </span>
     </NavigationTreeHeader>
   );
 };
@@ -925,7 +950,7 @@ export interface SideNavItemLinkProps {
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
-  let {isCollapsed, isTransitioning, isRail} = useContext(InternalSideNavContext);
+  let {isCollapsedOrCollapsing, isTransitioning, isRail} = useContext(InternalSideNavContext);
   let textId = useId();
 
   return (
@@ -941,7 +966,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
             TextContext,
             {
               id: textId,
-              styles: treeContent({isCollapsed, isTransitioning, isRail})
+              styles: treeContent({isCollapsedOrCollapsing, isTransitioning, isRail})
             }
           ],
           [
