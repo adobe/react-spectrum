@@ -80,10 +80,12 @@ Place a `<SliderInput />` inside `<RangeSlider>` when users should be able to pr
 ```tsx render docs={docs.exports.RangeSlider} links={docs.links} props={['size', 'labelPosition', 'isEmphasized', 'isDisabled']} type="s2"
 "use client";
 import {RangeSlider, SliderInput} from '@react-spectrum/s2/RangeSlider';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <RangeSlider
   label="Range"
   defaultValue={{start: 25, end: 75}}
+  styles={style({width: 320, maxWidth: 'full'})}
   /* PROPS */>
   {/*- begin highlight -*/}
   <SliderInput />
