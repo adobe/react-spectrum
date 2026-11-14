@@ -33,7 +33,7 @@ import {getPlaceholder} from './placeholders';
 import {IncompleteDate} from './IncompleteDate';
 import {NumberFormatter} from '@internationalized/number';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export type DateSegmentType =
@@ -235,7 +235,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(
 
   let [initialValue] = useState(value);
   let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
-  let [displayValue, setDisplayValue] = useState(
+  let [displayValue, setDisplayValueState] = useState(
     () => new IncompleteDate(calendar, hourCycle, calendarValue)
   );
 
@@ -299,8 +299,19 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     setLastValue(calendarValue);
     setLastCalendar(calendar);
     setLastHourCycle(hourCycle);
-    setDisplayValue(displayValue);
+    setDisplayValueState(displayValue);
   }
+
+  // Advancing to another field can trigger blur before the keystroke's state update renders.
+  // Track the latest display value so confirmPlaceholder doesn't read a stale closure.
+  let displayValueRef = useRef(displayValue);
+  useEffect(() => {
+    displayValueRef.current = displayValue;
+  }, [displayValue]);
+  let setDisplayValue = (value: IncompleteDate) => {
+    displayValueRef.current = value;
+    setDisplayValueState(value);
+  };
 
   let setValue = (newValue: DateValue | IncompleteDate | null) => {
     if (props.isDisabled || props.isReadOnly) {
@@ -423,6 +434,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(
       if (props.isDisabled || props.isReadOnly) {
         return;
       }
+
+      // Use the latest display value in case a segment was updated earlier in this event.
+      let displayValue = displayValueRef.current;
 
       // If the display value is complete but invalid, we need to constrain it and emit onChange on blur.
       if (displayValue.isComplete(displaySegments)) {
