@@ -343,6 +343,12 @@ function getMaxHeight(
   let boundaryToContainerTransformOffset = isContainerDescendentOfBoundary
     ? containerOffsetWithBoundary.top
     : 0;
+  // Use the same visual viewport origin as getContainerDimensions. WebKit can
+  // report an offsetTop that disagrees with pageTop while the keyboard is open.
+  // Reading from body also handles documents that scroll on body rather than html.
+  let visualViewportTop = visualViewport
+    ? getContainerDimensions(document.body, visualViewport).top
+    : null;
   let boundingRect = {
     // This should be boundary top in container coord system vs viewport top in container coord system
     // For the viewport top, there are several cases
@@ -350,11 +356,11 @@ function getMaxHeight(
     // 2. case where container is offset from the boundary and is contained by the boundary. In this case the top we want here is NOT 0, we want to take boundary's top even though is is a negative number OR the visual viewport, whichever is more restrictive
     top: Math.max(
       boundaryDimensions.top + boundaryToContainerTransformOffset,
-      (visualViewport?.offsetTop ?? boundaryDimensions.top) + boundaryToContainerTransformOffset
+      (visualViewportTop ?? boundaryDimensions.top) + boundaryToContainerTransformOffset
     ),
     bottom: Math.min(
       boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset,
-      (visualViewport?.offsetTop ?? 0) + (visualViewport?.height ?? 0)
+      (visualViewportTop ?? 0) + (visualViewport?.height ?? 0)
     )
   };
   let maxHeight =
