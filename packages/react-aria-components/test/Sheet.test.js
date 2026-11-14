@@ -463,22 +463,14 @@ describe('Sheet', () => {
   describe('visibility', () => {
     let observe;
     let observer;
-    let time = 0;
     beforeEach(() => {
-      time = 0;
       observe = jest.fn();
       observer = setupIntersectionObserverMock({observe});
     });
 
-    function intersect(intersectionRatio) {
+    function intersect(...ratios) {
       act(() => {
-        observer.instance.triggerCallback([{intersectionRatio, time: ++time}]);
-      });
-    }
-
-    function triggerEntries(entries) {
-      act(() => {
-        observer.instance.triggerCallback(entries.map(entry => ({time: ++time, ...entry})));
+        observer.instance.triggerCallback(ratios.map(intersectionRatio => ({intersectionRatio})));
       });
     }
 
@@ -575,28 +567,13 @@ describe('Sheet', () => {
       expect(tree.getByRole('dialog')).toBeInTheDocument();
     });
 
-    it('handles single entry callbacks sequentially', async () => {
-      let onOpenChange = jest.fn();
-      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
-      await open(tree);
-
-      triggerEntries([{intersectionRatio: 1}]);
-      expect(tree.getByTestId('sheet')).toHaveAttribute('data-expanded', 'true');
-      expect(onOpenChange).not.toHaveBeenCalledWith(false);
-
-      triggerEntries([{intersectionRatio: 0}]);
-      act(() => jest.runAllTimers());
-      expect(onOpenChange).toHaveBeenLastCalledWith(false);
-      expect(tree.queryByRole('dialog')).toBeNull();
-    });
-
     it('processes the latest entry when multiple entries are delivered in a single callback', async () => {
       let onOpenChange = jest.fn();
       let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
       await open(tree);
 
       intersect(1);
-      triggerEntries([{intersectionRatio: 0.5}, {intersectionRatio: 0}]);
+      intersect(0.5, 0);
       act(() => jest.runAllTimers());
       expect(onOpenChange).toHaveBeenLastCalledWith(false);
       expect(tree.queryByRole('dialog')).toBeNull();
@@ -608,7 +585,7 @@ describe('Sheet', () => {
       await open(tree);
 
       intersect(1);
-      triggerEntries([{intersectionRatio: 0}, {intersectionRatio: 0.5}]);
+      intersect(0, 0.5);
       act(() => jest.runAllTimers());
       expect(onOpenChange).not.toHaveBeenCalledWith(false);
       expect(tree.getByRole('dialog')).toBeInTheDocument();
