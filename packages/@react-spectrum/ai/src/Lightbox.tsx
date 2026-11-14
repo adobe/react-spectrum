@@ -15,7 +15,7 @@ import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Butt
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
-import {createContext, ReactNode, useContext, useReducer, useRef, useState} from 'react';
+import {createContext, ReactNode, useContext, useRef, useState} from 'react';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {flushSync} from 'react-dom';
 import {FocusableElement, Key} from '@react-types/shared';
@@ -686,42 +686,42 @@ function CarouselNavButton(props: CarouselNavButtonProps) {
   // oxlint-enable react/react-compiler
 }
 
-interface CarouselState {
-  centerPage: number;
-  currentPage: number;
-}
+// interface CarouselState {
+//   centerPage: number;
+//   currentPage: number;
+// }
 
-type Action =
-  | {type: 'SCROLL'; page: number}
-  | {type: 'SCROLL_END'}
-  | {type: 'SET_CENTER_PAGE'; page: number};
+// type Action =
+//   | {type: 'SCROLL'; page: number}
+//   | {type: 'SCROLL_END'}
+//   | {type: 'SET_CENTER_PAGE'; page: number};
 
-const PAGES = 100;
+// const PAGES = 100;
 
-function getWrappedIndex(index: number, size: number): number {
-  return ((index % size) + size) % size;
-}
+// function getWrappedIndex(index: number, size: number): number {
+//   return ((index % size) + size) % size;
+// }
 
-function reducer(state: CarouselState, action: Action) {
-  let {centerPage, currentPage} = state;
-  switch (action.type) {
-    case 'SET_CENTER_PAGE':
-      return {centerPage: action.page, currentPage: PAGES};
-    case 'SCROLL':
-      if (action.page === currentPage) {
-        return state;
-      }
-      return {centerPage, currentPage: action.page};
-    case 'SCROLL_END':
-      if (currentPage === PAGES) {
-        return state;
-      }
-      return {
-        centerPage: centerPage + currentPage - PAGES,
-        currentPage: PAGES
-      };
-  }
-}
+// function reducer(state: CarouselState, action: Action) {
+//   let {centerPage, currentPage} = state;
+//   switch (action.type) {
+//     case 'SET_CENTER_PAGE':
+//       return {centerPage: action.page, currentPage: PAGES};
+//     case 'SCROLL':
+//       if (action.page === currentPage) {
+//         return state;
+//       }
+//       return {centerPage, currentPage: action.page};
+//     case 'SCROLL_END':
+//       if (currentPage === PAGES) {
+//         return state;
+//       }
+//       return {
+//         centerPage: centerPage + currentPage - PAGES,
+//         currentPage: PAGES
+//       };
+//   }
+// }
 
 const imageStyles = style({
   ...focusRing(),
