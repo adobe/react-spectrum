@@ -1,6 +1,6 @@
 import {DOMAttributes} from '@react-types/shared';
 import {isFocusVisible, useFocusVisibleListener} from '../interactions/useFocusVisible';
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useState} from 'react';
 import {useFocus} from '../interactions/useFocus';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 
@@ -38,36 +38,21 @@ export interface FocusRingAria {
  * not with a mouse, touch, or other input methods.
  */
 export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
-  let {autoFocus = false, isTextInput, within} = props;
-  let state = useRef({
-    isFocused: false,
-    isFocusVisible: autoFocus || isFocusVisible()
-  });
-  let [isFocused, setFocused] = useState(false);
-  let [isFocusVisibleState, setFocusVisible] = useState(
-    // oxlint-disable-next-line react/react-compiler
-    () => state.current.isFocused && state.current.isFocusVisible
+  let {isTextInput, within} = props;
+  let [focusState, setFocusState] = useState<'unfocused' | 'focused' | 'focus-visible'>(
+    'unfocused'
   );
+  let isFocused = focusState !== 'unfocused';
 
-  let updateState = useCallback(
-    () => setFocusVisible(state.current.isFocused && state.current.isFocusVisible),
-    []
-  );
-
-  let onFocusChange = useCallback(
-    isFocused => {
-      state.current.isFocused = isFocused;
-      state.current.isFocusVisible = isFocusVisible();
-      setFocused(isFocused);
-      updateState();
-    },
-    [updateState]
-  );
+  let onFocusChange = useCallback(isFocused => {
+    setFocusState(isFocused ? (isFocusVisible() ? 'focus-visible' : 'focused') : 'unfocused');
+  }, []);
 
   useFocusVisibleListener(
     isFocusVisible => {
-      state.current.isFocusVisible = isFocusVisible;
-      updateState();
+      setFocusState(state =>
+        state === 'unfocused' ? state : isFocusVisible ? 'focus-visible' : 'focused'
+      );
     },
     [isTextInput, isFocused],
     {enabled: isFocused, isTextInput}
@@ -85,7 +70,7 @@ export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
 
   return {
     isFocused,
-    isFocusVisible: isFocusVisibleState,
+    isFocusVisible: focusState === 'focus-visible',
     focusProps: within ? focusWithinProps : focusProps
   };
 }

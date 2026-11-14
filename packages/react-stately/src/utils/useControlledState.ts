@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {SetStateAction, useCallback, useEffect, useReducer, useRef, useState} from 'react';
+import React, {SetStateAction, useCallback, useEffect, useRef, useState} from 'react';
 
 // Use the earliest effect possible to reset the ref below.
 const useEarlyEffect: typeof React.useLayoutEffect =
@@ -35,8 +35,8 @@ export function useControlledState<T, C = T>(
 ): [T, (value: SetStateAction<T>, ...args: any[]) => void] {
   // Store the value in both state and a ref. The state value will only be used when uncontrolled.
   // The ref is used to track the most current value, which is passed to the function setState callback.
-  let [stateValue, setStateValue] = useState(value || defaultValue);
-  let valueRef = useRef(stateValue);
+  let [state, setState] = useState({value: value || defaultValue});
+  let valueRef = useRef(state.value);
 
   let isControlledRef = useRef(value !== undefined);
   let isControlled = value !== undefined;
@@ -53,12 +53,11 @@ export function useControlledState<T, C = T>(
   // After each render, update the ref to the current value.
   // This ensures that the setState callback argument is reset.
   // Note: the effect should not have any dependencies so that controlled values always reset.
-  let currentValue = isControlled ? value : stateValue;
+  let currentValue = isControlled ? value : state.value;
   useEarlyEffect(() => {
     valueRef.current = currentValue;
   });
 
-  let [, forceUpdate] = useReducer(() => ({}), {});
   let setValue = useCallback(
     (value: SetStateAction<T>, ...args: any[]) => {
       // @ts-ignore - TS doesn't know that T cannot be a function.
@@ -67,10 +66,9 @@ export function useControlledState<T, C = T>(
         // Update the ref so that the next setState callback has the most recent value.
         valueRef.current = newValue;
 
-        setStateValue(newValue);
-
-        // Always trigger a re-render, even when controlled, so that the layout effect above runs to reset the value.
-        forceUpdate();
+        // Use a new object to always trigger a render, even if a controlled parent repeatedly
+        // rejects the same value, so the early effect above resets the ref to the current value.
+        setState({value: newValue});
 
         // Trigger onChange. Note that if setState is called multiple times in a single event,
         // onChange will be called for each one instead of only once.
