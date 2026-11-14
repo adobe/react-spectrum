@@ -734,6 +734,68 @@ describe('Table', () => {
     expect(checkbox2).toBeChecked();
   });
 
+  it('should support range selection with shift+click on row checkboxes', async () => {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = renderTable({
+      tableProps: {selectionMode: 'multiple', onSelectionChange}
+    });
+
+    let checkboxes = getAllByRole('checkbox');
+    await user.click(checkboxes[1]);
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
+
+    await user.keyboard('{Shift>}');
+    await user.click(checkboxes[3]);
+    await user.keyboard('{/Shift}');
+    expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1', '2', '3']));
+
+    // Shift-clicking another row extends the range from the same anchor row.
+    await user.keyboard('{Shift>}');
+    await user.click(checkboxes[2]);
+    await user.keyboard('{/Shift}');
+    expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['1', '2']));
+
+    // The range selection should not break normal checkbox toggling.
+    await user.click(checkboxes[3]);
+    expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['1', '2', '3']));
+  });
+
+  it('should extend checkbox selection when selectedKeys is controlled', async () => {
+    let onSelectionChange = jest.fn();
+    function ControlledTable() {
+      // Pass the Selection object received from onSelectionChange back through
+      // selectedKeys so its range anchor is preserved between renders.
+      let [selected, setSelected] = useState(new Set());
+      return (
+        <TestTable
+          tableProps={{
+            selectionMode: 'multiple',
+            selectedKeys: selected,
+            onSelectionChange: keys => {
+              setSelected(keys);
+              onSelectionChange(keys);
+            }
+          }}
+        />
+      );
+    }
+
+    let {getAllByRole} = render(<ControlledTable />);
+    let checkboxes = getAllByRole('checkbox');
+    await user.click(checkboxes[1]);
+
+    await user.keyboard('{Shift>}');
+    await user.click(checkboxes[3]);
+    await user.keyboard('{/Shift}');
+    expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1', '2', '3']));
+
+    // Shift-clicking another row extends the range from the same anchor row.
+    await user.keyboard('{Shift>}');
+    await user.click(checkboxes[2]);
+    await user.keyboard('{/Shift}');
+    expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['1', '2']));
+  });
+
   it('should not render checkboxes for selection with selectionBehavior=replace', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {
