@@ -468,9 +468,9 @@ describe('Sheet', () => {
       observer = setupIntersectionObserverMock({observe});
     });
 
-    function intersect(intersectionRatio) {
+    function intersect(...ratios) {
       act(() => {
-        observer.instance.triggerCallback([{intersectionRatio}]);
+        observer.instance.triggerCallback(ratios.map(intersectionRatio => ({intersectionRatio})));
       });
     }
 
@@ -565,6 +565,31 @@ describe('Sheet', () => {
       intersect(0);
       expect(onOpenChange).not.toHaveBeenCalledWith(false);
       expect(tree.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    it('processes the latest entry when multiple entries are delivered in a single callback', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
+      await open(tree);
+
+      intersect(1);
+      intersect(0.5, 0);
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
+    it('does not close when the latest entry has a positive intersection ratio', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<TestSheet triggerProps={{onOpenChange}} />);
+      await open(tree);
+
+      intersect(1);
+      intersect(0, 0.5);
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).not.toHaveBeenCalledWith(false);
+      expect(tree.getByRole('dialog')).toBeInTheDocument();
+      expect(tree.getByTestId('sheet')).not.toHaveAttribute('data-expanded');
     });
   });
 
