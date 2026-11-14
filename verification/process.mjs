@@ -1,0 +1,134 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {closeSync, openSync, writeSync} from 'node:fs';
+import {execFileSync, spawn} from 'node:child_process';
+
+// The process groups of `pid` and its descendants, other than this process's own.
+// Playwright starts each browser in a group of its own, so signaling only the
+// runner's group would leave the browser running.
+function processGroups(pid) {
+  let groups = new Set([pid]);
+  let rows;
+  try {
+    rows = execFileSync('ps', ['-A', '-o', 'pid=,ppid=,pgid='], {encoding: 'utf8'})
+      .trim()
+      .split('\n')
+      .map(line => line.trim().split(/\s+/).map(Number));
+  } catch {
+    return groups;
+  }
+  let tree = new Set([pid]);
+  for (let size = 0; size !== tree.size; ) {
+    size = tree.size;
+    for (let [child, parent] of rows) if (tree.has(parent)) tree.add(child);
+  }
+  for (let [child, , group] of rows) if (tree.has(child)) groups.add(group);
+  groups.delete(rows.find(([child]) => child === process.pid)?.[2]);
+  return groups;
+}
+
+// Write complete logs to disk, retaining only a bounded tail for diagnostics.
+// A separate process group lets timeouts stop Yarn's child runners as well.
+// Without `timeoutMs`, the process runs until it exits or `signal` aborts it.
+export function runProcess(command, args, {cwd, env = process.env, timeoutMs, log, signal} = {}) {
+  return new Promise(resolve => {
+    let fd = openSync(log, 'wx');
+    let started = Date.now();
+    let output = '';
+    let error;
+    let timedOut = false;
+    let interrupted = false;
+    let killTimer;
+    let groups;
+    let child;
+    try {
+      child = spawn(command, args, {
+        cwd,
+        env,
+        detached: process.platform !== 'win32',
+        stdio: ['ignore', 'pipe', 'pipe']
+      });
+    } catch (failure) {
+      closeSync(fd);
+      resolve({code: null, error: failure.message, durationMs: Date.now() - started, output});
+      return;
+    }
+    let kill = signal => {
+      if (!child.pid) return;
+      if (process.platform === 'win32') {
+        // taskkill /T stops the whole tree.
+        try {
+          execFileSync('taskkill', ['/pid', String(child.pid), '/T', '/F'], {stdio: 'ignore'});
+        } catch {
+          // The tree has already exited.
+        }
+        return;
+      }
+      // Find the groups once, while the process tree still links them to the child.
+      groups ??= processGroups(child.pid);
+      for (let group of groups) {
+        try {
+          process.kill(-group, signal);
+        } catch (failure) {
+          if (failure.code !== 'ESRCH') error = failure.message;
+        }
+      }
+    };
+    let stop = () => {
+      kill('SIGTERM');
+      // Not cleared when the child closes: a browser in its own group can outlive it.
+      killTimer ??= setTimeout(() => kill('SIGKILL'), 1000);
+    };
+    let abort = () => {
+      interrupted = true;
+      stop();
+    };
+    let timer =
+      timeoutMs === undefined
+        ? undefined
+        : setTimeout(() => {
+            timedOut = true;
+            stop();
+          }, timeoutMs);
+    let record = chunk => {
+      try {
+        writeSync(fd, chunk);
+        output = (output + chunk.toString()).slice(-65536);
+      } catch (failure) {
+        error = failure.message;
+        stop();
+      }
+    };
+    child.stdout.on('data', record);
+    child.stderr.on('data', record);
+    child.on('error', failure => {
+      error = failure.message;
+    });
+    child.on('close', (code, exitSignal) => {
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', abort);
+      closeSync(fd);
+      resolve({
+        code,
+        signal: exitSignal,
+        error,
+        timedOut,
+        interrupted,
+        durationMs: Date.now() - started,
+        output
+      });
+    });
+    signal?.addEventListener('abort', abort, {once: true});
+    if (signal?.aborted) abort();
+  });
+}
