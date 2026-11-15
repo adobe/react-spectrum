@@ -10,12 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {addEvent} from '../utils/domHelpers';
+import {addEvent, getOwnerWindow} from '../utils/domHelpers';
 import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {getActiveElement, isFocusWithin} from '../utils/shadowdom/DOMFunctions';
-import {getPropagationTargets} from '../utils/shadowdom/DOMFunctions';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  getActiveElement,
+  getPropagationTargets,
+  isFocusWithin
+} from '../utils/shadowdom/DOMFunctions';
+import {useCallback, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
@@ -103,7 +106,7 @@ export interface AriaPositionProps extends PositionProps {
   /**
    * Element that that serves as the positioning boundary.
    *
-   * @default document.body
+   * @default overlayRef.current.ownerDocument.body
    */
   boundaryElement?: Element;
   /**
@@ -171,8 +174,6 @@ interface ScrollAnchor {
   offset: number;
 }
 
-let visualViewport = typeof document !== 'undefined' ? window.visualViewport : null;
-
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger
  * element, and updating the position when the window resizes.
@@ -188,7 +189,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     placement = 'bottom' as Placement,
     containerPadding = 12,
     shouldFlip = true,
-    boundaryElement = typeof document !== 'undefined' ? document.body : null,
+    boundaryElement,
     offset = 0,
     crossOffset = 0,
     shouldUpdatePosition = true,
@@ -223,28 +224,30 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     arrowSize
   ];
 
-  // Note, the position freezing breaks if body sizes itself dynamicly with the visual viewport but that might
-  // just be a non-realistic use case
-  // Upon opening a overlay, record the current visual viewport scale so we can freeze the overlay styles
-  let lastScale = useRef(visualViewport?.scale);
-  useEffect(() => {
-    if (isOpen) {
-      lastScale.current = visualViewport?.scale;
-    }
+  // Freeze positioning if the viewport is zoomed after opening the overlay.
+  let initialViewport = useRef<{viewport: VisualViewport; scale: number} | null>(null);
+  useLayoutEffect(() => {
+    initialViewport.current = null;
   }, [isOpen]);
 
   let updatePosition = useCallback(() => {
-    if (
-      shouldUpdatePosition === false ||
-      !isOpen ||
-      !overlayRef.current ||
-      !targetRef.current ||
-      !boundaryElement
-    ) {
+    let overlay = overlayRef.current as HTMLElement | null;
+    let target = targetRef.current;
+    if (shouldUpdatePosition === false || !isOpen || !overlay || !target) {
       return;
     }
 
-    if (visualViewport?.scale !== lastScale.current) {
+    let ownerWindow = getOwnerWindow(overlay);
+    let visualViewport = ownerWindow.visualViewport;
+    let boundary = boundaryElement === undefined ? overlay.ownerDocument.body : boundaryElement;
+    if (!boundary) {
+      return;
+    }
+
+    if (visualViewport && initialViewport.current?.viewport !== visualViewport) {
+      initialViewport.current = {viewport: visualViewport, scale: visualViewport.scale};
+    }
+    if (visualViewport && visualViewport.scale !== initialViewport.current?.scale) {
       return;
     }
 
@@ -254,7 +257,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // changes, the focused element appears to stay in the same position.
     let anchor: ScrollAnchor | null = null;
     if (scrollRef.current && isFocusWithin(scrollRef.current)) {
-      let anchorRect = getActiveElement()?.getBoundingClientRect();
+      let anchorRect = getActiveElement(scrollRef.current.ownerDocument)?.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       // Anchor from the top if the offset is in the top half of the scrollable element,
       // otherwise anchor from the bottom.
@@ -270,27 +273,26 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     // Always reset the overlay's previous max height if not defined by the user so that we can compensate for
     // RAC collections populating after a second render and properly set a correct max height + positioning when it populates.
-    let overlay = overlayRef.current as HTMLElement;
-    if (!maxHeight && overlayRef.current) {
+    if (!maxHeight) {
       overlay.style.top = '0px';
       overlay.style.bottom = '';
-      overlay.style.maxHeight = (window.visualViewport?.height ?? window.innerHeight) + 'px';
+      overlay.style.maxHeight = (visualViewport?.height ?? ownerWindow.innerHeight) + 'px';
     }
 
     let position = calculatePosition({
       placement: translateRTL(placement, direction),
-      overlayNode: overlayRef.current,
-      targetNode: targetRef.current,
-      scrollNode: scrollRef.current || overlayRef.current,
+      overlayNode: overlay,
+      targetNode: target,
+      scrollNode: scrollRef.current || overlay,
       padding: containerPadding,
       shouldFlip,
-      boundaryElement,
+      boundaryElement: boundary,
       offset,
       crossOffset,
       maxHeight,
       arrowSize: arrowSize ?? (arrowRef?.current ? getRect(arrowRef.current, true).width : 0),
       arrowBoundaryOffset,
-      targetRect: getTargetRect?.(targetRef.current)
+      targetRect: getTargetRect?.(target)
     });
 
     if (!position.position) {
@@ -310,7 +312,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlay.style.maxHeight = position.maxHeight != null ? position.maxHeight + 'px' : '';
 
     // Restore scroll position relative to anchor element.
-    let activeElement = getActiveElement();
+    let activeElement = getActiveElement(overlay.ownerDocument);
     if (anchor && activeElement && scrollRef.current) {
       let anchorRect = activeElement.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
@@ -329,9 +331,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
   useLayoutEffect(updatePosition, deps);
 
-  // Update position on window resize
-  useResize(updatePosition);
-
   // Update position when the overlay changes size (might need to flip).
   useResizeObserver({
     ref: overlayRef,
@@ -348,6 +347,13 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.
   let isResizing = useRef(false);
   useLayoutEffect(() => {
+    let overlay = overlayRef.current;
+    if (!overlay) {
+      return;
+    }
+
+    let ownerWindow = getOwnerWindow(overlay);
+    let visualViewport = ownerWindow.visualViewport;
     let timeout: ReturnType<typeof setTimeout>;
     let onResize = () => {
       isResizing.current = true;
@@ -368,20 +374,23 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       }
     };
 
-    visualViewport?.addEventListener('resize', onResize);
-    visualViewport?.addEventListener('scroll', onScroll);
-    let cleanup = addEvent(
-      // @ts-expect-error
-      getPropagationTargets(window),
+    ownerWindow.addEventListener('resize', updatePosition);
+    let removeScrollListener = addEvent(
+      getPropagationTargets(overlay, ownerWindow),
       'scroll',
       onScroll
     );
+    visualViewport?.addEventListener('resize', onResize);
+    visualViewport?.addEventListener('scroll', onScroll);
     return () => {
+      ownerWindow.removeEventListener('resize', updatePosition);
+      removeScrollListener();
       visualViewport?.removeEventListener('resize', onResize);
       visualViewport?.removeEventListener('scroll', onScroll);
-      cleanup();
+      clearTimeout(timeout);
+      isResizing.current = false;
     };
-  }, [updatePosition]);
+  }, [overlayRef, updatePosition]);
 
   let close = useCallback(() => {
     if (!isResizing.current) {
@@ -420,15 +429,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     },
     updatePosition
   };
-}
-
-function useResize(onResize) {
-  useLayoutEffect(() => {
-    window.addEventListener('resize', onResize, false);
-    return () => {
-      window.removeEventListener('resize', onResize, false);
-    };
-  }, [onResize]);
 }
 
 function translateRTL(position, direction) {

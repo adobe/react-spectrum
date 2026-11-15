@@ -11,10 +11,111 @@
  */
 
 import {createPortal} from 'react-dom';
-import {expect, it} from 'vitest';
+import {expect, it, vi} from 'vitest';
+import {getOwnerWindow} from '../../src/utils/domHelpers';
 import React, {useRef, useState} from 'react';
 import {render} from 'vitest-browser-react';
+import {useCloseOnScroll} from '../../src/overlays/useCloseOnScroll';
 import {useOverlayPosition} from '../../src/overlays/useOverlayPosition';
+
+it('positions an overlay in its own viewport and responds to that window’s resize event', async () => {
+  let frame = document.createElement('iframe');
+  frame.style.width = '320px';
+  frame.style.height = '240px';
+  document.body.append(frame);
+
+  try {
+    let body = frame.contentDocument!.body;
+    function Example() {
+      let targetRef = useRef<HTMLInputElement>(null);
+      let overlayRef = useRef<HTMLDivElement>(null);
+      let {overlayProps, placement} = useOverlayPosition({
+        targetRef,
+        overlayRef,
+        placement: 'bottom left'
+      });
+
+      return createPortal(
+        <>
+          <input
+            ref={targetRef}
+            aria-label="Search"
+            style={{position: 'absolute', top: 180, left: 50, height: 30, boxSizing: 'border-box'}}
+          />
+          <div
+            ref={overlayRef}
+            data-placement={placement}
+            {...overlayProps}
+            style={{...overlayProps.style, width: 140, height: 100}}>
+            Overlay
+          </div>
+        </>,
+        body
+      );
+    }
+
+    let result = await render(<Example />);
+    try {
+      let target = body.querySelector('input')!;
+      let overlay = body.querySelector<HTMLElement>('[data-placement]')!;
+      let ownerWindow = getOwnerWindow(target);
+      await expect.poll(() => overlay.dataset.placement).toBe('top');
+      expect(overlay.style.maxHeight).toBe('168px');
+
+      // Move the trigger without changing its size so only the resize event updates placement.
+      target.style.top = '20px';
+      ownerWindow.dispatchEvent(new ownerWindow.Event('resize'));
+      await expect.poll(() => overlay.dataset.placement).toBe('bottom');
+      expect(overlay.getBoundingClientRect().top).toBe(target.getBoundingClientRect().bottom);
+    } finally {
+      await result.unmount();
+    }
+  } finally {
+    frame.remove();
+  }
+});
+
+it('dismisses on ancestor scroll but ignores other scroll targets in a second document', async () => {
+  let frame = document.createElement('iframe');
+  document.body.append(frame);
+
+  try {
+    let body = frame.contentDocument!.body;
+    let onClose = vi.fn();
+    function Example() {
+      let triggerRef = useRef<HTMLInputElement>(null);
+      useCloseOnScroll({triggerRef, isOpen: true, onClose});
+
+      return createPortal(
+        <>
+          <div>
+            <input ref={triggerRef} aria-label="Search" />
+          </div>
+          <div data-testid="unrelated">Unrelated scroll region</div>
+        </>,
+        body
+      );
+    }
+
+    let result = await render(<Example />);
+    try {
+      let trigger = body.querySelector('input')!;
+      let ownerWindow = getOwnerWindow(trigger);
+      body
+        .querySelector('[data-testid="unrelated"]')!
+        .dispatchEvent(new ownerWindow.Event('scroll'));
+      trigger.dispatchEvent(new ownerWindow.Event('scroll'));
+      expect(onClose).not.toHaveBeenCalled();
+
+      trigger.parentElement!.dispatchEvent(new ownerWindow.Event('scroll'));
+      expect(onClose).toHaveBeenCalledTimes(1);
+    } finally {
+      await result.unmount();
+    }
+  } finally {
+    frame.remove();
+  }
+});
 
 it.each(['fixed', 'absolute'] as const)(
   'positions an overlay against a %s target without modifying its rectangle',

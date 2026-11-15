@@ -12,6 +12,7 @@
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from './useOverlayPosition';
 import {clamp} from 'react-stately/private/utils/number';
+import {getOwnerWindow} from '../utils/domHelpers';
 import {getParentElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {isWebKit} from '../utils/platform';
 
@@ -106,8 +107,6 @@ const TOTAL_SIZE = {
 
 const PARSED_PLACEMENT_CACHE = {};
 
-let getVisualViewport = () => (typeof document !== 'undefined' ? window.visualViewport : null);
-
 function getContainerDimensions(
   containerNode: Element,
   visualViewport: VisualViewport | null
@@ -126,7 +125,7 @@ function getContainerDimensions(
   // That's why we use the visual viewport instead.
 
   if (containerNode.tagName === 'BODY' || containerNode.tagName === 'HTML') {
-    let documentElement = document.documentElement;
+    let documentElement = containerNode.ownerDocument.documentElement;
     totalWidth = documentElement.clientWidth;
     totalHeight = documentElement.clientHeight;
     width = visualViewport?.width ?? totalWidth;
@@ -235,7 +234,7 @@ function getDelta(
 }
 
 function getMargins(node: Element): Position {
-  let style = window.getComputedStyle(node);
+  let style = getOwnerWindow(node).getComputedStyle(node);
   return {
     top: parseInt(style.marginTop, 10) || 0,
     bottom: parseInt(style.marginBottom, 10) || 0,
@@ -661,18 +660,22 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     targetRect
   } = opts;
 
-  let visualViewport = getVisualViewport();
+  let ownerWindow = getOwnerWindow(overlayNode);
+  let documentElement = overlayNode.ownerDocument.documentElement;
+  let visualViewport = ownerWindow.visualViewport ?? null;
   let container =
-    overlayNode instanceof HTMLElement ? getContainingBlock(overlayNode) : document.documentElement;
-  let isViewportContainer = container === document.documentElement;
-  const containerPositionStyle = window.getComputedStyle(container).position;
+    overlayNode instanceof ownerWindow.HTMLElement
+      ? getContainingBlock(overlayNode)
+      : documentElement;
+  let isViewportContainer = container === documentElement;
+  const containerPositionStyle = ownerWindow.getComputedStyle(container).position;
   let isContainerPositioned = !!containerPositionStyle && containerPositionStyle !== 'static';
   let childOffset: Offset = isViewportContainer
     ? getOffset(targetNode, false, targetRect)
     : getPosition(targetNode, container, false, targetRect);
 
   if (!isViewportContainer) {
-    let {marginTop, marginLeft} = window.getComputedStyle(targetNode);
+    let {marginTop, marginLeft} = getOwnerWindow(targetNode).getComputedStyle(targetNode);
     childOffset.top += parseInt(marginTop, 10) || 0;
     childOffset.left += parseInt(marginLeft, 10) || 0;
   }
@@ -766,7 +769,7 @@ function getOffset(
   overrideRect?: Readonly<Offset> | null | undefined
 ): Offset {
   let {top, left, width, height} = overrideRect || getRect(node, ignoreScale);
-  let {scrollTop, scrollLeft, clientTop, clientLeft} = document.documentElement;
+  let {scrollTop, scrollLeft, clientTop, clientLeft} = node.ownerDocument.documentElement;
   return {
     top: top + scrollTop - clientTop,
     left: left + scrollLeft - clientLeft,
@@ -781,7 +784,7 @@ function getPosition(
   ignoreScale: boolean,
   overrideRect?: Readonly<Offset> | null | undefined
 ): Offset {
-  let style = window.getComputedStyle(node);
+  let style = getOwnerWindow(node).getComputedStyle(node);
   let offset: Offset;
   if (style.position === 'fixed') {
     let {top, left, width, height} = overrideRect || getRect(node, ignoreScale);
@@ -789,7 +792,7 @@ function getPosition(
   } else {
     offset = getOffset(node, ignoreScale, overrideRect);
     let parentOffset = getOffset(parent, ignoreScale);
-    let parentStyle = window.getComputedStyle(parent);
+    let parentStyle = getOwnerWindow(parent).getComputedStyle(parent);
     parentOffset.top += (parseInt(parentStyle.borderTopWidth, 10) || 0) - parent.scrollTop;
     parentOffset.left += (parseInt(parentStyle.borderLeftWidth, 10) || 0) - parent.scrollLeft;
     offset.top -= parentOffset.top;
@@ -808,17 +811,18 @@ function getContainingBlock(node: HTMLElement): Element {
   // The offsetParent of an element in most cases equals the containing block.
   // https://w3c.github.io/csswg-drafts/cssom-view/#dom-htmlelement-offsetparent
   let offsetParent = node.offsetParent;
+  let ownerDocument = node.ownerDocument;
 
   // The offsetParent algorithm terminates at the document body,
   // even if the body is not a containing block. Double check that
   // and use the documentElement if so.
   if (
     offsetParent &&
-    offsetParent === document.body &&
-    window.getComputedStyle(offsetParent).position === 'static' &&
+    offsetParent === ownerDocument.body &&
+    getOwnerWindow(offsetParent).getComputedStyle(offsetParent).position === 'static' &&
     !isContainingBlock(offsetParent)
   ) {
-    offsetParent = document.documentElement;
+    offsetParent = ownerDocument.documentElement;
   }
 
   // TODO(later): handle table elements?
@@ -834,12 +838,12 @@ function getContainingBlock(node: HTMLElement): Element {
   }
 
   // Fall back to the viewport.
-  return offsetParent || document.documentElement;
+  return offsetParent || ownerDocument.documentElement;
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
 function isContainingBlock(node: Element): boolean {
-  let style = window.getComputedStyle(node);
+  let style = getOwnerWindow(node).getComputedStyle(node);
   return (
     style.transform !== 'none' ||
     /transform|perspective/.test(style.willChange) ||

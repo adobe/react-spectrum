@@ -1,10 +1,7 @@
+import {getOwnerWindow} from './domHelpers';
 import {RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
 import {useEffectEvent} from './useEffectEvent';
-
-function hasResizeObserver() {
-  return typeof window.ResizeObserver !== 'undefined';
-}
 
 type useResizeObserverOptionsType<T> = {
   ref: RefObject<T | undefined | null> | undefined;
@@ -26,13 +23,14 @@ export function useResizeObserver<T extends Element>(
       return;
     }
 
-    if (!hasResizeObserver()) {
-      window.addEventListener('resize', onResizeEvent, false);
+    let ownerWindow = getOwnerWindow(element);
+    if (typeof ownerWindow.ResizeObserver === 'undefined') {
+      ownerWindow.addEventListener('resize', onResizeEvent, false);
       return () => {
-        window.removeEventListener('resize', onResizeEvent, false);
+        ownerWindow.removeEventListener('resize', onResizeEvent, false);
       };
     } else {
-      const resizeObserverInstance = new window.ResizeObserver(entries => {
+      const resizeObserverInstance = new ownerWindow.ResizeObserver(entries => {
         if (!entries.length) {
           return;
         }
