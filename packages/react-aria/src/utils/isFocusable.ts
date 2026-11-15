@@ -37,10 +37,13 @@ const FOCUSABLE_ELEMENT_SELECTOR =
 focusableElements.push('[tabindex]:not([tabindex="-1"]):not([disabled])');
 const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
 
-export function isFocusable(element: Element, options?: {skipVisibilityCheck?: boolean}): boolean {
+export function isFocusable(
+  element: Element,
+  options?: {skipVisibilityCheck?: boolean; skipInertCheck?: boolean}
+): boolean {
   return (
     element.matches(FOCUSABLE_ELEMENT_SELECTOR) &&
-    !isInert(element) &&
+    (options?.skipInertCheck || !isInert(element)) &&
     (options?.skipVisibilityCheck || isElementVisible(element))
   );
 }

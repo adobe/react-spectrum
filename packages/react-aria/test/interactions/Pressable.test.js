@@ -138,6 +138,24 @@ describe('Pressable', function () {
     );
   });
 
+  it('should not warn if focusable child is inside an inert subtree', async function () {
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    // jsdom doesn't implement inert, so set the property as ariaHideOutside does.
+    let container = document.createElement('div');
+    container.inert = true;
+    document.body.appendChild(container);
+    render(
+      <Pressable>
+        <span role="button">Button</span>
+      </Pressable>,
+      {container}
+    );
+
+    expect(spy).not.toHaveBeenCalledWith(
+      '<Pressable> child must be focusable. Please ensure the tabIndex prop is passed through.'
+    );
+  });
+
   it('supports isDisabled', async function () {
     using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole} = render(
