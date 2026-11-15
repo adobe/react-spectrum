@@ -46,7 +46,7 @@ import {
 } from '../src/SideNav';
 import {SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
 import {style} from '../style' with {type: 'macro'};
-import {useLandmark} from 'react-aria';
+import {useLandmark} from 'react-aria/useLandmark';
 
 const events = ['onSelectionChange'];
 

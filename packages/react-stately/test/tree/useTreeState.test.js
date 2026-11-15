@@ -10,10 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {composeStory} from '@storybook/react';
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {KeyboardNavigation} from '../../stories/tree/useTreeState.stories';
+import Meta, {
+  KeyboardNavigation as KeyboardNavigationStory
+} from '../../stories/tree/useTreeState.stories';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+
+const KeyboardNavigation = composeStory(KeyboardNavigationStory, Meta);
 
 describe('useTreeState', () => {
   let user;

@@ -12,7 +12,7 @@
 
 import {Label} from '../src/Label';
 
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {Slider, SliderOutput, SliderThumb, SliderTrack} from '../src/Slider';
 import styles from '../example/index.css';
@@ -23,82 +23,84 @@ export default {
   component: Slider
 } as Meta<typeof Slider>;
 
-export type SliderStory = StoryFn<typeof Slider>;
+export type SliderStory = StoryObj<typeof Slider>;
 
-export const SliderExample: SliderStory = () => {
-  const [value, setValue] = React.useState([30, 60]);
-  return (
-    <div>
-      <Slider<number[]>
-        data-testid="slider-example"
-        value={value}
-        onChange={setValue}
-        style={{
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          width: 300
-        }}>
-        <div style={{display: 'flex', alignSelf: 'stretch'}}>
-          <Label>Test</Label>
-          <SliderOutput style={{flex: '1 0 auto', textAlign: 'end'}}>
-            {({state}) => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
-          </SliderOutput>
-        </div>
-        <SliderTrack
+export const SliderExample: SliderStory = {
+  render: function SliderExample() {
+    const [value, setValue] = React.useState([30, 60]);
+    return (
+      <div>
+        <Slider<number[]>
+          data-testid="slider-example"
+          value={value}
+          onChange={setValue}
           style={{
             position: 'relative',
-            height: 30,
-            width: '100%'
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: 300
           }}>
-          <div
+          <div style={{display: 'flex', alignSelf: 'stretch'}}>
+            <Label>Test</Label>
+            <SliderOutput style={{flex: '1 0 auto', textAlign: 'end'}}>
+              {({state}) => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
+            </SliderOutput>
+          </div>
+          <SliderTrack
             style={{
-              position: 'absolute',
-              backgroundColor: 'gray',
-              height: 3,
-              top: 13,
+              position: 'relative',
+              height: 30,
               width: '100%'
-            }}
-          />
-          <CustomThumb index={0}>
-            <Label>A</Label>
-          </CustomThumb>
-          <CustomThumb index={1}>
-            <Label>B</Label>
-          </CustomThumb>
-        </SliderTrack>
-      </Slider>
-      <button onClick={() => setValue([0, 100])}>reset</button>
-    </div>
-  );
+            }}>
+            <div
+              style={{
+                position: 'absolute',
+                backgroundColor: 'gray',
+                height: 3,
+                top: 13,
+                width: '100%'
+              }}
+            />
+            <CustomThumb index={0}>
+              <Label>A</Label>
+            </CustomThumb>
+            <CustomThumb index={1}>
+              <Label>B</Label>
+            </CustomThumb>
+          </SliderTrack>
+        </Slider>
+        <button onClick={() => setValue([0, 100])}>reset</button>
+      </div>
+    );
+  }
 };
 
-export const SliderCSS: SliderStory = props => (
-  <Slider {...props} defaultValue={30} className={styles.slider}>
-    <div className={styles.label}>
-      <Label>Test</Label>
-      <SliderOutput />
-    </div>
-    <SliderTrack className={styles.track}>
-      <SliderThumb className={styles.thumb} />
-    </SliderTrack>
-  </Slider>
-);
-
-SliderCSS.args = {
-  orientation: 'horizontal',
-  isDisabled: false,
-  minValue: 0,
-  maxValue: 100,
-  step: 1
-};
-
-SliderCSS.argTypes = {
-  orientation: {
-    control: {
-      type: 'inline-radio',
-      options: ['horizontal', 'vertical']
+export const SliderCSS: SliderStory = {
+  render: props => (
+    <Slider {...props} defaultValue={30} className={styles.slider}>
+      <div className={styles.label}>
+        <Label>Test</Label>
+        <SliderOutput />
+      </div>
+      <SliderTrack className={styles.track}>
+        <SliderThumb className={styles.thumb} />
+      </SliderTrack>
+    </Slider>
+  ),
+  args: {
+    orientation: 'horizontal',
+    isDisabled: false,
+    minValue: 0,
+    maxValue: 100,
+    step: 1
+  },
+  argTypes: {
+    orientation: {
+      control: {
+        type: 'inline-radio',
+        options: ['horizontal', 'vertical']
+      }
     }
   }
 };

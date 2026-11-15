@@ -177,7 +177,9 @@ export function usePreviewTrigger(
         first.focus();
       }
     } else if (e.key === 'Escape') {
-      e.preventDefault();
+      if (state.isOpen) {
+        e.preventDefault();
+      }
       state.close(true);
     }
   };

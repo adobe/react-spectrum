@@ -14,7 +14,7 @@ import {action} from 'storybook/actions';
 import {Button} from '../src/Button';
 import {FileTrigger} from '../src/FileTrigger';
 import {Link} from '../src/Link';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';
 
@@ -23,45 +23,51 @@ export default {
   component: FileTrigger
 } as Meta<typeof FileTrigger>;
 
-export type FileTriggerStory = StoryFn<typeof FileTrigger>;
+export type FileTriggerStory = StoryObj<typeof FileTrigger>;
 
-export const FileTriggerButton: FileTriggerStory = props => (
-  <FileTrigger onSelect={action('onSelect')} data-testid="filetrigger-example" {...props}>
-    <Button>Upload</Button>
-  </FileTrigger>
-);
-
-export const FileTriggerDirectories: FileTriggerStory = props => {
-  let [files, setFiles] = React.useState<string[]>([]);
-
-  return (
-    <>
-      <FileTrigger
-        {...props}
-        acceptDirectory
-        onSelect={e => {
-          if (e) {
-            let fileList = [...e].map(file =>
-              file.webkitRelativePath !== '' ? file.webkitRelativePath : file.name
-            );
-            setFiles(fileList);
-          }
-        }}>
-        <Button>Upload</Button>
-      </FileTrigger>
-      {files && (
-        <ul>
-          {files.map((file, index) => (
-            <li key={index}>{file}</li>
-          ))}
-        </ul>
-      )}
-    </>
-  );
+export const FileTriggerButton: FileTriggerStory = {
+  render: props => (
+    <FileTrigger onSelect={action('onSelect')} data-testid="filetrigger-example" {...props}>
+      <Button>Upload</Button>
+    </FileTrigger>
+  )
 };
 
-export const FileTriggerLinkAllowsMultiple: FileTriggerStory = props => (
-  <FileTrigger {...props} onSelect={action('onSelect')} allowsMultiple>
-    <Link>Select a file</Link>
-  </FileTrigger>
-);
+export const FileTriggerDirectories: FileTriggerStory = {
+  render: function FileTriggerDirectories(props) {
+    let [files, setFiles] = React.useState<string[]>([]);
+
+    return (
+      <>
+        <FileTrigger
+          {...props}
+          acceptDirectory
+          onSelect={e => {
+            if (e) {
+              let fileList = [...e].map(file =>
+                file.webkitRelativePath !== '' ? file.webkitRelativePath : file.name
+              );
+              setFiles(fileList);
+            }
+          }}>
+          <Button>Upload</Button>
+        </FileTrigger>
+        {files && (
+          <ul>
+            {files.map((file, index) => (
+              <li key={index}>{file}</li>
+            ))}
+          </ul>
+        )}
+      </>
+    );
+  }
+};
+
+export const FileTriggerLinkAllowsMultiple: FileTriggerStory = {
+  render: props => (
+    <FileTrigger {...props} onSelect={action('onSelect')} allowsMultiple>
+      <Link>Select a file</Link>
+    </FileTrigger>
+  )
+};

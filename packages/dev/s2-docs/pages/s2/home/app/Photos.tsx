@@ -35,7 +35,8 @@ export function Photos(props: any) {
         return {items: []};
       }
 
-      let nextItems: any[] = await next();
+      let nextPage: any = await next();
+      let nextItems: any[] = nextPage.default || nextPage;
       // Filter duplicates which might be returned by the API.
       let existingKeys = new Set(items.map(i => i.id));
       nextItems = nextItems.filter(

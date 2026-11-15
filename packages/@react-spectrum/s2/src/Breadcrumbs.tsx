@@ -62,6 +62,7 @@ import {Link, LinkRenderProps} from 'react-aria-components/Link';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {Text} from './Content';
 import {useDOMRef} from './useDOMRef';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
@@ -522,19 +523,20 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
     setVisibleItems(Math.max(MIN_VISIBLE_ITEMS, Math.min(maxVisibleItems, newVisibleItems)));
   }, [collection.size, setVisibleItems]);
 
+  const updateOverflowEffect = useEffectEvent(updateOverflow);
+
   // making bad assumption that i can listen to containerRef when it's declared in the parent?
   useResizeObserver({ref: containerRef, onResize: updateOverflow});
 
   useLayoutEffect(() => {
     if (collection.size > 0) {
-      queueMicrotask(updateOverflow);
+      queueMicrotask(updateOverflowEffect);
     }
-  }, [collection.size, updateOverflow]);
+  }, [collection.size]);
 
   useEffect(() => {
     // Recalculate visible tags when fonts are loaded.
-    document.fonts?.ready.then(() => updateOverflow());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    document.fonts?.ready.then(() => updateOverflowEffect());
   }, []);
   let sliceIndex = collection.size - visibleItems;
 

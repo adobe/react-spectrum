@@ -253,333 +253,344 @@ function StatusThreadItem({msg}: {msg: Extract<StreamingMessage, {type: 'status'
   );
 }
 
-export function VirtualizedStreamingChat() {
-  let [messages, setMessages] = useState<StreamingMessage[]>(
-    initialResponses as StreamingMessage[]
-  );
-  let nextId = useRef(initialResponses.length);
-  let [isGenerating, setGenerating] = useState(false);
-  let timeouts = useRef<NodeJS.Timeout[]>([]);
-  let [promptValue, setPromptValue] = useState(new PromptFieldValue([]));
-  let followUpMessage = useRef<TokenFieldValue | null>(null);
+export const VirtualizedStreamingChat = {
+  render: function VirtualizedStreamingChat() {
+    let [messages, setMessages] = useState<StreamingMessage[]>(
+      initialResponses as StreamingMessage[]
+    );
+    let nextId = useRef(initialResponses.length);
+    let [isGenerating, setGenerating] = useState(false);
+    let timeouts = useRef<NodeJS.Timeout[]>([]);
+    let [promptValue, setPromptValue] = useState(new PromptFieldValue([]));
+    let followUpMessage = useRef<TokenFieldValue | null>(null);
 
-  function handleSend(prompt: TokenFieldValue) {
-    setGenerating(true);
-    // user message added first so its announcement plays before
-    setMessages(prev => [
-      ...prev,
-      {id: nextId.current++, type: 'user', content: prompt.toString()}
-    ]);
-
-    // Starts a new grouped status message containing a single pending execution trace step.
-    function startToolGroup(label: string) {
+    function handleSend(prompt: TokenFieldValue) {
+      setGenerating(true);
+      // user message added first so its announcement plays before
       setMessages(prev => [
         ...prev,
-        {
-          id: nextId.current++,
-          type: 'status',
-          status: 'pending',
-          steps: [{id: nextId.current++, label, status: 'pending'}]
-        }
+        {id: nextId.current++, type: 'user', content: prompt.toString()}
       ]);
-    }
 
-    // Adds a new step to the trailing status group if one is still open, otherwise starts a new group.
-    function addStep(label: string) {
-      setMessages(prev => {
-        let last = prev[prev.length - 1];
-        let newStep: ExecutionStep = {id: nextId.current++, label, status: 'pending'};
-        if (last?.type === 'status' && last.status === 'pending') {
-          return [
-            ...prev.slice(0, -1),
-            {
-              ...last,
-              steps: [
-                ...last.steps.slice(0, -1),
-                {...last.steps[last.steps.length - 1], status: 'success'},
-                newStep
-              ]
-            }
-          ];
-        }
-        return [
+      // Starts a new grouped status message containing a single pending execution trace step.
+      function startToolGroup(label: string) {
+        setMessages(prev => [
           ...prev,
-          {id: nextId.current++, type: 'status', status: 'pending', steps: [newStep]}
-        ];
-      });
-    }
+          {
+            id: nextId.current++,
+            type: 'status',
+            status: 'pending',
+            steps: [{id: nextId.current++, label, status: 'pending'}]
+          }
+        ]);
+      }
 
-    // Completes the last step of the trailing status group, optionally updating its label.
-    function completeStep(detail: string, label?: string) {
-      setMessages(prev => {
-        let last = prev[prev.length - 1];
-        if (last?.type !== 'status') {
-          return prev;
-        }
-        let steps = last.steps.slice();
-        let step = steps[steps.length - 1];
-        steps[steps.length - 1] = {...step, label: label ?? step.label, status: 'success', detail};
-        return [...prev.slice(0, -1), {...last, steps}];
-      });
-    }
+      // Adds a new step to the trailing status group if one is still open, otherwise starts a new group.
+      function addStep(label: string) {
+        setMessages(prev => {
+          let last = prev[prev.length - 1];
+          let newStep: ExecutionStep = {id: nextId.current++, label, status: 'pending'};
+          if (last?.type === 'status' && last.status === 'pending') {
+            return [
+              ...prev.slice(0, -1),
+              {
+                ...last,
+                steps: [
+                  ...last.steps.slice(0, -1),
+                  {...last.steps[last.steps.length - 1], status: 'success'},
+                  newStep
+                ]
+              }
+            ];
+          }
+          return [
+            ...prev,
+            {id: nextId.current++, type: 'status', status: 'pending', steps: [newStep]}
+          ];
+        });
+      }
 
-    // Marks the trailing status group as complete once all of its steps have finished.
-    function completeGroup() {
-      setMessages(prev => {
-        let last = prev[prev.length - 1];
-        if (last?.type !== 'status') {
-          return prev;
-        }
-        return [...prev.slice(0, -1), {...last, status: 'success'}];
-      });
-    }
-
-    function streamText(content: string, sources?: string[]) {
-      setMessages(prev => [
-        ...prev,
-        {id: nextId.current++, type: 'system', content: '', isStreaming: true}
-      ]);
-      let tokens = content.split(' ');
-      let accumulated = '';
-      tokens.forEach((token, i) => {
-        setTimeout(() => {
-          accumulated += (i === 0 ? '' : ' ') + token;
-          let isLastToken = i === tokens.length - 1;
-          setMessages(prev =>
-            prev.map(m =>
-              m.type === 'system' && m.isStreaming
-                ? {
-                    ...m,
-                    content: accumulated,
-                    isStreaming: !isLastToken,
-                    ...(isLastToken && sources ? {sources} : {})
-                  }
-                : m
-            )
-          );
-        }, i * 80);
-      });
-    }
-
-    let addTimeout = (callback: () => void, delay: number) => {
-      let timeout = setTimeout(callback, delay);
-      timeouts.current.push(timeout);
-      return timeout;
-    };
-
-    // TODO: these durations are quite generous in order to accomodate for announcements, but realistically it might be
-    // faster and thus the announcements will get cut off even with polite...
-    // first batch, does tool calls with text response
-    let timestamp = 0;
-    let toolCallDuration = 1000;
-    // Status added after short delay so user message announcement plays first
-    addTimeout(() => startToolGroup('Thinking'), (timestamp += 500));
-    addTimeout(
-      () =>
-        completeStep(
-          'Reviewed conversation context and identified the user is searching for Hilton brand assets.'
-        ),
-      (timestamp += toolCallDuration)
-    );
-    addTimeout(() => addStep('Loading tool'), (timestamp += 500));
-    addTimeout(
-      () => completeStep('Asset search tool loaded with access to the Hilton brand library.'),
-      (timestamp += toolCallDuration)
-    );
-    addTimeout(() => addStep('Searching'), (timestamp += 500));
-    addTimeout(
-      () => completeStep('Found 15 assets matching the brand criteria across 3 campaigns.'),
-      (timestamp += toolCallDuration)
-    );
-    addTimeout(() => completeGroup(), (timestamp += 200));
-    let firstStreamContent =
-      'I found some relevant assets that match your request. Let me pull up the details.';
-    addTimeout(() => streamText(firstStreamContent), (timestamp += 500));
-    timestamp += (firstStreamContent.split(' ').length - 1) * 80;
-
-    // then does searching, streaming more text, returning a card and sources
-    addTimeout(() => startToolGroup('Searching'), (timestamp += 1000));
-    addTimeout(
-      () =>
-        completeStep('Identified additional brand materials related to the presentation context.'),
-      (timestamp += toolCallDuration)
-    );
-    addTimeout(() => addStep('Querying database'), (timestamp += 1000));
-    addTimeout(
-      () =>
-        completeStep(
-          'Retrieved asset records including metadata, previews, and usage rights for 12 items.'
-        ),
-      (timestamp += toolCallDuration)
-    );
-    addTimeout(() => addStep('Generating response'), (timestamp += 500));
-    addTimeout(
-      () =>
-        completeStep(
-          'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.',
-          'Response generated'
-        ),
-      (timestamp += 1000)
-    );
-    addTimeout(() => completeGroup(), (timestamp += 200));
-    let secondStreamContent =
-      'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
-      'layering in supporting visuals and data to reinforce the core message. The main themes ' +
-      'revolve around brand consistency, audience engagement, and clear calls to action.';
-    addTimeout(() => streamText(secondStreamContent, MOCK_SOURCES), (timestamp += 500));
-
-    let streamEndTimestamp = timestamp + (secondStreamContent.split(' ').length - 1) * 80 + 500;
-    addTimeout(() => {
-      setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
-    }, streamEndTimestamp);
-    addTimeout(() => {
-      setMessages(prev => [
-        ...prev,
-        {
-          id: nextId.current++,
-          type: 'suggestions',
-          title: 'Suggested follow-ups',
-          suggestions: MOCK_SUGGESTIONS
-        }
-      ]);
-      setGenerating(false);
-    }, streamEndTimestamp + 1000);
-  }
-
-  useEffect(() => {
-    if (!isGenerating && followUpMessage.current) {
-      let followup = followUpMessage.current;
-      followUpMessage.current = null;
-      handleSend(followup);
-    }
-  }, [isGenerating]);
-
-  // TODO: maybe also have it finalize any in progress tool calls and what not, but do it later
-  function handleStop() {
-    followUpMessage.current = null;
-    timeouts.current.forEach(clearTimeout);
-    timeouts.current = [];
-    setMessages(prev =>
-      prev.map(m => {
-        if (m.type === 'system' && m.isStreaming) {
-          return {...m, isStreaming: false};
-        }
-        if (m.type === 'status' && m.status === 'pending') {
-          return {
-            ...m,
+      // Completes the last step of the trailing status group, optionally updating its label.
+      function completeStep(detail: string, label?: string) {
+        setMessages(prev => {
+          let last = prev[prev.length - 1];
+          if (last?.type !== 'status') {
+            return prev;
+          }
+          let steps = last.steps.slice();
+          let step = steps[steps.length - 1];
+          steps[steps.length - 1] = {
+            ...step,
+            label: label ?? step.label,
             status: 'success',
-            steps: m.steps.map((s, i) => (i === m.steps.length - 1 ? {...s, status: 'success'} : s))
+            detail
           };
-        }
-        return m;
-      })
-    );
-    setGenerating(false);
-  }
+          return [...prev.slice(0, -1), {...last, steps}];
+        });
+      }
 
-  return (
-    <Chat>
-      <Thread items={messages} aria-label="Chat thread">
-        {(msg: StreamingMessage) => {
-          if (msg.type === 'user') {
+      // Marks the trailing status group as complete once all of its steps have finished.
+      function completeGroup() {
+        setMessages(prev => {
+          let last = prev[prev.length - 1];
+          if (last?.type !== 'status') {
+            return prev;
+          }
+          return [...prev.slice(0, -1), {...last, status: 'success'}];
+        });
+      }
+
+      function streamText(content: string, sources?: string[]) {
+        setMessages(prev => [
+          ...prev,
+          {id: nextId.current++, type: 'system', content: '', isStreaming: true}
+        ]);
+        let tokens = content.split(' ');
+        let accumulated = '';
+        tokens.forEach((token, i) => {
+          setTimeout(() => {
+            accumulated += (i === 0 ? '' : ' ') + token;
+            let isLastToken = i === tokens.length - 1;
+            setMessages(prev =>
+              prev.map(m =>
+                m.type === 'system' && m.isStreaming
+                  ? {
+                      ...m,
+                      content: accumulated,
+                      isStreaming: !isLastToken,
+                      ...(isLastToken && sources ? {sources} : {})
+                    }
+                  : m
+              )
+            );
+          }, i * 80);
+        });
+      }
+
+      let addTimeout = (callback: () => void, delay: number) => {
+        let timeout = setTimeout(callback, delay);
+        timeouts.current.push(timeout);
+        return timeout;
+      };
+
+      // TODO: these durations are quite generous in order to accomodate for announcements, but realistically it might be
+      // faster and thus the announcements will get cut off even with polite...
+      // first batch, does tool calls with text response
+      let timestamp = 0;
+      let toolCallDuration = 1000;
+      // Status added after short delay so user message announcement plays first
+      addTimeout(() => startToolGroup('Thinking'), (timestamp += 500));
+      addTimeout(
+        () =>
+          completeStep(
+            'Reviewed conversation context and identified the user is searching for Hilton brand assets.'
+          ),
+        (timestamp += toolCallDuration)
+      );
+      addTimeout(() => addStep('Loading tool'), (timestamp += 500));
+      addTimeout(
+        () => completeStep('Asset search tool loaded with access to the Hilton brand library.'),
+        (timestamp += toolCallDuration)
+      );
+      addTimeout(() => addStep('Searching'), (timestamp += 500));
+      addTimeout(
+        () => completeStep('Found 15 assets matching the brand criteria across 3 campaigns.'),
+        (timestamp += toolCallDuration)
+      );
+      addTimeout(() => completeGroup(), (timestamp += 200));
+      let firstStreamContent =
+        'I found some relevant assets that match your request. Let me pull up the details.';
+      addTimeout(() => streamText(firstStreamContent), (timestamp += 500));
+      timestamp += (firstStreamContent.split(' ').length - 1) * 80;
+
+      // then does searching, streaming more text, returning a card and sources
+      addTimeout(() => startToolGroup('Searching'), (timestamp += 1000));
+      addTimeout(
+        () =>
+          completeStep(
+            'Identified additional brand materials related to the presentation context.'
+          ),
+        (timestamp += toolCallDuration)
+      );
+      addTimeout(() => addStep('Querying database'), (timestamp += 1000));
+      addTimeout(
+        () =>
+          completeStep(
+            'Retrieved asset records including metadata, previews, and usage rights for 12 items.'
+          ),
+        (timestamp += toolCallDuration)
+      );
+      addTimeout(() => addStep('Generating response'), (timestamp += 500));
+      addTimeout(
+        () =>
+          completeStep(
+            'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.',
+            'Response generated'
+          ),
+        (timestamp += 1000)
+      );
+      addTimeout(() => completeGroup(), (timestamp += 200));
+      let secondStreamContent =
+        'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
+        'layering in supporting visuals and data to reinforce the core message. The main themes ' +
+        'revolve around brand consistency, audience engagement, and clear calls to action.';
+      addTimeout(() => streamText(secondStreamContent, MOCK_SOURCES), (timestamp += 500));
+
+      let streamEndTimestamp = timestamp + (secondStreamContent.split(' ').length - 1) * 80 + 500;
+      addTimeout(() => {
+        setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
+      }, streamEndTimestamp);
+      addTimeout(() => {
+        setMessages(prev => [
+          ...prev,
+          {
+            id: nextId.current++,
+            type: 'suggestions',
+            title: 'Suggested follow-ups',
+            suggestions: MOCK_SUGGESTIONS
+          }
+        ]);
+        setGenerating(false);
+      }, streamEndTimestamp + 1000);
+    }
+
+    useEffect(() => {
+      if (!isGenerating && followUpMessage.current) {
+        let followup = followUpMessage.current;
+        followUpMessage.current = null;
+        handleSend(followup);
+      }
+    }, [isGenerating]);
+
+    // TODO: maybe also have it finalize any in progress tool calls and what not, but do it later
+    function handleStop() {
+      followUpMessage.current = null;
+      timeouts.current.forEach(clearTimeout);
+      timeouts.current = [];
+      setMessages(prev =>
+        prev.map(m => {
+          if (m.type === 'system' && m.isStreaming) {
+            return {...m, isStreaming: false};
+          }
+          if (m.type === 'status' && m.status === 'pending') {
+            return {
+              ...m,
+              status: 'success',
+              steps: m.steps.map((s, i) =>
+                i === m.steps.length - 1 ? {...s, status: 'success'} : s
+              )
+            };
+          }
+          return m;
+        })
+      );
+      setGenerating(false);
+    }
+
+    return (
+      <Chat>
+        <Thread items={messages} aria-label="Chat thread">
+          {(msg: StreamingMessage) => {
+            if (msg.type === 'user') {
+              return (
+                <ThreadItem
+                  textValue={msg.content}
+                  styles={style({display: 'flex', justifyContent: 'end'})}>
+                  <UserMessage>{msg.content}</UserMessage>
+                </ThreadItem>
+              );
+            }
+            if (msg.type === 'status') {
+              return <StatusThreadItem msg={msg} />;
+            }
+            if (msg.type === 'card') {
+              return (
+                <CardMessage
+                  title={msg.title}
+                  description={msg.description}
+                  imageUrl={msg.imageUrl}
+                />
+              );
+            }
+            if (msg.type === 'suggestions') {
+              // TODO: probably should have ThreadItem auto wrap MessageSuggestionList as well
+              // but this one I could see perhaps being a standalone component to be used outside of thread
+              // DG: maybe we could auto-wrap if it's inside a Thread?
+              // YL: If we auto-wrap, we would need to move some ThreadItem props (isStreaming, textValue) to the ai component level. Might be strange to have those props when used standalone
+              return (
+                <ThreadItem textValue={msg.title}>
+                  <MessageSuggestionList title={msg.title}>
+                    {msg.suggestions.map((s, i) => (
+                      <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                    ))}
+                  </MessageSuggestionList>
+                </ThreadItem>
+              );
+            }
             return (
-              <ThreadItem
+              <SystemMessage
                 textValue={msg.content}
-                styles={style({display: 'flex', justifyContent: 'end'})}>
-                <UserMessage>{msg.content}</UserMessage>
-              </ThreadItem>
+                isStreaming={msg.isStreaming}
+                sources={msg.sources}>
+                {/* TODO: make this a component? Build it into SystemMessage? */}
+                <div role="document" className={prose()}>
+                  <p className={style({font: 'body'})}>{msg.content || ''}</p>
+                </div>
+                {!msg.isStreaming && <MessageFeedback styles={style({marginTop: 8})} />}
+              </SystemMessage>
             );
-          }
-          if (msg.type === 'status') {
-            return <StatusThreadItem msg={msg} />;
-          }
-          if (msg.type === 'card') {
-            return (
-              <CardMessage
-                title={msg.title}
-                description={msg.description}
-                imageUrl={msg.imageUrl}
-              />
-            );
-          }
-          if (msg.type === 'suggestions') {
-            // TODO: probably should have ThreadItem auto wrap MessageSuggestionList as well
-            // but this one I could see perhaps being a standalone component to be used outside of thread
-            // DG: maybe we could auto-wrap if it's inside a Thread?
-            // YL: If we auto-wrap, we would need to move some ThreadItem props (isStreaming, textValue) to the ai component level. Might be strange to have those props when used standalone
-            return (
-              <ThreadItem textValue={msg.title}>
-                <MessageSuggestionList title={msg.title}>
-                  {msg.suggestions.map((s, i) => (
-                    <MessageSuggestion key={i}>{s}</MessageSuggestion>
-                  ))}
-                </MessageSuggestionList>
-              </ThreadItem>
-            );
-          }
-          return (
-            <SystemMessage
-              textValue={msg.content}
-              isStreaming={msg.isStreaming}
-              sources={msg.sources}>
-              {/* TODO: make this a component? Build it into SystemMessage? */}
-              <div role="document" className={prose()}>
-                <p className={style({font: 'body'})}>{msg.content || ''}</p>
-              </div>
-              {!msg.isStreaming && <MessageFeedback styles={style({marginTop: 8})} />}
-            </SystemMessage>
-          );
-        }}
-      </Thread>
-      <PromptField
-        value={promptValue}
-        onChange={setPromptValue}
-        onSubmit={prompt => {
-          setPromptValue(new PromptFieldValue([]));
-          handleSend(prompt);
-        }}
-        isGenerating={isGenerating}
-        onStop={handleStop}>
-        <PromptTokenField
-          placeholder={
-            isGenerating
-              ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
-              : undefined
-          }
-          onKeyDown={e => {
-            if (!isGenerating) {
-              return;
-            }
-
-            // TODO: we could make this even more realistic but for now just fire storybook event
-            // and add follow up message to queue
-            if (e.key === 'Enter' && !e.altKey) {
-              e.preventDefault();
-              if (promptValue.segments.length > 0) {
-                action('onSteer')(promptValue.toString());
-                setPromptValue(new PromptFieldValue([]));
-              }
-            } else if (e.key === 'Enter' && e.altKey) {
-              e.preventDefault();
-              if (promptValue.segments.length > 0) {
-                action('onFollowUp')(promptValue.toString());
-                followUpMessage.current = promptValue;
-                setPromptValue(new PromptFieldValue([]));
-              }
-            } else if (e.key === 'Escape') {
-              e.preventDefault();
-              handleStop();
-            }
           }}
-        />
-        <PromptFieldToolbar>
-          <div />
-          <PromptFieldSubmitButton />
-        </PromptFieldToolbar>
-      </PromptField>
-    </Chat>
-  );
-}
+        </Thread>
+        <PromptField
+          value={promptValue}
+          onChange={setPromptValue}
+          onSubmit={prompt => {
+            setPromptValue(new PromptFieldValue([]));
+            handleSend(prompt);
+          }}
+          isGenerating={isGenerating}
+          onStop={handleStop}>
+          <PromptTokenField
+            placeholder={
+              isGenerating
+                ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
+                : undefined
+            }
+            onKeyDown={e => {
+              if (!isGenerating) {
+                return;
+              }
+
+              // TODO: we could make this even more realistic but for now just fire storybook event
+              // and add follow up message to queue
+              if (e.key === 'Enter' && !e.altKey) {
+                e.preventDefault();
+                if (promptValue.segments.length > 0) {
+                  action('onSteer')(promptValue.toString());
+                  setPromptValue(new PromptFieldValue([]));
+                }
+              } else if (e.key === 'Enter' && e.altKey) {
+                e.preventDefault();
+                if (promptValue.segments.length > 0) {
+                  action('onFollowUp')(promptValue.toString());
+                  followUpMessage.current = promptValue;
+                  setPromptValue(new PromptFieldValue([]));
+                }
+              } else if (e.key === 'Escape') {
+                e.preventDefault();
+                handleStop();
+              }
+            }}
+          />
+          <PromptFieldToolbar>
+            <div />
+            <PromptFieldSubmitButton />
+          </PromptFieldToolbar>
+        </PromptField>
+      </Chat>
+    );
+  }
+};
 
 let DUMMY_RESPONSES = [
   "That's a great question! I'm here to help. Could you give me a bit more context so I can provide a more tailored response?",
@@ -589,115 +600,117 @@ let DUMMY_RESPONSES = [
   'Great point! I think the best approach here depends on your specific situation. Can you tell me more about your constraints or priorities?'
 ];
 
-export function EmptyChat() {
-  let [messages, setMessages] = useState<StreamingMessage[]>([]);
-  let nextId = useRef(0);
-  let [isGenerating, setGenerating] = useState(false);
-  let timeouts = useRef<NodeJS.Timeout[]>([]);
+export const EmptyChat = {
+  render: function EmptyChat() {
+    let [messages, setMessages] = useState<StreamingMessage[]>([]);
+    let nextId = useRef(0);
+    let [isGenerating, setGenerating] = useState(false);
+    let timeouts = useRef<NodeJS.Timeout[]>([]);
 
-  function handleSend(prompt: TokenFieldValue) {
-    setGenerating(true);
-    setMessages(prev => [
-      ...prev,
-      {id: nextId.current++, type: 'user', content: prompt.toString()}
-    ]);
-
-    let addTimeout = (callback: () => void, delay: number) => {
-      let timeout = setTimeout(callback, delay);
-      timeouts.current.push(timeout);
-      return timeout;
-    };
-
-    let response = DUMMY_RESPONSES[Math.floor(Math.random() * DUMMY_RESPONSES.length)];
-
-    addTimeout(() => {
+    function handleSend(prompt: TokenFieldValue) {
+      setGenerating(true);
       setMessages(prev => [
         ...prev,
-        {id: nextId.current++, type: 'system', content: '', isStreaming: true}
+        {id: nextId.current++, type: 'user', content: prompt.toString()}
       ]);
-      let tokens = response.split(' ');
-      let accumulated = '';
-      tokens.forEach((token, i) => {
-        addTimeout(() => {
-          accumulated += (i === 0 ? '' : ' ') + token;
-          let isLastToken = i === tokens.length - 1;
-          setMessages(prev =>
-            prev.map(m =>
-              m.type === 'system' && m.isStreaming
-                ? {...m, content: accumulated, isStreaming: !isLastToken}
-                : m
-            )
-          );
-          if (isLastToken) {
-            setGenerating(false);
-          }
-        }, i * 60);
-      });
-    }, 600);
-  }
 
-  return (
-    <Chat>
-      <Thread items={messages} aria-label="Chat thread">
-        {(msg: StreamingMessage) => {
-          if (msg.type === 'user') {
-            return (
-              <ThreadItem
-                textValue={msg.content}
-                styles={style({display: 'flex', justifyContent: 'end'})}>
-                <UserMessage>{msg.content}</UserMessage>
-              </ThreadItem>
+      let addTimeout = (callback: () => void, delay: number) => {
+        let timeout = setTimeout(callback, delay);
+        timeouts.current.push(timeout);
+        return timeout;
+      };
+
+      let response = DUMMY_RESPONSES[Math.floor(Math.random() * DUMMY_RESPONSES.length)];
+
+      addTimeout(() => {
+        setMessages(prev => [
+          ...prev,
+          {id: nextId.current++, type: 'system', content: '', isStreaming: true}
+        ]);
+        let tokens = response.split(' ');
+        let accumulated = '';
+        tokens.forEach((token, i) => {
+          addTimeout(() => {
+            accumulated += (i === 0 ? '' : ' ') + token;
+            let isLastToken = i === tokens.length - 1;
+            setMessages(prev =>
+              prev.map(m =>
+                m.type === 'system' && m.isStreaming
+                  ? {...m, content: accumulated, isStreaming: !isLastToken}
+                  : m
+              )
             );
-          }
-          if (msg.type === 'status') {
-            return <StatusThreadItem msg={msg} />;
-          }
-          if (msg.type === 'card') {
+            if (isLastToken) {
+              setGenerating(false);
+            }
+          }, i * 60);
+        });
+      }, 600);
+    }
+
+    return (
+      <Chat>
+        <Thread items={messages} aria-label="Chat thread">
+          {(msg: StreamingMessage) => {
+            if (msg.type === 'user') {
+              return (
+                <ThreadItem
+                  textValue={msg.content}
+                  styles={style({display: 'flex', justifyContent: 'end'})}>
+                  <UserMessage>{msg.content}</UserMessage>
+                </ThreadItem>
+              );
+            }
+            if (msg.type === 'status') {
+              return <StatusThreadItem msg={msg} />;
+            }
+            if (msg.type === 'card') {
+              return (
+                <CardMessage
+                  title={msg.title}
+                  description={msg.description}
+                  imageUrl={msg.imageUrl}
+                />
+              );
+            }
+            if (msg.type === 'suggestions') {
+              return (
+                <ThreadItem textValue={msg.title}>
+                  <MessageSuggestionList title={msg.title}>
+                    {msg.suggestions.map((s, i) => (
+                      <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                    ))}
+                  </MessageSuggestionList>
+                </ThreadItem>
+              );
+            }
             return (
-              <CardMessage
-                title={msg.title}
-                description={msg.description}
-                imageUrl={msg.imageUrl}
-              />
+              <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
+                <div role="document">
+                  <p className={style({font: 'body'})}>{msg.content || ''}</p>
+                </div>
+                {!msg.isStreaming && <MessageFeedback />}
+              </SystemMessage>
             );
-          }
-          if (msg.type === 'suggestions') {
-            return (
-              <ThreadItem textValue={msg.title}>
-                <MessageSuggestionList title={msg.title}>
-                  {msg.suggestions.map((s, i) => (
-                    <MessageSuggestion key={i}>{s}</MessageSuggestion>
-                  ))}
-                </MessageSuggestionList>
-              </ThreadItem>
-            );
-          }
-          return (
-            <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
-              <div role="document">
-                <p className={style({font: 'body'})}>{msg.content || ''}</p>
-              </div>
-              {!msg.isStreaming && <MessageFeedback />}
-            </SystemMessage>
-          );
-        }}
-      </Thread>
-      <PromptField
-        onSubmit={handleSend}
-        isGenerating={isGenerating}
-        onStop={() => {
-          setGenerating(false);
-          timeouts.current.forEach(clearTimeout);
-          timeouts.current = [];
-        }}>
-        <div className={style({display: 'flex', gap: 16, height: 'full'})}>
-          <PromptTokenField />
-          <PromptFieldSubmitButton />
-        </div>
-      </PromptField>
-    </Chat>
-  );
-}
+          }}
+        </Thread>
+        <PromptField
+          onSubmit={handleSend}
+          isGenerating={isGenerating}
+          onStop={() => {
+            setGenerating(false);
+            timeouts.current.forEach(clearTimeout);
+            timeouts.current = [];
+          }}>
+          <div className={style({display: 'flex', gap: 16, height: 'full'})}>
+            <PromptTokenField />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptField>
+      </Chat>
+    );
+  }
+};
 
 // A system response rendered as prose, e.g. markdown returned from the server.
 // Uses the `prose` macro from S2 to style the semantic HTML elements.
@@ -748,53 +761,55 @@ type PopoverMessage = {id: number; type: 'user'; content: string} | {id: number;
 
 // A Chat rendered inside an S2 Popover, where the system response is prose
 // (markdown) styled with the `prose` macro.
-export function ChatPopover() {
-  let messages: PopoverMessage[] = [
-    {
-      id: 0,
-      type: 'user',
-      content: 'Can you explain how a design token pipeline works?'
-    },
-    {id: 1, type: 'prose'}
-  ];
+export const ChatPopover = {
+  render: function ChatPopover() {
+    let messages: PopoverMessage[] = [
+      {
+        id: 0,
+        type: 'user',
+        content: 'Can you explain how a design token pipeline works?'
+      },
+      {id: 1, type: 'prose'}
+    ];
 
-  return (
-    <DialogTrigger>
-      <ActionButton aria-label="Open assistant" styles={style({marginX: 'auto'})}>
-        <ChatIcon />
-      </ActionButton>
-      <Popover styles={style({width: 400, height: 520})}>
-        <Chat>
-          <Thread items={messages} aria-label="Chat thread">
-            {(msg: PopoverMessage) => {
-              if (msg.type === 'user') {
+    return (
+      <DialogTrigger>
+        <ActionButton aria-label="Open assistant" styles={style({marginX: 'auto'})}>
+          <ChatIcon />
+        </ActionButton>
+        <Popover styles={style({width: 400, height: 520})}>
+          <Chat>
+            <Thread items={messages} aria-label="Chat thread">
+              {(msg: PopoverMessage) => {
+                if (msg.type === 'user') {
+                  return (
+                    <ThreadItem
+                      textValue={msg.content}
+                      styles={style({display: 'flex', justifyContent: 'end'})}>
+                      <UserMessage>{msg.content}</UserMessage>
+                    </ThreadItem>
+                  );
+                }
                 return (
-                  <ThreadItem
-                    textValue={msg.content}
-                    styles={style({display: 'flex', justifyContent: 'end'})}>
-                    <UserMessage>{msg.content}</UserMessage>
-                  </ThreadItem>
+                  <SystemMessage textValue="Design token pipeline overview">
+                    <ProseResponse />
+                    <MessageFeedback />
+                  </SystemMessage>
                 );
-              }
-              return (
-                <SystemMessage textValue="Design token pipeline overview">
-                  <ProseResponse />
-                  <MessageFeedback />
-                </SystemMessage>
-              );
-            }}
-          </Thread>
-          <PromptField size="S" onSubmit={() => {}}>
-            <div className={style({display: 'flex', gap: 16, height: 'full'})}>
-              <PromptTokenField />
-              <PromptFieldSubmitButton />
-            </div>
-          </PromptField>
-        </Chat>
-      </Popover>
-    </DialogTrigger>
-  );
-}
+              }}
+            </Thread>
+            <PromptField size="S" onSubmit={() => {}}>
+              <div className={style({display: 'flex', gap: 16, height: 'full'})}>
+                <PromptTokenField />
+                <PromptFieldSubmitButton />
+              </div>
+            </PromptField>
+          </Chat>
+        </Popover>
+      </DialogTrigger>
+    );
+  }
+};
 
 function SystemMessage({
   children,
@@ -1101,30 +1116,32 @@ function useAsyncMessages() {
   return {messages, isLoadingMore, handleLoadMore, hasMore};
 }
 
-export function AsyncLoadingChat() {
-  const {messages, isLoadingMore, handleLoadMore, hasMore} = useAsyncMessages();
+export const AsyncLoadingChat = {
+  render: function AsyncLoadingChat() {
+    const {messages, isLoadingMore, handleLoadMore, hasMore} = useAsyncMessages();
 
-  return (
-    <Chat>
-      <Thread aria-label="Chat">
-        <ThreadLoadMoreItem
-          isLoading={isLoadingMore}
-          onLoadMore={hasMore ? handleLoadMore : undefined}>
-          <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
-            <ProgressCircle aria-label="Loading older messages" isIndeterminate />
+    return (
+      <Chat>
+        <Thread aria-label="Chat">
+          <ThreadLoadMoreItem
+            isLoading={isLoadingMore}
+            onLoadMore={hasMore ? handleLoadMore : undefined}>
+            <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
+              <ProgressCircle aria-label="Loading older messages" isIndeterminate />
+            </div>
+          </ThreadLoadMoreItem>
+          <Collection items={messages}>{renderAsyncMessage}</Collection>
+        </Thread>
+        <PromptField>
+          <div className={style({display: 'flex', gap: 16, height: 'full'})}>
+            <PromptTokenField />
+            <PromptFieldSubmitButton />
           </div>
-        </ThreadLoadMoreItem>
-        <Collection items={messages}>{renderAsyncMessage}</Collection>
-      </Thread>
-      <PromptField>
-        <div className={style({display: 'flex', gap: 16, height: 'full'})}>
-          <PromptTokenField />
-          <PromptFieldSubmitButton />
-        </div>
-      </PromptField>
-    </Chat>
-  );
-}
+        </PromptField>
+      </Chat>
+    );
+  }
+};
 
 let initialMessages: StreamingMessage[] = [
   {id: 1, type: 'user', content: "What's a good cat breed for a small apartment?"},
@@ -1154,111 +1171,113 @@ let initialMessages: StreamingMessage[] = [
   }
 ];
 
-export function SmallChat() {
-  let [messages, setMessages] = useState<StreamingMessage[]>(initialMessages);
-  let nextId = useRef(0);
-  let [isGenerating, setGenerating] = useState(false);
-  let timeouts = useRef<NodeJS.Timeout[]>([]);
+export const SmallChat = {
+  render: function SmallChat() {
+    let [messages, setMessages] = useState<StreamingMessage[]>(initialMessages);
+    let nextId = useRef(0);
+    let [isGenerating, setGenerating] = useState(false);
+    let timeouts = useRef<NodeJS.Timeout[]>([]);
 
-  function handleSend(prompt: TokenFieldValue) {
-    setGenerating(true);
-    setMessages(prev => [
-      ...prev,
-      {id: nextId.current++, type: 'user', content: prompt.toString()}
-    ]);
-
-    let addTimeout = (callback: () => void, delay: number) => {
-      let timeout = setTimeout(callback, delay);
-      timeouts.current.push(timeout);
-      return timeout;
-    };
-
-    let response = DUMMY_RESPONSES[Math.floor(Math.random() * DUMMY_RESPONSES.length)];
-
-    addTimeout(() => {
+    function handleSend(prompt: TokenFieldValue) {
+      setGenerating(true);
       setMessages(prev => [
         ...prev,
-        {id: nextId.current++, type: 'system', content: '', isStreaming: true}
+        {id: nextId.current++, type: 'user', content: prompt.toString()}
       ]);
-      let tokens = response.split(' ');
-      let accumulated = '';
-      tokens.forEach((token, i) => {
-        addTimeout(() => {
-          accumulated += (i === 0 ? '' : ' ') + token;
-          let isLastToken = i === tokens.length - 1;
-          setMessages(prev =>
-            prev.map(m =>
-              m.type === 'system' && m.isStreaming
-                ? {...m, content: accumulated, isStreaming: !isLastToken}
-                : m
-            )
-          );
-          if (isLastToken) {
-            setGenerating(false);
-          }
-        }, i * 60);
-      });
-    }, 600);
-  }
 
-  return (
-    <Chat styles={style({width: 'full', maxWidth: 400})}>
-      <Thread items={messages} aria-label="Chat thread">
-        {(msg: StreamingMessage) => {
-          if (msg.type === 'user') {
-            return (
-              <ThreadItem
-                textValue={msg.content}
-                styles={style({display: 'flex', justifyContent: 'end'})}>
-                <UserMessage>{msg.content}</UserMessage>
-              </ThreadItem>
+      let addTimeout = (callback: () => void, delay: number) => {
+        let timeout = setTimeout(callback, delay);
+        timeouts.current.push(timeout);
+        return timeout;
+      };
+
+      let response = DUMMY_RESPONSES[Math.floor(Math.random() * DUMMY_RESPONSES.length)];
+
+      addTimeout(() => {
+        setMessages(prev => [
+          ...prev,
+          {id: nextId.current++, type: 'system', content: '', isStreaming: true}
+        ]);
+        let tokens = response.split(' ');
+        let accumulated = '';
+        tokens.forEach((token, i) => {
+          addTimeout(() => {
+            accumulated += (i === 0 ? '' : ' ') + token;
+            let isLastToken = i === tokens.length - 1;
+            setMessages(prev =>
+              prev.map(m =>
+                m.type === 'system' && m.isStreaming
+                  ? {...m, content: accumulated, isStreaming: !isLastToken}
+                  : m
+              )
             );
-          }
-          if (msg.type === 'status') {
-            return <StatusThreadItem msg={msg} />;
-          }
-          if (msg.type === 'card') {
+            if (isLastToken) {
+              setGenerating(false);
+            }
+          }, i * 60);
+        });
+      }, 600);
+    }
+
+    return (
+      <Chat styles={style({width: 'full', maxWidth: 400})}>
+        <Thread items={messages} aria-label="Chat thread">
+          {(msg: StreamingMessage) => {
+            if (msg.type === 'user') {
+              return (
+                <ThreadItem
+                  textValue={msg.content}
+                  styles={style({display: 'flex', justifyContent: 'end'})}>
+                  <UserMessage>{msg.content}</UserMessage>
+                </ThreadItem>
+              );
+            }
+            if (msg.type === 'status') {
+              return <StatusThreadItem msg={msg} />;
+            }
+            if (msg.type === 'card') {
+              return (
+                <CardMessage
+                  title={msg.title}
+                  description={msg.description}
+                  imageUrl={msg.imageUrl}
+                />
+              );
+            }
+            if (msg.type === 'suggestions') {
+              return (
+                <ThreadItem textValue={msg.title}>
+                  <MessageSuggestionList title={msg.title}>
+                    {msg.suggestions.map((s, i) => (
+                      <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                    ))}
+                  </MessageSuggestionList>
+                </ThreadItem>
+              );
+            }
             return (
-              <CardMessage
-                title={msg.title}
-                description={msg.description}
-                imageUrl={msg.imageUrl}
-              />
+              <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
+                <div role="document">
+                  <p className={style({font: 'body'})}>{msg.content || ''}</p>
+                </div>
+                {!msg.isStreaming && <MessageFeedback />}
+              </SystemMessage>
             );
-          }
-          if (msg.type === 'suggestions') {
-            return (
-              <ThreadItem textValue={msg.title}>
-                <MessageSuggestionList title={msg.title}>
-                  {msg.suggestions.map((s, i) => (
-                    <MessageSuggestion key={i}>{s}</MessageSuggestion>
-                  ))}
-                </MessageSuggestionList>
-              </ThreadItem>
-            );
-          }
-          return (
-            <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
-              <div role="document">
-                <p className={style({font: 'body'})}>{msg.content || ''}</p>
-              </div>
-              {!msg.isStreaming && <MessageFeedback />}
-            </SystemMessage>
-          );
-        }}
-      </Thread>
-      <PromptField
-        size="S"
-        onSubmit={handleSend}
-        isGenerating={isGenerating}
-        onStop={() => {
-          setGenerating(false);
-          timeouts.current.forEach(clearTimeout);
-          timeouts.current = [];
-        }}>
-        <PromptTokenField />
-        <PromptFieldSubmitButton />
-      </PromptField>
-    </Chat>
-  );
-}
+          }}
+        </Thread>
+        <PromptField
+          size="S"
+          onSubmit={handleSend}
+          isGenerating={isGenerating}
+          onStop={() => {
+            setGenerating(false);
+            timeouts.current.forEach(clearTimeout);
+            timeouts.current = [];
+          }}>
+          <PromptTokenField />
+          <PromptFieldSubmitButton />
+        </PromptField>
+      </Chat>
+    );
+  }
+};

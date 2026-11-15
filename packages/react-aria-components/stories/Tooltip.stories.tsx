@@ -12,7 +12,7 @@
 
 import {Button} from '../src/Button';
 
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {OverlayArrow} from '../src/OverlayArrow';
 import React, {JSX} from 'react';
 import styles from './styles.css';
@@ -60,34 +60,36 @@ export default {
   }
 } as Meta<typeof Tooltip>;
 
-export type TooltipStory = StoryFn<typeof Tooltip>;
+export type TooltipStory = StoryObj<typeof Tooltip>;
 export type TooltipStoryObj = StoryObj<typeof Tooltip>;
 
-export const TooltipExample: TooltipStory = args => (
-  <TooltipTrigger>
-    <Button>Tooltip trigger</Button>
-    <Tooltip
-      {...args}
-      className={`${styles['tooltip-base']} ${styles[(args as any).animation]}`}
-      offset={5}
-      style={{
-        background: 'Canvas',
-        color: 'CanvasText',
-        border: '1px solid gray',
-        padding: 5,
-        borderRadius: 4
-      }}>
-      {!(args as any).hideArrow && (
-        <OverlayArrow style={{transform: 'translateX(-50%)'}}>
-          <svg width="8" height="8" style={{display: 'block'}}>
-            <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-          </svg>
-        </OverlayArrow>
-      )}
-      I am a tooltip
-    </Tooltip>
-  </TooltipTrigger>
-);
+export const TooltipExample: TooltipStory = {
+  render: args => (
+    <TooltipTrigger>
+      <Button>Tooltip trigger</Button>
+      <Tooltip
+        {...args}
+        className={`${styles['tooltip-base']} ${styles[(args as any).animation]}`}
+        offset={5}
+        style={{
+          background: 'Canvas',
+          color: 'CanvasText',
+          border: '1px solid gray',
+          padding: 5,
+          borderRadius: 4
+        }}>
+        {!(args as any).hideArrow && (
+          <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+            <svg width="8" height="8" style={{display: 'block'}}>
+              <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+            </svg>
+          </OverlayArrow>
+        )}
+        I am a tooltip
+      </Tooltip>
+    </TooltipTrigger>
+  )
+};
 
 function TooltipArrowBoundaryOffsetExampleRender(args: {
   topLeft: number;

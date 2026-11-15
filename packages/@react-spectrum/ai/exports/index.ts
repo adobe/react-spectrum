@@ -3,7 +3,6 @@ export {Attachment, AttachmentList, AttachmentPreview} from '../src/AttachmentLi
 export {AttachmentGrid, AttachmentGridItem} from '../src/AttachmentGrid';
 export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
-export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 export {
   PromptFieldValue,
   PromptField,
@@ -19,6 +18,7 @@ export {
   PromptToken,
   PromptFieldVoiceButton
 } from '../src/PromptField';
+export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 export {
   ExecutionTrace,
   ExecutionTraceItem,

@@ -14,7 +14,7 @@ import {CollectionBase, Node} from '@react-types/shared';
 import {Item} from 'react-stately/Item';
 import {List} from './List';
 import {ListState, useListState} from 'react-stately/useListState';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 import {Section} from 'react-stately/Section';
 import styles from './styles.css';
@@ -143,105 +143,96 @@ export default {
   }
 } as Meta;
 
-export type SelectableListStory = StoryFn<typeof SelectableList>;
+export type SelectableListStory = StoryObj<typeof SelectableList>;
 
-export const StaticUlStaticSubUl: SelectableListStory = () => (
-  <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned={false}>
-    {options}
-  </SelectableList>
-);
-
-StaticUlStaticSubUl.story = {
+export const StaticUlStaticSubUl: SelectableListStory = {
+  render: () => (
+    <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned={false}>
+      {options}
+    </SelectableList>
+  ),
   name: 'Static ul, static sub ul',
   parameters: {description: {data: 'Built to test if focusing an element scrolls into view.'}}
 };
 
-export const StaticUlRelativeSubUl: SelectableListStory = () => (
-  <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned={false}>
-    {options}
-  </SelectableList>
-);
-
-StaticUlRelativeSubUl.story = {
+export const StaticUlRelativeSubUl: SelectableListStory = {
+  render: () => (
+    <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned={false}>
+      {options}
+    </SelectableList>
+  ),
   name: 'Static ul, relative sub ul'
 };
 
-export const RelativeUlStaticSubUl: SelectableListStory = () => (
-  <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned>
-    {options}
-  </SelectableList>
-);
-
-RelativeUlStaticSubUl.story = {
+export const RelativeUlStaticSubUl: SelectableListStory = {
+  render: () => (
+    <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned>
+      {options}
+    </SelectableList>
+  ),
   name: 'Relative ul, static sub ul'
 };
 
-export const RelativeUlRelativeSubUl: SelectableListStory = () => (
-  <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned>
-    {options}
-  </SelectableList>
-);
-
-RelativeUlRelativeSubUl.story = {
+export const RelativeUlRelativeSubUl: SelectableListStory = {
+  render: () => (
+    <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned>
+      {options}
+    </SelectableList>
+  ),
   name: 'Relative ul, relative sub ul'
 };
 
-export const SingleSelectAllowEmptySelectOnFocus: SelectableListStory = () => (
-  <List selectionMode="single">
-    <Item>Paco de Lucia</Item>
-    <Item>Vicente Amigo</Item>
-    <Item>Gerardo Nunez</Item>
-  </List>
-);
-
-SingleSelectAllowEmptySelectOnFocus.story = {
+export const SingleSelectAllowEmptySelectOnFocus: SelectableListStory = {
+  render: () => (
+    <List selectionMode="single">
+      <Item>Paco de Lucia</Item>
+      <Item>Vicente Amigo</Item>
+      <Item>Gerardo Nunez</Item>
+    </List>
+  ),
   name: 'single select, allow empty, select on focus'
 };
 
-export const SingleSelectDisallowEmptySelectionSelectOnFocus: SelectableListStory = () => (
-  <List selectionMode="single" disallowEmptySelection>
-    <Item>Paco de Lucia</Item>
-    <Item>Vicente Amigo</Item>
-    <Item>Gerardo Nunez</Item>
-  </List>
-);
-
-SingleSelectDisallowEmptySelectionSelectOnFocus.story = {
+export const SingleSelectDisallowEmptySelectionSelectOnFocus: SelectableListStory = {
+  render: () => (
+    <List selectionMode="single" disallowEmptySelection>
+      <Item>Paco de Lucia</Item>
+      <Item>Vicente Amigo</Item>
+      <Item>Gerardo Nunez</Item>
+    </List>
+  ),
   name: 'single select, disallow empty selection, select on focus'
 };
 
-export const MultiSelectReplaceOnPressSelectOnFocus: SelectableListStory = () => (
-  <List selectionMode="multiple" selectionBehavior="replace">
-    <Item>Paco de Lucia</Item>
-    <Item>Vicente Amigo</Item>
-    <Item>Gerardo Nunez</Item>
-  </List>
-);
-
-MultiSelectReplaceOnPressSelectOnFocus.story = {
+export const MultiSelectReplaceOnPressSelectOnFocus: SelectableListStory = {
+  render: () => (
+    <List selectionMode="multiple" selectionBehavior="replace">
+      <Item>Paco de Lucia</Item>
+      <Item>Vicente Amigo</Item>
+      <Item>Gerardo Nunez</Item>
+    </List>
+  ),
   name: 'multi select, replace on press, select on focus'
 };
 
-export const MultiSelectAllowEmptySelectOnFocus: SelectableListStory = () => (
-  <List selectionMode="multiple">
-    <Item>Paco de Lucia</Item>
-    <Item>Vicente Amigo</Item>
-    <Item>Gerardo Nunez</Item>
-  </List>
-);
-
-MultiSelectAllowEmptySelectOnFocus.story = {
+export const MultiSelectAllowEmptySelectOnFocus: SelectableListStory = {
+  render: () => (
+    <List selectionMode="multiple">
+      <Item>Paco de Lucia</Item>
+      <Item>Vicente Amigo</Item>
+      <Item>Gerardo Nunez</Item>
+    </List>
+  ),
   name: 'multi select, allow empty, select on focus'
 };
 
-export const MultiSelectDisallowEmptySelectOnFocus: SelectableListStory = () => (
-  <List selectionMode="multiple" disallowEmptySelection>
-    <Item>Paco de Lucia</Item>
-    <Item>Vicente Amigo</Item>
-    <Item>Gerardo Nunez</Item>
-  </List>
-);
-
-MultiSelectDisallowEmptySelectOnFocus.story = {
+export const MultiSelectDisallowEmptySelectOnFocus: SelectableListStory = {
+  render: () => (
+    <List selectionMode="multiple" disallowEmptySelection>
+      <Item>Paco de Lucia</Item>
+      <Item>Vicente Amigo</Item>
+      <Item>Gerardo Nunez</Item>
+    </List>
+  ),
   name: 'multi select, disallow empty, select on focus'
 };

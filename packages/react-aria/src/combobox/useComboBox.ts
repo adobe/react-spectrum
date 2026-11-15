@@ -175,6 +175,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     keyboardDelegate: delegate,
     disallowTypeAhead: true,
     disallowEmptySelection: true,
+    disallowSelectAll: true,
     shouldFocusWrap,
     ref: inputRef,
     // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
@@ -238,8 +239,10 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         if (!state.selectionManager.isEmpty || state.inputValue === '' || props.allowsCustomValue) {
           shouldContinuePropagation = true;
         }
+        // Closing the popover consumes Escape, so prevent the browser default (e.g. Safari exiting fullscreen).
+        let shouldPreventDefault = state.isOpen;
         state.revert();
-        return {shouldContinuePropagation};
+        return {shouldContinuePropagation, shouldPreventDefault};
       }
     }
   });

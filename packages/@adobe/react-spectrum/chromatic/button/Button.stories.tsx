@@ -16,7 +16,7 @@ import {classNames} from '../../src/utils/classNames';
 import {Flex} from '../../src/layout/Flex';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '../../src/layout/Grid';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {ElementType, JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '../../src/text/Text';
@@ -49,82 +49,74 @@ export default {
   excludeStories: ['Render']
 } as Meta<typeof Button>;
 
-export type ButtonStory = StoryFn<typeof Button>;
+export type ButtonStory = StoryObj<typeof Button>;
 
-export const VariantAccent: ButtonStory = () => <Render variant="accent" />;
-
-VariantAccent.story = {
+export const VariantAccent: ButtonStory = {
+  render: () => <Render variant="accent" />,
   name: 'variant: accent'
 };
 
-export const VariantPrimary: ButtonStory = () => <Render variant="primary" />;
-
-VariantPrimary.story = {
+export const VariantPrimary: ButtonStory = {
+  render: () => <Render variant="primary" />,
   name: 'variant: primary'
 };
 
-export const VariantSecondary: ButtonStory = () => <Render variant="secondary" />;
-
-VariantSecondary.story = {
+export const VariantSecondary: ButtonStory = {
+  render: () => <Render variant="secondary" />,
   name: 'variant: secondary'
 };
 
-export const VariantNegative: ButtonStory = () => <Render variant="negative" />;
-
-VariantNegative.story = {
+export const VariantNegative: ButtonStory = {
+  render: () => <Render variant="negative" />,
   name: 'variant: negative'
 };
 
-export const ElementA: ButtonStory = () => <Render elementType="a" variant="primary" />;
-
-ElementA.story = {
+export const ElementA: ButtonStory = {
+  render: () => <Render elementType="a" variant="primary" />,
   name: 'element: a'
 };
 
-export const WithIcon: ButtonStory = () => (
-  <Flex gap="size-200">
-    <Button variant="primary">
-      <Bell />
-      <Text>Default</Text>
-    </Button>
-    <Button isDisabled variant="primary">
-      <Text>Disabled</Text>
-      <Bell />
-    </Button>
-  </Flex>
-);
-
-WithIcon.story = {
+export const WithIcon: ButtonStory = {
+  render: () => (
+    <Flex gap="size-200">
+      <Button variant="primary">
+        <Bell />
+        <Text>Default</Text>
+      </Button>
+      <Button isDisabled variant="primary">
+        <Text>Disabled</Text>
+        <Bell />
+      </Button>
+    </Flex>
+  ),
   name: 'with icon',
   parameters: {chromaticProvider: {locales: ['en-US', 'ar-AE']}}
 };
 
-export const IconOnly: ButtonStory = () => (
-  <Flex gap="size-200">
-    <Button variant="primary" aria-label="Notifications">
-      <Bell />
-    </Button>
-    <Button isDisabled variant="primary" aria-label="Notifications">
-      <Bell />
-    </Button>
-  </Flex>
-);
-
-IconOnly.story = {
+export const IconOnly: ButtonStory = {
+  render: () => (
+    <Flex gap="size-200">
+      <Button variant="primary" aria-label="Notifications">
+        <Bell />
+      </Button>
+      <Button isDisabled variant="primary" aria-label="Notifications">
+        <Bell />
+      </Button>
+    </Flex>
+  ),
   name: 'icon only',
   parameters: {chromaticProvider: {locales: ['en-US', 'ar-AE']}}
 };
 
-export const DoubleTextNode: ButtonStory = () => (
-  <Flex gap="size-200">
-    <Button variant="primary">{0} Dogs</Button>
-    <Button isDisabled variant="primary">
-      {0} Dogs
-    </Button>
-  </Flex>
-);
-
-DoubleTextNode.story = {
+export const DoubleTextNode: ButtonStory = {
+  render: () => (
+    <Flex gap="size-200">
+      <Button variant="primary">{0} Dogs</Button>
+      <Button isDisabled variant="primary">
+        {0} Dogs
+      </Button>
+    </Flex>
+  ),
   name: 'double text node'
 };
 
