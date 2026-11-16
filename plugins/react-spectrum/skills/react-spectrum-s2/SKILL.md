@@ -24,23 +24,23 @@ spectrum search "<user intent or UI pattern>" --cwd <app-dir>
 ```
 Or read the versioned decision guide directly:
 ```sh
-spectrum read s2:component-decision-tree --cwd <app-dir>
+spectrum read s2:guide/component-decision-tree --cwd <app-dir>
 ```
 
 ### Step B — Batch-read implementation guidance + target components in one call
 ```sh
-spectrum read s2:implementation-guidance s2:ComboBox s2:Dialog --sections usage,api,accessibility --cwd <app-dir>
+spectrum read s2:guide/implementation-guidance s2:ComboBox s2:Dialog --sections usage,api,accessibility --cwd <app-dir>
 ```
 
 ### Step C — Look up Spectrum 2 design tokens or workflow icons when styling or adding iconography
 ```sh
-spectrum tokens --query "padding" --cwd <app-dir>
+spectrum tokens padding --cwd <app-dir>
 spectrum icons "search" --cwd <app-dir>
 ```
 
 ### Focused prop/event inspection & diagnostic resolution
 ```sh
-spectrum api s2:ComboBox --props selectedKey,onSelectionChange --cwd <app-dir>
+spectrum api s2:ComboBox --prop selectedKey,onSelectionChange --cwd <app-dir>
 spectrum resolve --cwd <app-dir>
 ```
 
@@ -53,8 +53,8 @@ spectrum resolve --cwd <app-dir>
 ## 3. Fallbacks When `spectrum` Is Not Globally Installed
 
 1. **Package runner (zero global install):**
-   - npm: `npx -y @react-spectrum/cli@latest read s2:implementation-guidance s2:Button --cwd <app-dir>`
-   - Yarn: `yarn dlx @react-spectrum/cli@latest read s2:implementation-guidance s2:Button --cwd <app-dir>`
-   - pnpm: `pnpm dlx @react-spectrum/cli@latest read s2:implementation-guidance s2:Button --cwd <app-dir>`
+   - npm: `npx -y @react-spectrum/cli@latest read s2:guide/implementation-guidance s2:Button --cwd <app-dir>`
+   - Yarn: `yarn dlx @react-spectrum/cli@latest read s2:guide/implementation-guidance s2:Button --cwd <app-dir>`
+   - pnpm: `pnpm dlx @react-spectrum/cli@latest read s2:guide/implementation-guidance s2:Button --cwd <app-dir>`
 2. **MCP server (`@react-spectrum/mcp`):**
    - Call `search_docs` and batched `read_docs` (passing `cwd` when working across multiple workspace roots, or reusing the `resolution` object from `resolve_versions`). Use `search_s2_tokens` and `search_s2_icons` for tokens and icons.

@@ -59,8 +59,9 @@ export function getEvergreenSkillMarkdown(brand: EvergreenSkillBrand): string {
   const cliPkg = isS2 ? '@react-spectrum/cli' : '@react-aria/cli';
   const mcpPkg = isS2 ? '@react-spectrum/mcp' : '@react-aria/mcp';
   const defaultPrefix = isS2 ? 's2' : 'rac';
-  const guidanceEntry = isS2 ? 's2:implementation-guidance' : 'rac:getting-started';
-  const decisionGuide = isS2 ? 's2:component-decision-tree' : 'rac:collections';
+  const guidanceEntry = isS2 ? 's2:guide/implementation-guidance' : 'rac:getting-started';
+  const decisionGuide = isS2 ? 's2:guide/component-decision-tree' : 'rac:collections';
+  const overlayEntry = isS2 ? 's2:Dialog' : 'rac:Modal';
 
   return (
     `---
@@ -94,14 +95,14 @@ ${cliBin} read ${decisionGuide} --cwd <app-dir>
 
 ### Step B — Batch-read implementation guidance + target components in one call
 \`\`\`sh
-${cliBin} read ${guidanceEntry} ${defaultPrefix}:ComboBox ${defaultPrefix}:Dialog --sections usage,api,accessibility --cwd <app-dir>
+${cliBin} read ${guidanceEntry} ${defaultPrefix}:ComboBox ${overlayEntry} --sections usage,api,accessibility --cwd <app-dir>
 \`\`\`
 ${
   isS2
     ? `
 ### Step C — Look up Spectrum 2 design tokens or workflow icons when styling or adding iconography
 \`\`\`sh
-spectrum tokens --query "padding" --cwd <app-dir>
+spectrum tokens padding --cwd <app-dir>
 spectrum icons "search" --cwd <app-dir>
 \`\`\`
 `
@@ -109,7 +110,7 @@ spectrum icons "search" --cwd <app-dir>
 }
 ### Focused prop/event inspection & diagnostic resolution
 \`\`\`sh
-${cliBin} api ${defaultPrefix}:ComboBox --props selectedKey,onSelectionChange --cwd <app-dir>
+${cliBin} api ${defaultPrefix}:ComboBox --prop selectedKey,onSelectionChange --cwd <app-dir>
 ${cliBin} resolve --cwd <app-dir>
 \`\`\`
 

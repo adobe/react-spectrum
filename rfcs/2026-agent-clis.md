@@ -165,7 +165,7 @@ Because `stdio` MCP servers are frequently launched by GUI hosts with an arbitra
 ```sh
 # React Spectrum S2 + React Aria (@react-spectrum/cli -> `spectrum`)
 spectrum search "searchable dropdown" [--library s2|rac|all] [--cwd apps/web] [--json]
-spectrum read s2:ComboBox s2:Popover [--sections summary,usage,api,accessibility,styling,testing] [--max-tokens 4000] [--json]
+spectrum read s2:ComboBox s2:Popover [--sections usage,api,accessibility,styling,testing,guide] [--max-tokens 4000] [--json]
 spectrum api s2:ComboBox [--export ComboBox] [--prop selectedKey,onSelectionChange] [--events-only] [--render-props] [--json]
 spectrum tokens [query] [--property backgroundColor] [--json]
 spectrum icons Edit Delete [--illustrations] [--json]

@@ -339,14 +339,36 @@ export function readSliceSearchIndex(sliceDir: string): SearchIndexRecord[] {
   return (Array.isArray(parsed) ? parsed : parsed.entries || []) as SearchIndexRecord[];
 }
 
+/**
+ * Returns true if a doc slug is a safe relative path: non-empty, no null bytes, no backslashes,
+ * no absolute or drive-letter prefix, and no `.`/`..`/empty segments.
+ */
+export function isSafeEntrySlug(slug: string): boolean {
+  if (!slug || slug.includes('\0') || slug.includes('\\')) {
+    return false;
+  }
+  if (slug.startsWith('/') || /^[a-zA-Z]:/.test(slug)) {
+    return false;
+  }
+  return slug.split('/').every(seg => seg !== '' && seg !== '.' && seg !== '..');
+}
+
 export function readSliceEntryBySlug(
   sliceDir: string,
   library: string,
   slug: string
 ): {entry: CatalogEntryIR; markdown: string} | null {
   const cleanSlug = slug.replace(/^\/+|\/+$/g, '');
-  const jsonPath = path.join(sliceDir, 'entries', library, `${cleanSlug}.json`);
-  const mdPath = path.join(sliceDir, 'entries', library, `${cleanSlug}.md`);
+  if (!isSafeEntrySlug(library) || !isSafeEntrySlug(cleanSlug)) {
+    return null;
+  }
+  const entriesRoot = path.resolve(sliceDir, 'entries');
+  const jsonPath = path.resolve(entriesRoot, library, `${cleanSlug}.json`);
+  const mdPath = path.resolve(entriesRoot, library, `${cleanSlug}.md`);
+  // Defense in depth: never read outside the slice's entries directory.
+  if (!jsonPath.startsWith(entriesRoot + path.sep) || !mdPath.startsWith(entriesRoot + path.sep)) {
+    return null;
+  }
   if (!fs.existsSync(jsonPath)) {
     return null;
   }

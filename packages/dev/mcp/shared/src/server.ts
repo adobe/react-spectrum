@@ -402,7 +402,9 @@ export async function createAgentDocsMcpServer(
       inputSchema: {
         ids: z
           .union([z.string(), z.array(z.string()).min(1)])
-          .describe('One or more entry IDs, e.g. ["s2:implementation-guidance", "s2:ComboBox"].'),
+          .describe(
+            'One or more entry IDs, e.g. ["s2:guide/implementation-guidance", "s2:ComboBox"].'
+          ),
         sections: z
           .array(SECTION_ENUM)
           .optional()

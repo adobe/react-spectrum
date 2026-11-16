@@ -84,6 +84,29 @@ test('CLI handles partial-batch resilience (exit code 2 with valid entries prese
     }
     assert.equal(allMissingExit, 3, 'Expected exit code 3 (NOT_FOUND) when entire batch fails');
 
+    // Path-traversal IDs are rejected per-entry without reading outside the slice
+    const traversalJson = JSON.parse(
+      execFileSync(
+        process.execPath,
+        [
+          s2CliBin,
+          'read',
+          's2:../../../../../../package',
+          'rac:..\\..\\index',
+          's2:Button',
+          '--version',
+          'latest',
+          '--json'
+        ],
+        {cwd: REPO_ROOT, env, encoding: 'utf8'}
+      )
+    );
+    assert.equal(traversalJson.results[0].ok, false);
+    assert.equal(traversalJson.results[0].error.code, 'ERR_INVALID_ID');
+    assert.equal(traversalJson.results[1].ok, false);
+    assert.equal(traversalJson.results[1].error.code, 'ERR_INVALID_ID');
+    assert.equal(traversalJson.results[2].ok, true);
+
     // 2. Bounded maxTokens budget emits continuation instructions instead of crashing
     const boundedRaw = execFileSync(
       process.execPath,
@@ -143,6 +166,51 @@ test('CLI handles partial-batch resilience (exit code 2 with valid entries prese
     );
     const comboExport = racApiJson.exports.find(e => e.name === 'ComboBox');
     assert.ok(comboExport);
+  } finally {
+    fs.rmSync(tmpCache, {recursive: true, force: true});
+  }
+});
+
+test('every CLI command documented in the generated SKILL.md files parses and runs', () => {
+  const bins = {
+    spectrum: path.join(REPO_ROOT, 'packages/dev/cli/s2/dist/cli/s2/src/index.js'),
+    'react-aria': path.join(
+      REPO_ROOT,
+      'packages/dev/cli/react-aria/dist/cli/react-aria/src/index.js'
+    )
+  };
+  const tmpCache = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-skill-cache-'));
+  const env = {
+    ...process.env,
+    RSP_AGENT_DOCS_SNAPSHOT_SOURCE: SNAPSHOT_SOURCE,
+    RSP_AGENT_DOCS_CACHE_DIR: tmpCache
+  };
+  try {
+    const skillsDir = path.join(REPO_ROOT, 'packages/dev/agent-docs-core/skills');
+    let count = 0;
+    for (const skill of fs.readdirSync(skillsDir)) {
+      const md = fs.readFileSync(path.join(skillsDir, skill, 'SKILL.md'), 'utf8');
+      for (const line of md.split('\n')) {
+        const bin = Object.keys(bins).find(b => line.startsWith(`${b} `));
+        if (!bin) {
+          continue;
+        }
+        const args = (line.slice(bin.length).match(/"[^"]*"|\S+/g) || [])
+          .map(a => a.replace(/^"|"$/g, ''))
+          .map(a => (a === '<app-dir>' ? REPO_ROOT : a));
+        const stdout = execFileSync(
+          process.execPath,
+          [bins[bin], ...args, '--version', 'latest', '--json'],
+          {cwd: REPO_ROOT, env, encoding: 'utf8'}
+        );
+        const results = args[0] === 'read' ? JSON.parse(stdout).results : [];
+        for (const result of results) {
+          assert.ok(result.ok, `${line}: ${result.requestedId} -> ${result.error?.code}`);
+        }
+        count++;
+      }
+    }
+    assert.ok(count >= 10, `Expected to exercise SKILL.md commands, ran ${count}`);
   } finally {
     fs.rmSync(tmpCache, {recursive: true, force: true});
   }

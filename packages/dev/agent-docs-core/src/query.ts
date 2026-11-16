@@ -39,6 +39,7 @@ import {
 } from './types.js';
 import {
   ensurePackageSliceExtracted,
+  isSafeEntrySlug,
   loadSnapshotIndex,
   readSliceEntryBySlug,
   readSliceS2Assets,
@@ -501,6 +502,18 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
 
   for (const requestedId of ids) {
     const {library, slug} = parseQualifiedId(requestedId, defaultLibrary, resolution);
+    if (!isSafeEntrySlug(slug)) {
+      results.push({
+        requestedId,
+        ok: false,
+        error: {
+          code: 'ERR_INVALID_ID',
+          message: `Document ID '${requestedId}' is not a valid documentation ID.`,
+          suggestions: []
+        }
+      });
+      continue;
+    }
     const candidatePkgs = candidatePackagesForLookup(library, slug);
 
     let matchedData: {
