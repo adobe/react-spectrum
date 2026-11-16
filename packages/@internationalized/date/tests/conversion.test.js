@@ -198,6 +198,62 @@ describe('CalendarDate conversion', function () {
     });
   });
 
+  describe('fromJulianDay', function () {
+    it('round trips every day of the years around 1 BC', function () {
+      let calendar = new GregorianCalendar();
+      let start = calendar.toJulianDay(new CalendarDate('BC', 10, 1, 1));
+      let end = calendar.toJulianDay(new CalendarDate(10, 12, 31));
+      let prev = null;
+      for (let jd = start; jd <= end; jd++) {
+        let date = calendar.fromJulianDay(jd);
+        expect(calendar.toJulianDay(date)).toBe(jd);
+        if (prev) {
+          expect(date.compare(prev)).toBe(1);
+        }
+        prev = date;
+      }
+    });
+
+    it('returns February 29 in BC leap years', function () {
+      let calendar = new GregorianCalendar();
+      let jd = calendar.toJulianDay(new CalendarDate('BC', 1, 2, 28)) + 1;
+      let date = calendar.fromJulianDay(jd);
+      expect([date.era, date.year, date.month, date.day]).toEqual(['BC', 1, 2, 29]);
+    });
+  });
+
+  describe('getDaysInYear', function () {
+    it('uses the gregorian year for calendars based on it', function () {
+      let calendars = [
+        new GregorianCalendar(),
+        new BuddhistCalendar(),
+        new TaiwanCalendar(),
+        new JapaneseCalendar()
+      ];
+      let years = [
+        [2024, 366],
+        [2023, 365],
+        [2000, 366],
+        [1900, 365]
+      ];
+      for (let calendar of calendars) {
+        for (let [year, days] of years) {
+          let date = toCalendar(new CalendarDate(year, 6, 1), calendar);
+          expect(calendar.getDaysInYear(date)).toBe(days);
+        }
+      }
+    });
+
+    it('handles BC years', function () {
+      let calendar = new GregorianCalendar();
+      expect(calendar.getDaysInYear(new CalendarDate('BC', 1, 1, 1))).toBe(366);
+      expect(calendar.getDaysInYear(new CalendarDate('BC', 4, 1, 1))).toBe(365);
+      expect(calendar.getDaysInYear(new CalendarDate('BC', 5, 1, 1))).toBe(366);
+      expect(calendar.getDaysInMonth(new CalendarDate('BC', 1, 2, 1))).toBe(29);
+      expect(calendar.getDaysInMonth(new CalendarDate('BC', 4, 2, 1))).toBe(28);
+    });
+  });
+
   describe('toCalendar', function () {
     it('should support converting a CalendarDateTime between calendars', function () {
       let date = new CalendarDateTime(new JapaneseCalendar(), 'heisei', 31, 4, 30, 8, 20, 30, 80);

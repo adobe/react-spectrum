@@ -166,6 +166,10 @@ export class JapaneseCalendar extends GregorianCalendar {
     return super.getDaysInMonth(toGregorian(date));
   }
 
+  getDaysInYear(date: AnyCalendarDate): number {
+    return super.getDaysInYear(toGregorian(date));
+  }
+
   getMinimumMonthInYear(date: AnyCalendarDate): number {
     let start = getMinimums(date);
     return start ? start[1] : 1;
