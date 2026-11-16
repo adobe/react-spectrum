@@ -177,11 +177,6 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
     onLastCompletedStepChange
   } = props;
 
-  // TODO: revist
-  // Don't have access to the keyboard delegate here, so just rely on the collection order.
-  let keys = useMemo(() => [...collection].map(item => item.key), [collection]);
-  let firstKey = collection.getFirstKey() ?? null;
-
   let [selectedKeyState, setSelectedKeyState] = useControlledState<Key | null>(
     props.selectedKey,
     props.defaultSelectedKey ?? null,
@@ -194,8 +189,7 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
       : undefined
   );
 
-  let selectedKey = selectedKeyState ?? firstKey;
-  let selectedIndex = selectedKey != null ? keys.indexOf(selectedKey) : -1;
+  let selectedKey = selectedKeyState ?? collection.getFirstKey();
 
   let isLastCompletedStepControlled = props.lastCompletedStep !== undefined;
   let [lastCompletedStepState, setLastCompletedStepState] = useState<Key | null>(
@@ -204,14 +198,18 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
   let lastCompletedStep = isLastCompletedStepControlled
     ? (props.lastCompletedStep ?? null)
     : lastCompletedStepState;
-  let lastCompletedIndex = lastCompletedStep != null ? keys.indexOf(lastCompletedStep) : -1;
+  let lastCompletedIndex = getStepIndex(collection, lastCompletedStep);
+
+  // Steps are ordered by getKeyBefore and getKeyAfter, which Tabs also uses to move focus.
+  let stepBeforeSelected = selectedKey != null ? collection.getKeyBefore(selectedKey) : null;
+  let stepBeforeSelectedIndex = getStepIndex(collection, stepBeforeSelected);
 
   // When uncontrolled, every step before the selected step is completed. Store it during render
   // rather than syncing it in an effect, so it's correct on the first render and isn't rolled back
   // when the selection moves backwards, even if the selection is controlled.
-  if (!isLastCompletedStepControlled && selectedIndex - 1 > lastCompletedIndex) {
-    lastCompletedIndex = selectedIndex - 1;
-    lastCompletedStep = keys[lastCompletedIndex];
+  if (!isLastCompletedStepControlled && stepBeforeSelectedIndex > lastCompletedIndex) {
+    lastCompletedIndex = stepBeforeSelectedIndex;
+    lastCompletedStep = stepBeforeSelected;
     setLastCompletedStepState(lastCompletedStep);
   }
 
@@ -219,26 +217,32 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
   // updated along with the selection.
   let setSelectedKey = (key: Key) => {
     setSelectedKeyState(key);
-    let index = keys.indexOf(key);
-    if (index - 1 > lastCompletedIndex) {
-      onLastCompletedStepChange?.(keys[index - 1]);
+    let stepBefore = collection.getKeyBefore(key);
+    if (getStepIndex(collection, stepBefore) > lastCompletedIndex) {
+      onLastCompletedStepChange?.(stepBefore);
     }
   };
 
   let disabledKeys = useMemo(() => {
     // Steps disabled by the consumer are never navigable, however the wizard is configured.
     let set = new Set<Key>(disabledStepKeys);
-    keys.forEach((key, i) => {
-      if (key === selectedKey) {
-        return;
+    if (!allowsRandomAccess) {
+      // Completed steps, the step after them, and the current step are navigable. The steps after
+      // those are upcoming, and are only navigable if allowsRandomAccess.
+      let nextStep =
+        lastCompletedStep != null && collection.getItem(lastCompletedStep)
+          ? collection.getKeyAfter(lastCompletedStep)
+          : collection.getFirstKey();
+      let key = nextStep != null ? collection.getKeyAfter(nextStep) : null;
+      while (key != null) {
+        if (key !== selectedKey) {
+          set.add(key);
+        }
+        key = collection.getKeyAfter(key);
       }
-      // Completed steps and the current step are navigable; upcoming steps are only if allowsRandomAccess.
-      if (!allowsRandomAccess && i > lastCompletedIndex + 1) {
-        set.add(key);
-      }
-    });
+    }
     return set;
-  }, [keys, selectedKey, lastCompletedIndex, allowsRandomAccess, disabledStepKeys]);
+  }, [collection, selectedKey, lastCompletedStep, allowsRandomAccess, disabledStepKeys]);
 
   return {
     collection,
@@ -247,6 +251,11 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
     lastCompletedStep,
     disabledKeys
   };
+}
+
+// The position of a step within the wizard, or -1 if the key isn't one of its steps.
+function getStepIndex<T>(collection: ICollection<Node<T>>, key: Key | null): number {
+  return key != null ? (collection.getItem(key)?.index ?? -1) : -1;
 }
 
 function WizardInner({props, collection, tabsRef: ref}: WizardInnerProps) {
@@ -377,10 +386,9 @@ export function useWizardStep<T>(
 ): WizardStepAria {
   let {key} = props;
   let {collection, selectedKey, lastCompletedStep} = state;
-  let index = collection.getItem(key)?.index ?? -1;
-  let selectedIndex = selectedKey != null ? (collection.getItem(selectedKey)?.index ?? -1) : -1;
-  let lastCompletedIndex =
-    lastCompletedStep != null ? (collection.getItem(lastCompletedStep)?.index ?? -1) : -1;
+  let index = getStepIndex(collection, key);
+  let selectedIndex = getStepIndex(collection, selectedKey);
+  let lastCompletedIndex = getStepIndex(collection, lastCompletedStep);
 
   return {
     isCurrent: index >= 0 && index === selectedIndex,

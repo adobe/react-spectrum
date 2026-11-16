@@ -29,7 +29,7 @@ function WizardExample({stepProps, children, ...props}) {
     <Wizard {...props}>
       <WizardStepList aria-label="Setup">
         {steps.map(step => (
-          <WizardStep key={step.id} id={step.id} {...stepProps}>
+          <WizardStep key={step.id} id={step.id} {...stepProps?.(step)}>
             {step.label}
           </WizardStep>
         ))}
@@ -143,7 +143,7 @@ describe('Wizard', () => {
     let tree = render(
       <WizardExample
         className={({defaultClassName}) => `${defaultClassName} wizard`}
-        stepProps={{className: ({defaultClassName}) => `${defaultClassName} step`}}
+        stepProps={() => ({className: ({defaultClassName}) => `${defaultClassName} step`})}
       />
     );
     let stepList = tree.getByRole('tablist');
@@ -264,7 +264,9 @@ describe('Wizard', () => {
               id={step.id}
               className={({isCurrent, isCompleted}) =>
                 isCurrent ? 'current' : isCompleted ? 'completed' : 'upcoming'
-              }>
+              }
+              style={({isCurrent}) => ({fontWeight: isCurrent ? 'bold' : 'normal'})}
+              render={(domProps, {stepNumber}) => <div {...domProps} data-step={stepNumber} />}>
               {({stepNumber}) => `${stepNumber}. ${step.label}`}
             </WizardStep>
           ))}
@@ -285,6 +287,8 @@ describe('Wizard', () => {
       '3. Advanced',
       'Not completed4. Review'
     ]);
+    expect(tabs.map(tab => tab.style.fontWeight)).toEqual(['normal', 'normal', 'bold', 'normal']);
+    expect(tabs.map(tab => tab.dataset.step)).toEqual(['1', '2', '3', '4']);
 
     await user.click(tabs[0]);
     expect(tabs.map(tab => tab.className)).toEqual([
@@ -347,11 +351,15 @@ describe('Wizard', () => {
   });
 
   describe('lastCompletedStep', () => {
-    it('should only allow navigating to the first step when no steps are completed', async () => {
+    it.each([
+      ['no steps are completed', {}],
+      ['lastCompletedStep is not one of the steps', {lastCompletedStep: 'missing'}]
+    ])('should only allow navigating to the first step when %s', async (_, props) => {
       let onSelectionChange = jest.fn();
       let onLastCompletedStepChange = jest.fn();
       let tree = render(
         <WizardExample
+          {...props}
           onSelectionChange={onSelectionChange}
           onLastCompletedStepChange={onLastCompletedStepChange}
         />
@@ -653,14 +661,15 @@ describe('Wizard', () => {
       expect(onLastCompletedStepChange).toHaveBeenLastCalledWith('advanced');
     });
 
-    it('should never allow navigating to steps in disabledKeys', async () => {
-      let tree = render(
-        <WizardExample defaultLastCompletedStep="advanced" disabledKeys={['dns']} />
-      );
+    it.each([
+      ['disabledKeys', {disabledKeys: ['dns']}],
+      ['isDisabled', {stepProps: step => ({isDisabled: step.id === 'dns'})}]
+    ])('should never allow navigating to steps disabled with %s', async (_, disabledProps) => {
+      let tree = render(<WizardExample defaultLastCompletedStep="advanced" {...disabledProps} />);
       expect(getNavigableSteps(tree)).toEqual(['domain', 'advanced', 'review']);
       tree.unmount();
 
-      tree = render(<WizardExample allowsRandomAccess disabledKeys={['dns']} />);
+      tree = render(<WizardExample allowsRandomAccess {...disabledProps} />);
       expect(getNavigableSteps(tree)).toEqual(['domain', 'advanced', 'review']);
 
       await user.click(tree.getAllByRole('tab')[1]);
