@@ -206,8 +206,13 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
     onSelectionChange: (keys: Selection) => {
       // impossible, but TS doesn't know that
       if (keys === 'all') {
-        return;
-      }
+  keys = new Set(
+    [...listState.collection.getKeys()].filter(key =>
+      listState.collection.getItem(key)?.type === 'item' &&
+      !listState.selectionManager.isDisabled(key)
+    )
+  );
+}
 
       if (selectionMode === 'single') {
         let key = keys.values().next().value ?? null;

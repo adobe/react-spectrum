@@ -18,7 +18,7 @@ import {Form} from '../src/Form';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from '../src/ListBox';
 import {Popover} from '../src/Popover';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState,useContext} from 'react';
 import {Select, SelectContext, SelectStateContext, SelectValue} from '../src/Select';
 import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
@@ -918,6 +918,58 @@ describe('Select', () => {
     let formData = new FormData(getByTestId('form'));
     expect(formData.getAll('select')).toEqual(['cat', 'dog']);
   });
+
+  it('should select all enabled options with the keyboard in multiple selection mode', async () => {
+  let onChange = jest.fn();
+  let {getByTestId} = render(
+    <TestSelect selectionMode="multiple" disabledKeys={['kangaroo']} onChange={onChange} />
+  );
+  let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+
+  await selectTester.open();
+  expect(selectTester.getListbox()).toContainElement(document.activeElement);
+
+  let modifier = /Mac/.test(navigator.platform) ? 'Meta' : 'Control';
+  await user.keyboard(`{${modifier}>}a{/${modifier}}`);
+
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenLastCalledWith(['cat', 'dog']);
+});
+
+it('should allow deselecting an option after calling selectAll', async () => {
+  function SelectAllButton() {
+    let state = useContext(SelectStateContext);
+    return <Button onPress={() => state.selectionManager.selectAll()}>Select all</Button>;
+  }
+
+  let onChange = jest.fn();
+  let {getByRole, getByTestId} = render(
+    <Select
+      data-testid="select"
+      selectionMode="multiple"
+      disabledKeys={['kangaroo']}
+      onChange={onChange}>
+      <Label>Favorite Animal</Label>
+      <Button><SelectValue /></Button>
+      <Popover>
+        <ListBox>
+          <ListBoxItem id="cat">Cat</ListBoxItem>
+          <ListBoxItem id="dog">Dog</ListBoxItem>
+          <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+        </ListBox>
+        <SelectAllButton />
+      </Popover>
+    </Select>
+  );
+  let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+
+  await selectTester.open();
+  await user.click(getByRole('button', {name: 'Select all'}));
+  expect(onChange).toHaveBeenLastCalledWith(['cat', 'dog']);
+
+  await user.click(getByRole('option', {name: 'Cat'}));
+  expect(onChange).toHaveBeenLastCalledWith(['dog']);
+});
 
   it('should support deselection if multiple selection is enabled', async () => {
     let onChange = jest.fn();
