@@ -2,8 +2,8 @@
   "extends": "../../../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
-    "noEmit": false,
+    "rootDir": "../..",
+    "noEmit": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "es2020",
@@ -13,6 +13,6 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../../agent-docs-core/src/**/*"],
   "exclude": ["dist", "node_modules", "s2/dist", "react-aria/dist"]
 }

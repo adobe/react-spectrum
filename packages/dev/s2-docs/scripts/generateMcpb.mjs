@@ -8,18 +8,22 @@ const repoRoot = path.resolve(scriptDir, '../../../../');
 
 const assetsDir = path.join(scriptDir, '../assets');
 
-const sharedPageTools = (libraryLabel, toolPrefix) => [
+const sharedV2Tools = libraryLabel => [
   {
-    name: `list_${toolPrefix}_pages`,
-    description: `Returns a list of available pages in the ${libraryLabel} docs.`
+    name: 'resolve_versions',
+    description: `Resolves exact installed or lockfile package versions for the workspace and returns reusable snapshot provenance for ${libraryLabel}.`
   },
   {
-    name: `get_${toolPrefix}_page_info`,
-    description: 'Returns page description and list of sections for a given page.'
+    name: 'search_docs',
+    description: `Searches version-matched ${libraryLabel} components, guides, hooks, utilities, and testing documentation.`
   },
   {
-    name: `get_${toolPrefix}_page`,
-    description: 'Returns the full markdown content for a page, or a specific section if provided.'
+    name: 'read_docs',
+    description: `Batch-reads one or more version-matched ${libraryLabel} documentation and API entries in a single call.`
+  },
+  {
+    name: 'get_component_api',
+    description: `Returns version-matched TypeScript imports, props, events, render props, and slots for a ${libraryLabel} component or hook.`
   }
 ];
 
@@ -29,47 +33,37 @@ const libraries = {
     packageName: '@react-spectrum/mcp',
     outputDir: path.join(repoRoot, 'packages/dev/s2-docs/dist/s2'),
     outputFile: 'react-spectrum-s2.mcpb',
-    serverEntryPoint: 'server/s2/src/index.js',
+    serverEntryPoint: 'server/mcp/s2/src/index.js',
     displayName: 'React Spectrum (S2)',
     extensionName: 'react-spectrum-s2',
     description: "Build apps with Adobe's React Spectrum component library.",
     longDescription:
-      'Provides tools for browsing the React Spectrum (S2) documentation, including listing and reading pages, searching for available icons and illustrations, and looking up available styling token values. Also bundles the React Aria docs tools for browsing React Aria documentation from the same server. Uses the React Spectrum documentation content available at https://react-spectrum.adobe.com and React Aria documentation content available at https://react-aria.adobe.com.',
+      'Provides version-aware tools for searching and batch-reading React Spectrum (S2) and React Aria documentation, component TypeScript APIs, design tokens, and workflow icons matched to workspace dependencies.',
     homepage: 'https://react-spectrum.adobe.com/',
     documentation: 'https://react-spectrum.adobe.com/ai.html',
     iconSvg: path.join(assetsDir, 'rsp-favicon.svg'),
     keywords: ['react', 'react-spectrum', 'spectrum', 'adobe', 'design-system', 'components'],
     tools: [
-      ...sharedPageTools('React Spectrum (S2)', 's2'),
+      ...sharedV2Tools('React Spectrum (S2)'),
+      {
+        name: 'search_s2_tokens',
+        description:
+          'Searches version-matched Spectrum 2 style macro properties and allowed design token values.'
+      },
       {
         name: 'search_s2_icons',
         description:
-          'Searches the S2 workflow icon set by one or more terms; returns matching icon names.'
-      },
-      {
-        name: 'search_s2_illustrations',
-        description:
-          'Searches the S2 illustrations set by one or more terms; returns matching illustration names.'
-      },
-      {
-        name: 'get_style_macro_property_values',
-        description:
-          'Returns the allowed values for a given S2 style macro property (including expanded color/spacing value lists where applicable).'
-      },
-      ...sharedPageTools('React Aria', 'react_aria')
+          'Searches version-matched Spectrum 2 workflow icons and illustrations by name or alias.'
+      }
     ],
     srcDirs: [
       {
-        from: path.join(repoRoot, 'packages/dev/mcp/s2/dist/s2/src'),
-        to: 'server/s2/src'
+        from: path.join(repoRoot, 'packages/dev/mcp/s2/dist/mcp'),
+        to: 'server/mcp'
       },
       {
-        from: path.join(repoRoot, 'packages/dev/mcp/s2/dist/shared/src'),
-        to: 'server/shared/src'
-      },
-      {
-        from: path.join(repoRoot, 'packages/dev/mcp/s2/dist/data'),
-        to: 'server/data'
+        from: path.join(repoRoot, 'packages/dev/mcp/s2/dist/agent-docs-core'),
+        to: 'server/agent-docs-core'
       }
     ]
   },
@@ -78,12 +72,12 @@ const libraries = {
     packageName: '@react-aria/mcp',
     outputDir: path.join(repoRoot, 'packages/dev/s2-docs/dist/react-aria'),
     outputFile: 'react-aria.mcpb',
-    serverEntryPoint: 'server/react-aria/src/index.js',
+    serverEntryPoint: 'server/mcp/react-aria/src/index.js',
     displayName: 'React Aria',
     extensionName: 'react-aria',
     description: 'Build accessible UI components with React Aria.',
     longDescription:
-      'Provides tools for browsing the React Aria documentation. Uses the React Aria documentation content available at https://react-aria.adobe.com.',
+      'Provides version-aware tools for searching and batch-reading React Aria Components, hooks, React Stately, and @internationalized/* documentation and TypeScript APIs matched to workspace dependencies.',
     homepage: 'https://react-aria.adobe.com/',
     documentation: 'https://react-aria.adobe.com/ai.html',
     iconSvg: path.join(assetsDir, 'react-aria-favicon.svg'),
@@ -96,15 +90,15 @@ const libraries = {
       'design-system',
       'components'
     ],
-    tools: sharedPageTools('React Aria', 'react_aria'),
+    tools: sharedV2Tools('React Aria'),
     srcDirs: [
       {
-        from: path.join(repoRoot, 'packages/dev/mcp/react-aria/dist/react-aria/src'),
-        to: 'server/react-aria/src'
+        from: path.join(repoRoot, 'packages/dev/mcp/react-aria/dist/mcp'),
+        to: 'server/mcp'
       },
       {
-        from: path.join(repoRoot, 'packages/dev/mcp/react-aria/dist/shared/src'),
-        to: 'server/shared/src'
+        from: path.join(repoRoot, 'packages/dev/mcp/react-aria/dist/agent-docs-core'),
+        to: 'server/agent-docs-core'
       }
     ]
   }

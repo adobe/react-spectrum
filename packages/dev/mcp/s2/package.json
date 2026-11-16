@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "bin": "dist/s2/src/index.js",
+  "bin": "dist/mcp/s2/src/index.js",
   "source": "src/index.ts",
   "files": [
     "dist",
@@ -25,18 +25,17 @@
   },
   "scripts": {
     "prepublishOnly": "yarn build",
-    "build": "node ./scripts/build-data.mjs && tsc -p tsconfig.json",
-    "start": "node dist/s2/src/index.js",
-    "dev": "node --enable-source-maps dist/s2/src/index.js"
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/mcp/s2/src/index.js",
+    "dev": "node --enable-source-maps dist/mcp/s2/src/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",
     "@swc/helpers": "^0.5.0",
-    "fast-glob": "^3.3.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=18"

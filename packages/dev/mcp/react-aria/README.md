@@ -105,9 +105,12 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 
 | Tool | Input | Description |
 | --- | --- | --- |
-| `list_react_aria_pages` | `{ includeDescription?: boolean }` | List available pages in the React Aria docs. |
-| `get_react_aria_page_info` | `{ page_name: string }` | Return page description and list of section titles. |
-| `get_react_aria_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
+| `resolve_versions` | `{ cwd?: string, version?: string, snapshot?: string }` | Resolve exact installed/lockfile `react-aria-components`, `react-aria`, `react-stately`, and `@internationalized/*` package versions and return a reusable `resolution` context. |
+| `search_docs` | `{ query: string, cwd?: string, resolution?: object, library?: string, version?: string, snapshot?: string, limit?: number }` | Search version-matched React Aria Components, hooks, guides, and patterns (defaults to ranking React Aria first). |
+| `read_docs` | `{ ids: string \| string[], sections?: string[], maxTokens?: number, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Batch-read multiple version-matched components, hooks, or guides in a single call with per-entry provenance and partial-batch resilience. |
+| `get_component_api` | `{ target: string, prop?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Inspect structured TypeScript API definitions (props, events, render props, generics, overloads) for a React Aria component or hook. |
+
+The server also exposes the evergreen CLI-first skill via MCP resource `skills://react-aria/SKILL.md` (`SEP-2640`) and discovers workspace roots via MCP `roots/list` (or `--cwd <dir>`).
 
 ## Privacy Policy
 
@@ -117,12 +120,11 @@ See [Adobe's privacy policy](https://www.adobe.com/privacy/policy.html).
 
 ### Testing locally
 
-Build the docs and MCP server locally, then start the docs server.
+Generate a local documentation snapshot and build the MCP server:
 
 ```bash
-yarn workspace @react-spectrum/s2-docs generate:md
+yarn generate:snapshots
 yarn workspace @react-aria/mcp build
-yarn start:s2-docs
 ```
 
 Update your MCP client configuration to use the local MCP server:
@@ -132,9 +134,9 @@ Update your MCP client configuration to use the local MCP server:
   "mcpServers": {
     "React Aria": {
       "command": "node",
-      "args": ["{your path here}/react-spectrum/packages/dev/mcp/react-aria/dist/index.js"],
+      "args": ["{your path here}/react-spectrum/packages/dev/mcp/react-aria/dist/mcp/react-aria/src/index.js"],
       "env": {
-        "DOCS_CDN_BASE": "http://localhost:1234"
+        "RSP_AGENT_DOCS_SNAPSHOT_SOURCE": "{your path here}/react-spectrum/packages/dev/s2-docs/dist/snapshots"
       }
     }
   }

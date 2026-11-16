@@ -1,19 +1,22 @@
 #!/usr/bin/env node
 /// <reference types="node" />
-import {errorToString, readPackageVersion} from '../../shared/src/utils.js';
+import {errorToString, parseServerCliArgs, readPackageVersion} from '../../shared/src/utils.js';
 import {startServer} from '../../shared/src/server.js';
 
-// CLI entry for React Aria
 (async () => {
   try {
-    const arg = (process.argv[2] || '').trim();
-    if (arg === '--help' || arg === '-h' || arg === 'help') {
+    const {help, cwd} = parseServerCliArgs(process.argv.slice(2));
+    if (help) {
       console.log(
-        'Usage: npx @react-aria/mcp@latest\n\nStarts the MCP server for React Aria documentation.'
+        [
+          'Usage: npx @react-aria/mcp@latest [--cwd <workspace-dir>]',
+          '',
+          'Starts the version-aware MCP server for React Aria documentation.'
+        ].join('\n')
       );
       process.exit(0);
     }
-    await startServer('react-aria', readPackageVersion(import.meta.url));
+    await startServer('react-aria', readPackageVersion(import.meta.url), {defaultCwd: cwd});
   } catch (err) {
     console.error(errorToString(err));
     process.exit(1);

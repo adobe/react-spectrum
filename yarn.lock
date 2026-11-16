@@ -6421,6 +6421,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-aria/cli@workspace:packages/dev/cli/react-aria":
+  version: 0.0.0-use.local
+  resolution: "@react-aria/cli@workspace:packages/dev/cli/react-aria"
+  dependencies:
+    typescript: "npm:^7.0.2"
+  bin:
+    react-aria: dist/cli/react-aria/src/index.js
+  languageName: unknown
+  linkType: soft
+
 "@react-aria/collections@workspace:packages/@react-aria/collections":
   version: 0.0.0-use.local
   resolution: "@react-aria/collections@workspace:packages/@react-aria/collections"
@@ -6694,7 +6704,7 @@ __metadata:
     typescript: "npm:^7.0.2"
     zod: "npm:^3.23.8"
   bin:
-    mcp: dist/react-aria/src/index.js
+    mcp: dist/mcp/react-aria/src/index.js
   languageName: unknown
   linkType: soft
 
@@ -7308,6 +7318,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-spectrum/cli@workspace:packages/dev/cli/s2":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/cli@workspace:packages/dev/cli/s2"
+  dependencies:
+    typescript: "npm:^7.0.2"
+  bin:
+    spectrum: dist/cli/s2/src/index.js
+  languageName: unknown
+  linkType: soft
+
 "@react-spectrum/codemods@workspace:packages/dev/codemods":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/codemods@workspace:packages/dev/codemods"
@@ -7673,11 +7693,10 @@ __metadata:
   dependencies:
     "@modelcontextprotocol/sdk": "npm:^1.17.3"
     "@swc/helpers": "npm:^0.5.0"
-    fast-glob: "npm:^3.3.3"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     zod: "npm:^3.23.8"
   bin:
-    mcp: dist/s2/src/index.js
+    mcp: dist/mcp/s2/src/index.js
   languageName: unknown
   linkType: soft
 
@@ -11919,6 +11938,20 @@ __metadata:
   checksum: 10c0/f60aaf82e40bc3668baac64c9063615452bfd24f56a2c14161ac1b725c9662a6567841f9afa7d1fd9a055411a8110cd165f2eedae8fbb708abefe3d6645acd3d
   languageName: node
   linkType: hard
+
+"agent-docs-bench@workspace:packages/dev/agent-docs-bench":
+  version: 0.0.0-use.local
+  resolution: "agent-docs-bench@workspace:packages/dev/agent-docs-bench"
+  languageName: unknown
+  linkType: soft
+
+"agent-docs-core@workspace:packages/dev/agent-docs-core":
+  version: 0.0.0-use.local
+  resolution: "agent-docs-core@workspace:packages/dev/agent-docs-core"
+  dependencies:
+    typescript: "npm:^7.0.2"
+  languageName: unknown
+  linkType: soft
 
 "agentkeepalive@npm:^3.4.1":
   version: 3.5.2

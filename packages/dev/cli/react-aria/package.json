@@ -1,0 +1,44 @@
+{
+  "name": "@react-aria/cli",
+  "version": "0.1.0",
+  "description": "Version-aware documentation and TypeScript API CLI & SDK for React Aria Components, Hooks, and Internationalized packages",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "bin": {
+    "react-aria": "dist/cli/react-aria/src/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "dist/cli/react-aria/src/sdk.js",
+  "types": "dist/cli/react-aria/src/sdk.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/cli/react-aria/src/sdk.d.ts",
+      "default": "./dist/cli/react-aria/src/sdk.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "yarn build",
+    "build": "tsc -p tsconfig.json && chmod +x dist/cli/react-aria/src/index.js",
+    "start": "node dist/cli/react-aria/src/index.js"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "rsp": {
+    "type": "cli"
+  }
+}

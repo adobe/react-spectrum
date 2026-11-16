@@ -1,0 +1,20 @@
+{
+  "name": "agent-docs-bench",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Benchmark and version-accuracy harness for React Spectrum and React Aria agent documentation tools",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "type": "module",
+  "scripts": {
+    "baseline": "node ./src/cli.mjs baseline",
+    "evaluate": "node ./src/cli.mjs evaluate",
+    "compare": "node ./src/cli.mjs compare"
+  },
+  "rsp": {
+    "type": "cli"
+  }
+}

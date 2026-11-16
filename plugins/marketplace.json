@@ -1,0 +1,37 @@
+{
+  "name": "adobe-react-spectrum-plugins",
+  "owner": {
+    "name": "Adobe",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "plugins": [
+    {
+      "name": "react-spectrum",
+      "source": "./react-spectrum",
+      "description": "Version-matched React Spectrum S2 documentation, APIs, tokens, and icons via @react-spectrum/cli (lightweight skill, no background MCP server).",
+      "version": "0.1.0",
+      "recommended": true
+    },
+    {
+      "name": "react-aria",
+      "source": "./react-aria",
+      "description": "Version-matched React Aria Components, hooks, React Stately, and @internationalized/* documentation and APIs via @react-aria/cli (lightweight skill, no background MCP server).",
+      "version": "0.1.0",
+      "recommended": true
+    },
+    {
+      "name": "react-spectrum-mcp",
+      "source": "./react-spectrum-mcp",
+      "description": "Optional MCP-enabled bundle for React Spectrum S2 (@react-spectrum/mcp + evergreen skill) for clients without shell execution.",
+      "version": "1.2.1",
+      "recommended": false
+    },
+    {
+      "name": "react-aria-mcp",
+      "source": "./react-aria-mcp",
+      "description": "Optional MCP-enabled bundle for React Aria (@react-aria/mcp + evergreen skill) for clients without shell execution.",
+      "version": "1.2.1",
+      "recommended": false
+    }
+  ]
+}

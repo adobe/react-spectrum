@@ -3,23 +3,26 @@ import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 
 async function main() {
-  const subcommand = process.argv[2] || 's2';
   const transport = new StdioClientTransport({
     command: 'node',
-    args: [new URL('../dist/index.js', import.meta.url).pathname, subcommand]
+    args: [new URL('../dist/mcp/react-aria/src/index.js', import.meta.url).pathname],
+    env: process.env
   });
 
-  const client = new Client({name: 's2-docs-smoke', version: '0.0.0'});
+  const client = new Client({name: 'react-aria-docs-smoke', version: '0.0.0'});
   await client.connect(transport);
 
   const result = await client.callTool({
-    name: 'list_pages',
-    arguments: {includeDescription: true}
+    name: 'search_docs',
+    arguments: {query: 'ComboBox', version: 'latest'}
   });
 
   const text = result?.content?.[0]?.text ?? '';
+  if (result?.isError) {
+    throw new Error(`MCP smoke test failed:\n${text}`);
+  }
   console.log(text);
-  process.exit(0);
+  await client.close();
 }
 
 main().catch(err => {

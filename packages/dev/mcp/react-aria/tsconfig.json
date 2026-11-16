@@ -2,7 +2,7 @@
   "extends": "../../../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "..",
+    "rootDir": "../..",
     "skipLibCheck": true,
     "types": ["node"],
     "module": "esnext",
@@ -13,6 +13,6 @@
     "noEmit": false,
     "allowImportingTsExtensions": false
   },
-  "include": ["src/**/*", "../shared/src/**/*"],
+  "include": ["src/**/*", "../shared/src/**/*", "../../agent-docs-core/src/**/*"],
   "exclude": ["dist", "node_modules"]
 }

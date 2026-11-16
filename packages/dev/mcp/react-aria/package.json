@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "bin": "dist/react-aria/src/index.js",
+  "bin": "dist/mcp/react-aria/src/index.js",
   "source": "src/index.ts",
   "files": [
     "dist",
@@ -24,8 +24,8 @@
   "scripts": {
     "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/react-aria/src/index.js",
-    "dev": "node --enable-source-maps dist/react-aria/src/index.js"
+    "start": "node dist/mcp/react-aria/src/index.js",
+    "dev": "node --enable-source-maps dist/mcp/react-aria/src/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",

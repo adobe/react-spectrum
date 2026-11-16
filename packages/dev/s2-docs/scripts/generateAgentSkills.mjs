@@ -38,6 +38,30 @@ const WELL_KNOWN_DIR = '.well-known';
 const WELL_KNOWN_SKILLS_DIR = 'agent-skills';
 const DISCOVERY_SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json';
 
+const USE_LEGACY_BUNDLED_REFERENCES = process.argv.includes('--legacy-bundled-references');
+const CUSTOM_OUT_DIR_IDX = process.argv.indexOf('--out-dir');
+const CUSTOM_OUT_DIR =
+  CUSTOM_OUT_DIR_IDX !== -1 && process.argv[CUSTOM_OUT_DIR_IDX + 1]
+    ? path.resolve(process.argv[CUSTOM_OUT_DIR_IDX + 1])
+    : null;
+
+function renderEvergreenCliFirstSkill(brand) {
+  const coreSkillsPath = path.join(
+    REPO_ROOT,
+    'packages/dev/agent-docs-core/skills',
+    brand === 's2' ? 'react-spectrum-s2' : 'react-aria',
+    'SKILL.md'
+  );
+  if (fs.existsSync(coreSkillsPath)) {
+    return fs.readFileSync(coreSkillsPath, 'utf8');
+  }
+  execSync(`node "${path.join(REPO_ROOT, 'scripts/generateAgentPlugins.mjs')}"`, {
+    cwd: REPO_ROOT,
+    stdio: 'inherit'
+  });
+  return fs.readFileSync(coreSkillsPath, 'utf8');
+}
+
 // Skill definitions
 const SKILLS = {
   'react-spectrum-s2': {
@@ -191,7 +215,12 @@ function ensureMarkdownDocs() {
 }
 
 function getWellKnownRootForLibrary(sourceDir) {
-  return path.join(MARKDOWN_DOCS_DIST, sourceDir, WELL_KNOWN_DIR, WELL_KNOWN_SKILLS_DIR);
+  return path.join(
+    CUSTOM_OUT_DIR || MARKDOWN_DOCS_DIST,
+    sourceDir,
+    WELL_KNOWN_DIR,
+    WELL_KNOWN_SKILLS_DIR
+  );
 }
 
 function getCustomSkillContent(skillName) {
@@ -1203,7 +1232,16 @@ function generateSkill(skillConfig, wellKnownRoot) {
 
   const isS2 = skillConfig.name === 'react-spectrum-s2';
 
-  // Parse documentation entries
+  if (!USE_LEGACY_BUNDLED_REFERENCES) {
+    const skillMdContent = renderEvergreenCliFirstSkill(isS2 ? 's2' : 'react-aria');
+    fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMdContent);
+    console.log(
+      `Generated evergreen single-file ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`
+    );
+    return skillDir;
+  }
+
+  // Legacy bundled-reference archive mode (--legacy-bundled-references)
   const llmsTxtPath = path.join(MARKDOWN_DOCS_DIST, skillConfig.sourceDir, 'llms.txt');
   if (!fs.existsSync(llmsTxtPath)) {
     console.error(`llms.txt not found at ${llmsTxtPath}`);

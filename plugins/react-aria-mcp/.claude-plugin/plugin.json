@@ -1,0 +1,15 @@
+{
+  "name": "react-aria-mcp",
+  "version": "1.2.1",
+  "description": "Optional MCP-enabled bundle for React Aria (@react-aria/mcp + evergreen skill) for clients without shell execution.",
+  "author": {
+    "name": "Adobe",
+    "url": "https://www.adobe.com"
+  },
+  "homepage": "https://react-aria.adobe.com",
+  "repository": "https://github.com/adobe/react-spectrum",
+  "license": "Apache-2.0",
+  "keywords": ["react-aria", "accessibility", "adobe", "mcp", "aria"],
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json"
+}

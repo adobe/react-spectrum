@@ -1,0 +1,14 @@
+{
+  "name": "react-spectrum",
+  "version": "0.1.0",
+  "description": "Version-matched React Spectrum S2 documentation, APIs, tokens, and icons via @react-spectrum/cli (lightweight skill, no background MCP server).",
+  "author": {
+    "name": "Adobe",
+    "url": "https://www.adobe.com"
+  },
+  "homepage": "https://react-spectrum.adobe.com",
+  "repository": "https://github.com/adobe/react-spectrum",
+  "license": "Apache-2.0",
+  "keywords": ["react-spectrum", "spectrum-2", "adobe", "design-system", "react", "cli"],
+  "skills": "./skills/"
+}

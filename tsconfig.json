@@ -50,6 +50,9 @@
     "packages/@react-spectrum/s2/s2wf-icons",
     "packages/@react-spectrum/s2/icon.d.ts",
     "packages/dev/s2-docs/pages/**",
+    "packages/dev/s2-docs/dist/**",
+    "packages/dev/mcp/*/dist/**",
+    "packages/dev/cli/*/dist/**",
     // Pulls in playwright-core's Protocol types, which use deprecated `module`
     // syntax that TypeScript 7 now reports as an error (TS1540). Not part of
     // the library's public API surface, so safe to exclude from type-checking.

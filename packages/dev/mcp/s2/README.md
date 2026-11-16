@@ -105,15 +105,14 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 
 | Tool | Input | Description |
 | --- | --- | --- |
-| `list_s2_pages` | `{ includeDescription?: boolean }` | List available pages in the S2 docs. |
-| `get_s2_page_info` | `{ page_name: string }` | Return page description and list of section titles. |
-| `get_s2_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
-| `search_s2_icons` | `{ terms: string \| string[] }` | Search S2 workflow icon names. |
-| `search_s2_illustrations` | `{ terms: string \| string[] }` | Search S2 illustration names. |
-| `get_style_macro_property_values` | `{ propertyName: string }` | Return allowed values for an S2 style macro property. |
-| `list_react_aria_pages` | `{ includeDescription?: boolean }` | List available pages in the React Aria docs. |
-| `get_react_aria_page_info` | `{ page_name: string }` | Return page description and list of section titles. |
-| `get_react_aria_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
+| `resolve_versions` | `{ cwd?: string, version?: string, snapshot?: string }` | Resolve exact installed/lockfile `@react-spectrum/s2` and `react-aria-components` package versions and return a reusable `resolution` context. |
+| `search_docs` | `{ query: string, cwd?: string, resolution?: object, library?: string, version?: string, snapshot?: string, limit?: number }` | Search version-matched React Spectrum S2 and React Aria components, guides, patterns, tokens, and icons (defaults to ranking S2 first). |
+| `read_docs` | `{ ids: string \| string[], sections?: string[], maxTokens?: number, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Batch-read multiple version-matched components or guides in a single call with per-entry provenance and partial-batch resilience. |
+| `get_component_api` | `{ target: string, prop?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Inspect structured TypeScript API definitions (props, events, slots, generics, overloads) for an S2 or RAC component. |
+| `search_s2_tokens` | `{ query?: string, property?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Query Spectrum 2 style-macro properties and design tokens from the versioned snapshot. |
+| `search_s2_icons` | `{ query: string, kind?: 'icon' \| 'illustration' \| 'all', cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Search Spectrum 2 workflow icons and illustrations from the versioned snapshot. |
+
+The server also exposes the evergreen CLI-first skill via MCP resource `skills://react-spectrum-s2/SKILL.md` (`SEP-2640`) and discovers workspace roots via MCP `roots/list` (or `--cwd <dir>`).
 
 ## Privacy Policy
 
@@ -123,12 +122,11 @@ See [Adobe's privacy policy](https://www.adobe.com/privacy/policy.html).
 
 ### Testing locally
 
-Build the docs and MCP server locally, then start the docs server.
+Generate a local documentation snapshot and build the MCP server:
 
 ```bash
-yarn workspace @react-spectrum/s2-docs generate:md
+yarn generate:snapshots
 yarn workspace @react-spectrum/mcp build
-yarn start:s2-docs
 ```
 
 Update your MCP client configuration to use the local MCP server:
@@ -138,9 +136,9 @@ Update your MCP client configuration to use the local MCP server:
   "mcpServers": {
     "React Spectrum (S2)": {
       "command": "node",
-      "args": ["{your path here}/react-spectrum/packages/dev/mcp/s2/dist/s2/src/index.js"],
+      "args": ["{your path here}/react-spectrum/packages/dev/mcp/s2/dist/mcp/s2/src/index.js"],
       "env": {
-        "DOCS_CDN_BASE": "http://localhost:1234"
+        "RSP_AGENT_DOCS_SNAPSHOT_SOURCE": "{your path here}/react-spectrum/packages/dev/s2-docs/dist/snapshots"
       }
     }
   }

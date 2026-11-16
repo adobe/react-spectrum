@@ -1,0 +1,14 @@
+{
+  "name": "react-aria",
+  "version": "0.1.0",
+  "description": "Version-matched React Aria Components, hooks, React Stately, and @internationalized/* documentation and APIs via @react-aria/cli (lightweight skill, no background MCP server).",
+  "author": {
+    "name": "Adobe",
+    "url": "https://www.adobe.com"
+  },
+  "homepage": "https://react-aria.adobe.com",
+  "repository": "https://github.com/adobe/react-spectrum",
+  "license": "Apache-2.0",
+  "keywords": ["react-aria", "accessibility", "adobe", "aria", "react", "cli"],
+  "skills": "./skills/"
+}
