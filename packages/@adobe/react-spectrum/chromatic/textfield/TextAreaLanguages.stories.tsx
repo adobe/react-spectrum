@@ -11,7 +11,7 @@
  */
 
 import Info from '@spectrum-icons/workflow/Info';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {render} from './TextArea.stories';
 import {TextArea} from '../../src/textfield/TextArea';
@@ -28,18 +28,15 @@ export default {
   }
 } as Meta<typeof TextArea>;
 
-export type TextAreaStory = StoryFn<typeof TextArea>;
+export type TextAreaStory = StoryObj<typeof TextArea>;
 
-export const Value測試IconInfoLabelPositionSideValidationStateValid: TextAreaStory = () =>
-  render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'});
-
-Value測試IconInfoLabelPositionSideValidationStateValid.story = {
+export const Value測試IconInfoLabelPositionSideValidationStateValid: TextAreaStory = {
+  render: () =>
+    render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'}),
   name: 'value: 測試, icon: Info, labelPosition: side, validationState: valid'
 };
 
-export const ValueاختبارIsRequiredFalseNecessityIndicatorLabel: TextAreaStory = () =>
-  render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'});
-
-ValueاختبارIsRequiredFalseNecessityIndicatorLabel.story = {
+export const ValueاختبارIsRequiredFalseNecessityIndicatorLabel: TextAreaStory = {
+  render: () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'}),
   name: 'value: اختبار, isRequired: false, necessityIndicator: label'
 };

@@ -251,7 +251,7 @@ const CardGridIllustrationsDecorator = props => {
         let url = getImage(index);
         return (
           <Story {...args} key={`${index}${url}`}>
-            <File slot="illustration" alt="test illustration" />
+            <File.render slot="illustration" alt="test illustration" />
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
           </Story>

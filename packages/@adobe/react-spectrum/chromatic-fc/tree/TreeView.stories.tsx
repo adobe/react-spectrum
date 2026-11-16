@@ -26,7 +26,7 @@ import {
   TreeViewItem,
   TreeViewItemContent
 } from '../../src/tree/TreeView';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 import {Text} from '../../src/text/Text';
 
 export default {
@@ -132,16 +132,22 @@ function TestTree(props) {
   );
 }
 
-type TreeViewStoryProps = StoryFn<SpectrumTreeViewProps<unknown>>;
+type TreeViewStoryProps = StoryObj<SpectrumTreeViewProps<unknown>>;
 
-export const Default: TreeViewStoryProps = () => <TestTree />;
+export const Default: TreeViewStoryProps = {
+  render: () => <TestTree />
+};
 
-export const SelectionMode: TreeViewStoryProps = () => <TestTree selectionMode="multiple" />;
+export const SelectionMode: TreeViewStoryProps = {
+  render: () => <TestTree selectionMode="multiple" />
+};
 
-export const DisabledBehaviorAll: TreeViewStoryProps = () => (
-  <TestTree disabledBehavior="all" selectionMode="multiple" />
-);
+export const DisabledBehaviorAll: TreeViewStoryProps = {
+  render: () => <TestTree disabledBehavior="all" selectionMode="multiple" />
+};
 
-export const HighlightSelectionWithDisabledBehaviorAll: TreeViewStoryProps = () => (
-  <TestTree selectionStyle="highlight" selectionMode="multiple" disabledBehavior="all" />
-);
+export const HighlightSelectionWithDisabledBehaviorAll: TreeViewStoryProps = {
+  render: () => (
+    <TestTree selectionStyle="highlight" selectionMode="multiple" disabledBehavior="all" />
+  )
+};

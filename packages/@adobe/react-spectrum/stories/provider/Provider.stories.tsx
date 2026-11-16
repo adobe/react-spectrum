@@ -20,7 +20,7 @@ import {expressTheme} from '../../src/theme-express/expressTheme';
 import {Flex} from '../../src/layout/Flex';
 import {Form} from '../../src/form/Form';
 import {Item} from 'react-stately/Item';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {NumberField} from '../../src/numberfield/NumberField';
 import {Provider} from '../../src/provider/Provider';
 import {ProviderProps} from '../../src/provider/types';
@@ -47,182 +47,167 @@ export default {
   }
 } as Meta<ProviderProps>;
 
-export type ProviderStory = StoryFn<typeof Provider>;
+export type ProviderStory = StoryObj<typeof Provider>;
 
-export const ColorSchemeDark: ProviderStory = () =>
-  render({colorScheme: 'dark', style: {padding: 50, textAlign: 'center', width: 500}});
-
-ColorSchemeDark.story = {
+export const ColorSchemeDark: ProviderStory = {
+  render: () =>
+    render({colorScheme: 'dark', style: {padding: 50, textAlign: 'center', width: 500}}),
   name: 'colorScheme: dark'
 };
 
-export const ScaleLarge: ProviderStory = () => render({scale: 'large'});
-
-ScaleLarge.story = {
+export const ScaleLarge: ProviderStory = {
+  render: () => render({scale: 'large'}),
   name: 'scale: large'
 };
 
-export const NestedColorSchemes: ProviderStory = () => (
-  <Provider colorScheme="dark" UNSAFE_style={{padding: 50, textAlign: 'center', width: 500}}>
-    <Button variant="primary">I am a dark button</Button>
-    <Provider colorScheme="light" UNSAFE_style={{padding: 50, margin: 50, textAlign: 'center'}}>
-      <Button variant="primary">I am a light button</Button>
+export const NestedColorSchemes: ProviderStory = {
+  render: () => (
+    <Provider colorScheme="dark" UNSAFE_style={{padding: 50, textAlign: 'center', width: 500}}>
+      <Button variant="primary">I am a dark button</Button>
+      <Provider colorScheme="light" UNSAFE_style={{padding: 50, margin: 50, textAlign: 'center'}}>
+        <Button variant="primary">I am a light button</Button>
+      </Provider>
     </Provider>
-  </Provider>
-);
-
-NestedColorSchemes.story = {
+  ),
   name: 'nested color schemes'
 };
 
-export const NestedProps: ProviderStory = () => (
-  <Provider isDisabled>
-    <Button variant="primary">I am disabled</Button>
-    <Provider isQuiet>
-      <Button variant="primary">I am disabled and quiet</Button>
+export const NestedProps: ProviderStory = {
+  render: () => (
+    <Provider isDisabled>
+      <Button variant="primary">I am disabled</Button>
+      <Provider isQuiet>
+        <Button variant="primary">I am disabled and quiet</Button>
+      </Provider>
     </Provider>
-  </Provider>
-);
-
-NestedProps.story = {
+  ),
   name: 'nested props'
 };
 
-export const IsQuiet: ProviderStory = () => render({isQuiet: true});
-
-IsQuiet.story = {
+export const IsQuiet: ProviderStory = {
+  render: () => render({isQuiet: true}),
   name: 'isQuiet'
 };
 
-export const IsEmphasized: ProviderStory = () => render({isEmphasized: true});
-
-IsEmphasized.story = {
+export const IsEmphasized: ProviderStory = {
+  render: () => render({isEmphasized: true}),
   name: 'isEmphasized'
 };
 
-export const IsDisabled: ProviderStory = () => render({isDisabled: true});
-
-IsDisabled.story = {
+export const IsDisabled: ProviderStory = {
+  render: () => render({isDisabled: true}),
   name: 'isDisabled'
 };
 
-export const IsReadOnly: ProviderStory = () => render({isReadOnly: true});
-
-IsReadOnly.story = {
+export const IsReadOnly: ProviderStory = {
+  render: () => render({isReadOnly: true}),
   name: 'isReadOnly'
 };
 
-export const IsRequired: ProviderStory = () => render({isRequired: true});
-
-IsRequired.story = {
+export const IsRequired: ProviderStory = {
+  render: () => render({isRequired: true}),
   name: 'isRequired'
 };
 
-export const CustomTheme: ProviderStory = () => render({theme: THEME});
-
-CustomTheme.story = {
+export const CustomTheme: ProviderStory = {
+  render: () => render({theme: THEME}),
   name: 'custom theme'
 };
 
-export const ExpressTheme: ProviderStory = () => render({theme: expressTheme});
-
-ExpressTheme.story = {
+export const ExpressTheme: ProviderStory = {
+  render: () => render({theme: expressTheme}),
   name: 'express theme'
 };
 
-export const ResponsiveStyleProps: ProviderStory = () => (
-  <Provider UNSAFE_style={{padding: 50}}>
-    <div>
-      <TextField
-        label="A text field"
-        width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}}
-      />
-    </div>
-    <Button
-      isHidden={{base: false, S: false, M: false, L: true}}
-      marginTop={{base: 'size-100', M: 'size-1000'}}
-      variant="primary">
-      This button is hidden in large display.
-    </Button>
-  </Provider>
-);
-
-ResponsiveStyleProps.story = {
+export const ResponsiveStyleProps: ProviderStory = {
+  render: () => (
+    <Provider UNSAFE_style={{padding: 50}}>
+      <div>
+        <TextField
+          label="A text field"
+          width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}}
+        />
+      </div>
+      <Button
+        isHidden={{base: false, S: false, M: false, L: true}}
+        marginTop={{base: 'size-100', M: 'size-1000'}}
+        variant="primary">
+        This button is hidden in large display.
+      </Button>
+    </Provider>
+  ),
   name: 'responsive styleProps'
 };
 
-export const CustomResponsiveStyleProps: ProviderStory = () => {
-  let Breakpoint = () => {
-    // oxlint-disable-next-line react/react-compiler
-    let {matchedBreakpoints} = useBreakpoint()!;
-    let breakpoint = matchedBreakpoints[0];
-    let width = {
-      base: 'size-1600',
-      XS: 'size-2000',
-      S: 'size-2400',
-      M: 'size-3000',
-      L: 'size-3400',
-      XL: 'size-4600',
-      XXL: 'size-6000'
+export const CustomResponsiveStyleProps: ProviderStory = {
+  render: () => {
+    let Breakpoint = () => {
+      // oxlint-disable-next-line react/react-compiler
+      let {matchedBreakpoints} = useBreakpoint()!;
+      let breakpoint = matchedBreakpoints[0];
+      let width = {
+        base: 'size-1600',
+        XS: 'size-2000',
+        S: 'size-2400',
+        M: 'size-3000',
+        L: 'size-3400',
+        XL: 'size-4600',
+        XXL: 'size-6000'
+      };
+      return (
+        <>
+          <Button variant="primary" width={width}>
+            Button with {breakpoint} breakpoint.
+          </Button>
+          <div>width: {width[breakpoint]}</div>
+        </>
+      );
     };
     return (
-      <>
-        <Button variant="primary" width={width}>
-          Button with {breakpoint} breakpoint.
-        </Button>
-        <div>width: {width[breakpoint]}</div>
-      </>
+      <Provider breakpoints={{S: 480, M: 640, L: 1024}} UNSAFE_style={{padding: 50}}>
+        {/* oxlint-disable-next-line react/react-compiler */}
+        <Breakpoint />
+      </Provider>
     );
-  };
-  return (
-    <Provider breakpoints={{S: 480, M: 640, L: 1024}} UNSAFE_style={{padding: 50}}>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      <Breakpoint />
-    </Provider>
-  );
-};
-
-CustomResponsiveStyleProps.story = {
+  },
   name: 'custom responsive styleProps'
 };
 
-export const BreakpointOmitted: ProviderStory = () => {
-  let Breakpoint = () => {
-    // oxlint-disable-next-line react/react-compiler
-    let {matchedBreakpoints} = useBreakpoint()!;
-    let breakpoint = matchedBreakpoints[0];
-    let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
+export const BreakpointOmitted: ProviderStory = {
+  render: () => {
+    let Breakpoint = () => {
+      // oxlint-disable-next-line react/react-compiler
+      let {matchedBreakpoints} = useBreakpoint()!;
+      let breakpoint = matchedBreakpoints[0];
+      let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
+      return (
+        <>
+          <p>button's width will be S: 'size-2400' at M viewport.</p>
+          <Button variant="primary" width={width}>
+            Button with {breakpoint} breakpoint.
+          </Button>
+        </>
+      );
+    };
     return (
-      <>
-        <p>button's width will be S: 'size-2400' at M viewport.</p>
-        <Button variant="primary" width={width}>
-          Button with {breakpoint} breakpoint.
-        </Button>
-      </>
+      <Provider UNSAFE_style={{padding: 50}}>
+        {/* oxlint-disable-next-line react/react-compiler */}
+        <Breakpoint />
+      </Provider>
     );
-  };
-  return (
-    <Provider UNSAFE_style={{padding: 50}}>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      <Breakpoint />
-    </Provider>
-  );
-};
-
-BreakpointOmitted.story = {
+  },
   name: 'breakpoint omitted'
 };
 
-export const LocaleZhHant: ProviderStory = () => (
-  <div>
-    <div>Heaven and earth are mysterious and yellow, the universe is prehistoric</div>
-    <Provider locale="zh-Hant">
-      <div>天地玄黃，宇宙洪荒</div>
-    </Provider>
-  </div>
-);
-
-LocaleZhHant.story = {
+export const LocaleZhHant: ProviderStory = {
+  render: () => (
+    <div>
+      <div>Heaven and earth are mysterious and yellow, the universe is prehistoric</div>
+      <Provider locale="zh-Hant">
+        <div>天地玄黃，宇宙洪荒</div>
+      </Provider>
+    </div>
+  ),
   name: 'locale: zh-Hant'
 };
 
