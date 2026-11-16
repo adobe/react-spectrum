@@ -426,7 +426,10 @@ export const Tab = /*#__PURE__*/ createLeafComponent(
     });
 
     let ElementType = item.props.href ? dom.a : dom.div;
-    let DOMProps = filterDOMProps(props as any, {global: true});
+    let DOMProps = filterDOMProps(props as any, {
+      global: true,
+      propNames: new Set(['aria-current'])
+    });
     delete DOMProps.id;
     delete DOMProps.onClick;
 

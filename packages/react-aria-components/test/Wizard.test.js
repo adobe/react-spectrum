@@ -178,6 +178,21 @@ describe('Wizard', () => {
     expect(getSelectedStep(tree)).toBe('dns');
   });
 
+  it('should identify only the selected step as the current step for assistive technology', async () => {
+    let tree = render(<WizardExample defaultLastCompletedStep="dns" />);
+    let tabs = tree.getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('aria-current', 'step');
+    for (let tab of tabs.slice(1)) {
+      expect(tab).not.toHaveAttribute('aria-current');
+    }
+
+    await user.click(tabs[2]);
+    expect(tabs[2]).toHaveAttribute('aria-current', 'step');
+    for (let tab of [tabs[0], tabs[1], tabs[3]]) {
+      expect(tab).not.toHaveAttribute('aria-current');
+    }
+  });
+
   it('should only select a step on Enter when navigating with the keyboard', async () => {
     let onSelectionChange = jest.fn();
     let tree = render(
@@ -207,7 +222,7 @@ describe('Wizard', () => {
     expect(getSelectedStep(tree)).toBe('advanced');
   });
 
-  it('should mark the steps before the selected step as completed', async () => {
+  it('should mark the steps before the selected step as completed and retain memory when going back', async () => {
     let tree = render(<WizardExample defaultSelectedKey="advanced" />);
     let tabs = tree.getAllByRole('tab');
 
@@ -224,23 +239,24 @@ describe('Wizard', () => {
     expect(tabs[3]).not.toHaveAttribute('data-completed');
     expect(tabs[3]).not.toHaveAttribute('data-current');
 
-    // Completion follows the selection, so steps after the selected step are not completed after
-    // navigating back, even though they are still navigable.
+    // Completion follows the selection moving forwards. But it does not change
+    // going back to earlier steps.
     await user.click(tabs[0]);
     expect(tabs.map(tab => tab.textContent)).toEqual([
       'Domain',
-      'Not completedDNS',
+      'CompletedDNS',
       'Not completedAdvanced',
       'Not completedReview'
     ]);
     expect(tabs[0]).toHaveAttribute('data-current');
-    expect(tabs[1]).not.toHaveAttribute('data-completed');
+    expect(tabs[0]).toHaveAttribute('data-completed');
+    expect(tabs[1]).toHaveAttribute('data-completed');
     expect(getNavigableSteps(tree)).toEqual(['domain', 'dns', 'advanced']);
   });
 
   it('should provide the step state as render props', async () => {
     let tree = render(
-      <Wizard defaultSelectedKey="dns">
+      <Wizard defaultSelectedKey="advanced">
         <WizardStepList aria-label="Setup">
           {steps.map(step => (
             <WizardStep
@@ -259,19 +275,24 @@ describe('Wizard', () => {
     let tabs = tree.getAllByRole('tab');
     expect(tabs.map(tab => tab.className)).toEqual([
       'completed',
+      'completed',
       'current',
-      'upcoming',
       'upcoming'
     ]);
     expect(tabs.map(tab => tab.textContent)).toEqual([
       'Completed1. Domain',
-      '2. DNS',
-      'Not completed3. Advanced',
+      'Completed2. DNS',
+      '3. Advanced',
       'Not completed4. Review'
     ]);
 
     await user.click(tabs[0]);
-    expect(tabs.map(tab => tab.className)).toEqual(['current', 'upcoming', 'upcoming', 'upcoming']);
+    expect(tabs.map(tab => tab.className)).toEqual([
+      'current',
+      'completed',
+      'upcoming',
+      'upcoming'
+    ]);
   });
 
   it('should support render props on steps', () => {
@@ -353,6 +374,13 @@ describe('Wizard', () => {
       );
       expect(getSelectedStep(tree)).toBe('domain');
       expect(getNavigableSteps(tree)).toEqual(['domain', 'dns', 'advanced']);
+      let tabs = tree.getAllByRole('tab');
+      expect(tabs[0]).toHaveAttribute('data-current');
+      expect(tabs[0]).toHaveAttribute('data-completed');
+      expect(tabs[1]).toHaveAccessibleName('Completed DNS');
+      expect(tabs[1]).toHaveAttribute('data-completed');
+      expect(tabs[2]).not.toHaveAttribute('data-completed');
+      expect(tabs[3]).not.toHaveAttribute('data-completed');
 
       // Selecting the step after the last completed step doesn't complete any more steps.
       await user.click(tree.getAllByRole('tab')[2]);
@@ -474,6 +502,13 @@ describe('Wizard', () => {
         />
       );
       expect(getNavigableSteps(tree)).toEqual(keys);
+      let tabs = tree.getAllByRole('tab');
+      expect(tabs.map(tab => tab.hasAttribute('data-completed'))).toEqual([
+        true,
+        true,
+        true,
+        false
+      ]);
 
       // Unlike an uncontrolled last completed step, a controlled one can be rolled back.
       tree.rerender(
@@ -483,8 +518,45 @@ describe('Wizard', () => {
         />
       );
       expect(getNavigableSteps(tree)).toEqual(['domain', 'dns']);
+      expect(tabs.map(tab => tab.hasAttribute('data-completed'))).toEqual([
+        true,
+        false,
+        false,
+        false
+      ]);
+      expect(tabs[1]).toHaveAccessibleName('Not completed DNS');
+
+      tree.rerender(
+        <WizardExample
+          lastCompletedStep={null}
+          onLastCompletedStepChange={onLastCompletedStepChange}
+        />
+      );
+      expect(getNavigableSteps(tree)).toEqual(['domain']);
+      for (let tab of tabs) {
+        expect(tab).not.toHaveAttribute('data-completed');
+      }
       expect(onLastCompletedStepChange).not.toHaveBeenCalled();
     });
+
+    it.each(['lastCompletedStep', 'defaultLastCompletedStep'])(
+      'should mark a step with key zero as completed with %s',
+      prop => {
+        let tree = render(
+          <Wizard {...{[prop]: 0}}>
+            <WizardStepList aria-label="Setup">
+              <WizardStep id={0}>First</WizardStep>
+              <WizardStep id={1}>Second</WizardStep>
+            </WizardStepList>
+          </Wizard>
+        );
+        let tabs = tree.getAllByRole('tab');
+        expect(tabs[0]).toHaveAttribute('data-current');
+        expect(tabs[0]).toHaveAttribute('data-completed');
+        expect(tabs[1]).not.toHaveAttribute('data-completed');
+        expect(tabs[1]).not.toHaveAttribute('aria-disabled');
+      }
+    );
 
     it('should request completing steps without updating a controlled lastCompletedStep', async () => {
       let onLastCompletedStepChange = jest.fn();

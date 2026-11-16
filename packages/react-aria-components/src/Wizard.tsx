@@ -180,7 +180,7 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
   // TODO: revist
   // Don't have access to the keyboard delegate here, so just rely on the collection order.
   let keys = useMemo(() => [...collection].map(item => item.key), [collection]);
-  let firstKey = keys.length > 0 ? keys[0] : null;
+  let firstKey = collection.getFirstKey() ?? null;
 
   let [selectedKeyState, setSelectedKeyState] = useControlledState<Key | null>(
     props.selectedKey,
@@ -328,7 +328,7 @@ export interface WizardStepRenderProps extends TabRenderProps {
    */
   isCurrent: boolean;
   /**
-   * Whether the step is rendered before the current step.
+   * Whether the step is at or before the last completed step.
    *
    * @selector [data-completed]
    */
@@ -354,7 +354,7 @@ export interface WizardStepProps
 export interface WizardStepAria {
   /** Whether this step is the current (selected) step. */
   isCurrent: boolean;
-  /** Whether this step has been completed (precedes the current step). */
+  /** Whether this step is at or before the last completed step. */
   isCompleted: boolean;
   /** The position of the step within the wizard, starting from 1. */
   stepNumber: number;
@@ -367,7 +367,7 @@ interface AriaWizardStepProps {
 
 /**
  * Provides the state of a step within a wizard: whether it is the current step, whether it has
- * already been completed (it is rendered before the current step), and its position.
+ * already been completed (it is at or before the last completed step), and its position.
  */
 export function useWizardStep<T>(
   props: AriaWizardStepProps,
@@ -376,13 +376,15 @@ export function useWizardStep<T>(
   ref: RefObject<FocusableElement | null>
 ): WizardStepAria {
   let {key} = props;
-  let {collection, selectedKey} = state;
+  let {collection, selectedKey, lastCompletedStep} = state;
   let index = collection.getItem(key)?.index ?? -1;
   let selectedIndex = selectedKey != null ? (collection.getItem(selectedKey)?.index ?? -1) : -1;
+  let lastCompletedIndex =
+    lastCompletedStep != null ? (collection.getItem(lastCompletedStep)?.index ?? -1) : -1;
 
   return {
     isCurrent: index >= 0 && index === selectedIndex,
-    isCompleted: index >= 0 && index < selectedIndex,
+    isCompleted: index >= 0 && index <= lastCompletedIndex,
     stepNumber: index + 1
   };
 }
@@ -437,7 +439,7 @@ function WizardStepInner({props, state, stepRef}: WizardStepInnerProps) {
       )}
       style={typeof style === 'function' ? values => style(getRenderProps(values)) : style}
       render={render ? (domProps, values) => render(domProps, getRenderProps(values)) : undefined}
-      aria-current="step"
+      aria-current={isCurrent ? 'step' : undefined}
       data-current={isCurrent || undefined}
       data-completed={isCompleted || undefined}>
       {renderProps => (
