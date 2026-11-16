@@ -257,6 +257,10 @@ function StepListItemContentInner({props, contentRef: ref}: StepListItemContentI
   let DOMProps = filterDOMProps(props, {global: true, labelable: true, isLink});
   delete DOMProps.id;
 
+  let ariaLabeledBy = props['aria-labelledby']
+    ? `${context?.hiddenId} ${props['aria-labelledby']}`
+    : `${context?.hiddenId} ${id}`;
+
   return (
     <ElementType
       {...mergeProps(
@@ -269,7 +273,7 @@ function StepListItemContentInner({props, contentRef: ref}: StepListItemContentI
       id={id}
       style={props.style}
       className={props.className ?? 'react-aria-StepListItemContent'}
-      aria-labelledby={`${context?.hiddenId} ${id}`}
+      aria-labelledby={ariaLabeledBy}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined}>
       {props.children}

@@ -265,6 +265,31 @@ describe('StepList', () => {
     expect(contentId).toBe(step.id);
   });
 
+  it.each([undefined, '#a'])(
+    'should label StepListItemContent with the step state and custom aria-labelledby when href is %s',
+    href => {
+      let {getByRole} = render(
+        <>
+          <span id="step-label">Custom step</span>
+          <span id="step-detail">Details</span>
+          <StepList selectedKey="a" aria-label="Setup">
+            <StepListItem id="a">
+              <StepListItemContent href={href} aria-labelledby="step-label step-detail">
+                Step A
+              </StepListItemContent>
+            </StepListItem>
+          </StepList>
+        </>
+      );
+
+      let content = getByRole(href ? 'link' : 'img');
+      let status = getByRole('listitem').querySelector('[hidden]');
+      expect(status).toHaveTextContent('Current');
+      expect(content).toHaveAttribute('aria-labelledby', `${status.id} step-label step-detail`);
+      expect(content).toHaveAccessibleName('Current Custom step Details');
+    }
+  );
+
   it('should support className and style on StepListItemContent', () => {
     let {getByRole, rerender} = render(
       <StepList selectedKey="a" aria-label="Setup">
