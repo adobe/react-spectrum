@@ -42,16 +42,20 @@ function isExactSemver(ver: string): boolean {
 
 /**
  * Parses npm `package-lock.json` v2/v3 `packages` map relative to `workspaceDir`.
+ * Returns null when the lockfile belongs to an ancestor project that doesn't include the workspace.
  */
 function parseNpmPackageLock(
   lockPath: string,
   lockRootDir: string,
   workspaceDir: string,
   candidatePkgNames: string[]
-): LockfileResolutionResult {
+): LockfileResolutionResult | null {
   const json = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
   const packagesMap: Record<string, {version?: string}> = json.packages || {};
   const wsRel = normalizePosixRel(lockRootDir, workspaceDir);
+  if (wsRel !== '.' && !packagesMap[wsRel]) {
+    return null;
+  }
   const wsPrefix = wsRel === '.' ? '' : `${wsRel}/`;
 
   const workspacePackages: Record<string, string> = {};
@@ -91,13 +95,14 @@ function parseNpmPackageLock(
 
 /**
  * Parses pnpm `pnpm-lock.yaml` `importers:` block for the selected workspace.
+ * Returns null when the lockfile belongs to an ancestor project that doesn't include the workspace.
  */
 function parsePnpmLock(
   lockPath: string,
   lockRootDir: string,
   workspaceDir: string,
   candidatePkgNames: string[]
-): LockfileResolutionResult {
+): LockfileResolutionResult | null {
   const text = fs.readFileSync(lockPath, 'utf8');
   const wsRel = normalizePosixRel(lockRootDir, workspaceDir);
   const candidateSet = new Set(candidatePkgNames);
@@ -105,6 +110,9 @@ function parsePnpmLock(
 
   const lines = text.split(/\r?\n/).filter(l => l.trim() && !l.trim().startsWith('#'));
   const hasImporters = lines.some(l => /^importers:\s*$/.test(l));
+  if (!hasImporters && wsRel !== '.') {
+    return null;
+  }
 
   if (hasImporters) {
     const importersIdx = lines.findIndex(l => /^importers:\s*$/.test(l));
@@ -120,9 +128,10 @@ function parsePnpmLock(
           break;
         }
       }
-      if (targetIdx !== -1) {
-        parsePnpmDepBlockLines(lines.slice(targetIdx), 6, 8, candidateSet, workspacePackages, true);
+      if (targetIdx === -1) {
+        return null;
       }
+      parsePnpmDepBlockLines(lines.slice(targetIdx), 6, 8, candidateSet, workspacePackages, true);
     }
   } else {
     parsePnpmDepBlockLines(lines, 2, 4, candidateSet, workspacePackages, false);
@@ -264,36 +273,55 @@ function parseYarnLock(
   };
 }
 
+function declaresWorkspaces(dir: string): boolean {
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+    return Boolean(pkg?.workspaces);
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Walks upward from `workspaceDir` to find the nearest lockfile and resolves
- * workspace-specific dependency versions.
+ * workspace-specific dependency versions. A lockfile in an ancestor directory is only used when
+ * it covers `workspaceDir` as a workspace; otherwise it belongs to an unrelated project and null
+ * is returned.
  */
 export function resolveFromWorkspaceLockfile(
   workspaceDir: string,
   declaredWorkspaceSpecs: Record<string, string>,
   candidatePkgNames: string[]
 ): LockfileResolutionResult | null {
-  let curr = path.resolve(workspaceDir);
+  const startDir = path.resolve(workspaceDir);
+  let curr = startDir;
   while (true) {
+    const isAncestor = curr !== startDir;
     const npmLock = path.join(curr, 'package-lock.json');
     if (fs.existsSync(npmLock)) {
-      return parseNpmPackageLock(npmLock, curr, workspaceDir, candidatePkgNames);
+      return parseNpmPackageLock(npmLock, curr, startDir, candidatePkgNames);
     }
     const npmShrinkwrap = path.join(curr, 'npm-shrinkwrap.json');
     if (fs.existsSync(npmShrinkwrap)) {
-      return parseNpmPackageLock(npmShrinkwrap, curr, workspaceDir, candidatePkgNames);
+      return parseNpmPackageLock(npmShrinkwrap, curr, startDir, candidatePkgNames);
     }
     const pnpmLock = path.join(curr, 'pnpm-lock.yaml');
     if (fs.existsSync(pnpmLock)) {
-      return parsePnpmLock(pnpmLock, curr, workspaceDir, candidatePkgNames);
+      return parsePnpmLock(pnpmLock, curr, startDir, candidatePkgNames);
     }
     const yarnLock = path.join(curr, 'yarn.lock');
     if (fs.existsSync(yarnLock)) {
+      if (isAncestor && !declaresWorkspaces(curr)) {
+        return null;
+      }
       return parseYarnLock(yarnLock, declaredWorkspaceSpecs, candidatePkgNames);
     }
     for (const bunFile of ['bun.lockb', 'bun.lock']) {
       const bunLockPath = path.join(curr, bunFile);
       if (fs.existsSync(bunLockPath)) {
+        if (isAncestor && !declaresWorkspaces(curr)) {
+          return null;
+        }
         return {
           lockfilePath: bunLockPath,
           lockfileKind: 'unsupported',

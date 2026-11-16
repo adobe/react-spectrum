@@ -145,6 +145,8 @@ Older tags in `react-spectrum` span two distinct documentation architectures:
    - `pnpm-lock.yaml` (v6–v9 monorepo `importers[<workspaceRelPath>]` blocks—strictly scoped to the target workspace importer rather than naive whole-file regexes)
    - `yarn.lock` (Classic v1 and Berry v2–v4 matched against the workspace's declared specifiers)
    - Unsupported lockfiles (`bun.lock`, `bun.lockb`) fail explicitly with `ERR_UNSUPPORTED_LOCKFILE` and actionable remediation (`install dependencies or pass --version`) rather than guessing.
+
+   The nearest lockfile wins. A lockfile in an ancestor directory is only used when it covers the workspace (an npm `packages` entry, a pnpm importer, or a Yarn/Bun root `package.json` that declares `workspaces`); otherwise it's treated as belonging to an unrelated project and ignored.
 4. **Outside a project:** Running outside any `package.json` workspace without `--version` fails explicitly (`ERR_WORKSPACE_REQUIRED`) rather than silently defaulting to `latest`.
 
 #### Explicit MCP Workspace Discovery (`packages/dev/mcp/shared/src/server.ts`)

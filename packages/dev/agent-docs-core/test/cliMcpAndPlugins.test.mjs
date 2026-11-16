@@ -31,7 +31,7 @@ const pluginModPromise = import(
   pathToFileURL(path.join(REPO_ROOT, 'scripts/generateAgentPlugins.mjs')).href
 );
 
-test('CLI handles partial-batch resilience (exit code 2 with valid entries preserved), maxTokens continuation, tokens, and icons', () => {
+test('CLI handles partial-batch resilience (exit code 0 with valid entries preserved), maxTokens continuation, tokens, and icons', () => {
   const s2CliBin = path.join(REPO_ROOT, 'packages/dev/cli/s2/dist/cli/s2/src/index.js');
   const racCliBin = path.join(
     REPO_ROOT,
@@ -153,6 +153,27 @@ test('CLI handles partial-batch resilience (exit code 2 with valid entries prese
       boundedJson.results.some(r => r.truncated && r.continueCommand?.includes('--sections')),
       'Expected truncated result with actionable --sections continueCommand'
     );
+
+    // Malformed numeric flags and S2-only commands in the react-aria CLI are invalid arguments
+    for (const [bin, args] of [
+      [s2CliBin, ['read', 's2:Button', '--max-tokens', 'abc']],
+      [s2CliBin, ['search', 'button', '--limit', '0']],
+      [racCliBin, ['tokens', 'padding']],
+      [racCliBin, ['icons', 'Edit']]
+    ]) {
+      let invalidErr;
+      try {
+        execFileSync(process.execPath, [bin, ...args, '--version', 'latest', '--json'], {
+          cwd: REPO_ROOT,
+          env,
+          encoding: 'utf8'
+        });
+      } catch (err) {
+        invalidErr = err;
+      }
+      assert.equal(invalidErr?.status, 2, `Expected exit 2 for ${args.join(' ')}`);
+      assert.equal(JSON.parse(invalidErr.stdout).error.code, 'ERR_INVALID_ARGS');
+    }
 
     // 3. S2 tokens + icons + RAC api commands
     const tokensJson = JSON.parse(

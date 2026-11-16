@@ -108,6 +108,27 @@ function toAgentDocsError(err: unknown): AgentDocsError {
   return new AgentDocsError('ERR_INTERNAL', message, EXIT_CODES.INTERNAL_ERROR);
 }
 
+function parseIntegerArg(
+  flag: string,
+  raw: string | undefined,
+  min: number,
+  max = Number.MAX_SAFE_INTEGER
+): number | undefined {
+  if (raw === undefined) {
+    return undefined;
+  }
+  const value = Number(raw.trim());
+  if (!/^\d+$/.test(raw.trim()) || value < min || value > max) {
+    const range = max === Number.MAX_SAFE_INTEGER ? `>= ${min}` : `between ${min} and ${max}`;
+    throw new AgentDocsError(
+      'ERR_INVALID_ARGS',
+      `Invalid ${flag} '${raw}'. Expected an integer ${range}.`,
+      EXIT_CODES.INVALID_ARGS
+    );
+  }
+  return value;
+}
+
 const VALID_SECTIONS = new Set<SectionFilter>([
   'usage',
   'api',
@@ -206,6 +227,14 @@ export async function runAgentDocsCli(
       defaultLibrary
     };
 
+    if (brand !== 's2' && (subcommand === 'tokens' || subcommand === 'icons')) {
+      throw new AgentDocsError(
+        'ERR_INVALID_ARGS',
+        `Unknown command '${subcommand}'. S2 ${subcommand} are available through the 'spectrum' CLI (@react-spectrum/cli).`,
+        EXIT_CODES.INVALID_ARGS
+      );
+    }
+
     switch (subcommand) {
       case 'manifest': {
         const manifest = getCapabilityManifest(brand, packageVersion);
@@ -239,7 +268,7 @@ export async function runAgentDocsCli(
 
       case 'search': {
         const query = restPositionals.join(' ').trim();
-        const limit = parsed.values.limit ? Number(parsed.values.limit) : undefined;
+        const limit = parseIntegerArg('--limit', parsed.values.limit, 1, 50);
         const result = await searchDocs({
           ...common,
           query,
@@ -256,9 +285,7 @@ export async function runAgentDocsCli(
       }
 
       case 'read': {
-        const maxTokens = parsed.values['max-tokens']
-          ? Number(parsed.values['max-tokens'])
-          : undefined;
+        const maxTokens = parseIntegerArg('--max-tokens', parsed.values['max-tokens'], 1);
         const result = await readDocs({
           ...common,
           ids: restPositionals,

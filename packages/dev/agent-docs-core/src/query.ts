@@ -495,9 +495,11 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
   const results: ReadItemResult[] = [];
   const usedSnapshots = new Set<string>();
   const warnings: DocWarning[] = [...resolution.warnings];
+  // Split the budget evenly so the batch as a whole stays within maxTokens. Each entry still
+  // keeps its title, summary, and imports.
   const perEntryTokenBudget =
     options.maxTokens && ids.length > 0
-      ? Math.max(400, Math.floor(options.maxTokens / ids.length))
+      ? Math.max(1, Math.floor(options.maxTokens / ids.length))
       : undefined;
 
   for (const requestedId of ids) {

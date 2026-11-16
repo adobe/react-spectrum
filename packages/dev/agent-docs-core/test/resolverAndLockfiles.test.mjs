@@ -348,6 +348,37 @@ test('resolves workspace dependencies across npm v3, Yarn Berry, Yarn Classic, p
       '@react-spectrum/s2'
     ]);
     assert.equal(bunLock?.lockfileKind, 'unsupported');
+
+    // 6. Lockfiles in ancestor directories that don't cover the workspace are ignored
+    const strayRoot = path.join(tmp, 'stray');
+    const strayApp = path.join(strayRoot, 'projects/app');
+    fs.mkdirSync(strayApp, {recursive: true});
+    fs.writeFileSync(path.join(strayApp, 'package.json'), JSON.stringify({name: 'app'}));
+    fs.writeFileSync(
+      path.join(strayRoot, 'package-lock.json'),
+      JSON.stringify({
+        lockfileVersion: 3,
+        packages: {'': {}, 'node_modules/@react-spectrum/s2': {version: '1.0.0'}}
+      })
+    );
+    assert.equal(
+      resolveFromWorkspaceLockfile(strayApp, {}, ['@react-spectrum/s2']),
+      null,
+      'npm lockfile without the workspace in `packages` must be ignored'
+    );
+    fs.rmSync(path.join(strayRoot, 'package-lock.json'));
+    fs.writeFileSync(path.join(strayRoot, 'package.json'), JSON.stringify({name: 'stray'}));
+    fs.writeFileSync(
+      path.join(strayRoot, 'yarn.lock'),
+      ['# yarn lockfile v1', '', '"@react-spectrum/s2@^1.0.0":', '  version "1.0.0"'].join('\n')
+    );
+    assert.equal(
+      resolveFromWorkspaceLockfile(strayApp, {'@react-spectrum/s2': '^1.0.0'}, [
+        '@react-spectrum/s2'
+      ]),
+      null,
+      'yarn lockfile in a non-workspace ancestor must be ignored'
+    );
     await assert.rejects(
       () => resolveWorkspace({cwd: bunDir, snapshotSource, cacheDir}),
       err =>
