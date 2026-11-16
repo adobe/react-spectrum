@@ -27,9 +27,13 @@ describe('runAfterTransition', () => {
   });
 
   afterEach(() => {
+    cleanupElements();
+    runAfterTransition(jest.fn());
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
     jest.restoreAllMocks();
-    cleanupElements();
   });
 
   function appendElement(element: HTMLElement) {
@@ -217,5 +221,95 @@ describe('runAfterTransition', () => {
     );
 
     expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  function startTransition(element: Element, callback = jest.fn()) {
+    element.dispatchEvent(
+      new TransitionEvent('transitionrun', {propertyName: 'opacity', bubbles: true})
+    );
+    const cancel = runAfterTransition(callback);
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+    expect(callback).not.toHaveBeenCalled();
+    return {callback, cancel};
+  }
+
+  it('releases queued callbacks when a transitioning subtree is removed without completion events', async () => {
+    const parent = appendElement(document.createElement('section'));
+    const element = document.createElement('div');
+    parent.appendChild(element);
+    const {callback} = startTransition(element);
+    const secondCallback = jest.fn();
+    runAfterTransition(secondCallback);
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+
+    parent.replaceChildren();
+    await Promise.resolve();
+
+    expect(callback.mock.calls).toEqual([[true]]);
+    expect(secondCallback.mock.calls).toEqual([[true]]);
+  });
+
+  it('keeps waiting for connected transitions after another target is removed', async () => {
+    const parent = appendElement(document.createElement('section'));
+    const removed = document.createElement('div');
+    parent.appendChild(removed);
+    const connected = appendElement(document.createElement('div'));
+    const {callback} = startTransition(removed);
+    connected.dispatchEvent(
+      new TransitionEvent('transitionrun', {propertyName: 'opacity', bubbles: true})
+    );
+
+    removed.remove();
+    await Promise.resolve();
+    expect(callback).not.toHaveBeenCalled();
+
+    connected.dispatchEvent(
+      new TransitionEvent('transitionend', {propertyName: 'opacity', bubbles: true})
+    );
+    expect(callback.mock.calls).toEqual([[true]]);
+  });
+
+  it('does not complete transitions when a target is moved within the document', async () => {
+    const parent = appendElement(document.createElement('section'));
+    const element = appendElement(document.createElement('div'));
+    const {callback} = startTransition(element);
+
+    parent.appendChild(element);
+    nodes.delete(element);
+    await Promise.resolve();
+    expect(callback).not.toHaveBeenCalled();
+
+    element.dispatchEvent(
+      new TransitionEvent('transitionend', {propertyName: 'opacity', bubbles: true})
+    );
+    expect(callback.mock.calls).toEqual([[true]]);
+  });
+
+  it('does not call cancelled callbacks when a transitioning element is removed', async () => {
+    const parent = appendElement(document.createElement('section'));
+    const element = document.createElement('div');
+    parent.appendChild(element);
+    const {callback, cancel} = startTransition(element);
+
+    cancel();
+    element.remove();
+    await Promise.resolve();
+    expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('releases transitions over repeated removals without another runAfterTransition call', async () => {
+    const parent = appendElement(document.createElement('section'));
+    for (let i = 0; i < 10; i++) {
+      const element = document.createElement('div');
+      parent.appendChild(element);
+      const {callback} = startTransition(element);
+      element.remove();
+      await Promise.resolve();
+      expect(callback.mock.calls).toEqual([[true]]);
+    }
   });
 });

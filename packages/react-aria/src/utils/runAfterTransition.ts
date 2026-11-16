@@ -21,6 +21,7 @@ import {getEventTarget} from './shadowdom/DOMFunctions';
 // we can ignore these duplicate events.
 const transitionsByElement = new Map<EventTarget, Set<string>>();
 const transitionCallbacks = new Set<QueuedCallback>();
+let removalObserver: MutationObserver | undefined;
 
 interface QueuedCallback {
   (isTransition: boolean): void;
@@ -41,6 +42,16 @@ function onTransitionStart(e: Event) {
   let transitions = transitionsByElement.get(eventTarget);
 
   if (!transitions) {
+    if (transitionsByElement.size === 0) {
+      removalObserver ??= new MutationObserver(records => {
+        if (records.some(record => record.removedNodes.length > 0)) {
+          cleanupDetachedElements();
+          flushCallbacks();
+        }
+      });
+      removalObserver.observe(document, {childList: true, subtree: true});
+    }
+
     transitions = new Set();
     transitionsByElement.set(eventTarget, transitions);
 
@@ -75,8 +86,13 @@ function onTransitionEnd(e: Event) {
     transitionsByElement.delete(eventTarget);
   }
 
+  flushCallbacks();
+}
+
+function flushCallbacks() {
   // If no transitioning elements, call all of the queued callbacks.
   if (transitionsByElement.size === 0) {
+    removalObserver?.disconnect();
     for (let callback of transitionCallbacks) {
       callback(true);
       transitionCallbacks.delete(callback);
@@ -99,6 +115,7 @@ function cleanupDetachedElements() {
     // Similar to `eventTarget instanceof Element && !eventTarget.isConnected`, but avoids
     // the explicit instanceof check, since it may be different in different contexts.
     if ('isConnected' in eventTarget && !eventTarget.isConnected) {
+      eventTarget.removeEventListener('transitioncancel', onTransitionEnd);
       transitionsByElement.delete(eventTarget);
     }
   }
@@ -119,6 +136,7 @@ export function runAfterTransition(fn: QueuedCallback): () => void {
   // Wait one frame to see if an animation starts, e.g. a transition on mount.
   let frame = window.requestAnimationFrame(() => {
     cleanupDetachedElements();
+    flushCallbacks();
 
     // If no transitions are running, call the function immediately.
     // Otherwise, add it to a list of callbacks to run at the end of the animation.
