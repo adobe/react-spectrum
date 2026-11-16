@@ -12,6 +12,8 @@ Maintainers run the Chromatic VRT suites themselves — don't run `yarn chromati
 
 Tests are **not** co-located with source — each package keeps them in a sibling `test/` directory. The file suffix routes the test to a runner: `*.ssr.test.*` → `yarn test:ssr`, `*.browser.test.*` → `yarn test:browser`, plain `*.test.*` → `yarn test` (Jest). Shared test helpers live in `@react-aria/test-utils` / `@react-spectrum/test-utils` (the `User` event abstraction and per-component testers).
 
+The agent documentation suites can also run with `yarn test:agent-docs`. Both this command and their Jest wrapper build the CLI/MCP binaries and generate filtered snapshots in a temporary directory. They require installed dependencies but no pre-existing builds, local benchmark data, network downloads, or historical release tags.
+
 ## Writing tests
 
 - **Run the full suite before committing.** Do not write PR descriptions that list a subset of specific passing tests — run `yarn test`, `yarn test:ssr` and (when relevant) `yarn test:browser` — do not run the Chromatic VRT suites (see above).

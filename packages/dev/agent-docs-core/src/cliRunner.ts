@@ -59,6 +59,9 @@ function renderHelpText(brand: BrandId, version: string): string {
   );
   lines.push('  --snapshot <id>          Pin an exact immutable snapshot ID');
   lines.push(
+    '  --max-tokens <N>         Bound read output, including JSON metadata (~4 UTF-8 bytes/token)'
+  );
+  lines.push(
     '  --strict-version         Fail instead of warning when an unverified patch falls back to same-minor'
   );
   lines.push('  --offline                Read strictly from local cache without network requests');

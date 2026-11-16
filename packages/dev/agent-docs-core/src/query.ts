@@ -23,6 +23,7 @@ import {
   ExportApiIR,
   IconsDocsResult,
   LibraryId,
+  PackageSlicePointer,
   PrefetchDocsResult,
   ReadDocsResult,
   READER_SCHEMA_VERSION,
@@ -41,6 +42,7 @@ import {
   ensurePackageSliceExtracted,
   isSafeEntrySlug,
   loadSnapshotIndex,
+  loadSnapshotManifest,
   readSliceEntryBySlug,
   readSliceS2Assets,
   readSliceSearchIndex,
@@ -98,16 +100,31 @@ async function openSliceForProvenance(
   index: SnapshotIndex,
   options: CommonQueryOptions
 ): Promise<string> {
-  const ptr =
-    index.packages[prov.packageName]?.[prov.packageVersion] ||
-    Object.values(index.packages[prov.packageName] || {}).find(
-      p => p.snapshotId === prov.snapshotId
-    );
+  let ptr: PackageSlicePointer | undefined =
+    index.packages[prov.packageName]?.[prov.packageVersion];
+  if (!ptr || ptr.snapshotId !== prov.snapshotId) {
+    const snapshot = index.snapshots[prov.snapshotId];
+    ptr = snapshot
+      ? (await loadSnapshotManifest(snapshot, options)).slices[prov.packageName]
+      : undefined;
+  }
   if (!ptr) {
     throw new AgentDocsError(
       'ERR_SNAPSHOT_NOT_FOUND',
       `Slice metadata missing in index for ${prov.packageName}@${prov.packageVersion}.`,
       EXIT_CODES.NOT_FOUND
+    );
+  }
+  if (
+    ptr.snapshotId !== prov.snapshotId ||
+    ptr.packageVersion !== prov.packageVersion ||
+    ptr.sliceRelPath !== prov.slicePath ||
+    ptr.sliceSha256 !== prov.sliceSha256
+  ) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Slice metadata no longer matches the resolution for ${prov.packageName}@${prov.packageVersion} in snapshot '${prov.snapshotId}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
     );
   }
   return ensurePackageSliceExtracted(prov.packageName, prov.packageVersion, ptr, {
@@ -349,13 +366,35 @@ function estimateTokens(text: string): number {
   return Math.ceil(Buffer.byteLength(text, 'utf8') / 4);
 }
 
-function filterEntryMarkdownBySections(
+function renderReadEntry(entry: CatalogEntryIR): string {
+  const lines = [
+    `# ${entry.title} (\`${entry.id}\`)`,
+    `Package: \`${entry.packageName}@${entry.packageVersion}\``,
+    '',
+    entry.summary
+  ];
+  if (entry.imports.length > 0) {
+    lines.push('', '## Imports', '```tsx', ...entry.imports, '```');
+  }
+  if (entry.compositionRules.length > 0) {
+    lines.push('', '## Implementation Rules', ...entry.compositionRules.map(rule => `- ${rule}`));
+  }
+  for (const section of entry.sections) {
+    lines.push('', `## ${section.heading}`, '', section.markdown);
+  }
+  if (entry.exports.length > 0) {
+    lines.push('', '## API', ...entry.exports.map(exp => renderDetailedExportMarkdown(exp)));
+  }
+  return lines.join('\n').trim() + '\n';
+}
+
+function filterEntryBySections(
   entry: CatalogEntryIR,
   fullCanonicalMd: string,
   requestedSections: SectionFilter[] | undefined,
-  maxTokens: number | undefined,
   cliPrefix: string
 ): {
+  entry: CatalogEntryIR;
   markdown: string;
   includedSections: string[];
   omittedSections: string[];
@@ -365,91 +404,127 @@ function filterEntryMarkdownBySections(
   const wantsAll =
     !requestedSections || requestedSections.length === 0 || requestedSections.includes('all');
 
-  if (wantsAll && (!maxTokens || estimateTokens(fullCanonicalMd) <= maxTokens)) {
+  if (wantsAll) {
     return {
+      entry,
       markdown: fullCanonicalMd,
-      includedSections: ['header', 'imports', ...entry.sections.map(s => s.category), 'api'],
+      includedSections: [
+        ...new Set([...entry.sections.map(s => s.id), ...(entry.exports.length > 0 ? ['api'] : [])])
+      ],
       omittedSections: [],
       truncated: false
     };
   }
 
-  const wantedSet = new Set<SectionFilter>(
-    requestedSections || ['usage', 'api', 'accessibility', 'styling']
-  );
-  const lines: string[] = [];
-  lines.push(`# ${entry.title} (\`${entry.id}\`)`);
-  lines.push(`Package: \`${entry.packageName}@${entry.packageVersion}\``);
-  lines.push('');
-  if (entry.summary) {
-    lines.push(entry.summary);
-    lines.push('');
-  }
-  if (entry.imports && entry.imports.length > 0) {
-    lines.push('## Imports');
-    lines.push('```tsx');
-    for (const imp of entry.imports) {
-      lines.push(imp);
-    }
-    lines.push('```');
-    lines.push('');
-  }
-
-  const includedSections: string[] = [];
-  const omittedSections: string[] = [];
-  let truncated = false;
-
-  // Extract API block from canonical markdown if requested
-  const apiMarkerIdx = fullCanonicalMd.indexOf('\n## API\n');
-  const apiBlock = apiMarkerIdx !== -1 ? fullCanonicalMd.slice(apiMarkerIdx + 1).trim() : '';
-
-  for (const sec of entry.sections) {
-    if (!wantsAll && !wantedSet.has(sec.category)) {
-      omittedSections.push(sec.id);
-      continue;
-    }
-    const candidateBlock = `## ${sec.heading}\n\n${sec.markdown}\n`;
-    if (maxTokens && estimateTokens(lines.join('\n') + '\n' + candidateBlock) > maxTokens) {
-      omittedSections.push(sec.id);
-      truncated = true;
-      continue;
-    }
-    lines.push(`## ${sec.heading}`);
-    lines.push('');
-    lines.push(sec.markdown);
-    lines.push('');
-    includedSections.push(sec.id);
-  }
-
-  if ((wantsAll || wantedSet.has('api')) && apiBlock) {
-    if (maxTokens && estimateTokens(lines.join('\n') + '\n' + apiBlock) > maxTokens) {
-      omittedSections.push('api');
-      truncated = true;
-    } else {
-      lines.push(apiBlock);
-      lines.push('');
-      includedSections.push('api');
-    }
-  } else if (apiBlock) {
-    omittedSections.push('api');
-  }
-
-  const continueCommand =
-    omittedSections.length > 0 ? `${cliPrefix} read ${entry.id} --sections all` : undefined;
-
-  if (truncated && continueCommand) {
-    lines.push(
-      `> Output bounded to ~${maxTokens} tokens. Omitted sections: ${omittedSections.join(', ')}. Run \`${continueCommand}\` for full content.`
-    );
-  }
+  const wantedSet = new Set(requestedSections);
+  const filteredEntry = {
+    ...entry,
+    sections: entry.sections.filter(sec => wantedSet.has(sec.category)),
+    exports: wantedSet.has('api') ? entry.exports : [],
+    compositionRules:
+      wantedSet.has('usage') || wantedSet.has('accessibility') ? entry.compositionRules : []
+  };
+  const omittedSections = [
+    ...entry.sections.filter(sec => !wantedSet.has(sec.category)).map(sec => sec.id),
+    ...(!wantedSet.has('api') && entry.exports.length > 0 ? ['api'] : [])
+  ];
 
   return {
-    markdown: lines.join('\n').trim() + '\n',
-    includedSections,
+    entry: filteredEntry,
+    markdown: renderReadEntry(filteredEntry),
+    includedSections: [
+      ...new Set([
+        ...filteredEntry.sections.map(sec => sec.id),
+        ...(filteredEntry.exports.length > 0 ? ['api'] : [])
+      ])
+    ],
     omittedSections,
-    truncated,
-    continueCommand
+    truncated: false,
+    continueCommand:
+      omittedSections.length > 0 ? `${cliPrefix} read ${entry.id} --sections all` : undefined
   };
+}
+
+function boundReadResult(result: ReadDocsResult, maxTokens: number, cliPrefix: string): void {
+  const outputTokens = () => estimateTokens(JSON.stringify(result, null, 2) + '\n');
+  if (outputTokens() <= maxTokens) {
+    return;
+  }
+
+  const originals = [...result.results];
+  type ReadSuccess = Extract<ReadItemResult, {ok: true}>;
+  const project = (original: ReadSuccess, entry: CatalogEntryIR): ReadSuccess => {
+    const omitted = [
+      ...original.omittedSections,
+      ...original.entry.sections.filter(sec => !entry.sections.includes(sec)).map(sec => sec.id),
+      ...(original.entry.exports.length > entry.exports.length ? ['api'] : [])
+    ];
+    const truncated =
+      entry.sections.length < original.entry.sections.length ||
+      entry.exports.length < original.entry.exports.length;
+    const continueCommand =
+      omitted.length > 0 ? `${cliPrefix} read ${entry.id} --sections all` : undefined;
+    return {
+      ...original,
+      entry,
+      markdown:
+        renderReadEntry(entry) +
+        (truncated ? `\n> Output truncated. Run \`${continueCommand}\` for full content.\n` : ''),
+      includedSections: [
+        ...new Set([
+          ...entry.sections.map(sec => sec.id),
+          ...(entry.exports.length > 0 ? ['api'] : [])
+        ])
+      ],
+      omittedSections: [...new Set(omitted)],
+      truncated,
+      continueCommand
+    };
+  };
+  // Reserve the complete serialized envelope, including provenance and continuation metadata.
+  result.results = originals.map(item =>
+    item.ok ? project(item, {...item.entry, sections: [], exports: []}) : item
+  );
+  const minimumTokens = outputTokens();
+  if (minimumTokens > maxTokens) {
+    throw new AgentDocsError(
+      'ERR_INVALID_ARGS',
+      `The token budget ${maxTokens} is too small for document metadata and provenance (requires at least ${minimumTokens}). Increase --max-tokens or request fewer entries.`,
+      EXIT_CODES.INVALID_ARGS
+    );
+  }
+  const successCount = originals.filter(item => item.ok).length;
+  const extraTokensPerEntry = Math.floor((maxTokens - minimumTokens) / Math.max(1, successCount));
+
+  for (const [i, original] of originals.entries()) {
+    let current = result.results[i];
+    if (!original.ok || !current.ok) {
+      continue;
+    }
+    const entryLimit = outputTokens() + extraTokensPerEntry;
+    const apiSections = original.entry.sections.filter(section => section.category === 'api');
+    const candidates = [
+      ...original.entry.sections
+        .filter(section => section.category !== 'api')
+        .map(section => ({sections: [section], exports: []})),
+      ...(original.entry.exports.length > 0 || apiSections.length > 0
+        ? [{sections: apiSections, exports: original.entry.exports}]
+        : [])
+    ];
+    for (const candidate of candidates) {
+      const next = project(original, {
+        ...current.entry,
+        sections: [...current.entry.sections, ...candidate.sections],
+        exports: candidate.exports.length > 0 ? candidate.exports : current.entry.exports
+      });
+      result.results[i] = next;
+      if (outputTokens() <= entryLimit) {
+        current = next;
+      } else {
+        result.results[i] = current;
+      }
+    }
+  }
 }
 
 export interface ReadDocsOptions extends CommonQueryOptions {
@@ -495,13 +570,6 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
   const results: ReadItemResult[] = [];
   const usedSnapshots = new Set<string>();
   const warnings: DocWarning[] = [...resolution.warnings];
-  // Split the budget evenly so the batch as a whole stays within maxTokens. Each entry still
-  // keeps its title, summary, and imports.
-  const perEntryTokenBudget =
-    options.maxTokens && ids.length > 0
-      ? Math.max(1, Math.floor(options.maxTokens / ids.length))
-      : undefined;
-
   for (const requestedId of ids) {
     const {library, slug} = parseQualifiedId(requestedId, defaultLibrary, resolution);
     if (!isSafeEntrySlug(slug)) {
@@ -601,11 +669,10 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     }
 
     usedSnapshots.add(matchedData.prov.snapshotId);
-    const filtered = filterEntryMarkdownBySections(
+    const filtered = filterEntryBySections(
       matchedData.entry,
       matchedData.markdown,
       options.sections,
-      perEntryTokenBudget,
       cliPrefix
     );
 
@@ -620,7 +687,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
         exactMatch: matchedData.prov.exactMatch,
         sourceUrl: matchedData.entry.sourceUrl
       },
-      entry: matchedData.entry,
+      entry: filtered.entry,
       markdown: filtered.markdown,
       includedSections: filtered.includedSections,
       omittedSections: filtered.omittedSections,
@@ -638,13 +705,24 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     });
   }
 
-  return {
+  const result: ReadDocsResult = {
     apiVersion: API_VERSION,
     snapshots: collectEnvelopeSnapshots(index, usedSnapshots),
     resolution,
     warnings,
     results
   };
+  if (options.maxTokens !== undefined) {
+    if (!Number.isSafeInteger(options.maxTokens) || options.maxTokens < 1) {
+      throw new AgentDocsError(
+        'ERR_INVALID_ARGS',
+        'maxTokens must be a positive safe integer.',
+        EXIT_CODES.INVALID_ARGS
+      );
+    }
+    boundReadResult(result, options.maxTokens, cliPrefix);
+  }
+  return result;
 }
 
 export interface QueryApiOptions extends CommonQueryOptions {
@@ -655,16 +733,13 @@ export interface QueryApiOptions extends CommonQueryOptions {
   renderPropsOnly?: boolean;
 }
 
-function renderDetailedExportMarkdown(
-  exp: ExportApiIR,
-  opts: {propFilter?: string; eventsOnly?: boolean; renderPropsOnly?: boolean}
-): string {
+function renderDetailedExportMarkdown(exp: ExportApiIR): string {
   const lines: string[] = [];
   const genSuffix =
-    exp.generics && exp.generics.length > 0
-      ? `<${exp.generics.map(g => `${g.name}${g.constraint ? ` extends ${g.constraint}` : ''}${g.default ? ` = ${g.default}` : ''}`).join(', ')}>`
+    exp.typeParameters.length > 0
+      ? `<${exp.typeParameters.map(g => `${g.name}${g.constraint ? ` extends ${g.constraint}` : ''}${g.defaultType ? ` = ${g.defaultType}` : ''}`).join(', ')}>`
       : '';
-  lines.push(`## \`${exp.name}${genSuffix}\` (${exp.kind})`);
+  lines.push(`## \`${exp.name}${genSuffix}\` (${exp.exportKind})`);
   if (exp.description) {
     lines.push(exp.description);
   }
@@ -672,14 +747,14 @@ function renderDetailedExportMarkdown(
     lines.push('');
     lines.push('**Constraints:**');
     for (const c of exp.constraints) {
-      lines.push(`- ${c}`);
+      lines.push(`- ${c.description}`);
     }
   }
-  if (exp.signatures && exp.signatures.length > 0) {
+  if (exp.callSignatures.length > 0) {
     lines.push('');
     lines.push('```ts');
-    for (const sig of exp.signatures) {
-      lines.push(`${exp.name}${sig}`);
+    for (const sig of exp.callSignatures) {
+      lines.push(sig.signature);
     }
     lines.push('```');
   }
@@ -690,70 +765,43 @@ function renderDetailedExportMarkdown(
     lines.push('```');
   }
 
-  const propNeedles = (opts.propFilter || '')
-    .split(',')
-    .map(s => s.trim().toLowerCase())
-    .filter(Boolean);
-  const filterProps = <T extends {name: string; description: string}>(items: T[]): T[] =>
-    propNeedles.length > 0
-      ? items.filter(p =>
-          propNeedles.some(
-            needle =>
-              p.name.toLowerCase().includes(needle) || p.description.toLowerCase().includes(needle)
-          )
-        )
-      : items;
-
-  if (!opts.eventsOnly && !opts.renderPropsOnly) {
-    const props = filterProps(exp.props || []);
-    if (props.length > 0) {
-      lines.push('');
-      lines.push('### Props');
-      lines.push('| Prop | Type | Default | Inherited From | Description |');
-      lines.push('|---|---|---|---|---|');
-      for (const p of props) {
-        const req = p.required ? '**required**' : p.default || '—';
-        lines.push(
-          `| \`${p.name}\` | \`${p.type.replace(/\|/g, '\\|')}\` | ${req.replace(/\|/g, '\\|')} | ${p.inheritedFrom ? `\`${p.inheritedFrom}\`` : '—'} | ${(p.description || '—').replace(/\|/g, '\\|')} |`
-        );
-      }
-    }
-    if (propNeedles.length === 0 && exp.inheritedGroups && exp.inheritedGroups.length > 0) {
-      lines.push('');
-      lines.push(`*Inherited prop groups:* \`${exp.inheritedGroups.join('`, `')}\``);
+  const props = exp.props;
+  if (props.length > 0) {
+    lines.push('');
+    lines.push('### Props');
+    lines.push('| Prop | Type | Default | Inherited From | Description |');
+    lines.push('|---|---|---|---|---|');
+    for (const p of props) {
+      const req = p.required ? '**required**' : p.defaultValue || '—';
+      lines.push(
+        `| \`${p.name}\` | \`${p.type.replace(/\|/g, '\\|')}\` | ${req.replace(/\|/g, '\\|')} | ${p.inheritedFrom ? `\`${p.inheritedFrom}\`` : '—'} | ${(p.description || '—').replace(/\|/g, '\\|')} |`
+      );
     }
   }
-
-  if (!opts.renderPropsOnly) {
-    const events = filterProps(exp.events || []);
-    if (events.length > 0) {
-      lines.push('');
-      lines.push('### Events');
-      lines.push('| Event | Signature | Description |');
-      lines.push('|---|---|---|');
-      for (const ev of events) {
-        lines.push(
-          `| \`${ev.name}\` | \`${ev.type.replace(/\|/g, '\\|')}\` | ${(ev.description || '—').replace(/\|/g, '\\|')} |`
-        );
-      }
+  const events = exp.events;
+  if (events.length > 0) {
+    lines.push('');
+    lines.push('### Events');
+    lines.push('| Event | Signature | Description |');
+    lines.push('|---|---|---|');
+    for (const ev of events) {
+      lines.push(
+        `| \`${ev.name}\` | \`${ev.type.replace(/\|/g, '\\|')}\` | ${(ev.description || '—').replace(/\|/g, '\\|')} |`
+      );
     }
   }
-
-  if (!opts.eventsOnly) {
-    const rps = filterProps(exp.renderProps || []);
-    if (rps.length > 0) {
-      lines.push('');
-      lines.push('### Render Props & Data Attributes');
-      lines.push('| State | Type | CSS Selector | Description |');
-      lines.push('|---|---|---|---|');
-      for (const rp of rps) {
-        lines.push(
-          `| \`${rp.name}\` | \`${rp.type.replace(/\|/g, '\\|')}\` | ${rp.cssSelector ? `\`${rp.cssSelector}\`` : '—'} | ${(rp.description || '—').replace(/\|/g, '\\|')} |`
-        );
-      }
+  const rps = exp.renderProps;
+  if (rps.length > 0) {
+    lines.push('');
+    lines.push('### Render Props & Data Attributes');
+    lines.push('| State | Type | CSS Selector | Description |');
+    lines.push('|---|---|---|---|');
+    for (const rp of rps) {
+      lines.push(
+        `| \`${rp.name}\` | \`${rp.type.replace(/\|/g, '\\|')}\` | ${rp.selector ? `\`${rp.selector}\`` : '—'} | ${(rp.description || '—').replace(/\|/g, '\\|')} |`
+      );
     }
   }
-
   return lines.join('\n');
 }
 
@@ -788,6 +836,26 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
     }
   }
 
+  const propNeedles = (options.propFilter || '')
+    .split(',')
+    .map(s => s.trim().toLowerCase())
+    .filter(Boolean);
+  const filterMembers = <T extends {name: string; description: string}>(items: T[]): T[] =>
+    propNeedles.length > 0
+      ? items.filter(p =>
+          propNeedles.some(
+            needle =>
+              p.name.toLowerCase().includes(needle) || p.description.toLowerCase().includes(needle)
+          )
+        )
+      : items;
+  exportsList = exportsList.map(exp => ({
+    ...exp,
+    props: options.eventsOnly || options.renderPropsOnly ? [] : filterMembers(exp.props),
+    events: options.renderPropsOnly ? [] : filterMembers(exp.events),
+    renderProps: options.eventsOnly ? [] : filterMembers(exp.renderProps)
+  }));
+
   const mdLines: string[] = [
     `# API Reference: ${item.entry.title} (\`${item.id}\`)`,
     `Package: \`${item.provenance.packageName}@${item.provenance.packageVersion}\` · Snapshot: \`${item.provenance.snapshotId}\``
@@ -802,13 +870,7 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
   }
   for (const exp of exportsList) {
     mdLines.push('');
-    mdLines.push(
-      renderDetailedExportMarkdown(exp, {
-        propFilter: options.propFilter,
-        eventsOnly: options.eventsOnly,
-        renderPropsOnly: options.renderPropsOnly
-      })
-    );
+    mdLines.push(renderDetailedExportMarkdown(exp));
   }
 
   return {
@@ -1057,6 +1119,19 @@ export async function prefetchDocs(options: CommonQueryOptions = {}): Promise<Pr
   const resolution = await resolveWorkspace({...options, cacheDir});
   const prefetchedSlices: PrefetchDocsResult['prefetchedSlices'] = [];
 
+  for (const snapshotId of new Set(
+    Object.values(resolution.packages).map(prov => prov.snapshotId)
+  )) {
+    const snapshot = index.snapshots[snapshotId];
+    if (!snapshot) {
+      throw new AgentDocsError(
+        'ERR_SNAPSHOT_NOT_FOUND',
+        `Unknown snapshot '${snapshotId}'.`,
+        EXIT_CODES.NOT_FOUND
+      );
+    }
+    await loadSnapshotManifest(snapshot, {...options, cacheDir});
+  }
   for (const prov of Object.values(resolution.packages)) {
     const localDir = await openSliceForProvenance(prov, index, {...options, cacheDir});
     prefetchedSlices.push({

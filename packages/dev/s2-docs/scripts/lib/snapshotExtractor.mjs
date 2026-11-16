@@ -1515,6 +1515,7 @@ export async function generateSnapshotFromTarget({
   docRevision = 1,
   sourceTag = null,
   sourceCommit,
+  sourceDate = null,
   extractorCommit,
   libraries = ['s2', 'rac', 'internationalized'],
   filterSlugs = null
@@ -2046,7 +2047,7 @@ export async function generateSnapshotFromTarget({
     minReaderSchemaVersion: MIN_READER_SCHEMA_VERSION,
     snapshotId,
     docRevision,
-    createdAt: new Date().toISOString(),
+    sourceDate,
     sourceTag,
     sourceCommit,
     extractorCommit,
@@ -2106,6 +2107,9 @@ export function updateSnapshotsIndex(outRoot, snapshotResults, options = {}) {
 
   for (let res of snapshotResults) {
     let {manifest, slices} = res;
+    const manifestBytes = fs.readFileSync(
+      path.join(outRoot, 'by-id', manifest.snapshotId, 'manifest.json')
+    );
     indexData.snapshots[manifest.snapshotId] = {
       snapshotId: manifest.snapshotId,
       docRevision: manifest.docRevision,
@@ -2115,6 +2119,8 @@ export function updateSnapshotsIndex(outRoot, snapshotResults, options = {}) {
       docsLayouts: manifest.docsLayouts,
       packages: manifest.packages,
       manifestPath: `by-id/${manifest.snapshotId}/manifest.json`,
+      manifestSha256: sha256Hex(manifestBytes),
+      manifestBytes: manifestBytes.length,
       catalogPath: `by-id/${manifest.snapshotId}/catalog.tar.gz`,
       catalogSha256: manifest.files['catalog.tar.gz']?.sha256,
       catalogBytes: manifest.files['catalog.tar.gz']?.bytes

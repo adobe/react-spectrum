@@ -21,11 +21,8 @@ import {test} from 'node:test';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../..');
 
-const BENCH_SNAPSHOTS = path.join(REPO_ROOT, 'packages/dev/agent-docs-bench/.local/snapshots');
-const DIST_SNAPSHOTS = path.join(REPO_ROOT, 'packages/dev/s2-docs/dist/snapshots');
-const SNAPSHOT_SOURCE = fs.existsSync(path.join(BENCH_SNAPSHOTS, 'index.json'))
-  ? BENCH_SNAPSHOTS
-  : DIST_SNAPSHOTS;
+const SNAPSHOT_SOURCE = process.env.RSP_AGENT_DOCS_TEST_SNAPSHOT_SOURCE;
+assert.ok(SNAPSHOT_SOURCE, 'Run yarn test:agent-docs to build binaries and test snapshots first.');
 
 const pluginModPromise = import(
   pathToFileURL(path.join(REPO_ROOT, 'scripts/generateAgentPlugins.mjs')).href
@@ -141,7 +138,7 @@ test('CLI handles partial-batch resilience (exit code 0 with valid entries prese
         's2:ComboBox',
         's2:TableView',
         '--max-tokens',
-        '350',
+        '6000',
         '--version',
         'latest',
         '--json'
@@ -149,14 +146,31 @@ test('CLI handles partial-batch resilience (exit code 0 with valid entries prese
       {cwd: REPO_ROOT, env, encoding: 'utf8'}
     );
     const boundedJson = JSON.parse(boundedRaw);
+    assert.ok(Math.ceil(Buffer.byteLength(boundedRaw) / 4) <= 6000);
     assert.ok(
       boundedJson.results.some(r => r.truncated && r.continueCommand?.includes('--sections')),
       'Expected truncated result with actionable --sections continueCommand'
     );
+    for (const result of boundedJson.results) {
+      assert.ok(
+        result.includedSections.every(section => !result.omittedSections.includes(section))
+      );
+      if (result.omittedSections.includes('api')) {
+        assert.equal(result.entry.exports.length, 0);
+      }
+    }
+    const singleBoundedRaw = execFileSync(
+      process.execPath,
+      [s2CliBin, 'read', 's2:ComboBox', '--max-tokens', '4000', '--version', 'latest', '--json'],
+      {cwd: REPO_ROOT, env, encoding: 'utf8'}
+    );
+    assert.ok(Math.ceil(Buffer.byteLength(singleBoundedRaw) / 4) <= 4000);
+    assert.equal(JSON.parse(singleBoundedRaw).results[0].truncated, true);
 
     // Malformed numeric flags and S2-only commands in the react-aria CLI are invalid arguments
     for (const [bin, args] of [
       [s2CliBin, ['read', 's2:Button', '--max-tokens', 'abc']],
+      [s2CliBin, ['read', 's2:Button', '--max-tokens', '1']],
       [s2CliBin, ['search', 'button', '--limit', '0']],
       [racCliBin, ['tokens', 'padding']],
       [racCliBin, ['icons', 'Edit']]
@@ -212,6 +226,8 @@ test('CLI handles partial-batch resilience (exit code 0 with valid entries prese
     );
     const comboExport = racApiJson.exports.find(e => e.name === 'ComboBox');
     assert.ok(comboExport);
+    assert.ok(comboExport.props.every(prop => prop.name === 'selectedKey'));
+    assert.ok(comboExport.events.every(event => event.name === 'onSelectionChange'));
   } finally {
     fs.rmSync(tmpCache, {recursive: true, force: true});
   }
@@ -252,6 +268,16 @@ test('every CLI command documented in the generated SKILL.md files parses and ru
         const results = args[0] === 'read' ? JSON.parse(stdout).results : [];
         for (const result of results) {
           assert.ok(result.ok, `${line}: ${result.requestedId} -> ${result.error?.code}`);
+        }
+        const guidance = results.find(
+          result => result.requestedId === 's2:guide/implementation-guidance'
+        );
+        if (guidance) {
+          assert.ok(
+            guidance.entry.sections.length > 0,
+            'Skill must include implementation guidance sections'
+          );
+          assert.match(guidance.markdown, /Styling/);
         }
         count++;
       }
@@ -341,6 +367,13 @@ test('MCP v2 servers support roots/list workspace discovery, reusable resolution
     const readPayload = JSON.parse(readRes.content[0].text);
     assert.equal(readPayload.results.length, 2);
     assert.ok(readPayload.results.every(r => r.ok));
+    const boundedRes = await client.callTool({
+      name: 'read_docs',
+      arguments: {ids: ['rac:ComboBox'], maxTokens: 4000, format: 'json', resolution: resolvedState}
+    });
+    assert.ok(!boundedRes.isError, boundedRes.content?.[0]?.text);
+    assert.ok(Math.ceil(Buffer.byteLength(boundedRes.content[0].text) / 4) <= 4000);
+    assert.equal(JSON.parse(boundedRes.content[0].text).results[0].truncated, true);
 
     // Malformed or conflicting `resolution` arguments are rejected with a clear error
     await assert.rejects(

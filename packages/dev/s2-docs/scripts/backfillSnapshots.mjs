@@ -153,9 +153,11 @@ export async function runBackfill({
   explicitTags = null,
   verifyPatches = true,
   limitMinors = null,
-  dryRun = false
+  dryRun = false,
+  repoRoot = REPO_ROOT
 }) {
   let plan = discoverBackfillPlan({
+    repoRoot,
     packageFilter,
     explicitTags,
     limitMinors
@@ -173,11 +175,12 @@ export async function runBackfill({
     let baseSummary = await extractGitRefSnapshot({
       gitRef: series.baseline.tag,
       outRoot,
-      libraries: series.libraries
+      libraries: series.libraries,
+      repoRoot
     });
     extractedSnapshots.push({
       tag: series.baseline.tag,
-      snapshotId: baseSummary.snapshotId
+      snapshotId: baseSummary.manifest.snapshotId
     });
 
     if (!verifyPatches) {
@@ -189,8 +192,10 @@ export async function runBackfill({
         outRoot,
         packageName: series.packageName,
         baseVersion: series.baseline.version,
-        candidateGitRef: patchInfo.tag,
-        libraries: [series.packageName === '@react-spectrum/s2' ? 's2' : 'rac']
+        patchVersion: patchInfo.version,
+        baseRef: series.baseline.tag,
+        patchRef: patchInfo.tag,
+        repoRoot
       });
 
       if (check.equivalent) {
@@ -203,11 +208,12 @@ export async function runBackfill({
         let patchSummary = await extractGitRefSnapshot({
           gitRef: patchInfo.tag,
           outRoot,
-          libraries: series.libraries
+          libraries: series.libraries,
+          repoRoot
         });
         dedicatedPatchSnapshots.push({
           tag: patchInfo.tag,
-          snapshotId: patchSummary.snapshotId
+          snapshotId: patchSummary.manifest.snapshotId
         });
       }
     }

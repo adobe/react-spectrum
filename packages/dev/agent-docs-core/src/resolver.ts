@@ -24,7 +24,7 @@ import {
 } from './types.js';
 import {createRequire} from 'node:module';
 import fs from 'node:fs';
-import {loadSnapshotIndex} from './cache.js';
+import {loadSnapshotIndex, loadSnapshotManifest} from './cache.js';
 import path from 'node:path';
 import {resolveFromWorkspaceLockfile} from './lockfiles.js';
 
@@ -145,7 +145,11 @@ export function matchPackageSliceInIndex(
   index: SnapshotIndex,
   packageName: string,
   requestedVersion: string,
-  options: {strictVersion?: boolean; snapshotOverride?: string} = {}
+  options: {
+    strictVersion?: boolean;
+    snapshotOverride?: string;
+    snapshotSlices?: Record<string, PackageSlicePointer>;
+  } = {}
 ): {
   pointer: PackageSlicePointer;
   matchedVersion: string;
@@ -158,10 +162,10 @@ export function matchPackageSliceInIndex(
   const availableVersions = Object.keys(pkgMap).sort(compareSemverDesc);
 
   if (options.snapshotOverride) {
-    const snapEntry = Object.entries(pkgMap).find(
-      ([, ptr]) => ptr.snapshotId === options.snapshotOverride
-    );
-    if (!snapEntry) {
+    const pointer = options.snapshotSlices
+      ? options.snapshotSlices[packageName]
+      : Object.values(pkgMap).find(ptr => ptr.snapshotId === options.snapshotOverride);
+    if (!pointer) {
       throw new AgentDocsError(
         'ERR_SNAPSHOT_NOT_FOUND',
         `Snapshot '${options.snapshotOverride}' does not contain package '${packageName}'. Available versions: ${availableVersions.join(', ') || 'none'}.`,
@@ -170,9 +174,9 @@ export function matchPackageSliceInIndex(
       );
     }
     return {
-      pointer: snapEntry[1],
-      matchedVersion: snapEntry[0],
-      exactMatch: snapEntry[0] === requestedVersion,
+      pointer,
+      matchedVersion: pointer.packageVersion,
+      exactMatch: pointer.packageVersion === requestedVersion,
       availableVersions
     };
   }
@@ -297,6 +301,18 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
     snapshotSource: options.snapshotSource,
     offline: options.offline
   });
+  let snapshotSlices: Record<string, PackageSlicePointer> | undefined;
+  if (options.snapshotOverride) {
+    const snapshot = index.snapshots[options.snapshotOverride];
+    if (!snapshot) {
+      throw new AgentDocsError(
+        'ERR_SNAPSHOT_NOT_FOUND',
+        `Unknown snapshot '${options.snapshotOverride}'.`,
+        EXIT_CODES.NOT_FOUND
+      );
+    }
+    snapshotSlices = (await loadSnapshotManifest(snapshot, options)).slices;
+  }
 
   const warnings: DocWarning[] = [];
   const instances: PackageInstanceResolution[] = [];
@@ -552,7 +568,8 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
     try {
       const matched = matchPackageSliceInIndex(index, pkgName, req.version, {
         strictVersion: options.strictVersion,
-        snapshotOverride: options.snapshotOverride
+        snapshotOverride: options.snapshotOverride,
+        snapshotSlices
       });
       if (matched.warning) {
         warnings.push(matched.warning);
@@ -595,7 +612,11 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
   if (s2Prov && snapSummary) {
     for (const auxPkg of ['@internationalized/date', '@internationalized/number', 'react-aria']) {
       const auxVer = !resolvedPackages[auxPkg] ? snapSummary.packages[auxPkg] : undefined;
-      const auxPtr = auxVer ? index.packages[auxPkg]?.[auxVer] : undefined;
+      const auxPtr = options.snapshotOverride
+        ? snapshotSlices?.[auxPkg]
+        : auxVer
+          ? index.packages[auxPkg]?.[auxVer]
+          : undefined;
       if (auxVer && auxPtr) {
         resolvedPackages[auxPkg] = {
           packageName: auxPkg,

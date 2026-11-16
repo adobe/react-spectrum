@@ -22,7 +22,7 @@
   "scripts": {
     "perf": "node perf/cli.mjs",
     "test:perf": "node --test perf/test/*.test.mjs",
-    "test:agent-docs": "node --test packages/dev/agent-docs-core/test/*.test.mjs",
+    "test:agent-docs": "node packages/dev/agent-docs-core/test/run.mjs",
     "check-types": "tsc --noEmit",
     "clean": "make clean",
     "clean:all": "make clean_all",

@@ -19,7 +19,9 @@ import {
   READER_SCHEMA_VERSION,
   S2Assets,
   SearchIndexRecord,
-  SnapshotIndex
+  SnapshotIndex,
+  SnapshotManifest,
+  SnapshotSummaryInfo
 } from './types.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -249,6 +251,50 @@ export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promi
     }
     throw err;
   }
+}
+
+export async function loadSnapshotManifest(
+  snapshot: SnapshotSummaryInfo,
+  options: CacheAccessOptions = {}
+): Promise<SnapshotManifest> {
+  const cacheDir = resolveDefaultCacheDir(options.cacheDir);
+  const source = resolveSnapshotSource(options.snapshotSource);
+  const key = sha256Buffer(Buffer.from(`${source}/${snapshot.manifestPath}`));
+  const cachedPath = path.join(cacheDir, 'manifests', `${key}.json`);
+  const raw = fs.existsSync(cachedPath)
+    ? fs.readFileSync(cachedPath)
+    : await fetchSourceBytes(
+        source,
+        snapshot.manifestPath,
+        Boolean(options.offline || process.env.RSP_AGENT_DOCS_OFFLINE === '1'),
+        snapshot.manifestBytes || MAX_INDEX_BYTES
+      );
+  if (
+    (snapshot.manifestSha256 && sha256Buffer(raw) !== snapshot.manifestSha256) ||
+    (snapshot.manifestBytes !== undefined && raw.length !== snapshot.manifestBytes)
+  ) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Integrity mismatch for snapshot manifest '${snapshot.manifestPath}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
+  const manifest = JSON.parse(raw.toString('utf8')) as SnapshotManifest;
+  assertCompatibleSchema(manifest.minReaderSchemaVersion, `Snapshot ${snapshot.snapshotId}`);
+  if (manifest.snapshotId !== snapshot.snapshotId || !manifest.slices) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Invalid package slice manifest for snapshot '${snapshot.snapshotId}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
+  if (!fs.existsSync(cachedPath)) {
+    fs.mkdirSync(path.dirname(cachedPath), {recursive: true});
+    const tmpPath = `${cachedPath}.tmp-${process.pid}-${Date.now()}`;
+    fs.writeFileSync(tmpPath, raw);
+    fs.renameSync(tmpPath, cachedPath);
+  }
+  return manifest;
 }
 
 function sanitizePackageCacheSeg(pkgName: string, version: string, sliceSha256: string): string {

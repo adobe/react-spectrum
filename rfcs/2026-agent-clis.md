@@ -99,6 +99,7 @@ A central design distinction separates **how documentation is built** from **how
 
 - **Published Snapshot (`/snapshots/by-id/<snapshotId>/`):** Produced from a git commit or release tag and split into **per-package `.tar.gz` slices** (`packages/react-spectrum__s2.tar.gz`, `packages/react-aria-components.tar.gz`, `packages/internationalized__date.tar.gz`, etc.) plus `manifest.json`.
 - **Per-Package Index (`/snapshots/index.json`):** Maps `packages[packageName][exactVersion]` → `PackageSlicePointer` (`snapshotId`, `docRevision`, `sliceRelPath`, `sliceSha256`, `sliceBytes`, `schemaVersion`, `minReaderSchemaVersion`, `verifiedEquivalentPatches`).
+- **Immutable revision lookup:** `--snapshot` and saved resolutions use the selected snapshot's manifest when the current per-version pointer has advanced. Manifests are cached for offline use and new index records include their SHA-256 and byte length. Saved resolutions must match the selected slice path and hash.
 - **Resolved Documentation Set:** Assembled dynamically per workspace by resolving each documented package independently:
   - If an app depends on `@react-spectrum/s2@1.2.0` and `react-aria-components@1.22.1`, `s2:*` queries read from the `1.2.0` S2 slice while `rac:*` queries read from the `1.22.1` RAC slice.
   - Every result carries entry-level `provenance` (`packageName`, `packageVersion`, `snapshotId`, `exactMatch`) plus a top-level `snapshots` map summarizing all referenced snapshots.
@@ -129,8 +130,8 @@ Older tags in `react-spectrum` span two distinct documentation architectures:
 
 `backfillSnapshots.mjs` checks out historical git tags into isolated temporary detached worktrees (`git worktree add --detach`) while executing the **current `HEAD` extractor** out-of-tree with layout auto-detection (`s2-docs` vs. `legacy-mdx`).
 
-**Strict patch-release policy:** A minor release snapshot (e.g., `1.2.0`) is **never** silently advertised as an exact match for `1.2.1`. During backfill, `backfillSnapshots.mjs` hashes exported TypeScript declarations across patch tags:
-- If `1.2.2` has an identical public API surface digest to `1.2.0`, `1.2.2` is recorded in `verifiedEquivalentPatches` and resolves cleanly with `matchedVia: "verifiedEquivalentPatch"`.
+**Strict patch-release policy:** A minor release snapshot (e.g., `1.2.0`) is **never** silently advertised as an exact match for `1.2.1`. During backfill, `backfillSnapshots.mjs` hashes extracted APIs and documentation across patch tags, ignoring stamped package versions:
+- If `1.2.2` has identical APIs and documentation to `1.2.0`, `1.2.2` is recorded in `verifiedEquivalentPatches` and resolves cleanly with `matchedVia: "verifiedEquivalentPatch"`.
 - Otherwise, `1.2.1` resolves nearest available fallback documentation with `exactMatch: false` and emits an explicit `EXACT_PATCH_UNAVAILABLE` warning listing nearest available versions.
 
 ---
@@ -184,6 +185,7 @@ react-aria api rac:ComboBox --render-props [--json]
 **Deterministic CLI behavior:**
 - **Default output:** Compact, clean Markdown with zero ANSI spinners or decorative chrome when piped.
 - **Structured output (`--json`):** Versioned `apiVersion: 1` JSON envelope with `snapshots`, `resolution`, `warnings`, and per-entry `results`.
+- **Consistent filtering and budgets:** Section and API-member filters apply to structured data as well as Markdown. `--max-tokens` bounds the serialized JSON envelope at approximately four UTF-8 bytes per token, preserving provenance and marking omitted document content with continuation instructions. Budgets below the required metadata size fail explicitly with `ERR_INVALID_ARGS`.
 - **Partial-batch resilience:** In `read A B C`, if `B` is unknown (`ERR_ENTRY_NOT_FOUND` with fuzzy `suggestions`), `A` and `C` are still returned (`partial: true`, exit code `0`); exit code `3` (`NOT_FOUND`) is returned only when **every** requested ID fails.
 - **Predictable exit codes:** `0` (`OK`), `1` (`INTERNAL_ERROR`, unexpected failures), `2` (`INVALID_ARGS`), `3` (`NOT_FOUND`), `4` (`OFFLINE_OR_NETWORK`), `5` (`INTEGRITY_OR_SCHEMA`).
 
@@ -222,12 +224,14 @@ Per MCP's runtime tool discovery model (`tools/list`), legacy v1 `list_*_pages`,
 3. **Step 2 — Pre-pointer completeness & SHA-256 check:** Verifies via `HeadObject` that every manifest-referenced slice exists remotely with exact byte length and SHA-256 digest before touching `index.json`.
 4. **Step 3 — Conditional `If-Match` CAS loop on `snapshots/index.json`:** Reads current `index.json` + `ETag`, merges new snapshot and package pointers (preserving monotonic SemVer `latest` pointers even when publishing older backfills and unioning `verifiedEquivalentPatches`), and writes back with `--if-match <ETag>` (`--if-none-match "*"` on bootstrap) with bounded backoff retries on `PreconditionFailed`.
 
+Snapshot IDs use the source commit date for both HEAD and tags. Artifacts record `sourceDate`, not a wall-clock creation time, so rebuilding unchanged inputs produces identical immutable bytes and can be republished idempotently. Changed extraction output still requires a new documentation revision.
+
 #### Shared User Cache (`packages/dev/agent-docs-core/src/cache.ts`)
 - Stores unpacked slices under the OS user cache (`~/.cache/react-spectrum-agent-docs`, `~/Library/Caches/...`, or `%LOCALAPPDATA%`), keeping consumer repositories completely clean.
 - Verifies downloaded `.tar.gz` SHA-256 and byte length against `index.json` **before** decompression.
 - Uses a custom zero-dependency tar unpacker (`tarArchive.mjs` / `cache.ts`) that rejects `..` path traversal, absolute paths, symlinks/hardlinks, device/FIFO entries, and oversized archives (`ERR_ARCHIVE_SECURITY`).
 - Coordinates concurrent CLI/MCP processes via per-slice lockfiles + staging temp directories + atomic `fs.renameSync`.
-- Supports `prefetch` + `--offline` (`ERR_OFFLINE_CACHE_MISS`) for deterministic, air-gapped CI environments.
+- Supports `prefetch` + `--offline` (`ERR_OFFLINE_CACHE_MISS`) for deterministic, air-gapped CI environments. Prefetch caches both immutable manifests and slices so old revisions remain available offline after the version index advances.
 
 ---
 

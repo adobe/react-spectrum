@@ -29,7 +29,7 @@ react-aria read rac:collections --cwd <app-dir>
 
 ### Step B — Batch-read implementation guidance + target components in one call
 ```sh
-react-aria read rac:getting-started rac:ComboBox rac:Modal --sections usage,api,accessibility --cwd <app-dir>
+react-aria read rac:getting-started rac:ComboBox rac:Modal --sections guide,usage,api,accessibility --cwd <app-dir>
 ```
 
 ### Focused prop/event inspection & diagnostic resolution

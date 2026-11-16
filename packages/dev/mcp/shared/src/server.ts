@@ -470,7 +470,9 @@ export async function createAgentDocsMcpServer(
           .int()
           .min(400)
           .optional()
-          .describe('Optional total token budget across requested entries.'),
+          .describe(
+            'Optional total output budget (~4 UTF-8 bytes per token), including JSON metadata. Budgets too small for provenance return an error.'
+          ),
         format: FORMAT_ENUM.optional().describe('Output format: "markdown" (default) or "json".'),
         ...commonContextSchema
       },

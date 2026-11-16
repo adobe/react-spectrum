@@ -41,21 +41,24 @@ export async function extractGitRefSnapshot({
   docRevision = 1,
   libraries,
   filterSlugs = null,
-  markAsLatest = false
+  markAsLatest = false,
+  repoRoot = REPO_ROOT
 }) {
-  let extractorCommit = git(['rev-parse', '--short=12', 'HEAD']);
+  let extractorCommit = git(['rev-parse', '--short=12', 'HEAD'], repoRoot);
   if (!gitRef || gitRef === 'HEAD') {
-    let sourceCommit = git(['rev-parse', '--short=12', 'HEAD']);
-    let dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    let sourceCommit = git(['rev-parse', '--short=12', 'HEAD'], repoRoot);
+    let sourceDate = git(['show', '-s', '--format=%cI', 'HEAD'], repoRoot);
+    let dateStr = sourceDate.slice(0, 10).replace(/-/g, '');
     let snapshotId = `${dateStr}-g${sourceCommit}-d${docRevision}`;
     let res = await generateSnapshotFromTarget({
-      targetRoot: REPO_ROOT,
-      repoRoot: REPO_ROOT,
+      targetRoot: repoRoot,
+      repoRoot,
       outRoot,
       snapshotId,
       docRevision,
       sourceTag: null,
       sourceCommit,
+      sourceDate,
       extractorCommit,
       libraries,
       filterSlugs
@@ -64,23 +67,24 @@ export async function extractGitRefSnapshot({
     return res;
   }
 
-  let sourceCommit = git(['rev-parse', '--short=12', `${gitRef}^{commit}`]);
-  let commitDateIso = git(['show', '-s', '--format=%cI', `${gitRef}^{commit}`]);
+  let sourceCommit = git(['rev-parse', '--short=12', `${gitRef}^{commit}`], repoRoot);
+  let commitDateIso = git(['show', '-s', '--format=%cI', `${gitRef}^{commit}`], repoRoot);
   let dateStr = commitDateIso.slice(0, 10).replace(/-/g, '');
   let safeTagSlug = gitRef.replace(/^@/, '').replace(/[/@]/g, '-');
   let snapshotId = `${dateStr}-${safeTagSlug}-g${sourceCommit}-d${docRevision}`;
 
   let tmpWorktree = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-doc-snapshot-'));
   try {
-    git(['worktree', 'add', '--detach', '--quiet', tmpWorktree, gitRef]);
+    git(['worktree', 'add', '--detach', '--quiet', tmpWorktree, gitRef], repoRoot);
     let res = await generateSnapshotFromTarget({
       targetRoot: tmpWorktree,
-      repoRoot: REPO_ROOT,
+      repoRoot,
       outRoot,
       snapshotId,
       docRevision,
       sourceTag: gitRef,
       sourceCommit,
+      sourceDate: commitDateIso,
       extractorCommit,
       libraries,
       filterSlugs
@@ -89,11 +93,11 @@ export async function extractGitRefSnapshot({
     return res;
   } finally {
     try {
-      git(['worktree', 'remove', '--force', tmpWorktree]);
+      git(['worktree', 'remove', '--force', tmpWorktree], repoRoot);
     } catch {
       fs.rmSync(tmpWorktree, {recursive: true, force: true});
       try {
-        git(['worktree', 'prune']);
+        git(['worktree', 'prune'], repoRoot);
       } catch {
         // ignore
       }
@@ -112,31 +116,34 @@ export async function verifyAndRecordEquivalentPatch({
   baseVersion,
   patchVersion,
   baseRef,
-  patchRef
+  patchRef,
+  repoRoot = REPO_ROOT
 }) {
   let pkgSubdir =
     packageName === '@react-spectrum/s2'
       ? 'packages/@react-spectrum/s2'
       : `packages/${packageName}`;
   let diffPaths = [`${pkgSubdir}/exports`, `${pkgSubdir}/src`];
-  let diffOut = git(['diff', '--name-only', baseRef, patchRef, '--', ...diffPaths]);
+  let diffOut = git(['diff', '--name-only', baseRef, patchRef, '--', ...diffPaths], repoRoot);
 
-  // Extract a temporary API digest for both refs to verify zero prop/event/signature changes
+  // Compare API and documentation while ignoring the package version stamped into generated prose.
   let tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-patch-verify-'));
   try {
     let library = packageName === '@react-spectrum/s2' ? 's2' : 'rac';
     let baseRes = await extractGitRefSnapshot({
       gitRef: baseRef,
       outRoot: path.join(tmpDir, 'base'),
-      libraries: [library]
+      libraries: [library],
+      repoRoot
     });
     let patchRes = await extractGitRefSnapshot({
       gitRef: patchRef,
       outRoot: path.join(tmpDir, 'patch'),
-      libraries: [library]
+      libraries: [library],
+      repoRoot
     });
 
-    const computeApiSignatureDigest = (dir, snapId) => {
+    const computeDocumentationDigest = (dir, snapId) => {
       let entriesDir = path.join(dir, 'by-id', snapId, 'entries');
       let jsonFiles = fs.existsSync(entriesDir)
         ? execFileSync('find', [entriesDir, '-name', '*.json'], {encoding: 'utf8'})
@@ -145,21 +152,41 @@ export async function verifyAndRecordEquivalentPatch({
             .filter(Boolean)
             .sort()
         : [];
-      let normalizedExports = jsonFiles.map(fp => {
-        let parsed = JSON.parse(fs.readFileSync(fp, 'utf8'));
-        return {
-          id: parsed.id,
-          exports: parsed.exports
-        };
-      });
-      return sha256Hex(JSON.stringify(normalizedExports));
+      let normalizedEntries = jsonFiles
+        .map(fp => {
+          let parsed = JSON.parse(fs.readFileSync(fp, 'utf8'));
+          if (parsed.packageName !== packageName) {
+            return null;
+          }
+          return {
+            id: parsed.id,
+            title: parsed.title,
+            summary: parsed.summary,
+            imports: parsed.imports,
+            compositionRules: parsed.compositionRules,
+            sections: parsed.sections,
+            exports: parsed.exports
+          };
+        })
+        .filter(Boolean);
+      const version = JSON.parse(
+        fs.readFileSync(path.join(dir, 'by-id', snapId, 'manifest.json'), 'utf8')
+      ).packages[packageName];
+      if (!version || normalizedEntries.length === 0) {
+        throw new Error(
+          `No documentation was extracted for ${packageName} in snapshot '${snapId}'.`
+        );
+      }
+      return sha256Hex(
+        JSON.stringify(normalizedEntries).split(`${packageName}@${version}`).join(packageName)
+      );
     };
 
-    let baseDigest = computeApiSignatureDigest(
+    let baseDigest = computeDocumentationDigest(
       path.join(tmpDir, 'base'),
       baseRes.manifest.snapshotId
     );
-    let patchDigest = computeApiSignatureDigest(
+    let patchDigest = computeDocumentationDigest(
       path.join(tmpDir, 'patch'),
       patchRes.manifest.snapshotId
     );
@@ -169,12 +196,13 @@ export async function verifyAndRecordEquivalentPatch({
       let indexPath = path.join(outRoot, 'index.json');
       let indexData = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
       let pkgRecord = indexData.packages?.[packageName]?.[baseVersion];
-      if (pkgRecord) {
-        let set = new Set(pkgRecord.verifiedEquivalentPatches || []);
-        set.add(patchVersion);
-        pkgRecord.verifiedEquivalentPatches = [...set].sort();
-        fs.writeFileSync(indexPath, JSON.stringify(indexData, null, 2) + '\n', 'utf8');
+      if (!pkgRecord) {
+        throw new Error(`Missing baseline snapshot for ${packageName}@${baseVersion}.`);
       }
+      let set = new Set(pkgRecord.verifiedEquivalentPatches || []);
+      set.add(patchVersion);
+      pkgRecord.verifiedEquivalentPatches = [...set].sort();
+      fs.writeFileSync(indexPath, JSON.stringify(indexData, null, 2) + '\n', 'utf8');
     }
 
     return {

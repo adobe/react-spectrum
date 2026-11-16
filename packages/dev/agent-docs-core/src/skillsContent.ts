@@ -95,7 +95,7 @@ ${cliBin} read ${decisionGuide} --cwd <app-dir>
 
 ### Step B — Batch-read implementation guidance + target components in one call
 \`\`\`sh
-${cliBin} read ${guidanceEntry} ${defaultPrefix}:ComboBox ${overlayEntry} --sections usage,api,accessibility --cwd <app-dir>
+${cliBin} read ${guidanceEntry} ${defaultPrefix}:ComboBox ${overlayEntry} --sections guide,usage,api,accessibility --cwd <app-dir>
 \`\`\`
 ${
   isS2

@@ -13,20 +13,19 @@
 import path from 'path';
 import {spawnSync} from 'child_process';
 
-jest.setTimeout(60000);
+jest.setTimeout(120000);
 
 describe('agent-docs version-aware SDK, CLIs, MCP v2, publisher, and plugins', () => {
   it('passes all ESM unit and integration suites', () => {
     const testDir = __dirname;
-    const files = [
-      path.join(testDir, 'resolverAndLockfiles.test.mjs'),
-      path.join(testDir, 'cacheAndPublishSecurity.test.mjs'),
-      path.join(testDir, 'cliMcpAndPlugins.test.mjs')
-    ];
-    const result = spawnSync(process.execPath, ['--test', ...files], {
+    const result = spawnSync(process.execPath, [path.join(testDir, 'run.mjs')], {
       cwd: path.resolve(__dirname, '../../../..'),
-      encoding: 'utf8'
+      encoding: 'utf8',
+      maxBuffer: 16 * 1024 * 1024
     });
+    if (result.error) {
+      throw result.error;
+    }
     if (result.status !== 0) {
       throw new Error(
         `node --test failed (exit ${result.status}):\n${result.stdout}\n${result.stderr}`

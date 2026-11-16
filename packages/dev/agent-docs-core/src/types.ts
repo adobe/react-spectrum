@@ -80,9 +80,18 @@ export interface SnapshotSummaryInfo {
   docsLayouts: Record<string, string>;
   packages: Record<string, string>;
   manifestPath: string;
+  manifestSha256?: string;
+  manifestBytes?: number;
   catalogPath: string;
   catalogSha256: string;
   catalogBytes: number;
+}
+
+export interface SnapshotManifest {
+  schemaVersion: number;
+  minReaderSchemaVersion: number;
+  snapshotId: string;
+  slices: Record<string, PackageSlicePointer>;
 }
 
 export interface SnapshotIndex {
@@ -98,34 +107,42 @@ export interface PropIR {
   name: string;
   type: string;
   required: boolean;
-  default?: string | null;
+  defaultValue?: string;
   description: string;
-  inheritedFrom: string | null;
+  inheritedFrom?: string;
 }
 
 export interface RenderPropIR {
   name: string;
   type: string;
-  cssSelector: string | null;
+  selector?: string;
   description: string;
 }
 
 export interface GenericParamIR {
   name: string;
-  constraint: string | null;
-  default: string | null;
+  constraint?: string;
+  defaultType?: string;
 }
 
 export interface ExportApiIR {
   name: string;
-  kind: 'component' | 'hook-or-function' | 'interface' | 'type';
-  generics: GenericParamIR[];
+  exportKind: 'component' | 'hook' | 'function' | 'class' | 'interface' | 'type';
+  typeParameters: GenericParamIR[];
   props: PropIR[];
   events: PropIR[];
   renderProps: RenderPropIR[];
-  inheritedGroups?: string[];
-  signatures?: string[];
-  constraints: string[];
+  slots: string[];
+  callSignatures: Array<{
+    signature: string;
+    parameters: Array<{name: string; type: string; optional: boolean; description: string}>;
+    returnType: string;
+  }>;
+  constraints: Array<{
+    kind: 'controlled-pair' | 'mutual-exclusion' | 'style-restriction';
+    props: string[];
+    description: string;
+  }>;
   typeText?: string;
   description?: string;
 }

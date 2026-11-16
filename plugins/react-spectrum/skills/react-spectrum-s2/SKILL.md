@@ -29,7 +29,7 @@ spectrum read s2:guide/component-decision-tree --cwd <app-dir>
 
 ### Step B — Batch-read implementation guidance + target components in one call
 ```sh
-spectrum read s2:guide/implementation-guidance s2:ComboBox s2:Dialog --sections usage,api,accessibility --cwd <app-dir>
+spectrum read s2:guide/implementation-guidance s2:ComboBox s2:Dialog --sections guide,usage,api,accessibility --cwd <app-dir>
 ```
 
 ### Step C — Look up Spectrum 2 design tokens or workflow icons when styling or adding iconography
