@@ -172,7 +172,19 @@ export function createLocalBucketStorage(bucketRootDir) {
       fs.mkdirSync(path.dirname(target), {recursive: true});
       let tmp = `${target}.tmp-${process.pid}-${Date.now()}`;
       fs.writeFileSync(tmp, bodyBuf);
-      fs.renameSync(tmp, target);
+      try {
+        // linkSync fails with EEXIST instead of replacing, matching S3 `If-None-Match: *`.
+        fs.linkSync(tmp, target);
+      } catch (err) {
+        if (err.code === 'EEXIST') {
+          const conflict = new Error(`Immutable object already exists: ${key}`);
+          conflict.code = 'PreconditionFailed';
+          throw conflict;
+        }
+        throw err;
+      } finally {
+        fs.rmSync(tmp, {force: true});
+      }
       fs.writeFileSync(
         metaPath(key),
         JSON.stringify({
@@ -303,10 +315,25 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
             '--cache-control',
             cacheControl,
             '--metadata',
-            `sha256=${sha256}`
+            `sha256=${sha256}`,
+            '--if-none-match',
+            '*'
           ],
           {stdio: 'pipe'}
         );
+      } catch (err) {
+        let stderr = String(err.stderr || err.message || '');
+        if (
+          stderr.includes('PreconditionFailed') ||
+          stderr.includes('ConditionalRequestConflict')
+        ) {
+          const conflict = new Error(
+            `Immutable object already exists (concurrent publish?): ${fullKey(relKey)}`
+          );
+          conflict.code = 'PreconditionFailed';
+          throw conflict;
+        }
+        throw err;
       } finally {
         fs.rmSync(tmpFile, {force: true});
       }
@@ -420,6 +447,27 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
 }
 
 /**
+ * Uploads an immutable object only if it doesn't exist yet. Immutable objects are cached for a
+ * year, so existing objects with different content are never overwritten.
+ */
+async function uploadImmutableIfAbsent(storage, item, buf) {
+  let existing = await storage.headObject(item.key);
+  if (!existing) {
+    await storage.putImmutableObject(item.key, buf, {
+      sha256: item.expectedSha256,
+      contentType: contentTypeForPath(item.key),
+      cacheControl: IMMUTABLE_CACHE_CONTROL
+    });
+    return;
+  }
+  if (existing.sha256 !== item.expectedSha256 || existing.bytes !== item.expectedBytes) {
+    throw new Error(
+      `Refusing to overwrite immutable object '${item.key}': remote has ${existing.sha256 || 'unknown SHA-256'} (${existing.bytes}B), expected ${item.expectedSha256} (${item.expectedBytes}B). Publish under a new snapshot ID instead.`
+    );
+  }
+}
+
+/**
  * Executes the 3-step verified & conditional publication protocol for all snapshots
  * staged in `stagedDir`.
  */
@@ -479,18 +527,7 @@ export async function publishStagedSnapshots({
       }
 
       if (!dryRun) {
-        let existing = await storage.headObject(item.key);
-        if (
-          !existing ||
-          existing.sha256 !== item.expectedSha256 ||
-          existing.bytes !== item.expectedBytes
-        ) {
-          await storage.putImmutableObject(item.key, buf, {
-            sha256: item.expectedSha256,
-            contentType: contentTypeForPath(item.key),
-            cacheControl: IMMUTABLE_CACHE_CONTROL
-          });
-        }
+        await uploadImmutableIfAbsent(storage, item, buf);
       }
       uploadedObjects.push(item);
     }

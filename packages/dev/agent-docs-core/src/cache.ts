@@ -28,6 +28,9 @@ import path from 'node:path';
 import {unpackTarGzBufferToDir} from './tar.js';
 
 const INDEX_TTL_MS = 10 * 60 * 1000;
+const FETCH_TIMEOUT_MS = 60 * 1000;
+const MAX_INDEX_BYTES = 32 * 1024 * 1024;
+const MAX_SLICE_BYTES = 64 * 1024 * 1024;
 
 export function resolveDefaultCacheDir(explicitCacheDir?: string): string {
   if (explicitCacheDir) {
@@ -75,7 +78,8 @@ function sha256Buffer(buf: Buffer): string {
 async function fetchSourceBytes(
   source: string,
   relPath: string,
-  offline: boolean
+  offline: boolean,
+  maxBytes: number
 ): Promise<Buffer> {
   const cleanRel = relPath.replace(/^\/+/, '');
   if (isLocalSource(source)) {
@@ -86,6 +90,9 @@ async function fetchSourceBytes(
         `Snapshot artifact not found at local source: ${fullPath}`,
         EXIT_CODES.NOT_FOUND
       );
+    }
+    if (fs.statSync(fullPath).size > maxBytes) {
+      throw downloadTooLargeError(fullPath, maxBytes);
     }
     return fs.readFileSync(fullPath);
   }
@@ -99,36 +106,68 @@ async function fetchSourceBytes(
   }
 
   const url = `${source}/${cleanRel}`;
-  let response: Response;
   try {
-    response = await fetch(url, {
-      headers: {'User-Agent': 'adobe-spectrum-agent-docs/1.0'}
+    const response = await fetch(url, {
+      headers: {'User-Agent': 'adobe-spectrum-agent-docs/1.0'},
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
     });
+
+    if (response.status === 404) {
+      throw new AgentDocsError(
+        'ERR_SNAPSHOT_NOT_FOUND',
+        `Snapshot artifact not found at '${url}' (HTTP 404).`,
+        EXIT_CODES.NOT_FOUND
+      );
+    }
+    if (!response.ok) {
+      throw new AgentDocsError(
+        'ERR_NETWORK_FETCH',
+        `Snapshot fetch failed for '${url}' (HTTP ${response.status}).`,
+        EXIT_CODES.OFFLINE_OR_NETWORK
+      );
+    }
+
+    const declaredLength = Number(response.headers.get('content-length'));
+    if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
+      throw downloadTooLargeError(url, maxBytes);
+    }
+    if (!response.body) {
+      return Buffer.alloc(0);
+    }
+    const chunks: Buffer[] = [];
+    let total = 0;
+    const reader = response.body.getReader();
+    for (;;) {
+      const {done, value} = await reader.read();
+      if (done) {
+        break;
+      }
+      total += value.byteLength;
+      if (total > maxBytes) {
+        await reader.cancel();
+        throw downloadTooLargeError(url, maxBytes);
+      }
+      chunks.push(Buffer.from(value));
+    }
+    return Buffer.concat(chunks, total);
   } catch (err) {
+    if (err instanceof AgentDocsError) {
+      throw err;
+    }
     throw new AgentDocsError(
       'ERR_NETWORK_FETCH',
       `Failed to fetch '${url}': ${err instanceof Error ? err.message : String(err)}`,
       EXIT_CODES.OFFLINE_OR_NETWORK
     );
   }
+}
 
-  if (response.status === 404) {
-    throw new AgentDocsError(
-      'ERR_SNAPSHOT_NOT_FOUND',
-      `Snapshot artifact not found at '${url}' (HTTP 404).`,
-      EXIT_CODES.NOT_FOUND
-    );
-  }
-  if (!response.ok) {
-    throw new AgentDocsError(
-      'ERR_NETWORK_FETCH',
-      `Snapshot fetch failed for '${url}' (HTTP ${response.status}).`,
-      EXIT_CODES.OFFLINE_OR_NETWORK
-    );
-  }
-
-  const arrBuf = await response.arrayBuffer();
-  return Buffer.from(arrBuf);
+function downloadTooLargeError(location: string, maxBytes: number): AgentDocsError {
+  return new AgentDocsError(
+    'ERR_CACHE_INTEGRITY',
+    `Snapshot artifact '${location}' exceeds the expected size of ${maxBytes} bytes.`,
+    EXIT_CODES.INTEGRITY_OR_SCHEMA
+  );
 }
 
 function assertCompatibleSchema(
@@ -194,7 +233,7 @@ export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promi
   }
 
   try {
-    const raw = await fetchSourceBytes(source, 'index.json', offline);
+    const raw = await fetchSourceBytes(source, 'index.json', offline, MAX_INDEX_BYTES);
     const parsed = JSON.parse(raw.toString('utf8')) as SnapshotIndex;
     assertCompatibleSchema(parsed.minReaderSchemaVersion, 'Snapshot index');
     const tmpPath = `${cachedIndexPath}.tmp-${process.pid}-${Date.now()}`;
@@ -283,7 +322,19 @@ export async function ensurePackageSliceExtracted(
   }
 
   // Fetch bytes before taking synchronous directory lock
-  const gzBytes = await fetchSourceBytes(source, pointer.sliceRelPath, offline);
+  const gzBytes = await fetchSourceBytes(
+    source,
+    pointer.sliceRelPath,
+    offline,
+    pointer.sliceBytes || MAX_SLICE_BYTES
+  );
+  if (pointer.sliceBytes && gzBytes.length !== pointer.sliceBytes) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Byte length mismatch for slice '${pointer.sliceRelPath}': expected ${pointer.sliceBytes}, got ${gzBytes.length}.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
   const actualSha = sha256Buffer(gzBytes);
   if (actualSha !== pointer.sliceSha256) {
     throw new AgentDocsError(

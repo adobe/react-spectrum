@@ -142,6 +142,18 @@ test('rejects path-traversal tar entries, symlink tar entries, SHA-256 tampering
 
     // Offline cache miss when unpopulated against remote source
     const pointerGood = {...pointerBadHash, sliceSha256: validSha};
+
+    // Byte-length mismatch is rejected even when the slice itself is intact
+    await assert.rejects(
+      () =>
+        ensurePackageSliceExtracted(
+          '@react-spectrum/s2',
+          '1.8.2',
+          {...pointerGood, sliceBytes: gzBytes.length - 1},
+          {snapshotSource: snapRepo, cacheDir: path.join(tmp, 'c-bytes')}
+        ),
+      err => err.code === 'ERR_CACHE_INTEGRITY'
+    );
     await assert.rejects(
       () =>
         ensurePackageSliceExtracted('@react-spectrum/s2', '1.8.2', pointerGood, {
@@ -330,6 +342,31 @@ test('publishSnapshots 3-step publisher retries CAS ETag races and preserves mon
     ]);
     // Publishing older backfill 1.2.0 MUST NOT downgrade `latest` from 1.8.2!
     assert.equal(finalIndex.latest['@react-spectrum/s2'], '1.8.2');
+
+    // Re-publishing identical content is idempotent, but changed content under an
+    // already-published immutable key is refused instead of overwritten.
+    await publishStagedSnapshots({
+      stagedDir: stagedRoot,
+      storage: baseStorage,
+      snapshotIds: ['snap-182']
+    });
+    const publishedSlice = fs.readFileSync(path.join(bucketRoot, s182.sliceRel));
+    const stagedIndex = JSON.parse(fs.readFileSync(path.join(stagedRoot, 'index.json'), 'utf8'));
+    const tampered = writeStagedSnap('snap-182', '1.8.3');
+    stagedIndex.packages['@react-spectrum/s2']['1.8.2'].sliceSha256 = tampered.sliceSha;
+    stagedIndex.packages['@react-spectrum/s2']['1.8.2'].sliceBytes = tampered.sliceBytes;
+    stagedIndex.snapshots['snap-182'].manifestSha256 = tampered.manifestSha;
+    fs.writeFileSync(path.join(stagedRoot, 'index.json'), JSON.stringify(stagedIndex));
+    await assert.rejects(
+      () =>
+        publishStagedSnapshots({
+          stagedDir: stagedRoot,
+          storage: baseStorage,
+          snapshotIds: ['snap-182']
+        }),
+      /Refusing to overwrite immutable object/
+    );
+    assert.deepEqual(fs.readFileSync(path.join(bucketRoot, s182.sliceRel)), publishedSlice);
   } finally {
     fs.rmSync(tmp, {recursive: true, force: true});
   }

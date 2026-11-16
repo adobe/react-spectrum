@@ -55,6 +55,48 @@ const SECTION_ENUM = z.enum([
 ]);
 const FORMAT_ENUM = z.enum(['markdown', 'json']);
 
+const VERSION_SOURCE_ENUM = z.enum(['installed', 'lockfile', 'override', 'latest-fallback']);
+const RESOLUTION_SCHEMA = z.object({
+  cwd: z.string(),
+  workspaceDir: z.string().nullable(),
+  workspacePackageName: z.string().nullable(),
+  lockfilePath: z.string().nullable(),
+  lockfileKind: z.enum(['npm', 'yarn-berry', 'yarn-classic', 'pnpm', 'unsupported']).nullable(),
+  packages: z.record(
+    z.string(),
+    z.object({
+      packageName: z.string(),
+      packageVersion: z.string(),
+      requestedVersion: z.string(),
+      importer: z.string(),
+      source: VERSION_SOURCE_ENUM,
+      snapshotId: z.string(),
+      exactMatch: z.boolean(),
+      matchedViaVerifiedPatch: z.string().optional(),
+      slicePath: z.string(),
+      sliceSha256: z.string(),
+      availableVersions: z.array(z.string()).optional()
+    })
+  ),
+  instances: z.array(
+    z.object({
+      packageName: z.string(),
+      version: z.string(),
+      importer: z.string(),
+      source: VERSION_SOURCE_ENUM,
+      resolvedPath: z.string().optional()
+    })
+  ),
+  warnings: z.array(
+    z.object({
+      code: z.string(),
+      message: z.string(),
+      packageName: z.string().optional(),
+      details: z.record(z.string(), z.unknown()).optional()
+    })
+  )
+});
+
 function findNearestPackageJsonDir(startDir: string): string | null {
   let current = startDir;
   const root = parse(current).root;
@@ -134,9 +176,24 @@ async function resolveMcpQueryOptions(
   );
 
   // 1. Reusable `resolution` object from a prior `resolve_versions` call
-  if (toolArgs.resolution && typeof toolArgs.resolution === 'object') {
+  if (toolArgs.resolution !== undefined) {
+    if (toolArgs.cwd || versionOverride || toolArgs.snapshot) {
+      throw new AgentDocsError(
+        'ERR_INVALID_ARGS',
+        "'resolution' cannot be combined with 'cwd', 'version', 'packageVersions', or 'snapshot'. Pass either a resolution from resolve_versions or the workspace/version arguments.",
+        EXIT_CODES.INVALID_ARGS
+      );
+    }
+    const parsed = RESOLUTION_SCHEMA.safeParse(toolArgs.resolution);
+    if (!parsed.success) {
+      throw new AgentDocsError(
+        'ERR_INVALID_ARGS',
+        `Invalid 'resolution' object; pass the value returned by resolve_versions unmodified. ${parsed.error.message}`,
+        EXIT_CODES.INVALID_ARGS
+      );
+    }
     return {
-      resolution: toolArgs.resolution as ResolutionState,
+      resolution: parsed.data as ResolutionState,
       offline: toolArgs.offline,
       defaultLibrary
     };
@@ -195,7 +252,7 @@ async function resolveMcpQueryOptions(
     }
     if (candidateResolutions.length > 1) {
       throw new AgentDocsError(
-        'AMBIGUOUS_WORKSPACE_ROOTS',
+        'ERR_AMBIGUOUS_WORKSPACE_ROOTS',
         `Multiple MCP workspace roots contain React Spectrum / React Aria dependencies (${candidateResolutions.map(c => c.root).join(', ')}). Pass 'cwd' explicitly to select the target workspace.`,
         EXIT_CODES.INVALID_ARGS
       );
@@ -306,10 +363,9 @@ export async function createAgentDocsMcpServer(
       .optional()
       .describe('Optional map of package names to exact semver versions (or "latest").'),
     snapshot: z.string().optional().describe('Optional immutable snapshotId override.'),
-    resolution: z
-      .record(z.string(), z.any())
-      .optional()
-      .describe('Optional reusable resolution state returned by resolve_versions.'),
+    resolution: RESOLUTION_SCHEMA.optional().describe(
+      'Optional reusable resolution state returned by resolve_versions. Pass it unmodified; do not combine with cwd, version, packageVersions, or snapshot.'
+    ),
     offline: z.boolean().optional().describe('Use only cached snapshots without network requests.')
   };
 

@@ -19,6 +19,7 @@ export type LibraryId = 's2' | 'rac' | 'react-aria' | 'react-stately' | 'interna
 
 export const EXIT_CODES = {
   OK: 0,
+  INTERNAL_ERROR: 1,
   INVALID_ARGS: 2,
   NOT_FOUND: 3,
   OFFLINE_OR_NETWORK: 4,

@@ -96,6 +96,18 @@ function parseLibraryArg(raw: string | undefined): LibraryId | undefined {
   );
 }
 
+function toAgentDocsError(err: unknown): AgentDocsError {
+  if (err instanceof AgentDocsError) {
+    return err;
+  }
+  const message = err instanceof Error ? err.message : String(err);
+  const nodeCode = (err as {code?: unknown} | null)?.code;
+  if (typeof nodeCode === 'string' && nodeCode.startsWith('ERR_PARSE_ARGS')) {
+    return new AgentDocsError('ERR_INVALID_ARGS', message, EXIT_CODES.INVALID_ARGS);
+  }
+  return new AgentDocsError('ERR_INTERNAL', message, EXIT_CODES.INTERNAL_ERROR);
+}
+
 const VALID_SECTIONS = new Set<SectionFilter>([
   'usage',
   'api',
@@ -335,14 +347,7 @@ export async function runAgentDocsCli(
         );
     }
   } catch (err) {
-    const agentErr =
-      err instanceof AgentDocsError
-        ? err
-        : new AgentDocsError(
-            'ERR_INVALID_ARGS',
-            err instanceof Error ? err.message : String(err),
-            EXIT_CODES.INVALID_ARGS
-          );
+    const agentErr = toAgentDocsError(err);
 
     if (wantJson) {
       writeOut(

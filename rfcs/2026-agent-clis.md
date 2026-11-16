@@ -183,7 +183,7 @@ react-aria api rac:ComboBox --render-props [--json]
 - **Default output:** Compact, clean Markdown with zero ANSI spinners or decorative chrome when piped.
 - **Structured output (`--json`):** Versioned `apiVersion: 1` JSON envelope with `snapshots`, `resolution`, `warnings`, and per-entry `results`.
 - **Partial-batch resilience:** In `read A B C`, if `B` is unknown (`ERR_ENTRY_NOT_FOUND` with fuzzy `suggestions`), `A` and `C` are still returned (`partial: true`, exit code `0`); exit code `3` (`NOT_FOUND`) is returned only when **every** requested ID fails.
-- **Predictable exit codes:** `0` (`OK`), `2` (`INVALID_ARGS`), `3` (`NOT_FOUND`), `4` (`OFFLINE_OR_NETWORK`), `5` (`INTEGRITY_OR_SCHEMA`).
+- **Predictable exit codes:** `0` (`OK`), `1` (`INTERNAL_ERROR`, unexpected failures), `2` (`INVALID_ARGS`), `3` (`NOT_FOUND`), `4` (`OFFLINE_OR_NETWORK`), `5` (`INTEGRITY_OR_SCHEMA`).
 
 #### Clean-Cutover MCP v2 (`@react-spectrum/mcp` & `@react-aria/mcp`)
 Per MCP's runtime tool discovery model (`tools/list`), legacy v1 `list_*_pages`, `get_*_page_info`, and `get_*_page` tools are removed cleanly in favor of batched version-aware v2 tools wrapping `agent-docs-core` in-process:

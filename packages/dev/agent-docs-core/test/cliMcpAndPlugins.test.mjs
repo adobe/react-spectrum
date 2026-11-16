@@ -84,6 +84,31 @@ test('CLI handles partial-batch resilience (exit code 2 with valid entries prese
     }
     assert.equal(allMissingExit, 3, 'Expected exit code 3 (NOT_FOUND) when entire batch fails');
 
+    // Unexpected failures are internal errors (exit 1), not invalid arguments
+    const fileAsCacheDir = path.join(tmpCache, 'not-a-dir');
+    fs.writeFileSync(fileAsCacheDir, '');
+    let internalErr;
+    try {
+      execFileSync(
+        process.execPath,
+        [
+          s2CliBin,
+          'read',
+          's2:Button',
+          '--version',
+          'latest',
+          '--cache-dir',
+          fileAsCacheDir,
+          '--json'
+        ],
+        {cwd: REPO_ROOT, env, encoding: 'utf8'}
+      );
+    } catch (err) {
+      internalErr = err;
+    }
+    assert.equal(internalErr?.status, 1);
+    assert.equal(JSON.parse(internalErr.stdout).error.code, 'ERR_INTERNAL');
+
     // Path-traversal IDs are rejected per-entry without reading outside the slice
     const traversalJson = JSON.parse(
       execFileSync(
@@ -295,6 +320,22 @@ test('MCP v2 servers support roots/list workspace discovery, reusable resolution
     const readPayload = JSON.parse(readRes.content[0].text);
     assert.equal(readPayload.results.length, 2);
     assert.ok(readPayload.results.every(r => r.ok));
+
+    // Malformed or conflicting `resolution` arguments are rejected with a clear error
+    await assert.rejects(
+      () =>
+        client.callTool({
+          name: 'read_docs',
+          arguments: {ids: ['rac:Button'], resolution: {cwd: appWorkspaceDir}}
+        }),
+      /Invalid arguments for tool read_docs/
+    );
+    const conflictingRes = await client.callTool({
+      name: 'read_docs',
+      arguments: {ids: ['rac:Button'], resolution: resolvedState, version: 'latest'}
+    });
+    assert.equal(conflictingRes.isError, true);
+    assert.match(conflictingRes.content[0].text, /cannot be combined/);
 
     // 4. `SEP-2640` evergreen skill resource (`skills://react-spectrum-s2/SKILL.md`)
     const {resources} = await client.listResources();
