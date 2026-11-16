@@ -12,7 +12,7 @@
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from './useOverlayPosition';
 import {clamp} from 'react-stately/private/utils/number';
-import {getOwnerWindow} from '../utils/domHelpers';
+import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {getParentElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {isWebKit} from '../utils/platform';
 
@@ -125,7 +125,7 @@ function getContainerDimensions(
   // That's why we use the visual viewport instead.
 
   if (containerNode.tagName === 'BODY' || containerNode.tagName === 'HTML') {
-    let documentElement = containerNode.ownerDocument.documentElement;
+    let documentElement = getOwnerDocument(containerNode).documentElement;
     totalWidth = documentElement.clientWidth;
     totalHeight = documentElement.clientHeight;
     width = visualViewport?.width ?? totalWidth;
@@ -661,7 +661,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   } = opts;
 
   let ownerWindow = getOwnerWindow(overlayNode);
-  let documentElement = overlayNode.ownerDocument.documentElement;
+  let documentElement = getOwnerDocument(overlayNode).documentElement;
   let visualViewport = ownerWindow.visualViewport ?? null;
   let container =
     overlayNode instanceof ownerWindow.HTMLElement
@@ -769,7 +769,7 @@ function getOffset(
   overrideRect?: Readonly<Offset> | null | undefined
 ): Offset {
   let {top, left, width, height} = overrideRect || getRect(node, ignoreScale);
-  let {scrollTop, scrollLeft, clientTop, clientLeft} = node.ownerDocument.documentElement;
+  let {scrollTop, scrollLeft, clientTop, clientLeft} = getOwnerDocument(node).documentElement;
   return {
     top: top + scrollTop - clientTop,
     left: left + scrollLeft - clientLeft,
@@ -811,7 +811,7 @@ function getContainingBlock(node: HTMLElement): Element {
   // The offsetParent of an element in most cases equals the containing block.
   // https://w3c.github.io/csswg-drafts/cssom-view/#dom-htmlelement-offsetparent
   let offsetParent = node.offsetParent;
-  let ownerDocument = node.ownerDocument;
+  let ownerDocument = getOwnerDocument(node);
 
   // The offsetParent algorithm terminates at the document body,
   // even if the body is not a containing block. Double check that

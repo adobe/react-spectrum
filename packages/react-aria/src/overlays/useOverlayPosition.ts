@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {addEvent, getOwnerWindow} from '../utils/domHelpers';
+import {addEvent, getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {
@@ -226,20 +226,22 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
   // Freeze positioning if the viewport is zoomed after opening the overlay.
   let initialViewport = useRef<{viewport: VisualViewport; scale: number} | null>(null);
-  useLayoutEffect(() => {
-    initialViewport.current = null;
-  }, [isOpen]);
 
   let updatePosition = useCallback(() => {
     let overlay = overlayRef.current as HTMLElement | null;
     let target = targetRef.current;
-    if (shouldUpdatePosition === false || !isOpen || !overlay || !target) {
+    if (!isOpen) {
+      initialViewport.current = null;
+      return;
+    }
+
+    if (shouldUpdatePosition === false || !overlay || !target) {
       return;
     }
 
     let ownerWindow = getOwnerWindow(overlay);
     let visualViewport = ownerWindow.visualViewport;
-    let boundary = boundaryElement === undefined ? overlay.ownerDocument.body : boundaryElement;
+    let boundary = boundaryElement === undefined ? getOwnerDocument(overlay).body : boundaryElement;
     if (!boundary) {
       return;
     }
@@ -257,7 +259,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // changes, the focused element appears to stay in the same position.
     let anchor: ScrollAnchor | null = null;
     if (scrollRef.current && isFocusWithin(scrollRef.current)) {
-      let anchorRect = getActiveElement(scrollRef.current.ownerDocument)?.getBoundingClientRect();
+      let anchorRect = getActiveElement(
+        getOwnerDocument(scrollRef.current)
+      )?.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       // Anchor from the top if the offset is in the top half of the scrollable element,
       // otherwise anchor from the bottom.
@@ -312,7 +316,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlay.style.maxHeight = position.maxHeight != null ? position.maxHeight + 'px' : '';
 
     // Restore scroll position relative to anchor element.
-    let activeElement = getActiveElement(overlay.ownerDocument);
+    let activeElement = getActiveElement(getOwnerDocument(overlay));
     if (anchor && activeElement && scrollRef.current) {
       let anchorRect = activeElement.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
@@ -375,11 +379,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     };
 
     ownerWindow.addEventListener('resize', updatePosition);
-    let removeScrollListener = addEvent(
-      getPropagationTargets(overlay, ownerWindow),
-      'scroll',
-      onScroll
-    );
+    let removeScrollListener = addEvent(getPropagationTargets(overlay), 'scroll', onScroll);
     visualViewport?.addEventListener('resize', onResize);
     visualViewport?.addEventListener('scroll', onScroll);
     return () => {

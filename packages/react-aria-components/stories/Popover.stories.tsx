@@ -12,6 +12,7 @@
 
 import {Button} from '../src/Button';
 
+import {createPortal} from 'react-dom';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {Heading} from '../src/Heading';
 import {Meta, StoryObj} from '@storybook/react';
@@ -19,6 +20,7 @@ import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
 import React, {JSX, useEffect, useRef, useState} from 'react';
 import styles from './styles.css';
+import {UNSAFE_PortalProvider} from 'react-aria';
 
 export default {
   title: 'React Aria Components/Popover',
@@ -104,6 +106,82 @@ export const PopoverExample: PopoverStory = {
       </Popover>
     </DialogTrigger>
   )
+};
+
+function PopoverInSecondaryWindow(): JSX.Element {
+  let [secondaryWindow, setSecondaryWindow] = useState<Window | null>(null);
+
+  useEffect(() => {
+    if (!secondaryWindow) {
+      return;
+    }
+
+    let onClose = () => setSecondaryWindow(null);
+    secondaryWindow.addEventListener('pagehide', onClose);
+    return () => {
+      secondaryWindow.removeEventListener('pagehide', onClose);
+      secondaryWindow.close();
+    };
+  }, [secondaryWindow]);
+
+  let openWindow = () => {
+    let popup = window.open('', '', 'popup,width=420,height=340');
+    if (popup) {
+      popup.document.title = 'Popover in a secondary window';
+      setSecondaryWindow(popup);
+    }
+  };
+
+  let container = secondaryWindow?.document.body;
+  return (
+    <>
+      <button disabled={secondaryWindow != null} onClick={openWindow}>
+        Open secondary window
+      </button>
+      {container &&
+        createPortal(
+          <UNSAFE_PortalProvider getContainer={() => container}>
+            <div
+              style={{
+                position: 'absolute',
+                top: 16,
+                left: 305,
+                width: 100,
+                height: 64,
+                overflow: 'auto'
+              }}>
+              <div style={{height: 180}}>Scroll here with the popover open</div>
+            </div>
+            <div style={{position: 'absolute', top: 220, left: 24}}>
+              <DialogTrigger>
+                <Button>Open popover</Button>
+                <Popover
+                  isNonModal
+                  placement="bottom start"
+                  style={{
+                    background: 'Canvas',
+                    color: 'CanvasText',
+                    border: '1px solid gray',
+                    padding: 12,
+                    width: 240,
+                    overflow: 'auto'
+                  }}>
+                  <Dialog style={{minHeight: 132}}>
+                    <Heading slot="title">Secondary window popover</Heading>
+                    <p>Resize this window to change the placement.</p>
+                  </Dialog>
+                </Popover>
+              </DialogTrigger>
+            </div>
+          </UNSAFE_PortalProvider>,
+          container
+        )}
+    </>
+  );
+}
+
+export const SecondaryWindow: StoryObj<typeof PopoverInSecondaryWindow> = {
+  render: () => <PopoverInSecondaryWindow />
 };
 
 const COUNTDOWN = 5000;

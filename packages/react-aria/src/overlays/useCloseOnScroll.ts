@@ -41,23 +41,21 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions): void {
     let onScroll = (e: Event) => {
       // Ignore scrollable regions outside the trigger's tree.
       let target = getEventTarget(e);
-      // window is not a Node and doesn't have contain, but window contains everything
-      if (!triggerRef.current || (isNode(target) && !nodeContains(target, triggerRef.current))) {
+      let trigger = triggerRef.current;
+      // A window scroll affects every element in that window.
+      if (!trigger || (isNode(target) && !nodeContains(target, trigger))) {
         return;
       }
 
       // Ignore scroll events on any input or textarea as the cursor position can cause it to scroll
       // such as in a combobox. Clicking the dropdown button places focus on the input, and if the
       // text inside the input extends beyond the 'end', then it will scroll so the cursor is visible at the end.
-      let ownerWindow = getOwnerWindow(triggerRef.current);
-      if (
-        target instanceof ownerWindow.HTMLInputElement ||
-        target instanceof ownerWindow.HTMLTextAreaElement
-      ) {
+      let {HTMLInputElement, HTMLTextAreaElement} = getOwnerWindow(trigger);
+      if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
         return;
       }
 
-      let onCloseHandler = onClose || onCloseMap.get(triggerRef.current);
+      let onCloseHandler = onClose || onCloseMap.get(trigger);
       if (onCloseHandler) {
         onCloseHandler();
       }
