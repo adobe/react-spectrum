@@ -74,6 +74,14 @@ export function formatSearchMarkdown(result: SearchDocsResult): string {
     return lines.join('\n') + '\n';
   }
 
+  // With several hits, state the shared context flags once instead of repeating them per hit.
+  const sharedFlags = result.results.length > 1 ? result.followUpFlags : '';
+  const suffix = sharedFlags ? ` ${sharedFlags}` : '';
+  if (sharedFlags) {
+    lines.push(`Append to every \`Next\` command below: \`${sharedFlags}\``);
+    lines.push('');
+  }
+
   for (const hit of result.results) {
     lines.push(
       `- **\`${hit.id}\`** — ${hit.title} (${hit.kind}, \`${hit.provenance.packageName}@${hit.provenance.packageVersion}\`)`
@@ -81,7 +89,10 @@ export function formatSearchMarkdown(result: SearchDocsResult): string {
     if (hit.summary) {
       lines.push(`  ${hit.summary}`);
     }
-    lines.push(`  Next: \`${hit.followUpCommands[0]}\``);
+    const command = hit.followUpCommands[0];
+    lines.push(
+      `  Next: \`${suffix && command.endsWith(suffix) ? command.slice(0, -suffix.length) : command}\``
+    );
   }
 
   return lines.join('\n') + '\n';

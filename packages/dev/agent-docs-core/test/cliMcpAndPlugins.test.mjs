@@ -309,6 +309,59 @@ test('CLI icons resolve pencil to Edit and show import examples only for matches
   }
 });
 
+test('CLI icons rank exact names first and report each unmatched term', t => {
+  const run = currentCli(t);
+  const edit = JSON.parse(run('icons', '--json', 'edit'));
+  assert.equal(edit.matches[0], 'Edit');
+  assert.ok(edit.matches.includes('CalendarEdit'));
+  assert.equal(edit.importExample, "import Edit from '@react-spectrum/s2/icons/Edit';");
+  assert.deepEqual(edit.unmatchedTerms, []);
+
+  const mixed = JSON.parse(run('icons', '--json', 'pencil', 'zzzz-no-such-asset'));
+  assert.ok(mixed.matches.includes('Edit'));
+  assert.deepEqual(mixed.unmatchedTerms, ['zzzz-no-such-asset']);
+  assert.match(mixed.markdown, /No matches for: `zzzz-no-such-asset`/);
+});
+
+test('CLI tokens match multi-word queries and say when nothing matches', t => {
+  const run = currentCli(t);
+  const blue = JSON.parse(run('tokens', '--json', 'blue background'));
+  const background = blue.properties.find(p => p.property === 'backgroundColor');
+  assert.ok(background);
+  assert.ok(background.matchedValues.length > 0);
+  assert.ok(background.matchedValues.every(value => value.includes('blue')));
+
+  const missing = JSON.parse(run('tokens', '--json', 'zzzz-no-such-token'));
+  assert.deepEqual(missing.properties, []);
+  assert.match(missing.markdown, /No style macro properties or values matched query `zzzz-no-such-token`/);
+});
+
+test('CLI api warns about each prop filter that matches nothing', t => {
+  const run = currentCli(t);
+  const args = ['api', 's2:ComboBox', '--prop', 'selectedKeyz,onInputChange'];
+  const markdown = run(...args);
+  assert.match(markdown, /\[WARN_PROP_NOT_FOUND\].*'selectedKeyz' \(did you mean `selectedKey`/);
+  assert.match(markdown, /`onInputChange`/);
+
+  const json = JSON.parse(run(...args, '--json'));
+  const warning = json.warnings.find(item => item.code === 'WARN_PROP_NOT_FOUND');
+  assert.equal(warning.details.filter, 'selectedKeyz');
+  assert.equal(warning.details.suggestions[0], 'selectedKey');
+  assert.ok(!JSON.parse(run('api', 's2:ComboBox', '--prop', 'onInputChange', '--json')).warnings.length);
+});
+
+test('CLI search states shared follow-up flags once in Markdown', t => {
+  const run = currentCli(t);
+  const markdown = run('search', 'combobox', '--limit', '3');
+  assert.equal(markdown.match(/--version latest/g).length, 1);
+  assert.match(markdown, /Append to every `Next` command below: `--cwd \S+ --version latest`/);
+  assert.match(markdown, /Next: `spectrum read s2:ComboBox`/);
+
+  const single = run('search', 'combobox', '--limit', '1');
+  assert.doesNotMatch(single, /Append to every/);
+  assert.match(single, /Next: `spectrum read s2:ComboBox --cwd \S+ --version latest`/);
+});
+
 test('CLI follow-up commands preserve version and workspace options', () => {
   const bin = path.join(REPO_ROOT, 'packages/dev/cli/s2/dist/cli/s2/src/index.js');
   const tmpDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-cli-follow-up-')));

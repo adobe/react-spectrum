@@ -314,6 +314,8 @@ export interface SearchDocsResult {
   snapshots: Record<string, SnapshotEnvelopeRef>;
   resolution: ResolutionState;
   warnings: DocWarning[];
+  /** Context flags that every `followUpCommands` entry ends with; empty when there are none. */
+  followUpFlags: string;
   results: SearchHit[];
 }
 
@@ -410,6 +412,8 @@ export interface IconsDocsResult {
   resolution: ResolutionState;
   warnings: DocWarning[];
   matches: string[];
+  /** Search terms that matched no asset name or alias. */
+  unmatchedTerms: string[];
   importExample: string;
   markdown: string;
 }
