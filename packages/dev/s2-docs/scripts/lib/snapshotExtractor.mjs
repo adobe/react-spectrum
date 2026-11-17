@@ -826,9 +826,6 @@ function parseMdxIntoStructuredDoc({
 
   // Also ensure the page's primary PascalCase / camelCase identifier is recorded if it matches an export
   let baseSlug = path.posix.basename(slug);
-  if (/^[A-Za-z][\w$]*$/.test(baseSlug) && baseSlug !== 'index') {
-    recordExport(baseSlug, defaultPackageName);
-  }
 
   // Strip `<details>...Show CSS...</details>` blocks in legacy MDX so CSS walls don't bloat usage tokens
   content = content.replace(/<details>\s*<summary[\s\S]*?Show CSS[\s\S]*?<\/details>/g, '');
@@ -836,6 +833,23 @@ function parseMdxIntoStructuredDoc({
   // Transform MDX AST into clean Markdown without inline PropTables (since API is structured in `exports` IR!)
   let pageTitle = baseSlug;
   let pageDescription = esmMeta.description || '';
+
+  const starterCodeNodes = expression => {
+    const files = [...expression.matchAll(/['"]([^'"]+\.tsx)['"]/g)].map(m => m[1]);
+    return files.flatMap(file => {
+      const absolutePath = path.join(ctx.targetRoot, file);
+      if (!fs.existsSync(absolutePath)) {
+        return [];
+      }
+      const code = fs
+        .readFileSync(absolutePath, 'utf8')
+        .replace(/^\s*import\s+['"][^'"]+\.css['"];?\s*$/gm, '')
+        .trim();
+      return [
+        {type: 'code', lang: 'tsx', meta: null, value: `// Starter wrapper (${file}):\n${code}`}
+      ];
+    });
+  };
 
   const remarkCleanMdx = () => tree => {
     // Remove ESM imports/exports
@@ -860,6 +874,22 @@ function parseMdxIntoStructuredDoc({
 
       if (node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') {
         let elName = node.name || '';
+
+        if (['FunctionAPI', 'FunctionAPIGroup', 'InterfaceType', 'ClassAPI'].includes(elName)) {
+          for (const attr of node.attributes || []) {
+            const expression =
+              typeof attr.value === 'string' ? attr.value : attr.value?.value || '';
+            for (const match of expression.matchAll(/([\w$]+)\.exports\.([\w$]+)/g)) {
+              recordExport(match[2], esmMeta.docsImports.get(match[1]) || defaultPackageName);
+            }
+          }
+        }
+
+        if (elName === 'VisualExample') {
+          const files = node.attributes?.find(attr => attr.name === 'files');
+          parent.children.splice(index, 1, ...starterCodeNodes(files?.value?.value || ''));
+          return index;
+        }
 
         if (elName === 'PageDescription') {
           let exprChild = node.children?.find(
@@ -950,22 +980,7 @@ function parseMdxIntoStructuredDoc({
             firstChild?.type === 'code' && typeof firstChild.meta === 'string'
               ? firstChild.meta.match(/files=\{\[([^\]]+)\]\}/)
               : null;
-          let relStarter = filesAttrMatch
-            ? [...filesAttrMatch[1].matchAll(/['"]([^'"]+\.tsx)['"]/g)].map(m => m[1])[0]
-            : null;
-          let starterAbs = relStarter ? path.join(ctx.targetRoot, relStarter) : null;
-          if (starterAbs && fs.existsSync(starterAbs)) {
-            let starterCode = fs
-              .readFileSync(starterAbs, 'utf8')
-              .replace(/^\s*import\s+['"][^'"]+\.css['"];?\s*$/gm, '')
-              .trim();
-            replacements.push({
-              type: 'code',
-              lang: 'tsx',
-              meta: null,
-              value: `// Starter wrapper (${relStarter}):\n${starterCode}`
-            });
-          }
+          replacements.push(...starterCodeNodes(filesAttrMatch?.[1] || ''));
           parent.children.splice(index, 1, ...replacements);
           return index;
         }
@@ -1074,6 +1089,13 @@ function parseMdxIntoStructuredDoc({
   }
 
   // Extract structured exports from TypeScript in targetRoot
+  if (
+    /^[A-Za-z][\w$]*$/.test(baseSlug) &&
+    baseSlug !== 'index' &&
+    !referencedExports.some(ref => ref.name === baseSlug)
+  ) {
+    recordExport(baseSlug, defaultPackageName);
+  }
   let exportsIR = [];
   for (let ref of referencedExports) {
     let exp = extractExportIR(ctx, ref.pkgName, ref.name, library);

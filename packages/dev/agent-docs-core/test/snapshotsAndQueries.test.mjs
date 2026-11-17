@@ -338,3 +338,96 @@ test('backfills equivalent patches and dedicated API or documentation changes fr
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });
+
+test('preserves current MDX API references and VisualExample starter implementations', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-mdx-components-'));
+  try {
+    const target = path.join(tmp, 'target');
+    const snapshots = path.join(tmp, 'snapshots');
+    createTarget(target);
+    write(
+      target,
+      'packages/react-stately/package.json',
+      JSON.stringify({
+        name: 'react-stately',
+        version: '1.0.0',
+        source: 'src/index.ts'
+      })
+    );
+    write(
+      target,
+      'packages/react-stately/src/index.ts',
+      `
+export interface ListState { selectedKey: string; }
+export function useListState(): ListState { return {selectedKey: ''}; }
+`
+    );
+    write(
+      target,
+      'starters/docs/src/Button.tsx',
+      "import './Button.css';\nexport const starterButton = 'vanilla implementation';"
+    );
+    write(
+      target,
+      'starters/docs/src/Helper.tsx',
+      "export const helper = 'supporting implementation';"
+    );
+    write(
+      target,
+      'starters/tailwind/src/Button.tsx',
+      "export const alternative = 'tailwind implementation';"
+    );
+    write(
+      target,
+      'packages/dev/s2-docs/pages/s2/Button.mdx',
+      `
+import docs from 'docs:@react-spectrum/s2';
+import state from 'docs:react-stately';
+
+# Button
+
+<ExampleSwitcher examples={['Vanilla CSS', 'Tailwind']}>
+  <VisualExample files={["starters/docs/src/Button.tsx", "starters/docs/src/Button.css", "starters/docs/src/Helper.tsx"]} />
+  <VisualExample files={["starters/tailwind/src/Button.tsx"]} />
+</ExampleSwitcher>
+
+## API
+
+<FunctionAPI function={docs.exports.useButton} />
+<FunctionAPIGroup functions={[
+  {function: state.exports.useListState, links: state.links},
+  {function: docs.exports.useButton, links: docs.links}
+]} />
+<InterfaceType {...state.exports.ListState} links={state.links} />
+`
+    );
+    await generate(target, snapshots, 'mdx');
+    const opts = {
+      cwd: target,
+      snapshotSource: snapshots,
+      cacheDir: path.join(tmp, 'cache'),
+      versionOverride: '1.0.0'
+    };
+    const api = await queryApi({...opts, id: 's2:Button'});
+    assert.deepEqual(api.exports.map(exp => exp.name).sort(), [
+      'Button',
+      'ListState',
+      'useButton',
+      'useListState'
+    ]);
+    const state = await queryApi({...opts, id: 's2:Button', exportName: 'ListState'});
+    assert.deepEqual(
+      state.exports[0].props.map(prop => prop.name),
+      ['selectedKey']
+    );
+    const read = await readDocs({...opts, ids: ['s2:Button']});
+    assert.match(read.results[0].markdown, /vanilla implementation/);
+    assert.match(read.results[0].markdown, /supporting implementation/);
+    assert.doesNotMatch(
+      read.results[0].markdown,
+      /tailwind implementation|import '\.\/Button\.css'/
+    );
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
