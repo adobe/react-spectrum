@@ -26,6 +26,8 @@ interface Symbols {
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
+// Whitespace and formatting characters, which are always treated as literals.
+const INVISIBLE_LITERALS = '\\p{White_Space}|\\p{Cf}';
 const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng', 'fullwide'];
 
 /**
@@ -291,39 +293,20 @@ class NumberParserImpl {
     return value;
   }
 
-  // Removes a partially entered literal, such as the "k" left after deleting a character from "kg",
-  // from the end of the value so that units can be edited one character at a time.
-  // This runs after complete literals and whitespace have been removed.
+  // Removes a trailing prefix of a literal, such as the "m" left after deleting the "L" from "mL",
+  // so that units can be deleted one character at a time. Complete literals have already been removed.
   removePartialLiteral(value: string) {
     let {partialLiterals, decimal, group, minusSign, plusSign} = this.symbols;
-    if (partialLiterals.length === 0) {
-      return value;
-    }
-
-    // Numerals are never part of a partial literal, and a fragment made only of number symbols
-    // (e.g. a trailing decimal point) must be kept so it is validated as part of the number.
-    let isNumberSymbol = (char: string) =>
-      char === decimal ||
-      char === group ||
-      char === minusSign ||
-      char === plusSign ||
-      char === '-' ||
-      char === '+';
-    let isPartialLiteral = (str: string) =>
-      [...str].some(char => !isNumberSymbol(char)) &&
-      partialLiterals.some(literal => literal.includes(str));
-
-    let start = value.length;
-    while (start > 0 && !/\p{N}/u.test(value[start - 1])) {
-      start--;
-    }
-    for (let i = start; i < value.length; i++) {
-      if (isPartialLiteral(value.slice(i))) {
-        value = value.slice(0, i);
-        break;
+    let numberSymbols = [decimal, group, minusSign, plusSign, '-', '+'];
+    for (let i = value.search(/\P{N}*$/u); i < value.length; i++) {
+      let fragment = value.slice(i);
+      if (
+        partialLiterals.some(literal => literal.startsWith(fragment)) &&
+        [...fragment].some(char => !numberSymbols.includes(char))
+      ) {
+        return value.slice(0, i);
       }
     }
-
     return value;
   }
 
@@ -444,16 +427,17 @@ function getSymbols(
     )
   ];
   let sortedLiterals = literalStrings.map(escapeRegex).sort((a, b) => b.length - a.length);
-  // Partial literals are matched after whitespace and formatting characters have been removed.
-  let partialLiterals = literalStrings
-    .map(literal => literal.replace(/\p{White_Space}|\p{Cf}/gu, ''))
-    .filter(literal => literal.length > 0);
+  let partialLiterals = [
+    ...new Set(
+      literalStrings.map(literal => literal.replace(new RegExp(INVISIBLE_LITERALS, 'gu'), ''))
+    )
+  ].filter(Boolean);
 
   // Match both whitespace and formatting characters
   let literals =
     sortedLiterals.length === 0
-      ? new RegExp('\\p{White_Space}|\\p{Cf}', 'gu')
-      : new RegExp(`${sortedLiterals.join('|')}|\\p{White_Space}|\\p{Cf}`, 'gu');
+      ? new RegExp(INVISIBLE_LITERALS, 'gu')
+      : new RegExp(`${sortedLiterals.join('|')}|${INVISIBLE_LITERALS}`, 'gu');
 
   // These are for replacing non-latn characters with the latn equivalent
   let numerals = [

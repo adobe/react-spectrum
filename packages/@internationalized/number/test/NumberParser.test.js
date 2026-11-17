@@ -1040,7 +1040,9 @@ describe('NumberParser', function () {
         }
       }
       let parser = new NumberParser('en-US', {style: 'unit', unit: 'milliliter'});
-      expect(parser.isValidPartialNumber('5 L')).toBe(true);
+      expect(parser.isValidPartialNumber('5 L')).toBe(false);
+      expect(parser.parse('5 L')).toBe(NaN);
+      expect(new NumberParser('en-US', {style: 'unit', unit: 'kilogram'}).parse('5 g')).toBe(NaN);
       expect(parser.isValidPartialNumber('5 Lm')).toBe(false);
       expect(parser.isValidPartialNumber('5 m 5')).toBe(false);
     });
