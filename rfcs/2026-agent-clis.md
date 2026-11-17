@@ -1,7 +1,7 @@
 # RFC: Version-Aware Agent Documentation, CLIs, MCP v2, and Evergreen Skills
 
 - **Status:** Implemented (Draft for Review)
-- **Packages:** `@react-spectrum/cli`, `@react-aria/cli`, `@react-spectrum/mcp`, `@react-aria/mcp`, `packages/dev/agent-docs-core`, `packages/dev/agent-docs-bench`
+- **Packages:** `@react-spectrum/cli` (`packages/dev/cli/s2`), `@react-aria/cli` (`packages/dev/cli/react-aria`), `@react-spectrum/mcp` (`packages/dev/mcp/s2`), `@react-aria/mcp` (`packages/dev/mcp/react-aria`), `packages/dev/agent-docs-core`, `packages/dev/agent-docs-bench`
 - **Standards:** [Agent Skills](https://agentskills.io/specification), [Agent Plugins 1.0](https://agent-plugins.org/specification), [MCP 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28) & Skills Extension (`SEP-2640`)
 
 ---
@@ -76,7 +76,7 @@ flowchart BT
     Query --> RACCLI["@react-aria/cli\n(bin: react-aria + JS SDK)"]
     Query --> MCP["@react-spectrum/mcp & @react-aria/mcp\n(MCP v2 stdio + roots/list + skills://)"]
 
-    Skill["Evergreen SKILL.md (3 KB)\n+ CLI-Only Plugins"] --> S2CLI
+    Skill["Evergreen SKILL.md (4 KB)\n+ CLI-Only Plugins"] --> S2CLI
     Skill --> RACCLI
     MCPPlugin["Optional MCP Plugins"] --> MCP
 ```
@@ -118,10 +118,10 @@ When both exist and diverge, the SDK resolves direct `rac:*` queries against the
 #### Rich Structured Document IR
 `packages/dev/s2-docs/scripts/lib/snapshotExtractor.mjs` parses MDX and TypeScript declarations (`ts-morph`) into a single structured IR per entry before rendering deterministic Markdown (`.md`), JSON (`entries.json`), S2 asset catalogs (`s2-assets.json`), and weighted search terms (`search-index.json`):
 
-- **Explicit library & package identity:** Every entry ID is prefixed (`s2:ComboBox`, `rac:ComboBox`, `rac:useComboBox`, `internationalized:CalendarDate`) and includes canonical import statements (e.g., subpath `@react-spectrum/s2/ComboBox` vs. `react-aria-components`).
+- **Explicit library & package identity:** Every entry ID is prefixed (`s2:ComboBox`, `rac:ComboBox`, `react-aria:ComboBox/useComboBox`, `internationalized:date/CalendarDate`) and includes canonical import statements (e.g., subpath `@react-spectrum/s2/ComboBox` vs. `react-aria-components`).
 - **Categorized TypeScript API representation:** Preserves `typeParameters` (generics, constraints, defaults), `props`, `events`, `renderProps`, `slots`, `callSignatures` / `overloads`, and `inheritedFrom` provenance rather than flattening everything into an undifferentiated table.
-- **Section-addressable prose:** Normalizes pages into `summary`, `usage`, `api`, `accessibility`, `styling`, and `testing` sections so agents can request compact slices (`--sections usage,api`) and follow `continueCommand` pointers when token budgets truncate output.
-- **Cataloged implementation, migration & audit guides:** Version-sensitive implementation guidance (`s2:implementation-guidance`, `s2:component-decision-tree`, `s2:style-macro`, `s2:creating-custom-components`, `s2:figma-to-s2`, `s2:testing`, `s2:migration-*`, `rac:testing`) lives inside each versioned slice so rules like S2 subpath imports or `label` prop vs. `<Label>` composition always match the target package version.
+- **Section-addressable prose:** Normalizes pages into `summary`, `usage`, `api`, `accessibility`, `styling`, and `testing` sections so agents can request compact slices (`--sections usage,api`) and resume with the returned `--cursor` when a token budget truncates output. A read without `--sections` (or with `--sections all`) returns the complete page.
+- **Cataloged implementation, migration & audit guides:** Version-sensitive implementation guidance (`s2:guide/implementation-guidance`, `s2:guide/component-decision-tree`, `s2:style-macro`, `s2:guide/creating-custom-components`, `s2:guide/figma-to-s2`, `s2:testing`, `s2:migration/*`, `rac:testing`) lives inside each versioned slice so rules like S2 subpath imports or `label` prop vs. `<Label>` composition always match the target package version.
 
 #### Historical Backfill & Strict Patch Semantics
 Older tags in `react-spectrum` span two distinct documentation architectures:
@@ -168,7 +168,8 @@ Because `stdio` MCP servers are frequently launched by GUI hosts with an arbitra
 ```sh
 # React Spectrum S2 + React Aria (@react-spectrum/cli -> `spectrum`)
 spectrum search "searchable dropdown" [--library s2|rac|all] [--cwd apps/web] [--json]
-spectrum read s2:ComboBox s2:Popover [--sections usage,api,accessibility,styling,testing,guide] [--max-tokens 4000] [--json]
+spectrum read s2:ComboBox s2:Popover [--sections usage,api,accessibility,styling,testing,guide,all] [--max-tokens 4000] [--json [--json-content entry|markdown]]
+spectrum read s2:ComboBox --cursor <value> --max-tokens 4000   # resume one truncated entry
 spectrum api s2:ComboBox [--export ComboBox] [--prop selectedKey,onSelectionChange] [--events-only] [--render-props] [--json]
 spectrum tokens [query] [--property backgroundColor] [--json]
 spectrum icons Edit Delete [--illustrations] [--json]
@@ -178,14 +179,16 @@ spectrum manifest --json
 
 # React Aria Components, Hooks, Stately & Internationalized (@react-aria/cli -> `react-aria`)
 react-aria search "date range" [--json]
-react-aria read rac:DateRangePicker internationalized:CalendarDate [--json]
+react-aria read rac:DateRangePicker internationalized:date/CalendarDate [--json]
 react-aria api rac:ComboBox --render-props [--json]
 ```
 
 **Deterministic CLI behavior:**
 - **Default output:** Compact, clean Markdown with zero ANSI spinners or decorative chrome when piped.
-- **Structured output (`--json`):** Versioned `apiVersion: 1` JSON envelope with `snapshots`, `resolution`, `warnings`, and per-entry `results`.
-- **Consistent filtering and budgets:** Section and API-member filters apply to structured data as well as Markdown. `--max-tokens` bounds the serialized JSON envelope at approximately four UTF-8 bytes per token, preserving provenance and marking omitted document content with continuation instructions. Budgets below the required metadata size fail explicitly with `ERR_INVALID_ARGS`.
+- **Structured output (`--json`):** Versioned `apiVersion: 1` JSON envelope with `snapshots`, `warnings`, and per-entry `results`. The full workspace `resolution` is opt-in (`--include-resolution`), and each read result carries one content representation: the structured `entry` by default, or rendered Markdown with `--json-content markdown`.
+- **Consistent filtering and budgets:** Section and API-member filters apply to structured data as well as Markdown. `--max-tokens` bounds the output in the selected format (Markdown or JSON) at approximately four UTF-8 bytes per token. A truncated entry returns a cursor, and `read <id> --cursor <value>` resumes at the next section or API export without repeating earlier content. A cursor is tied to its document, snapshot, and section selection, and is rejected with `ERR_INVALID_ARGS` when used with any other.
+- **Context-preserving follow-ups:** Search hits and continuation commands carry the flags that produced them (`--cwd`, `--version`, `--snapshot`, and cache options), so following one resolves the same documentation. Markdown search output states the shared flags once; JSON `followUpCommands` are complete commands.
+- **No silent narrowing:** Filters that match nothing are reported. `api --prop` warns for each unmatched name (`WARN_PROP_NOT_FOUND`, with near-name suggestions) and fails with `ERR_PROP_NOT_FOUND` when none match; `icons` lists unmatched terms; `tokens` states when nothing matched. Warnings are limited to the packages a query reads.
 - **Partial-batch resilience:** In `read A B C`, if `B` is unknown (`ERR_ENTRY_NOT_FOUND` with fuzzy `suggestions`), `A` and `C` are still returned (`partial: true`, exit code `0`); exit code `3` (`NOT_FOUND`) is returned only when **every** requested ID fails.
 - **Predictable exit codes:** `0` (`OK`), `1` (`INTERNAL_ERROR`, unexpected failures), `2` (`INVALID_ARGS`), `3` (`NOT_FOUND`), `4` (`OFFLINE_OR_NETWORK`), `5` (`INTEGRITY_OR_SCHEMA`).
 
@@ -196,7 +199,7 @@ Per MCP's runtime tool discovery model (`tools/list`), legacy v1 `list_*_pages`,
 | :--- | :--- | :--- |
 | `resolve_versions` | Both | Inspects workspace dependencies (`cwd` or `roots/list`) and returns a reusable `resolution` state object + warnings. |
 | `search_docs` | Both | Ranked multi-package search across components, guides, hooks, and utilities. |
-| `read_docs` | Both | Batched multi-ID read (`ids`, `sections`, `maxTokens`, `cwd`, `resolution`, `version`, `snapshot`) with partial-batch resilience. |
+| `read_docs` | Both | Batched multi-ID read (`ids`, `sections`, `maxTokens`, `cursor`, `jsonContent`, `includeResolution`, `cwd`, `resolution`, `version`, `snapshot`) with partial-batch resilience and cursor continuation. |
 | `get_component_api` | Both | Focused TypeScript API lookup (`id`, `exportName`, `propFilter`, `eventsOnly`, `renderPropsOnly`). |
 | `search_s2_tokens` | `@react-spectrum/mcp` | Version-matched Spectrum 2 `style` macro property and design token lookup. |
 | `search_s2_icons` | `@react-spectrum/mcp` | Version-matched Spectrum 2 workflow icon and illustration search (including synonym aliases). |
@@ -207,7 +210,7 @@ Per MCP's runtime tool discovery model (`tools/list`), legacy v1 `list_*_pages`,
 ### 4.6 Evergreen `SKILL.md` & Separated Agent Plugin Bundles
 
 `packages/dev/s2-docs/scripts/generateAgentSkills.mjs` and `scripts/generateAgentPlugins.mjs` (`yarn generate:plugins`) generate:
-1. **Single-file evergreen `SKILL.md` (`~3 KB`)** for `.well-known/agent-skills/` and plugin distribution—containing zero version-sensitive prop lists or import paths, instructing agents to run 1–2 batched lookups and obey the returned versioned guidance.
+1. **Single-file evergreen `SKILL.md` (`~4 KB`)** for `.well-known/agent-skills/` and plugin distribution—containing zero version-sensitive prop lists or import paths, instructing agents to run 1–2 batched lookups and obey the returned versioned guidance.
 2. **Four separated Agent Plugin bundles under `plugins/`** (supporting both portable Agent Plugins 1.0 `plugin.json` and `.claude-plugin/plugin.json` + `plugins/marketplace.json`):
    - **`plugins/react-spectrum` & `plugins/react-aria` (Recommended default):** Skill-only bundles with **no `mcp.json`**, ensuring CLI-capable hosts never spawn idle background `stdio` MCP processes or pay duplicate tool-schema context overhead.
    - **`plugins/react-spectrum-mcp` & `plugins/react-aria-mcp`:** Optional MCP-enabled bundles (`.mcp.json` at plugin root; `.claude-plugin/plugin.json` omits `mcpServers` to prevent duplicate server registration in hosts that read both manifests).
@@ -245,11 +248,13 @@ Snapshot IDs use the source commit date for both HEAD and tags. Artifacts record
 
 ## 6. Evaluation & Benchmark Results
 
-`packages/dev/agent-docs-bench` (`yarn bench:agent-docs compare --include-mcp`) evaluates standard S2/RAC component tasks alongside four version-trap fixtures (`pinned-s2-1.2.0`, `pinned-rac-1.4.0`, `mixed-s2-1.2.0-rac-head`, and `unverified-patch-s2-1.2.1`) across the legacy static skill, legacy v1 MCP waterfall, and the new v2 system:
+`packages/dev/agent-docs-bench` (`yarn bench:agent-docs compare --include-mcp`) evaluates standard S2/RAC component tasks alongside four version-trap fixtures (`pinned-s2-1.2.0`, `pinned-rac-1.4.0`, `mixed-s2-1.2.0-rac-head`, and `unverified-patch-s2-1.2.1`) across the legacy static skill, legacy v1 MCP waterfall, and the new v2 system.
+
+> **These figures need re-measuring.** They were recorded before default reads returned complete pages, before `--max-tokens` applied to the selected output format, and before cursor continuation. A complete component page is now several thousand tokens on its own (about 7k for `s2:ComboBox`), so the average doc tokens per task for v2 is expected to be higher than shown unless the scenario uses `--sections` or `--max-tokens`. Re-run `yarn bench:agent-docs compare --include-mcp` against a backfilled snapshot set before citing them.
 
 | Metric | Legacy Static Skill | Legacy v1 MCP | **Agent Docs v2 (New)** |
 | :--- | :---: | :---: | :---: |
-| **Project files installed** | `267` (`3,996 KB`) | `0` | **`1` (`3 KB`)** |
+| **Project files installed** | `267` (`3,996 KB`) | `0` | **`1` (`4 KB`)** |
 | **Average lookups per task** | `2.6` (max `5`) | `4.1` (max `9`) | **`1.1` (max `2`)** |
 | **Average doc tokens per task** | `11,847` | `16,799` | **`4,876` (`-59%` vs. skill, `-71%` vs. MCP)** |
 | **Version-trap fixtures passed** | `0 / 4` | `0 / 4` | **`4 / 4` (zero wrong-version leaks)** |

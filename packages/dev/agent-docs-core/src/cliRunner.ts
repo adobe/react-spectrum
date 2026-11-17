@@ -261,11 +261,7 @@ export async function runAgentDocsCli(
     switch (subcommand) {
       case 'manifest': {
         const manifest = getCapabilityManifest(brand, packageVersion);
-        if (wantJson || argv.length === 1) {
-          writeOut(JSON.stringify(manifest, null, 2) + '\n');
-        } else {
-          writeOut(JSON.stringify(manifest, null, 2) + '\n');
-        }
+        writeOut(JSON.stringify(manifest, null, 2) + '\n');
         return EXIT_CODES.OK;
       }
 

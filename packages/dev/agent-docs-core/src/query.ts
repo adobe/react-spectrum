@@ -39,6 +39,7 @@ import {
   SnapshotIndex,
   TokensDocsResult
 } from './types.js';
+import {createHash} from 'node:crypto';
 import {
   ensurePackageSliceExtracted,
   isSafeEntrySlug,
@@ -49,7 +50,6 @@ import {
   readSliceSearchIndex,
   resolveDefaultCacheDir
 } from './cache.js';
-import {createHash} from 'node:crypto';
 import {formatReadOutput, ReadOutputOptions} from './format.js';
 import {LIBRARY_TO_PACKAGES, resolveWorkspace} from './resolver.js';
 import path from 'node:path';

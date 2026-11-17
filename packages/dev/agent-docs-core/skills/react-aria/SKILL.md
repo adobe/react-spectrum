@@ -27,10 +27,11 @@ Or read the versioned decision guide directly:
 react-aria read rac:collections --cwd <app-dir>
 ```
 
-### Step B — Batch-read implementation guidance + target components in one call
+### Step B — Batch-read implementation guidance + target components in one budgeted call
 ```sh
-react-aria read rac:getting-started rac:ComboBox rac:Modal --sections guide,usage,api,accessibility --cwd <app-dir>
+react-aria read rac:getting-started rac:ComboBox rac:Modal --sections guide,usage --max-tokens 6000 --cwd <app-dir>
 ```
+Complete component pages are large, so set `--max-tokens` and narrow `--sections` (`usage`, `api`, `accessibility`, `styling`, `testing`, `guide`) to what the task needs. When an entry is cut short, the output ends with a `Continue with …` command carrying a `--cursor`; run it only if the part you need was omitted. Use `api` (below) rather than a full read to check individual props.
 
 ### Focused prop/event inspection & diagnostic resolution
 ```sh
@@ -51,4 +52,4 @@ react-aria resolve --cwd <app-dir>
    - Yarn: `yarn dlx @react-aria/cli@latest read rac:getting-started rac:Button --cwd <app-dir>`
    - pnpm: `pnpm dlx @react-aria/cli@latest read rac:getting-started rac:Button --cwd <app-dir>`
 2. **MCP server (`@react-aria/mcp`):**
-   - Call `search_docs` and batched `read_docs` (passing `cwd` when working across multiple workspace roots, or reusing the `resolution` object from `resolve_versions`).
+   - Call `search_docs` and batched `read_docs` (passing `cwd` when working across multiple workspace roots, or reusing the `resolution` object from `resolve_versions`). Pass `sections` and `maxTokens` to `read_docs`, and continue a truncated entry with its returned `cursor`.

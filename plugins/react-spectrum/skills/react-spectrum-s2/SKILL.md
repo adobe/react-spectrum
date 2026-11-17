@@ -27,10 +27,11 @@ Or read the versioned decision guide directly:
 spectrum read s2:guide/component-decision-tree --cwd <app-dir>
 ```
 
-### Step B — Batch-read implementation guidance + target components in one call
+### Step B — Batch-read implementation guidance + target components in one budgeted call
 ```sh
-spectrum read s2:guide/implementation-guidance s2:ComboBox s2:Dialog --sections guide,usage,api,accessibility --cwd <app-dir>
+spectrum read s2:guide/implementation-guidance s2:ComboBox s2:Dialog --sections guide,usage --max-tokens 6000 --cwd <app-dir>
 ```
+Complete component pages are large, so set `--max-tokens` and narrow `--sections` (`usage`, `api`, `accessibility`, `styling`, `testing`, `guide`) to what the task needs. When an entry is cut short, the output ends with a `Continue with …` command carrying a `--cursor`; run it only if the part you need was omitted. Use `api` (below) rather than a full read to check individual props.
 
 ### Step C — Look up Spectrum 2 design tokens or workflow icons when styling or adding iconography
 ```sh
@@ -40,7 +41,7 @@ spectrum icons "search" --cwd <app-dir>
 
 ### Focused prop/event inspection & diagnostic resolution
 ```sh
-spectrum api s2:ComboBox --prop selectedKey,onSelectionChange --cwd <app-dir>
+spectrum api s2:ComboBox --prop allowsCustomValue,onInputChange --cwd <app-dir>
 spectrum resolve --cwd <app-dir>
 ```
 
@@ -57,4 +58,4 @@ spectrum resolve --cwd <app-dir>
    - Yarn: `yarn dlx @react-spectrum/cli@latest read s2:guide/implementation-guidance s2:Button --cwd <app-dir>`
    - pnpm: `pnpm dlx @react-spectrum/cli@latest read s2:guide/implementation-guidance s2:Button --cwd <app-dir>`
 2. **MCP server (`@react-spectrum/mcp`):**
-   - Call `search_docs` and batched `read_docs` (passing `cwd` when working across multiple workspace roots, or reusing the `resolution` object from `resolve_versions`). Use `search_s2_tokens` and `search_s2_icons` for tokens and icons.
+   - Call `search_docs` and batched `read_docs` (passing `cwd` when working across multiple workspace roots, or reusing the `resolution` object from `resolve_versions`). Pass `sections` and `maxTokens` to `read_docs`, and continue a truncated entry with its returned `cursor`. Use `search_s2_tokens` and `search_s2_icons` for tokens and icons.
