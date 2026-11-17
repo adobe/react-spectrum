@@ -168,16 +168,15 @@ export default {
 
 export type DefaultStory = StoryObj<typeof DefaultPicker>;
 export const Default: DefaultStory = {
-  render: args => <DefaultPicker {...args} />
-};
-
-// Need to interact with picker for the aXe plugin to catch the 'aria-hidden-focus' false positive
-Default.play = async ({canvasElement}) => {
-  let canvas = within(canvasElement);
-  let button = await canvas.findByRole('button');
-  await userEvent.click(button);
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('listbox');
+  render: args => <DefaultPicker {...args} />,
+  // Need to interact with picker for the aXe plugin to catch the 'aria-hidden-focus' false positive
+  play: async ({canvasElement}) => {
+    let canvas = within(canvasElement);
+    let button = await canvas.findByRole('button');
+    await userEvent.click(button);
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('listbox');
+  }
 };
 
 export const Disabled: DefaultStory = {

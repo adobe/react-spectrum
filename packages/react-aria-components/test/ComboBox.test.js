@@ -500,6 +500,26 @@ describe('ComboBox', () => {
     expect(queryByRole('listbox')).not.toBeInTheDocument();
   });
 
+  it('should not fire change events on blur when isReadOnly', async () => {
+    let onChange = jest.fn();
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <TestComboBox
+        isReadOnly
+        value="4"
+        inputValue="Finland"
+        onChange={onChange}
+        onSelectionChange={onSelectionChange}
+      />
+    );
+    let input = getByRole('combobox');
+    await user.click(input);
+    await user.tab();
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
   it('should support virtualizer', async () => {
     let items = [];
     for (let i = 0; i < 50; i++) {
@@ -783,6 +803,35 @@ describe('ComboBox', () => {
     expect(comboboxTester.getCombobox()).toHaveValue('');
     formData = new FormData(getByTestId('form'));
     expect(formData.getAll('combobox')).toEqual(['']);
+  });
+
+  it('selects and replaces input text with Ctrl+A while the multi-select popover is open', async () => {
+    let onChange = jest.fn();
+    let {container} = render(
+      <TestComboBox selectionMode="multiple" defaultInputValue="an" onChange={onChange} />
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    await comboboxTester.open();
+    let input = comboboxTester.getCombobox();
+    expect(input).toHaveValue('an');
+    expect(input).toHaveFocus();
+    await user.keyboard('{ArrowRight}');
+    expect(input.selectionStart).toBe(2);
+    expect(input.selectionEnd).toBe(2);
+
+    await user.keyboard('{Control>}a{/Control}');
+    expect(input.selectionStart).toBe(0);
+    expect(input.selectionEnd).toBe(2);
+    expect(onChange).not.toHaveBeenCalled();
+    for (let option of comboboxTester.getOptions()) {
+      expect(option).toHaveAttribute('aria-selected', 'false');
+    }
+
+    await user.keyboard('do');
+    expect(input).toHaveValue('do');
+    expect(comboboxTester.getOptions()).toHaveLength(1);
+    expect(comboboxTester.getOptions()[0]).toHaveTextContent('Dog');
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it('should support deselection if multiple selection is enabled', async () => {
@@ -1279,6 +1328,32 @@ describe('ComboBox', () => {
 
     await user.keyboard('Z');
     expect(queryByRole('listbox')).toBeNull();
+  });
+
+  it('should prevent the default action of Escape when it closes the popover', async () => {
+    let {getByRole, queryByRole} = render(<TestComboBox />);
+    let input = getByRole('combobox');
+
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    expect(getByRole('listbox')).toBeInTheDocument();
+
+    let notPrevented = fireEvent.keyDown(input, {key: 'Escape'});
+    fireEvent.keyUp(input, {key: 'Escape'});
+    expect(notPrevented).toBe(false);
+    expect(queryByRole('listbox')).toBeNull();
+  });
+
+  it('should not prevent the default action of Escape when the popover is closed', async () => {
+    let {getByRole, queryByRole} = render(<TestComboBox />);
+    let input = getByRole('combobox');
+
+    await user.tab();
+    expect(queryByRole('listbox')).toBeNull();
+
+    let notPrevented = fireEvent.keyDown(input, {key: 'Escape'});
+    fireEvent.keyUp(input, {key: 'Escape'});
+    expect(notPrevented).toBe(true);
   });
 
   it('should not re-open after user dismisses with Escape (revert) controlled items', async () => {

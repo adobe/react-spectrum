@@ -19,6 +19,7 @@ import {classNames} from '../utils/classNames';
 import {ClearSlots, SlotProvider, useSlotProps} from '../utils/Slots';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import intlMessages from '../../intl/actiongroup/*.json';
 import {Item} from 'react-stately/Item';
 import {ListState, useListState} from 'react-stately/useListState';
@@ -257,7 +258,7 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(
   let parentRef = useMemo(
     () => ({
       get current() {
-        return wrapperRef.current?.parentElement;
+        return getParentElement(wrapperRef.current);
       }
     }),
     // oxlint-disable-next-line react/react-compiler

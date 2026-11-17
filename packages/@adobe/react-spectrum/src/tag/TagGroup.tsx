@@ -24,6 +24,7 @@ import {
 import {Field} from '../label/Field';
 import {FocusRing} from 'react-aria/FocusRing';
 import {FocusScope} from 'react-aria/FocusScope';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import intlMessages from '../../intl/tag/*.json';
 import {ListCollection} from 'react-stately/private/list/ListCollection';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
@@ -177,19 +178,15 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttons = [...currActionsRef.children];
-        if (
-          maxRows &&
-          buttons.length > 0 &&
-          rowCount >= maxRows &&
-          currContainerRef.parentElement
-        ) {
+        let parentElement = getParentElement(currContainerRef);
+        if (maxRows && buttons.length > 0 && rowCount >= maxRows && parentElement) {
           let buttonsWidth = buttons.reduce(
             (acc, curr) => (acc += curr.getBoundingClientRect().width),
             0
           );
           buttonsWidth += TAG_STYLES[scale].margin * 2 * buttons.length;
           let end = direction === 'ltr' ? 'right' : 'left';
-          let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
+          let containerEnd = parentElement.getBoundingClientRect()[end];
           let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
           lastTagEnd += TAG_STYLES[scale].margin;
           let availableWidth = containerEnd - lastTagEnd;

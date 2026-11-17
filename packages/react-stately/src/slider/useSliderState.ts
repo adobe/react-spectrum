@@ -303,6 +303,9 @@ export function useSliderState<T extends number | number[]>(
 
     // Round value to multiple of step, clamp value between min and max
     value = snapValueToStep(value, thisMin, thisMax, step);
+    if (valuesRef.current[index] === value) {
+      return;
+    }
     let newValues = replaceIndex(valuesRef.current, index, value);
     setValues(newValues);
   }

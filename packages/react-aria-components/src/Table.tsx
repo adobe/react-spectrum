@@ -1,5 +1,6 @@
 import {
   AriaLabelingProps,
+  FocusEvents,
   GlobalDOMAttributes,
   HoverEvents,
   Key,
@@ -71,6 +72,7 @@ import {
 } from './Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {inertValue} from 'react-aria/private/utils/inertValue';
 import intlMessages from '../intl/*.json';
@@ -112,6 +114,7 @@ import {TableColumnResizeState} from 'react-stately/useTableState';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 import {useControlledState} from 'react-stately/useControlledState';
+import {useFocus} from 'react-aria/useFocus';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -502,7 +505,7 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
     // the Table itself for virtualized tables.
     let table = tableRef.current as HTMLElement | null;
     while (table && table !== containerRef.current && !isScrollable(table)) {
-      table = table.parentElement;
+      table = getParentElement(table) as HTMLElement | null;
     }
     scrollRef.current = table;
   }, [containerRef]);
@@ -1709,6 +1712,7 @@ export interface RowProps<T>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
+    FocusEvents<HTMLTableRowElement | HTMLDivElement>,
     Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -1802,6 +1806,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       state,
       ref
     );
+    let {focusProps: focusEventProps} = useFocus(props);
     let {isFocused, isFocusVisible, focusProps} = useFocusRing();
     let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
       within: true
@@ -1907,6 +1912,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
             renderProps,
             rowProps,
             focusProps,
+            focusEventProps,
             hoverProps,
             draggableItem?.dragProps,
             focusWithinProps

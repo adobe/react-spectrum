@@ -18,7 +18,7 @@ import {FileTrigger} from '../src/FileTrigger';
 import {FocusRing} from 'react-aria/FocusRing';
 import {Link} from '../src/Link';
 import {mergeProps} from 'react-aria/mergeProps';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useRef} from 'react';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
@@ -32,117 +32,131 @@ export default {
   component: DropZone
 } as Meta<typeof DropZone>;
 
-export type DropzoneStory = StoryFn<typeof DropZone>;
+export type DropzoneStory = StoryObj<typeof DropZone>;
 export type DropzoneStoryObj = StoryObj<typeof DropZone>;
 
-export const DropzoneExampleWithFileTriggerLink: DropzoneStory = props => (
-  <div>
-    <DropZone
-      {...props}
-      aria-label={'testing aria-label'}
-      className={styles.dropzone}
-      data-testid="drop-zone-example-with-file-trigger-link"
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      <FileTrigger onSelect={action('onSelect')}>
-        <Link>Upload</Link>
-      </FileTrigger>
-    </DropZone>
-  </div>
-);
+export const DropzoneExampleWithFileTriggerLink: DropzoneStory = {
+  render: props => (
+    <div>
+      <DropZone
+        {...props}
+        aria-label={'testing aria-label'}
+        className={styles.dropzone}
+        data-testid="drop-zone-example-with-file-trigger-link"
+        onDrop={action('OnDrop')}
+        onDropEnter={action('OnDropEnter')}
+        onDropExit={action('OnDropExit')}>
+        <FileTrigger onSelect={action('onSelect')}>
+          <Link>Upload</Link>
+        </FileTrigger>
+      </DropZone>
+    </div>
+  )
+};
 
-export const DropzoneExampleWithFileTriggerButton: DropzoneStory = props => (
-  <div>
-    <DropZone
-      {...props}
-      className={styles.dropzone}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      <FileTrigger onSelect={action('onSelect')}>
-        <Button>Upload</Button>
-      </FileTrigger>
-    </DropZone>
-  </div>
-);
+export const DropzoneExampleWithFileTriggerButton: DropzoneStory = {
+  render: props => (
+    <div>
+      <DropZone
+        {...props}
+        className={styles.dropzone}
+        onDrop={action('OnDrop')}
+        onDropEnter={action('OnDropEnter')}
+        onDropExit={action('OnDropExit')}>
+        <FileTrigger onSelect={action('onSelect')}>
+          <Button>Upload</Button>
+        </FileTrigger>
+      </DropZone>
+    </div>
+  )
+};
 
-export const DropzoneExampleWithDraggableAndFileTrigger: DropzoneStory = props => (
-  <div>
-    <Draggable />
-    <DropZone
-      {...props}
-      className={styles.dropzone}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      <FileTrigger onSelect={action('onSelect')}>
-        <Button>Browse</Button>
-      </FileTrigger>
-      Or drag into here
-    </DropZone>
-  </div>
-);
+export const DropzoneExampleWithDraggableAndFileTrigger: DropzoneStory = {
+  render: props => (
+    <div>
+      <Draggable />
+      <DropZone
+        {...props}
+        className={styles.dropzone}
+        onDrop={action('OnDrop')}
+        onDropEnter={action('OnDropEnter')}
+        onDropExit={action('OnDropExit')}>
+        <FileTrigger onSelect={action('onSelect')}>
+          <Button>Browse</Button>
+        </FileTrigger>
+        Or drag into here
+      </DropZone>
+    </div>
+  )
+};
 
-export const DropZoneOnlyAcceptPNGWithFileTrigger: DropzoneStory = props => (
-  <div>
-    <DropZone
-      {...props}
-      getDropOperation={types => (types.has('image/png') ? 'copy' : 'cancel')}
-      className={styles.dropzone}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      <FileTrigger onSelect={action('onSelect')} acceptedFileTypes={['image/png']}>
-        <Button>Upload</Button>
-      </FileTrigger>
-    </DropZone>
-  </div>
-);
+export const DropZoneOnlyAcceptPNGWithFileTrigger: DropzoneStory = {
+  render: props => (
+    <div>
+      <DropZone
+        {...props}
+        getDropOperation={types => (types.has('image/png') ? 'copy' : 'cancel')}
+        className={styles.dropzone}
+        onDrop={action('OnDrop')}
+        onDropEnter={action('OnDropEnter')}
+        onDropExit={action('OnDropExit')}>
+        <FileTrigger onSelect={action('onSelect')} acceptedFileTypes={['image/png']}>
+          <Button>Upload</Button>
+        </FileTrigger>
+      </DropZone>
+    </div>
+  )
+};
 
-export const DropZoneWithCaptureMobileOnly: DropzoneStory = props => (
-  <div>
-    <DropZone
-      {...props}
-      getDropOperation={types => (types.has('image/png') ? 'copy' : 'cancel')}
-      className={styles.dropzone}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      <FileTrigger onSelect={action('onSelect')} defaultCamera="environment">
-        <Button>Upload</Button>
-      </FileTrigger>
-    </DropZone>
-  </div>
-);
+export const DropZoneWithCaptureMobileOnly: DropzoneStory = {
+  render: props => (
+    <div>
+      <DropZone
+        {...props}
+        getDropOperation={types => (types.has('image/png') ? 'copy' : 'cancel')}
+        className={styles.dropzone}
+        onDrop={action('OnDrop')}
+        onDropEnter={action('OnDropEnter')}
+        onDropExit={action('OnDropExit')}>
+        <FileTrigger onSelect={action('onSelect')} defaultCamera="environment">
+          <Button>Upload</Button>
+        </FileTrigger>
+      </DropZone>
+    </div>
+  )
+};
 
-export const DropzoneExampleWithDraggableObject: DropzoneStory = props => (
-  <div>
-    <Draggable />
-    <DropZone
-      {...props}
-      className={styles.dropzone}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      <Text slot="label">DropZone Area</Text>
-    </DropZone>
-  </div>
-);
+export const DropzoneExampleWithDraggableObject: DropzoneStory = {
+  render: props => (
+    <div>
+      <Draggable />
+      <DropZone
+        {...props}
+        className={styles.dropzone}
+        onDrop={action('OnDrop')}
+        onDropEnter={action('OnDropEnter')}
+        onDropExit={action('OnDropExit')}>
+        <Text slot="label">DropZone Area</Text>
+      </DropZone>
+    </div>
+  )
+};
 
-export const DropzoneExampleWithCopyableObject: DropzoneStory = props => (
-  <div>
-    <Copyable />
-    <DropZone
-      {...props}
-      className={styles.dropzone}
-      onDrop={action('OnDrop')}
-      onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')}>
-      <Text slot="label">DropZone Area</Text>
-    </DropZone>
-  </div>
-);
+export const DropzoneExampleWithCopyableObject: DropzoneStory = {
+  render: props => (
+    <div>
+      <Copyable />
+      <DropZone
+        {...props}
+        className={styles.dropzone}
+        onDrop={action('OnDrop')}
+        onDropEnter={action('OnDropEnter')}
+        onDropExit={action('OnDropExit')}>
+        <Text slot="label">DropZone Area</Text>
+      </DropZone>
+    </div>
+  )
+};
 
 const DropzoneWithRenderPropsExample = props => (
   <div>

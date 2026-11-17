@@ -15,7 +15,7 @@ import {Button} from '../src/Button';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {SearchField} from '../src/SearchField';
 import styles from '../example/index.css';
@@ -26,16 +26,18 @@ export default {
   component: SearchField
 } as Meta<typeof SearchField>;
 
-export type SearchFieldStory = StoryFn<typeof SearchField>;
+export type SearchFieldStory = StoryObj<typeof SearchField>;
 
-export const SearchFieldExample: SearchFieldStory = () => {
-  return (
-    <SearchField
-      className={classNames(styles, 'searchFieldExample')}
-      data-testid="search-field-example">
-      <Label>Search</Label>
-      <Input />
-      <Button>✕</Button>
-    </SearchField>
-  );
+export const SearchFieldExample: SearchFieldStory = {
+  render: () => {
+    return (
+      <SearchField
+        className={classNames(styles, 'searchFieldExample')}
+        data-testid="search-field-example">
+        <Label>Search</Label>
+        <Input />
+        <Button>✕</Button>
+      </SearchField>
+    );
+  }
 };

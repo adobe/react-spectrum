@@ -28,7 +28,7 @@ import {DateValue} from 'react-stately/useCalendarState';
 import {Flex} from '../../src/layout/Flex';
 import {Item} from 'react-stately/Item';
 import {Key} from '@react-types/shared';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Picker} from '../../src/picker/Picker';
 import {Provider} from '../../src/provider/Provider';
 import React, {JSX} from 'react';
@@ -43,224 +43,199 @@ export default {
   excludeStories: ['render']
 } as Meta<typeof DateRangePicker>;
 
-export type DateRangePickerStory = StoryFn<typeof DateRangePicker>;
+export type DateRangePickerStory = StoryObj<typeof DateRangePicker>;
 
-export const Default: DateRangePickerStory = args => render(args);
-
-Default.story = {
+export const Default: DateRangePickerStory = {
+  render: args => render(args),
   name: 'default'
 };
 
-export const DefaultValue: DateRangePickerStory = () =>
-  render({defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
-
-DefaultValue.story = {
+export const DefaultValue: DateRangePickerStory = {
+  render: () =>
+    render({
+      defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+    }),
   name: 'defaultValue'
 };
 
-export const ControlledValue: DateRangePickerStory = args => <ControlledExample {...args} />;
-
-ControlledValue.story = {
+export const ControlledValue: DateRangePickerStory = {
+  render: args => <ControlledExample {...args} />,
   name: 'controlled value'
 };
 
-export const DefaultValueZoned: DateRangePickerStory = () =>
-  render({
-    defaultValue: {
-      start: toZoned(parseDate('2020-02-03'), 'America/New_York'),
-      end: toZoned(parseDate('2020-02-05'), 'America/Los_Angeles')
-    }
-  });
-
-DefaultValueZoned.story = {
+export const DefaultValueZoned: DateRangePickerStory = {
+  render: () =>
+    render({
+      defaultValue: {
+        start: toZoned(parseDate('2020-02-03'), 'America/New_York'),
+        end: toZoned(parseDate('2020-02-05'), 'America/Los_Angeles')
+      }
+    }),
   name: 'defaultValue, zoned'
 };
 
-export const GranularityMinute: DateRangePickerStory = () => render({granularity: 'minute'});
-
-GranularityMinute.story = {
+export const GranularityMinute: DateRangePickerStory = {
+  render: () => render({granularity: 'minute'}),
   name: 'granularity: minute'
 };
 
-export const GranularitySecond: DateRangePickerStory = () => render({granularity: 'second'});
-
-GranularitySecond.story = {
+export const GranularitySecond: DateRangePickerStory = {
+  render: () => render({granularity: 'second'}),
   name: 'granularity: second'
 };
 
-export const HourCycle12: DateRangePickerStory = () =>
-  render({granularity: 'minute', hourCycle: 12});
-
-HourCycle12.story = {
+export const HourCycle12: DateRangePickerStory = {
+  render: () => render({granularity: 'minute', hourCycle: 12}),
   name: 'hourCycle: 12'
 };
 
-export const HourCycle24: DateRangePickerStory = () =>
-  render({granularity: 'minute', hourCycle: 24});
-
-HourCycle24.story = {
+export const HourCycle24: DateRangePickerStory = {
+  render: () => render({granularity: 'minute', hourCycle: 24}),
   name: 'hourCycle: 24'
 };
 
-export const ForceLeadingZeros: DateRangePickerStory = () =>
-  render({
-    defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)},
-    shouldForceLeadingZeros: true
-  });
-
-ForceLeadingZeros.story = {
+export const ForceLeadingZeros: DateRangePickerStory = {
+  render: () =>
+    render({
+      defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)},
+      shouldForceLeadingZeros: true
+    }),
   name: 'shouldForceLeadingZeros'
 };
 
-export const IsDisabled: DateRangePickerStory = () =>
-  render({
-    isDisabled: true,
-    value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
-  });
-
-IsDisabled.story = {
+export const IsDisabled: DateRangePickerStory = {
+  render: () =>
+    render({
+      isDisabled: true,
+      value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+    }),
   name: 'isDisabled'
 };
 
-export const IsQuietIsDisabled: DateRangePickerStory = () =>
-  render({
-    isQuiet: true,
-    isDisabled: true,
-    value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
-  });
-
-IsQuietIsDisabled.story = {
+export const IsQuietIsDisabled: DateRangePickerStory = {
+  render: () =>
+    render({
+      isQuiet: true,
+      isDisabled: true,
+      value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+    }),
   name: 'isQuiet, isDisabled'
 };
 
-export const IsReadOnly: DateRangePickerStory = () =>
-  render({
-    isReadOnly: true,
-    value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
-  });
-
-IsReadOnly.story = {
+export const IsReadOnly: DateRangePickerStory = {
+  render: () =>
+    render({
+      isReadOnly: true,
+      value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+    }),
   name: 'isReadOnly'
 };
 
-export const AutoFocus: DateRangePickerStory = () => render({autoFocus: true});
-
-AutoFocus.story = {
+export const AutoFocus: DateRangePickerStory = {
+  render: () => render({autoFocus: true}),
   name: 'autoFocus'
 };
 
-export const ValidationStateInvalid: DateRangePickerStory = () =>
-  render({
-    validationState: 'invalid',
-    value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
-  });
-
-ValidationStateInvalid.story = {
+export const ValidationStateInvalid: DateRangePickerStory = {
+  render: () =>
+    render({
+      validationState: 'invalid',
+      value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+    }),
   name: 'validationState: invalid'
 };
 
-export const ValidationStateValid: DateRangePickerStory = () =>
-  render({
-    validationState: 'valid',
-    value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
-  });
-
-ValidationStateValid.story = {
+export const ValidationStateValid: DateRangePickerStory = {
+  render: () =>
+    render({
+      validationState: 'valid',
+      value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+    }),
   name: 'validationState: valid'
 };
 
-export const MinDate201011MaxDate202011: DateRangePickerStory = () =>
-  render({minValue: new CalendarDate(2010, 1, 1), maxValue: new CalendarDate(2020, 1, 1)});
-
-MinDate201011MaxDate202011.story = {
+export const MinDate201011MaxDate202011: DateRangePickerStory = {
+  render: () =>
+    render({minValue: new CalendarDate(2010, 1, 1), maxValue: new CalendarDate(2020, 1, 1)}),
   name: 'minDate: 2010/1/1, maxDate: 2020/1/1'
 };
 
-export const IsDateUnavailable: DateRangePickerStory = () => {
-  const disabledRanges = [
-    [today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})],
-    [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]
-  ];
-  let [value, setValue] = React.useState<DateRange | null>(null);
-  let isInvalid =
-    value &&
-    disabledRanges.some(
-      interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0
-    );
-  let isDateUnavailable = date =>
-    disabledRanges.some(
-      interval => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
-    );
-  return render({
-    value,
-    onChange: setValue,
-    validationState: isInvalid ? 'invalid' : null,
-    isDateUnavailable,
-    errorMessage: 'Selected ranges may not include unavailable dates.'
-  });
-};
-
-IsDateUnavailable.story = {
+export const IsDateUnavailable: DateRangePickerStory = {
+  render: function IsDateUnavailable() {
+    const disabledRanges = [
+      [today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})],
+      [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]
+    ];
+    let [value, setValue] = React.useState<DateRange | null>(null);
+    let isInvalid =
+      value &&
+      disabledRanges.some(
+        interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0
+      );
+    let isDateUnavailable = date =>
+      disabledRanges.some(
+        interval => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+      );
+    return render({
+      value,
+      onChange: setValue,
+      validationState: isInvalid ? 'invalid' : null,
+      isDateUnavailable,
+      errorMessage: 'Selected ranges may not include unavailable dates.'
+    });
+  },
   name: 'isDateUnavailable'
 };
 
-export const IsDateAvailableAllowsNonContiguousRanges: DateRangePickerStory = args => {
-  let {locale} = useLocale();
-  return render({
-    isDateUnavailable: (date: DateValue) => isWeekend(date, locale),
-    allowsNonContiguousRanges: true,
-    ...args
-  });
-};
-
-IsDateAvailableAllowsNonContiguousRanges.story = {
+export const IsDateAvailableAllowsNonContiguousRanges: DateRangePickerStory = {
+  render: function IsDateAvailableAllowsNonContiguousRanges(args) {
+    let {locale} = useLocale();
+    return render({
+      isDateUnavailable: (date: DateValue) => isWeekend(date, locale),
+      allowsNonContiguousRanges: true,
+      ...args
+    });
+  },
   name: 'isDateAvailable, allowsNonContiguousRanges'
 };
 
-export const PlaceholderValue198011: DateRangePickerStory = args =>
-  render({placeholderValue: new CalendarDate(1980, 1, 1), ...args});
-
-PlaceholderValue198011.story = {
+export const PlaceholderValue198011: DateRangePickerStory = {
+  render: args => render({placeholderValue: new CalendarDate(1980, 1, 1), ...args}),
   name: 'placeholderValue: 1980/1/1'
 };
 
-export const MaxVisibleMonths2: DateRangePickerStory = args =>
-  render({maxVisibleMonths: 2, granularity: 'minute', ...args});
-
-MaxVisibleMonths2.story = {
+export const MaxVisibleMonths2: DateRangePickerStory = {
+  render: args => render({maxVisibleMonths: 2, granularity: 'minute', ...args}),
   name: 'maxVisibleMonths: 2'
 };
 
-export const MaxVisibleMonths3: DateRangePickerStory = args =>
-  render({maxVisibleMonths: 3, granularity: 'minute', ...args});
-
-MaxVisibleMonths3.story = {
+export const MaxVisibleMonths3: DateRangePickerStory = {
+  render: args => render({maxVisibleMonths: 3, granularity: 'minute', ...args}),
   name: 'maxVisibleMonths: 3'
 };
 
-export const ShowFormatHelpText: DateRangePickerStory = args =>
-  render({showFormatHelpText: true, ...args});
-
-ShowFormatHelpText.story = {
+export const ShowFormatHelpText: DateRangePickerStory = {
+  render: args => render({showFormatHelpText: true, ...args}),
   name: 'showFormatHelpText'
 };
 
-export const AllTheEvents: DateRangePickerStory = args =>
-  render({
-    onBlur: action('onBlur'),
-    onFocus: action('onFocus'),
-    onFocusChange: action('onFocusChange'),
-    onKeyDown: action('onKeyDown'),
-    onKeyUp: action('onKeyUp'),
-    onOpenChange: action('onOpenChange'),
-    ...args
-  });
-
-AllTheEvents.story = {
+export const AllTheEvents: DateRangePickerStory = {
+  render: args =>
+    render({
+      onBlur: action('onBlur'),
+      onFocus: action('onFocus'),
+      onFocusChange: action('onFocusChange'),
+      onKeyDown: action('onKeyDown'),
+      onKeyUp: action('onKeyUp'),
+      onOpenChange: action('onOpenChange'),
+      ...args
+    }),
   name: 'all the events'
 };
 
-export const CustomCalendar: DateRangePickerStory = args => <CustomExample {...args} />;
+export const CustomCalendar: DateRangePickerStory = {
+  render: args => <CustomExample {...args} />
+};
 
 export function render(props = {}): JSX.Element {
   return (

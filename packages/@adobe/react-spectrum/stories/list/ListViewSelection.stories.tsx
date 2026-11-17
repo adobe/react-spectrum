@@ -8,7 +8,7 @@ import Folder from '@spectrum-icons/illustrations/Folder';
 import {Item} from 'react-stately/Item';
 import {items} from './ListView.stories';
 import {ListView} from '../../src/list/ListView';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import {Text} from '../../src/text/Text';
 
@@ -126,28 +126,30 @@ export const DisableFolderSelection: ListViewStory = {
   name: 'disable folders selection'
 };
 
-export const Links: StoryFn<typeof ListView> = args => {
-  return (
-    <ListView
-      aria-label="ListView with links"
-      width="250px"
-      height={400}
-      onSelectionChange={action('onSelectionChange')}
-      {...args}>
-      <Item key="https://adobe.com/" href="https://adobe.com/">
-        Adobe
-      </Item>
-      <Item key="https://google.com/" href="https://google.com/">
-        Google
-      </Item>
-      <Item key="https://apple.com/" href="https://apple.com/">
-        Apple
-      </Item>
-      <Item key="https://nytimes.com/" href="https://nytimes.com/">
-        New York Times
-      </Item>
-    </ListView>
-  );
+export const Links: StoryObj<typeof ListView> = {
+  render: args => {
+    return (
+      <ListView
+        aria-label="ListView with links"
+        width="250px"
+        height={400}
+        onSelectionChange={action('onSelectionChange')}
+        {...args}>
+        <Item key="https://adobe.com/" href="https://adobe.com/">
+          Adobe
+        </Item>
+        <Item key="https://google.com/" href="https://google.com/">
+          Google
+        </Item>
+        <Item key="https://apple.com/" href="https://apple.com/">
+          Apple
+        </Item>
+        <Item key="https://nytimes.com/" href="https://nytimes.com/">
+          New York Times
+        </Item>
+      </ListView>
+    );
+  }
 };
 
 export const OnAction: ListViewStory = {

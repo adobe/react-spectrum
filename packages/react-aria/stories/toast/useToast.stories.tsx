@@ -11,7 +11,7 @@
  */
 
 import React, {JSX} from 'react';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 import {ToastContainer} from './Example';
 import {ToastStateProps} from 'react-stately/useToastState';
 
@@ -43,4 +43,6 @@ let ToastStory = (props: ToastStateProps & {timeout?: number}): JSX.Element => (
   </ToastContainer>
 );
 
-export const Default: StoryFn<typeof ToastStory> = args => <ToastStory {...args} />;
+export const Default: StoryObj<typeof ToastStory> = {
+  render: args => <ToastStory {...args} />
+};

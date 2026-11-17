@@ -65,7 +65,9 @@ function ProseStory() {
   );
 }
 
-export const Example = () => <ProseStory />;
+export const Example = {
+  render: () => <ProseStory />
+};
 
 // Spectrum tokens applied to each prose element (see style/prose.ts). When a
 // font isn't specified the element inherits `body`; when a margin isn't

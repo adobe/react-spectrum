@@ -23,7 +23,8 @@ import {
   SlotProps,
   useContextProps,
   useRenderProps,
-  useSlot
+  useSlot,
+  useSlottedContext
 } from './utils';
 import {ColorChannel, ColorSpace} from 'react-stately/Color';
 import {
@@ -33,6 +34,7 @@ import {
 } from 'react-stately/useColorFieldState';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {FormContext} from './Form';
 import {GlobalDOMAttributes, InputDOMProps, ValidationResult} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
@@ -133,6 +135,9 @@ export const ColorField = forwardRef(function ColorField(
   ref: ForwardedRef<HTMLDivElement>
 ) {
   [props, ref] = useContextProps(props, ref, ColorFieldContext);
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
+  props = {...props, validationBehavior};
   if (props.channel) {
     return <ColorChannelField {...props} channel={props.channel} forwardedRef={ref} />;
   } else {

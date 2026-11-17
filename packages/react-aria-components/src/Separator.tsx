@@ -65,8 +65,8 @@ export const Separator = /*#__PURE__*/ createLeafComponent(
   function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
     [props, ref] = useContextProps(props, ref, SeparatorContext);
 
-    let {elementType, orientation, style, className, slot, ...otherProps} = props;
-    let Element = elementType || 'hr';
+    let {elementType = 'hr', orientation, style, className, slot, ...otherProps} = props;
+    let Element = elementType;
     if (Element === 'hr' && orientation === 'vertical') {
       Element = 'div';
     }
@@ -75,7 +75,7 @@ export const Separator = /*#__PURE__*/ createLeafComponent(
 
     let {separatorProps} = useSeparator({
       ...otherProps,
-      elementType,
+      elementType: Element,
       orientation
     });
 
