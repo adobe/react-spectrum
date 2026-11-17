@@ -153,7 +153,7 @@ export const Focusable: React.ForwardRefExoticComponent<
 
       if (
         !props.isDisabled &&
-        !isFocusable(el, {skipVisibilityCheck: true, skipInertCheck: true})
+        !isFocusable(el, {skipVisibilityCheck: true, skipInertAncestorCheck: true})
       ) {
         console.warn(
           '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'

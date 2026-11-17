@@ -39,11 +39,11 @@ const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([ta
 
 export function isFocusable(
   element: Element,
-  options?: {skipVisibilityCheck?: boolean; skipInertCheck?: boolean}
+  options?: {skipVisibilityCheck?: boolean; skipInertAncestorCheck?: boolean}
 ): boolean {
   return (
     element.matches(FOCUSABLE_ELEMENT_SELECTOR) &&
-    (options?.skipInertCheck || !isInert(element)) &&
+    !isInert(element, !options?.skipInertAncestorCheck) &&
     (options?.skipVisibilityCheck || isElementVisible(element))
   );
 }
@@ -54,14 +54,14 @@ export function isTabbable(element: Element): boolean {
   );
 }
 
-function isInert(element: Element): boolean {
+function isInert(element: Element, checkAncestors = true): boolean {
   let node: Element | null = element;
   while (node != null) {
     if (node instanceof getOwnerWindow(node).HTMLElement && node.inert) {
       return true;
     }
 
-    node = getParentElement(node);
+    node = checkAncestors ? getParentElement(node) : null;
   }
 
   return false;

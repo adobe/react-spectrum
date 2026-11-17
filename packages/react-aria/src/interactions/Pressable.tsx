@@ -46,7 +46,7 @@ export const Pressable: React.ForwardRefExoticComponent<
 
       if (
         !props.isDisabled &&
-        !isFocusable(el, {skipVisibilityCheck: true, skipInertCheck: true})
+        !isFocusable(el, {skipVisibilityCheck: true, skipInertAncestorCheck: true})
       ) {
         console.warn(
           '<Pressable> child must be focusable. Please ensure the tabIndex prop is passed through.'
