@@ -588,7 +588,7 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
         availableVersions: matched.availableVersions
       };
     } catch (err) {
-      if (!isPrimary && err instanceof AgentDocsError) {
+      if (!isPrimary && !options.strictVersion && err instanceof AgentDocsError) {
         deferredAuxErrors.push(err);
         warnings.push({
           code: 'WARN_AUX_PACKAGE_SLICE_UNAVAILABLE',
@@ -611,7 +611,7 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
   const snapSummary = s2Prov ? index.snapshots[s2Prov.snapshotId] : undefined;
   if (s2Prov && snapSummary) {
     for (const auxPkg of ['@internationalized/date', '@internationalized/number', 'react-aria']) {
-      const auxVer = !resolvedPackages[auxPkg] ? snapSummary.packages[auxPkg] : undefined;
+      const auxVer = !effectiveRequest.has(auxPkg) ? snapSummary.packages[auxPkg] : undefined;
       const auxPtr = options.snapshotOverride
         ? snapshotSlices?.[auxPkg]
         : auxVer

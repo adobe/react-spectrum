@@ -462,3 +462,89 @@ test('distinguishes unverified patch releases from verified surface-equivalent p
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });
+
+test('does not replace unavailable installed or locked auxiliary versions with component snapshot versions', async () => {
+  const {resolveWorkspace} = await corePromise;
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-aux-versions-'));
+  try {
+    const snapshotSource = path.join(tmp, 'snapshots');
+    fs.mkdirSync(snapshotSource);
+    const pointer = packageVersion => ({
+      packageVersion,
+      snapshotId: 'snapshot',
+      sliceRelPath: 'unused',
+      sliceSha256: 'unused'
+    });
+    fs.writeFileSync(
+      path.join(snapshotSource, 'index.json'),
+      JSON.stringify({
+        schemaVersion: 1,
+        latest: {},
+        packages: {
+          'react-aria-components': {'1.0.0': pointer('1.0.0')},
+          '@internationalized/date': {'3.8.0': pointer('3.8.0')}
+        },
+        snapshots: {
+          snapshot: {
+            snapshotId: 'snapshot',
+            packages: {
+              'react-aria-components': '1.0.0',
+              '@internationalized/date': '3.8.0'
+            }
+          }
+        }
+      })
+    );
+    for (const source of ['installed', 'lockfile']) {
+      const app = path.join(tmp, source);
+      fs.mkdirSync(app);
+      const opts = {cwd: app, snapshotSource, cacheDir: path.join(tmp, 'cache')};
+      for (const version of ['3.8.1', '3.9.0']) {
+        const dependencies = {'react-aria-components': '1.0.0', '@internationalized/date': version};
+        fs.writeFileSync(
+          path.join(app, 'package.json'),
+          JSON.stringify({name: 'app', dependencies})
+        );
+        const packages = {'': {dependencies}};
+        for (const [name, version] of Object.entries(dependencies)) {
+          packages[`node_modules/${name}`] = {version};
+        }
+        const installed = source === 'installed' ? Object.entries(dependencies) : [];
+        for (const [name, version] of installed) {
+          const dir = path.join(app, 'node_modules', name);
+          fs.mkdirSync(dir, {recursive: true});
+          fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify({name, version}));
+        }
+        fs.writeFileSync(
+          path.join(app, 'package-lock.json'),
+          JSON.stringify({lockfileVersion: 3, packages})
+        );
+        await assert.rejects(
+          () => resolveWorkspace({...opts, strictVersion: true}),
+          err => err.code === 'ERR_EXACT_PATCH_UNAVAILABLE'
+        );
+        const result = await resolveWorkspace(opts);
+        const date = result.packages['@internationalized/date'];
+        if (version === '3.8.1') {
+          assert.equal(date.requestedVersion, version);
+          assert.equal(date.exactMatch, false);
+        } else {
+          assert.equal(date, undefined);
+          assert.ok(result.warnings.some(w => w.code === 'WARN_AUX_PACKAGE_SLICE_UNAVAILABLE'));
+        }
+      }
+    }
+    const emptyApp = path.join(tmp, 'no-aux');
+    fs.mkdirSync(emptyApp);
+    fs.writeFileSync(path.join(emptyApp, 'package.json'), '{"name":"app"}');
+    const fallback = await resolveWorkspace({
+      cwd: emptyApp,
+      snapshotSource,
+      cacheDir: path.join(tmp, 'cache'),
+      versionOverride: 'react-aria-components@1.0.0'
+    });
+    assert.equal(fallback.packages['@internationalized/date'].packageVersion, '3.8.0');
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
