@@ -230,7 +230,13 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
           }
         }
         if (state.isOpen) {
-          state.commit();
+          // Enter commits in every selection mode. Tab only dismisses multiple
+          // selection, so it does not toggle or select the focused option.
+          if (props.selectionMode === 'multiple') {
+            state.close();
+          } else {
+            state.commit();
+          }
         }
         return {shouldPreventDefault: false, shouldContinuePropagation: true};
       },
