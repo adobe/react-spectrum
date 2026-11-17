@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, Key, LayoutDelegate, Node} from '@react-types/shared';
+import {
+  Collection,
+  CollectionStateBase,
+  Key,
+  LayoutDelegate,
+  Node,
+  Selection
+} from '@react-types/shared';
 import {ListCollection} from './ListCollection';
 import {
   MultipleSelectionStateProps,
@@ -47,10 +54,15 @@ export interface ListState<T> {
  * Provides state management for list-like components. Handles building a collection
  * of items from props, and manages multiple selection state.
  */
-export function useListState<T>(props: ListProps<T>): ListState<T> {
+export function useListState<T>(
+  props: ListProps<T>,
+  onSelectionChange?: (
+    keys: Selection,
+    collection: Collection<Node<T>>,
+    disabledKeys: Set<Key>
+  ) => void
+): ListState<T> {
   let {filter, layoutDelegate} = props;
-
-  let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(
     () => (props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()),
     [props.disabledKeys]
@@ -67,6 +79,11 @@ export function useListState<T>(props: ListProps<T>): ListState<T> {
   );
 
   let collection = useCollection(props, factory, context);
+  let selectionState = useMultipleSelectionState(
+    onSelectionChange
+      ? {...props, onSelectionChange: keys => onSelectionChange(keys, collection, disabledKeys)}
+      : props
+  );
 
   let selectionManager = useMemo(
     () => new SelectionManager(collection, selectionState, {layoutDelegate}),
