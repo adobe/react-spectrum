@@ -107,10 +107,12 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 | --- | --- | --- |
 | `resolve_versions` | `{ cwd?: string, version?: string, snapshot?: string }` | Resolve exact installed/lockfile `@react-spectrum/s2` and `react-aria-components` package versions and return a reusable `resolution` context. |
 | `search_docs` | `{ query: string, cwd?: string, resolution?: object, library?: string, version?: string, snapshot?: string, limit?: number }` | Search version-matched React Spectrum S2 and React Aria components, guides, patterns, tokens, and icons (defaults to ranking S2 first). |
-| `read_docs` | `{ ids: string \| string[], sections?: string[], maxTokens?: number, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Batch-read multiple version-matched components or guides in a single call with per-entry provenance and partial-batch resilience. |
+| `read_docs` | `{ ids: string \| string[], sections?: string[], maxTokens?: number, cursor?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Batch-read multiple version-matched components or guides in a single call with per-entry provenance and partial-batch resilience. |
 | `get_component_api` | `{ target: string, prop?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Inspect structured TypeScript API definitions (props, events, slots, generics, overloads) for an S2 or RAC component. |
 | `search_s2_tokens` | `{ query?: string, property?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Query Spectrum 2 style-macro properties and design tokens from the versioned snapshot. |
 | `search_s2_icons` | `{ query: string, kind?: 'icon' \| 'illustration' \| 'all', cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Search Spectrum 2 workflow icons and illustrations from the versioned snapshot. |
+
+`read_docs` measures `maxTokens` against the selected output format. To resume a truncated read, pass its `nextCursor` as `cursor` with that document ID and the same section and version options. Set `format: "json"` for a structured entry, or add `jsonContent: "markdown"` to receive rendered Markdown in the JSON envelope. Query tools accept `includeResolution: true` to include the full resolution in JSON output.
 
 The server also exposes the evergreen CLI-first skill via MCP resource `skills://react-spectrum-s2/SKILL.md` (`SEP-2640`) and discovers workspace roots via MCP `roots/list` (or `--cwd <dir>`).
 

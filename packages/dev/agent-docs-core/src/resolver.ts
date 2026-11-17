@@ -592,6 +592,7 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
         deferredAuxErrors.push(err);
         warnings.push({
           code: 'WARN_AUX_PACKAGE_SLICE_UNAVAILABLE',
+          packageName: pkgName,
           message: err.message
         });
       } else {

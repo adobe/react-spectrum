@@ -334,6 +334,7 @@ export type ReadItemResult =
       includedSections: string[];
       omittedSections: string[];
       truncated: boolean;
+      nextCursor?: string;
       continueCommand?: string;
     }
   | {

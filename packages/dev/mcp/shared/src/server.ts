@@ -17,7 +17,8 @@ import {
   EVERGREEN_SKILL_METADATA,
   EvergreenSkillBrand,
   EXIT_CODES,
-  formatReadMarkdown,
+  formatQueryJson,
+  formatReadOutput,
   formatSearchMarkdown,
   getEvergreenSkillMarkdown,
   LibraryId,
@@ -25,6 +26,7 @@ import {
   queryIcons,
   queryTokens,
   readDocs,
+  ReadOutputOptions,
   ResolutionState,
   resolveWorkspace,
   searchDocs,
@@ -366,6 +368,10 @@ export async function createAgentDocsMcpServer(
     resolution: RESOLUTION_SCHEMA.optional().describe(
       'Optional reusable resolution state returned by resolve_versions. Pass it unmodified; do not combine with cwd, version, packageVersions, or snapshot.'
     ),
+    includeResolution: z
+      .boolean()
+      .optional()
+      .describe('Include full workspace resolution in JSON output.'),
     offline: z.boolean().optional().describe('Use only cached snapshots without network requests.')
   };
 
@@ -441,7 +447,9 @@ export async function createAgentDocsMcpServer(
           limit: args.limit
         });
         return toolSuccessText(
-          args.format === 'json' ? JSON.stringify(res, null, 2) : formatSearchMarkdown(res)
+          args.format === 'json'
+            ? formatQueryJson(res, args.includeResolution)
+            : formatSearchMarkdown(res)
         );
       } catch (err) {
         return toolErrorResult(err);
@@ -468,11 +476,20 @@ export async function createAgentDocsMcpServer(
         maxTokens: z
           .number()
           .int()
-          .min(400)
+          .min(1)
+          .optional()
+          .describe('Optional budget for the rendered output (~4 UTF-8 bytes per token).'),
+        cursor: z
+          .string()
+          .min(1)
           .optional()
           .describe(
-            'Optional total output budget (~4 UTF-8 bytes per token), including JSON metadata. Budgets too small for provenance return an error.'
+            'Resume one document with its nextCursor and the same section and version options.'
           ),
+        jsonContent: z
+          .enum(['entry', 'markdown'])
+          .optional()
+          .describe('Content for JSON output: structured entry (default) or rendered Markdown.'),
         format: FORMAT_ENUM.optional().describe('Output format: "markdown" (default) or "json".'),
         ...commonContextSchema
       },
@@ -487,15 +504,21 @@ export async function createAgentDocsMcpServer(
           args
         );
         const ids = Array.isArray(args.ids) ? args.ids : [args.ids];
+        const output: ReadOutputOptions = {
+          format: args.format ?? 'markdown',
+          jsonContent: args.jsonContent,
+          includeResolution: args.includeResolution,
+          continuation: 'cursor'
+        };
         const res = await readDocs({
           ...queryOpts,
           ids,
           sections: args.sections as SectionFilter[] | undefined,
-          maxTokens: args.maxTokens
+          maxTokens: args.maxTokens,
+          cursor: args.cursor,
+          output
         });
-        return toolSuccessText(
-          args.format === 'json' ? JSON.stringify(res, null, 2) : formatReadMarkdown(res)
-        );
+        return toolSuccessText(formatReadOutput(res, output));
       } catch (err) {
         return toolErrorResult(err);
       }
@@ -541,7 +564,7 @@ export async function createAgentDocsMcpServer(
           propFilter: args.props ? args.props.join(',') : undefined
         });
         return toolSuccessText(
-          args.format === 'json' ? JSON.stringify(res, null, 2) : res.markdown
+          args.format === 'json' ? formatQueryJson(res, args.includeResolution) : res.markdown
         );
       } catch (err) {
         return toolErrorResult(err);
@@ -584,7 +607,7 @@ export async function createAgentDocsMcpServer(
             propertyFilter: args.property
           });
           return toolSuccessText(
-            args.format === 'json' ? JSON.stringify(res, null, 2) : res.markdown
+            args.format === 'json' ? formatQueryJson(res, args.includeResolution) : res.markdown
           );
         } catch (err) {
           return toolErrorResult(err);
@@ -626,7 +649,7 @@ export async function createAgentDocsMcpServer(
             illustrations: args.kind === 'illustrations'
           });
           return toolSuccessText(
-            args.format === 'json' ? JSON.stringify(res, null, 2) : res.markdown
+            args.format === 'json' ? formatQueryJson(res, args.includeResolution) : res.markdown
           );
         } catch (err) {
           return toolErrorResult(err);

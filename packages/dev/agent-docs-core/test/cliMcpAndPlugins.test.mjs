@@ -49,6 +49,9 @@ test('CLI reads the full ComboBox documentation by default and with --sections a
   const read = (...args) => run('read', 's2:ComboBox', ...args);
   const markdown = read();
   assert.equal(markdown, read('--sections', 'all'));
+  const filtered = read('--sections', 'usage,api');
+  assert.ok(Buffer.byteLength(filtered) <= Buffer.byteLength(markdown));
+  assert.equal([...filtered.matchAll(/^## API$/gm)].length, 1);
   assert.match(markdown, /<ComboBoxSection/);
   assert.match(markdown, /onLoadMore=\{list\.loadMore\}/);
   assert.match(markdown, /### `ComboBoxItem/);
@@ -61,6 +64,92 @@ test('CLI reads the full ComboBox documentation by default and with --sections a
     assert.ok(section, `Expected the ComboBox usage section ${heading}`);
     assert.ok(markdown.includes(section.markdown), `Expected the full content for ${heading}`);
   }
+});
+
+test('CLI budgets rendered Markdown and resumes filtered reads without repeating content', t => {
+  const run = currentCli(t);
+  const args = ['read', 's2:ComboBox', '--sections', 'usage,api'];
+  const first = run(...args, '--max-tokens', '3000');
+  assert.ok(Buffer.byteLength(first) <= 3000 * 4);
+  assert.match(first, /Star Wars Character Lookup/);
+  const cursor = first.match(/--cursor ([\w.]+)/)?.[1];
+  assert.ok(cursor);
+  const rest = run(...args, '--cursor', cursor);
+  assert.match(rest, /### `ComboBoxItem/);
+  assert.doesNotMatch(rest, /Star Wars Character Lookup|^## Imports$/m);
+
+  const full = JSON.parse(run(...args, '--json'));
+  assert.ok(full.results[0].entry);
+  assert.equal(full.results[0].markdown, undefined);
+  assert.equal(full.resolution, undefined);
+  const boundedArgs = [...args, '--json', '--json-content', 'markdown', '--include-resolution'];
+  const boundedRaw = run(...boundedArgs, '--max-tokens', '3000');
+  assert.ok(Buffer.byteLength(boundedRaw) <= 3000 * 4);
+  const bounded = JSON.parse(boundedRaw);
+  const page = bounded.results[0];
+  assert.ok(bounded.resolution.packages['@react-spectrum/s2']);
+  assert.ok(page.markdown);
+  assert.equal(page.entry, undefined);
+
+  const seen = new Set();
+  let current = page;
+  for (let i = 0; i < 25; i++) {
+    for (const id of current.includedSections) {
+      assert.ok(!seen.has(id), `Repeated section ${id}`);
+      seen.add(id);
+    }
+    if (!current.nextCursor) {
+      break;
+    }
+    const raw = run(...boundedArgs, '--max-tokens', '3000', '--cursor', current.nextCursor);
+    assert.ok(Buffer.byteLength(raw) <= 3000 * 4);
+    current = JSON.parse(raw).results[0];
+  }
+  assert.equal(current.truncated, false);
+  assert.deepEqual([...seen], full.results[0].includedSections);
+  assert.throws(
+    () => run('read', 's2:ComboBox', '--cursor', cursor, '--json'),
+    err => err.status === 2 && /does not match/.test(JSON.parse(err.stdout).error.message)
+  );
+});
+
+test('CLI reports missing auxiliary slices only when relevant to the query', t => {
+  const run = currentCli(t);
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-cli-warnings-'));
+  t.after(() => fs.rmSync(cwd, {recursive: true, force: true}));
+  const stalePackage = path.join(cwd, 'node_modules', 'react-stately');
+  fs.mkdirSync(stalePackage, {recursive: true});
+  fs.writeFileSync(
+    path.join(cwd, 'package.json'),
+    JSON.stringify({name: 'app', dependencies: {'react-stately': '1.0.0'}})
+  );
+  fs.writeFileSync(
+    path.join(stalePackage, 'package.json'),
+    '{"name":"react-stately","version":"1.0.0"}'
+  );
+  const opts = ['--cwd', cwd, '--version', '@react-spectrum/s2@latest', '--json'];
+  for (const args of [
+    ['read', 's2:Button'],
+    ['search', 'Button'],
+    ['search', 'Button', '--library', 's2'],
+    ['tokens', '--property', 'gap'],
+    ['icons', 'Edit']
+  ]) {
+    const payload = JSON.parse(run(...args, ...opts));
+    assert.ok(!payload.warnings.some(w => w.code === 'WARN_AUX_PACKAGE_SLICE_UNAVAILABLE'));
+  }
+  const resolve = JSON.parse(run('resolve', ...opts));
+  assert.ok(
+    resolve.warnings.some(
+      w => w.packageName === 'react-stately' && w.code === 'WARN_AUX_PACKAGE_SLICE_UNAVAILABLE'
+    )
+  );
+  const search = JSON.parse(run('search', 'collection', '--library', 'react-stately', ...opts));
+  assert.ok(
+    search.warnings.some(
+      w => w.packageName === 'react-stately' && w.code === 'WARN_AUX_PACKAGE_SLICE_UNAVAILABLE'
+    )
+  );
 });
 
 test('CLI preserves API signatures and examples from real hook and class pages', t => {
@@ -183,18 +272,16 @@ test('CLI follow-up commands preserve version and workspace options', () => {
       `spectrum api rac:Select ${workspaceFlags} ${cacheFlags}`
     ]);
 
-    for (const args of [
-      ['--sections', 'usage'],
-      ['--max-tokens', '4000']
-    ]) {
-      const {
-        results: [item]
-      } = JSON.parse(run('read', 's2:ComboBox', '--snapshot', 'test-current', ...args));
-      assert.equal(
-        item.continueCommand,
-        `spectrum read s2:ComboBox --sections all ${workspaceFlags} --snapshot test-current ${cacheFlags}`
-      );
-    }
+    const {
+      results: [item]
+    } = JSON.parse(
+      run('read', 's2:ComboBox', '--snapshot', 'test-current', '--max-tokens', '3000')
+    );
+    assert.ok(item.nextCursor);
+    assert.equal(
+      item.continueCommand,
+      `spectrum read s2:ComboBox --cursor ${item.nextCursor} --max-tokens 3000 --json ${workspaceFlags} --snapshot test-current ${cacheFlags}`
+    );
   } finally {
     fs.rmSync(tmpDir, {recursive: true, force: true});
   }
@@ -320,15 +407,15 @@ test('CLI handles partial-batch resilience (exit code 0 with valid entries prese
     const boundedJson = JSON.parse(boundedRaw);
     assert.ok(Math.ceil(Buffer.byteLength(boundedRaw) / 4) <= 6000);
     assert.ok(
-      boundedJson.results.some(r => r.truncated && r.continueCommand?.includes('--sections')),
-      'Expected truncated result with actionable --sections continueCommand'
+      boundedJson.results.some(r => r.truncated && r.continueCommand?.includes('--cursor')),
+      'Expected truncated result with an actionable cursor'
     );
     for (const result of boundedJson.results) {
       assert.ok(
         result.includedSections.every(section => !result.omittedSections.includes(section))
       );
-      if (result.omittedSections.includes('api')) {
-        assert.equal(result.entry.exports.length, 0);
+      for (const exp of result.entry.exports) {
+        assert.ok(result.includedSections.includes(`api:${exp.name}`));
       }
     }
     const singleBoundedRaw = execFileSync(
@@ -487,7 +574,7 @@ test('every CLI command documented in the generated SKILL.md files parses and ru
             guidance.entry.sections.length > 0,
             'Skill must include implementation guidance sections'
           );
-          assert.match(guidance.markdown, /Styling/);
+          assert.ok(guidance.entry.sections.some(section => section.heading === 'Styling'));
         }
         count++;
       }
@@ -583,7 +670,30 @@ test('MCP v2 servers support roots/list workspace discovery, reusable resolution
     });
     assert.ok(!boundedRes.isError, boundedRes.content?.[0]?.text);
     assert.ok(Math.ceil(Buffer.byteLength(boundedRes.content[0].text) / 4) <= 4000);
-    assert.equal(JSON.parse(boundedRes.content[0].text).results[0].truncated, true);
+    const firstPage = JSON.parse(boundedRes.content[0].text);
+    const firstItem = firstPage.results[0];
+    assert.equal(firstPage.resolution, undefined);
+    assert.equal(firstItem.markdown, undefined);
+    assert.ok(firstItem.nextCursor);
+    const resumedRes = await client.callTool({
+      name: 'read_docs',
+      arguments: {
+        ids: ['rac:ComboBox'],
+        cursor: firstItem.nextCursor,
+        format: 'json',
+        jsonContent: 'markdown',
+        includeResolution: true,
+        resolution: resolvedState
+      }
+    });
+    assert.ok(!resumedRes.isError, resumedRes.content?.[0]?.text);
+    const resumedPage = JSON.parse(resumedRes.content[0].text);
+    const resumedItem = resumedPage.results[0];
+    assert.deepEqual(resumedPage.resolution, resolvedState);
+    assert.ok(resumedItem.markdown);
+    assert.equal(resumedItem.entry, undefined);
+    assert.equal(resumedItem.truncated, false);
+    assert.ok(resumedItem.includedSections.every(id => !firstItem.includedSections.includes(id)));
 
     // Malformed or conflicting `resolution` arguments are rejected with a clear error
     await assert.rejects(

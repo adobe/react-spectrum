@@ -95,7 +95,12 @@ export function formatReadMarkdown(result: ReadDocsResult): string {
 
   for (const item of result.results) {
     if (item.ok) {
-      blocks.push(item.markdown.trimEnd());
+      const continuation = item.continueCommand
+        ? `\n\n> Continue with \`${item.continueCommand}\`.`
+        : item.nextCursor
+          ? `\n\n> Call read_docs for this ID with cursor \`${item.nextCursor}\` and the same options.`
+          : '';
+      blocks.push(item.markdown.trimEnd() + continuation);
     } else {
       const suggestionText =
         item.error.suggestions && item.error.suggestions.length > 0
@@ -108,6 +113,34 @@ export function formatReadMarkdown(result: ReadDocsResult): string {
   }
 
   return blocks.join('\n\n---\n\n') + '\n';
+}
+
+export interface ReadOutputOptions {
+  format: 'markdown' | 'json';
+  jsonContent?: 'entry' | 'markdown';
+  includeResolution?: boolean;
+  continuation?: 'cursor';
+}
+
+export function formatQueryJson<T extends {resolution: ResolutionState}>(
+  {resolution, ...result}: T,
+  includeResolution?: boolean
+): string {
+  return JSON.stringify(includeResolution ? {...result, resolution} : result) + '\n';
+}
+
+export function formatReadOutput(result: ReadDocsResult, options: ReadOutputOptions): string {
+  if (options.format === 'markdown') {
+    return formatReadMarkdown(result);
+  }
+  const results = result.results.map(item => {
+    if (!item.ok) {
+      return item;
+    }
+    const {entry, markdown, ...metadata} = item;
+    return options.jsonContent === 'markdown' ? {...metadata, markdown} : {...metadata, entry};
+  });
+  return formatQueryJson({...result, results}, options.includeResolution);
 }
 
 export function formatPrefetchMarkdown(result: PrefetchDocsResult): string {

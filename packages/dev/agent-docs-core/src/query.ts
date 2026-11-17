@@ -16,6 +16,7 @@ import {
   ApiDocsResult,
   BrandId,
   CatalogEntryIR,
+  CatalogSectionIR,
   CliCapabilityManifest,
   CommonQueryOptions,
   DocWarning,
@@ -48,6 +49,8 @@ import {
   readSliceSearchIndex,
   resolveDefaultCacheDir
 } from './cache.js';
+import {createHash} from 'node:crypto';
+import {formatReadOutput, ReadOutputOptions} from './format.js';
 import {LIBRARY_TO_PACKAGES, resolveWorkspace} from './resolver.js';
 import path from 'node:path';
 
@@ -296,6 +299,16 @@ function formatFollowUpFlags(options: CommonQueryOptions, resolution: Resolution
   ].join(' ');
 }
 
+function warningsForPackages(
+  resolution: ResolutionState,
+  packages: Iterable<string>
+): DocWarning[] {
+  const selected = new Set(packages);
+  return resolution.warnings.filter(
+    warning => !warning.packageName || selected.has(warning.packageName)
+  );
+}
+
 export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocsResult> {
   const query = String(options.query || '').trim();
   if (!query) {
@@ -385,7 +398,12 @@ export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocs
     libraryFilter: options.library || null,
     snapshots: collectEnvelopeSnapshots(index, usedSnapshots),
     resolution,
-    warnings: [...resolution.warnings],
+    warnings: warningsForPackages(
+      resolution,
+      options.library
+        ? candidatePackagesForLookup(options.library, '')
+        : Object.keys(resolution.packages)
+    ),
     results: topHits
   };
 }
@@ -394,31 +412,56 @@ function estimateTokens(text: string): number {
   return Math.ceil(Buffer.byteLength(text, 'utf8') / 4);
 }
 
-function renderReadEntry(entry: CatalogEntryIR): string {
+type ReadChunk = {id: string; section: CatalogSectionIR} | {id: string; apiExport: ExportApiIR};
+
+function isApiHeading(section: CatalogSectionIR): boolean {
+  return section.id === 'api' && (section.level ?? 2) === 2;
+}
+
+function getReadChunks(entry: CatalogEntryIR): ReadChunk[] {
+  const chunks: ReadChunk[] = entry.sections.map(section => ({id: section.id, section}));
+  const apiHeading = entry.sections.findIndex(isApiHeading);
+  const nextHeading =
+    apiHeading < 0
+      ? -1
+      : entry.sections.findIndex((section, i) => i > apiHeading && (section.level ?? 2) === 2);
+  chunks.splice(
+    nextHeading < 0 ? chunks.length : nextHeading,
+    0,
+    ...entry.exports.map(apiExport => ({id: `api:${apiExport.name}`, apiExport}))
+  );
+  return chunks;
+}
+
+function renderReadEntry(entry: CatalogEntryIR, chunks: ReadChunk[]): string {
   const lines = [
     `# ${entry.title} (\`${entry.id}\`)`,
-    `Package: \`${entry.packageName}@${entry.packageVersion}\``,
-    '',
-    entry.summary
+    `Package: \`${entry.packageName}@${entry.packageVersion}\``
   ];
+  if (entry.summary) {
+    lines.push('', entry.summary);
+  }
   if (entry.imports.length > 0) {
     lines.push('', '## Imports', '```tsx', ...entry.imports, '```');
   }
   if (entry.compositionRules.length > 0) {
     lines.push('', '## Implementation Rules', ...entry.compositionRules.map(rule => `- ${rule}`));
   }
-  for (const section of entry.sections) {
-    lines.push(
-      '',
-      `${'#'.repeat(Math.max(2, section.level ?? 2))} ${section.heading}`,
-      '',
-      section.markdown
-    );
-  }
-  if (entry.exports.length > 0) {
-    lines.push('', '## API');
-    for (const exp of entry.exports) {
-      lines.push('', renderDetailedExportMarkdown(exp, 3));
+  let hasApiHeading = false;
+  for (const chunk of chunks) {
+    if ('section' in chunk) {
+      const {section} = chunk;
+      const level = Math.max(2, section.level ?? 2);
+      lines.push('', `${'#'.repeat(level)} ${section.heading}`, '', section.markdown);
+      if (level === 2) {
+        hasApiHeading = isApiHeading(section);
+      }
+    } else {
+      if (!hasApiHeading) {
+        lines.push('', '## API');
+        hasApiHeading = true;
+      }
+      lines.push('', renderDetailedExportMarkdown(chunk.apiExport, 3));
     }
   }
   return lines.join('\n').trim() + '\n';
@@ -442,88 +485,59 @@ function filterEntryBySections(
   };
 }
 
-function getIncludedSections(entry: CatalogEntryIR): string[] {
-  return [
-    ...new Set([...entry.sections.map(sec => sec.id), ...(entry.exports.length > 0 ? ['api'] : [])])
-  ];
+type ReadSuccess = Extract<ReadItemResult, {ok: true}>;
+
+interface ReadPage {
+  start: number;
+  end: number;
+  project: (end: number) => ReadSuccess;
 }
 
 function boundReadResult(
   result: ReadDocsResult,
+  pages: Map<number, ReadPage>,
   maxTokens: number,
-  continueRead: (id: string) => string
+  output?: ReadOutputOptions
 ): void {
-  const outputTokens = () => estimateTokens(JSON.stringify(result, null, 2) + '\n');
+  const outputTokens = () =>
+    estimateTokens(
+      output ? formatReadOutput(result, output) : JSON.stringify(result, null, 2) + '\n'
+    );
   if (outputTokens() <= maxTokens) {
     return;
   }
 
-  const originals = [...result.results];
-  type ReadSuccess = Extract<ReadItemResult, {ok: true}>;
-  const project = (original: ReadSuccess, entry: CatalogEntryIR): ReadSuccess => {
-    const includedSections = getIncludedSections(entry);
-    const omittedSections = [
-      ...original.omittedSections,
-      ...original.includedSections.filter(id => !includedSections.includes(id))
-    ];
-    const truncated =
-      entry.sections.length < original.entry.sections.length ||
-      entry.exports.length < original.entry.exports.length;
-    const continueCommand = omittedSections.length > 0 ? continueRead(entry.id) : undefined;
-    return {
-      ...original,
-      entry,
-      markdown:
-        renderReadEntry(entry) +
-        (truncated ? `\n> Output truncated. Run \`${continueCommand}\` for full content.\n` : ''),
-      includedSections,
-      omittedSections,
-      truncated,
-      continueCommand
-    };
-  };
-  // Reserve the complete serialized envelope, including provenance and continuation metadata.
-  result.results = originals.map(item =>
-    item.ok ? project(item, {...item.entry, sections: [], exports: []}) : item
-  );
-  const minimumTokens = outputTokens();
-  if (minimumTokens > maxTokens) {
-    throw new AgentDocsError(
+  const budgetError = (required: number, subject: string) =>
+    new AgentDocsError(
       'ERR_INVALID_ARGS',
-      `The token budget ${maxTokens} is too small for document metadata and provenance (requires at least ${minimumTokens}). Increase --max-tokens or request fewer entries.`,
+      `The token budget ${maxTokens} is too small for ${subject} (requires at least ${required}). Increase --max-tokens or request fewer entries.`,
       EXIT_CODES.INVALID_ARGS
     );
-  }
-  const successCount = originals.filter(item => item.ok).length;
-  const extraTokensPerEntry = Math.floor((maxTokens - minimumTokens) / Math.max(1, successCount));
 
-  for (const [i, original] of originals.entries()) {
+  for (const [i, page] of pages) {
+    result.results[i] = page.project(page.start);
+  }
+  const minimumTokens = outputTokens();
+  if (minimumTokens > maxTokens) {
+    throw budgetError(minimumTokens, 'the response metadata');
+  }
+
+  let remainingPages = pages.size;
+  for (const [i, page] of pages) {
+    const entryLimit = outputTokens() + Math.floor((maxTokens - outputTokens()) / remainingPages--);
     let current = result.results[i];
-    if (!original.ok || !current.ok) {
-      continue;
-    }
-    const entryLimit = outputTokens() + extraTokensPerEntry;
-    const apiSections = original.entry.sections.filter(section => section.category === 'api');
-    const candidates = [
-      ...original.entry.sections
-        .filter(section => section.category !== 'api')
-        .map(section => ({sections: [section], exports: []})),
-      ...(original.entry.exports.length > 0 || apiSections.length > 0
-        ? [{sections: apiSections, exports: original.entry.exports}]
-        : [])
-    ];
-    for (const candidate of candidates) {
-      const next = project(original, {
-        ...current.entry,
-        sections: [...current.entry.sections, ...candidate.sections],
-        exports: candidate.exports.length > 0 ? candidate.exports : current.entry.exports
-      });
+    for (let end = page.start + 1; end <= page.end; end++) {
+      const next = page.project(end);
       result.results[i] = next;
-      if (outputTokens() <= entryLimit) {
-        current = next;
-      } else {
+      const tokens = outputTokens();
+      if (tokens > entryLimit) {
         result.results[i] = current;
+        if (pages.size === 1 && end === page.start + 1) {
+          throw budgetError(tokens, 'the next section or API export');
+        }
+        break;
       }
+      current = next;
     }
   }
 }
@@ -532,6 +546,8 @@ export interface ReadDocsOptions extends CommonQueryOptions {
   ids: string[];
   sections?: SectionFilter[];
   maxTokens?: number;
+  cursor?: string;
+  output?: ReadOutputOptions;
   cliCommandPrefix?: string;
 }
 
@@ -549,6 +565,24 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     );
   }
 
+  if (options.cursor !== undefined && (ids.length !== 1 || !options.cursor)) {
+    throw new AgentDocsError(
+      'ERR_INVALID_ARGS',
+      'Provide a non-empty cursor with exactly one document ID.',
+      EXIT_CODES.INVALID_ARGS
+    );
+  }
+  if (
+    options.maxTokens !== undefined &&
+    (!Number.isSafeInteger(options.maxTokens) || options.maxTokens < 1)
+  ) {
+    throw new AgentDocsError(
+      'ERR_INVALID_ARGS',
+      'maxTokens must be a positive safe integer.',
+      EXIT_CODES.INVALID_ARGS
+    );
+  }
+
   const index = await loadSnapshotIndex({
     cacheDir: options.cacheDir,
     snapshotSource: options.snapshotSource,
@@ -559,8 +593,18 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
   const cliPrefix =
     options.cliCommandPrefix || (defaultLibrary === 'rac' ? 'react-aria' : 'spectrum');
   const followUpFlags = formatFollowUpFlags(options, resolution);
-  const continueRead = (id: string) =>
-    `${cliPrefix} read ${quoteShellArg(id)} --sections all ${followUpFlags}`;
+  const sections =
+    options.sections?.length && !options.sections.includes('all')
+      ? [...new Set(options.sections)].sort()
+      : undefined;
+  const continuationFlags = [
+    ...(sections ? ['--sections', sections.join(',')] : []),
+    ...(options.maxTokens === undefined ? [] : ['--max-tokens', String(options.maxTokens)]),
+    ...(options.output?.format === 'json' ? ['--json'] : []),
+    ...(options.output?.jsonContent === 'markdown' ? ['--json-content', 'markdown'] : []),
+    ...(options.output?.includeResolution ? ['--include-resolution'] : []),
+    followUpFlags
+  ].join(' ');
 
   const sliceCache = new Map<string, string>();
   const getSliceDir = async (prov: ResolvedPackageProvenance) => {
@@ -573,7 +617,8 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
 
   const results: ReadItemResult[] = [];
   const usedSnapshots = new Set<string>();
-  const warnings: DocWarning[] = [...resolution.warnings];
+  const pages = new Map<number, ReadPage>();
+  const relevantPackages = new Set<string>();
   for (const requestedId of ids) {
     const {library, slug} = parseQualifiedId(requestedId, defaultLibrary, resolution);
     if (!isSafeEntrySlug(slug)) {
@@ -654,6 +699,9 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     }
 
     if (!matchedData) {
+      for (const pkg of candidatePkgs) {
+        relevantPackages.add(pkg);
+      }
       const primaryPkg = candidatePkgs[0];
       const prov = resolution.packages[primaryPkg];
       const versionNote = prov
@@ -671,33 +719,80 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
       continue;
     }
 
-    usedSnapshots.add(matchedData.prov.snapshotId);
-    const entry = filterEntryBySections(matchedData.entry, options.sections);
-    const includedSections = getIncludedSections(entry);
-    const omittedSections = getIncludedSections(matchedData.entry).filter(
-      id => !includedSections.includes(id)
-    );
+    const {entry: fullEntry, prov} = matchedData;
+    usedSnapshots.add(prov.snapshotId);
+    relevantPackages.add(prov.packageName);
+    const entry = filterEntryBySections(fullEntry, sections);
+    const chunks = getReadChunks(entry);
+    const selectedIds = new Set(chunks.map(chunk => chunk.id));
+    const filteredIds = getReadChunks(fullEntry)
+      .map(chunk => chunk.id)
+      .filter(id => !selectedIds.has(id));
+    const cursorKey = createHash('sha256')
+      .update(JSON.stringify([entry.id, prov.snapshotId, prov.sliceSha256, sections]))
+      .digest('hex')
+      .slice(0, 20);
+    const [offset] = options.cursor?.split('.', 1) ?? [];
+    const start = Number(offset ?? 0);
+    if (
+      options.cursor !== undefined &&
+      (options.cursor !== `${start}.${cursorKey}` ||
+        !Number.isSafeInteger(start) ||
+        start < 0 ||
+        start >= chunks.length)
+    ) {
+      throw new AgentDocsError(
+        'ERR_INVALID_ARGS',
+        'This cursor does not match the document, snapshot, or section selection. Start a new read or use the original options.',
+        EXIT_CODES.INVALID_ARGS
+      );
+    }
 
-    results.push({
-      requestedId,
-      ok: true,
-      id: matchedData.entry.id,
-      provenance: {
-        packageName: matchedData.prov.packageName,
-        packageVersion: matchedData.prov.packageVersion,
-        snapshotId: matchedData.prov.snapshotId,
-        exactMatch: matchedData.prov.exactMatch,
-        sourceUrl: matchedData.entry.sourceUrl
-      },
-      entry,
-      markdown: renderReadEntry(entry),
-      includedSections,
-      omittedSections,
-      truncated: false,
-      continueCommand: omittedSections.length > 0 ? continueRead(entry.id) : undefined
-    });
+    const header =
+      options.cursor === undefined
+        ? entry
+        : {...entry, summary: '', imports: [], compositionRules: []};
+    const project = (end: number): ReadSuccess => {
+      const selected = chunks.slice(start, end);
+      const pageEntry = {
+        ...header,
+        sections: selected.flatMap(chunk => ('section' in chunk ? [chunk.section] : [])),
+        exports: selected.flatMap(chunk => ('apiExport' in chunk ? [chunk.apiExport] : []))
+      };
+      const truncated = end < chunks.length;
+      const nextCursor = truncated ? `${end}.${cursorKey}` : undefined;
+      return {
+        requestedId,
+        ok: true,
+        id: entry.id,
+        provenance: {
+          packageName: prov.packageName,
+          packageVersion: prov.packageVersion,
+          snapshotId: prov.snapshotId,
+          exactMatch: prov.exactMatch,
+          sourceUrl: entry.sourceUrl
+        },
+        entry: pageEntry,
+        markdown: renderReadEntry(pageEntry, selected),
+        includedSections: [...new Set(selected.map(chunk => chunk.id))],
+        omittedSections: [
+          ...new Set([...filteredIds, ...chunks.slice(end).map(chunk => chunk.id)])
+        ],
+        truncated,
+        nextCursor,
+        continueCommand:
+          nextCursor && options.output?.continuation !== 'cursor'
+            ? `${cliPrefix} read ${quoteShellArg(entry.id)} --cursor ${nextCursor} ${continuationFlags}`
+            : undefined
+      };
+    };
+    if (start < chunks.length) {
+      pages.set(results.length, {start, end: chunks.length, project});
+    }
+    results.push(project(chunks.length));
   }
 
+  const warnings = warningsForPackages(resolution, relevantPackages);
   const okCount = results.filter(r => r.ok).length;
   const failCount = results.length - okCount;
   if (okCount > 0 && failCount > 0) {
@@ -715,14 +810,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     results
   };
   if (options.maxTokens !== undefined) {
-    if (!Number.isSafeInteger(options.maxTokens) || options.maxTokens < 1) {
-      throw new AgentDocsError(
-        'ERR_INVALID_ARGS',
-        'maxTokens must be a positive safe integer.',
-        EXIT_CODES.INVALID_ARGS
-      );
-    }
-    boundReadResult(result, options.maxTokens, continueRead);
+    boundReadResult(result, pages, options.maxTokens, options.output);
   }
   return result;
 }
@@ -1044,7 +1132,7 @@ export async function queryTokens(options: QueryTokensOptions = {}): Promise<Tok
     },
     snapshots: collectEnvelopeSnapshots(index, [s2Prov.snapshotId]),
     resolution,
-    warnings: [...resolution.warnings],
+    warnings: warningsForPackages(resolution, [s2Prov.packageName]),
     properties: matchedProps,
     markdown: mdLines.join('\n').trim() + '\n'
   };
@@ -1159,7 +1247,7 @@ export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsR
     },
     snapshots: collectEnvelopeSnapshots(index, [s2Prov.snapshotId]),
     resolution,
-    warnings: [...resolution.warnings],
+    warnings: warningsForPackages(resolution, [s2Prov.packageName]),
     matches: sortedMatches,
     importExample,
     markdown: mdLines.join('\n').trim() + '\n'
@@ -1225,22 +1313,34 @@ export function getCapabilityManifest(
       summary:
         'Search components, hooks, patterns, and guides matched to workspace package versions.',
       usage: `${cliName} search <query> [--library s2|rac|react-aria|internationalized] [--limit N] [--json]`,
-      flags: ['--cwd', '--library', '--limit', '--version', '--snapshot', '--offline', '--json']
+      flags: [
+        '--cwd',
+        '--library',
+        '--limit',
+        '--version',
+        '--snapshot',
+        '--offline',
+        '--json',
+        '--include-resolution'
+      ]
     },
     {
       name: 'read',
       summary:
         'Read compact usage, anatomy, styling, accessibility, and API docs for one or more IDs in a single call.',
-      usage: `${cliName} read <id...> [--sections usage,api,accessibility,styling,testing,guide,all] [--max-tokens N] [--json]`,
+      usage: `${cliName} read <id...> [--sections usage,api,accessibility,styling,testing,guide,all] [--max-tokens N] [--cursor value] [--json [--json-content entry|markdown]]`,
       flags: [
         '--cwd',
         '--sections',
         '--max-tokens',
+        '--cursor',
         '--version',
         '--snapshot',
         '--strict-version',
         '--offline',
-        '--json'
+        '--json',
+        '--json-content',
+        '--include-resolution'
       ]
     },
     {
@@ -1257,7 +1357,8 @@ export function getCapabilityManifest(
         '--version',
         '--snapshot',
         '--offline',
-        '--json'
+        '--json',
+        '--include-resolution'
       ]
     },
     ...(isS2
@@ -1266,13 +1367,29 @@ export function getCapabilityManifest(
             name: 'tokens',
             summary: 'Query S2 style macro properties and allowed design token values.',
             usage: `${cliName} tokens [query] [--property name] [--json]`,
-            flags: ['--cwd', '--property', '--version', '--snapshot', '--offline', '--json']
+            flags: [
+              '--cwd',
+              '--property',
+              '--version',
+              '--snapshot',
+              '--offline',
+              '--json',
+              '--include-resolution'
+            ]
           },
           {
             name: 'icons',
             summary: 'Search S2 workflow icons and linear illustrations by name or alias.',
             usage: `${cliName} icons <term...> [--illustrations] [--json]`,
-            flags: ['--cwd', '--illustrations', '--version', '--snapshot', '--offline', '--json']
+            flags: [
+              '--cwd',
+              '--illustrations',
+              '--version',
+              '--snapshot',
+              '--offline',
+              '--json',
+              '--include-resolution'
+            ]
           }
         ]
       : []),
@@ -1288,7 +1405,7 @@ export function getCapabilityManifest(
       summary:
         'Download and SHA-256 verify documentation slices for the workspace into the user cache for offline/CI use.',
       usage: `${cliName} prefetch [--cwd path] [--cache-dir dir] [--json]`,
-      flags: ['--cwd', '--cache-dir', '--version', '--snapshot', '--json']
+      flags: ['--cwd', '--cache-dir', '--version', '--snapshot', '--json', '--include-resolution']
     },
     {
       name: 'manifest',

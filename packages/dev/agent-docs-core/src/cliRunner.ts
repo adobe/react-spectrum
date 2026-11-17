@@ -21,9 +21,11 @@ import {
 } from './types.js';
 import {
   formatPrefetchMarkdown,
-  formatReadMarkdown,
+  formatQueryJson,
+  formatReadOutput,
   formatResolutionMarkdown,
-  formatSearchMarkdown
+  formatSearchMarkdown,
+  ReadOutputOptions
 } from './format.js';
 import {
   getCapabilityManifest,
@@ -58,9 +60,10 @@ function renderHelpText(brand: BrandId, version: string): string {
     '  --version <spec>         Override package version (e.g. 1.2.0, latest, @react-spectrum/s2@1.2.0)'
   );
   lines.push('  --snapshot <id>          Pin an exact immutable snapshot ID');
-  lines.push(
-    '  --max-tokens <N>         Bound read output, including JSON metadata (~4 UTF-8 bytes/token)'
-  );
+  lines.push('  --max-tokens <N>         Bound rendered read output (~4 UTF-8 bytes/token)');
+  lines.push('  --cursor <value>         Resume a truncated read for one document');
+  lines.push('  --json-content <type>    Read JSON content: entry (default) or markdown');
+  lines.push('  --include-resolution    Include full workspace resolution in JSON output');
   lines.push(
     '  --strict-version         Fail instead of warning when an unverified patch falls back to same-minor'
   );
@@ -188,6 +191,9 @@ export async function runAgentDocsCli(
         cwd: {type: 'string'},
         library: {type: 'string'},
         sections: {type: 'string'},
+        cursor: {type: 'string'},
+        'json-content': {type: 'string'},
+        'include-resolution': {type: 'boolean'},
         'max-tokens': {type: 'string'},
         limit: {type: 'string'},
         prop: {type: 'string'},
@@ -229,6 +235,20 @@ export async function runAgentDocsCli(
       snapshotOverride: parsed.values.snapshot,
       defaultLibrary
     };
+    const includeResolution = parsed.values['include-resolution'];
+    const jsonContent = parsed.values['json-content'];
+    if (
+      jsonContent !== undefined &&
+      (subcommand !== 'read' ||
+        !wantJson ||
+        (jsonContent !== 'entry' && jsonContent !== 'markdown'))
+    ) {
+      throw new AgentDocsError(
+        'ERR_INVALID_ARGS',
+        '--json-content must be entry or markdown and requires read --json.',
+        EXIT_CODES.INVALID_ARGS
+      );
+    }
 
     if (brand !== 's2' && (subcommand === 'tokens' || subcommand === 'icons')) {
       throw new AgentDocsError(
@@ -280,7 +300,7 @@ export async function runAgentDocsCli(
           cliCommandPrefix
         });
         if (wantJson) {
-          writeOut(JSON.stringify(result, null, 2) + '\n');
+          writeOut(formatQueryJson(result, includeResolution));
         } else {
           writeOut(formatSearchMarkdown(result));
         }
@@ -289,18 +309,21 @@ export async function runAgentDocsCli(
 
       case 'read': {
         const maxTokens = parseIntegerArg('--max-tokens', parsed.values['max-tokens'], 1);
+        const output: ReadOutputOptions = {
+          format: wantJson ? 'json' : 'markdown',
+          jsonContent,
+          includeResolution
+        };
         const result = await readDocs({
           ...common,
           ids: restPositionals,
           sections: parseSectionsArg(parsed.values.sections),
           maxTokens,
+          cursor: parsed.values.cursor,
+          output,
           cliCommandPrefix
         });
-        if (wantJson) {
-          writeOut(JSON.stringify(result, null, 2) + '\n');
-        } else {
-          writeOut(formatReadMarkdown(result));
-        }
+        writeOut(formatReadOutput(result, output));
         const anyOk = result.results.some(r => r.ok);
         return anyOk ? EXIT_CODES.OK : EXIT_CODES.NOT_FOUND;
       }
@@ -323,7 +346,7 @@ export async function runAgentDocsCli(
           renderPropsOnly: Boolean(parsed.values['render-props'])
         });
         if (wantJson) {
-          writeOut(JSON.stringify(result, null, 2) + '\n');
+          writeOut(formatQueryJson(result, includeResolution));
         } else {
           writeOut(result.markdown);
         }
@@ -338,7 +361,7 @@ export async function runAgentDocsCli(
           propertyFilter: parsed.values.property
         });
         if (wantJson) {
-          writeOut(JSON.stringify(result, null, 2) + '\n');
+          writeOut(formatQueryJson(result, includeResolution));
         } else {
           writeOut(result.markdown);
         }
@@ -352,7 +375,7 @@ export async function runAgentDocsCli(
           illustrations: Boolean(parsed.values.illustrations)
         });
         if (wantJson) {
-          writeOut(JSON.stringify(result, null, 2) + '\n');
+          writeOut(formatQueryJson(result, includeResolution));
         } else {
           writeOut(result.markdown);
         }
@@ -362,7 +385,7 @@ export async function runAgentDocsCli(
       case 'prefetch': {
         const result = await prefetchDocs(common);
         if (wantJson) {
-          writeOut(JSON.stringify(result, null, 2) + '\n');
+          writeOut(formatQueryJson(result, includeResolution));
         } else {
           writeOut(formatPrefetchMarkdown(result));
         }

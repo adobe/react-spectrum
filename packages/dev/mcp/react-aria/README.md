@@ -107,8 +107,10 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 | --- | --- | --- |
 | `resolve_versions` | `{ cwd?: string, version?: string, snapshot?: string }` | Resolve exact installed/lockfile `react-aria-components`, `react-aria`, `react-stately`, and `@internationalized/*` package versions and return a reusable `resolution` context. |
 | `search_docs` | `{ query: string, cwd?: string, resolution?: object, library?: string, version?: string, snapshot?: string, limit?: number }` | Search version-matched React Aria Components, hooks, guides, and patterns (defaults to ranking React Aria first). |
-| `read_docs` | `{ ids: string \| string[], sections?: string[], maxTokens?: number, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Batch-read multiple version-matched components, hooks, or guides in a single call with per-entry provenance and partial-batch resilience. |
+| `read_docs` | `{ ids: string \| string[], sections?: string[], maxTokens?: number, cursor?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Batch-read multiple version-matched components, hooks, or guides in a single call with per-entry provenance and partial-batch resilience. |
 | `get_component_api` | `{ target: string, prop?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Inspect structured TypeScript API definitions (props, events, render props, generics, overloads) for a React Aria component or hook. |
+
+`read_docs` measures `maxTokens` against the selected output format. To resume a truncated read, pass its `nextCursor` as `cursor` with that document ID and the same section and version options. Set `format: "json"` for a structured entry, or add `jsonContent: "markdown"` to receive rendered Markdown in the JSON envelope. Query tools accept `includeResolution: true` to include the full resolution in JSON output.
 
 The server also exposes the evergreen CLI-first skill via MCP resource `skills://react-aria/SKILL.md` (`SEP-2640`) and discovers workspace roots via MCP `roots/list` (or `--cwd <dir>`).
 
