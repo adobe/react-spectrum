@@ -19,7 +19,17 @@ import {
   SliderThumbRenderProps,
   SliderTrack
 } from 'react-aria-components/Slider';
-import {Children, createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
+import {
+  Children,
+  createContext,
+  forwardRef,
+  Fragment,
+  isValidElement,
+  ReactNode,
+  RefObject,
+  useContext,
+  useRef
+} from 'react';
 import {ContextValue} from 'react-aria-components/slots';
 import {
   controlFont,
@@ -414,6 +424,15 @@ export let filledTrack = style<{
   translateY: '-50%'
 });
 
+function hasNonEmptyChildren(children: ReactNode): boolean {
+  return Children.toArray(children).some(child => {
+    if (isValidElement<{children?: ReactNode}>(child) && child.type === Fragment) {
+      return hasNonEmptyChildren(child.props.children);
+    }
+    return true;
+  });
+}
+
 export function SliderBase<T extends number | number[]>(
   props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>; track: ReactNode}
 ): ReactNode {
@@ -433,8 +452,7 @@ export function SliderBase<T extends number | number[]>(
     ...ariaProps
   } = props;
   let {direction} = useLocale();
-  // Ignore empty children such as `{isEditable && <SliderInput />}`.
-  let hasInput = Children.toArray(children).length > 0;
+  let hasInput = hasNonEmptyChildren(children);
 
   // oxlint-disable react/react-compiler
   return (
