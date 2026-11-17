@@ -60,7 +60,7 @@ let editableStates = [
 
 let editableCombinations = generatePowerset(
   editableStates,
-  v => v.isDisabled && (v.isEmphasized || v.value.start !== 0)
+  v => v.isDisabled && (v.isEmphasized || v.value?.start !== 0)
 );
 
 export const Editable: Story = {
