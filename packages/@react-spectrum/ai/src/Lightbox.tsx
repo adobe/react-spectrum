@@ -15,7 +15,6 @@ import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Butt
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
-import {ReactNode, useContext, useRef} from 'react';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {flushSync} from 'react-dom';
 import {FocusableElement, Key} from '@react-types/shared';
@@ -44,6 +43,7 @@ import {
   TabProps,
   TabsProps
 } from 'react-aria-components/Tabs';
+import {ReactNode, useContext, useRef} from 'react';
 import {scrollFade} from './style/style-macro' with {type: 'macro'};
 import {scrollIntoView} from 'react-aria/private/utils/scrollIntoView';
 import {useKeyboard} from 'react-aria/useKeyboard';
