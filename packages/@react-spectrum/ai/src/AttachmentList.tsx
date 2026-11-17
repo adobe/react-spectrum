@@ -42,10 +42,9 @@ import {getMimeTypeLabel, matchMimeType} from './PromptField';
 import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {keyframes, scrollFade} from './style/style-macro' with {type: 'macro'};
-import {LightboxTriggerContext} from './Lightbox';
+import {LightboxTriggerContext} from './LightboxTrigger';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
