@@ -617,6 +617,55 @@ describe('Slider', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 
+  it.each([false, true])(
+    'resets both editable range values (controlled: %s)',
+    async isControlled => {
+      function Example() {
+        let [value, setValue] = useState([20, 80]);
+        return (
+          <form data-testid="form">
+            <Slider
+              aria-label="Range"
+              defaultValue={[20, 80]}
+              value={isControlled ? value : undefined}
+              onChange={setValue}>
+              <SliderTrack>
+                <SliderThumb index={0} name="start" aria-label="Minimum" />
+                <SliderThumb index={1} name="end" aria-label="Maximum" />
+              </SliderTrack>
+              <NumberField slot="0" aria-label="Minimum">
+                <Input />
+              </NumberField>
+              <NumberField slot="1" aria-label="Maximum">
+                <Input />
+              </NumberField>
+            </Slider>
+            <button type="reset">Reset</button>
+          </form>
+        );
+      }
+
+      let {getByRole, getAllByRole, getByTestId} = render(<Example />);
+      let minInput = getByRole('textbox', {name: 'Minimum Range'});
+      let maxInput = getByRole('textbox', {name: 'Maximum Range'});
+      await user.click(minInput);
+      await user.clear(minInput);
+      await user.keyboard('40{Enter}');
+      await user.click(maxInput);
+      await user.clear(maxInput);
+      await user.keyboard('60{Enter}');
+      await user.click(getByRole('button', {name: 'Reset'}));
+
+      expect(getAllByRole('slider').map(input => input.value)).toEqual(['20', '80']);
+      expect(minInput).toHaveValue('20');
+      expect(maxInput).toHaveValue('80');
+      expect(Array.from(new FormData(getByTestId('form')).entries())).toEqual([
+        ['start', '20'],
+        ['end', '80']
+      ]);
+    }
+  );
+
   it('keeps the NumberField disabled state in sync with the thumb', () => {
     function Example({isDisabled, isThumbDisabled}) {
       return (

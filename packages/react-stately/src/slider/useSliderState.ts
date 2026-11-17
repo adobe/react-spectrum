@@ -13,7 +13,7 @@
 import {clamp, snapValueToStep} from '../utils/number';
 
 import {LabelableProps, Orientation, RangeInputBase, ValueBase} from '@react-types/shared';
-import {useCallback, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
 export interface SliderProps<T = number | number[]>
@@ -270,6 +270,13 @@ export function useSliderState<T extends number | number[]>(
   const valuesRef = useRef<number[]>(values);
   const isDraggingsRef = useRef<boolean[]>(isDraggings);
 
+  // Sync between interactions without discarding batched updates or pending drag values.
+  useEffect(() => {
+    if (!isDraggingsRef.current.some(Boolean)) {
+      valuesRef.current = values;
+    }
+  });
+
   let setValues = (values: number[]) => {
     valuesRef.current = values;
     setValuesState(values);
@@ -315,10 +322,6 @@ export function useSliderState<T extends number | number[]>(
     if (isDisabled || !isThumbEditable(index)) {
       return;
     }
-    if (dragging) {
-      valuesRef.current = values;
-    }
-
     const wasDragging = isDraggingsRef.current[index];
     isDraggingsRef.current = replaceIndex(isDraggingsRef.current, index, dragging);
     setDraggings(isDraggingsRef.current);
