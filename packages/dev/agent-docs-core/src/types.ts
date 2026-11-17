@@ -221,7 +221,7 @@ export interface S2Assets {
         }
       >
     >;
-    spacingScale: Record<string, string>;
+    spacingScale: Record<string, Array<string | number>>;
   };
 }
 

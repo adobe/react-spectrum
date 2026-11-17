@@ -49,6 +49,7 @@ import {
   resolveDefaultCacheDir
 } from './cache.js';
 import {LIBRARY_TO_PACKAGES, resolveWorkspace} from './resolver.js';
+import path from 'node:path';
 
 const QUERY_SYNONYMS: Record<string, string[]> = {
   dropdown: ['picker', 'select', 'combobox', 'menu'],
@@ -271,6 +272,30 @@ export interface SearchDocsOptions extends CommonQueryOptions {
   cliCommandPrefix?: string;
 }
 
+function quoteShellArg(value: string): string {
+  return /^[\w@%+=:,./-]+$/.test(value) ? value : `'${value.replace(/'/g, "'\\''")}'`;
+}
+
+function formatFollowUpFlags(options: CommonQueryOptions, resolution: ResolutionState): string {
+  const source = options.snapshotSource;
+  const values = {
+    '--cwd': resolution.cwd,
+    '--version': options.versionOverride,
+    '--snapshot': options.snapshotOverride,
+    '--cache-dir': options.cacheDir ? path.resolve(options.cacheDir) : undefined,
+    '--snapshot-source':
+      source && !/^(?:https?|file):\/\//i.test(source) ? path.resolve(source) : source
+  };
+  return [
+    ...Object.entries(values).flatMap(([flag, value]) =>
+      value ? [flag, quoteShellArg(value)] : []
+    ),
+    ...(options.offline ? ['--offline'] : []),
+    ...(options.strictVersion ? ['--strict-version'] : []),
+    ...(options.allowLatestFallback ? ['--allow-latest'] : [])
+  ].join(' ');
+}
+
 export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocsResult> {
   const query = String(options.query || '').trim();
   if (!query) {
@@ -290,6 +315,7 @@ export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocs
   const limit = Math.max(1, Math.min(options.limit ?? 10, 50));
   const cliPrefix =
     options.cliCommandPrefix || (options.defaultLibrary === 'rac' ? 'react-aria' : 'spectrum');
+  const followUpFlags = formatFollowUpFlags(options, resolution);
 
   const rawQueryLower = query.toLowerCase();
   const tokens = tokenizeQuery(query);
@@ -341,8 +367,10 @@ export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocs
           exactMatch: prov.exactMatch
         },
         followUpCommands: [
-          `${cliPrefix} read ${rec.id}`,
-          ...(rec.exports && rec.exports.length > 0 ? [`${cliPrefix} api ${rec.id}`] : [])
+          `${cliPrefix} read ${quoteShellArg(rec.id)} ${followUpFlags}`,
+          ...(rec.exports && rec.exports.length > 0
+            ? [`${cliPrefix} api ${quoteShellArg(rec.id)} ${followUpFlags}`]
+            : [])
         ]
       });
     }
@@ -380,72 +408,51 @@ function renderReadEntry(entry: CatalogEntryIR): string {
     lines.push('', '## Implementation Rules', ...entry.compositionRules.map(rule => `- ${rule}`));
   }
   for (const section of entry.sections) {
-    lines.push('', `## ${section.heading}`, '', section.markdown);
+    lines.push(
+      '',
+      `${'#'.repeat(Math.max(2, section.level ?? 2))} ${section.heading}`,
+      '',
+      section.markdown
+    );
   }
   if (entry.exports.length > 0) {
-    lines.push('', '## API', ...entry.exports.map(exp => renderDetailedExportMarkdown(exp)));
+    lines.push('', '## API');
+    for (const exp of entry.exports) {
+      lines.push('', renderDetailedExportMarkdown(exp, 3));
+    }
   }
   return lines.join('\n').trim() + '\n';
 }
 
 function filterEntryBySections(
   entry: CatalogEntryIR,
-  fullCanonicalMd: string,
-  requestedSections: SectionFilter[] | undefined,
-  cliPrefix: string
-): {
-  entry: CatalogEntryIR;
-  markdown: string;
-  includedSections: string[];
-  omittedSections: string[];
-  truncated: boolean;
-  continueCommand?: string;
-} {
-  const wantsAll =
-    !requestedSections || requestedSections.length === 0 || requestedSections.includes('all');
-
-  if (wantsAll) {
-    return {
-      entry,
-      markdown: fullCanonicalMd,
-      includedSections: [
-        ...new Set([...entry.sections.map(s => s.id), ...(entry.exports.length > 0 ? ['api'] : [])])
-      ],
-      omittedSections: [],
-      truncated: false
-    };
+  requestedSections: SectionFilter[] | undefined
+): CatalogEntryIR {
+  if (!requestedSections?.length || requestedSections.includes('all')) {
+    return entry;
   }
 
   const wantedSet = new Set(requestedSections);
-  const filteredEntry = {
+  return {
     ...entry,
     sections: entry.sections.filter(sec => wantedSet.has(sec.category)),
     exports: wantedSet.has('api') ? entry.exports : [],
     compositionRules:
       wantedSet.has('usage') || wantedSet.has('accessibility') ? entry.compositionRules : []
   };
-  const omittedSections = [
-    ...entry.sections.filter(sec => !wantedSet.has(sec.category)).map(sec => sec.id),
-    ...(!wantedSet.has('api') && entry.exports.length > 0 ? ['api'] : [])
-  ];
-
-  return {
-    entry: filteredEntry,
-    markdown: renderReadEntry(filteredEntry),
-    includedSections: [
-      ...new Set([
-        ...filteredEntry.sections.map(sec => sec.id),
-        ...(filteredEntry.exports.length > 0 ? ['api'] : [])
-      ])
-    ],
-    omittedSections,
-    truncated: false,
-    continueCommand:
-      omittedSections.length > 0 ? `${cliPrefix} read ${entry.id} --sections all` : undefined
-  };
 }
 
-function boundReadResult(result: ReadDocsResult, maxTokens: number, cliPrefix: string): void {
+function getIncludedSections(entry: CatalogEntryIR): string[] {
+  return [
+    ...new Set([...entry.sections.map(sec => sec.id), ...(entry.exports.length > 0 ? ['api'] : [])])
+  ];
+}
+
+function boundReadResult(
+  result: ReadDocsResult,
+  maxTokens: number,
+  continueRead: (id: string) => string
+): void {
   const outputTokens = () => estimateTokens(JSON.stringify(result, null, 2) + '\n');
   if (outputTokens() <= maxTokens) {
     return;
@@ -454,29 +461,23 @@ function boundReadResult(result: ReadDocsResult, maxTokens: number, cliPrefix: s
   const originals = [...result.results];
   type ReadSuccess = Extract<ReadItemResult, {ok: true}>;
   const project = (original: ReadSuccess, entry: CatalogEntryIR): ReadSuccess => {
-    const omitted = [
+    const includedSections = getIncludedSections(entry);
+    const omittedSections = [
       ...original.omittedSections,
-      ...original.entry.sections.filter(sec => !entry.sections.includes(sec)).map(sec => sec.id),
-      ...(original.entry.exports.length > entry.exports.length ? ['api'] : [])
+      ...original.includedSections.filter(id => !includedSections.includes(id))
     ];
     const truncated =
       entry.sections.length < original.entry.sections.length ||
       entry.exports.length < original.entry.exports.length;
-    const continueCommand =
-      omitted.length > 0 ? `${cliPrefix} read ${entry.id} --sections all` : undefined;
+    const continueCommand = omittedSections.length > 0 ? continueRead(entry.id) : undefined;
     return {
       ...original,
       entry,
       markdown:
         renderReadEntry(entry) +
         (truncated ? `\n> Output truncated. Run \`${continueCommand}\` for full content.\n` : ''),
-      includedSections: [
-        ...new Set([
-          ...entry.sections.map(sec => sec.id),
-          ...(entry.exports.length > 0 ? ['api'] : [])
-        ])
-      ],
-      omittedSections: [...new Set(omitted)],
+      includedSections,
+      omittedSections,
       truncated,
       continueCommand
     };
@@ -557,6 +558,9 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
   const defaultLibrary = options.defaultLibrary || 's2';
   const cliPrefix =
     options.cliCommandPrefix || (defaultLibrary === 'rac' ? 'react-aria' : 'spectrum');
+  const followUpFlags = formatFollowUpFlags(options, resolution);
+  const continueRead = (id: string) =>
+    `${cliPrefix} read ${quoteShellArg(id)} --sections all ${followUpFlags}`;
 
   const sliceCache = new Map<string, string>();
   const getSliceDir = async (prov: ResolvedPackageProvenance) => {
@@ -588,7 +592,6 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
 
     let matchedData: {
       entry: CatalogEntryIR;
-      markdown: string;
       prov: ResolvedPackageProvenance;
     } | null = null;
     const fuzzySuggestions = new Set<string>();
@@ -601,7 +604,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
       const sliceDir = await getSliceDir(prov);
       const direct = readSliceEntryBySlug(sliceDir, library, slug);
       if (direct) {
-        matchedData = {entry: direct.entry, markdown: direct.markdown, prov};
+        matchedData = {entry: direct.entry, prov};
         break;
       }
 
@@ -616,7 +619,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
       if (exactRecord) {
         const byExact = readSliceEntryBySlug(sliceDir, exactRecord.library, exactRecord.slug);
         if (byExact) {
-          matchedData = {entry: byExact.entry, markdown: byExact.markdown, prov};
+          matchedData = {entry: byExact.entry, prov};
           break;
         }
       }
@@ -644,7 +647,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
           ? readSliceEntryBySlug(sliceDir, exactRecord.library, exactRecord.slug)
           : null;
         if (found) {
-          matchedData = {entry: found.entry, markdown: found.markdown, prov};
+          matchedData = {entry: found.entry, prov};
           break;
         }
       }
@@ -669,11 +672,10 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     }
 
     usedSnapshots.add(matchedData.prov.snapshotId);
-    const filtered = filterEntryBySections(
-      matchedData.entry,
-      matchedData.markdown,
-      options.sections,
-      cliPrefix
+    const entry = filterEntryBySections(matchedData.entry, options.sections);
+    const includedSections = getIncludedSections(entry);
+    const omittedSections = getIncludedSections(matchedData.entry).filter(
+      id => !includedSections.includes(id)
     );
 
     results.push({
@@ -687,12 +689,12 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
         exactMatch: matchedData.prov.exactMatch,
         sourceUrl: matchedData.entry.sourceUrl
       },
-      entry: filtered.entry,
-      markdown: filtered.markdown,
-      includedSections: filtered.includedSections,
-      omittedSections: filtered.omittedSections,
-      truncated: filtered.truncated,
-      continueCommand: filtered.continueCommand
+      entry,
+      markdown: renderReadEntry(entry),
+      includedSections,
+      omittedSections,
+      truncated: false,
+      continueCommand: omittedSections.length > 0 ? continueRead(entry.id) : undefined
     });
   }
 
@@ -720,7 +722,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
         EXIT_CODES.INVALID_ARGS
       );
     }
-    boundReadResult(result, options.maxTokens, cliPrefix);
+    boundReadResult(result, options.maxTokens, continueRead);
   }
   return result;
 }
@@ -733,13 +735,14 @@ export interface QueryApiOptions extends CommonQueryOptions {
   renderPropsOnly?: boolean;
 }
 
-function renderDetailedExportMarkdown(exp: ExportApiIR): string {
+function renderDetailedExportMarkdown(exp: ExportApiIR, headingLevel = 2): string {
   const lines: string[] = [];
+  const heading = '#'.repeat(headingLevel);
   const genSuffix =
     exp.typeParameters.length > 0
       ? `<${exp.typeParameters.map(g => `${g.name}${g.constraint ? ` extends ${g.constraint}` : ''}${g.defaultType ? ` = ${g.defaultType}` : ''}`).join(', ')}>`
       : '';
-  lines.push(`## \`${exp.name}${genSuffix}\` (${exp.exportKind})`);
+  lines.push(`${heading} \`${exp.name}${genSuffix}\` (${exp.exportKind})`);
   if (exp.description) {
     lines.push(exp.description);
   }
@@ -768,7 +771,7 @@ function renderDetailedExportMarkdown(exp: ExportApiIR): string {
   const props = exp.props;
   if (props.length > 0) {
     lines.push('');
-    lines.push('### Props');
+    lines.push(`${heading}# Props`);
     lines.push('| Prop | Type | Default | Inherited From | Description |');
     lines.push('|---|---|---|---|---|');
     for (const p of props) {
@@ -781,7 +784,7 @@ function renderDetailedExportMarkdown(exp: ExportApiIR): string {
   const events = exp.events;
   if (events.length > 0) {
     lines.push('');
-    lines.push('### Events');
+    lines.push(`${heading}# Events`);
     lines.push('| Event | Signature | Description |');
     lines.push('|---|---|---|');
     for (const ev of events) {
@@ -793,7 +796,7 @@ function renderDetailedExportMarkdown(exp: ExportApiIR): string {
   const rps = exp.renderProps;
   if (rps.length > 0) {
     lines.push('');
-    lines.push('### Render Props & Data Attributes');
+    lines.push(`${heading}# Render Props & Data Attributes`);
     lines.push('| State | Type | CSS Selector | Description |');
     lines.push('|---|---|---|---|');
     for (const rp of rps) {
@@ -803,6 +806,22 @@ function renderDetailedExportMarkdown(exp: ExportApiIR): string {
     }
   }
   return lines.join('\n');
+}
+
+function editDistance(a: string, b: string): number {
+  let previous = Array.from({length: b.length + 1}, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const current = [i];
+    for (let j = 1; j <= b.length; j++) {
+      current[j] = Math.min(
+        previous[j] + 1,
+        current[j - 1] + 1,
+        previous[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+      );
+    }
+    previous = current;
+  }
+  return previous[b.length];
 }
 
 export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult> {
@@ -849,12 +868,45 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
           )
         )
       : items;
-  exportsList = exportsList.map(exp => ({
+  const visibleExports = exportsList.map(exp => ({
     ...exp,
-    props: options.eventsOnly || options.renderPropsOnly ? [] : filterMembers(exp.props),
-    events: options.renderPropsOnly ? [] : filterMembers(exp.events),
-    renderProps: options.eventsOnly ? [] : filterMembers(exp.renderProps)
+    props: options.eventsOnly || options.renderPropsOnly ? [] : exp.props,
+    events: options.renderPropsOnly ? [] : exp.events,
+    renderProps: options.eventsOnly ? [] : exp.renderProps
   }));
+  exportsList = visibleExports.map(exp => ({
+    ...exp,
+    props: filterMembers(exp.props),
+    events: filterMembers(exp.events),
+    renderProps: filterMembers(exp.renderProps)
+  }));
+
+  if (
+    propNeedles.length > 0 &&
+    !exportsList.some(exp => exp.props.length || exp.events.length || exp.renderProps.length)
+  ) {
+    const names = new Set(
+      visibleExports.flatMap(exp =>
+        [...exp.props, ...exp.events, ...exp.renderProps].map(p => p.name)
+      )
+    );
+    const suggestions = [...names]
+      .map(name => ({
+        name,
+        distance: Math.min(...propNeedles.map(needle => editDistance(needle, name.toLowerCase())))
+      }))
+      .filter(({distance}) => distance <= 3)
+      .sort((a, b) => a.distance - b.distance || a.name.localeCompare(b.name))
+      .slice(0, 5)
+      .map(({name}) => name);
+    const target = options.exportName ? `'${options.exportName}' in '${item.id}'` : `'${item.id}'`;
+    throw new AgentDocsError(
+      'ERR_PROP_NOT_FOUND',
+      `Prop filter '${options.propFilter}' not found on ${target}.`,
+      EXIT_CODES.NOT_FOUND,
+      {suggestions}
+    );
+  }
 
   const mdLines: string[] = [
     `# API Reference: ${item.entry.title} (\`${item.id}\`)`,
@@ -921,6 +973,7 @@ export async function queryTokens(options: QueryTokensOptions = {}): Promise<Tok
   const propNeedle = options.propertyFilter?.toLowerCase() || null;
   const queryNeedle = options.query?.toLowerCase() || null;
   const matchedProps: TokensDocsResult['properties'] = [];
+  const spacingScale = assets.styleMacro?.spacingScale ?? {};
 
   for (const [categoryName, catMap] of Object.entries(assets.styleMacro?.categories || {})) {
     for (const [propName, def] of Object.entries(catMap || {})) {
@@ -931,7 +984,11 @@ export async function queryTokens(options: QueryTokensOptions = {}): Promise<Tok
       ) {
         continue;
       }
-      const allValues = (def.values || []).map(v => String(v));
+      const spacingValues = (def.additionalTypes || []).flatMap(type => {
+        const scale = spacingScale[type];
+        return Array.isArray(scale) ? scale : [];
+      });
+      const allValues = [...new Set([...(def.values || []), ...spacingValues].map(String))];
       const desc = def.description || `${categoryName} style macro property`;
       if (queryNeedle) {
         const nameHit =
@@ -1045,7 +1102,9 @@ export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsR
   const allNames = options.illustrations
     ? (assets.illustrations || []).map(i => i.id)
     : assets.icons || [];
-  const aliases = options.illustrations ? {} : assets.iconAliases || {};
+  const aliases: Record<string, string[]> = options.illustrations
+    ? {}
+    : {pencil: ['Edit'], ...assets.iconAliases};
   const nameSet = new Set(allNames);
   const matches = new Set<string>();
 
@@ -1067,23 +1126,22 @@ export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsR
   }
 
   const sortedMatches = Array.from(matches).sort((a, b) => a.localeCompare(b));
-  const sampleName = sortedMatches[0] || (options.illustrations ? 'Upload' : 'Search');
-  const sampleIllusSubpath = options.illustrations
-    ? assets.illustrations.find(i => i.id === sampleName)?.subpath ||
-      `@react-spectrum/s2/illustrations/linear/${sampleName}`
-    : '';
-  const importExample = options.illustrations
-    ? `import ${sampleName} from '${sampleIllusSubpath}';`
-    : `import ${sampleName} from '@react-spectrum/s2/icons/${sampleName}';`;
+  const sampleName = sortedMatches[0];
+  let importExample = '';
+  if (sampleName) {
+    const subpath = options.illustrations
+      ? assets.illustrations.find(i => i.id === sampleName)?.subpath
+      : `@react-spectrum/s2/icons/${sampleName}`;
+    if (subpath) {
+      importExample = `import ${sampleName} from '${subpath}';`;
+    }
+  }
 
   const mdLines: string[] = [
     `# S2 ${options.illustrations ? 'Illustrations' : 'Workflow Icons'} (\`${s2Prov.packageName}@${s2Prov.packageVersion}\`)`,
     `Matched ${sortedMatches.length} of ${allNames.length} ${kind} for: ${normalized.map(t => `\`${t}\``).join(', ')}`,
     '',
-    '```tsx',
-    importExample,
-    '```',
-    '',
+    ...(importExample ? ['```tsx', importExample, '```', ''] : []),
     sortedMatches.length > 0
       ? sortedMatches.map(m => `- \`${m}\``).join('\n')
       : '_No matching names found._'

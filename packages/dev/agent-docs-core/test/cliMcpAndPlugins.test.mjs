@@ -28,6 +28,178 @@ const pluginModPromise = import(
   pathToFileURL(path.join(REPO_ROOT, 'scripts/generateAgentPlugins.mjs')).href
 );
 
+function currentCli(t, brand = 's2') {
+  const bin = path.join(REPO_ROOT, `packages/dev/cli/${brand}/dist/cli/${brand}/src/index.js`);
+  const cache = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-cli-'));
+  t.after(() => fs.rmSync(cache, {recursive: true, force: true}));
+  return (...args) =>
+    execFileSync(process.execPath, [bin, '--version', 'latest', ...args], {
+      cwd: REPO_ROOT,
+      env: {
+        ...process.env,
+        RSP_AGENT_DOCS_SNAPSHOT_SOURCE: SNAPSHOT_SOURCE,
+        RSP_AGENT_DOCS_CACHE_DIR: cache
+      },
+      encoding: 'utf8'
+    });
+}
+
+test('CLI reads the full ComboBox documentation by default and with --sections all', t => {
+  const run = currentCli(t);
+  const read = (...args) => run('read', 's2:ComboBox', ...args);
+  const markdown = read();
+  assert.equal(markdown, read('--sections', 'all'));
+  assert.match(markdown, /<ComboBoxSection/);
+  assert.match(markdown, /onLoadMore=\{list\.loadMore\}/);
+  assert.match(markdown, /### `ComboBoxItem/);
+  const {
+    results: [usage]
+  } = JSON.parse(read('--sections', 'usage', '--json'));
+  assert.ok(usage.ok);
+  for (const heading of ['Asynchronous loading', 'Selection', 'Forms']) {
+    const section = usage.entry.sections.find(section => section.heading === heading);
+    assert.ok(section, `Expected the ComboBox usage section ${heading}`);
+    assert.ok(markdown.includes(section.markdown), `Expected the full content for ${heading}`);
+  }
+});
+
+test('CLI preserves API signatures and examples from real hook and class pages', t => {
+  const run = currentCli(t, 'react-aria');
+  const hook = run('api', 'react-aria:Button/useButton', '--export', 'useButton');
+  assert.match(
+    hook,
+    /useButton\(props: AriaButtonOptions<"button">, ref: RefObject<HTMLButtonElement \| null>\): ButtonAria/
+  );
+  assert.match(hook, /AriaButtonOptions<"a">.*RefObject<HTMLAnchorElement \| null>/);
+  const date = run('read', 'internationalized:date/CalendarDate');
+  assert.match(date, /`CalendarDate` \(class\)/);
+  assert.match(date, /new CalendarDate\(2022, 2, 3\)/);
+  assert.match(date, /date\.add\(\{weeks: 1\}\)/);
+});
+
+test('CLI tokens show the documented numeric spacing scale for longhands and shorthands', t => {
+  const run = currentCli(t);
+  const tokens = (...args) => JSON.parse(run('tokens', '--json', ...args));
+  const baseSpacing = [
+    '0',
+    '2',
+    '4',
+    '8',
+    '12',
+    '16',
+    '20',
+    '24',
+    '28',
+    '32',
+    '36',
+    '40',
+    '44',
+    '48',
+    '56',
+    '64',
+    '80',
+    '96'
+  ];
+  for (const property of ['padding', 'gap', 'scrollPadding']) {
+    const {properties, markdown} = tokens('--property', property);
+    const entry = properties.find(p => p.property === property);
+    assert.deepEqual(
+      entry.matchedValues.filter(value => /^\d+$/.test(value)),
+      baseSpacing,
+      property
+    );
+    assert.equal(entry.totalValueCount, entry.matchedValues.length);
+    assert.ok(markdown.includes('`96`'));
+    if (property === 'scrollPadding') {
+      assert.equal(properties.length, 7);
+      for (const item of properties) {
+        assert.deepEqual(item.matchedValues, baseSpacing, item.property);
+      }
+    } else {
+      assert.ok(entry.matchedValues.includes('edge-to-text'));
+    }
+  }
+  const {
+    properties: [pad]
+  } = tokens('24', '--property', 'paddingTop');
+  assert.deepEqual(pad.matchedValues, ['24']);
+  const {
+    properties: [margin]
+  } = tokens('--property', 'marginTop', '--', '-24');
+  assert.deepEqual(margin.matchedValues, ['-24']);
+});
+
+test('CLI icons resolve pencil to Edit and show import examples only for matches', t => {
+  const run = currentCli(t);
+  const icons = (...args) => JSON.parse(run('icons', '--json', ...args));
+  const pencil = icons('pencil');
+  assert.ok(pencil.matches.includes('Edit'));
+  assert.equal(pencil.importExample, "import Edit from '@react-spectrum/s2/icons/Edit';");
+  assert.ok(pencil.markdown.includes(pencil.importExample));
+
+  for (const args of [[], ['--illustrations']]) {
+    const missing = icons('zzzz-no-such-asset', ...args);
+    assert.deepEqual(missing.matches, []);
+    assert.equal(missing.importExample, '');
+    assert.match(missing.markdown, /No matching names found/);
+    assert.doesNotMatch(missing.markdown, /import |```/);
+  }
+});
+
+test('CLI follow-up commands preserve version and workspace options', () => {
+  const bin = path.join(REPO_ROOT, 'packages/dev/cli/s2/dist/cli/s2/src/index.js');
+  const tmpDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-cli-follow-up-')));
+  try {
+    const workspaceName = "team's app";
+    const workspace = path.join(tmpDir, workspaceName);
+    fs.mkdirSync(workspace);
+    fs.writeFileSync(path.join(workspace, 'package.json'), '{"name":"test-app"}');
+    const run = (...args) =>
+      execFileSync(
+        process.execPath,
+        [
+          bin,
+          ...args,
+          '--cwd',
+          workspaceName,
+          '--version',
+          'latest',
+          '--cache-dir',
+          'cache',
+          '--snapshot-source',
+          SNAPSHOT_SOURCE,
+          '--offline',
+          '--json'
+        ],
+        {cwd: tmpDir, encoding: 'utf8'}
+      );
+    const {results} = JSON.parse(run('search', 'Select', '--library', 'rac'));
+    const select = results.find(hit => hit.id === 'rac:Select');
+    assert.ok(select);
+    const workspaceFlags = `--cwd '${path.join(tmpDir, "team'\\''s app")}' --version latest`;
+    const cacheFlags = `--cache-dir ${path.join(tmpDir, 'cache')} --snapshot-source ${SNAPSHOT_SOURCE} --offline`;
+    assert.deepEqual(select.followUpCommands, [
+      `spectrum read rac:Select ${workspaceFlags} ${cacheFlags}`,
+      `spectrum api rac:Select ${workspaceFlags} ${cacheFlags}`
+    ]);
+
+    for (const args of [
+      ['--sections', 'usage'],
+      ['--max-tokens', '4000']
+    ]) {
+      const {
+        results: [item]
+      } = JSON.parse(run('read', 's2:ComboBox', '--snapshot', 'test-current', ...args));
+      assert.equal(
+        item.continueCommand,
+        `spectrum read s2:ComboBox --sections all ${workspaceFlags} --snapshot test-current ${cacheFlags}`
+      );
+    }
+  } finally {
+    fs.rmSync(tmpDir, {recursive: true, force: true});
+  }
+});
+
 test('CLI handles partial-batch resilience (exit code 0 with valid entries preserved), maxTokens continuation, tokens, and icons', () => {
   const s2CliBin = path.join(REPO_ROOT, 'packages/dev/cli/s2/dist/cli/s2/src/index.js');
   const racCliBin = path.join(
@@ -216,7 +388,7 @@ test('CLI handles partial-batch resilience (exit code 0 with valid entries prese
           'api',
           'rac:ComboBox',
           '--prop',
-          'selectedKey,onSelectionChange',
+          'allowsCustomValue,onInputChange',
           '--version',
           'latest',
           '--json'
@@ -226,8 +398,46 @@ test('CLI handles partial-batch resilience (exit code 0 with valid entries prese
     );
     const comboExport = racApiJson.exports.find(e => e.name === 'ComboBox');
     assert.ok(comboExport);
-    assert.ok(comboExport.props.every(prop => prop.name === 'selectedKey'));
-    assert.ok(comboExport.events.every(event => event.name === 'onSelectionChange'));
+    assert.ok(comboExport.props.some(prop => prop.name === 'allowsCustomValue'));
+    assert.ok(comboExport.events.some(event => event.name === 'onInputChange'));
+
+    const missingPropArgs = [
+      racCliBin,
+      'api',
+      'rac:ComboBox',
+      '--export',
+      'ComboBox',
+      '--prop',
+      'onInptChange',
+      '--events-only',
+      '--version',
+      'latest'
+    ];
+    for (const json of [false, true]) {
+      assert.throws(
+        () =>
+          execFileSync(process.execPath, [...missingPropArgs, ...(json ? ['--json'] : [])], {
+            cwd: REPO_ROOT,
+            env,
+            encoding: 'utf8',
+            stdio: 'pipe'
+          }),
+        err => {
+          assert.equal(err.status, 3);
+          if (json) {
+            const {error} = JSON.parse(err.stdout);
+            assert.equal(error.code, 'ERR_PROP_NOT_FOUND');
+            assert.match(error.message, /onInptChange.*not found/);
+            assert.equal(error.suggestions[0], 'onInputChange');
+          } else {
+            assert.match(err.stderr, /onInptChange.*not found/);
+            assert.match(err.stderr, /suggested: onInputChange/);
+            assert.equal(err.stdout, '');
+          }
+          return true;
+        }
+      );
+    }
   } finally {
     fs.rmSync(tmpCache, {recursive: true, force: true});
   }

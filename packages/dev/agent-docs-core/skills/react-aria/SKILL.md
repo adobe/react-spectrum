@@ -34,7 +34,7 @@ react-aria read rac:getting-started rac:ComboBox rac:Modal --sections guide,usag
 
 ### Focused prop/event inspection & diagnostic resolution
 ```sh
-react-aria api rac:ComboBox --prop selectedKey,onSelectionChange --cwd <app-dir>
+react-aria api rac:ComboBox --prop allowsCustomValue,onInputChange --cwd <app-dir>
 react-aria resolve --cwd <app-dir>
 ```
 

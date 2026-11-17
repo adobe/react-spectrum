@@ -40,7 +40,7 @@ spectrum icons "search" --cwd <app-dir>
 
 ### Focused prop/event inspection & diagnostic resolution
 ```sh
-spectrum api s2:ComboBox --prop selectedKey,onSelectionChange --cwd <app-dir>
+spectrum api s2:ComboBox --prop allowsCustomValue,onInputChange --cwd <app-dir>
 spectrum resolve --cwd <app-dir>
 ```
 

@@ -37,12 +37,14 @@ try {
     filterSlugs: [
       'Button',
       'ComboBox',
+      'rac:Select',
       'TableView',
       'Dialog',
       'Modal',
       'getting-started',
       'collections',
       'Button/useButton',
+      'internationalized/date/CalendarDate',
       's2:guide/implementation-guidance',
       's2:guide/component-decision-tree'
     ]

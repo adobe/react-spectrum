@@ -110,7 +110,7 @@ spectrum icons "search" --cwd <app-dir>
 }
 ### Focused prop/event inspection & diagnostic resolution
 \`\`\`sh
-${cliBin} api ${defaultPrefix}:ComboBox --prop selectedKey,onSelectionChange --cwd <app-dir>
+${cliBin} api ${defaultPrefix}:ComboBox --prop allowsCustomValue,onInputChange --cwd <app-dir>
 ${cliBin} resolve --cwd <app-dir>
 \`\`\`
 
