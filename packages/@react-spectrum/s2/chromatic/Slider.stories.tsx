@@ -15,7 +15,6 @@ import {ContextualHelp} from '../src/ContextualHelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
-import {shortName} from './utils';
 import {Slider, SliderProps} from '../src/Slider';
 import {SliderInput} from '../src/SliderInput';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -116,12 +115,9 @@ export const Editable: Story = {
       })}>
       {editableCombinations.map(c => {
         let {isEditable, ...sliderProps} = c;
-        let key = Object.keys(c)
-          .map(k => shortName(k, c[k]))
-          .join(' ');
         return (
           <Slider
-            key={key}
+            key={JSON.stringify(c)}
             label="Label"
             maxValue={1}
             step={0.01}

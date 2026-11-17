@@ -16,7 +16,6 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {RangeSlider, RangeSliderProps} from '../src/RangeSlider';
-import {shortName} from './utils';
 import {SliderInput} from '../src/SliderInput';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -77,11 +76,8 @@ export const Editable: Story = {
       })}>
       {editableCombinations.map(c => {
         let {isEditable, ...sliderProps} = c;
-        let key = Object.keys(c)
-          .map(k => (k === 'value' ? `${c[k].start}-${c[k].end}` : shortName(k, c[k])))
-          .join(' ');
         return (
-          <RangeSlider key={key} label="Label" {...args} {...sliderProps}>
+          <RangeSlider key={JSON.stringify(c)} label="Label" {...args} {...sliderProps}>
             {isEditable ? <SliderInput /> : null}
           </RangeSlider>
         );
