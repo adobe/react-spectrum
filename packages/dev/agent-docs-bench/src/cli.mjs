@@ -357,6 +357,7 @@ async function measureCandidateV2(options) {
       let lookupCalls = 0;
       let markdownText = '';
       let lastJsonEnvelope = null;
+      const versionViolations = [];
       const warmT0 = performance.now();
       for (const step of scenario.v2Plan.steps) {
         lookupCalls++;
@@ -378,6 +379,18 @@ async function measureCandidateV2(options) {
             snapshotSource: snapshotRepoDir,
             defaultLibrary: scenario.v2Plan.brand === 'rac' ? 'rac' : 's2'
           });
+          for (const item of res.results) {
+            if (!item.ok) {
+              versionViolations.push(`Read failed for '${item.requestedId}': ${item.error.code}`);
+              continue;
+            }
+            const expected = scenario.assertions.expectedPackages?.[item.provenance.packageName];
+            if (expected && item.provenance.packageVersion !== expected) {
+              versionViolations.push(
+                `'${item.id}' used ${item.provenance.packageName}@${item.provenance.packageVersion}; expected ${expected}`
+              );
+            }
+          }
           markdownText += '\n' + core.formatReadMarkdown(res);
           lastJsonEnvelope = res;
         }
@@ -433,7 +446,12 @@ async function measureCandidateV2(options) {
       }
 
       // 5. Verify version accuracy & content assertions
-      const versionViolations = [];
+      for (const [name, expected] of Object.entries(scenario.assertions.expectedPackages || {})) {
+        const actual = lastJsonEnvelope?.resolution.packages[name]?.packageVersion;
+        if (actual !== expected) {
+          versionViolations.push(`Expected ${name}@${expected}; resolved ${actual ?? 'nothing'}`);
+        }
+      }
       for (const substr of scenario.assertions.mustContainSubstrings || []) {
         if (!markdownText.includes(substr)) {
           versionViolations.push(`Missing expected content '${substr}'`);
@@ -524,7 +542,10 @@ async function measureCandidateV2(options) {
     // Optional MCP stdio measurement if v2 server is built
     let mcpStdioLatencyMs = null;
     const mcpBinPath = path.join(REPO_ROOT, 'packages/dev/mcp/s2/dist/mcp/s2/src/index.js');
-    if (options.includeMcp && fs.existsSync(mcpBinPath)) {
+    if (options.includeMcp) {
+      if (!fs.existsSync(mcpBinPath)) {
+        throw new Error('Candidate MCP build not found. Run yarn build:mcp first.');
+      }
       mcpStdioLatencyMs = await measureMcpStdioRoundTrip(mcpBinPath, warmCacheDir, snapshotRepoDir);
     }
 
@@ -572,10 +593,13 @@ async function measureMcpStdioRoundTrip(mcpBinPath, cacheDir, snapshotRepoDir) {
   try {
     await client.connect(transport);
     const t0 = performance.now();
-    await client.callTool({
+    const response = await client.callTool({
       name: 'read_docs',
       arguments: {ids: ['s2:ComboBox'], cwd: appCwd}
     });
+    if (response.isError) {
+      throw new Error(`MCP read_docs benchmark failed: ${JSON.stringify(response.content)}`);
+    }
     return Number((performance.now() - t0).toFixed(2));
   } finally {
     await client.close().catch(() => {});

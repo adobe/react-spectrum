@@ -261,7 +261,8 @@ export const SCENARIOS = [
     assertions: {
       mustContainSubstrings: [],
       expectedWarningOrErrorCode: 'EXACT_PATCH_UNAVAILABLE',
-      mustNotSilentlyUseVersion: HEAD_VERSIONS.s2
+      mustNotSilentlyUseVersion: HEAD_VERSIONS.s2,
+      expectedPackages: {'@react-spectrum/s2': '1.2.0'}
     }
   }
 ];

@@ -250,17 +250,19 @@ Snapshot IDs use the source commit date for both HEAD and tags. Artifacts record
 
 `packages/dev/agent-docs-bench` (`yarn bench:agent-docs compare --include-mcp`) evaluates standard S2/RAC component tasks alongside four version-trap fixtures (`pinned-s2-1.2.0`, `pinned-rac-1.4.0`, `mixed-s2-1.2.0-rac-head`, and `unverified-patch-s2-1.2.1`) across the legacy static skill, legacy v1 MCP waterfall, and the new v2 system.
 
-> **These figures need re-measuring.** They were recorded before default reads returned complete pages, before `--max-tokens` applied to the selected output format, and before cursor continuation. A complete component page is now several thousand tokens on its own (about 7k for `s2:ComboBox`), so the average doc tokens per task for v2 is expected to be higher than shown unless the scenario uses `--sections` or `--max-tokens`. Re-run `yarn bench:agent-docs compare --include-mcp` against a backfilled snapshot set before citing them.
+Measured locally with the docs from `35a4194cd141` (S2 1.8.2 and RAC 1.22.1) and release-tag snapshots for S2 1.2.0 and RAC 1.4.0. The backfill also compared RAC 1.4.1 against 1.4.0 and generated a separate patch snapshot. The S2 1.2.1 fixture deliberately has no exact or verified-equivalent slice. It falls back to 1.2.0 with `WARN_EXACT_PATCH_UNAVAILABLE`.
+
+Token estimates use four UTF-8 bytes per token across six standard tasks. The v2 plans read full Markdown pages. The legacy MCP arm simulates the v1 waterfall using generated docs. The v2 MCP latency is a separate local stdio sample.
 
 | Metric | Legacy Static Skill | Legacy v1 MCP | **Agent Docs v2 (New)** |
 | :--- | :---: | :---: | :---: |
 | **Project files installed** | `267` (`3,996 KB`) | `0` | **`1` (`4 KB`)** |
 | **Average lookups per task** | `2.6` (max `5`) | `4.1` (max `9`) | **`1.1` (max `2`)** |
-| **Average doc tokens per task** | `11,847` | `16,799` | **`4,876` (`-59%` vs. skill, `-71%` vs. MCP)** |
+| **Average doc tokens per standard task** | `11,847` | `16,799` | **`10,092` (`-15%` vs. skill, `-40%` vs. MCP)** |
 | **Version-trap fixtures passed** | `0 / 4` | `0 / 4` | **`4 / 4` (zero wrong-version leaks)** |
-| **SDK warm query latency (median)** | — | — | **`21.5 ms`** (`61.4 ms` cold unpack) |
-| **CLI direct binary latency (median)** | — | — | **`42.0 ms`** (`~546 ms` via `npx` runner) |
-| **MCP v2 `stdio` round-trip** | — | Network-bound | **`4.8 ms`** |
+| **SDK latency per task (warm median)** | — | — | **`8.83 ms`** (`30.63 ms` for the first cold query) |
+| **CLI direct binary latency (median)** | — | — | **`40.19 ms`** (`467.47 ms` for one Yarn workspace runner sample) |
+| **MCP v2 `stdio` round-trip** | — | — | **`4.46 ms`** |
 
 ---
 
