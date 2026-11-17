@@ -22,5 +22,6 @@
   "promptfield.insertButton": "Add",
   "promptfield.uploading": "Uploading",
   "attachmentlist.previousAttachments": "Show previous attachments",
-  "attachmentlist.nextAttachments": "Show next attachments"
+  "attachmentlist.nextAttachments": "Show next attachments",
+  "lightbox.label": "Attachment viewer"
 }

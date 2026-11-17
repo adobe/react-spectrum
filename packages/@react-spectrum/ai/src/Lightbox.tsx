@@ -15,7 +15,7 @@ import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Butt
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
-import {createContext, ReactNode, useContext, useRef, useState} from 'react';
+import {ReactNode, useContext, useRef} from 'react';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {flushSync} from 'react-dom';
 import {FocusableElement, Key} from '@react-types/shared';
@@ -30,6 +30,7 @@ import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import intlMessages from '../intl/*.json';
 import type {KeyboardEvent} from 'react';
+import {LightboxTriggerContext} from './LightboxTrigger';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {
   Tab as RACTab,
@@ -65,10 +66,6 @@ export interface LightboxItemsProps<T> extends Omit<TabPanelsProps<T>, 'classNam
   children: ReactNode[];
 }
 export interface LightboxItemProps extends Omit<TabPanelProps, 'className'> {}
-
-export interface LightboxTrigger {
-  children: ReactNode;
-}
 
 const carouselStyles = style({
   display: 'flex',
@@ -172,14 +169,9 @@ const itemStyles = style({
   outlineStyle: 'none'
 });
 
-// interface LightboxCarouselContextProps {
-//   isInfinite?: boolean;
-// }
-
-// let LightBoxCarouselContext = createContext<LightboxCarouselContextProps>({});
-
 export function LightboxCarousel(props: LightboxCarouselProps) {
   let ctx = useContext(LightboxTriggerContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
   // Only render Lightbox Carousel inside a modal if there is a trigger
   if (ctx) {
@@ -208,6 +200,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
         }>
         <Modal className={style({width: 'full', height: 'full'})}>
           <Dialog
+            aria-label={props['aria-label'] ?? stringFormatter.format('lightbox.label')}
             className={style({
               display: 'grid',
               gridTemplateRows: ['auto', 'minmax(0, 1fr)'],
@@ -437,7 +430,6 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
 
   let size = state.collection.size;
 
-  // Arrow keys, the nav buttons, and scrolling all change slides through here.
   let selectIndex = (index: number) => {
     let el = ref.current;
     if (!el || index < 0 || index >= size) {
@@ -456,7 +448,6 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     }
 
     // Focus is in the current slide, so move it to the new one.
-    // Blur first: deselecting removes the panel's focus handlers.
     activeElement?.blur();
     // Re-render synchronously so the new slide is active before we focus it.
     flushSync(() => {
@@ -498,8 +489,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     }
 
     // When a jump interrupts a smooth scroll (i.e. going from the last tab to the first tab), Chrome adds the smooth scroll's last few pixels
-    // after the jump and doesn't re-snap causing the slide to be incorrectly aligned. This stays on the selected slide, so it
-    // can't change the selection.
+    // after the jump and doesn't re-snap causing the slide to be incorrectly aligned.
     // https://issues.chromium.org/issues/40722572
     if (isProgrammaticScroll.current && el && selectedIndex != null) {
       el.scrollTo({left: selectedIndex * el.offsetWidth});
@@ -686,43 +676,6 @@ function CarouselNavButton(props: CarouselNavButtonProps) {
   // oxlint-enable react/react-compiler
 }
 
-// interface CarouselState {
-//   centerPage: number;
-//   currentPage: number;
-// }
-
-// type Action =
-//   | {type: 'SCROLL'; page: number}
-//   | {type: 'SCROLL_END'}
-//   | {type: 'SET_CENTER_PAGE'; page: number};
-
-// const PAGES = 100;
-
-// function getWrappedIndex(index: number, size: number): number {
-//   return ((index % size) + size) % size;
-// }
-
-// function reducer(state: CarouselState, action: Action) {
-//   let {centerPage, currentPage} = state;
-//   switch (action.type) {
-//     case 'SET_CENTER_PAGE':
-//       return {centerPage: action.page, currentPage: PAGES};
-//     case 'SCROLL':
-//       if (action.page === currentPage) {
-//         return state;
-//       }
-//       return {centerPage, currentPage: action.page};
-//     case 'SCROLL_END':
-//       if (currentPage === PAGES) {
-//         return state;
-//       }
-//       return {
-//         centerPage: centerPage + currentPage - PAGES,
-//         currentPage: PAGES
-//       };
-//   }
-// }
-
 const imageStyles = style({
   ...focusRing(),
   borderRadius: 'lg',
@@ -741,142 +694,6 @@ const innerImageStyles = style({
   maxHeight: '100cqh'
 });
 
-// interface InfiniteLightboxItemsProps<T> extends Omit<LightboxItemsProps<T>, 'children'> {
-//   children: (page: number) => ReactNode;
-// }
-
-// function InfiniteLightboxItems<T>(props: InfiniteLightboxItemsProps<T>) {
-//   let {children: renderPage} = props;
-//   let state = useContext(TabListStateContext)!;
-//   let ref = useRef<HTMLDivElement | null>(null);
-
-//   let selectedIndex = state?.selectedItem?.index ?? null;
-
-//   let [{centerPage, currentPage}, dispatch] = useReducer(reducer, null, () => ({
-//     centerPage: selectedIndex ?? 0,
-//     currentPage: PAGES
-//   }));
-
-//   // if the selected tab changes (like if you were to click one), update the centered page
-//   if (
-//     selectedIndex != null &&
-//     currentPage === PAGES &&
-//     selectedIndex !== getWrappedIndex(centerPage, state.collection.size)
-//   ) {
-//     dispatch({
-//       type: 'SET_CENTER_PAGE',
-//       page: selectedIndex
-//     });
-//   }
-
-//   // when the center page changes, reset the scroll position
-//   useLayoutEffect(() => {
-//     if (!ref.current) {
-//       return;
-//     }
-
-//     ref.current.scrollTo({
-//       left: ref.current.offsetWidth * PAGES,
-//       behavior: 'instant'
-//     });
-//   }, [centerPage]);
-
-//   if (selectedIndex == null || state.collection.size === 0) {
-//     return null;
-//   }
-
-//   let visiblePage = centerPage + currentPage - PAGES;
-//   let pages = [visiblePage - 1, visiblePage, visiblePage + 1];
-
-//   let prevItem = () => {
-//     if (!ref.current) {
-//       return;
-//     }
-
-//     ref.current!.scrollLeft = ref.current!.offsetWidth * (PAGES - 1);
-//   };
-
-//   let nextItem = () => {
-//     if (!ref.current) {
-//       return;
-//     }
-
-//     ref.current!.scrollLeft = ref.current!.offsetWidth * (PAGES + 1);
-//   };
-
-//   // update selected tab while scrolling
-//   let onScroll = () => {
-//     let el = ref.current;
-//     // Scroll events can arrive while the carousel is hidden.
-//     if (!el || el.offsetWidth === 0) {
-//       return;
-//     }
-
-//     let index = Math.round(el.scrollLeft / el.offsetWidth); // this is not the collection index, this is the pages index
-//     let collectionIndex = centerPage + index - PAGES; // this is the actual collection index
-//     if (currentPage !== index) {
-//       // actually update the selected key (so that the tabs actually reflect what is in the viewport)
-//       let key = [...state.collection].at(
-//         getWrappedIndex(collectionIndex, state.collection.size)
-//       )?.key;
-//       if (key != null) {
-//         state.setSelectedKey(key);
-//       }
-//       // keeps track of how much we have scrolled from the center page
-//       dispatch({
-//         type: 'SCROLL',
-//         page: index
-//       });
-//     }
-//   };
-
-//   let onScrollEnd = () => {
-//     // update the centered page once scrolling is done
-//     dispatch({type: 'SCROLL_END'});
-//   };
-
-//   return (
-//     <>
-//       <div ref={ref} onScroll={onScroll} onScrollEnd={onScrollEnd} className={itemsStyles}>
-//         {/* Placeholder to hold space in the scroll width for more pages. */}
-//         <div
-//           style={{
-//             width: (currentPage - 1) * 100 + '%',
-//             flexShrink: 0,
-//             contain: 'strict'
-//           }}
-//         />
-//         {pages.map(page => (
-//           <div
-//             // Keep each slide mounted when it moves to a new position.
-//             // Recreating S2 Image can make it flash, even if the image is already cached.
-//             key={page}
-//             inert={page !== visiblePage}
-//             style={{
-//               width: '100%',
-//               height: '100%',
-//               flexShrink: 0,
-//               contain: page !== visiblePage ? 'inline-size' : undefined,
-//               scrollSnapAlign: 'start',
-//               scrollSnapStop: 'always'
-//             }}>
-//             {renderPage(page)}
-//           </div>
-//         ))}
-//         <div
-//           style={{
-//             width: (PAGES * 2 - currentPage - 1) * 100 + '%',
-//             flexShrink: 0,
-//             contain: 'strict'
-//           }}
-//         />
-//       </div>
-//       <CarouselNavButton onPress={prevItem} side="start" />
-//       <CarouselNavButton onPress={nextItem} side="end" />
-//     </>
-//   );
-// }
-
 export function LightboxItem(props: LightboxItemProps) {
   return (
     <RACTabPanel {...props} shouldForceMount className={itemStyles} aria-roledescription="slide">
@@ -887,31 +704,5 @@ export function LightboxItem(props: LightboxItemProps) {
         </ImageContext.Provider>
       )}
     </RACTabPanel>
-  );
-}
-
-export interface LightboxTriggerContextProps {
-  onAction?: (key: Key) => void;
-  isOpen?: boolean;
-  setIsOpen?: (boolean) => void;
-  activeKey?: Key | undefined;
-  setActiveKey?: (key: Key) => void;
-}
-
-export const LightboxTriggerContext = createContext<LightboxTriggerContextProps | null>(null);
-
-export function LightboxTrigger(props: LightboxTrigger) {
-  let [isOpen, setIsOpen] = useState<boolean>(false);
-  let [activeKey, setActiveKey] = useState<Key | undefined>(undefined);
-
-  let onAction = (key: Key) => {
-    setActiveKey(key);
-    setIsOpen(true);
-  };
-
-  return (
-    <LightboxTriggerContext.Provider value={{isOpen, setIsOpen, onAction, activeKey, setActiveKey}}>
-      <div {...props}>{props.children}</div>
-    </LightboxTriggerContext.Provider>
   );
 }

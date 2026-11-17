@@ -17,9 +17,9 @@ import {
   LightboxItem,
   LightboxItems,
   LightboxPicker,
-  LightboxPickerItem,
-  LightboxTrigger
+  LightboxPickerItem
 } from '../src/Lightbox';
+import {LightboxTrigger} from '../src/LightboxTrigger';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 

@@ -54,9 +54,9 @@ import {
   LightboxItem,
   LightboxItems,
   LightboxPicker,
-  LightboxPickerItem,
-  LightboxTrigger
+  LightboxPickerItem
 } from '../src/Lightbox';
+import {LightboxTrigger} from '../src/LightboxTrigger';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta, StoryObj} from '@storybook/react';
