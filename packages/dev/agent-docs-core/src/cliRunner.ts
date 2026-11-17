@@ -62,6 +62,8 @@ function renderHelpText(brand: BrandId, version: string): string {
   lines.push('  --snapshot <id>          Pin an exact immutable snapshot ID');
   lines.push('  --max-tokens <N>         Bound rendered read output (~4 UTF-8 bytes/token)');
   lines.push('  --cursor <value>         Resume a truncated read for one document');
+  lines.push('  --list-sections          List available headings and section IDs');
+  lines.push('  --section <heading|id>   Read a specific section (repeatable)');
   lines.push('  --json-content <type>    Read JSON content: entry (default) or markdown');
   lines.push('  --include-resolution    Include full workspace resolution in JSON output');
   lines.push(
@@ -191,6 +193,8 @@ export async function runAgentDocsCli(
         cwd: {type: 'string'},
         library: {type: 'string'},
         sections: {type: 'string'},
+        'list-sections': {type: 'boolean'},
+        section: {type: 'string', multiple: true},
         cursor: {type: 'string'},
         'json-content': {type: 'string'},
         'include-resolution': {type: 'boolean'},
@@ -314,6 +318,8 @@ export async function runAgentDocsCli(
           ...common,
           ids: restPositionals,
           sections: parseSectionsArg(parsed.values.sections),
+          listSections: parsed.values['list-sections'],
+          sectionHeadings: parsed.values.section,
           maxTokens,
           cursor: parsed.values.cursor,
           output,

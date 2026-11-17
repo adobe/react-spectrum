@@ -215,6 +215,88 @@ test('CLI reads the full ComboBox documentation by default and with --sections a
   }
 });
 
+test('CLI lists ComboBox headings and reads just the selected sections by heading or ID', t => {
+  const run = currentCli(t);
+  const read = (...args) => run('read', 's2:ComboBox', ...args);
+  const outline = read('--list-sections');
+  assert.match(outline, /Asynchronous loading \(`asynchronous-loading`\)/);
+  assert.doesNotMatch(outline, /Star Wars Character Lookup|## Imports/);
+  const {
+    results: [index]
+  } = JSON.parse(read('--list-sections', '--json'));
+  assert.equal(index.entry, undefined);
+  assert.equal(index.markdown, undefined);
+  assert.ok(index.sectionIndex.some(section => section.id === 'api:ComboBoxItem'));
+  const section = index.sectionIndex.find(section => section.heading === 'Asynchronous loading');
+  assert.deepEqual(section, {
+    id: 'asynchronous-loading',
+    heading: 'Asynchronous loading',
+    category: 'usage',
+    level: 3
+  });
+
+  const markdown = read('--section', 'asynchronous loading');
+  assert.match(markdown, /^### Asynchronous loading$/m);
+  assert.match(markdown, /Star Wars Character Lookup/);
+  assert.doesNotMatch(markdown, /^## (Forms|Imports|API)$/m);
+  const {
+    results: [byId]
+  } = JSON.parse(read('--section', section.id, '--json'));
+  assert.deepEqual(byId.includedSections, [section.id]);
+  assert.deepEqual(
+    byId.entry.sections.map(section => section.heading),
+    ['Asynchronous loading']
+  );
+  assert.deepEqual(byId.entry.exports, []);
+
+  const {
+    results: [multiple]
+  } = JSON.parse(read('--section', 'api:ComboBoxItem', '--section', 'Forms', '--json'));
+  assert.deepEqual(multiple.includedSections, ['forms', 'api:ComboBoxItem']);
+  assert.deepEqual(
+    multiple.entry.exports.map(exp => exp.name),
+    ['ComboBoxItem']
+  );
+  const {
+    results: [apiIndex]
+  } = JSON.parse(read('--sections', 'api', '--list-sections', '--json'));
+  assert.ok(apiIndex.sectionIndex.length > 0);
+  assert.ok(apiIndex.sectionIndex.every(section => section.category === 'api'));
+
+  const selectionArgs = [
+    '--section',
+    'Asynchronous loading',
+    '--section',
+    'Forms',
+    '--max-tokens',
+    '470'
+  ];
+  const first = read(...selectionArgs);
+  assert.ok(Buffer.byteLength(first) <= 470 * 4);
+  assert.match(first, /Star Wars Character Lookup/);
+  assert.doesNotMatch(first, /^## Forms$/m);
+  assert.match(first, /--section 'Asynchronous loading' --section Forms/);
+  const cursor = first.match(/--cursor ([\w.]+)/)?.[1];
+  assert.ok(cursor);
+  const next = read(...selectionArgs, '--cursor', cursor);
+  assert.ok(Buffer.byteLength(next) <= 470 * 4);
+  assert.match(next, /^## Forms$/m);
+  assert.doesNotMatch(next, /Star Wars Character Lookup|--cursor/);
+
+  assert.throws(
+    () => read('--section', 'Asynchronous loadig', '--json'),
+    err => {
+      assert.equal(err.status, 3);
+      const {
+        results: [miss]
+      } = JSON.parse(err.stdout);
+      assert.equal(miss.error.code, 'ERR_SECTION_NOT_FOUND');
+      assert.equal(miss.error.suggestions[0], 'asynchronous-loading');
+      return true;
+    }
+  );
+});
+
 test('CLI budgets rendered Markdown and resumes filtered reads without repeating content', t => {
   const run = currentCli(t);
   const args = ['read', 's2:ComboBox', '--sections', 'usage,api'];
@@ -871,6 +953,34 @@ test('MCP v2 servers support roots/list workspace discovery, reusable resolution
     const readPayload = JSON.parse(readRes.content[0].text);
     assert.equal(readPayload.results.length, 2);
     assert.ok(readPayload.results.every(r => r.ok));
+    const indexRes = await client.callTool({
+      name: 'read_docs',
+      arguments: {
+        ids: 'rac:ComboBox',
+        listSections: true,
+        format: 'json',
+        resolution: resolvedState
+      }
+    });
+    assert.ok(!indexRes.isError, indexRes.content?.[0]?.text);
+    const index = JSON.parse(indexRes.content[0].text).results[0];
+    const section = index.sectionIndex.find(section => section.heading === 'Forms');
+    assert.ok(section);
+    assert.equal(index.entry, undefined);
+    const sectionRes = await client.callTool({
+      name: 'read_docs',
+      arguments: {
+        ids: 'rac:ComboBox',
+        sectionHeadings: [section.id],
+        format: 'json',
+        resolution: resolvedState
+      }
+    });
+    assert.ok(!sectionRes.isError, sectionRes.content?.[0]?.text);
+    const focused = JSON.parse(sectionRes.content[0].text).results[0];
+    assert.deepEqual(focused.includedSections, [section.id]);
+    assert.equal(focused.entry.sections[0].heading, section.heading);
+
     const boundedRes = await client.callTool({
       name: 'read_docs',
       arguments: {ids: ['rac:ComboBox'], maxTokens: 4000, format: 'json', resolution: resolvedState}

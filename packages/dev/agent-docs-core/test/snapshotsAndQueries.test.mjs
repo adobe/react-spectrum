@@ -123,6 +123,11 @@ test('renders extracted APIs and applies the same member and section filters to 
     const target = path.join(tmp, 'target');
     const snapshots = path.join(tmp, 'snapshots');
     createTarget(target);
+    write(
+      target,
+      'packages/dev/s2-docs/pages/s2/useButton.mdx',
+      '# useButton\n\n## Options\n\n### Examples\n\nOption example.\n\n## Return value\n\n### Examples\n\nReturn example.\n'
+    );
     await generate(target, snapshots, 'api');
     const opts = {
       cwd: target,
@@ -165,6 +170,16 @@ test('renders extracted APIs and applies the same member and section filters to 
     assert.ok(usage.results[0].entry.sections.every(section => section.category === 'usage'));
     assert.equal(usage.results[0].entry.exports.length, 0);
     assert.ok(!JSON.stringify(usage).includes('Styling-only content'));
+
+    const hookReadOptions = {...opts, ids: ['s2:useButton']};
+    const ambiguous = await readDocs({...hookReadOptions, sectionHeadings: ['Examples']});
+    assert.equal(ambiguous.results[0].error.code, 'ERR_AMBIGUOUS_SECTION');
+    const choices = ambiguous.results[0].error.suggestions;
+    assert.deepEqual(choices, ['examples#1', 'examples#2']);
+    const selected = await readDocs({...hookReadOptions, sectionHeadings: [choices[1]]});
+    assert.equal(selected.results[0].entry.sections[0].id, choices[1]);
+    assert.match(selected.results[0].markdown, /Return example/);
+    assert.doesNotMatch(selected.results[0].markdown, /Option example/);
   } finally {
     fs.rmSync(tmp, {recursive: true, force: true});
   }

@@ -148,7 +148,13 @@ export function formatReadOutput(result: ReadDocsResult, options: ReadOutputOpti
     if (!item.ok) {
       return item;
     }
-    const {entry, markdown, ...metadata} = item;
+    const {entry, markdown, sectionIndex, ...metadata} = item;
+    if (sectionIndex) {
+      const {includedSections, omittedSections, ...outlineMetadata} = metadata;
+      return options.jsonContent === 'markdown'
+        ? {...outlineMetadata, markdown}
+        : {...outlineMetadata, sectionIndex};
+    }
     return options.jsonContent === 'markdown' ? {...metadata, markdown} : {...metadata, entry};
   });
   return formatQueryJson({...result, results}, options.includeResolution);

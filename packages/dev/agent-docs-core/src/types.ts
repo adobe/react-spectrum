@@ -319,6 +319,13 @@ export interface SearchDocsResult {
   results: SearchHit[];
 }
 
+export interface ReadSectionRef {
+  id: string;
+  heading: string;
+  category: CatalogSectionIR['category'];
+  level: number;
+}
+
 export type ReadItemResult =
   | {
       requestedId: string;
@@ -333,6 +340,7 @@ export type ReadItemResult =
       };
       entry: CatalogEntryIR;
       markdown: string;
+      sectionIndex?: ReadSectionRef[];
       includedSections: string[];
       omittedSections: string[];
       truncated: boolean;

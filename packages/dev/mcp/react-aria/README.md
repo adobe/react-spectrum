@@ -110,6 +110,8 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 | `read_docs` | `{ ids: string \| string[], sections?: string[], maxTokens?: number, cursor?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Batch-read multiple version-matched components, hooks, or guides in a single call with per-entry provenance and partial-batch resilience. |
 | `get_component_api` | `{ target: string, prop?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Inspect structured TypeScript API definitions (props, events, render props, generics, overloads) for a React Aria component or hook. |
 
+Set `listSections: true` to retrieve headings and section IDs without their content. Pass `sectionHeadings` with the exact headings or IDs to read, for example `["Value"]` on `rac:ComboBox`.
+
 `read_docs` measures `maxTokens` against the selected output format. To resume a truncated read, pass its `nextCursor` as `cursor` with that document ID and the same section and version options. Set `format: "json"` for a structured entry, or add `jsonContent: "markdown"` to receive rendered Markdown in the JSON envelope. Query tools accept `includeResolution: true` to include the full resolution in JSON output.
 
 The server also exposes the evergreen CLI-first skill via MCP resource `skills://react-aria/SKILL.md` (`SEP-2640`) and discovers workspace roots via MCP `roots/list` (or `--cwd <dir>`).

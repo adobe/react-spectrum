@@ -29,6 +29,7 @@ import {
   ReadDocsResult,
   READER_SCHEMA_VERSION,
   ReadItemResult,
+  ReadSectionRef,
   ResolutionState,
   ResolvedPackageProvenance,
   SearchDocsResult,
@@ -453,14 +454,21 @@ function estimateTokens(text: string): number {
   return Math.ceil(Buffer.byteLength(text, 'utf8') / 4);
 }
 
-type ReadChunk = {id: string; section: CatalogSectionIR} | {id: string; apiExport: ExportApiIR};
+type ReadChunk = ReadSectionRef & ({section: CatalogSectionIR} | {apiExport: ExportApiIR});
+type ReadFailure = Extract<ReadItemResult, {ok: false}>;
 
 function isApiHeading(section: CatalogSectionIR): boolean {
   return section.id === 'api' && (section.level ?? 2) === 2;
 }
 
 function getReadChunks(entry: CatalogEntryIR): ReadChunk[] {
-  const chunks: ReadChunk[] = entry.sections.map(section => ({id: section.id, section}));
+  const chunks: ReadChunk[] = entry.sections.map(section => ({
+    id: section.id,
+    heading: section.heading,
+    category: section.category,
+    level: Math.max(2, section.level ?? 2),
+    section
+  }));
   const apiHeading = entry.sections.findIndex(isApiHeading);
   const nextHeading =
     apiHeading < 0
@@ -469,9 +477,72 @@ function getReadChunks(entry: CatalogEntryIR): ReadChunk[] {
   chunks.splice(
     nextHeading < 0 ? chunks.length : nextHeading,
     0,
-    ...entry.exports.map(apiExport => ({id: `api:${apiExport.name}`, apiExport}))
+    ...entry.exports.map<ReadChunk>(apiExport => ({
+      id: `api:${apiExport.name}`,
+      heading: apiExport.name,
+      category: 'api',
+      level: 3,
+      apiExport
+    }))
   );
+  // Duplicate headings in existing snapshots need distinct selectors.
+  const counts = new Map<string, number>();
+  const occurrences = new Map<string, number>();
+  for (const {id} of chunks) {
+    counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
+  for (const chunk of chunks) {
+    const {id} = chunk;
+    if ((counts.get(id) ?? 0) > 1) {
+      const occurrence = (occurrences.get(id) ?? 0) + 1;
+      occurrences.set(id, occurrence);
+      chunk.id = `${id}#${occurrence}`;
+    }
+  }
   return chunks;
+}
+
+function selectReadChunks(
+  entryId: string,
+  chunks: ReadChunk[],
+  headings: string[]
+): {chunks: ReadChunk[]} | {error: ReadFailure['error']} {
+  if (headings.length === 0) {
+    return {chunks};
+  }
+
+  const selected = new Set<ReadChunk>();
+  for (const heading of headings) {
+    const needle = heading.toLowerCase();
+    const byId = chunks.find(chunk => chunk.id.toLowerCase() === needle);
+    const matches = byId ? [byId] : chunks.filter(chunk => chunk.heading.toLowerCase() === needle);
+    if (matches.length === 0) {
+      const suggestions = chunks
+        .map(chunk => ({id: chunk.id, distance: editDistance(needle, chunk.heading.toLowerCase())}))
+        .filter(({distance}) => distance <= 3)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 5)
+        .map(({id}) => id);
+      return {
+        error: {
+          code: 'ERR_SECTION_NOT_FOUND',
+          message: `Section '${heading}' was not found on '${entryId}' with the selected filters. Use --list-sections to see available headings.`,
+          suggestions
+        }
+      };
+    }
+    if (matches.length > 1) {
+      return {
+        error: {
+          code: 'ERR_AMBIGUOUS_SECTION',
+          message: `Multiple sections match '${heading}' on '${entryId}'. Use one of their section IDs.`,
+          suggestions: matches.map(chunk => chunk.id)
+        }
+      };
+    }
+    selected.add(matches[0]);
+  }
+  return {chunks: chunks.filter(chunk => selected.has(chunk))};
 }
 
 function renderReadEntry(entry: CatalogEntryIR, chunks: ReadChunk[]): string {
@@ -492,7 +563,7 @@ function renderReadEntry(entry: CatalogEntryIR, chunks: ReadChunk[]): string {
   for (const chunk of chunks) {
     if ('section' in chunk) {
       const {section} = chunk;
-      const level = Math.max(2, section.level ?? 2);
+      const {level} = chunk;
       lines.push('', `${'#'.repeat(level)} ${section.heading}`, '', section.markdown);
       if (level === 2) {
         hasApiHeading = isApiHeading(section);
@@ -508,22 +579,13 @@ function renderReadEntry(entry: CatalogEntryIR, chunks: ReadChunk[]): string {
   return lines.join('\n').trim() + '\n';
 }
 
-function filterEntryBySections(
-  entry: CatalogEntryIR,
-  requestedSections: SectionFilter[] | undefined
-): CatalogEntryIR {
-  if (!requestedSections?.length || requestedSections.includes('all')) {
-    return entry;
-  }
-
-  const wantedSet = new Set(requestedSections);
-  return {
-    ...entry,
-    sections: entry.sections.filter(sec => wantedSet.has(sec.category)),
-    exports: wantedSet.has('api') ? entry.exports : [],
-    compositionRules:
-      wantedSet.has('usage') || wantedSet.has('accessibility') ? entry.compositionRules : []
-  };
+function renderReadSectionIndex(entry: CatalogEntryIR, sections: ReadSectionRef[]): string {
+  const outline = sections.length
+    ? sections
+        .map(({id, heading, level}) => `${'  '.repeat(level - 2)}- ${heading} (\`${id}\`)`)
+        .join('\n')
+    : '_No matching sections._';
+  return renderReadEntry(entry, []) + '\n' + outline + '\n';
 }
 
 type ReadSuccess = Extract<ReadItemResult, {ok: true}>;
@@ -586,6 +648,8 @@ function boundReadResult(
 export interface ReadDocsOptions extends CommonQueryOptions {
   ids: string[];
   sections?: SectionFilter[];
+  listSections?: boolean;
+  sectionHeadings?: string[];
   maxTokens?: number;
   cursor?: string;
   output?: ReadOutputOptions;
@@ -624,6 +688,15 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     );
   }
 
+  const headings = [...new Set((options.sectionHeadings ?? []).map(heading => heading.trim()))];
+  if (headings.includes('') || (options.listSections && headings.length > 0)) {
+    throw new AgentDocsError(
+      'ERR_INVALID_ARGS',
+      'Provide non-empty section headings or IDs. Listing sections and reading specific headings are separate operations.',
+      EXIT_CODES.INVALID_ARGS
+    );
+  }
+
   const index = await loadSnapshotIndex({
     cacheDir: options.cacheDir,
     snapshotSource: options.snapshotSource,
@@ -640,6 +713,8 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
       : undefined;
   const continuationFlags = [
     ...(sections ? ['--sections', sections.join(',')] : []),
+    ...(options.listSections ? ['--list-sections'] : []),
+    ...headings.flatMap(heading => ['--section', quoteShellArg(heading)]),
     ...(options.maxTokens === undefined ? [] : ['--max-tokens', String(options.maxTokens)]),
     ...(options.output?.format === 'json' ? ['--json'] : []),
     ...(options.output?.jsonContent === 'markdown' ? ['--json-content', 'markdown'] : []),
@@ -774,14 +849,27 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     const {entry: fullEntry, prov} = matchedData;
     usedSnapshots.add(prov.snapshotId);
     relevantPackages.add(prov.packageName);
-    const entry = filterEntryBySections(fullEntry, sections);
-    const chunks = getReadChunks(entry);
+    const allChunks = getReadChunks(fullEntry);
+    const categoryChunks = sections
+      ? allChunks.filter(chunk => sections.includes(chunk.category))
+      : allChunks;
+    const selection = selectReadChunks(fullEntry.id, categoryChunks, headings);
+    if ('error' in selection) {
+      results.push({requestedId, ok: false, error: selection.error});
+      continue;
+    }
+    const {chunks} = selection;
     const selectedIds = new Set(chunks.map(chunk => chunk.id));
-    const filteredIds = getReadChunks(fullEntry)
-      .map(chunk => chunk.id)
-      .filter(id => !selectedIds.has(id));
+    const filteredIds = allChunks.map(chunk => chunk.id).filter(id => !selectedIds.has(id));
+    const cursorScope = [fullEntry.id, prov.snapshotId, prov.sliceSha256, sections];
     const cursorKey = createHash('sha256')
-      .update(JSON.stringify([entry.id, prov.snapshotId, prov.sliceSha256, sections]))
+      .update(
+        JSON.stringify(
+          options.listSections || headings.length
+            ? [...cursorScope, Boolean(options.listSections), [...selectedIds]]
+            : cursorScope
+        )
+      )
       .digest('hex')
       .slice(0, 20);
     const [offset] = options.cursor?.split('.', 1) ?? [];
@@ -801,31 +889,49 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     }
 
     const header =
-      options.cursor === undefined
-        ? entry
-        : {...entry, summary: '', imports: [], compositionRules: []};
+      options.cursor !== undefined || options.listSections || headings.length > 0
+        ? {...fullEntry, summary: '', imports: [], compositionRules: []}
+        : {
+            ...fullEntry,
+            compositionRules:
+              !sections || sections.includes('usage') || sections.includes('accessibility')
+                ? fullEntry.compositionRules
+                : []
+          };
     const project = (end: number): ReadSuccess => {
       const selected = chunks.slice(start, end);
+      const sectionIndex = options.listSections
+        ? selected.map(({id, heading, category, level}) => ({id, heading, category, level}))
+        : undefined;
       const pageEntry = {
         ...header,
-        sections: selected.flatMap(chunk => ('section' in chunk ? [chunk.section] : [])),
-        exports: selected.flatMap(chunk => ('apiExport' in chunk ? [chunk.apiExport] : []))
+        sections: sectionIndex
+          ? []
+          : selected.flatMap(chunk =>
+              'section' in chunk ? [{...chunk.section, id: chunk.id}] : []
+            ),
+        exports: sectionIndex
+          ? []
+          : selected.flatMap(chunk => ('apiExport' in chunk ? [chunk.apiExport] : []))
       };
       const truncated = end < chunks.length;
       const nextCursor = truncated ? `${end}.${cursorKey}` : undefined;
       return {
         requestedId,
         ok: true,
-        id: entry.id,
+        id: fullEntry.id,
         provenance: {
           packageName: prov.packageName,
           packageVersion: prov.packageVersion,
           snapshotId: prov.snapshotId,
           exactMatch: prov.exactMatch,
-          sourceUrl: entry.sourceUrl
+          sourceUrl: fullEntry.sourceUrl
         },
         entry: pageEntry,
-        markdown: renderReadEntry(pageEntry, selected),
+        markdown: sectionIndex
+          ? renderReadSectionIndex(pageEntry, sectionIndex)
+          : renderReadEntry(pageEntry, selected),
+        sectionIndex,
         includedSections: [...new Set(selected.map(chunk => chunk.id))],
         omittedSections: [
           ...new Set([...filteredIds, ...chunks.slice(end).map(chunk => chunk.id)])
@@ -834,7 +940,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
         nextCursor,
         continueCommand:
           nextCursor && options.output?.continuation !== 'cursor'
-            ? `${cliPrefix} read ${quoteShellArg(entry.id)} --cursor ${nextCursor} ${continuationFlags}`
+            ? `${cliPrefix} read ${quoteShellArg(fullEntry.id)} --cursor ${nextCursor} ${continuationFlags}`
             : undefined
       };
     };
@@ -1546,10 +1652,12 @@ export function getCapabilityManifest(
       name: 'read',
       summary:
         'Read compact usage, anatomy, styling, accessibility, and API docs for one or more IDs in a single call.',
-      usage: `${cliName} read <id...> [--sections usage,api,accessibility,styling,testing,guide,all] [--max-tokens N] [--cursor value] [--json [--json-content entry|markdown]]`,
+      usage: `${cliName} read <id...> [--sections usage,api,accessibility,styling,testing,guide,all] [--list-sections | --section heading-or-id] [--max-tokens N] [--cursor value] [--json [--json-content entry|markdown]]`,
       flags: [
         '--cwd',
         '--sections',
+        '--list-sections',
+        '--section',
         '--max-tokens',
         '--cursor',
         '--version',

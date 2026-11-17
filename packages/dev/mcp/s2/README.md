@@ -112,6 +112,8 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 | `search_s2_tokens` | `{ query?: string, property?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Query Spectrum 2 style-macro properties and design tokens from the versioned snapshot. |
 | `search_s2_icons` | `{ query: string, kind?: 'icon' \| 'illustration' \| 'all', cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Search Spectrum 2 workflow icons and illustrations from the versioned snapshot. |
 
+Set `listSections: true` to retrieve headings and section IDs without their content. Pass `sectionHeadings` with the exact headings or IDs to read, for example `["Asynchronous loading"]`.
+
 `read_docs` measures `maxTokens` against the selected output format. To resume a truncated read, pass its `nextCursor` as `cursor` with that document ID and the same section and version options. Set `format: "json"` for a structured entry, or add `jsonContent: "markdown"` to receive rendered Markdown in the JSON envelope. Query tools accept `includeResolution: true` to include the full resolution in JSON output.
 
 The server also exposes the evergreen CLI-first skill via MCP resource `skills://react-spectrum-s2/SKILL.md` (`SEP-2640`) and discovers workspace roots via MCP `roots/list` (or `--cwd <dir>`).

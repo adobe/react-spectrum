@@ -473,6 +473,14 @@ export async function createAgentDocsMcpServer(
           .array(SECTION_ENUM)
           .optional()
           .describe('Optional section filter (e.g. ["usage", "api", "accessibility"]).'),
+        listSections: z
+          .boolean()
+          .optional()
+          .describe('Return the headings and IDs of available sections.'),
+        sectionHeadings: z
+          .array(z.string().min(1))
+          .optional()
+          .describe('Read specific sections by exact heading or section ID.'),
         maxTokens: z
           .number()
           .int()
@@ -514,6 +522,8 @@ export async function createAgentDocsMcpServer(
           ...queryOpts,
           ids,
           sections: args.sections as SectionFilter[] | undefined,
+          listSections: args.listSections,
+          sectionHeadings: args.sectionHeadings,
           maxTokens: args.maxTokens,
           cursor: args.cursor,
           output
