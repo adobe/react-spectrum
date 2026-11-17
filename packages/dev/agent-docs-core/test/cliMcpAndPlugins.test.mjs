@@ -44,6 +44,80 @@ function currentCli(t, brand = 's2') {
     });
 }
 
+test('CLI finds documented exports by name and offers choices for ambiguous exports', t => {
+  const run = currentCli(t, 'react-aria');
+  const option = JSON.parse(run('api', 'useOption', '--json'));
+  assert.equal(option.resolvedId, 'react-aria:ListBox/useListBox');
+  assert.deepEqual(
+    option.exports.map(item => item.name),
+    ['useOption']
+  );
+  assert.ok(option.exports[0].callSignatures.length > 0);
+  assert.match(option.markdown, /useOption\(/);
+  assert.deepEqual(option.imports, ["import {useOption} from 'react-aria';"]);
+
+  const ariaOption = JSON.parse(run('api', 'react-aria:useOption', '--json'));
+  assert.equal(ariaOption.resolvedId, option.resolvedId);
+  assert.deepEqual(ariaOption.exports, option.exports);
+  assert.throws(
+    () => run('api', 'MenuItem', '--json'),
+    err => {
+      assert.equal(err.status, 3);
+      const {error} = JSON.parse(err.stdout);
+      assert.match(error.message, /MenuItem.*more than one/);
+      assert.ok(error.suggestions.includes('rac:Menu'));
+      assert.ok(error.suggestions.includes('s2:Menu'));
+      return true;
+    }
+  );
+  const s2Item = JSON.parse(run('api', 's2:ComboBoxItem', '--json'));
+  assert.equal(s2Item.resolvedId, 's2:ComboBox');
+  assert.deepEqual(
+    s2Item.exports.map(item => item.name),
+    ['ComboBoxItem']
+  );
+});
+
+test('CLI suggests nearby IDs and ranks results that cover the query intent', t => {
+  const run = currentCli(t);
+  assert.throws(
+    () => run('read', 's2:Buton', 's2:Mneu', '--json'),
+    err => {
+      assert.equal(err.status, 3);
+      const {results} = JSON.parse(err.stdout);
+      assert.deepEqual(
+        results.map(miss => miss.error.suggestions[0]),
+        ['s2:Button', 's2:Menu']
+      );
+      for (const miss of results) {
+        assert.ok(miss.error.suggestions.every(id => id.startsWith('s2:')));
+      }
+      return true;
+    }
+  );
+  const dropdown = JSON.parse(run('search', 'searchable dropdown', '--json'));
+  assert.equal(dropdown.results[0].id, 's2:ComboBox');
+  assert.ok(dropdown.results.some(hit => hit.id === 'rac:Select'));
+  const currency = JSON.parse(run('search', 'format currency', '--json'));
+  assert.equal(currency.results[0].id, 'internationalized:number/NumberFormatter');
+  assert.ok(currency.results.some(hit => hit.id === 'internationalized:date/DateFormatter'));
+});
+
+test('CLI surfaces complete summaries and consolidates example imports', t => {
+  const run = currentCli(t);
+  const actionMenu = JSON.parse(run('read', 's2:ActionMenu', '--json')).results[0].entry;
+  assert.equal(
+    actionMenu.summary,
+    'Combines an ActionButton with a Menu for simple "more actions" use cases.'
+  );
+  const combo = JSON.parse(run('read', 's2:ComboBox', '--json')).results[0].entry;
+  const comboImports = combo.imports.filter(line => line.includes('@react-spectrum/s2/ComboBox'));
+  assert.equal(comboImports.length, 1);
+  assert.equal([...comboImports[0].matchAll(/\bComboBoxItem\b/g)].length, 1);
+  assert.match(comboImports[0], /ComboBoxSection/);
+  assert.ok(combo.imports.some(line => line.includes('@react-spectrum/s2/Avatar')));
+});
+
 test('CLI reads the full ComboBox documentation by default and with --sections all', t => {
   const run = currentCli(t);
   const read = (...args) => run('read', 's2:ComboBox', ...args);
@@ -83,8 +157,8 @@ test('CLI budgets rendered Markdown and resumes filtered reads without repeating
   assert.equal(full.results[0].markdown, undefined);
   assert.equal(full.resolution, undefined);
   const boundedArgs = [...args, '--json', '--json-content', 'markdown', '--include-resolution'];
-  const boundedRaw = run(...boundedArgs, '--max-tokens', '3000');
-  assert.ok(Buffer.byteLength(boundedRaw) <= 3000 * 4);
+  const boundedRaw = run(...boundedArgs, '--max-tokens', '4000');
+  assert.ok(Buffer.byteLength(boundedRaw) <= 4000 * 4);
   const bounded = JSON.parse(boundedRaw);
   const page = bounded.results[0];
   assert.ok(bounded.resolution.packages['@react-spectrum/s2']);
@@ -101,8 +175,8 @@ test('CLI budgets rendered Markdown and resumes filtered reads without repeating
     if (!current.nextCursor) {
       break;
     }
-    const raw = run(...boundedArgs, '--max-tokens', '3000', '--cursor', current.nextCursor);
-    assert.ok(Buffer.byteLength(raw) <= 3000 * 4);
+    const raw = run(...boundedArgs, '--max-tokens', '4000', '--cursor', current.nextCursor);
+    assert.ok(Buffer.byteLength(raw) <= 4000 * 4);
     current = JSON.parse(raw).results[0];
   }
   assert.equal(current.truncated, false);

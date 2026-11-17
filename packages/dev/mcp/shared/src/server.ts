@@ -535,7 +535,7 @@ export async function createAgentDocsMcpServer(
         id: z
           .string()
           .min(1)
-          .describe('Component or hook ID, e.g. "s2:ComboBox" or "rac:ComboBox".'),
+          .describe('Document ID or export name, e.g. "s2:ComboBox" or "useOption".'),
         exportName: z
           .string()
           .optional()

@@ -37,6 +37,8 @@ try {
     filterSlugs: [
       'Button',
       'ComboBox',
+      's2:ActionMenu',
+      'Menu',
       'rac:Select',
       'TableView',
       'Dialog',
@@ -44,7 +46,11 @@ try {
       'getting-started',
       'collections',
       'Button/useButton',
+      'ListBox/useListBox',
       'internationalized/date/CalendarDate',
+      'internationalized/date/DateFormatter',
+      'internationalized/number/NumberFormatter',
+      'useNumberFormatter',
       's2:guide/implementation-guidance',
       's2:guide/component-decision-tree'
     ]

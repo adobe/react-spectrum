@@ -333,7 +333,7 @@ export async function runAgentDocsCli(
         if (!id) {
           throw new AgentDocsError(
             'ERR_INVALID_ARGS',
-            `Usage: ${cliCommandPrefix} api <id> [--export Name] [--prop filter]`,
+            `Usage: ${cliCommandPrefix} api <id-or-export> [--export Name] [--prop filter]`,
             EXIT_CODES.INVALID_ARGS
           );
         }

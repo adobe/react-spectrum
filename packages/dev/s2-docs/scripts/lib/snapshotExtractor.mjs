@@ -130,9 +130,15 @@ function parseEsmMetadata(rawMdx) {
   if (secMatch) {
     section = secMatch[1].trim();
   }
-  let descMatch = rawMdx.match(/export\s+const\s+description\s*=\s*['"]([^'"]+)['"]/m);
+  let descMatch = rawMdx.match(
+    /export\s+const\s+description\s*=\s*("(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')/
+  );
   if (descMatch) {
-    description = descMatch[1].trim();
+    let source = ts.createSourceFile('description.ts', descMatch[1], ts.ScriptTarget.Latest);
+    let statement = source.statements[0];
+    if (ts.isExpressionStatement(statement) && ts.isStringLiteral(statement.expression)) {
+      description = statement.expression.text.trim();
+    }
   }
 
   let docsImports = new Map();
@@ -1106,21 +1112,42 @@ function parseMdxIntoStructuredDoc({
 
   // Extract canonical import statements from code examples in this targetRoot MDX (version-accurate!),
   // falling back to `supportsSubpathExports` inspection of targetRoot's package.json!
-  let imports = [];
-  let seenImports = new Set();
+  let importsBySource = new Map();
+  let bindingSources = new Map();
   let importStmtRe =
-    /^import\s+\{[^}]+\}\s+from\s+['"](@react-spectrum\/s2(?:\/[\w-]+)?|react-aria-components(?:\/[\w-]+)?|react-aria|react-stately|@internationalized\/[\w-]+)['"];?$/gm;
+    /^import[ \t]+\{([^}]+)\}[ \t]+from[ \t]+['"]((?:@react-spectrum\/s2|react-aria-components|react-aria|react-stately|@internationalized\/[\w-]+)(?:\/[\w-]+)?)['"];?$/gm;
   let im;
   while ((im = importStmtRe.exec(mdText)) !== null) {
-    let stmt = im[0].trim().endsWith(';') ? im[0].trim() : `${im[0].trim()};`;
-    if (!seenImports.has(stmt)) {
-      seenImports.add(stmt);
-      imports.push(stmt);
+    let [, specifiers, source] = im;
+    if (importsBySource.size === 3 && !importsBySource.has(source)) {
+      continue;
     }
-    if (imports.length >= 3) {
-      break;
+    let bindings = importsBySource.get(source) || new Map();
+    for (let specifier of specifiers.split(',')) {
+      let binding = specifier.trim().replace(/\s+/g, ' ');
+      let match = binding.match(/^(type )?([\w$]+)(?: as ([\w$]+))?$/);
+      if (!match) {
+        continue;
+      }
+      let [, typeOnly, imported, alias] = match;
+      let local = alias || imported;
+      let owner = bindingSources.get(local);
+      if (owner && owner !== source) {
+        continue;
+      }
+      let previous = bindings.get(local);
+      if (!previous || (!typeOnly && previous === `type ${binding}`)) {
+        bindings.set(local, binding);
+      }
+      bindingSources.set(local, source);
+    }
+    if (bindings.size > 0) {
+      importsBySource.set(source, bindings);
     }
   }
+  let imports = [...importsBySource].map(
+    ([source, bindings]) => `import {${[...bindings.values()].join(', ')}} from '${source}';`
+  );
 
   if (imports.length === 0 && exportsIR.length > 0) {
     let mainNames = exportsIR.slice(0, 4).map(e => e.name);

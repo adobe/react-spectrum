@@ -57,6 +57,7 @@ import path from 'node:path';
 const QUERY_SYNONYMS: Record<string, string[]> = {
   dropdown: ['picker', 'select', 'combobox', 'menu'],
   searchable: ['combobox', 'autocomplete', 'searchfield', 'filter'],
+  currency: ['numberformatter', 'usenumberformatter'],
   modal: ['dialog', 'alertdialog', 'popover'],
   popup: ['popover', 'dialog', 'tooltip', 'contextualhelp'],
   notification: ['toast', 'inlinealert', 'badge'],
@@ -201,8 +202,7 @@ function candidatePackagesForLookup(library: LibraryId, slug: string): string[] 
 function scoreSearchRecord(
   rec: SearchIndexRecord,
   rawQueryLower: string,
-  tokens: string[],
-  expandedTokens: Set<string>,
+  terms: Array<{token: string; synonyms: string[]}>,
   preferredLibrary: LibraryId | null
 ): number {
   const titleLower = rec.title.toLowerCase();
@@ -220,41 +220,45 @@ function scoreSearchRecord(
     score += 65;
   }
 
-  for (const tok of tokens) {
-    if (titleLower === tok || slugLower === tok) {
-      score += 55;
-    } else if (titleLower.includes(tok) || slugLower.includes(tok)) {
-      score += 30;
+  for (const {token, synonyms} of terms) {
+    let directScore = 0;
+    if (titleLower === token || slugLower === token) {
+      directScore += 55;
+    } else if (titleLower.includes(token) || slugLower.includes(token)) {
+      directScore += 30;
     }
-    if (exportsLower.some(e => e === tok)) {
-      score += 35;
-    } else if (exportsLower.some(e => e.includes(tok))) {
-      score += 15;
+    if (exportsLower.includes(token)) {
+      directScore += 35;
+    } else if (exportsLower.some(e => e.includes(token))) {
+      directScore += 15;
     }
-    if (keywordsLower.some(k => k === tok || k.includes(tok))) {
-      score += 22;
+    if (keywordsLower.some(k => k.includes(token))) {
+      directScore += 22;
     }
-    if (summaryLower.includes(tok)) {
-      score += 12;
+    if (summaryLower.includes(token)) {
+      directScore += 12;
     }
-    if (rec.kind.toLowerCase().includes(tok)) {
-      score += 10;
+    if (rec.kind.toLowerCase().includes(token)) {
+      directScore += 10;
     }
-  }
 
-  for (const syn of expandedTokens) {
-    if (tokens.includes(syn)) {
-      continue;
+    let synonymScore = 0;
+    for (const synonym of synonyms) {
+      if (titleLower === synonym || slugLower === synonym) {
+        synonymScore = 28;
+        break;
+      }
+      if (
+        titleLower.includes(synonym) ||
+        keywordsLower.some(k => k.includes(synonym)) ||
+        summaryLower.includes(synonym)
+      ) {
+        synonymScore = 12;
+      }
     }
-    if (titleLower === syn || slugLower === syn) {
-      score += 28;
-    } else if (
-      titleLower.includes(syn) ||
-      keywordsLower.some(k => k.includes(syn)) ||
-      summaryLower.includes(syn)
-    ) {
-      score += 12;
-    }
+    // A synonym is evidence for its query term. Several aliases for the same term
+    // should not outweigh a result that matches more of the query.
+    score += Math.max(directScore, synonymScore);
   }
 
   if (score > 0 && preferredLibrary && rec.library === preferredLibrary) {
@@ -331,17 +335,12 @@ export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocs
   const followUpFlags = formatFollowUpFlags(options, resolution);
 
   const rawQueryLower = query.toLowerCase();
-  const tokens = tokenizeQuery(query);
-  const expandedTokens = new Set<string>(tokens);
-  for (const tok of tokens) {
-    for (const [key, syns] of Object.entries(QUERY_SYNONYMS)) {
-      if (tok === key || tok.includes(key)) {
-        for (const s of syns) {
-          expandedTokens.add(s);
-        }
-      }
-    }
-  }
+  const terms = tokenizeQuery(query).map(token => ({
+    token,
+    synonyms: Object.entries(QUERY_SYNONYMS)
+      .filter(([key]) => token === key || token === `${key}s`)
+      .flatMap(([, synonyms]) => synonyms)
+  }));
 
   const hits: SearchHit[] = [];
   const usedSnapshots = new Set<string>();
@@ -356,8 +355,7 @@ export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocs
       const score = scoreSearchRecord(
         rec,
         rawQueryLower,
-        tokens,
-        expandedTokens,
+        terms,
         options.library || options.defaultLibrary || null
       );
       if (score <= 0) {
@@ -607,6 +605,15 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
   ].join(' ');
 
   const sliceCache = new Map<string, string>();
+  const searchCache = new Map<string, SearchIndexRecord[]>();
+  const getSearchRecords = (sliceDir: string) => {
+    let records = searchCache.get(sliceDir);
+    if (!records) {
+      records = readSliceSearchIndex(sliceDir);
+      searchCache.set(sliceDir, records);
+    }
+    return records;
+  };
   const getSliceDir = async (prov: ResolvedPackageProvenance) => {
     const key = `${prov.packageName}@${prov.packageVersion}`;
     if (!sliceCache.has(key)) {
@@ -639,7 +646,8 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
       entry: CatalogEntryIR;
       prov: ResolvedPackageProvenance;
     } | null = null;
-    const fuzzySuggestions = new Set<string>();
+    const slugLower = slug.toLowerCase();
+    const suggestionRecords = new Set<SearchIndexRecord>();
 
     for (const pkgName of candidatePkgs) {
       const prov = resolution.packages[pkgName];
@@ -654,8 +662,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
       }
 
       // Case-insensitive exact ID/slug/title lookup via search index (without fuzzy hallucination!)
-      const searchRecords = readSliceSearchIndex(sliceDir);
-      const slugLower = slug.toLowerCase();
+      const searchRecords = getSearchRecords(sliceDir);
       const exactRecord = searchRecords.find(
         r =>
           r.library === library &&
@@ -669,23 +676,19 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
         }
       }
 
-      for (const rec of searchRecords) {
-        if (
-          rec.title.toLowerCase().includes(slugLower) ||
-          slugLower.includes(rec.title.toLowerCase()) ||
-          rec.exports.some(e => e.toLowerCase() === slugLower)
-        ) {
-          fuzzySuggestions.add(rec.id);
+      for (const record of searchRecords) {
+        if (record.library === library) {
+          suggestionRecords.add(record);
         }
       }
     }
 
     // Fallback: if unqualified slug (e.g. `CalendarDate`) didn't match defaultLibrary, check other resolved packages for an exact title/slug match
     if (!matchedData && !requestedId.includes(':')) {
-      const slugLower = slug.toLowerCase();
       for (const prov of Object.values(resolution.packages)) {
         const sliceDir = await getSliceDir(prov);
-        const exactRecord = readSliceSearchIndex(sliceDir).find(
+        const records = getSearchRecords(sliceDir);
+        const exactRecord = records.find(
           r => r.slug.toLowerCase() === slugLower || r.title.toLowerCase() === slugLower
         );
         const found = exactRecord
@@ -694,6 +697,9 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
         if (found) {
           matchedData = {entry: found.entry, prov};
           break;
+        }
+        for (const record of records) {
+          suggestionRecords.add(record);
         }
       }
     }
@@ -713,7 +719,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
         error: {
           code: 'ERR_ENTRY_NOT_FOUND',
           message: `Document '${requestedId}' was not found${versionNote}.`,
-          suggestions: Array.from(fuzzySuggestions).slice(0, 5)
+          suggestions: suggestIds(suggestionRecords, slugLower, library)
         }
       });
       continue;
@@ -897,6 +903,7 @@ function renderDetailedExportMarkdown(exp: ExportApiIR, headingLevel = 2): strin
 }
 
 function editDistance(a: string, b: string): number {
+  let previousPrevious: number[] | undefined;
   let previous = Array.from({length: b.length + 1}, (_, i) => i);
   for (let i = 1; i <= a.length; i++) {
     const current = [i];
@@ -906,19 +913,118 @@ function editDistance(a: string, b: string): number {
         current[j - 1] + 1,
         previous[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
       );
+      if (previousPrevious && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        current[j] = Math.min(current[j], previousPrevious[j - 2] + 1);
+      }
     }
+    previousPrevious = previous;
     previous = current;
   }
   return previous[b.length];
 }
 
+function scoreIdSuggestion(record: SearchIndexRecord, query: string): number {
+  if (record.exports.some(name => name.toLowerCase() === query)) {
+    return 0;
+  }
+  const title = record.title.toLowerCase();
+  const slug = record.slug.toLowerCase();
+  const maxDistance = query.length >= 6 ? 2 : 1;
+  let score = Infinity;
+  for (const name of new Set([title, slug, path.posix.basename(slug)])) {
+    if (query.length >= 4 && Math.abs(name.length - query.length) <= maxDistance) {
+      const distance = editDistance(query, name);
+      if (distance <= maxDistance) {
+        score = Math.min(score, distance);
+      }
+    }
+    if (name.includes(query) || (name.length >= 4 && query.includes(name))) {
+      score = Math.min(score, 3);
+    }
+  }
+  return score;
+}
+
+function suggestIds(
+  records: Iterable<SearchIndexRecord>,
+  query: string,
+  preferredLibrary: LibraryId
+): string[] {
+  const ranked = [...records].map(record => ({
+    id: record.id,
+    score: scoreIdSuggestion(record, query),
+    preferred: record.library === preferredLibrary
+  }));
+  ranked.sort(
+    (a, b) =>
+      a.score - b.score || Number(b.preferred) - Number(a.preferred) || a.id.localeCompare(b.id)
+  );
+  const ids = new Set(ranked.filter(item => Number.isFinite(item.score)).map(item => item.id));
+  return [...ids].slice(0, 5);
+}
+
+async function findApiExport(
+  options: QueryApiOptions,
+  resolution: ResolutionState
+): Promise<{id: string; exportName: string} | undefined> {
+  const {slug, library} = parseQualifiedId(options.id, options.defaultLibrary || 's2', resolution);
+  const qualified = options.id.includes(':');
+  const query = slug.toLowerCase();
+  const index = await loadSnapshotIndex(options);
+  const matches = new Map<string, string>();
+  const packages = qualified
+    ? candidatePackagesForLookup(library, slug)
+    : Object.keys(resolution.packages);
+  for (const packageName of packages) {
+    const prov = resolution.packages[packageName];
+    if (!prov) {
+      continue;
+    }
+    const sliceDir = await openSliceForProvenance(prov, index, options);
+    for (const record of readSliceSearchIndex(sliceDir)) {
+      if (!qualified || record.library === library) {
+        const exportName = record.exports.find(name => name.toLowerCase() === query);
+        if (exportName) {
+          matches.set(record.id, exportName);
+        }
+      }
+    }
+  }
+  if (matches.size > 1) {
+    throw new AgentDocsError(
+      'ERR_AMBIGUOUS_EXPORT',
+      `Export '${options.id}' appears in more than one document. Choose a document ID with --export ${slug}.`,
+      EXIT_CODES.NOT_FOUND,
+      {suggestions: [...matches.keys()].sort()}
+    );
+  }
+  const match = matches.entries().next().value;
+  return match && {id: match[0], exportName: match[1]};
+}
+
 export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult> {
-  const readRes = await readDocs({
+  let readRes = await readDocs({
     ...options,
     ids: [options.id],
     sections: ['api']
   });
-  const item = readRes.results[0];
+  let item = readRes.results[0];
+  let exportName = options.exportName;
+  let resolvedByExport = false;
+  if (item && !item.ok && item.error.code === 'ERR_ENTRY_NOT_FOUND') {
+    const match = await findApiExport(options, readRes.resolution);
+    if (match) {
+      resolvedByExport = true;
+      exportName ??= match.exportName;
+      readRes = await readDocs({
+        ...options,
+        resolution: readRes.resolution,
+        ids: [match.id],
+        sections: ['api']
+      });
+      item = readRes.results[0];
+    }
+  }
   if (!item || !item.ok) {
     throw new AgentDocsError(
       item?.error.code || 'ERR_ENTRY_NOT_FOUND',
@@ -929,14 +1035,14 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
   }
 
   let exportsList = item.entry.exports || [];
-  if (options.exportName) {
-    const needle = options.exportName.toLowerCase();
+  if (exportName) {
+    const needle = exportName.toLowerCase();
     exportsList = exportsList.filter(e => e.name.toLowerCase() === needle);
     if (exportsList.length === 0) {
       const available = (item.entry.exports || []).map(e => e.name);
       throw new AgentDocsError(
         'ERR_ENTRY_NOT_FOUND',
-        `Export '${options.exportName}' not found on '${item.id}'. Available exports: ${available.join(', ') || 'none'}.`,
+        `Export '${exportName}' not found on '${item.id}'. Available exports: ${available.join(', ') || 'none'}.`,
         EXIT_CODES.NOT_FOUND,
         {suggestions: available}
       );
@@ -987,7 +1093,7 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
       .sort((a, b) => a.distance - b.distance || a.name.localeCompare(b.name))
       .slice(0, 5)
       .map(({name}) => name);
-    const target = options.exportName ? `'${options.exportName}' in '${item.id}'` : `'${item.id}'`;
+    const target = exportName ? `'${exportName}' in '${item.id}'` : `'${item.id}'`;
     throw new AgentDocsError(
       'ERR_PROP_NOT_FOUND',
       `Prop filter '${options.propFilter}' not found on ${target}.`,
@@ -996,14 +1102,29 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
     );
   }
 
+  let imports = item.entry.imports;
+  if (resolvedByExport && exportName) {
+    const focusedImports = imports.flatMap(statement => {
+      const match = /^(import\s+\{)([^}]+)(\}\s+from\s+.+)$/.exec(statement);
+      const binding = match?.[2]
+        .split(',')
+        .map(specifier => specifier.trim())
+        .find(specifier => specifier.replace(/^type\s+/, '').split(/\s+/)[0] === exportName);
+      return match && binding ? [`${match[1]}${binding}${match[3]}`] : [];
+    });
+    if (focusedImports.length > 0) {
+      imports = focusedImports;
+    }
+  }
+
   const mdLines: string[] = [
     `# API Reference: ${item.entry.title} (\`${item.id}\`)`,
     `Package: \`${item.provenance.packageName}@${item.provenance.packageVersion}\` · Snapshot: \`${item.provenance.snapshotId}\``
   ];
-  if (item.entry.imports && item.entry.imports.length > 0) {
+  if (imports.length > 0) {
     mdLines.push('');
     mdLines.push('```tsx');
-    for (const imp of item.entry.imports) {
+    for (const imp of imports) {
       mdLines.push(imp);
     }
     mdLines.push('```');
@@ -1021,7 +1142,7 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
     snapshots: readRes.snapshots,
     resolution: readRes.resolution,
     warnings: readRes.warnings,
-    imports: item.entry.imports,
+    imports,
     exports: exportsList,
     markdown: mdLines.join('\n').trim() + '\n'
   };
@@ -1345,9 +1466,8 @@ export function getCapabilityManifest(
     },
     {
       name: 'api',
-      summary:
-        'Inspect detailed TypeScript props, events, render props, generics, and constraints for a component or hook.',
-      usage: `${cliName} api <id> [--export Name] [--prop filter] [--events-only] [--render-props] [--json]`,
+      summary: 'Inspect TypeScript APIs by document ID or export name.',
+      usage: `${cliName} api <id-or-export> [--export Name] [--prop filter] [--events-only] [--render-props] [--json]`,
       flags: [
         '--cwd',
         '--export',
