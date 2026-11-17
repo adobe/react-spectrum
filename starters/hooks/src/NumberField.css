@@ -50,12 +50,9 @@
     }
   }
 
-  .react-aria-Group .react-aria-Input {
-    outline: none;
-  }
-
   .react-aria-Input {
     z-index: 1;
+    outline: none;
     width: 5.25rem;
     flex: 1;
 

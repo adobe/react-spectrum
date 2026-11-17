@@ -138,6 +138,9 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
+  // Props for a NumberField bound to the thumb at the given index. The NumberField displays and
+  // edits that thumb's value, and its constraints mirror the thumb's (neighboring thumbs in a range
+  // slider limit its min/max).
   let getNumberFieldProps = (index: number): WithRef<NumberFieldProps, HTMLDivElement> => ({
     ref: el => {
       numberFieldRefs.current[index] = el;
@@ -148,10 +151,16 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
     formatOptions: props.formatOptions,
     value: state.values[index],
     defaultValue: state.defaultValues[index],
+    // A thumb can be individually disabled via SliderThumb's isDisabled.
     isDisabled: state.isDisabled || !state.isThumbEditable(index),
+    // Label the NumberField with the slider's labelling ids (its Label and any aria-labelledby
+    // passed to the Slider), falling back to the slider group's id (e.g. aria-label only).
     'aria-labelledby': groupProps['aria-labelledby'] || groupProps.id,
     'aria-describedby': props['aria-describedby'],
     'aria-details': props['aria-details'],
+    // In a range slider, the inputs behave like one continuous text field: pressing the arrow
+    // key in the reading direction at the end of one input's text moves the caret into the next
+    // enabled input, and vice versa at the start.
     onKeyDown(e) {
       if (state.values.length <= 1 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
         return;
@@ -198,6 +207,8 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
       }
     },
     onChange(val) {
+      // NumberField emits NaN when its input is cleared. Ignore that, and skip committing values
+      // that snap to the thumb's current value so no redundant onChange/onChangeEnd fires.
       if (
         Number.isNaN(val) ||
         snapValueToStep(
@@ -210,14 +221,18 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
         return;
       }
 
+      // A committed text value is a complete interaction, so wrap it in a drag start/end. Slider
+      // state only fires onChangeEnd when a thumb stops dragging, so this makes typed values fire
+      // onChangeEnd just like a keyboard or pointer interaction on the thumb.
       state.setThumbDragging(index, true);
       state.setThumbValue(index, val);
       state.setThumbDragging(index, false);
     }
   });
 
-  // Only NumberFields with an explicit thumb index slot are bound to the slider.
-  // NumberFields without a slot keep their own state.
+  // Only NumberFields with an explicit thumb index slot (e.g. slot="0", slot="1") are bound to the
+  // slider. NumberFields without a slot keep their own state, so a slider can contain unrelated
+  // NumberFields.
   let numberFieldContext = {
     slots: {
       [DEFAULT_SLOT]: {},
@@ -227,11 +242,18 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
     }
   };
 
-  function onTrackPress(e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) {
+  // When the user presses the track while a bound NumberField has uncommitted text, blur the
+  // input first so the text is committed before the track press starts a drag. Otherwise the
+  // commit (which toggles thumb dragging in onChange above) would happen mid-drag, ending the
+  // gesture and firing onChangeEnd early.
+  function onTrackPress(e: React.PointerEvent<HTMLDivElement>) {
     if (
       state.isDisabled ||
       e.defaultPrevented ||
-      ('button' in e && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) ||
+      e.button !== 0 ||
+      e.altKey ||
+      e.ctrlKey ||
+      e.metaKey ||
       !nodeContains(trackRef.current, getEventTarget(e))
     ) {
       return;
@@ -254,14 +276,14 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
         [SliderTrackContext, {...trackProps, ref: trackRef}],
         [SliderOutputContext, outputProps],
         [LabelContext, {...labelProps, ref: labelRef}],
+        // Lets a Group inside the slider (e.g. wrapping range inputs) inherit the disabled state.
         [GroupContext, {isDisabled: state.isDisabled}],
         [NumberFieldContext, numberFieldContext]
       ]}>
       <dom.div
         {...mergeProps(DOMProps, renderProps, groupProps, {
-          onPointerDownCapture: onTrackPress,
-          onMouseDownCapture: onTrackPress,
-          onTouchStartCapture: onTrackPress
+          // Capture phase so this runs before the track's own press handling.
+          onPointerDownCapture: onTrackPress
         })}
         ref={ref}
         slot={props.slot || undefined}

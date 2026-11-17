@@ -460,6 +460,35 @@ describe('Slider', () => {
     expect(fill).toHaveStyle({position: 'absolute', bottom: '50%', height: '30%', width: '100%'});
   });
 
+  it('commits pending NumberField text before a track press starts dragging', async () => {
+    let onChangeEnd = jest.fn();
+    let {getByRole} = render(
+      <Slider defaultValue={30} onChangeEnd={onChangeEnd}>
+        <Label>Opacity</Label>
+        <SliderTrack>
+          <SliderThumb />
+        </SliderTrack>
+        <NumberField slot="0">
+          <Input />
+        </NumberField>
+      </Slider>
+    );
+
+    let input = getByRole('textbox');
+    let track = getByRole('group').querySelector('.react-aria-SliderTrack');
+    await user.click(input);
+    await user.clear(input);
+    await user.keyboard('75');
+    expect(onChangeEnd).not.toHaveBeenCalled();
+
+    await user.pointer({target: track, keys: '[MouseLeft>]', coords: {x: 20}});
+    expect(onChangeEnd).toHaveBeenCalledTimes(1);
+    expect(onChangeEnd).toHaveBeenLastCalledWith(75);
+
+    await user.pointer({keys: '[/MouseLeft]', target: track});
+    expect(onChangeEnd).toHaveBeenCalledTimes(2);
+  });
+
   it('should support composing a NumberField inside Slider', async () => {
     let onChange = jest.fn();
     let onChangeEnd = jest.fn();

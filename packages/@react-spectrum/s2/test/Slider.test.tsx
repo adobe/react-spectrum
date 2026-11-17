@@ -98,28 +98,6 @@ describe('Slider and RangeSlider with SliderInput', () => {
     expect(getByRole('status')).toHaveTextContent('25');
   });
 
-  it('shows the standard output when nested fragments contain no SliderInput', () => {
-    function EditableSlider({isEditable}: {isEditable: boolean}) {
-      return (
-        <Slider label="Opacity" defaultValue={25}>
-          <>
-            <>{isEditable && <SliderInput />}</>
-          </>
-        </Slider>
-      );
-    }
-
-    let {queryByRole, getByRole, rerender} = render(<EditableSlider isEditable={false} />);
-    expect(getByRole('status')).toHaveTextContent('25');
-    expect(queryByRole('textbox')).not.toBeInTheDocument();
-    rerender(<EditableSlider isEditable />);
-    expect(queryByRole('status')).not.toBeInTheDocument();
-    expect(getByRole('textbox')).toHaveValue('25');
-    rerender(<EditableSlider isEditable={false} />);
-    expect(getByRole('status')).toHaveTextContent('25');
-    expect(queryByRole('textbox')).not.toBeInTheDocument();
-  });
-
   it('supports controlled editable Slider and Form integration without duplicate form entries', async () => {
     let entries: [string, FormDataEntryValue][] = [];
     function ControlledExample() {

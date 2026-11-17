@@ -26,6 +26,7 @@ import {SliderInternalContext} from './Slider';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 
 export interface SliderInputProps extends DOMProps, StyleProps {}
 
@@ -59,9 +60,6 @@ const editableInputSizer = css(`
   display: inline-grid;
   flex-grow: 1;
   font-variant-numeric: tabular-nums;
-  & input {
-    font-variant-numeric: tabular-nums;
-  }
   &::before, &::after {
     grid-area: 1 / 1;
     visibility: hidden;
@@ -94,11 +92,16 @@ const autoWidthInputSizer = css(`
   }
 `);
 
+// Inputs don't inherit font-variant-numeric from their parent by default, and the style macro
+// doesn't support this property, so apply it inline.
+const inputStyle = {fontVariantNumeric: 'tabular-nums'};
+
 function RangeAutoWidthInput(): ReactNode {
   let state = useContext(NumberFieldStateContext);
   return (
     <div className={autoWidthInputSizer} data-value={state?.inputValue || '0'}>
       <Input
+        UNSAFE_style={inputStyle}
         styles={style({
           gridColumnStart: 1,
           gridRowStart: 1,
@@ -137,6 +140,7 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
 ) {
   let ctx = useContext(SliderInternalContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let numberFormatter = useNumberFormatter();
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let domProps = filterDOMProps(props);
@@ -150,6 +154,7 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
     return (
       <AriaNumberField
         {...domProps}
+        data-slider-input
         slot="0"
         ref={domRef}
         style={UNSAFE_style}
@@ -161,6 +166,7 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
           styles={editableFieldGroup({size, isRange: false})}>
           <div className={editableInputSizer} data-min={minSizer} data-max={maxSizer}>
             <Input
+              UNSAFE_style={inputStyle}
               styles={style({
                 gridColumnStart: 1,
                 gridRowStart: 1,
@@ -174,12 +180,23 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
     );
   }
 
-  let rangeMinSizer = `${minSizer}\u00a0–\u00a0${minSizer}`;
-  let rangeMaxSizer = `${maxSizer}\u00a0–\u00a0${maxSizer}`;
+  // Use the locale's range separator (e.g. "–", "-", "～"). The min input is rendered first, so in
+  // RTL locales the flex layout places it on the right, matching how the bidi algorithm displays
+  // a formatted number range like "10–20" in RTL text.
+  let separator =
+    numberFormatter
+      .formatRangeToParts(0, 1)
+      .filter(part => part.source === 'shared')
+      .map(part => part.value)
+      .join('')
+      .trim() || '–';
+  let rangeMinSizer = `${minSizer}\u00a0${separator}\u00a0${minSizer}`;
+  let rangeMaxSizer = `${maxSizer}\u00a0${separator}\u00a0${maxSizer}`;
 
   return (
     <div
       {...domProps}
+      data-slider-input="range"
       ref={domRef}
       style={UNSAFE_style}
       className={UNSAFE_className + wrapperStyles(null, styles)}>
@@ -188,6 +205,10 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
         isDisabled={state.isDisabled}
         size={size}
         styles={editableFieldGroup({size, isRange: true})}
+        // FieldGroup focuses its first input when the group itself is pressed. For a range, focus
+        // whichever input is closest to the press instead (e.g. clicking the separator or padding
+        // near the max value focuses the max input), and preventDefault so FieldGroup's handler
+        // skips its default. Presses directly on an input are left alone.
         onPointerDownCapture={e => {
           if (
             !state.isDisabled &&
@@ -225,7 +246,7 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
             <span
               aria-hidden="true"
               className={style({paddingX: 2, flexShrink: 0, userSelect: 'none'})}>
-              –
+              {separator}
             </span>
             <AriaNumberField
               slot="1"
