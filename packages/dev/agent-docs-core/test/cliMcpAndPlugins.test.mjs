@@ -946,6 +946,11 @@ test('validateGeneratedPlugins enforces CLI vs MCP separation, duplicate-server 
       coreSkillsOutRoot: skillsDir
     });
     assert.equal(generated.validation.ok, true);
+    const manifests = fs
+      .readdirSync(pluginsDir, {recursive: true})
+      .filter(file => file.endsWith('.json'))
+      .map(file => path.join(pluginsDir, file));
+    execFileSync('yarn', ['format:check', ...manifests], {cwd: REPO_ROOT});
 
     // Negative check 1: adding `.mcp.json` alongside `mcp.json` in an MCP bundle fails validation (duplicate server registration)
     fs.writeFileSync(path.join(pluginsDir, 'react-spectrum-mcp/.mcp.json'), '{"mcpServers":{}}');

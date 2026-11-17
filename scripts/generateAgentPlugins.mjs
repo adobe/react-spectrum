@@ -21,7 +21,7 @@
  * `plugins/marketplace.json` (Multi-plugin catalog manifest)
  */
 
-import {execSync} from 'node:child_process';
+import {execFileSync} from 'node:child_process';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -35,7 +35,7 @@ async function loadSkillsContentModule() {
     'packages/dev/cli/s2/dist/agent-docs-core/src/skillsContent.js'
   );
   if (!fs.existsSync(compiledCandidate)) {
-    execSync('yarn build:cli', {cwd: REPO_ROOT, stdio: 'inherit'});
+    execFileSync('yarn', ['build:cli'], {cwd: REPO_ROOT, stdio: 'inherit'});
   }
   return import(pathToFileURL(compiledCandidate).href);
 }
@@ -43,11 +43,6 @@ async function loadSkillsContentModule() {
 function readPkgVersion(relPkgJsonPath) {
   const raw = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, relPkgJsonPath), 'utf8'));
   return raw.version || '0.1.0';
-}
-
-function writeJsonFile(filePath, value) {
-  fs.mkdirSync(path.dirname(filePath), {recursive: true});
-  fs.writeFileSync(filePath, JSON.stringify(value, null, 2) + '\n', 'utf8');
 }
 
 function writeTextFile(filePath, text) {
@@ -212,6 +207,12 @@ export async function generateAllAgentPlugins({
   fs.rmSync(pluginsOutRoot, {recursive: true, force: true});
   fs.mkdirSync(pluginsOutRoot, {recursive: true});
 
+  const jsonFiles = [];
+  const writeJsonFile = (filePath, value) => {
+    writeTextFile(filePath, JSON.stringify(value, null, 2) + '\n');
+    jsonFiles.push(path.resolve(filePath));
+  };
+
   for (const bundle of bundles) {
     const dir = path.join(pluginsOutRoot, bundle.pluginDirName);
     writeJsonFile(path.join(dir, 'plugin.json'), bundle.portableManifest);
@@ -237,6 +238,8 @@ export async function generateAllAgentPlugins({
       recommended: !b.mcpConfig
     }))
   });
+
+  execFileSync('yarn', ['format', ...jsonFiles], {cwd: REPO_ROOT, stdio: 'inherit'});
 
   const validation = validateGeneratedPlugins(pluginsOutRoot);
   if (!validation.ok) {
