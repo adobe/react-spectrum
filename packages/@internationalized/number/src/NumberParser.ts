@@ -18,6 +18,7 @@ interface Symbols {
   decimal?: string;
   group?: string;
   literals: RegExp;
+  partialLiterals: string[];
   numeral: RegExp;
   numerals: string[];
   index: (v: string) => string;
@@ -252,6 +253,7 @@ class NumberParserImpl {
     }
 
     value = value.replace(this.symbols.literals, '');
+    value = this.removePartialLiteral(value);
 
     // Replace the ASCII minus sign with the minus sign used in the current locale
     // so that both are allowed in case the user's keyboard doesn't have the locale's minus sign.
@@ -284,6 +286,42 @@ class NumberParserImpl {
     if (this.options.locale === 'fr-FR' && this.symbols.group && isGroupSymbolAllowed) {
       value = replaceAll(value, ' ', this.symbols.group);
       value = replaceAll(value, /\u00A0/g, this.symbols.group);
+    }
+
+    return value;
+  }
+
+  // Removes a partially entered literal, such as the "k" left after deleting a character from "kg",
+  // from the end of the value so that units can be edited one character at a time.
+  // This runs after complete literals and whitespace have been removed.
+  removePartialLiteral(value: string) {
+    let {partialLiterals, decimal, group, minusSign, plusSign} = this.symbols;
+    if (partialLiterals.length === 0) {
+      return value;
+    }
+
+    // Numerals are never part of a partial literal, and a fragment made only of number symbols
+    // (e.g. a trailing decimal point) must be kept so it is validated as part of the number.
+    let isNumberSymbol = (char: string) =>
+      char === decimal ||
+      char === group ||
+      char === minusSign ||
+      char === plusSign ||
+      char === '-' ||
+      char === '+';
+    let isPartialLiteral = (str: string) =>
+      [...str].some(char => !isNumberSymbol(char)) &&
+      partialLiterals.some(literal => literal.includes(str));
+
+    let start = value.length;
+    while (start > 0 && !/\p{N}/u.test(value[start - 1])) {
+      start--;
+    }
+    for (let i = start; i < value.length; i++) {
+      if (isPartialLiteral(value.slice(i))) {
+        value = value.slice(0, i);
+        break;
+      }
     }
 
     return value;
@@ -398,15 +436,18 @@ function getSymbols(
 
   // this set is also for a regex, it's all literals that might be in the string we want to eventually parse that
   // don't contribute to the numerical value
-  let allPartsLiterals = allParts
-    .filter(p => !nonLiteralParts.has(p.type))
-    .map(p => escapeRegex(p.value));
-  let pluralPartsLiterals = pluralParts.flatMap(p =>
-    p.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value))
-  );
-  let sortedLiterals = [...new Set([...allPartsLiterals, ...pluralPartsLiterals])].sort(
-    (a, b) => b.length - a.length
-  );
+  let literalStrings = [
+    ...new Set(
+      [...allParts, ...pluralParts.flat()]
+        .filter(p => !nonLiteralParts.has(p.type))
+        .map(p => p.value)
+    )
+  ];
+  let sortedLiterals = literalStrings.map(escapeRegex).sort((a, b) => b.length - a.length);
+  // Partial literals are matched after whitespace and formatting characters have been removed.
+  let partialLiterals = literalStrings
+    .map(literal => literal.replace(/\p{White_Space}|\p{Cf}/gu, ''))
+    .filter(literal => literal.length > 0);
 
   // Match both whitespace and formatting characters
   let literals =
@@ -422,7 +463,18 @@ function getSymbols(
   let numeral = new RegExp(`[${numerals.join('')}]`, 'g');
   let index = d => String(indexes.get(d));
 
-  return {minusSign, plusSign, decimal, group, literals, numeral, numerals, index, noNumeralUnits};
+  return {
+    minusSign,
+    plusSign,
+    decimal,
+    group,
+    literals,
+    partialLiterals,
+    numeral,
+    numerals,
+    index,
+    noNumeralUnits
+  };
 }
 
 function replaceAll(str: string, find: string | RegExp, replace: string) {

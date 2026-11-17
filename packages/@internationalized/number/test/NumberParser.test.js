@@ -343,8 +343,11 @@ describe('NumberParser', function () {
         expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).parse('23.5 ft')).toBe(NaN);
       });
 
-      it('should return NaN for partial units', function () {
-        expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).parse('23.5 i')).toBe(NaN);
+      it('should ignore partially entered units', function () {
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).parse('23.5 i')).toBe(23.5);
+        expect(
+          new NumberParser('el-GR', {style: 'unit', unit: 'kilometer-per-hour'}).parse('0,5 χλμ./ώ')
+        ).toBe(0.5);
       });
 
       it('should support plural forms', function () {
@@ -925,7 +928,7 @@ describe('NumberParser', function () {
           currency: 'USD',
           currencyDisplay: 'name'
         }).isValidPartialNumber('10 US d')
-      ).toBe(false);
+      ).toBe(true);
       expect(
         new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('(')
       ).toBe(false);
@@ -1013,10 +1016,33 @@ describe('NumberParser', function () {
       ).toBe(true);
       expect(
         new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10 i')
-      ).toBe(false);
+      ).toBe(true);
       expect(
         new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10.5 i')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10 ft')
       ).toBe(false);
+    });
+
+    it('should allow deleting a unit one character at a time', function () {
+      let cases = [
+        [{style: 'unit', unit: 'kilogram'}, '5 kg'],
+        [{style: 'unit', unit: 'milliliter'}, '5 mL'],
+        [{style: 'unit', unit: 'gram', unitDisplay: 'long'}, '5 grams'],
+        [{style: 'unit', unit: 'kilometer-per-hour', unitDisplay: 'long'}, '5 kilometers per hour'],
+        [{style: 'currency', currency: 'USD', currencyDisplay: 'name'}, '5 US dollars']
+      ];
+      for (let [options, formatted] of cases) {
+        let parser = new NumberParser('en-US', options);
+        for (let i = formatted.length; i >= 0; i--) {
+          expect(parser.isValidPartialNumber(formatted.slice(0, i))).toBe(true);
+        }
+      }
+      let parser = new NumberParser('en-US', {style: 'unit', unit: 'milliliter'});
+      expect(parser.isValidPartialNumber('5 L')).toBe(true);
+      expect(parser.isValidPartialNumber('5 Lm')).toBe(false);
+      expect(parser.isValidPartialNumber('5 m 5')).toBe(false);
     });
 
     it('should support percents', function () {
