@@ -167,7 +167,7 @@ Because `stdio` MCP servers are frequently launched by GUI hosts with an arbitra
 
 ```sh
 # React Spectrum S2 + React Aria (@react-spectrum/cli -> `spectrum`)
-spectrum search "searchable dropdown" [--library s2|rac|all] [--cwd apps/web] [--json]
+spectrum search "searchable dropdown" [--library s2] [--cwd apps/web] [--json]
 spectrum read s2:ComboBox s2:Popover [--sections usage,api,accessibility,styling,testing,guide,all] [--max-tokens 4000] [--json [--json-content entry|markdown]]
 spectrum read s2:ComboBox --cursor <value> --max-tokens 4000   # resume one truncated entry
 spectrum api s2:ComboBox [--export ComboBox] [--prop selectedKey,onSelectionChange] [--events-only] [--render-props] [--json]
@@ -179,9 +179,13 @@ spectrum manifest --json
 
 # React Aria Components, Hooks, Stately & Internationalized (@react-aria/cli -> `react-aria`)
 react-aria search "date range" [--json]
+react-aria search useListData --library react-stately [--json]
+react-aria api react-stately:useListData [--json]
 react-aria read rac:DateRangePicker internationalized:date/CalendarDate [--json]
 react-aria api rac:ComboBox --render-props [--json]
 ```
+
+React Stately standalone pages are cataloged under `react-stately:` and use that package's snapshot version. Current pages include `useListData`, `useTreeData`, and `useAsyncList`. Historical coverage follows the docs available at each release tag. Scoped search reports when the workspace has no matching Stately slice.
 
 **Deterministic CLI behavior:**
 - **Default output:** Compact, clean Markdown with zero ANSI spinners or decorative chrome when piped.

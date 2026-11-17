@@ -151,6 +151,21 @@ function parseEsmMetadata(rawMdx) {
   return {tags, section, description, docsImports};
 }
 
+function getHookLibrary(rawMdx, hookName) {
+  let {docsImports} = parseEsmMetadata(rawMdx);
+  // A page may document several related hooks from both libraries. Use the
+  // package of the export that matches the page name.
+  for (let [, alias, exportName] of rawMdx.matchAll(/([\w$]+)\.exports\.([\w$]+)/g)) {
+    let pkg = docsImports.get(alias);
+    if (exportName === hookName && pkg) {
+      return /^(?:@react-stately\/|react-stately(?:\/|$))/.test(pkg)
+        ? 'react-stately'
+        : 'react-aria';
+    }
+  }
+  return 'react-aria';
+}
+
 function classifyHeadingCategory(heading, slug) {
   let h = heading.toLowerCase();
   if (
@@ -1730,7 +1745,13 @@ export async function generateSnapshotFromTarget({
 
       for (let relMdx of racMdxFiles) {
         let slug = relMdx.replace(/\.mdx$/, '').replace(/\/index$/, '') || 'index';
-        if (slugAllowSet && !slugAllowSet.has(`rac:${slug}`) && !slugAllowSet.has(slug)) {
+        let matchesPageFilter =
+          !slugAllowSet || slugAllowSet.has(`rac:${slug}`) || slugAllowSet.has(slug);
+        if (
+          !matchesPageFilter &&
+          !slugAllowSet.has(`react-aria:${slug}`) &&
+          !slugAllowSet.has(`react-stately:${slug}`)
+        ) {
           continue;
         }
         let absPath = path.join(activeRacDir, relMdx);
@@ -1778,29 +1799,35 @@ export async function generateSnapshotFromTarget({
           continue;
         }
 
-        // Determine if this page belongs to `react-aria` / `react-stately` hooks rather than `react-aria-components`
-        let isHookPage = /^use[A-Z]/.test(path.posix.basename(slug));
-        let ownerPkgName = isHookPage
-          ? raw.includes('docs:react-stately') || raw.includes("from 'react-stately'")
-            ? 'react-stately'
-            : 'react-aria'
-          : 'react-aria-components';
-        let ownerPkg = ctx.packagesByName.get(ownerPkgName) || racPkg;
-        let entryLib = isHookPage ? ownerPkgName : 'rac';
+        let pageName = path.posix.basename(slug);
+        let isHookPage = /^use[A-Z]/.test(pageName);
+        let entryLib = isHookPage ? getHookLibrary(raw, pageName) : 'rac';
+        if (!matchesPageFilter && !slugAllowSet.has(`${entryLib}:${slug}`)) {
+          continue;
+        }
+        let ownerPkgName = entryLib === 'rac' ? 'react-aria-components' : entryLib;
+        let ownerPkg = ctx.packagesByName.get(ownerPkgName);
+        if (entryLib === 'react-stately') {
+          if (!ownerPkg) {
+            continue;
+          }
+          docsLayouts[ownerPkg.name] = 's2-docs';
+        }
+        ownerPkg ||= racPkg;
 
         let parsed = parseMdxIntoStructuredDoc({
           ctx,
           rawMdx: raw,
           filePath: absPath,
           slug,
-          library: entryLib === 'rac' ? 'rac' : 'react-aria',
+          library: entryLib,
           defaultPackageName: ownerPkg.name,
           supportsSubpathExports: ownerPkg.supportsSubpathExports
         });
 
         entries.push({
           schemaVersion: CATALOG_SCHEMA_VERSION,
-          id: `${entryLib === 'rac' ? 'rac' : entryLib}:${slug}`,
+          id: `${entryLib}:${slug}`,
           slug,
           library: entryLib === 'rac' ? 'rac' : entryLib,
           kind: parsed.kind,

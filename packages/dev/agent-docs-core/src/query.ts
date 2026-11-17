@@ -313,6 +313,25 @@ function warningsForPackages(
   );
 }
 
+function getStatelyCoverageWarning(resolution: ResolutionState): DocWarning | undefined {
+  if (resolution.packages['react-stately']) {
+    return undefined;
+  }
+  const warning = resolution.warnings.find(
+    warning =>
+      warning.packageName === 'react-stately' &&
+      warning.code === 'WARN_AUX_PACKAGE_SLICE_UNAVAILABLE'
+  );
+  return (
+    warning ?? {
+      code: 'WARN_LIBRARY_UNAVAILABLE',
+      packageName: 'react-stately',
+      message:
+        'No version-matched React Stately documentation snapshot is available for this workspace. Run resolve to inspect package versions.'
+    }
+  );
+}
+
 export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocsResult> {
   const query = String(options.query || '').trim();
   if (!query) {
@@ -334,8 +353,12 @@ export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocs
     options.cliCommandPrefix || (options.defaultLibrary === 'rac' ? 'react-aria' : 'spectrum');
   const followUpFlags = formatFollowUpFlags(options, resolution);
 
-  const rawQueryLower = query.toLowerCase();
-  const terms = tokenizeQuery(query).map(token => ({
+  const statelyPrefix = /^(?:react-stately|stately):/i.exec(query)?.[0];
+  const library = options.library ?? (statelyPrefix ? 'react-stately' : undefined);
+  const searchTerm =
+    statelyPrefix && library === 'react-stately' ? query.slice(statelyPrefix.length).trim() : query;
+  const rawQueryLower = searchTerm.toLowerCase();
+  const terms = tokenizeQuery(searchTerm).map(token => ({
     token,
     synonyms: Object.entries(QUERY_SYNONYMS)
       .filter(([key]) => token === key || token === `${key}s`)
@@ -344,22 +367,31 @@ export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocs
 
   const hits: SearchHit[] = [];
   const usedSnapshots = new Set<string>();
+  const isHookQuery = /^use[A-Z][\w$]*$/.test(searchTerm);
+  let foundExactHook = false;
 
   for (const prov of Object.values(resolution.packages)) {
     const sliceDir = await openSliceForProvenance(prov, index, options);
     const records = readSliceSearchIndex(sliceDir);
     for (const rec of records) {
-      if (options.library && rec.library !== options.library) {
+      if (library && rec.library !== library) {
         continue;
       }
       const score = scoreSearchRecord(
         rec,
         rawQueryLower,
         terms,
-        options.library || options.defaultLibrary || null
+        library || options.defaultLibrary || null
       );
       if (score <= 0) {
         continue;
+      }
+      if (
+        isHookQuery &&
+        (rec.title.toLowerCase() === rawQueryLower ||
+          rec.exports.some(name => name.toLowerCase() === rawQueryLower))
+      ) {
+        foundExactHook = true;
       }
       usedSnapshots.add(prov.snapshotId);
       hits.push({
@@ -389,19 +421,29 @@ export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocs
 
   hits.sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
   const topHits = hits.slice(0, limit);
+  const warnings = warningsForPackages(
+    resolution,
+    library ? candidatePackagesForLookup(library, '') : Object.keys(resolution.packages)
+  );
+  const coverageWarning =
+    library === 'react-stately' ? getStatelyCoverageWarning(resolution) : undefined;
+  if (coverageWarning && !warnings.includes(coverageWarning)) {
+    warnings.push(coverageWarning);
+  }
+  if (isHookQuery && !foundExactHook && topHits.length > 0) {
+    warnings.push({
+      code: 'WARN_NO_EXACT_HOOK_MATCH',
+      message: `No documented hook exactly matches '${searchTerm}' in the selected snapshots. Showing related results.`
+    });
+  }
 
   return {
     apiVersion: API_VERSION,
     query,
-    libraryFilter: options.library || null,
+    libraryFilter: library || null,
     snapshots: collectEnvelopeSnapshots(index, usedSnapshots),
     resolution,
-    warnings: warningsForPackages(
-      resolution,
-      options.library
-        ? candidatePackagesForLookup(options.library, '')
-        : Object.keys(resolution.packages)
-    ),
+    warnings,
     followUpFlags,
     results: topHits
   };
@@ -711,6 +753,8 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
       }
       const primaryPkg = candidatePkgs[0];
       const prov = resolution.packages[primaryPkg];
+      const coverageWarning =
+        library === 'react-stately' ? getStatelyCoverageWarning(resolution) : undefined;
       const versionNote = prov
         ? ` in ${prov.packageName}@${prov.packageVersion} (snapshot ${prov.snapshotId})`
         : ` (package '${primaryPkg}' is not resolved in this workspace)`;
@@ -718,8 +762,9 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
         requestedId,
         ok: false,
         error: {
-          code: 'ERR_ENTRY_NOT_FOUND',
-          message: `Document '${requestedId}' was not found${versionNote}.`,
+          code: coverageWarning ? 'ERR_SNAPSHOT_NOT_FOUND' : 'ERR_ENTRY_NOT_FOUND',
+          message:
+            coverageWarning?.message ?? `Document '${requestedId}' was not found${versionNote}.`,
           suggestions: suggestIds(suggestionRecords, slugLower, library)
         }
       });
@@ -1485,7 +1530,7 @@ export function getCapabilityManifest(
       name: 'search',
       summary:
         'Search components, hooks, patterns, and guides matched to workspace package versions.',
-      usage: `${cliName} search <query> [--library s2|rac|react-aria|internationalized] [--limit N] [--json]`,
+      usage: `${cliName} search <query> [--library s2|rac|react-aria|react-stately|internationalized] [--limit N] [--json]`,
       flags: [
         '--cwd',
         '--library',

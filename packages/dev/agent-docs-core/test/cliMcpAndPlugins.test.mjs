@@ -78,6 +78,81 @@ test('CLI finds documented exports by name and offers choices for ambiguous expo
   );
 });
 
+test('CLI routes Stately utility pages to versioned Stately search, read, and API results', t => {
+  const run = currentCli(t, 'react-aria');
+  const {version} = JSON.parse(
+    fs.readFileSync(path.join(REPO_ROOT, 'packages/react-stately/package.json'), 'utf8')
+  );
+  for (const name of ['useListData', 'useTreeData', 'useAsyncList']) {
+    const id = `react-stately:${name}`;
+    const search = JSON.parse(run('search', name, '--library', 'react-stately', '--json'));
+    assert.equal(search.results[0].id, id);
+    assert.equal(search.results[0].provenance.packageVersion, version);
+    const read = JSON.parse(run('read', id, '--json')).results[0];
+    assert.ok(read.ok);
+    assert.equal(read.entry.packageName, 'react-stately');
+    assert.equal(read.provenance.packageVersion, version);
+    const api = JSON.parse(run('api', id, '--export', name, '--json'));
+    assert.equal(api.provenance.packageVersion, version);
+    assert.ok(api.exports[0].callSignatures.length > 0);
+  }
+
+  const exact = JSON.parse(run('search', 'useListData', '--json'));
+  assert.equal(exact.results[0].id, 'react-stately:useListData');
+  const mixed = JSON.parse(
+    run('api', 'react-aria:ListBox/useListBox', '--export', 'useListBox', '--json')
+  );
+  assert.equal(mixed.provenance.packageName, 'react-aria');
+
+  const related = JSON.parse(run('search', 'useList', '--library', 'react-stately', '--json'));
+  assert.ok(related.results.length > 0);
+  assert.ok(related.warnings.some(w => w.code === 'WARN_NO_EXACT_HOOK_MATCH'));
+  const undocumented = JSON.parse(run('search', 'react-stately:useNoSuchHook', '--json'));
+  assert.deepEqual(undocumented.results, []);
+  assert.deepEqual(undocumented.warnings, []);
+});
+
+test('CLI resolves Stately from a matching React Aria snapshot and explains absent coverage', t => {
+  const run = currentCli(t, 'react-aria');
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-stately-'));
+  t.after(() => fs.rmSync(cwd, {recursive: true, force: true}));
+  const search = version =>
+    JSON.parse(
+      run('search', 'react-stately:useListData', '--cwd', cwd, '--version', version, '--json')
+    );
+  const available = search('react-aria@latest');
+  assert.equal(available.libraryFilter, 'react-stately');
+  assert.equal(available.results[0].id, 'react-stately:useListData');
+
+  const missing = search('@internationalized/date@latest');
+  assert.deepEqual(missing.results, []);
+  assert.ok(
+    missing.warnings.some(
+      w => w.code === 'WARN_LIBRARY_UNAVAILABLE' && w.packageName === 'react-stately'
+    )
+  );
+  for (const command of ['read', 'api']) {
+    assert.throws(
+      () =>
+        run(
+          command,
+          'react-stately:useListData',
+          '--cwd',
+          cwd,
+          '--version',
+          '@internationalized/date@latest',
+          '--json'
+        ),
+      err => {
+        assert.equal(err.status, 3);
+        const response = JSON.parse(err.stdout);
+        assert.equal((response.error ?? response.results[0].error).code, 'ERR_SNAPSHOT_NOT_FOUND');
+        return true;
+      }
+    );
+  }
+});
+
 test('CLI suggests nearby IDs and ranks results that cover the query intent', t => {
   const run = currentCli(t);
   assert.throws(
@@ -333,7 +408,10 @@ test('CLI tokens match multi-word queries and say when nothing matches', t => {
 
   const missing = JSON.parse(run('tokens', '--json', 'zzzz-no-such-token'));
   assert.deepEqual(missing.properties, []);
-  assert.match(missing.markdown, /No style macro properties or values matched query `zzzz-no-such-token`/);
+  assert.match(
+    missing.markdown,
+    /No style macro properties or values matched query `zzzz-no-such-token`/
+  );
 });
 
 test('CLI api warns about each prop filter that matches nothing', t => {
@@ -347,7 +425,9 @@ test('CLI api warns about each prop filter that matches nothing', t => {
   const warning = json.warnings.find(item => item.code === 'WARN_PROP_NOT_FOUND');
   assert.equal(warning.details.filter, 'selectedKeyz');
   assert.equal(warning.details.suggestions[0], 'selectedKey');
-  assert.ok(!JSON.parse(run('api', 's2:ComboBox', '--prop', 'onInputChange', '--json')).warnings.length);
+  assert.ok(
+    !JSON.parse(run('api', 's2:ComboBox', '--prop', 'onInputChange', '--json')).warnings.length
+  );
 });
 
 test('CLI search states shared follow-up flags once in Markdown', t => {

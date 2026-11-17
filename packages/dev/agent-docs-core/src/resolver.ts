@@ -604,14 +604,17 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
     throw deferredAuxErrors[0];
   }
 
-  // When @react-spectrum/s2 is installed (e.g. 1.2.0 or 1.8.2) and the user hasn't explicitly installed
-  // `@internationalized/date` directly, populate `@internationalized/*` from the SAME S2 snapshot if available
-  // so `internationalized:*` lookups on an S2-only project use the matching snapshot rather than failing!
+  // Use auxiliary versions from the primary package's snapshot when the
+  // workspace has no resolved dependency or override for that package.
   const s2Prov =
     resolvedPackages['@react-spectrum/s2'] || resolvedPackages['react-aria-components'];
-  const snapSummary = s2Prov ? index.snapshots[s2Prov.snapshotId] : undefined;
-  if (s2Prov && snapSummary) {
-    for (const auxPkg of ['@internationalized/date', '@internationalized/number', 'react-aria']) {
+  const primaryProv = s2Prov || resolvedPackages['react-aria'];
+  const snapSummary = primaryProv ? index.snapshots[primaryProv.snapshotId] : undefined;
+  if (primaryProv && snapSummary) {
+    const auxiliaryPackages = s2Prov
+      ? ['@internationalized/date', '@internationalized/number', 'react-aria', 'react-stately']
+      : ['react-stately'];
+    for (const auxPkg of auxiliaryPackages) {
       const auxVer = !effectiveRequest.has(auxPkg) ? snapSummary.packages[auxPkg] : undefined;
       const auxPtr = options.snapshotOverride
         ? snapshotSlices?.[auxPkg]
@@ -623,10 +626,10 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
           packageName: auxPkg,
           packageVersion: auxVer,
           requestedVersion: auxVer,
-          importer: s2Prov.packageName,
-          source: s2Prov.source,
+          importer: primaryProv.packageName,
+          source: primaryProv.source,
           snapshotId: auxPtr.snapshotId,
-          exactMatch: s2Prov.exactMatch,
+          exactMatch: primaryProv.exactMatch,
           slicePath: auxPtr.sliceRelPath,
           sliceSha256: auxPtr.sliceSha256
         };
