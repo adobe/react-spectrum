@@ -11,26 +11,9 @@
 }
 
 .react-aria-ProgressListItem {
-  position: relative;
   /* Steps share the available width equally, with a preferred width of 96px. */
   flex: 1;
   width: calc(var(--spacing) * 24);
-  box-sizing: border-box;
-  padding-inline: var(--spacing-1);
-  display: flex;
-  justify-content: center;
-
-  .marker {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--spacing-6);
-    height: var(--spacing-6);
-    box-sizing: border-box;
-    border: 1px solid var(--border-color);
-    border-radius: 50%;
-    font-size: var(--font-size-sm);
-  }
 
   &[data-current] .marker,
   &[data-completed] .marker {
@@ -44,40 +27,62 @@
     font-weight: 600;
   }
 
-  /* Connector lines. Each step draws the lines on either side of its marker,
-     so they stay centered when steps have different widths. */
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: var(--spacing-3);
-    border-top: 1px solid var(--border-color);
-  }
-
-  &::before {
-    inset-inline: 0 calc(50% + var(--spacing-5));
-  }
-
-  &::after {
-    inset-inline: calc(50% + var(--spacing-5)) 0;
-  }
-
-  &:first-child::before,
-  &:last-child::after {
+  &:first-child .react-aria-ProgressListItemContent::before,
+  &:last-child .react-aria-ProgressListItemContent::after {
     display: none;
   }
 
-  &[data-current]::before,
-  &[data-completed]::before,
-  &[data-completed]::after {
-    border-color: var(--highlight-background);
+  /* Highlight the line between two steps that are both completed or current. */
+  &:is([data-current], [data-completed]) {
+    &:has(+ :is([data-current], [data-completed])) .react-aria-ProgressListItemContent::after,
+    & + :is([data-current], [data-completed]) .react-aria-ProgressListItemContent::before {
+      border-color: var(--highlight-background);
+    }
   }
 }
 
 .react-aria-ProgressListItemContent {
-  display: flex;
-  flex-direction: column;
+  /* The marker sits between two connector lines, with the label below. */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-areas:
+    'before marker after'
+    'label label label';
   align-items: center;
   gap: var(--spacing-2);
   text-align: center;
+
+  .marker {
+    grid-area: marker;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    font-size: var(--font-size-sm);
+  }
+
+  .label {
+    grid-area: label;
+    padding-inline: var(--spacing-1);
+  }
+
+  /* Connector lines. Each step draws its half of the line to each neighbor,
+     so the lines connect the markers even when steps have different widths. */
+  &::before,
+  &::after {
+    content: '';
+    border-top: 1px solid var(--border-color);
+  }
+
+  &::before {
+    grid-area: before;
+  }
+
+  &::after {
+    grid-area: after;
+  }
 }

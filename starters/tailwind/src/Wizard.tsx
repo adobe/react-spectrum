@@ -40,9 +40,22 @@ export function WizardStepList<T extends object>(props: WizardStepListProps<T>) 
   );
 }
 
+const stepStyles = tv({
+  base: [
+    // The marker sits between two connector lines, with the label below.
+    'grid flex-1 grid-cols-[1fr_auto_1fr] items-center gap-2 text-center text-neutral-800 dark:text-neutral-200 cursor-default outline-0 [-webkit-tap-highlight-color:transparent] selected:font-semibold disabled:text-neutral-300 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText]',
+    // Each step draws its half of the line to each neighbor, so the lines connect the markers even when steps have different widths.
+    'before:col-start-1 before:row-start-1 before:border-t before:border-neutral-400 forced-colors:before:border-[ButtonBorder] first:before:hidden',
+    'after:col-start-3 after:row-start-1 after:border-t after:border-neutral-400 forced-colors:after:border-[ButtonBorder] last:after:hidden',
+    // Highlight the line between two steps that are both selected or completed.
+    '[:is([data-selected],[data-completed])+&:is([data-selected],[data-completed])]:before:border-blue-600 forced-colors:[:is([data-selected],[data-completed])+&:is([data-selected],[data-completed])]:before:border-[Highlight]',
+    '[&:is([data-selected],[data-completed]):has(+:is([data-selected],[data-completed]))]:after:border-blue-600 forced-colors:[&:is([data-selected],[data-completed]):has(+:is([data-selected],[data-completed]))]:after:border-[Highlight]'
+  ].join(' ')
+});
+
 const markerStyles = tv({
   extend: focusRing,
-  base: 'flex items-center justify-center size-6 shrink-0 rounded-full border text-xs',
+  base: 'col-start-2 row-start-1 flex items-center justify-center size-6 box-border rounded-full border text-xs',
   variants: {
     isUpcoming: {
       true: 'border-neutral-400',
@@ -56,11 +69,7 @@ export function WizardStep(props: WizardStepProps) {
   return (
     <AriaWizardStep
       {...props}
-      className={composeTailwindRenderProps(
-        props.className,
-        // The ::before and ::after elements draw the connector lines on either side of the marker.
-        'relative box-border flex flex-1 flex-col items-center gap-2 px-1 text-center text-neutral-800 dark:text-neutral-200 cursor-default outline-0 [-webkit-tap-highlight-color:transparent] selected:font-semibold disabled:text-neutral-300 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] before:absolute before:start-0 before:end-[calc(50%+--spacing(5))] before:top-3 before:border-t before:border-neutral-400 forced-colors:before:border-[ButtonBorder] first:before:hidden selected:before:border-blue-600 data-completed:before:border-blue-600 after:absolute after:start-[calc(50%+--spacing(5))] after:end-0 after:top-3 after:border-t after:border-neutral-400 forced-colors:after:border-[ButtonBorder] data-completed:after:border-blue-600 last:after:hidden'
-      )}>
+      className={composeTailwindRenderProps(props.className, stepStyles())}>
       {composeRenderProps(
         props.children,
         (children, {isSelected, isCompleted, isFocusVisible, stepNumber}) => (
@@ -71,7 +80,7 @@ export function WizardStep(props: WizardStepProps) {
               aria-hidden>
               {isCompleted ? <Check className="size-3.5" /> : stepNumber}
             </span>
-            {children}
+            <span className="col-span-full row-start-2 px-1">{children}</span>
           </>
         )
       )}

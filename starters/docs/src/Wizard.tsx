@@ -35,7 +35,7 @@ export function WizardStep(props: WizardStepProps) {
           <span className="marker" aria-hidden>
             {isCompleted ? <Check size={14} /> : stepNumber}
           </span>
-          {children}
+          <span className="label">{children}</span>
         </>
       ))}
     </RACWizardStep>

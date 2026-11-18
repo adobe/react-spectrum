@@ -28,8 +28,21 @@ export interface ProgressListItemProps extends Omit<AriaProgressListItemProps, '
   children?: React.ReactNode;
 }
 
+const contentStyles = tv({
+  base: [
+    // The marker sits between two connector lines, with the label below.
+    'grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-center',
+    // Each step draws its half of the line to each neighbor, so the lines connect the markers even when steps have different widths.
+    'before:col-start-1 before:row-start-1 before:border-t before:border-neutral-400 forced-colors:before:border-[ButtonBorder] [:first-child>&]:before:hidden',
+    'after:col-start-3 after:row-start-1 after:border-t after:border-neutral-400 forced-colors:after:border-[ButtonBorder] [:last-child>&]:after:hidden',
+    // Highlight the line between two steps that are both completed or current.
+    '[:is([data-current],[data-completed])+:is([data-current],[data-completed])>&]:before:border-blue-600 forced-colors:[:is([data-current],[data-completed])+:is([data-current],[data-completed])>&]:before:border-[Highlight]',
+    '[:is([data-current],[data-completed]):has(+:is([data-current],[data-completed]))>&]:after:border-blue-600 forced-colors:[:is([data-current],[data-completed]):has(+:is([data-current],[data-completed]))>&]:after:border-[Highlight]'
+  ].join(' ')
+});
+
 const markerStyles = tv({
-  base: 'flex items-center justify-center size-6 shrink-0 rounded-full border text-xs',
+  base: 'col-start-2 row-start-1 flex items-center justify-center size-6 box-border rounded-full border text-xs',
   variants: {
     isUpcoming: {
       true: 'border-neutral-400',
@@ -43,17 +56,13 @@ export function ProgressListItem({children, ...props}: ProgressListItemProps) {
   return (
     <AriaProgressListItem
       {...props}
-      className={composeTailwindRenderProps(
-        props.className,
-        // The ::before and ::after elements draw the connector lines on either side of the marker.
-        'relative box-border flex w-24 flex-1 justify-center px-1 current:font-semibold before:absolute before:start-0 before:end-[calc(50%+--spacing(5))] before:top-3 before:border-t before:border-neutral-400 first:before:hidden current:before:border-blue-600 data-completed:before:border-blue-600 after:absolute after:start-[calc(50%+--spacing(5))] after:end-0 after:top-3 after:border-t after:border-neutral-400 data-completed:after:border-blue-600 last:after:hidden'
-      )}>
+      className={composeTailwindRenderProps(props.className, 'w-24 flex-1 current:font-semibold')}>
       {({isCurrent, isCompleted, stepNumber}) => (
-        <AriaProgressListItemContent className="flex flex-col items-center gap-2 text-center">
+        <AriaProgressListItemContent className={contentStyles()}>
           <span className={markerStyles({isUpcoming: !isCurrent && !isCompleted})} aria-hidden>
             {isCompleted ? <Check className="size-3.5" /> : stepNumber}
           </span>
-          {children}
+          <span className="col-span-full row-start-2 px-1">{children}</span>
         </AriaProgressListItemContent>
       )}
     </AriaProgressListItem>
