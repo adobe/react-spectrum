@@ -19,6 +19,7 @@ import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
 import {Collection} from 'react-aria/Collection';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {GridList, GridListItem} from '../src/GridList';
+import {Group} from '../src/Group';
 import {Header} from '../src/Header';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
@@ -698,6 +699,37 @@ describe('Autocomplete', () => {
     expect(bar).not.toHaveAttribute('data-focus-visible');
     expect(input).toHaveAttribute('data-focused');
     expect(input).toHaveAttribute('data-focus-visible');
+  });
+
+  it('should keep focus within a Group around the input while virtually focusing items', async function () {
+    let {getByRole} = render(
+      <>
+        <Autocomplete>
+          <Group data-testid="group">
+            <SearchField aria-label="Search">
+              <Input />
+            </SearchField>
+          </Group>
+          <StaticMenu />
+        </Autocomplete>
+        <button>after</button>
+      </>
+    );
+
+    let input = getByRole('searchbox');
+    let group = input.closest('[data-testid="group"]');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(group).toHaveAttribute('data-focus-within');
+
+    await user.keyboard('{ArrowDown}');
+    let options = within(getByRole('menu')).getAllByRole('menuitem');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(document.activeElement).toBe(input);
+    expect(group).toHaveAttribute('data-focus-within');
+
+    await user.tab();
+    expect(group).not.toHaveAttribute('data-focus-within');
   });
 
   it('should maintain focus styles on the input if typing forward results in an completely empty collection', async function () {

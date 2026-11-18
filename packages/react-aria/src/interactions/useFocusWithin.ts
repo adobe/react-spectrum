@@ -56,6 +56,17 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
         return;
       }
 
+      // Virtual focus (e.g. Autocomplete moving to an option outside currentTarget) dispatches a
+      // blur on the input while real focus stays inside, so it isn't a blur within. Synthetic blurs
+      // without a relatedTarget (e.g. a disabled element in Firefox) still go through.
+      if (
+        !e.nativeEvent.isTrusted &&
+        e.relatedTarget &&
+        nodeContains(e.currentTarget, getActiveElement(getOwnerDocument(e.currentTarget)))
+      ) {
+        return;
+      }
+
       // We don't want to trigger onBlurWithin and then immediately onFocusWithin again
       // when moving focus inside the element. Only trigger if the currentTarget doesn't
       // include the relatedTarget (where focus is moving).
