@@ -16,9 +16,9 @@ import React, {ReactNode} from 'react';
 import './ProgressList.css';
 
 const steps = [
-  {id: 'domain', label: 'Domain/Sender details', href: '#domain'},
-  {id: 'dns', label: 'Configure DNS', href: '#dns'},
-  {id: 'advanced', label: 'Advanced settings', href: '#advanced'}
+  {id: 'domain', label: 'Domain/Sender details'},
+  {id: 'dns', label: 'Configure DNS'},
+  {id: 'advanced', label: 'Advanced settings'}
 ];
 
 export default {
@@ -96,35 +96,6 @@ export const ProgressListDynamic: ProgressListStory = {
                   </span>
                 )}
                 <ProgressListItemContent>
-                  <span className="label">{step.label}</span>
-                </ProgressListItemContent>
-              </span>
-            )}
-          </ProgressListItem>
-        )}
-      </ProgressList>
-    </div>
-  )
-};
-
-export const ProgressListLinks: ProgressListStory = {
-  render: (args: any) => (
-    <div>
-      <button>Focus landing point</button>
-      <ProgressList {...args} aria-label="Email domain setup" items={steps}>
-        {(step: (typeof steps)[number]) => (
-          <ProgressListItem>
-            {({isCompleted, stepNumber}) => (
-              <span className="marker" role="presentation">
-                {isCompleted ? (
-                  <CheckIcon />
-                ) : (
-                  <span role="presentation" aria-hidden="true">
-                    {stepNumber}
-                  </span>
-                )}
-                {/* Every step has an href, but only completed steps can be navigated back to. */}
-                <ProgressListItemContent href={isCompleted ? step.href : undefined}>
                   <span className="label">{step.label}</span>
                 </ProgressListItemContent>
               </span>

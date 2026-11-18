@@ -80,18 +80,4 @@
   align-items: center;
   gap: var(--spacing-2);
   text-align: center;
-  color: inherit;
-  text-decoration: none;
-  border-radius: var(--radius-sm);
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-
-  &[data-hovered] {
-    text-decoration: underline;
-  }
-
-  &[data-focus-visible] {
-    outline: 2px solid var(--focus-ring-color);
-    outline-offset: 2px;
-  }
 }

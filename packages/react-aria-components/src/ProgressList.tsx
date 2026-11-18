@@ -15,7 +15,6 @@ import {
   forwardRefType,
   GlobalDOMAttributes,
   Key,
-  LinkDOMProps,
   Node
 } from '@react-types/shared';
 import {
@@ -24,7 +23,6 @@ import {
   dom,
   DOMProps,
   DOMRenderProps,
-  PossibleLinkDOMRenderProps,
   RenderProps,
   SlotProps,
   StyleProps,
@@ -39,12 +37,8 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {useHover} from 'react-aria/useHover';
 import {useId} from 'react-aria/useId';
-import {useLink} from 'react-aria/useLink';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useObjectRef} from 'react-aria/useObjectRef';
 
 export interface ProgressListProps<T>
   extends
@@ -209,77 +203,42 @@ export const ProgressListItem = /*#__PURE__*/ createLeafComponent(
 export interface ProgressListItemContentProps
   extends
     DOMProps,
-    LinkDOMProps,
     AriaLabelingProps,
-    PossibleLinkDOMRenderProps<'div', undefined>,
-    Omit<GlobalDOMAttributes<HTMLElement>, 'onClick'> {}
+    DOMRenderProps<'div', undefined>,
+    GlobalDOMAttributes<HTMLDivElement> {}
 
 const ProgressListItemContext = createContext<{hiddenId: string | undefined} | undefined>(
   undefined
 );
 
 /**
- * A ProgressListItemContent renders the content of a `<ProgressListItem>`, optionally as a link to
- * the step.
+ * A ProgressListItemContent renders the content of a `<ProgressListItem>`.
  */
 export const ProgressListItemContent = /*#__PURE__*/ (forwardRef as forwardRefType)(
   function ProgressListItemContent(
     props: ProgressListItemContentProps,
-    ref: ForwardedRef<HTMLAnchorElement | HTMLDivElement>
+    ref: ForwardedRef<HTMLDivElement>
   ) {
-    // Remount when switching between a link and a plain `div`. A focused link that is removed never
-    // receives a blur event, so its focus state would otherwise carry over to the new element.
+    let context = useContext(ProgressListItemContext);
+    let id = useId();
+    let DOMProps = filterDOMProps(props, {global: true, labelable: true});
+    delete DOMProps.id;
+
+    let ariaLabeledBy = props['aria-labelledby']
+      ? `${context?.hiddenId} ${props['aria-labelledby']}`
+      : `${context?.hiddenId} ${id}`;
+
     return (
-      <ProgressListItemContentInner
-        key={props.href != null ? 'link' : 'content'}
-        props={props}
-        contentRef={ref}
-      />
+      <dom.div
+        {...mergeProps(DOMProps, {role: 'img'})}
+        ref={ref}
+        render={props.render}
+        id={id}
+        style={props.style}
+        className={props.className ?? 'react-aria-ProgressListItemContent'}
+        aria-labelledby={ariaLabeledBy}>
+        {props.children}
+      </dom.div>
     );
   }
 );
-
-interface ProgressListItemContentInnerProps {
-  props: ProgressListItemContentProps;
-  contentRef: ForwardedRef<HTMLAnchorElement | HTMLDivElement>;
-}
-
-function ProgressListItemContentInner({props, contentRef: ref}: ProgressListItemContentInnerProps) {
-  let context = useContext(ProgressListItemContext);
-  let objRef = useObjectRef(ref);
-  let id = useId();
-  // A step is only navigable when it is given an `href`. Otherwise `role="img"` is applied to a
-  // non-focusable element purely so that screen readers treat the contents as a single unit.
-  let isLink = props.href != null;
-  let elementType = isLink ? 'a' : 'div';
-  let {linkProps} = useLink({...props, elementType}, objRef);
-  let ElementType = dom[elementType];
-  // Only a link is interactive, so a plain `div` never reports hover or focus.
-  let {hoverProps, isHovered} = useHover({isDisabled: !isLink});
-  let {focusProps, isFocusVisible} = useFocusRing();
-  let DOMProps = filterDOMProps(props, {global: true, labelable: true, isLink});
-  delete DOMProps.id;
-
-  let ariaLabeledBy = props['aria-labelledby']
-    ? `${context?.hiddenId} ${props['aria-labelledby']}`
-    : `${context?.hiddenId} ${id}`;
-
-  return (
-    <ElementType
-      {...mergeProps(
-        DOMProps,
-        isLink ? mergeProps(linkProps, focusProps) : {role: 'img'},
-        hoverProps
-      )}
-      ref={objRef}
-      render={props.render}
-      id={id}
-      style={props.style}
-      className={props.className ?? 'react-aria-ProgressListItemContent'}
-      aria-labelledby={ariaLabeledBy}
-      data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      {props.children}
-    </ElementType>
-  );
-}

@@ -17,17 +17,9 @@ type Story = StoryFn<typeof ProgressList>;
 
 export const Example: Story = args => (
   <ProgressList {...args} aria-label="Checkout">
-    <ProgressListItem id="cart" href="#cart">
-      Cart
-    </ProgressListItem>
-    <ProgressListItem id="shipping" href="#shipping">
-      Shipping
-    </ProgressListItem>
-    <ProgressListItem id="payment" href="#payment">
-      Payment
-    </ProgressListItem>
-    <ProgressListItem id="review" href="#review">
-      Review
-    </ProgressListItem>
+    <ProgressListItem id="cart">Cart</ProgressListItem>
+    <ProgressListItem id="shipping">Shipping</ProgressListItem>
+    <ProgressListItem id="payment">Payment</ProgressListItem>
+    <ProgressListItem id="review">Review</ProgressListItem>
   </ProgressList>
 );

@@ -1,11 +1,10 @@
 'use client';
 import {Check} from 'lucide-react';
-import React, {createContext, useContext} from 'react';
+import React from 'react';
 import {
   ProgressList as AriaProgressList,
   ProgressListItem as AriaProgressListItem,
   ProgressListItemContent as AriaProgressListItemContent,
-  type ProgressListItemContentProps,
   type ProgressListItemProps as AriaProgressListItemProps,
   type ProgressListProps
 } from 'react-aria-components/ProgressList';
@@ -13,28 +12,20 @@ import {twMerge} from 'tailwind-merge';
 import {tv} from 'tailwind-variants';
 import {composeTailwindRenderProps} from './utils';
 
-const RenderLinkContext = createContext<ProgressListItemContentProps['render']>(undefined);
-
-export function ProgressList<T>({
-  renderLink,
-  ...props
-}: ProgressListProps<T> & {renderLink?: ProgressListItemContentProps['render']}) {
+export function ProgressList<T>(props: ProgressListProps<T>) {
   return (
-    <RenderLinkContext.Provider value={renderLink}>
-      <AriaProgressList
-        {...props}
-        className={twMerge(
-          'flex max-w-full m-0 p-0 list-none font-sans text-sm text-neutral-800 dark:text-neutral-200',
-          props.className
-        )}
-      />
-    </RenderLinkContext.Provider>
+    <AriaProgressList
+      {...props}
+      className={twMerge(
+        'flex max-w-full m-0 p-0 list-none font-sans text-sm text-neutral-800 dark:text-neutral-200',
+        props.className
+      )}
+    />
   );
 }
 
 export interface ProgressListItemProps extends Omit<AriaProgressListItemProps, 'children'> {
   children?: React.ReactNode;
-  href?: string;
 }
 
 const markerStyles = tv({
@@ -48,8 +39,7 @@ const markerStyles = tv({
   }
 });
 
-export function ProgressListItem({children, href, ...props}: ProgressListItemProps) {
-  let renderLink = useContext(RenderLinkContext);
+export function ProgressListItem({children, ...props}: ProgressListItemProps) {
   return (
     <AriaProgressListItem
       {...props}
@@ -58,21 +48,14 @@ export function ProgressListItem({children, href, ...props}: ProgressListItemPro
         // The ::before and ::after elements draw the connector lines on either side of the marker.
         'relative box-border flex w-24 flex-1 justify-center px-1 current:font-semibold before:absolute before:start-0 before:end-[calc(50%+--spacing(5))] before:top-3 before:border-t before:border-neutral-400 first:before:hidden current:before:border-blue-600 data-completed:before:border-blue-600 after:absolute after:start-[calc(50%+--spacing(5))] after:end-0 after:top-3 after:border-t after:border-neutral-400 data-completed:after:border-blue-600 last:after:hidden'
       )}>
-      {({isCurrent, isCompleted, stepNumber}) => {
-        // Only completed steps are links, so users can go back but not skip ahead.
-        let isLink = isCompleted && href != null;
-        return (
-          <AriaProgressListItemContent
-            href={isLink ? href : undefined}
-            render={isLink ? renderLink : undefined}
-            className="flex flex-col items-center gap-2 text-center rounded-xs text-current no-underline outline-0 outline-offset-2 outline-blue-600 dark:outline-blue-500 forced-colors:outline-[Highlight] data-hovered:underline data-focus-visible:outline-2 [-webkit-tap-highlight-color:transparent]">
-            <span className={markerStyles({isUpcoming: !isCurrent && !isCompleted})} aria-hidden>
-              {isCompleted ? <Check className="size-3.5" /> : stepNumber}
-            </span>
-            {children}
-          </AriaProgressListItemContent>
-        );
-      }}
+      {({isCurrent, isCompleted, stepNumber}) => (
+        <AriaProgressListItemContent className="flex flex-col items-center gap-2 text-center">
+          <span className={markerStyles({isUpcoming: !isCurrent && !isCompleted})} aria-hidden>
+            {isCompleted ? <Check className="size-3.5" /> : stepNumber}
+          </span>
+          {children}
+        </AriaProgressListItemContent>
+      )}
     </AriaProgressListItem>
   );
 }

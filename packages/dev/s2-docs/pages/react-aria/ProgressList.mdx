@@ -70,41 +70,6 @@ let steps = [
   <Content>Provide an `aria-label` or `aria-labelledby` that describes the process, such as "Checkout". Each step announces whether it is completed, current, or not completed, and the current step is marked with `aria-current="step"`.</Content>
 </InlineAlert>
 
-### Links
-
-Use the `href` prop on a `<ProgressListItemContent>` to create a link to a step. In this example, only completed steps are links, so users can go back to a previous step, but not skip ahead.
-
-```tsx render files={["packages/dev/s2-docs/pages/react-aria/Router.tsx"]}
-"use client";
-import {ProgressList, ProgressListItem} from 'vanilla-starter/ProgressList';
-import {Router, Link as RouterLink} from './Router';
-
-<Router defaultSelectedRoute="/review">
-  {({selectedRoute}) => (
-    /*- begin highlight -*/
-    <ProgressList aria-label="Checkout" selectedKey={selectedRoute} renderLink={props => 'href' in props ? <RouterLink {...props} /> : <div {...props} />}>
-      {/*- end highlight -*/}
-      <ProgressListItem id="/cart" href="/cart">Cart</ProgressListItem>
-      <ProgressListItem id="/shipping" href="/shipping">Shipping</ProgressListItem>
-      <ProgressListItem id="/payment" href="/payment">Payment</ProgressListItem>
-      <ProgressListItem id="/review" href="/review">Review</ProgressListItem>
-    </ProgressList>
-  )}
-</Router>
-```
-
-By default, links are rendered as an `<a>` element. Use the `render` prop to integrate your framework's link component.
-
-```tsx
-<ProgressListItemContent
-  href="/shipping"
-  render={domProps =>
-    'href' in domProps
-      ? <RouterLink {...domProps} />
-      : <div {...domProps} />
-  } />
-```
-
 ## Current step
 
 Use the `selectedKey` prop to set the current step. The current step is marked with `aria-current="step"`, and the steps before it are marked as completed. Use the `data-current` and `data-completed` attributes to style them.

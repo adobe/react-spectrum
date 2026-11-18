@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {
   ProgressList,
   ProgressListContext,
@@ -18,7 +17,7 @@ import {
   ProgressListItemContent
 } from '../src/ProgressList';
 import React from 'react';
-import userEvent from '@testing-library/user-event';
+import {render} from '@react-spectrum/test-utils-internal';
 
 let steps = [
   {id: 'domain', label: 'Domain'},
@@ -38,11 +37,6 @@ let renderProgressList = (listProps, itemProps) =>
   );
 
 describe('ProgressList', () => {
-  let user;
-  beforeAll(() => {
-    user = userEvent.setup({delay: null, pointerMap});
-  });
-
   it('should render with default classes', () => {
     let {getByRole, getAllByRole} = renderProgressList();
     expect(getByRole('list')).toHaveClass('react-aria-ProgressList');
@@ -272,30 +266,27 @@ describe('ProgressList', () => {
     expect(contentId).toBe(step.id);
   });
 
-  it.each([undefined, '#a'])(
-    'should label ProgressListItemContent with the step state and custom aria-labelledby when href is %s',
-    href => {
-      let {getByRole} = render(
-        <>
-          <span id="step-label">Custom step</span>
-          <span id="step-detail">Details</span>
-          <ProgressList selectedKey="a" aria-label="Setup">
-            <ProgressListItem id="a">
-              <ProgressListItemContent href={href} aria-labelledby="step-label step-detail">
-                Step A
-              </ProgressListItemContent>
-            </ProgressListItem>
-          </ProgressList>
-        </>
-      );
+  it('should label ProgressListItemContent with the step state and a custom aria-labelledby', () => {
+    let {getByRole} = render(
+      <>
+        <span id="step-label">Custom step</span>
+        <span id="step-detail">Details</span>
+        <ProgressList selectedKey="a" aria-label="Setup">
+          <ProgressListItem id="a">
+            <ProgressListItemContent aria-labelledby="step-label step-detail">
+              Step A
+            </ProgressListItemContent>
+          </ProgressListItem>
+        </ProgressList>
+      </>
+    );
 
-      let content = getByRole(href ? 'link' : 'img');
-      let status = getByRole('listitem').querySelector('[hidden]');
-      expect(status).toHaveTextContent('Current');
-      expect(content).toHaveAttribute('aria-labelledby', `${status.id} step-label step-detail`);
-      expect(content).toHaveAccessibleName('Current Custom step Details');
-    }
-  );
+    let content = getByRole('img');
+    let status = getByRole('listitem').querySelector('[hidden]');
+    expect(status).toHaveTextContent('Current');
+    expect(content).toHaveAttribute('aria-labelledby', `${status.id} step-label step-detail`);
+    expect(content).toHaveAccessibleName('Current Custom step Details');
+  });
 
   it('should support className and style on ProgressListItemContent', () => {
     let {getByRole, rerender} = render(
@@ -326,36 +317,21 @@ describe('ProgressList', () => {
 
   it('should support custom render function on ProgressListItemContent', () => {
     let {getByRole} = render(
-      <ProgressList selectedKey="b" aria-label="Setup">
+      <ProgressList selectedKey="a" aria-label="Setup">
         <ProgressListItem id="a">
-          <ProgressListItemContent
-            href="#a"
-            render={props => {
-              if ('href' in props) {
-                // eslint-disable-next-line jsx-a11y/anchor-has-content
-                return <a {...props} data-custom="link" />;
-              }
-              return <div {...props} />;
-            }}>
-            Step A
-          </ProgressListItemContent>
-        </ProgressListItem>
-        <ProgressListItem id="b">
           <ProgressListItemContent render={props => <div {...props} data-custom="content" />}>
-            Step B
+            Step A
           </ProgressListItemContent>
         </ProgressListItem>
       </ProgressList>
     );
 
-    let link = getByRole('link');
-    expect(link).toHaveAttribute('data-custom', 'link');
-    expect(link).toHaveAttribute('href', '#a');
-    expect(link).toHaveClass('react-aria-ProgressListItemContent');
-    expect(getByRole('img')).toHaveAttribute('data-custom', 'content');
+    let content = getByRole('img');
+    expect(content).toHaveAttribute('data-custom', 'content');
+    expect(content).toHaveClass('react-aria-ProgressListItemContent');
   });
 
-  it('should render ProgressListItemContent as a non-focusable div without an href', () => {
+  it('should render ProgressListItemContent as a non-focusable div', () => {
     let {getByRole} = render(
       <ProgressList selectedKey="a" aria-label="Setup">
         <ProgressListItem id="a">
@@ -368,69 +344,5 @@ describe('ProgressList', () => {
     expect(content.tagName).toBe('DIV');
     expect(content).toHaveAttribute('role', 'img');
     expect(content).not.toHaveAttribute('tabindex');
-    expect(content).not.toHaveAttribute('href');
-  });
-
-  it('should render ProgressListItemContent as an anchor when an href is provided', () => {
-    let {getAllByRole} = render(
-      <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
-        {step => (
-          <ProgressListItem>
-            {({isCompleted}) => (
-              <ProgressListItemContent href={isCompleted ? `#${step.id}` : undefined}>
-                {step.label}
-              </ProgressListItemContent>
-            )}
-          </ProgressListItem>
-        )}
-      </ProgressList>
-    );
-
-    let contents = [...getAllByRole('link'), ...getAllByRole('img')];
-    expect(contents).toHaveLength(3);
-
-    // Completed step gets the href.
-    expect(contents[0].tagName).toBe('A');
-    expect(contents[0]).toHaveAttribute('href', '#domain');
-    expect(contents[0]).not.toHaveAttribute('role');
-
-    // Current and upcoming steps do not.
-    for (let content of contents.slice(1)) {
-      expect(content.tagName).toBe('DIV');
-      expect(content).toHaveAttribute('role', 'img');
-      expect(content).not.toHaveAttribute('href');
-    }
-  });
-
-  it('should reset focus state when a focused link is replaced by a non-link', async () => {
-    let renderSteps = selectedKey => (
-      <ProgressList selectedKey={selectedKey} aria-label="Setup" items={steps}>
-        {step => (
-          <ProgressListItem>
-            {({isCompleted}) => (
-              <ProgressListItemContent href={isCompleted ? `#${step.id}` : undefined}>
-                {step.label}
-              </ProgressListItemContent>
-            )}
-          </ProgressListItem>
-        )}
-      </ProgressList>
-    );
-    let {getByRole, getAllByRole, rerender} = render(renderSteps('dns'));
-
-    await user.tab();
-    let link = getByRole('link');
-    expect(document.activeElement).toBe(link);
-    expect(link).toHaveAttribute('data-focus-visible', 'true');
-
-    // Navigating to the focused step makes it current, so it is no longer a link.
-    rerender(renderSteps('domain'));
-    for (let content of getAllByRole('img')) {
-      expect(content).not.toHaveAttribute('data-focus-visible');
-    }
-
-    // The step becomes a link again, but is not focused.
-    rerender(renderSteps('dns'));
-    expect(getByRole('link')).not.toHaveAttribute('data-focus-visible');
   });
 });
