@@ -11,9 +11,9 @@
  */
 
 import {Meta, StoryObj} from '@storybook/react';
+import {ProgressList, ProgressListItem, ProgressListItemContent} from '../src/ProgressList';
 import React, {ReactNode} from 'react';
-import {StepList, StepListItem, StepListItemContent} from '../src/StepList';
-import './StepList.css';
+import './ProgressList.css';
 
 const steps = [
   {id: 'domain', label: 'Domain/Sender details', href: '#domain'},
@@ -22,8 +22,8 @@ const steps = [
 ];
 
 export default {
-  title: 'React Aria Components/StepList',
-  component: StepList,
+  title: 'React Aria Components/ProgressList',
+  component: ProgressList,
   args: {
     selectedKey: 'dns'
   },
@@ -33,9 +33,9 @@ export default {
       options: steps.map(step => step.id)
     }
   }
-} as Meta<typeof StepList>;
+} as Meta<typeof ProgressList>;
 
-export type StepListStory = StoryObj<typeof StepList>;
+export type ProgressListStory = StoryObj<typeof ProgressList>;
 
 function CheckIcon(): ReactNode {
   return (
@@ -51,13 +51,13 @@ function CheckIcon(): ReactNode {
   );
 }
 
-export const StepListExample: StepListStory = {
+export const ProgressListExample: ProgressListStory = {
   render: (args: any) => (
     <div>
       <button>Focus landing point</button>
-      <StepList {...args} aria-label="Email domain setup">
+      <ProgressList {...args} aria-label="Email domain setup">
         {steps.map(step => (
-          <StepListItem key={step.id} id={step.id}>
+          <ProgressListItem key={step.id} id={step.id}>
             {({isCompleted, stepNumber}) => (
               <span className="marker" role="presentation">
                 {isCompleted ? (
@@ -67,25 +67,25 @@ export const StepListExample: StepListStory = {
                     {stepNumber}
                   </span>
                 )}
-                <StepListItemContent>
+                <ProgressListItemContent>
                   <span className="label">{step.label}</span>
-                </StepListItemContent>
+                </ProgressListItemContent>
               </span>
             )}
-          </StepListItem>
+          </ProgressListItem>
         ))}
-      </StepList>
+      </ProgressList>
     </div>
   )
 };
 
-export const StepListDynamic: StepListStory = {
+export const ProgressListDynamic: ProgressListStory = {
   render: (args: any) => (
     <div>
       <button>Focus landing point</button>
-      <StepList {...args} aria-label="Email domain setup" items={steps}>
+      <ProgressList {...args} aria-label="Email domain setup" items={steps}>
         {(step: (typeof steps)[number]) => (
-          <StepListItem>
+          <ProgressListItem>
             {({isCompleted, stepNumber}) => (
               <span className="marker" role="presentation">
                 {isCompleted ? (
@@ -95,25 +95,25 @@ export const StepListDynamic: StepListStory = {
                     {stepNumber}
                   </span>
                 )}
-                <StepListItemContent>
+                <ProgressListItemContent>
                   <span className="label">{step.label}</span>
-                </StepListItemContent>
+                </ProgressListItemContent>
               </span>
             )}
-          </StepListItem>
+          </ProgressListItem>
         )}
-      </StepList>
+      </ProgressList>
     </div>
   )
 };
 
-export const StepListLinks: StepListStory = {
+export const ProgressListLinks: ProgressListStory = {
   render: (args: any) => (
     <div>
       <button>Focus landing point</button>
-      <StepList {...args} aria-label="Email domain setup" items={steps}>
+      <ProgressList {...args} aria-label="Email domain setup" items={steps}>
         {(step: (typeof steps)[number]) => (
-          <StepListItem>
+          <ProgressListItem>
             {({isCompleted, stepNumber}) => (
               <span className="marker" role="presentation">
                 {isCompleted ? (
@@ -124,14 +124,14 @@ export const StepListLinks: StepListStory = {
                   </span>
                 )}
                 {/* Every step has an href, but only completed steps can be navigated back to. */}
-                <StepListItemContent href={isCompleted ? step.href : undefined}>
+                <ProgressListItemContent href={isCompleted ? step.href : undefined}>
                   <span className="label">{step.label}</span>
-                </StepListItemContent>
+                </ProgressListItemContent>
               </span>
             )}
-          </StepListItem>
+          </ProgressListItem>
         )}
-      </StepList>
+      </ProgressList>
     </div>
   )
 };

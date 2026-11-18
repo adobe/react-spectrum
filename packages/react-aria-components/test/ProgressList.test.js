@@ -11,8 +11,13 @@
  */
 
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {
+  ProgressList,
+  ProgressListContext,
+  ProgressListItem,
+  ProgressListItemContent
+} from '../src/ProgressList';
 import React from 'react';
-import {StepList, StepListContext, StepListItem, StepListItemContent} from '../src/StepList';
 import userEvent from '@testing-library/user-event';
 
 let steps = [
@@ -21,34 +26,34 @@ let steps = [
   {id: 'advanced', label: 'Advanced'}
 ];
 
-let renderStepList = (listProps, itemProps) =>
+let renderProgressList = (listProps, itemProps) =>
   render(
-    <StepList selectedKey="dns" aria-label="Setup" {...listProps}>
+    <ProgressList selectedKey="dns" aria-label="Setup" {...listProps}>
       {steps.map(step => (
-        <StepListItem key={step.id} id={step.id} {...itemProps}>
-          <StepListItemContent>{step.label}</StepListItemContent>
-        </StepListItem>
+        <ProgressListItem key={step.id} id={step.id} {...itemProps}>
+          <ProgressListItemContent>{step.label}</ProgressListItemContent>
+        </ProgressListItem>
       ))}
-    </StepList>
+    </ProgressList>
   );
 
-describe('StepList', () => {
+describe('ProgressList', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
   it('should render with default classes', () => {
-    let {getByRole, getAllByRole} = renderStepList();
-    expect(getByRole('list')).toHaveClass('react-aria-StepList');
+    let {getByRole, getAllByRole} = renderProgressList();
+    expect(getByRole('list')).toHaveClass('react-aria-ProgressList');
 
     for (let item of getAllByRole('listitem')) {
-      expect(item).toHaveClass('react-aria-StepListItem');
+      expect(item).toHaveClass('react-aria-ProgressListItem');
     }
   });
 
   it('should render with custom classes', () => {
-    let {getByRole, getAllByRole} = renderStepList({className: 'steps'}, {className: 'step'});
+    let {getByRole, getAllByRole} = renderProgressList({className: 'steps'}, {className: 'step'});
     expect(getByRole('list')).toHaveClass('steps');
 
     for (let item of getAllByRole('listitem')) {
@@ -57,7 +62,7 @@ describe('StepList', () => {
   });
 
   it('should mark steps before the selected step as completed', () => {
-    let {getAllByRole} = renderStepList();
+    let {getAllByRole} = renderProgressList();
     let items = getAllByRole('listitem');
 
     expect(items[0]).toHaveAttribute('data-completed');
@@ -73,20 +78,20 @@ describe('StepList', () => {
   });
 
   it('should update completed steps when the selected step changes', () => {
-    let {getAllByRole, rerender} = renderStepList({selectedKey: 'advanced'});
+    let {getAllByRole, rerender} = renderProgressList({selectedKey: 'advanced'});
     let items = getAllByRole('listitem');
     expect(items[0]).toHaveAttribute('data-completed');
     expect(items[1]).toHaveAttribute('data-completed');
     expect(items[2]).toHaveAttribute('data-current');
 
     rerender(
-      <StepList selectedKey="domain" aria-label="Setup">
+      <ProgressList selectedKey="domain" aria-label="Setup">
         {steps.map(step => (
-          <StepListItem key={step.id} id={step.id}>
-            <StepListItemContent>{step.label}</StepListItemContent>
-          </StepListItem>
+          <ProgressListItem key={step.id} id={step.id}>
+            <ProgressListItemContent>{step.label}</ProgressListItemContent>
+          </ProgressListItem>
         ))}
-      </StepList>
+      </ProgressList>
     );
 
     items = getAllByRole('listitem');
@@ -96,7 +101,7 @@ describe('StepList', () => {
   });
 
   it('should mark no steps as completed when the selected step is not in the collection', () => {
-    let {getAllByRole} = renderStepList({selectedKey: 'nope'});
+    let {getAllByRole} = renderProgressList({selectedKey: 'nope'});
 
     for (let item of getAllByRole('listitem')) {
       expect(item).not.toHaveAttribute('data-completed');
@@ -106,13 +111,13 @@ describe('StepList', () => {
 
   it('should support dynamic collections', () => {
     let {getAllByRole} = render(
-      <StepList selectedKey="dns" aria-label="Setup" items={steps}>
+      <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
         {step => (
-          <StepListItem>
-            <StepListItemContent>{step.label}</StepListItemContent>
-          </StepListItem>
+          <ProgressListItem>
+            <ProgressListItemContent>{step.label}</ProgressListItemContent>
+          </ProgressListItem>
         )}
-      </StepList>
+      </ProgressList>
     );
 
     let items = getAllByRole('listitem');
@@ -127,17 +132,17 @@ describe('StepList', () => {
 
   it('should support render props', () => {
     let {getAllByRole} = render(
-      <StepList selectedKey="dns" aria-label="Setup" items={steps}>
+      <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
         {step => (
-          <StepListItem>
+          <ProgressListItem>
             {({isCurrent, isCompleted}) => (
-              <StepListItemContent>
+              <ProgressListItemContent>
                 {isCurrent ? 'current' : isCompleted ? 'completed' : step.label}
-              </StepListItemContent>
+              </ProgressListItemContent>
             )}
-          </StepListItem>
+          </ProgressListItem>
         )}
-      </StepList>
+      </ProgressList>
     );
 
     expect(getAllByRole('listitem').map(item => item.lastChild.textContent)).toEqual([
@@ -149,13 +154,15 @@ describe('StepList', () => {
 
   it('should provide a 1-based step number to render props', () => {
     let {getAllByRole} = render(
-      <StepList selectedKey="dns" aria-label="Setup" items={steps}>
+      <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
         {() => (
-          <StepListItem>
-            {({stepNumber}) => <StepListItemContent>{`Step ${stepNumber}`}</StepListItemContent>}
-          </StepListItem>
+          <ProgressListItem>
+            {({stepNumber}) => (
+              <ProgressListItemContent>{`Step ${stepNumber}`}</ProgressListItemContent>
+            )}
+          </ProgressListItem>
         )}
-      </StepList>
+      </ProgressList>
     );
 
     expect(getAllByRole('listitem').map(item => item.lastChild.textContent)).toEqual([
@@ -167,15 +174,15 @@ describe('StepList', () => {
 
   it('should provide the step number to className and style functions', () => {
     let {getAllByRole} = render(
-      <StepList selectedKey="dns" aria-label="Setup" items={steps}>
+      <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
         {step => (
-          <StepListItem
+          <ProgressListItem
             className={({stepNumber}) => `step-${stepNumber}`}
             style={({stepNumber}) => ({order: stepNumber})}>
-            <StepListItemContent>{step.label}</StepListItemContent>
-          </StepListItem>
+            <ProgressListItemContent>{step.label}</ProgressListItemContent>
+          </ProgressListItem>
         )}
-      </StepList>
+      </ProgressList>
     );
 
     let items = getAllByRole('listitem');
@@ -184,7 +191,7 @@ describe('StepList', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = renderStepList(
+    let {getByRole, getAllByRole} = renderProgressList(
       {'data-foo': 'bar', 'aria-label': 'test list'},
       {'data-bar': 'foo', 'aria-label': 'test item'}
     );
@@ -200,7 +207,7 @@ describe('StepList', () => {
   });
 
   it('should not forward the step id to the DOM', () => {
-    let {getAllByRole} = renderStepList();
+    let {getAllByRole} = renderProgressList();
 
     for (let item of getAllByRole('listitem')) {
       expect(item).not.toHaveAttribute('id');
@@ -208,7 +215,7 @@ describe('StepList', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole, getAllByRole} = renderStepList(
+    let {getByRole, getAllByRole} = renderProgressList(
       {render: props => <ol {...props} data-custom="bar" />},
       {render: props => <li {...props} data-custom="true" />}
     );
@@ -223,11 +230,11 @@ describe('StepList', () => {
     let listRef = React.createRef();
     let itemRef = React.createRef();
     let {getByRole} = render(
-      <StepList selectedKey="a" aria-label="Setup" ref={listRef}>
-        <StepListItem id="a" ref={itemRef}>
-          <StepListItemContent>A</StepListItemContent>
-        </StepListItem>
-      </StepList>
+      <ProgressList selectedKey="a" aria-label="Setup" ref={listRef}>
+        <ProgressListItem id="a" ref={itemRef}>
+          <ProgressListItemContent>A</ProgressListItemContent>
+        </ProgressListItem>
+      </ProgressList>
     );
 
     expect(listRef.current).toBe(getByRole('list'));
@@ -236,13 +243,13 @@ describe('StepList', () => {
 
   it('should support slots', () => {
     let {getByRole} = render(
-      <StepListContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
-        <StepList slot="test" selectedKey="a">
-          <StepListItem id="a">
-            <StepListItemContent>A</StepListItemContent>
-          </StepListItem>
-        </StepList>
-      </StepListContext.Provider>
+      <ProgressListContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <ProgressList slot="test" selectedKey="a">
+          <ProgressListItem id="a">
+            <ProgressListItemContent>A</ProgressListItemContent>
+          </ProgressListItem>
+        </ProgressList>
+      </ProgressListContext.Provider>
     );
 
     let list = getByRole('list');
@@ -250,13 +257,13 @@ describe('StepList', () => {
     expect(list).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should label StepListItemContent with the step state', () => {
+  it('should label ProgressListItemContent with the step state', () => {
     let {getByRole} = render(
-      <StepList selectedKey="a" aria-label="Setup">
-        <StepListItem id="a">
-          <StepListItemContent>Step A</StepListItemContent>
-        </StepListItem>
-      </StepList>
+      <ProgressList selectedKey="a" aria-label="Setup">
+        <ProgressListItem id="a">
+          <ProgressListItemContent>Step A</ProgressListItemContent>
+        </ProgressListItem>
+      </ProgressList>
     );
 
     let step = getByRole('img');
@@ -266,19 +273,19 @@ describe('StepList', () => {
   });
 
   it.each([undefined, '#a'])(
-    'should label StepListItemContent with the step state and custom aria-labelledby when href is %s',
+    'should label ProgressListItemContent with the step state and custom aria-labelledby when href is %s',
     href => {
       let {getByRole} = render(
         <>
           <span id="step-label">Custom step</span>
           <span id="step-detail">Details</span>
-          <StepList selectedKey="a" aria-label="Setup">
-            <StepListItem id="a">
-              <StepListItemContent href={href} aria-labelledby="step-label step-detail">
+          <ProgressList selectedKey="a" aria-label="Setup">
+            <ProgressListItem id="a">
+              <ProgressListItemContent href={href} aria-labelledby="step-label step-detail">
                 Step A
-              </StepListItemContent>
-            </StepListItem>
-          </StepList>
+              </ProgressListItemContent>
+            </ProgressListItem>
+          </ProgressList>
         </>
       );
 
@@ -290,38 +297,38 @@ describe('StepList', () => {
     }
   );
 
-  it('should support className and style on StepListItemContent', () => {
+  it('should support className and style on ProgressListItemContent', () => {
     let {getByRole, rerender} = render(
-      <StepList selectedKey="a" aria-label="Setup">
-        <StepListItem id="a">
-          <StepListItemContent>Step A</StepListItemContent>
-        </StepListItem>
-      </StepList>
+      <ProgressList selectedKey="a" aria-label="Setup">
+        <ProgressListItem id="a">
+          <ProgressListItemContent>Step A</ProgressListItemContent>
+        </ProgressListItem>
+      </ProgressList>
     );
 
-    expect(getByRole('img')).toHaveClass('react-aria-StepListItemContent');
+    expect(getByRole('img')).toHaveClass('react-aria-ProgressListItemContent');
 
     rerender(
-      <StepList selectedKey="a" aria-label="Setup">
-        <StepListItem id="a">
-          <StepListItemContent className="content" style={{color: 'red'}}>
+      <ProgressList selectedKey="a" aria-label="Setup">
+        <ProgressListItem id="a">
+          <ProgressListItemContent className="content" style={{color: 'red'}}>
             Step A
-          </StepListItemContent>
-        </StepListItem>
-      </StepList>
+          </ProgressListItemContent>
+        </ProgressListItem>
+      </ProgressList>
     );
 
     let content = getByRole('img');
     expect(content).toHaveClass('content');
-    expect(content).not.toHaveClass('react-aria-StepListItemContent');
+    expect(content).not.toHaveClass('react-aria-ProgressListItemContent');
     expect(content.style.color).toBe('red');
   });
 
-  it('should support custom render function on StepListItemContent', () => {
+  it('should support custom render function on ProgressListItemContent', () => {
     let {getByRole} = render(
-      <StepList selectedKey="b" aria-label="Setup">
-        <StepListItem id="a">
-          <StepListItemContent
+      <ProgressList selectedKey="b" aria-label="Setup">
+        <ProgressListItem id="a">
+          <ProgressListItemContent
             href="#a"
             render={props => {
               if ('href' in props) {
@@ -331,30 +338,30 @@ describe('StepList', () => {
               return <div {...props} />;
             }}>
             Step A
-          </StepListItemContent>
-        </StepListItem>
-        <StepListItem id="b">
-          <StepListItemContent render={props => <div {...props} data-custom="content" />}>
+          </ProgressListItemContent>
+        </ProgressListItem>
+        <ProgressListItem id="b">
+          <ProgressListItemContent render={props => <div {...props} data-custom="content" />}>
             Step B
-          </StepListItemContent>
-        </StepListItem>
-      </StepList>
+          </ProgressListItemContent>
+        </ProgressListItem>
+      </ProgressList>
     );
 
     let link = getByRole('link');
     expect(link).toHaveAttribute('data-custom', 'link');
     expect(link).toHaveAttribute('href', '#a');
-    expect(link).toHaveClass('react-aria-StepListItemContent');
+    expect(link).toHaveClass('react-aria-ProgressListItemContent');
     expect(getByRole('img')).toHaveAttribute('data-custom', 'content');
   });
 
-  it('should render StepListItemContent as a non-focusable div without an href', () => {
+  it('should render ProgressListItemContent as a non-focusable div without an href', () => {
     let {getByRole} = render(
-      <StepList selectedKey="a" aria-label="Setup">
-        <StepListItem id="a">
-          <StepListItemContent>Step A</StepListItemContent>
-        </StepListItem>
-      </StepList>
+      <ProgressList selectedKey="a" aria-label="Setup">
+        <ProgressListItem id="a">
+          <ProgressListItemContent>Step A</ProgressListItemContent>
+        </ProgressListItem>
+      </ProgressList>
     );
 
     let content = getByRole('img');
@@ -364,19 +371,19 @@ describe('StepList', () => {
     expect(content).not.toHaveAttribute('href');
   });
 
-  it('should render StepListItemContent as an anchor when an href is provided', () => {
+  it('should render ProgressListItemContent as an anchor when an href is provided', () => {
     let {getAllByRole} = render(
-      <StepList selectedKey="dns" aria-label="Setup" items={steps}>
+      <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
         {step => (
-          <StepListItem>
+          <ProgressListItem>
             {({isCompleted}) => (
-              <StepListItemContent href={isCompleted ? `#${step.id}` : undefined}>
+              <ProgressListItemContent href={isCompleted ? `#${step.id}` : undefined}>
                 {step.label}
-              </StepListItemContent>
+              </ProgressListItemContent>
             )}
-          </StepListItem>
+          </ProgressListItem>
         )}
-      </StepList>
+      </ProgressList>
     );
 
     let contents = [...getAllByRole('link'), ...getAllByRole('img')];
@@ -397,17 +404,17 @@ describe('StepList', () => {
 
   it('should reset focus state when a focused link is replaced by a non-link', async () => {
     let renderSteps = selectedKey => (
-      <StepList selectedKey={selectedKey} aria-label="Setup" items={steps}>
+      <ProgressList selectedKey={selectedKey} aria-label="Setup" items={steps}>
         {step => (
-          <StepListItem>
+          <ProgressListItem>
             {({isCompleted}) => (
-              <StepListItemContent href={isCompleted ? `#${step.id}` : undefined}>
+              <ProgressListItemContent href={isCompleted ? `#${step.id}` : undefined}>
                 {step.label}
-              </StepListItemContent>
+              </ProgressListItemContent>
             )}
-          </StepListItem>
+          </ProgressListItem>
         )}
-      </StepList>
+      </ProgressList>
     );
     let {getByRole, getAllByRole, rerender} = render(renderSteps('dns'));
 

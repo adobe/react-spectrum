@@ -1,4 +1,4 @@
-.react-aria-StepList {
+.react-aria-ProgressList {
   display: flex;
   gap: 12px;
   margin: 0;
@@ -6,7 +6,7 @@
   list-style: none;
 }
 
-.react-aria-StepListItem {
+.react-aria-ProgressListItem {
   --marker-background: var(--spectrum-global-color-gray-200);
   --marker-color: var(--spectrum-global-color-gray-700);
   --label-color: var(--spectrum-global-color-gray-700);
@@ -58,7 +58,7 @@
   }
 }
 
-.react-aria-StepListItemContent {
+.react-aria-ProgressListItemContent {
   /* Stretch over the marker so links have a sensible hit area and focus ring. The label is
      absolutely positioned against this element, which occupies the same box as the marker. */
   position: absolute;

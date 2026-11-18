@@ -14,11 +14,16 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {StepList, StepListContext, StepListItem, StepListItemContent} from '../src/StepList';
+export {
+  ProgressList,
+  ProgressListContext,
+  ProgressListItem,
+  ProgressListItemContent
+} from '../src/ProgressList';
 export type {
-  StepListProps,
-  StepListItemProps,
-  StepListItemRenderProps,
-  StepListItemContentProps
-} from '../src/StepList';
+  ProgressListProps,
+  ProgressListItemProps,
+  ProgressListItemRenderProps,
+  ProgressListItemContentProps
+} from '../src/ProgressList';
 export type {Key} from '@react-types/shared';

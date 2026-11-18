@@ -1,6 +1,6 @@
 @import './theme.css';
 
-.react-aria-StepList {
+.react-aria-ProgressList {
   display: flex;
   max-width: 100%;
   margin: 0;
@@ -10,7 +10,7 @@
   color: var(--text-color);
 }
 
-.react-aria-StepListItem {
+.react-aria-ProgressListItem {
   position: relative;
   /* Steps share the available width equally, with a preferred width of 96px. */
   flex: 1;
@@ -74,7 +74,7 @@
   }
 }
 
-.react-aria-StepListItemContent {
+.react-aria-ProgressListItemContent {
   display: flex;
   flex-direction: column;
   align-items: center;

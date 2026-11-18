@@ -2,26 +2,26 @@
 import {Check} from 'lucide-react';
 import React, {createContext, useContext} from 'react';
 import {
-  StepList as AriaStepList,
-  StepListItem as AriaStepListItem,
-  StepListItemContent as AriaStepListItemContent,
-  type StepListItemContentProps,
-  type StepListItemProps as AriaStepListItemProps,
-  type StepListProps
-} from 'react-aria-components/StepList';
+  ProgressList as AriaProgressList,
+  ProgressListItem as AriaProgressListItem,
+  ProgressListItemContent as AriaProgressListItemContent,
+  type ProgressListItemContentProps,
+  type ProgressListItemProps as AriaProgressListItemProps,
+  type ProgressListProps
+} from 'react-aria-components/ProgressList';
 import {twMerge} from 'tailwind-merge';
 import {tv} from 'tailwind-variants';
 import {composeTailwindRenderProps} from './utils';
 
-const RenderLinkContext = createContext<StepListItemContentProps['render']>(undefined);
+const RenderLinkContext = createContext<ProgressListItemContentProps['render']>(undefined);
 
-export function StepList<T>({
+export function ProgressList<T>({
   renderLink,
   ...props
-}: StepListProps<T> & {renderLink?: StepListItemContentProps['render']}) {
+}: ProgressListProps<T> & {renderLink?: ProgressListItemContentProps['render']}) {
   return (
     <RenderLinkContext.Provider value={renderLink}>
-      <AriaStepList
+      <AriaProgressList
         {...props}
         className={twMerge(
           'flex max-w-full m-0 p-0 list-none font-sans text-sm text-neutral-800 dark:text-neutral-200',
@@ -32,7 +32,7 @@ export function StepList<T>({
   );
 }
 
-export interface StepListItemProps extends Omit<AriaStepListItemProps, 'children'> {
+export interface ProgressListItemProps extends Omit<AriaProgressListItemProps, 'children'> {
   children?: React.ReactNode;
   href?: string;
 }
@@ -48,10 +48,10 @@ const markerStyles = tv({
   }
 });
 
-export function StepListItem({children, href, ...props}: StepListItemProps) {
+export function ProgressListItem({children, href, ...props}: ProgressListItemProps) {
   let renderLink = useContext(RenderLinkContext);
   return (
-    <AriaStepListItem
+    <AriaProgressListItem
       {...props}
       className={composeTailwindRenderProps(
         props.className,
@@ -62,7 +62,7 @@ export function StepListItem({children, href, ...props}: StepListItemProps) {
         // Only completed steps are links, so users can go back but not skip ahead.
         let isLink = isCompleted && href != null;
         return (
-          <AriaStepListItemContent
+          <AriaProgressListItemContent
             href={isLink ? href : undefined}
             render={isLink ? renderLink : undefined}
             className="flex flex-col items-center gap-2 text-center rounded-xs text-current no-underline outline-0 outline-offset-2 outline-blue-600 dark:outline-blue-500 forced-colors:outline-[Highlight] data-hovered:underline data-focus-visible:outline-2 [-webkit-tap-highlight-color:transparent]">
@@ -70,9 +70,9 @@ export function StepListItem({children, href, ...props}: StepListItemProps) {
               {isCompleted ? <Check className="size-3.5" /> : stepNumber}
             </span>
             {children}
-          </AriaStepListItemContent>
+          </AriaProgressListItemContent>
         );
       }}
-    </AriaStepListItem>
+    </AriaProgressListItem>
   );
 }

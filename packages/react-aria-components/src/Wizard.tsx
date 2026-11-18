@@ -426,8 +426,8 @@ function WizardStepInner({props, state, stepRef}: WizardStepInnerProps) {
   let {isCurrent, isCompleted, stepNumber} = useWizardStep({key: props.id!}, state, ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
   let stateText = isCompleted
-    ? stringFormatter.format('stepListItemCompleted')
-    : stringFormatter.format('stepListItemNotCompleted');
+    ? stringFormatter.format('progressListItemCompleted')
+    : stringFormatter.format('progressListItemNotCompleted');
 
   // Adds the step state to the render props that Tab provides.
   let getRenderProps = <R extends TabRenderProps>(renderProps: R): R & WizardStepRenderProps => ({

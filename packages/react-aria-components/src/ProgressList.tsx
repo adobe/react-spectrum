@@ -46,7 +46,7 @@ import {useLink} from 'react-aria/useLink';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
-export interface StepListProps<T>
+export interface ProgressListProps<T>
   extends
     Omit<CollectionProps<T>, 'disabledKeys'>,
     StyleProps,
@@ -58,36 +58,37 @@ export interface StepListProps<T>
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element.
    *
-   * @default 'react-aria-StepList'
+   * @default 'react-aria-ProgressList'
    */
   className?: string;
   /**
-   * The `id` of the currently selected `StepListItem`. Steps before it in the collection are marked
-   * as completed, and steps after it are marked as not completed.
+   * The `id` of the currently selected `ProgressListItem`. Steps before it in the collection are
+   * marked as completed, and steps after it are marked as not completed.
    */
   selectedKey: Key;
 }
 
-export const StepListContext =
-  createContext<ContextValue<StepListProps<any>, HTMLOListElement>>(null);
+export const ProgressListContext =
+  createContext<ContextValue<ProgressListProps<any>, HTMLOListElement>>(null);
 
-interface StepListState {
+interface ProgressListState {
   /** The key of the currently selected step. */
   selectedKey: Key;
   /** The index of the currently selected step within the collection, or -1 if it isn't present. */
   selectedIndex: number;
 }
 
-const InternalStepListContext = createContext<StepListState | null>(null);
+const InternalProgressListContext = createContext<ProgressListState | null>(null);
 
 /**
- * A StepList displays the steps of a multi-step process, and which of them the user has completed.
+ * A ProgressList displays the steps of a multi-step process, and which of them the user has
+ * completed.
  */
-export const StepList = /*#__PURE__*/ (forwardRef as forwardRefType)(function StepList<T>(
-  props: StepListProps<T>,
+export const ProgressList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ProgressList<T>(
+  props: ProgressListProps<T>,
   ref: ForwardedRef<HTMLOListElement>
 ) {
-  [props, ref] = useContextProps(props, ref, StepListContext);
+  [props, ref] = useContextProps(props, ref, ProgressListContext);
   let {CollectionRoot} = useContext(CollectionRendererContext);
   let {selectedKey} = props;
   let DOMProps = filterDOMProps(props, {global: true, labelable: true});
@@ -102,18 +103,18 @@ export const StepList = /*#__PURE__*/ (forwardRef as forwardRefType)(function St
           ref={ref}
           slot={props.slot || undefined}
           style={props.style}
-          className={props.className ?? 'react-aria-StepList'}>
-          <InternalStepListContext.Provider
+          className={props.className ?? 'react-aria-ProgressList'}>
+          <InternalProgressListContext.Provider
             value={{selectedKey, selectedIndex: collection.getItem(selectedKey)?.index ?? -1}}>
             <CollectionRoot collection={collection} />
-          </InternalStepListContext.Provider>
+          </InternalProgressListContext.Provider>
         </dom.ol>
       )}
     </CollectionBuilder>
   );
 });
 
-export interface StepListItemRenderProps {
+export interface ProgressListItemRenderProps {
   /**
    * Whether the step is the currently selected step.
    *
@@ -126,41 +127,41 @@ export interface StepListItemRenderProps {
    * @selector [data-completed]
    */
   isCompleted: boolean;
-  /** The position of the step within the `StepList`, starting from 1. */
+  /** The position of the step within the `ProgressList`, starting from 1. */
   stepNumber: number;
 }
 
-export interface StepListItemProps
+export interface ProgressListItemProps
   extends
-    RenderProps<StepListItemRenderProps, 'li'>,
+    RenderProps<ProgressListItemRenderProps, 'li'>,
     GlobalDOMAttributes<HTMLLIElement>,
     AriaLabelingProps {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element. A function may be provided to compute the class based on component state.
    *
-   * @default 'react-aria-StepListItem'
+   * @default 'react-aria-ProgressListItem'
    */
-  className?: ClassNameOrFunction<StepListItemRenderProps>;
-  /** A unique id for the step, which is compared against the `selectedKey` of the `StepList`. */
+  className?: ClassNameOrFunction<ProgressListItemRenderProps>;
+  /** A unique id for the step, which is compared against the `selectedKey` of the `ProgressList`. */
   id?: Key;
 }
 
-class StepListItemNode extends CollectionNode<unknown> {
+class ProgressListItemNode extends CollectionNode<unknown> {
   static readonly type = 'item';
 }
 
 /**
- * A StepListItem represents an individual step within a `<StepList>`.
+ * A ProgressListItem represents an individual step within a `<ProgressList>`.
  */
-export const StepListItem = /*#__PURE__*/ createLeafComponent(
-  StepListItemNode,
-  function StepListItem(
-    props: StepListItemProps,
+export const ProgressListItem = /*#__PURE__*/ createLeafComponent(
+  ProgressListItemNode,
+  function ProgressListItem(
+    props: ProgressListItemProps,
     ref: ForwardedRef<HTMLLIElement>,
     node: Node<unknown>
   ) {
-    let state = useContext(InternalStepListContext);
+    let state = useContext(InternalProgressListContext);
     let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
     let hiddenId = useId();
 
@@ -172,22 +173,22 @@ export const StepListItem = /*#__PURE__*/ createLeafComponent(
       ...node.props,
       children: node.rendered,
       values: {isCurrent, isCompleted, stepNumber: node.index + 1},
-      defaultClassName: 'react-aria-StepListItem'
+      defaultClassName: 'react-aria-ProgressListItem'
     });
 
     let DOMProps = filterDOMProps(props as any, {global: true, labelable: true});
     // `id` identifies the step rather than the DOM element, so it is not forwarded to the DOM.
     delete DOMProps.id;
 
-    let message = stringFormatter.format('stepListItemNotCompleted');
+    let message = stringFormatter.format('progressListItemNotCompleted');
     if (isCurrent) {
-      message = stringFormatter.format('stepListItemCurrent');
+      message = stringFormatter.format('progressListItemCurrent');
     } else if (isCompleted) {
-      message = stringFormatter.format('stepListItemCompleted');
+      message = stringFormatter.format('progressListItemCompleted');
     }
 
     return (
-      <StepListItemContext.Provider value={{hiddenId}}>
+      <ProgressListItemContext.Provider value={{hiddenId}}>
         <dom.li
           {...mergeProps(DOMProps, renderProps)}
           role="listitem"
@@ -200,12 +201,12 @@ export const StepListItem = /*#__PURE__*/ createLeafComponent(
           </span>
           {renderProps.children}
         </dom.li>
-      </StepListItemContext.Provider>
+      </ProgressListItemContext.Provider>
     );
   }
 );
 
-export interface StepListItemContentProps
+export interface ProgressListItemContentProps
   extends
     DOMProps,
     LinkDOMProps,
@@ -213,21 +214,23 @@ export interface StepListItemContentProps
     PossibleLinkDOMRenderProps<'div', undefined>,
     Omit<GlobalDOMAttributes<HTMLElement>, 'onClick'> {}
 
-const StepListItemContext = createContext<{hiddenId: string | undefined} | undefined>(undefined);
+const ProgressListItemContext = createContext<{hiddenId: string | undefined} | undefined>(
+  undefined
+);
 
 /**
- * A StepListItemContent renders the content of a `<StepListItem>`, optionally as a link to the
- * step.
+ * A ProgressListItemContent renders the content of a `<ProgressListItem>`, optionally as a link to
+ * the step.
  */
-export const StepListItemContent = /*#__PURE__*/ (forwardRef as forwardRefType)(
-  function StepListItemContent(
-    props: StepListItemContentProps,
+export const ProgressListItemContent = /*#__PURE__*/ (forwardRef as forwardRefType)(
+  function ProgressListItemContent(
+    props: ProgressListItemContentProps,
     ref: ForwardedRef<HTMLAnchorElement | HTMLDivElement>
   ) {
     // Remount when switching between a link and a plain `div`. A focused link that is removed never
     // receives a blur event, so its focus state would otherwise carry over to the new element.
     return (
-      <StepListItemContentInner
+      <ProgressListItemContentInner
         key={props.href != null ? 'link' : 'content'}
         props={props}
         contentRef={ref}
@@ -236,13 +239,13 @@ export const StepListItemContent = /*#__PURE__*/ (forwardRef as forwardRefType)(
   }
 );
 
-interface StepListItemContentInnerProps {
-  props: StepListItemContentProps;
+interface ProgressListItemContentInnerProps {
+  props: ProgressListItemContentProps;
   contentRef: ForwardedRef<HTMLAnchorElement | HTMLDivElement>;
 }
 
-function StepListItemContentInner({props, contentRef: ref}: StepListItemContentInnerProps) {
-  let context = useContext(StepListItemContext);
+function ProgressListItemContentInner({props, contentRef: ref}: ProgressListItemContentInnerProps) {
+  let context = useContext(ProgressListItemContext);
   let objRef = useObjectRef(ref);
   let id = useId();
   // A step is only navigable when it is given an `href`. Otherwise `role="img"` is applied to a
@@ -272,7 +275,7 @@ function StepListItemContentInner({props, contentRef: ref}: StepListItemContentI
       render={props.render}
       id={id}
       style={props.style}
-      className={props.className ?? 'react-aria-StepListItemContent'}
+      className={props.className ?? 'react-aria-ProgressListItemContent'}
       aria-labelledby={ariaLabeledBy}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined}>

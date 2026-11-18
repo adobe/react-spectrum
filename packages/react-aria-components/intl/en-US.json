@@ -3,7 +3,7 @@
   "tableResizer": "Resizer",
   "dropzoneLabel": "DropZone",
   "colorSwatchPicker": "Color swatches",
-  "stepListItemCurrent": "Current",
-  "stepListItemCompleted": "Completed",
-  "stepListItemNotCompleted": "Not completed"
+  "progressListItemCurrent": "Current",
+  "progressListItemCompleted": "Completed",
+  "progressListItemNotCompleted": "Not completed"
 }
