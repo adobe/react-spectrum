@@ -59,16 +59,13 @@ import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
-export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
+export interface LightboxCarouselProps extends Omit<TabsProps, 'className' | 'orientation'> {
   // TODO: Support infinite carousel
   // isInfinite?: boolean;
 }
 
 export interface LightboxPickerProps<T> extends Omit<TabListProps<T>, 'className'> {}
-export interface LightboxPickerItemProps extends Omit<
-  TabProps,
-  'className' | 'children' | 'orientation'
-> {
+export interface LightboxPickerItemProps extends Omit<TabProps, 'className' | 'children'> {
   children: ReactNode;
 }
 export interface LightboxItemsProps<T> extends Omit<TabPanelsProps<T>, 'className'> {
@@ -78,12 +75,7 @@ export interface LightboxItemProps extends Omit<TabPanelProps, 'className'> {}
 
 const carouselStyles = style({
   display: 'flex',
-  flexDirection: {
-    orientation: {
-      horizontal: 'column',
-      vertical: 'row'
-    }
-  },
+  flexDirection: 'column',
   gap: 16,
   minWidth: 0,
   minHeight: 0,
@@ -98,12 +90,7 @@ const pickerStyles = style({
     md: 600
   },
   overflowX: 'auto',
-  flexDirection: {
-    orientation: {
-      horizontal: 'row',
-      vertical: 'column'
-    }
-  },
+  flexDirection: 'row',
   scrollbarWidth: 'none',
   flexShrink: 0,
   order: 1,
@@ -242,7 +229,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
                   {...props}
                   selectedKey={ctx?.activeKey}
                   onSelectionChange={ctx?.setActiveKey}
-                  className={renderProps => carouselStyles(renderProps)}
+                  className={carouselStyles}
                 />
                 {/* </LightBoxCarouselContext.Provider> */}
               </>
@@ -260,7 +247,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
       aria-label={props['aria-label']}
       aria-roledescription={stringFormatter.format('lightbox.carousel')}
       style={{width: '100%', height: '100%'}}>
-      <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
+      <RACTabs {...props} className={carouselStyles} />
     </div>
     // </LightBoxCarouselContext.Provider>
   );
@@ -311,11 +298,7 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
 
   let picker = (
     <div className={style({display: 'flex', justifyContent: 'center', order: 1})}>
-      <RACTabList
-        {...props}
-        ref={ref}
-        className={renderProps => pickerStyles(renderProps) + ' ' + scrollFade({x: 16})}
-      />
+      <RACTabList {...props} ref={ref} className={pickerStyles + ' ' + scrollFade({x: 16})} />
     </div>
   );
 
