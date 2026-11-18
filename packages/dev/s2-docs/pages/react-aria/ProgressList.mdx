@@ -40,6 +40,11 @@ export const description = 'Displays the steps of a multi-step process, and whic
 
 </ExampleSwitcher>
 
+<InlineAlert variant="notice">
+  <Heading>ProgressList vs. Wizard</Heading>
+  <Content>Use a `ProgressList` to show the user's progress through steps. Use a `Wizard` if any of the steps need to be interactive.</Content>
+</InlineAlert>
+
 ## Content
 
 `ProgressList` follows the [Collection Components API](collections?component=ProgressList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
@@ -108,11 +113,6 @@ function Example() {
   );
 }
 ```
-
-## ProgressList vs. Wizard
-
-Use a `ProgressList` to show a sequence of steps in a user flow, where each step corresponds to a separate page or route.
-To allow random access and let users move between the steps they have reached without losing their progress, use a [Wizard](Wizard) instead.
 
 ## API
 
