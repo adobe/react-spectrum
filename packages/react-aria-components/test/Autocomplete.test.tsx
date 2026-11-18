@@ -728,6 +728,15 @@ describe('Autocomplete', () => {
     expect(document.activeElement).toBe(input);
     expect(group).toHaveAttribute('data-focus-within');
 
+    await user.keyboard('{ArrowDown}');
+    expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+    expect(document.activeElement).toBe(input);
+    expect(group).toHaveAttribute('data-focus-within');
+
+    await user.keyboard('{ArrowUp}');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(group).toHaveAttribute('data-focus-within');
+
     await user.tab();
     expect(group).not.toHaveAttribute('data-focus-within');
   });
