@@ -131,10 +131,14 @@ const track = style<RenderProps>({
     type: 'height',
     value: controlSize('sm')
   },
+  '--trackBorderWidth': {
+    type: 'borderTopWidth',
+    value: 2
+  },
   width: '--trackWidth',
   height: '--trackHeight',
   boxSizing: 'border-box',
-  borderWidth: 2,
+  borderWidth: '--trackBorderWidth',
   borderStyle: 'solid',
   transition: 'default',
   forcedColorAdjust: 'none',
@@ -170,7 +174,7 @@ const handle = style<RenderProps>({
   // within the same form. Deriving width directly from the track height avoids that
   // trigger while keeping the handle square.
   // https://bugzilla.mozilla.org/show_bug.cgi?id=2067007
-  width: 'calc(var(--trackHeight) - 4px)',
+  width: 'calc(var(--trackHeight) - 2 * var(--trackBorderWidth))',
   borderRadius: 'full',
   backgroundColor: {
     default: baseColor('neutral'),
