@@ -681,9 +681,7 @@ function CarouselNavButton(props: CarouselNavButtonProps) {
       className={renderProps =>
         carouselNavButtonStyles({...renderProps, side, isInModal, isDisabled})
       }
-      aria-label={stringFormatter.format(
-        side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
-      )}>
+      aria-label={stringFormatter.format(side === 'start' ? 'lightbox.previous' : 'lightbox.next')}>
       <Icon />
     </Button>
   );
