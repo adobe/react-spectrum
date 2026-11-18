@@ -21,7 +21,6 @@ import {
   TableFooter as AriaTableFooter,
   type TableFooterProps
 } from 'react-aria-components/Table';
-import {Group} from 'react-aria-components/Group';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {Checkbox} from './Checkbox';
 import {ProgressCircle} from './ProgressCircle';
@@ -41,9 +40,9 @@ export function Column(props: Omit<ColumnProps, 'children'> & {children?: React.
     <AriaColumn {...props} className="react-aria-Column button-base">
       {({allowsSorting, sortDirection}) => (
         <div className="column-header">
-          <Group role="presentation" tabIndex={-1} className="column-name">
+          <div role={allowsSorting ? 'button' : undefined} tabIndex={-1} className="column-name">
             {props.children}
-          </Group>
+          </div>
           {allowsSorting && (
             <span aria-hidden="true" className="sort-indicator">
               {sortDirection === 'ascending' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
