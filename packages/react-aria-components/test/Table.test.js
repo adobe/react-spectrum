@@ -2881,6 +2881,13 @@ describe('Table', () => {
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
     });
 
+    it('should span the sentinel across every column so it can be observed when scrolled horizontally', async () => {
+      let tree = render(<LoadMoreTable items={items} />);
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(sentinel.closest('td')).toHaveAttribute('colspan', '3');
+      expect(sentinel).toHaveStyle({width: '100%'});
+    });
+
     it('should properly render the renderEmptyState if table is empty', async () => {
       let tree = render(<LoadMoreTable items={[]} />);
       let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
