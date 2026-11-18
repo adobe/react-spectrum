@@ -22,12 +22,19 @@ import {
   useRenderProps
 } from './utils';
 import {DialogContext, DialogProps, OverlayTriggerStateContext} from './Dialog';
-import {DismissButton, Overlay, OverlayProps} from 'react-aria/Overlay';
-import {DOMAttributes, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {DismissButton, Overlay} from 'react-aria/Overlay';
+import {
+  DOMAttributes,
+  FocusableElement,
+  forwardRefType,
+  GlobalDOMAttributes,
+  RefObject
+} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {isScrollable} from 'react-aria/private/utils/isScrollable';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
+import {Modality} from 'react-aria/useFocusVisible';
 import {
   OverlayTriggerProps,
   OverlayTriggerState,
@@ -92,12 +99,15 @@ export interface ModalOverlayProps
   /**
    * Where focus goes when the modal closes. By default, focus returns to the element that was
    * focused when the modal opened. Pass a ref or a function to choose another element, for
-   * example when that element was removed while the modal was open, or `false` to leave
-   * focus where it lands.
+   * example when that element was removed while the modal was open. Returning
+   * a boolean is the same as passing it directly in.
    *
    * @default true
    */
-  restoreFocus?: OverlayProps['restoreFocus'];
+  restoreFocus?:
+    | boolean
+    | RefObject<FocusableElement | null>
+    | ((modality: Modality | null) => FocusableElement | boolean | null);
   /**
    * Whether to wait until the entry animation completes before hiding content outside the modal
    * and moving focus into it.

@@ -12,7 +12,9 @@
 
 import {ClearPressResponder} from '../interactions/PressResponder';
 import {FocusableContext} from '../interactions/useFocusable';
-import {FocusScope, FocusScopeProps} from '../focus/FocusScope';
+import {FocusableElement, RefObject} from '@react-types/shared';
+import {FocusScope} from '../focus/FocusScope';
+import {Modality} from '../interactions/useFocusVisible';
 import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '../ssr/SSRProvider';
@@ -41,12 +43,15 @@ export interface OverlayProps {
   /**
    * Where focus goes when the overlay closes. By default, focus returns to the element that was
    * focused when the overlay opened. Pass a ref or a function to choose another element, for
-   * example when that element was removed while the overlay was open, or `false` to leave
-   * focus where it lands.
+   * example when that element was removed while the overlay was open. Returning a boolean is
+   * the same as passing it directly in.
    *
    * @default true
    */
-  restoreFocus?: FocusScopeProps['restoreFocus'];
+  restoreFocus?:
+    | boolean
+    | RefObject<FocusableElement | null>
+    | ((modality: Modality | null) => FocusableElement | boolean | null);
   /**
    * Whether the overlay is currently performing an exit animation. When true,
    * focus is allowed to move outside.

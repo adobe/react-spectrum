@@ -41,11 +41,9 @@ export interface FocusScopeProps {
   /**
    * Whether to restore focus back to the element that was focused
    * when the focus scope mounted, after the focus scope unmounts.
-   *
    * Pass a ref to restore focus to that element instead. Pass a function to choose
-   * at restore time: it receives the current interaction modality, and returns an element,
-   * `true` for the default target, or `false` to leave focus where it is.
-   * Focus is only restored when it would otherwise be lost, not when the user moved it elsewhere.
+   * at restore time: it receives the current interaction modality, and returns either an element,
+   * or a boolean, the same as passing `true` or `false` directly to `restoreFocus`.
    */
   restoreFocus?:
     | boolean

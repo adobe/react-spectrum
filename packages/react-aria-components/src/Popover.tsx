@@ -12,6 +12,7 @@
 
 import {
   AriaLabelingProps,
+  FocusableElement,
   forwardRefType,
   GlobalDOMAttributes,
   RefObject
@@ -26,12 +27,13 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {DismissButton, Overlay, OverlayProps} from 'react-aria/Overlay';
+import {DismissButton, Overlay} from 'react-aria/Overlay';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {mergeProps} from 'react-aria/mergeProps';
+import {Modality} from 'react-aria/useFocusVisible';
 import {OverlayArrowContext} from './OverlayArrow';
 import {
   OverlayTriggerProps,
@@ -113,12 +115,15 @@ export interface PopoverProps
   /**
    * Where focus goes when the popover closes. By default, focus returns to the element that was
    * focused when the popover opened. Pass a ref or a function to choose another element, for
-   * example when that element was removed while the popover was open, or `false` to leave
-   * focus where it lands.
+   * example when that element was removed while the popover was open. Returning a boolean is
+   * the same as passing it directly in.
    *
    * @default true
    */
-  restoreFocus?: OverlayProps['restoreFocus'];
+  restoreFocus?:
+    | boolean
+    | RefObject<FocusableElement | null>
+    | ((modality: Modality | null) => FocusableElement | boolean | null);
   /**
    * The additional offset applied along the main axis between the element and its
    * anchor element.
