@@ -99,15 +99,19 @@ export interface ModalOverlayProps
   /**
    * Where focus goes when the modal closes. By default, focus returns to the element that was
    * focused when the modal opened. Pass a ref or a function to choose another element, for
-   * example when that element was removed while the modal was open. Returning
-   * a boolean is the same as passing it directly in.
+   * example when that element was removed while the modal was open. A function receives the
+   * current interaction modality and the element focus is about to return to by default, or
+   * `null` if there is none. Returning a boolean is the same as passing it directly in.
    *
    * @default true
    */
   restoreFocus?:
     | boolean
     | RefObject<FocusableElement | null>
-    | ((modality: Modality | null) => FocusableElement | boolean | null);
+    | ((details: {
+        modality: Modality | null;
+        defaultTarget: FocusableElement | null;
+      }) => FocusableElement | boolean | null);
   /**
    * Whether to wait until the entry animation completes before hiding content outside the modal
    * and moving focus into it.

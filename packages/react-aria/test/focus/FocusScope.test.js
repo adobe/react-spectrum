@@ -1019,10 +1019,10 @@ describe('FocusScope', function () {
       );
     }
 
-    function openAndClose({restoreFocus, removeTrigger}) {
+    function openAndClose({restoreFocus, removeTrigger, wrapper}) {
       let listRef = React.createRef();
       let props = {listRef, restoreFocus: restoreFocus(listRef)};
-      let {getByTestId, rerender} = render(<Test {...props} />);
+      let {getByTestId, rerender} = render(<Test {...props} />, {wrapper});
       act(() => getByTestId('trigger').focus());
       rerender(<Test {...props} show />);
       act(() => jest.runAllTimers());
@@ -1055,23 +1055,31 @@ describe('FocusScope', function () {
 
     it.each([
       ['an element', listRef => listRef.current, 'list'],
+      ['the default target', (_, {defaultTarget}) => defaultTarget, 'trigger'],
       ['true', () => true, 'trigger'],
       ['null', () => null, 'trigger'],
       ['false', () => false, null]
     ])('restores focus according to a function that returns %s', function (_, result, expected) {
       let fn = jest.fn();
+      let onRestore = jest.fn();
+      document.addEventListener('react-aria-focus-scope-restore', onRestore);
       let {getByTestId} = openAndClose({
         restoreFocus: listRef => {
-          fn.mockImplementation(() => result(listRef));
+          fn.mockImplementation(details => result(listRef, details));
           return fn;
         },
         removeTrigger: false
       });
+      document.removeEventListener('react-aria-focus-scope-restore', onRestore);
+      let target = expected ? getByTestId(expected) : undefined;
       expect(fn).toHaveBeenCalledTimes(1);
-      expect(document.activeElement).toBe(expected ? getByTestId(expected) : document.body);
+      expect(document.activeElement).toBe(target ?? document.body);
+      // Whichever element is chosen, focus is restored through the cancelable restore event.
+      expect(onRestore).toHaveBeenCalledTimes(target ? 1 : 0);
+      expect(onRestore.mock.calls[0]?.[0].target).toBe(target);
     });
 
-    it('passes the interaction modality to the function', async function () {
+    it('passes the interaction modality and default target to the function', async function () {
       let restoreFocus = jest.fn(() => true);
       let {getByTestId, rerender} = render(<Test restoreFocus={restoreFocus} />);
       await user.tab();
@@ -1081,8 +1089,34 @@ describe('FocusScope', function () {
       rerender(<Test restoreFocus={restoreFocus} />);
       act(() => jest.runAllTimers());
       expect(restoreFocus).toHaveBeenCalledTimes(1);
-      expect(restoreFocus).toHaveBeenCalledWith('keyboard');
+      expect(restoreFocus).toHaveBeenCalledWith({
+        modality: 'keyboard',
+        defaultTarget: getByTestId('trigger')
+      });
       expect(document.activeElement).toBe(getByTestId('trigger'));
+    });
+
+    it('passes the element focus is about to return to as the default target', function () {
+      let fn = jest.fn(() => true);
+      // The element focused at mount is removed, so focus returns to the parent scope instead.
+      let {getByTestId} = openAndClose({
+        restoreFocus: () => fn,
+        removeTrigger: true,
+        wrapper: FocusScope
+      });
+      expect(fn.mock.calls[0][0].defaultTarget).toBe(getByTestId('other'));
+      expect(document.activeElement).toBe(getByTestId('other'));
+    });
+
+    it('restores focus to another element when there is no default target', function () {
+      let fn = jest.fn();
+      let {list} = openAndClose({
+        restoreFocus: listRef =>
+          fn.mockImplementation(({defaultTarget}) => defaultTarget ?? listRef.current),
+        removeTrigger: true
+      });
+      expect(fn.mock.calls[0][0].defaultTarget).toBeNull();
+      expect(document.activeElement).toBe(list);
     });
 
     it('does not move focus to the given ref when the user moved focus elsewhere', function () {

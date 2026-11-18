@@ -810,6 +810,49 @@ describe('Dialog', () => {
       }
     );
 
+    it.each(['Popover', 'Modal', 'ModalOverlay'])(
+      'a %s restores focus to the element returned by a restoreFocus function',
+      async component => {
+        function Test() {
+          let [showTrigger, setShowTrigger] = React.useState(true);
+          let fallbackRef = useRef(null);
+          let restoreFocus = ({defaultTarget}) => defaultTarget ?? fallbackRef.current;
+          let dialog = (
+            <Dialog aria-label="Dialog">
+              <Button onPress={() => setShowTrigger(false)}>Remove trigger</Button>
+            </Dialog>
+          );
+          let overlay = {
+            Popover: <Popover restoreFocus={restoreFocus}>{dialog}</Popover>,
+            Modal: <Modal restoreFocus={restoreFocus}>{dialog}</Modal>,
+            ModalOverlay: (
+              <ModalOverlay restoreFocus={restoreFocus}>
+                <Modal>{dialog}</Modal>
+              </ModalOverlay>
+            )
+          }[component];
+          return (
+            <>
+              <Button ref={fallbackRef}>Fallback</Button>
+              {showTrigger && (
+                <DialogTrigger>
+                  <Button>Open</Button>
+                  {overlay}
+                </DialogTrigger>
+              )}
+            </>
+          );
+        }
+
+        let {getByRole} = render(<Test />);
+        await user.click(getByRole('button', {name: 'Open'}));
+        act(() => jest.runAllTimers());
+        await user.click(getByRole('button', {name: 'Remove trigger'}));
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Fallback'}));
+      }
+    );
+
     it('does not restore focus when restoreFocus is false', async () => {
       let {getByRole} = render(
         <DialogTrigger>

@@ -39,16 +39,20 @@ export interface FocusScopeProps {
   contain?: boolean;
 
   /**
-   * Whether to restore focus back to the element that was focused
-   * when the focus scope mounted, after the focus scope unmounts.
-   * Pass a ref to restore focus to that element instead. Pass a function to choose
-   * at restore time: it receives the current interaction modality, and returns either an element,
-   * or a boolean, the same as passing `true` or `false` directly to `restoreFocus`.
+   * Whether to restore focus back to the element that was focused when the focus scope mounted,
+   * after the focus scope unmounts. Pass a ref to restore focus to that element instead. Pass a
+   * function to choose at restore time: it receives the current interaction modality and the
+   * default target (the element that this FocusScope is about to return focus to, or `null` if
+   * there is none), and returns either an element, or a boolean, which is the same as passing
+   * `true` or `false` directly to `restoreFocus`.
    */
   restoreFocus?:
     | boolean
     | RefObject<FocusableElement | null>
-    | ((modality: Modality | null) => FocusableElement | boolean | null);
+    | ((details: {
+        modality: Modality | null;
+        defaultTarget: FocusableElement | null;
+      }) => FocusableElement | boolean | null);
 
   /** Whether to auto focus the first focusable element in the focus scope on mount. */
   autoFocus?: boolean;
@@ -804,46 +808,16 @@ function useRestoreFocus(
         requestAnimationFrame(() => {
           // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
           if (ownerDocument.activeElement === ownerDocument.body) {
-            let target = resolveRestoreFocus(restoreFocusPropEvent());
+            let defaultTarget = getDefaultRestoreTarget(clonedTree, scopeRef);
+            let target = resolveRestoreFocus(restoreFocusPropEvent(), defaultTarget);
             if (target === false) {
               return;
             }
-            if (target !== true && target.isConnected) {
-              focusElement(target);
-              return;
-            }
 
-            // look up the tree starting with our scope to find a nodeToRestore still in the DOM
-            let treeNode = clonedTree.getTreeNode(scopeRef);
-            while (treeNode) {
-              if (treeNode.nodeToRestore && treeNode.nodeToRestore.isConnected) {
-                restoreFocusToElement(treeNode.nodeToRestore);
-                return;
-              }
-              treeNode = treeNode.parent;
-            }
-
-            // If no nodeToRestore was found, focus the first element in the nearest
-            // ancestor scope that is still in the tree.
-            treeNode = clonedTree.getTreeNode(scopeRef);
-            while (treeNode) {
-              if (
-                treeNode.scopeRef &&
-                // TODO: this is probably a false positive based on naming, it's not a real ref, rename.
-                // oxlint-disable-next-line react-hooks/exhaustive-deps
-                treeNode.scopeRef.current &&
-                focusScopeTree.getTreeNode(treeNode.scopeRef)
-              ) {
-                // oxlint-disable-next-line react-hooks/exhaustive-deps
-                let node = getFirstInScope(treeNode.scopeRef.current, true);
-                // The scope may have nothing focusable in it, e.g. if its focusable
-                // content was removed or hidden. Keep walking up in that case.
-                if (node) {
-                  restoreFocusToElement(node);
-                  return;
-                }
-              }
-              treeNode = treeNode.parent;
+            // Fall back to the default target if the chosen element is no longer in the DOM.
+            let node = target !== true && target.isConnected ? target : defaultTarget;
+            if (node) {
+              restoreFocusToElement(node);
             }
           }
         });
@@ -852,11 +826,50 @@ function useRestoreFocus(
   }, [scopeRef, restoreFocus]);
 }
 
+/**
+ * Gets the element that a scope returns focus to by default when it unmounts,
+ * or null if there is nothing to return focus to.
+ */
+function getDefaultRestoreTarget(tree: Tree, scopeRef: ScopeRef): FocusableElement | null {
+  // look up the tree starting with our scope to find a nodeToRestore still in the DOM
+  let treeNode = tree.getTreeNode(scopeRef);
+  while (treeNode) {
+    let nodeToRestore = treeNode.nodeToRestore;
+    if (nodeToRestore && nodeToRestore.isConnected) {
+      // The body means nothing was focused when the scope mounted.
+      return nodeToRestore === getOwnerDocument(nodeToRestore).body ? null : nodeToRestore;
+    }
+    treeNode = treeNode.parent;
+  }
+
+  // If no nodeToRestore was found, use the first element in the nearest
+  // ancestor scope that is still in the tree.
+  treeNode = tree.getTreeNode(scopeRef);
+  while (treeNode) {
+    if (
+      treeNode.scopeRef &&
+      treeNode.scopeRef.current &&
+      focusScopeTree.getTreeNode(treeNode.scopeRef)
+    ) {
+      let node = getFirstInScope(treeNode.scopeRef.current, true);
+      // The scope may have nothing focusable in it, e.g. if its focusable
+      // content was removed or hidden. Keep walking up in that case.
+      if (node) {
+        return node;
+      }
+    }
+    treeNode = treeNode.parent;
+  }
+
+  return null;
+}
+
 function resolveRestoreFocus(
-  restoreFocus: FocusScopeProps['restoreFocus']
+  restoreFocus: FocusScopeProps['restoreFocus'],
+  defaultTarget: FocusableElement | null
 ): FocusableElement | boolean {
   if (typeof restoreFocus === 'function') {
-    return restoreFocus(getInteractionModality()) ?? true;
+    return restoreFocus({modality: getInteractionModality(), defaultTarget}) ?? true;
   }
   if (restoreFocus && typeof restoreFocus === 'object') {
     return restoreFocus.current ?? true;
