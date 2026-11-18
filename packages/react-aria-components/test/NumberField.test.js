@@ -538,7 +538,10 @@ describe('NumberField', () => {
     expect(input).toHaveValue('5 m');
 
     // Editing the number while a partial unit remains commits the new value.
-    await user.keyboard('{ArrowLeft}{ArrowLeft}{Backspace}8');
+    // Select the digit explicitly rather than relying on caret position after an edit,
+    // which differs between React versions (React 16/17 move it to the end).
+    act(() => input.setSelectionRange(0, 1));
+    await user.keyboard('8');
     expect(input).toHaveValue('8 m');
     await user.keyboard('{Enter}');
     expect(input).toHaveValue('8 mL');
