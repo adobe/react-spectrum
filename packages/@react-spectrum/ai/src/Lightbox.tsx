@@ -14,7 +14,15 @@ import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type:
 import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Button';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
-import {Children, isValidElement, ReactNode, useContext, useEffect, useRef} from 'react';
+import {
+  Children,
+  isValidElement,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef
+} from 'react';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {flushSync} from 'react-dom';
@@ -48,6 +56,7 @@ import {scrollFade} from './style/style-macro' with {type: 'macro'};
 import {scrollIntoView} from 'react-aria/private/utils/scrollIntoView';
 import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export interface LightboxCarouselProps extends Omit<TabsProps, 'className'> {
@@ -172,6 +181,17 @@ const itemStyles = style({
 export function LightboxCarousel(props: LightboxCarouselProps) {
   let ctx = useContext(LightboxTriggerContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+  let {locale, direction} = useLocale();
+
+  let modalRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      if (el) {
+        el.lang = locale;
+        el.dir = direction;
+      }
+    },
+    [locale, direction]
+  );
 
   // Only render Lightbox Carousel inside a modal if there is a trigger
   if (ctx) {
@@ -198,7 +218,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
             }
           })(renderProps)
         }>
-        <Modal className={style({width: 'full', height: 'full'})}>
+        <Modal ref={modalRef} className={style({width: 'full', height: 'full'})}>
           <Dialog
             aria-label={props['aria-label'] ?? stringFormatter.format('lightbox.label')}
             className={style({
@@ -386,9 +406,14 @@ interface FiniteLightboxItemsProps<T> extends Omit<LightboxItemsProps<T>, 'child
   children: (page: number) => ReactNode;
 }
 
+function getScrollLeft(el: HTMLElement, index: number, isRTL: boolean) {
+  return (isRTL ? -1 : 1) * index * el.offsetWidth;
+}
+
 function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   let {children: renderPage, ...otherProps} = props;
   let state = useContext(TabListStateContext)!;
+  let isRTL = useLocale().direction === 'rtl';
   let ref = useRef<HTMLDivElement | null>(null);
   let isProgrammaticScroll = useRef(false);
   let previousSelectedIndex = useRef<number | null>(null);
@@ -408,13 +433,13 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       return;
     }
 
-    let currentIndex = Math.round(el.scrollLeft / el.offsetWidth);
+    let currentIndex = Math.round(Math.abs(el.scrollLeft) / el.offsetWidth);
     // Avoid fighting the user's scroll by returning early
     if (selectedIndex === currentIndex && !isProgrammaticScroll.current) {
       return;
     }
 
-    let left = el.offsetWidth * selectedIndex;
+    let left = getScrollLeft(el, selectedIndex, isRTL);
     let isAdjacent = previousIndex !== null && Math.abs(selectedIndex - previousIndex) === 1;
 
     // We're about to scroll to the selected slide. Flag it so onScroll doesn't switch the
@@ -440,7 +465,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       // https://bugs.webkit.org/show_bug.cgi?id=331157
       behavior: 'smooth'
     });
-  }, [selectedIndex]);
+  }, [selectedIndex, isRTL]);
 
   let size = state.collection.size;
 
@@ -485,7 +510,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     }
 
     // If we are swiping between slides, then we update the selected key based on scroll position
-    selectIndex(Math.round(el.scrollLeft / el.offsetWidth));
+    selectIndex(Math.round(Math.abs(el.scrollLeft) / el.offsetWidth));
   };
 
   let onScrollEnd = () => {
@@ -497,7 +522,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       isProgrammaticScroll.current &&
       el &&
       selectedIndex != null &&
-      Math.round(el.scrollLeft / el.offsetWidth) !== selectedIndex
+      Math.round(Math.abs(el.scrollLeft) / el.offsetWidth) !== selectedIndex
     ) {
       return;
     }
@@ -506,7 +531,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
     // after the jump and doesn't re-snap causing the slide to be incorrectly aligned.
     // https://issues.chromium.org/issues/40722572
     if (isProgrammaticScroll.current && el && selectedIndex != null) {
-      el.scrollTo({left: selectedIndex * el.offsetWidth});
+      el.scrollTo({left: getScrollLeft(el, selectedIndex, isRTL)});
     }
 
     isProgrammaticScroll.current = false;
@@ -527,8 +552,8 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   let {keyboardProps} = useKeyboard({
     allowRepeats: true,
     shortcuts: {
-      ArrowLeft: e => handleArrow(e, -1),
-      ArrowRight: e => handleArrow(e, 1)
+      ArrowLeft: e => handleArrow(e, isRTL ? 1 : -1),
+      ArrowRight: e => handleArrow(e, isRTL ? -1 : 1)
     }
   });
 
@@ -670,7 +695,8 @@ function CarouselNavButton(props: CarouselNavButtonProps) {
   let isDisabled = props['aria-disabled'] === true || props['aria-disabled'] === 'true';
   let ref = useRef<HTMLButtonElement | null>(null);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
-  let Icon = side === 'start' ? ChevronLeft : ChevronRight;
+  let isRTL = useLocale().direction === 'rtl';
+  let Icon = (side === 'start') !== isRTL ? ChevronLeft : ChevronRight;
   // oxlint-disable react/react-compiler
   return (
     <Button

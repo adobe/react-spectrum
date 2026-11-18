@@ -30,6 +30,7 @@ import {
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button, ButtonProps} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
+import {chain} from 'react-aria/chain';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {ContentContext} from '@react-spectrum/s2/Content';
@@ -346,7 +347,6 @@ export interface AttachmentListProps<T>
       | 'escapeKeyBehavior'
       | 'onSelectionChange'
       | 'shouldSelectOnPressUp'
-      // | 'onAction'
       | 'render'
       | 'style'
       | 'className'
@@ -499,6 +499,8 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   let scrollRef = useRef<HTMLDivElement>(null);
   let {direction} = useLocale();
   let ctx = useContext(LightboxTriggerContext);
+  let onAction =
+    otherProps.onAction || ctx?.onAction ? chain(otherProps.onAction, ctx?.onAction) : undefined;
 
   let scroll = (dir: 1 | -1) => {
     let el = scrollRef.current;
@@ -523,7 +525,7 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   return (
     <TagGroup
       {...otherProps}
-      onAction={ctx?.onAction}
+      onAction={onAction}
       className={mergeStyles(style({...flexRow, gap: 8, position: 'relative'}), styles)}
       style={
         {
