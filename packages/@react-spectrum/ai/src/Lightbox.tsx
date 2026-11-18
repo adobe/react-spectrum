@@ -209,9 +209,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
           <Dialog
             aria-label={props['aria-label'] ?? stringFormatter.format('lightbox.label')}
             className={style({
-              display: 'grid',
-              gridTemplateRows: ['auto', 'minmax(0, 1fr)'],
-              gap: 24,
+              position: 'relative',
               boxSizing: 'border-box',
               height: 'full',
               padding: 24,
@@ -222,7 +220,12 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
                 <CloseButton
                   staticColor="white"
                   onPress={close}
-                  styles={style({justifySelf: 'end'})}
+                  styles={style({
+                    position: 'absolute',
+                    top: 24,
+                    insetEnd: 24,
+                    zIndex: 1
+                  })}
                 />
                 {/* <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}> */}
                 <RACTabs
