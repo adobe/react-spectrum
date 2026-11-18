@@ -23,6 +23,7 @@ import {
 } from '../src/SideNav';
 import {SideNavPanel, SideNavPanelProps} from '../src/SideNavPanel';
 import {Text} from '../src/Content';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
 // Icons imported from s2wf-icons are mocked in jest, which skips createIcon and the slot wiring that
@@ -103,6 +104,42 @@ function SideNavPanelExample(
     <RouterProvider navigate={navigate}>{sideNavPanel}</RouterProvider>
   ) : (
     sideNavPanel
+  );
+}
+
+// "Files" has an href, so its link is the tooltip trigger. "Categories" has no href, so its row is.
+function TooltipSideNavPanelExample(props: SideNavPanelProps) {
+  return (
+    <SideNavPanel aria-label="Side panel" {...props}>
+      <SideNav aria-label="Test sidenav" selectedRoute="/files">
+        <TooltipTrigger placement="end">
+          <SideNavItem id="files" href="/files" textValue="Files">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Text>Files</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+          <Tooltip>Files tooltip</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger placement="end">
+          <SideNavItem id="categories" textValue="Categories">
+            <SideNavItemContent>
+              <TestIcon />
+              <Text>Categories</Text>
+            </SideNavItemContent>
+            <SideNavItem id="archive" href="/archive" textValue="Archive">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Text>Archive</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+          </SideNavItem>
+          <Tooltip>Categories tooltip</Tooltip>
+        </TooltipTrigger>
+      </SideNav>
+    </SideNavPanel>
   );
 }
 
@@ -313,5 +350,51 @@ describe('SideNavPanel', () => {
     finishExpanding();
     expect(getByRole('row', {name: 'Favorites'})).toHaveAttribute('aria-expanded', 'true');
     expect(getByRole('link', {name: 'Documents'})).toBeInTheDocument();
+  });
+
+  it('shows a wrapping tooltip on the link or row of a collapsed item', async () => {
+    let {getByRole} = render(<TooltipSideNavPanelExample defaultCollapsed />);
+
+    await user.tab();
+    let filesLink = getByRole('link', {name: 'Files'});
+    expect(filesLink).toHaveFocus();
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveTextContent('Files tooltip');
+    expect(filesLink).toHaveAttribute('aria-describedby', tooltip.id);
+
+    await user.keyboard('{ArrowDown}');
+    let categoriesRow = getByRole('row', {name: 'Categories'});
+    expect(categoriesRow).toHaveFocus();
+    tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveTextContent('Categories tooltip');
+    expect(categoriesRow).toHaveAttribute('aria-describedby', tooltip.id);
+  });
+
+  it('does not show a wrapping tooltip while the panel is expanded', async () => {
+    let {getByRole, queryByRole} = render(<TooltipSideNavPanelExample />);
+
+    await user.tab();
+    let filesLink = getByRole('link', {name: 'Files'});
+    expect(filesLink).toHaveFocus();
+    expect(queryByRole('tooltip')).toBeNull();
+    expect(filesLink).not.toHaveAttribute('aria-describedby');
+
+    await user.keyboard('{ArrowDown}');
+    let categoriesRow = getByRole('row', {name: 'Categories'});
+    expect(categoriesRow).toHaveFocus();
+    expect(queryByRole('tooltip')).toBeNull();
+    expect(categoriesRow).not.toHaveAttribute('aria-describedby');
+  });
+
+  it('closes an open tooltip when the panel expands', async () => {
+    let {getByRole, queryByRole, rerender} = render(<TooltipSideNavPanelExample isCollapsed />);
+
+    await user.tab();
+    expect(getByRole('tooltip')).toHaveTextContent('Files tooltip');
+
+    rerender(<TooltipSideNavPanelExample isCollapsed={false} />);
+    finishExpanding();
+    expect(queryByRole('tooltip')).toBeNull();
+    expect(getByRole('link', {name: 'Files'})).not.toHaveAttribute('aria-describedby');
   });
 });

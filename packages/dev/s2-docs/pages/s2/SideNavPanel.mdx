@@ -184,6 +184,72 @@ function CollapsibleSideNavPanel() {
 <CollapsibleSideNavPanel />
 ```
 
+## Tooltips
+
+A collapsed panel hides each item's label, leaving only its icon. Wrap a `SideNavItem` in a [TooltipTrigger](Tooltip) to show the label in a tooltip when the user hovers or focuses the item in the collapsed panel. The tooltip is disabled while the panel is expanded, where the label is already visible.
+
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SideNavPanelApp.tsx']}
+"use client";
+import {SideNavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Text} from '@react-spectrum/s2/SideNavPanel';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
+import {SideNavPanelApp} from './SideNavPanelApp';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
+import Files from '@react-spectrum/s2/icons/Files';
+import Images from '@react-spectrum/s2/icons/Images';
+
+<SideNavPanelApp defaultSelectedRoute="/files">
+  {({selectedRoute}) => (
+    <SideNavPanel defaultCollapsed styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
+      <SideNav
+        aria-label="Files"
+        selectedRoute={selectedRoute}
+        styles={style({width: 'full'})}>
+        {/*- begin highlight -*/}
+        <TooltipTrigger placement="end">
+        {/*- end highlight -*/}
+          <SideNavItem href="/files" textValue="Files">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Files />
+                <Text>Files</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+          {/*- begin highlight -*/}
+          <Tooltip>Files</Tooltip>
+        </TooltipTrigger>
+        {/*- end highlight -*/}
+        <TooltipTrigger placement="end">
+          <SideNavItem href="/your-libraries" textValue="Your Libraries">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <CCLibrary />
+                <Text>Your Libraries</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+          <Tooltip>Your Libraries</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger placement="end">
+          <SideNavItem href="/photos" textValue="Photos">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Images />
+                <Text>Photos</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+          <Tooltip>Photos</Tooltip>
+        </TooltipTrigger>
+      </SideNav>
+    </SideNavPanel>
+  )}
+</SideNavPanelApp>
+```
+
+When rendering items from a dynamic collection, set the `id` on the `SideNavItem` itself, since the `TooltipTrigger` is now the element returned for each item.
+
 ## Animations
 
 `SideNavPanel` and [SideNav](SideNav) animate themselves. The panel's width animates first, and its contents animate only once it has settled.

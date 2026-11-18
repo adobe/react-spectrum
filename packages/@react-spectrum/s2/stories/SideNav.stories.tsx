@@ -46,6 +46,7 @@ import {
 } from '../src/SideNav';
 import {SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
 import {style} from '../style' with {type: 'macro'};
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {useLandmark} from 'react-aria/useLandmark';
 
 const events = ['onSelectionChange'];
@@ -774,6 +775,93 @@ export const SideNavPanelExample2 = {
               </SideNavItemContent>
             </SideNavItem>
           </SideNavItem>
+        </RoutedSideNav>
+      </SideNavPanel>
+      <div
+        className={style({
+          gridArea: 'main',
+          backgroundColor: 'layer-2',
+          borderTopStartRadius: 'lg'
+        })}
+      />
+    </div>
+  ),
+  parameters: {
+    layout: {
+      fullscreen: true
+    }
+  }
+};
+
+// Each top level item is wrapped in a TooltipTrigger, which only shows while the panel is collapsed
+// to the icon rail. "Your files" is a link, so the link is the trigger; "Your Libraries" has no href,
+// so its row is the trigger.
+export const SideNavPanelWithTooltips = {
+  render: args => (
+    <div
+      className={style({
+        width: 'full',
+        height: '100vh',
+        display: 'grid',
+        gridTemplateAreas: ['header header', 'sidebar main'],
+        gridTemplateColumns: 'auto 1fr',
+        gridTemplateRows: 'auto 1fr',
+        backgroundColor: 'layer-1'
+      })}>
+      <div
+        className={style({
+          gridArea: 'header',
+          display: 'flex',
+          alignItems: 'center',
+          paddingX: 8,
+          paddingY: 16
+        })}>
+        <AdobeLogo size={28} />
+      </div>
+      <SideNavPanel
+        defaultCollapsed
+        styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]', width: 224})}
+        aria-label="Side panel">
+        <RoutedSideNav {...args} selectedRoute="/files">
+          <TooltipTrigger placement="end">
+            <SideNavItem href="/files" textValue="Files">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Files />
+                  <Text>Your files</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+            <Tooltip>Your files</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger placement="end">
+            <SideNavItem id="your-libraries" textValue="Your Libraries">
+              <SideNavItemContent>
+                <CCLibrary />
+                <Text>Your Libraries</Text>
+              </SideNavItemContent>
+              <SideNavItem id="photos" href="/photos" textValue="Photos">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Images />
+                    <Text>Photos</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+            </SideNavItem>
+            <Tooltip>Your Libraries</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger placement="end">
+            <SideNavItem href="/projects" textValue="Projects">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Project />
+                  <Text>Projects</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+            <Tooltip>Projects</Tooltip>
+          </TooltipTrigger>
         </RoutedSideNav>
       </SideNavPanel>
       <div

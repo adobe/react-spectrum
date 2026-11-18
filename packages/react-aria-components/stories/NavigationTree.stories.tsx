@@ -16,7 +16,9 @@ import {
   NavigationTree,
   NavigationTreeItem,
   NavigationTreeItemContent,
-  RouterProvider
+  RouterProvider,
+  Tooltip,
+  TooltipTrigger
 } from 'react-aria-components';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import React, {ReactNode, useState} from 'react';
@@ -110,6 +112,50 @@ export const Example = {
             <Item href="/projects-3" title="Projects 3" />
             <Item href="/projects-4" title="Projects 4" />
           </Item>
+        </NavigationTree>
+      )}
+    </RoutedNavigationTree>
+  )
+};
+
+const tooltipStyle = {
+  background: 'Canvas',
+  color: 'CanvasText',
+  border: '1px solid gray',
+  padding: 5,
+  borderRadius: 4
+};
+
+function TooltipItem(props: {href?: string; title: string; children?: ReactNode}) {
+  return (
+    <TooltipTrigger>
+      <Item {...props} />
+      <Tooltip placement="end" offset={8} style={tooltipStyle}>
+        {props.title} tooltip
+      </Tooltip>
+    </TooltipTrigger>
+  );
+}
+
+// Wrapping an item in a TooltipTrigger uses its link as the trigger, or its row when it has no href.
+export const WithTooltips = {
+  render: (args: any) => (
+    <RoutedNavigationTree defaultSelectedRoute="/files">
+      {({selectedRoute}) => (
+        <NavigationTree
+          aria-label="Example"
+          selectedRoute={selectedRoute}
+          className={styles.tree}
+          {...args}>
+          <TooltipItem href="/files" title="Your files" />
+          <TooltipItem title="Your libraries">
+            <TooltipItem href="/projects-1" title="Projects 1" />
+            <TooltipItem href="/projects-2" title="Projects 2" />
+          </TooltipItem>
+          <TooltipItem href="/shared" title="Shared with you">
+            <TooltipItem href="/projects-3" title="Projects 3" />
+            <TooltipItem href="/projects-4" title="Projects 4" />
+          </TooltipItem>
         </NavigationTree>
       )}
     </RoutedNavigationTree>

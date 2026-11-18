@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  installPointerEvent,
+  pointerMap,
+  render,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {Link} from '../src/Link';
 import {
@@ -22,6 +28,7 @@ import {
   NavigationTreeSection
 } from '../src/NavigationTree';
 import React from 'react';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
 // libraries > (projects-1, projects-2); files is a top-level leaf.
@@ -128,6 +135,56 @@ function NoHrefLinkNavigationTreeExample(props: Partial<NavigationTreeProps<unkn
           </NavigationTreeItemContent>
         </NavigationTreeItem>
       </NavigationTreeItem>
+    </NavigationTree>
+  );
+}
+
+// Each top-level item is wrapped in a TooltipTrigger, e.g. to show its label while only icons are
+// visible. files and libraries have an href (focus lands on their link); section has none (focus
+// stays on the row).
+function TooltipNavigationTreeExample(props: Partial<NavigationTreeProps<unknown>>) {
+  return (
+    <NavigationTree aria-label="Test NavigationTree" {...props}>
+      <TooltipTrigger>
+        <NavigationTreeItem id="files" href="/files" textValue="Your files">
+          <NavigationTreeItemContent>
+            <Link>Your files</Link>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <Tooltip>Files tooltip</Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger>
+        <NavigationTreeItem id="libraries" href="/libraries" textValue="Your libraries">
+          <NavigationTreeItemContent>
+            <Link>Your libraries</Link>
+            <Button slot="chevron" aria-label="expand">
+              ▶
+            </Button>
+          </NavigationTreeItemContent>
+          <NavigationTreeItem id="projects-1" href="/projects-1" textValue="Projects 1">
+            <NavigationTreeItemContent>
+              <Link>Projects 1</Link>
+            </NavigationTreeItemContent>
+          </NavigationTreeItem>
+        </NavigationTreeItem>
+        <Tooltip>Libraries tooltip</Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger>
+        <NavigationTreeItem id="section" textValue="Section">
+          <NavigationTreeItemContent>
+            Section
+            <Button slot="chevron" aria-label="expand">
+              ▶
+            </Button>
+          </NavigationTreeItemContent>
+          <NavigationTreeItem id="section-2" href="/section-2" textValue="Section 2">
+            <NavigationTreeItemContent>
+              <Link>Section 2</Link>
+            </NavigationTreeItemContent>
+          </NavigationTreeItem>
+        </NavigationTreeItem>
+        <Tooltip>Section tooltip</Tooltip>
+      </TooltipTrigger>
     </NavigationTree>
   );
 }
@@ -404,6 +461,69 @@ describe('NavigationTree', () => {
     // 3rd ArrowLeft: focus moves up to the grandparent.
     await user.keyboard('{ArrowLeft}');
     expect(getByRole('link', {name: 'Your libraries'})).toHaveFocus();
+  });
+
+  it('triggers a wrapping TooltipTrigger from the link, or from the row when an item has no href', async () => {
+    let {getByRole, queryByRole} = render(<TooltipNavigationTreeExample />);
+
+    // Items with an href move focus to their link, so the link is the trigger.
+    await user.tab();
+    let filesLink = getByRole('link', {name: 'Your files'});
+    expect(filesLink).toHaveFocus();
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveTextContent('Files tooltip');
+    expect(filesLink).toHaveAttribute('aria-describedby', tooltip.id);
+    expect(getByRole('row', {name: 'Your files'})).not.toHaveAttribute('aria-describedby');
+
+    await user.keyboard('{ArrowDown}');
+    let librariesRow = getByRole('row', {name: 'Your libraries'});
+    let librariesLink = within(librariesRow).getByRole('link');
+    expect(librariesLink).toHaveFocus();
+    tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveTextContent('Libraries tooltip');
+    expect(librariesLink).toHaveAttribute('aria-describedby', tooltip.id);
+    expect(librariesRow).not.toHaveAttribute('aria-describedby');
+    expect(within(librariesRow).getByRole('button')).not.toHaveAttribute('aria-describedby');
+
+    // Items with no href keep focus on the row, so the row is the trigger.
+    await user.keyboard('{ArrowDown}');
+    let sectionRow = getByRole('row', {name: 'Section'});
+    expect(sectionRow).toHaveFocus();
+    tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveTextContent('Section tooltip');
+    expect(sectionRow).toHaveAttribute('aria-describedby', tooltip.id);
+
+    // Arrow keys still navigate the tree from a link that is a trigger.
+    await user.keyboard('{ArrowUp}');
+    expect(librariesLink).toHaveFocus();
+    await user.keyboard('{ArrowRight}');
+    expect(librariesRow).toHaveAttribute('aria-expanded', 'true');
+
+    // Child items are not triggers for their parent's tooltip.
+    await user.keyboard('{ArrowDown}');
+    let projectsLink = getByRole('link', {name: 'Projects 1'});
+    expect(projectsLink).toHaveFocus();
+    expect(queryByRole('tooltip')).toBeNull();
+    expect(projectsLink).not.toHaveAttribute('aria-describedby');
+  });
+
+  describe('with pointer events', () => {
+    // Without PointerEvent, the row's mouseenter fallback stops propagation before it reaches the link.
+    installPointerEvent();
+
+    it('opens a wrapping TooltipTrigger when hovering the link, or the row when an item has no href', async () => {
+      let {getByRole} = render(<TooltipNavigationTreeExample />);
+
+      // Move the pointer first so that the hover is treated as a pointer interaction.
+      await user.hover(getByRole('treegrid'));
+      await user.hover(getByRole('link', {name: 'Your files'}));
+      act(() => jest.runAllTimers());
+      expect(getByRole('tooltip')).toHaveTextContent('Files tooltip');
+
+      await user.hover(getByRole('row', {name: 'Section'}));
+      act(() => jest.runAllTimers());
+      expect(getByRole('tooltip')).toHaveTextContent('Section tooltip');
+    });
   });
 
   it('should render a NavigationTree with default classes, including sections and headers', () => {

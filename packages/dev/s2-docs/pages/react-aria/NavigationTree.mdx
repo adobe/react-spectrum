@@ -295,6 +295,56 @@ Get the current route from your framework and pass it as `selectedRoute`.
   ```
 </ExampleSwitcher>
 
+## Tooltips
+
+Wrap a `NavigationTreeItem` in a [TooltipTrigger](Tooltip) to show a tooltip when the user hovers or focuses the item. The item's link is the tooltip's trigger, or the item's row when it has no `href`. This is useful for a navigation that collapses to icons, where the tooltip shows each item's hidden label. Set `isDisabled` on the `TooltipTrigger` to show it only while the navigation is collapsed.
+
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/Router.tsx"]}
+"use client";
+import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent, NavigationTreeItemLink} from 'vanilla-starter/NavigationTree';
+import {TooltipTrigger} from 'react-aria-components/Tooltip';
+import {Tooltip} from 'vanilla-starter/Tooltip';
+import {Router, Link as RouterLink} from './Router';
+import {File, Inbox, Send} from 'lucide-react';
+
+<Router defaultSelectedRoute="/inbox">
+  {({selectedRoute}) => (
+    <NavigationTree aria-label="Mail" selectedRoute={selectedRoute} renderLink={props => <RouterLink {...props} />} style={{width: 'fit-content'}}>
+      {/*- begin highlight -*/}
+      <TooltipTrigger>
+      {/*- end highlight -*/}
+        <NavigationTreeItem href="/inbox" textValue="Inbox">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink aria-label="Inbox"><Inbox size={16} aria-hidden /></NavigationTreeItemLink>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        {/*- begin highlight -*/}
+        <Tooltip placement="end">Inbox</Tooltip>
+      </TooltipTrigger>
+      {/*- end highlight -*/}
+      <TooltipTrigger>
+        <NavigationTreeItem href="/drafts" textValue="Drafts">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink aria-label="Drafts"><File size={16} aria-hidden /></NavigationTreeItemLink>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <Tooltip placement="end">Drafts</Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger>
+        <NavigationTreeItem href="/sent" textValue="Sent">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink aria-label="Sent"><Send size={16} aria-hidden /></NavigationTreeItemLink>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <Tooltip placement="end">Sent</Tooltip>
+      </TooltipTrigger>
+    </NavigationTree>
+  )}
+</Router>
+```
+
+When rendering items from a dynamic collection, set the `id` on the `NavigationTreeItem` itself, since the `TooltipTrigger` is now the element returned for each item.
+
 ## API
 
 <Anatomy role="img" aria-label="Anatomy diagram of a NavigationTree, consisting of sections of items. Each item contains a link, and items with children include a chevron button to collapse and expand them." />

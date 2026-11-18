@@ -31,6 +31,7 @@ import {ListLayout} from 'react-stately/useVirtualizerState';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
 import {Text} from '../src/Text';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {
   Tree,
   TreeHeader,
@@ -1154,6 +1155,53 @@ describe('Tree', () => {
       let tree = getByRole('treegrid');
       fireEvent.scroll(tree);
       expect(onScroll).toHaveBeenCalled();
+    });
+
+    it('should support wrapping an item in a TooltipTrigger, with the row as the trigger', async () => {
+      let {getByRole, queryByRole} = render(
+        <Tree aria-label="test tree">
+          <StaticTreeItem id="photos" textValue="Photos">
+            Photos
+          </StaticTreeItem>
+          <TooltipTrigger>
+            <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+              <StaticTreeItem id="projects-1" textValue="Projects-1">
+                Projects-1
+              </StaticTreeItem>
+            </StaticTreeItem>
+            <Tooltip>Projects tooltip</Tooltip>
+          </TooltipTrigger>
+        </Tree>
+      );
+
+      await user.tab();
+      let photosRow = getByRole('row', {name: 'Photos'});
+      expect(photosRow).toHaveFocus();
+      expect(queryByRole('tooltip')).toBeNull();
+
+      await user.keyboard('{ArrowDown}');
+      let projectsRow = getByRole('row', {name: 'Projects'});
+      expect(projectsRow).toHaveFocus();
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toHaveTextContent('Projects tooltip');
+      expect(projectsRow).toHaveAttribute('aria-describedby', tooltip.id);
+      for (let button of within(projectsRow).getAllByRole('button')) {
+        expect(button).not.toHaveAttribute('aria-describedby');
+      }
+
+      // Child items are not triggers for their parent's tooltip.
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowDown}');
+      let childRow = getByRole('row', {name: 'Projects-1'});
+      expect(childRow).toHaveFocus();
+      expect(queryByRole('tooltip')).toBeNull();
+      expect(childRow).not.toHaveAttribute('aria-describedby');
+
+      // Move the pointer first so that the hover is treated as a pointer interaction.
+      await user.hover(photosRow);
+      await user.hover(projectsRow);
+      act(() => jest.runAllTimers());
+      expect(getByRole('tooltip')).toHaveTextContent('Projects tooltip');
     });
 
     describe('links', function () {

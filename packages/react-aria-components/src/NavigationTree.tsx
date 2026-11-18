@@ -19,11 +19,21 @@ import {
   StyleRenderProps,
   useContextProps
 } from './utils';
-import {Collection, forwardRefType, Key, Node, RouterOptions} from '@react-types/shared';
+import {
+  Collection,
+  forwardRefType,
+  Key,
+  KeyboardEvent,
+  Node,
+  RouterOptions
+} from '@react-types/shared';
+import {FocusableContext} from 'react-aria/private/interactions/useFocusable';
 import {getScrollParent} from 'react-aria/private/utils/getScrollParent';
-import {LinkContext} from './Link';
+import {LinkContext, LinkProps} from './Link';
+import {mergeProps} from 'react-aria/mergeProps';
 import {nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import React, {
+  ContextType,
   createContext,
   ForwardedRef,
   forwardRef,
@@ -79,6 +89,9 @@ interface NavigationTreeItemLinkContextValue {
   // Whether the item's link (as opposed to another focusable child such as a button) is focused.
   isLinkFocused?: boolean;
   setLinkFocused?: (isFocused: boolean) => void;
+  // The FocusableContext from where the item was rendered (e.g. a wrapping TooltipTrigger). Items
+  // with an href receive focus on their link rather than the row, so the link becomes the trigger.
+  focusableContext?: ContextType<typeof FocusableContext>;
 }
 const NavigationTreeItemLinkContext = createContext<NavigationTreeItemLinkContextValue>({});
 
@@ -212,6 +225,7 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
       ...rest
     } = props;
     let {selectedRoute, treeRef} = useContext(InternalNavigationTreeContext);
+    let focusableContext = useContext(FocusableContext);
     let hasLink = href != null && href.length > 0;
     let isCurrent = hasLink && href === selectedRoute;
     let [isLinkFocused, setLinkFocused] = useState(false);
@@ -253,47 +267,51 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
           routerOptions,
           isCurrent,
           isLinkFocused,
-          setLinkFocused
+          setLinkFocused,
+          focusableContext: hasLink ? focusableContext : null
         }}>
-        <TreeItem
-          {...rest}
-          ref={objRef}
-          href={href}
-          focusMode={hasLink ? 'child' : undefined}
-          allowsArrowNavigation
-          data-current={isCurrent || undefined}
-          className={
-            typeof className === 'function'
-              ? renderProps => className(getItemRenderProps(renderProps))
-              : (className ?? 'react-aria-NavigationTreeItem')
-          }
-          style={
-            typeof style === 'function'
-              ? renderProps => style(getItemRenderProps(renderProps))
-              : style
-          }
-          render={(domProps, renderProps) => {
-            let values = getItemRenderProps(renderProps);
-            let {children: rowChildren, ...domRest} = domProps;
-            let dataProps = {
-              'data-focus-visible': values.isFocusVisible || undefined,
-              'data-current-ancestor': values.isCurrentAncestor || undefined
-            };
-            let content = (
-              <NavigationTreeItemStateContext.Provider
-                value={{isCurrentAncestor: values.isCurrentAncestor}}>
-                {rowChildren}
-              </NavigationTreeItemStateContext.Provider>
-            );
-            return typeof render === 'function' ? (
-              render({...domRest, ...dataProps, children: content}, values)
-            ) : (
-              <dom.div {...domRest} {...dataProps}>
-                {content}
-              </dom.div>
-            );
-          }}
-        />
+        {/* Items without an href are focused on the row, so the TreeItem row is the trigger. */}
+        <FocusableContext.Provider value={hasLink ? null : focusableContext}>
+          <TreeItem
+            {...rest}
+            ref={objRef}
+            href={href}
+            focusMode={hasLink ? 'child' : undefined}
+            allowsArrowNavigation
+            data-current={isCurrent || undefined}
+            className={
+              typeof className === 'function'
+                ? renderProps => className(getItemRenderProps(renderProps))
+                : (className ?? 'react-aria-NavigationTreeItem')
+            }
+            style={
+              typeof style === 'function'
+                ? renderProps => style(getItemRenderProps(renderProps))
+                : style
+            }
+            render={(domProps, renderProps) => {
+              let values = getItemRenderProps(renderProps);
+              let {children: rowChildren, ...domRest} = domProps;
+              let dataProps = {
+                'data-focus-visible': values.isFocusVisible || undefined,
+                'data-current-ancestor': values.isCurrentAncestor || undefined
+              };
+              let content = (
+                <NavigationTreeItemStateContext.Provider
+                  value={{isCurrentAncestor: values.isCurrentAncestor}}>
+                  {rowChildren}
+                </NavigationTreeItemStateContext.Provider>
+              );
+              return typeof render === 'function' ? (
+                render({...domRest, ...dataProps, children: content}, values)
+              ) : (
+                <dom.div {...domRest} {...dataProps}>
+                  {content}
+                </dom.div>
+              );
+            }}
+          />
+        </FocusableContext.Provider>
       </NavigationTreeItemLinkContext.Provider>
     );
   }
@@ -420,8 +438,9 @@ interface NavigationTreeItemContentInnerProps {
 
 function NavigationTreeItemContentInner(props: NavigationTreeItemContentInnerProps): ReactNode {
   let {treeRenderProps, linkCtx, children} = props;
-  let {isCurrent, isLinkFocused, setLinkFocused, ...linkProps} = linkCtx;
-  let {state, isFocusVisible, isFocusVisibleWithin, id, hasChildItems} = treeRenderProps;
+  let {isCurrent, isLinkFocused, setLinkFocused, focusableContext, ...linkProps} = linkCtx;
+  let {state, isFocusVisible, isFocusVisibleWithin, id, hasChildItems, isDisabled} =
+    treeRenderProps;
   let {isCurrentAncestor} = useContext(NavigationTreeItemStateContext);
 
   useRouteFocusSync({state});
@@ -436,13 +455,25 @@ function NavigationTreeItemContentInner(props: NavigationTreeItemContentInnerPro
     isFocusVisible: linkFocusVisible
   };
   let renderChildren = typeof children === 'function' ? children(values) : children;
+  // The link is the trigger of a wrapping TooltipTrigger (e.g. for its ref, hover, and focus).
+  let triggerProps: LinkProps | null =
+    focusableContext && !isDisabled
+      ? {
+          ...(focusableContext as LinkProps),
+          onKeyDown: (e: KeyboardEvent) => {
+            focusableContext.onKeyDown?.(e);
+            // Links stop keyboard event propagation by default, which would break tree navigation.
+            e.continuePropagation();
+          }
+        }
+      : null;
   // Provide onFocusChange so the link reports its focus up to NavigationTreeItem.
-  let linkContextValue = {
+  let linkContextValue = mergeProps(triggerProps, {
     ...linkProps,
     'aria-current': isCurrent ? ('page' as const) : undefined,
     onFocusChange: setLinkFocused,
     onPress: linkProps.href == null && hasChildItems ? () => state.toggleKey(id) : undefined
-  };
+  });
   return <Provider values={[[LinkContext, linkContextValue]]}>{renderChildren}</Provider>;
 }
 

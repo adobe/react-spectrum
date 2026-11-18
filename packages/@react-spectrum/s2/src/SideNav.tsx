@@ -28,12 +28,14 @@ import {
   forwardRef,
   ReactNode,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
   ViewTransitionClass
 } from 'react';
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
+import {FocusableContext} from 'react-aria/private/interactions/useFocusable';
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
 import {
@@ -54,6 +56,7 @@ import React from 'react';
 import sideNavCss from './SideNav.module.css';
 import {SideNavPanelContext} from './SideNavPanel';
 import {Text, TextContext} from './Content';
+import {TooltipTriggerStateContext} from 'react-aria-components/Tooltip';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
 import {useId} from 'react-aria/useId';
@@ -372,19 +375,34 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
   let scaling = pressScale(rowRef);
   let viewTransitions = useContext(SideNavViewTransitionContext);
 
+  // A wrapping TooltipTrigger only applies while the panel is collapsed to the icon rail, where the
+  // tooltip shows the item's otherwise hidden label.
+  let {isCollapsed = false} = useContext(SideNavPanelContext);
+  let focusableContext = useContext(FocusableContext);
+  let tooltipState = useContext(TooltipTriggerStateContext);
+  let shouldCloseTooltip = !isCollapsed && focusableContext != null && !!tooltipState?.isOpen;
+  useEffect(() => {
+    // Expanding the panel detaches the trigger, so close a tooltip that is still open.
+    if (shouldCloseTooltip) {
+      tooltipState?.close(true);
+    }
+  }, [shouldCloseTooltip, tooltipState]);
+
   return (
     <SideNavInternalItemContext.Provider value={{setLinkPressed}}>
-      <NavigationTreeItem
-        {...props}
-        ref={rowRef}
-        style={({isPressed}) => scaling({isPressed: isLinkPressed || isPressed})}
-        className={renderProps => treeRow(renderProps)}
-        render={domProps => (
-          <ViewTransition default={viewTransitions.item}>
-            <div {...domProps} />
-          </ViewTransition>
-        )}
-      />
+      <FocusableContext.Provider value={isCollapsed ? focusableContext : null}>
+        <NavigationTreeItem
+          {...props}
+          ref={rowRef}
+          style={({isPressed}) => scaling({isPressed: isLinkPressed || isPressed})}
+          className={renderProps => treeRow(renderProps)}
+          render={domProps => (
+            <ViewTransition default={viewTransitions.item}>
+              <div {...domProps} />
+            </ViewTransition>
+          )}
+        />
+      </FocusableContext.Provider>
     </SideNavInternalItemContext.Provider>
   );
 };

@@ -78,6 +78,7 @@ import {
 } from 'react-aria/useDroppableCollection';
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {FocusableContext} from 'react-aria/private/interactions/useFocusable';
 import {FocusScope} from 'react-aria/FocusScope';
 import {
   GridListHeader,
@@ -94,6 +95,7 @@ import {
 import {mergeProps} from 'react-aria/mergeProps';
 import {Node, SelectionBehavior} from '@react-types/shared';
 import React, {
+  ContextType,
   createContext,
   ForwardedRef,
   forwardRef,
@@ -119,6 +121,7 @@ import {useHover} from 'react-aria/useHover';
 import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useObjectRef} from 'react-aria/useObjectRef';
+import {useSyncRef} from 'react-aria/private/utils/useSyncRef';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 class TreeCollection<T> extends BaseCollection<T> {
@@ -771,14 +774,30 @@ class TreeItemNode extends CollectionNode<any> {
   static readonly type = 'item';
 }
 
-/**
- * A TreeItem represents an individual item in a Tree.
- */
-export const TreeItem = /*#__PURE__*/ createBranchComponent(
+interface TreeItemInnerProps<T> extends TreeItemProps<T> {
+  // The FocusableContext from where the TreeItem was rendered, e.g. a wrapping TooltipTrigger.
+  focusableContext?: ContextType<typeof FocusableContext>;
+}
+
+function useTreeItemChildren<T>(props: TreeItemInnerProps<T>): ReactNode {
+  let children = useCachedChildren({...props, addIdAndValue: true});
+  // The row consumes the FocusableContext, so it must not also reach the content or nested items.
+  return <FocusableContext.Provider value={null}>{children}</FocusableContext.Provider>;
+}
+
+const TreeItemInner = /*#__PURE__*/ createBranchComponent(
   TreeItemNode,
-  <T extends any>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+  <T extends any>(
+    props: TreeItemInnerProps<T>,
+    ref: ForwardedRef<HTMLDivElement>,
+    item: Node<T>
+  ) => {
     let state = useContext(TreeStateContext)!;
     ref = useObjectRef<HTMLDivElement>(ref);
+    // Let the row act as the trigger of a wrapping TooltipTrigger, the same way useFocusable does.
+    useSyncRef(props.focusableContext, ref);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {ref: _, ...focusableContextProps} = props.focusableContext || {};
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
     let isDraggable =
       dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
@@ -977,7 +996,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
             focusProps,
             hoverProps,
             focusWithinProps,
-            draggableItem?.dragProps
+            draggableItem?.dragProps,
+            states.isDisabled ? null : focusableContextProps
           )}
           {...renderProps}
           ref={ref}
@@ -1055,8 +1075,22 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
         </dom.div>
       </>
     );
-  }
+  },
+  useTreeItemChildren
 );
+
+/**
+ * A TreeItem represents an individual item in a Tree.
+ */
+export const TreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeItem<T>(
+  props: TreeItemProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  // Capture the FocusableContext where the item is rendered (e.g. inside a TooltipTrigger)
+  // so that the row itself can be the trigger.
+  let focusableContext = useContext(FocusableContext);
+  return <TreeItemInner {...props} ref={ref} focusableContext={focusableContext} />;
+});
 
 export interface TreeLoadMoreItemRenderProps {
   /**
