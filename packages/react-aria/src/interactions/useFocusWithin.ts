@@ -20,6 +20,7 @@ import {DOMAttributes} from '@react-types/shared';
 import {FocusEvent, useCallback, useRef} from 'react';
 import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from '../utils/domHelpers';
+import {isVirtualFocusEvent} from '../focus/virtualFocus';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
 
 export interface FocusWithinProps {
@@ -51,8 +52,9 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   let onBlur = useCallback(
     (e: FocusEvent) => {
-      // Ignore events bubbling through portals.
-      if (!nodeContains(e.currentTarget, getEventTarget(e))) {
+      // Ignore events bubbling through portals, and virtual focus moves
+      // (aria-activedescendant), which don't change real DOM focus.
+      if (!nodeContains(e.currentTarget, getEventTarget(e)) || isVirtualFocusEvent(e.nativeEvent)) {
         return;
       }
 
@@ -114,7 +116,8 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
             let eventTarget = getEventTarget(e);
             if (
               state.current.isFocusWithin &&
-              !nodeContains(currentTarget, eventTarget as Element)
+              !nodeContains(currentTarget, eventTarget as Element) &&
+              !isVirtualFocusEvent(e)
             ) {
               let nativeEvent = new ownerDocument.defaultView!.FocusEvent('blur', {
                 relatedTarget: eventTarget
