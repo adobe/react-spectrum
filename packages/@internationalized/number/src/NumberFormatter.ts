@@ -12,30 +12,20 @@
 
 let formatterCache = new Map<string, Intl.NumberFormat>();
 
-let supportsSignDisplay = false;
-try {
-  supportsSignDisplay =
-    new Intl.NumberFormat('de-DE', {signDisplay: 'exceptZero'}).resolvedOptions().signDisplay ===
-    'exceptZero';
-  // eslint-disable-next-line no-empty
-} catch {}
-
 export interface NumberFormatOptions extends Intl.NumberFormatOptions {
   /** Overrides default numbering system for the current locale. */
   numberingSystem?: string;
 }
 
 /**
- * A wrapper around Intl.NumberFormat providing additional options, polyfills, and caching for
+ * A wrapper around Intl.NumberFormat providing additional options and caching for
  * performance.
  */
 export class NumberFormatter implements Intl.NumberFormat {
   private numberFormatter: Intl.NumberFormat;
-  private options: NumberFormatOptions;
 
   constructor(locale: string, options: NumberFormatOptions = {}) {
     this.numberFormatter = getCachedNumberFormatter(locale, options);
-    this.options = options;
   }
 
   /**
@@ -43,19 +33,11 @@ export class NumberFormatter implements Intl.NumberFormat {
    * constructor.
    */
   format(value: number): string {
-    let res = '';
-    if (!supportsSignDisplay && this.options.signDisplay != null) {
-      res = numberFormatSignDisplayPolyfill(this.numberFormatter, this.options.signDisplay, value);
-    } else {
-      res = this.numberFormatter.format(value);
-    }
-
-    return res;
+    return this.numberFormatter.format(value);
   }
 
   /** Formats a number to an array of parts such as separators, digits, punctuation, and more. */
   formatToParts(value: number): Intl.NumberFormatPart[] {
-    // TODO: implement signDisplay for formatToParts
     return this.numberFormatter.formatToParts(value);
   }
 
@@ -94,12 +76,7 @@ export class NumberFormatter implements Intl.NumberFormat {
 
   /** Returns the resolved formatting options based on the values passed to the constructor. */
   resolvedOptions(): Intl.ResolvedNumberFormatOptions {
-    let options = this.numberFormatter.resolvedOptions();
-    if (!supportsSignDisplay && this.options.signDisplay != null) {
-      options = {...options, signDisplay: this.options.signDisplay};
-    }
-
-    return options;
+    return this.numberFormatter.resolvedOptions();
   }
 }
 
@@ -129,42 +106,4 @@ function getCachedNumberFormatter(
   let numberFormatter = new Intl.NumberFormat(locale, options);
   formatterCache.set(cacheKey, numberFormatter);
   return numberFormatter;
-}
-
-/** @private - Exported for tests */
-export function numberFormatSignDisplayPolyfill(
-  numberFormat: Intl.NumberFormat,
-  signDisplay: string,
-  num: number
-): string {
-  if (signDisplay === 'auto') {
-    return numberFormat.format(num);
-  } else if (signDisplay === 'never') {
-    return numberFormat.format(Math.abs(num));
-  } else {
-    let needsPositiveSign = false;
-    if (signDisplay === 'always') {
-      needsPositiveSign = num > 0 || Object.is(num, 0);
-    } else if (signDisplay === 'exceptZero') {
-      if (Object.is(num, -0) || Object.is(num, 0)) {
-        num = Math.abs(num);
-      } else {
-        needsPositiveSign = num > 0;
-      }
-    }
-
-    if (needsPositiveSign) {
-      let negative = numberFormat.format(-num);
-      let noSign = numberFormat.format(num);
-      // ignore RTL/LTR marker character
-      let minus = negative.replace(noSign, '').replace(/\u200e|\u061C/, '');
-      if ([...minus].length !== 1) {
-        console.warn('@react-aria/i18n polyfill for NumberFormat signDisplay: Unsupported case');
-      }
-      let positive = negative.replace(noSign, '!!!').replace(minus, '+').replace('!!!', noSign);
-      return positive;
-    } else {
-      return numberFormat.format(num);
-    }
-  }
 }

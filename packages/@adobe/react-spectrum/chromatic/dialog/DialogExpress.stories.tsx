@@ -11,7 +11,7 @@
  */
 
 import {Dialog} from '../../src/dialog/Dialog';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {renderAlert} from './AlertDialog.stories';
 import {renderTriggerProps, singleParagraph} from './Dialog.stories';
 
@@ -28,76 +28,70 @@ export default {
   }
 } as Meta<typeof Dialog>;
 
-export type DialogExpressStory = StoryFn<typeof Dialog>;
+export type DialogExpressStory = StoryObj<typeof Dialog>;
 
-export const _Destructive: DialogExpressStory = () =>
-  renderAlert({
-    variant: 'destructive',
-    title: 'Warning Destructive',
-    children: singleParagraph(),
-    primaryActionLabel: 'Accept',
-    cancelLabel: 'Cancel'
-  });
-
-_Destructive.story = {
+export const _Destructive: DialogExpressStory = {
+  render: () =>
+    renderAlert({
+      variant: 'destructive',
+      title: 'Warning Destructive',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    }),
   name: 'destructive'
 };
 
-export const _Confirmation: DialogExpressStory = () =>
-  renderAlert({
-    variant: 'confirmation',
-    title: 'Confirmation Required',
-    children: singleParagraph(),
-    primaryActionLabel: 'Accept',
-    cancelLabel: 'Cancel'
-  });
-
-_Confirmation.story = {
+export const _Confirmation: DialogExpressStory = {
+  render: () =>
+    renderAlert({
+      variant: 'confirmation',
+      title: 'Confirmation Required',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    }),
   name: 'confirmation'
 };
 
-export const _Information: DialogExpressStory = () =>
-  renderAlert({
-    variant: 'information',
-    title: 'Informative Alert',
-    children: singleParagraph(),
-    primaryActionLabel: 'Accept',
-    cancelLabel: 'Cancel'
-  });
-
-_Information.story = {
+export const _Information: DialogExpressStory = {
+  render: () =>
+    renderAlert({
+      variant: 'information',
+      title: 'Informative Alert',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    }),
   name: 'information'
 };
 
-export const _Error: DialogExpressStory = () =>
-  renderAlert({
-    variant: 'error',
-    title: 'Error: Danger Will Robinson',
-    children: singleParagraph(),
-    primaryActionLabel: 'Accept',
-    cancelLabel: 'Cancel'
-  });
-
-_Error.story = {
+export const _Error: DialogExpressStory = {
+  render: () =>
+    renderAlert({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    }),
   name: 'error'
 };
 
-export const _Warning: DialogExpressStory = () =>
-  renderAlert({
-    variant: 'warning',
-    title: 'This is a warning',
-    children: singleParagraph(),
-    primaryActionLabel: 'Accept',
-    cancelLabel: 'Cancel'
-  });
-
-_Warning.story = {
+export const _Warning: DialogExpressStory = {
+  render: () =>
+    renderAlert({
+      variant: 'warning',
+      title: 'This is a warning',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    }),
   name: 'warning'
 };
 
-export const _Tray: DialogExpressStory = () => renderTriggerProps({type: 'tray'});
-
-_Tray.story = {
+export const _Tray: DialogExpressStory = {
+  render: () => renderTriggerProps({type: 'tray'}),
   name: 'tray',
 
   parameters: {
@@ -105,9 +99,8 @@ _Tray.story = {
   }
 };
 
-export const _Popover: DialogExpressStory = () => renderTriggerProps({type: 'popover'});
-
-_Popover.story = {
+export const _Popover: DialogExpressStory = {
+  render: () => renderTriggerProps({type: 'popover'}),
   name: 'popover',
 
   parameters: {

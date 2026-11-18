@@ -11,7 +11,7 @@
  */
 
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 import {Switch} from '../src/Switch';
@@ -22,13 +22,15 @@ export default {
   component: Switch
 } as Meta<typeof Switch>;
 
-export type SwitchStory = StoryFn<typeof Switch>;
+export type SwitchStory = StoryObj<typeof Switch>;
 
-export const SwitchExample: SwitchStory = () => {
-  return (
-    <Switch className={classNames(styles, 'switchExample')} data-testid="switch-example">
-      <div className={classNames(styles, 'switchExample-indicator')} />
-      Switch me
-    </Switch>
-  );
+export const SwitchExample: SwitchStory = {
+  render: () => {
+    return (
+      <Switch className={classNames(styles, 'switchExample')} data-testid="switch-example">
+        <div className={classNames(styles, 'switchExample-indicator')} />
+        Switch me
+      </Switch>
+    );
+  }
 };

@@ -26,7 +26,10 @@ import {Label} from '../src/Label';
 import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Popover} from '../src/Popover';
 import React from 'react';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import {User} from '@react-aria/test-utils';
+import userEvent from '@testing-library/user-event';
+import {within} from '@testing-library/dom';
 
 function TestComboBox() {
   return (
@@ -118,5 +121,75 @@ describe('Shadow DOM', () => {
 
     root.unmount();
     document.body.removeChild(outerHost);
+  });
+
+  it.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+  `('selects an option via $interactionType', async ({interactionType}) => {
+    const host = document.createElement('div');
+    const shadowRoot = host.attachShadow({mode: 'open'});
+    const appContainer = document.createElement('div');
+    shadowRoot.appendChild(appContainer);
+    document.body.appendChild(host);
+    const portalHost = document.createElement('div');
+    const shadowPortal = portalHost.attachShadow({mode: 'open'});
+    const portalContainer = document.createElement('div');
+    shadowPortal.appendChild(portalContainer);
+    const button = document.createElement('button');
+    shadowPortal.appendChild(button);
+    document.body.appendChild(portalHost);
+    const root = createRoot(appContainer);
+
+    root.render(
+      <UNSAFE_PortalProvider getContainer={() => portalContainer}>
+        <TestComboBox />
+      </UNSAFE_PortalProvider>
+    );
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const trigger = shadowRoot.querySelector('button')!;
+    await open();
+    const listbox = getListbox();
+    expect(listbox).not.toBeNull();
+
+    if (interactionType === 'keyboard') {
+      await userEvent.keyboard('{ArrowDown}');
+      await userEvent.keyboard('[Enter]');
+    } else if (interactionType === 'mouse') {
+      const option = within(listbox!).queryAllByRole('option')[1];
+      await userEvent.click(option);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(getListbox()).toBeNull();
+    expect(getCombobox()).toHaveValue('Dog');
+    await open();
+    expect(getListbox()).not.toBeNull();
+    await userEvent.click(button);
+    expect(getListbox()).toBeNull();
+    root.unmount();
+    document.body.removeChild(host);
+    document.body.removeChild(portalHost);
+
+    async function open() {
+      if (interactionType === 'mouse') {
+        await userEvent.click(trigger);
+      } else if (interactionType === 'keyboard') {
+        // oxlint-disable-next-line rsp-rules/act-events-test
+        getCombobox()?.focus();
+        await userEvent.keyboard('{ArrowDown}');
+      }
+    }
+
+    function getCombobox() {
+      return shadowRoot.querySelector<HTMLElement>('[role="combobox"]');
+    }
+
+    function getListbox() {
+      const listBoxId = getCombobox()?.getAttribute('aria-controls');
+      return listBoxId ? shadowPortal.getElementById(listBoxId) || null : null;
+    }
   });
 });

@@ -27,7 +27,7 @@ For significant changes, it is recommended that you first propose your solution 
 
 A few things to keep in mind before submitting a pull request:
 
-- Add a clear description covering your changes
+- Add a clear description covering your changes. See [describing the problem](#describing-the-problem)
 - Reference the issue in the description
 - Make sure linting and tests pass
 - Include relevant unit tests
@@ -44,6 +44,26 @@ Read [GitHub's pull request documentation](https://help.github.com/articles/abou
 
 Lastly, please follow the pull request template when submitting a pull request!
 
+### Describing the problem
+
+Whether you open an issue or a PR, provide enough context for us to understand the problem and assess the proposed change.
+
+If an issue already exists, link it and read the discussion. You do not need to copy information that is already there, but include any new findings or changes to the proposed approach.
+
+If there is no issue, include the information requested by the relevant[bug report](.github/ISSUE_TEMPLATE/Bug_Report.yml) or [feature request](.github/ISSUE_TEMPLATE/Feature_Request.yml) template in your PR description.
+
+For bug fixes, include:
+
+- What happens and what you expected to happen.
+- What you are trying to accomplish and how the bug affects you.
+- Reproduction steps and a minimal example we can use to verify the problem.
+- The affected package version, browser, and operating system.
+
+For features, explain the current limitation, the concrete use case, and how the proposed behavior would help. Include examples where useful.
+
+Documentation and routine maintenance changes should explain their purpose; they do not need an artificial bug report or reproduction.
+
+Search existing issues and PRs before opening either, and link related work when you find it. A PR can also be the starting point for a design discussion; opening it does not mean the proposed scope or approach has been approved.
 
 ## AI-assisted contributions
 Setting expectations: the AI doesn't contribute to React Spectrum, you do. The AI is a tool, but you are still the author, and you own every line, every decision, and every explanation.

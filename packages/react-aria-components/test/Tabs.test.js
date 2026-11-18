@@ -20,21 +20,24 @@ import {
 } from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {ComboBox} from '../src/ComboBox';
+import {composeStory} from '@storybook/react';
 import {DialogTrigger} from '../src/Dialog';
 import {I18nProvider} from 'react-aria/I18nProvider';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
+import Meta, {TabsExample as TabsExampleStory} from '../stories/Tabs.stories';
 import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
 import {Select, SelectValue} from '../src/Select';
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from '../src/Tabs';
-import {TabsExample} from '../stories/Tabs.stories';
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+
+const TabsExample = composeStory(TabsExampleStory, Meta);
 
 let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) =>
   render(

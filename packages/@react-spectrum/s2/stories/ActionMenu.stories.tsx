@@ -67,14 +67,12 @@ export const DynamicExample: Story = {
   },
   args: {
     items
-  }
-};
-
-DynamicExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
+  },
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
 let items = [
   {id: 'cut', label: 'Cut'},
   {id: 'copy', label: 'Copy'},
@@ -84,6 +82,7 @@ let items = [
 <ActionMenu items={items}>
   {(item) => <MenuItem id={item.id>{item.label}</MenuItem>}
 </ActionMenu>`;
+        }
       }
     }
   }

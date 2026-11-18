@@ -144,7 +144,7 @@ type SheetValues = Omit<SheetRenderProps, keyof ModalRenderProps>;
 interface InternalSheetContextValue extends Omit<SheetOverlayProps, 'position' | 'swipeDirection'> {
   position: SheetPosition;
   swipeDirection: SheetSwipeDirection;
-  index: number;
+  timelineName: string;
   descendants: SheetStackEntry[];
   isEntering: boolean;
   isExiting: boolean;
@@ -155,6 +155,7 @@ const InternalSheetContext = createContext<InternalSheetContextValue | null>(nul
 
 interface SheetStackEntry {
   id: string;
+  timelineName: string;
   range: string;
   direction: string;
   iterations: number;
@@ -167,9 +168,7 @@ function emitStackChange() {
   // Hoist every mounted sheet's timeline name to the root so a parent
   // can still resolve the child's timeline by name.
   // TODO: don't override existing timelines declared in CSS or inline styles.
-  let names = Array.from({length: sheetStack.length})
-    .map((_, i) => `--sheet-timeline-${i}`)
-    .join(', ');
+  let names = sheetStack.map(sheet => sheet.timelineName).join(', ');
   document.documentElement.style.setProperty('timeline-scope', names);
   stackListeners.forEach(listener => listener());
 }
@@ -248,14 +247,17 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
     getSwipeConfig(swipeDirection);
 
   let id = useId();
+  // A sheet needs its own timeline before it registers and while its stack index changes.
+  let timelineName = `--sheet-timeline-${id.replace(/:/g, '')}`;
   let stackItem = useMemo(
     () => ({
       id,
+      timelineName,
       range: viewRange,
       direction: viewDirection,
       iterations: viewIterations
     }),
-    [id, viewRange, viewDirection, viewIterations]
+    [id, timelineName, viewRange, viewDirection, viewIterations]
   );
 
   let [isExpanded, setExpanded] = useState(false);
@@ -363,6 +365,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
       onEnter={element => {
         // The overlay is the document-anchored wrapper; the swipe gesture scrolls the inner container.
         let scroller = element.querySelector<HTMLElement>('[data-sheet-scroll]')!;
+        let content = element.querySelector<HTMLElement>('[data-sheet-content]');
         let vp =
           axis === 'y'
             ? window.innerHeight + parseFloat(calcToPx(viewportPadding(after, axis)))
@@ -377,18 +380,37 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
           }
         };
         if (enteredScroll === 0) {
-          // The rest position is at scroll 0, so the sheet mounts already entered. Jump to the exit
-          // first, then animate back in on the next frame — doing both in the same task can leave
-          // the browser stuck at the jumped-to position instead of running the smooth scroll.
+          // The rest position is at scroll 0, so the sheet mounts already entered. Jump to the exit first.
           scrollAlongAxis(scroller, axis, (maxScroll / 100) * vp);
-          requestAnimationFrame(() => scrollToRest(true));
-        } else {
-          scrollToRest(true);
         }
+        // Skip the part of the enter scroll where the sheet is still entirely off screen.
+        let snapType = scroller.style.scrollSnapType;
+        let skipped =
+          content != null && !reduceMotion() && skipOffscreenTravel(scroller, content, axis, vp);
 
         return new Promise<void>(resolve => {
-          // eslint-disable-next-line rsp-rules/no-non-composing-event-listener
-          scroller.addEventListener('scrollend', () => resolve(), {once: true});
+          let startEnterScroll = () => {
+            scrollToRest(true);
+            // Listen only once the smooth scroll has started, so the jump's own scrollend is ignored.
+            // eslint-disable-next-line rsp-rules/no-non-composing-event-listener
+            scroller.addEventListener(
+              'scrollend',
+              () => {
+                if (skipped) {
+                  scroller.style.scrollSnapType = snapType;
+                }
+                resolve();
+              },
+              {once: true}
+            );
+          };
+
+          // Jumping and smooth scrolling in the same task can leave the browser stuck at the jumped-to position.
+          if (enteredScroll === 0 || skipped) {
+            requestAnimationFrame(startEnterScroll);
+          } else {
+            startEnterScroll();
+          }
         });
       }}
       onExit={element => {
@@ -438,7 +460,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
             ...props,
             position,
             swipeDirection,
-            index,
+            timelineName,
             descendants,
             isEntering: renderProps.isEntering,
             isExiting: renderProps.isExiting,
@@ -710,7 +732,6 @@ export const Sheet = forwardRef(function Sheet(
     position,
     swipeDirection,
     snapPoints,
-    index,
     descendants,
     isEntering,
     isExiting,
@@ -817,9 +838,9 @@ export const Sheet = forwardRef(function Sheet(
 
   if (props.stackAnimation && descendants.length > 0 && supportsViewTimeline) {
     // Append one animation per descendant sheet, driven by that descendant's view timeline.
-    let stackStyle: Record<string, (d: SheetStackEntry, i: number) => string> = {
+    let stackStyle: Record<string, (d: SheetStackEntry) => string> = {
       animationName: () => props.stackAnimation!,
-      animationTimeline: (_, i) => `--sheet-timeline-${index + 1 + i}`,
+      animationTimeline: d => d.timelineName,
       animationDirection: d => d.direction,
       animationIterationCount: d => String(d.iterations),
       animationFillMode: () => 'both',
@@ -1012,7 +1033,7 @@ export const SheetBackdrop = forwardRef(function SheetBackdrop(
 });
 
 function useSwipeAnimation(props: SheetBackdropProps) {
-  let {swipeDirection, snapPoints, index, isEntering, isExiting} =
+  let {swipeDirection, snapPoints, timelineName, isEntering, isExiting} =
     useContext(InternalSheetContext)!;
   let {viewRange, viewDirection, viewIterations} = getSwipeConfig(swipeDirection);
 
@@ -1036,7 +1057,7 @@ function useSwipeAnimation(props: SheetBackdropProps) {
     if (supportsViewTimeline) {
       return {
         animationName: props.swipeAnimation,
-        animationTimeline: `--sheet-timeline-${index}`,
+        animationTimeline: timelineName,
         animationDirection: viewDirection,
         animationIterationCount: viewIterations,
         animationFillMode: 'both',
@@ -1078,7 +1099,7 @@ export const SheetContent = forwardRef(function SheetContent(
   props: SheetContentProps,
   ref: ForwardedRef<HTMLDivElement>
 ) {
-  let {swipeDirection, index} = useContext(InternalSheetContext)!;
+  let {swipeDirection, timelineName} = useContext(InternalSheetContext)!;
   let {axis, before, after} = getSwipeConfig(swipeDirection);
   let viewportLength = axis === 'y' ? '100dvh' : '100dvw';
 
@@ -1096,7 +1117,7 @@ export const SheetContent = forwardRef(function SheetContent(
         // It is _not_ the Modal because that may have additional padding for overscroll and therefore never be entirely visible.
         // The inset crops the scroll container's scrollport down to the visible viewport.
         // @ts-ignore
-        viewTimelineName: `--sheet-timeline-${index}`,
+        viewTimelineName: timelineName,
         viewTimelineAxis: axis,
         viewTimelineInset: before && !after ? `${viewportLength} 0` : `0 ${viewportLength}`
       }}
@@ -1111,6 +1132,26 @@ function reduceMotion() {
 function scrollAlongAxis(element: HTMLElement, axis: Axis, value: number, smooth = false) {
   let behavior: ScrollBehavior | undefined = smooth && !reduceMotion() ? 'smooth' : undefined;
   element.scrollTo(axis === 'y' ? {top: value, behavior} : {left: value, behavior});
+}
+
+// Moves the scroller so the sheet's leading edge sits at the viewport edge, with snapping
+// disabled so the browser doesn't pull it back to a snap point. Returns whether it moved.
+function skipOffscreenTravel(scroller: HTMLElement, content: HTMLElement, axis: Axis, vp: number) {
+  let rect = content.getBoundingClientRect();
+  let start = axis === 'y' ? rect.top : rect.left;
+  let end = axis === 'y' ? rect.bottom : rect.right;
+  let delta = start > vp ? start - vp : end < 0 ? end : 0;
+  if (delta === 0) {
+    return false;
+  }
+
+  scroller.style.scrollSnapType = 'none';
+  if (axis === 'y') {
+    scroller.scrollTop += delta;
+  } else {
+    scroller.scrollLeft += delta;
+  }
+  return true;
 }
 
 function scrollDetentIntoView(

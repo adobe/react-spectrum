@@ -47,7 +47,7 @@ function onTransitionStart(e: Event) {
     // The transitioncancel event must be registered on the element itself, rather than as a global
     // event. This enables us to handle when the node is deleted from the document while it is transitioning.
     // In that case, the cancel event would have nowhere to bubble to so we need to handle it directly.
-    eventTarget.addEventListener('transitioncancel', onTransitionEnd, {once: true});
+    eventTarget.addEventListener('transitioncancel', onTransitionEnd);
   }
 
   transitions.add(e.propertyName);

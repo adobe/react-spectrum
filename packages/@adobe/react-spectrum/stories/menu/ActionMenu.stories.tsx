@@ -16,7 +16,7 @@ import {Alignment} from '@react-types/shared';
 import {Checkbox} from '../../src/checkbox/Checkbox';
 import {Flex} from '../../src/layout/Flex';
 import {Item} from 'react-stately/Item';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Picker} from '../../src/picker/Picker';
 import React, {JSX, useState} from 'react';
 import {SpectrumActionMenuProps} from '../../src/menu/ActionMenu';
@@ -133,7 +133,7 @@ function DirectionAlignment() {
   );
 }
 
-export type ActionMenuStoryFn = StoryFn<typeof Template>;
+export type ActionMenuStoryFn = StoryObj<typeof Template>;
 export type ActionMenuStory = StoryObj<typeof Template>;
 
 export const Default: ActionMenuStory = {
@@ -176,37 +176,47 @@ export const DefaultOpen: ActionMenuStory = {
   args: {onOpenChange: action('openChange'), defaultOpen: true}
 };
 
-export const ControlledOpen: ActionMenuStoryFn = () => {
-  let [open, setOpen] = React.useState(false);
+export const ControlledOpen: ActionMenuStoryFn = {
+  render: function ControlledOpen() {
+    let [open, setOpen] = React.useState(false);
 
-  return (
-    <ActionMenu isOpen={open} onOpenChange={setOpen} onAction={action('action')}>
-      <Item key="cut">Cut</Item>
-      <Item key="copy">Copy</Item>
-      <Item key="paste">Paste</Item>
-    </ActionMenu>
-  );
+    return (
+      <ActionMenu isOpen={open} onOpenChange={setOpen} onAction={action('action')}>
+        <Item key="cut">Cut</Item>
+        <Item key="copy">Copy</Item>
+        <Item key="paste">Paste</Item>
+      </ActionMenu>
+    );
+  }
 };
 
-export const DirectionAlignFlip: ActionMenuStoryFn = () => <DirectionAlignment />;
+export const DirectionAlignFlip: ActionMenuStoryFn = {
+  render: () => <DirectionAlignment />
+};
 
-export const WithTooltip: ActionMenuStoryFn = () => (
-  <TooltipTrigger delay={0}>
-    <ActionMenu>
-      <Item key="cut">Cut</Item>
-      <Item key="copy">Copy</Item>
-      <Item key="paste">Paste</Item>
-    </ActionMenu>
-    <Tooltip>Actions</Tooltip>
-  </TooltipTrigger>
-);
+export const WithTooltip: ActionMenuStoryFn = {
+  render: () => (
+    <TooltipTrigger delay={0}>
+      <ActionMenu>
+        <Item key="cut">Cut</Item>
+        <Item key="copy">Copy</Item>
+        <Item key="paste">Paste</Item>
+      </ActionMenu>
+      <Tooltip>Actions</Tooltip>
+    </TooltipTrigger>
+  )
+};
 
-export const Dynamic: ActionMenuStoryFn = () => {
-  const items = [
-    {key: 'cut', label: 'Cut'},
-    {key: 'copy', label: 'Copy'},
-    {key: 'paste', label: 'Paste'}
-  ];
+export const Dynamic: ActionMenuStoryFn = {
+  render: () => {
+    const items = [
+      {key: 'cut', label: 'Cut'},
+      {key: 'copy', label: 'Copy'},
+      {key: 'paste', label: 'Paste'}
+    ];
 
-  return <ActionMenu items={items}>{item => <Item key={item.key}>{item.label}</Item>}</ActionMenu>;
+    return (
+      <ActionMenu items={items}>{item => <Item key={item.key}>{item.label}</Item>}</ActionMenu>
+    );
+  }
 };

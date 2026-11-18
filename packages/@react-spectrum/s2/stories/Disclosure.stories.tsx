@@ -70,23 +70,24 @@ export const WithLongTitle: Story = {
         </Disclosure>
       </div>
     );
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
-WithLongTitle.parameters = {
-  docs: {
-    disable: true
+export const Controlled: Story = {
+  render: function Controlled(args) {
+    let [isExpanded, setExpanded] = React.useState(false);
+    return (
+      <Disclosure {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>
+        <DisclosureTitle>Files</DisclosureTitle>
+        <DisclosurePanel>Files content</DisclosurePanel>
+      </Disclosure>
+    );
   }
-};
-
-export const Controlled: Story['render'] = args => {
-  let [isExpanded, setExpanded] = React.useState(false);
-  return (
-    <Disclosure {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>
-      <DisclosureTitle>Files</DisclosureTitle>
-      <DisclosurePanel>Files content</DisclosurePanel>
-    </Disclosure>
-  );
 };
 
 export const ControlledClosed: Story = {
@@ -95,12 +96,11 @@ export const ControlledClosed: Story = {
       <DisclosureTitle>Files</DisclosureTitle>
       <DisclosurePanel>Files content</DisclosurePanel>
     </Disclosure>
-  )
-};
-
-ControlledClosed.parameters = {
-  docs: {
-    disable: true
+  ),
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 

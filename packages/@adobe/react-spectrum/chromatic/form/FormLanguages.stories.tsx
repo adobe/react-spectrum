@@ -22,7 +22,7 @@ import {Heading} from '../../src/text/Heading';
 // @ts-ignore
 import intlMessages from './intlMessages.json';
 import {Item} from 'react-stately/Item';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {NumberField} from '../../src/numberfield/NumberField';
 import {Picker} from '../../src/picker/Picker';
 import {Radio} from '../../src/radio/Radio';
@@ -49,7 +49,7 @@ export default {
   excludeStories: ['TranslateForm']
 } as Meta<typeof Form>;
 
-export type FormStory = StoryFn<typeof Form>;
+export type FormStory = StoryObj<typeof Form>;
 
 export let TranslateForm = (props: Omit<SpectrumFormProps, 'children'>): JSX.Element => {
   let strings = useLocalizedStringFormatter(intlMessages);
@@ -163,8 +163,12 @@ export let TranslateForm = (props: Omit<SpectrumFormProps, 'children'>): JSX.Ele
   );
 };
 
-export const FormTranslatedText: FormStory = props => <TranslateForm {...props} />;
+export const FormTranslatedText: FormStory = {
+  render: props => <TranslateForm {...props} />
+};
 
-export const FormTranslatedTextSideLabel: FormStory = () => {
-  return <TranslateForm labelPosition="side" labelAlign="start" width="500px" />;
+export const FormTranslatedTextSideLabel: FormStory = {
+  render: () => {
+    return <TranslateForm labelPosition="side" labelAlign="start" width="500px" />;
+  }
 };

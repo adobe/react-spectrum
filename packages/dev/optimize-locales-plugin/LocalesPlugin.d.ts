@@ -25,7 +25,7 @@ type TurbopackOptionsList = readonly [TurbopackOptions, ...TurbopackOptions[]];
 
 type TurbopackRule = {
   condition?: TurbopackCondition;
-  loaders: [{loader: string; options: {locales: readonly string[]}}];
+  loaders: [{loader: string; options: {locales: string[]}}];
   as: '*.js';
 };
 

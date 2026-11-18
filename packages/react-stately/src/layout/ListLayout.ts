@@ -745,7 +745,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     y += this.virtualizer!.visibleRect.y;
 
     // Find the closest item within on either side of the point using the gap width.
-    let searchRect = new Rect(x, Math.max(0, y - this.gap), 1, Math.max(1, this.gap * 2));
+    let searchRect =
+      this.orientation === 'horizontal'
+        ? new Rect(Math.max(0, x - this.gap), y, Math.max(1, this.gap * 2), 1)
+        : new Rect(x, Math.max(0, y - this.gap), 1, Math.max(1, this.gap * 2));
     let candidates = this.getVisibleLayoutInfos(searchRect);
     let key: Key | null = null;
     let minDistance = Infinity;
@@ -755,9 +758,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
         continue;
       }
 
-      let yDist = Math.abs(candidate.rect.y - y);
-      let maxYDist = Math.abs(candidate.rect.maxY - y);
-      let dist = Math.min(yDist, maxYDist);
+      let position = this.orientation === 'horizontal' ? x : y;
+      let start = this.orientation === 'horizontal' ? candidate.rect.x : candidate.rect.y;
+      let end = this.orientation === 'horizontal' ? candidate.rect.maxX : candidate.rect.maxY;
+      let dist = Math.min(Math.abs(start - position), Math.abs(end - position));
       if (dist < minDistance) {
         minDistance = dist;
         key = candidate.key;
@@ -774,24 +778,28 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     }
 
     let rect = layoutInfo.rect;
+    let position = this.orientation === 'horizontal' ? x : y;
+    let start = this.orientation === 'horizontal' ? rect.x : rect.y;
+    let end = this.orientation === 'horizontal' ? rect.maxX : rect.maxY;
+    let size = this.orientation === 'horizontal' ? rect.width : rect.height;
     let target: DropTarget = {
       type: 'item',
       key: layoutInfo.key,
       dropPosition: 'on'
     };
 
-    // If dropping on the item isn't accepted, try the target before or after depending on the y position.
-    // Otherwise, if dropping on the item is accepted, still try the before/after positions if within 10px
-    // of the top or bottom of the item.
+    // If dropping on the item isn't accepted, try the target before or after depending on the
+    // position along the main axis. Otherwise, if dropping on the item is accepted, still try
+    // the before/after positions if within 10px of the start or end of the item.
     if (!isValidDropTarget(target)) {
-      if (y <= rect.y + rect.height / 2 && isValidDropTarget({...target, dropPosition: 'before'})) {
+      if (position <= start + size / 2 && isValidDropTarget({...target, dropPosition: 'before'})) {
         target.dropPosition = 'before';
       } else if (isValidDropTarget({...target, dropPosition: 'after'})) {
         target.dropPosition = 'after';
       }
-    } else if (y <= rect.y + 10 && isValidDropTarget({...target, dropPosition: 'before'})) {
+    } else if (position <= start + 10 && isValidDropTarget({...target, dropPosition: 'before'})) {
       target.dropPosition = 'before';
-    } else if (y >= rect.maxY - 10 && isValidDropTarget({...target, dropPosition: 'after'})) {
+    } else if (position >= end - 10 && isValidDropTarget({...target, dropPosition: 'after'})) {
       target.dropPosition = 'after';
     }
 

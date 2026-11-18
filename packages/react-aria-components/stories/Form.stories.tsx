@@ -16,7 +16,7 @@ import {Form} from '../src/Form';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem} from '../src/ListBox';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Popover} from '../src/Popover';
 import React from 'react';
 import {Select, SelectValue} from '../src/Select';
@@ -28,55 +28,59 @@ export default {
   component: Form
 } as Meta<typeof Form>;
 
-export type FormStory = StoryFn<typeof Form>;
+export type FormStory = StoryObj<typeof Form>;
 
-export const FormAutoFillExample: FormStory = () => {
-  return (
-    <Form
-      aria-label="Shipping information"
-      onSubmit={e => {
-        action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
-        e.preventDefault();
-      }}>
-      <TextField>
-        <Label>Address</Label>
-        <Input
-          name="streetAddress"
-          type="text"
-          id="streetAddress"
-          autoComplete="shipping street-address"
-        />
-      </TextField>
-      <TextField>
-        <Label>City</Label>
-        <Input name="city" type="text" id="city" autoComplete="shipping address-level2" />
-      </TextField>
-      <TextField>
-        <Label>State</Label>
-        <Input name="state" type="text" id="state" autoComplete="shipping address-level1" />
-      </TextField>
-      <TextField>
-        <Label>Zip</Label>
-        <Input name="city" type="text" id="city" autoComplete="shipping postal-code" />
-      </TextField>
-      <Select name="country" id="country" autoComplete="shipping country">
-        <Label>Country</Label>
-        <Button>
-          <SelectValue />
-          <span aria-hidden="true">▼</span>
-        </Button>
-        <Popover>
-          <ListBox>
-            <ListBoxItem>Greece</ListBoxItem>
-            <ListBoxItem>Italy</ListBoxItem>
-            <ListBoxItem>Spain</ListBoxItem>
-            <ListBoxItem>Mexico</ListBoxItem>
-            <ListBoxItem>Canada</ListBoxItem>
-            <ListBoxItem>United States</ListBoxItem>
-          </ListBox>
-        </Popover>
-      </Select>
-      <Button type="submit">Submit</Button>
-    </Form>
-  );
+export const FormAutoFillExample: FormStory = {
+  render: () => {
+    return (
+      <Form
+        aria-label="Shipping information"
+        onSubmit={e => {
+          action('onSubmit')(
+            Object.fromEntries(new FormData(e.target as HTMLFormElement).entries())
+          );
+          e.preventDefault();
+        }}>
+        <TextField>
+          <Label>Address</Label>
+          <Input
+            name="streetAddress"
+            type="text"
+            id="streetAddress"
+            autoComplete="shipping street-address"
+          />
+        </TextField>
+        <TextField>
+          <Label>City</Label>
+          <Input name="city" type="text" id="city" autoComplete="shipping address-level2" />
+        </TextField>
+        <TextField>
+          <Label>State</Label>
+          <Input name="state" type="text" id="state" autoComplete="shipping address-level1" />
+        </TextField>
+        <TextField>
+          <Label>Zip</Label>
+          <Input name="city" type="text" id="city" autoComplete="shipping postal-code" />
+        </TextField>
+        <Select name="country" id="country" autoComplete="shipping country">
+          <Label>Country</Label>
+          <Button>
+            <SelectValue />
+            <span aria-hidden="true">▼</span>
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem>Greece</ListBoxItem>
+              <ListBoxItem>Italy</ListBoxItem>
+              <ListBoxItem>Spain</ListBoxItem>
+              <ListBoxItem>Mexico</ListBoxItem>
+              <ListBoxItem>Canada</ListBoxItem>
+              <ListBoxItem>United States</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+        <Button type="submit">Submit</Button>
+      </Form>
+    );
+  }
 };
