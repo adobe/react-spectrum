@@ -238,7 +238,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
     <div
       role="region"
       aria-label={props['aria-label']}
-      aria-roledescription="slide"
+      aria-roledescription={stringFormatter.format('lightbox.carousel')}
       style={{width: '100%', height: '100%'}}>
       <RACTabs {...props} className={renderProps => carouselStyles(renderProps)} />
     </div>
@@ -707,8 +707,13 @@ const innerImageStyles = style({
 });
 
 export function LightboxItem(props: LightboxItemProps) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
-    <RACTabPanel {...props} shouldForceMount className={itemStyles} aria-roledescription="slide">
+    <RACTabPanel
+      {...props}
+      shouldForceMount
+      className={itemStyles}
+      aria-roledescription={stringFormatter.format('lightbox.slide')}>
       {renderProps => (
         <ImageContext.Provider
           value={{styles: imageStyles({...renderProps}), imgStyles: innerImageStyles}}>
