@@ -14,6 +14,7 @@ import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type:
 import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Button';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
+import {Children, isValidElement, ReactNode, useContext, useEffect, useRef} from 'react';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {flushSync} from 'react-dom';
@@ -43,7 +44,6 @@ import {
   TabProps,
   TabsProps
 } from 'react-aria-components/Tabs';
-import {ReactNode, useContext, useRef} from 'react';
 import {scrollFade} from './style/style-macro' with {type: 'macro'};
 import {scrollIntoView} from 'react-aria/private/utils/scrollIntoView';
 import {useKeyboard} from 'react-aria/useKeyboard';
@@ -63,7 +63,7 @@ export interface LightboxPickerItemProps extends Omit<
   children: ReactNode;
 }
 export interface LightboxItemsProps<T> extends Omit<TabPanelsProps<T>, 'className'> {
-  children: ReactNode[];
+  children: ReactNode;
 }
 export interface LightboxItemProps extends Omit<TabPanelProps, 'className'> {}
 
@@ -329,25 +329,39 @@ export function LightboxPickerItem(props: LightboxPickerItemProps) {
 
 export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
-  // let {isInfinite} = useContext(LightBoxCarouselContext);
+  let slides = Children.toArray(props.children);
+  let collection = state?.collection;
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production' || !collection) {
+      return;
+    }
+
+    let slideIds = Children.toArray(props.children).map(slide =>
+      isValidElement<LightboxItemProps>(slide) ? slide.props.id : undefined
+    );
+    let tabKeys = [...collection].map(item => item.key);
+    if (slideIds.length !== tabKeys.length) {
+      console.warn(
+        `LightboxItems has ${slideIds.length} slides but LightboxPicker has ${tabKeys.length} items. They must match.`
+      );
+    }
+    slideIds.forEach((id, i) => {
+      if (i < tabKeys.length && id !== tabKeys[i]) {
+        console.warn(
+          `LightboxItem at position ${i} has id "${String(id)}" but the matching LightboxPickerItem has id "${String(tabKeys[i])}". Slides must be in the same order as picker items and use the same ids.`
+        );
+      }
+    });
+  }, [props.children, collection]);
 
   if (state?.selectedItem == null) {
     return null;
   }
-
-  // let wrapper: ReactNode = isInfinite ? (
-  //   <InfiniteLightboxItems>
-  //     {index => props.children?.at(getWrappedIndex(index, state.collection.size))}
-  //   </InfiniteLightboxItems>
-  // ) : (
-  //   <FocusScope>
-  //     <FiniteLightboxItems>{index => props.children?.at(index)}</FiniteLightboxItems>
-  //   </FocusScope>
-  // );
-
+  // TODO: Add InfiniteLightBoxItems to the wrapper when infinite carousel is supported
   let wrapper = (
     <FocusScope>
-      <FiniteLightboxItems>{index => props.children?.at(index)}</FiniteLightboxItems>
+      <FiniteLightboxItems>{index => slides[index]}</FiniteLightboxItems>
     </FocusScope>
   );
 
