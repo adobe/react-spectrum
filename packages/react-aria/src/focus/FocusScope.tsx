@@ -642,7 +642,7 @@ function useRestoreFocus(
   contain?: boolean
 ) {
   let restoreFocus = !!restoreFocusProp;
-  let getRestoreFocusProp = useEffectEvent(() => restoreFocusProp);
+  let restoreFocusPropEvent = useEffectEvent(() => restoreFocusProp);
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
 
   const nodeToRestoreRef = useRef(
@@ -789,7 +789,7 @@ function useRestoreFocus(
         return;
       }
       let nodeToRestore = treeNode.nodeToRestore;
-      let hasRestoreTarget = typeof getRestoreFocusProp() !== 'boolean';
+      let hasRestoreTarget = typeof restoreFocusPropEvent() !== 'boolean';
 
       // if we already lost focus to the body and this was the active scope, then we should attempt to restore
       let activeElement = getActiveElement(ownerDocument);
@@ -804,7 +804,7 @@ function useRestoreFocus(
         requestAnimationFrame(() => {
           // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
           if (ownerDocument.activeElement === ownerDocument.body) {
-            let target = resolveRestoreFocus(getRestoreFocusProp());
+            let target = resolveRestoreFocus(restoreFocusPropEvent());
             if (target === false) {
               return;
             }
