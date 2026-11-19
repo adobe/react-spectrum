@@ -11,6 +11,8 @@
  */
 
 import {Attachment, AttachmentList, AttachmentPreview} from '../src/AttachmentList';
+import {AttachmentGrid, AttachmentGridItem} from '../src/AttachmentGrid';
+import {Content} from '@react-spectrum/s2/Content';
 import {Image} from '@react-spectrum/s2/Image';
 import {
   LightboxCarousel,
@@ -22,6 +24,7 @@ import {
 import {LightboxTrigger} from '../src/LightboxTrigger';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Text} from '@react-spectrum/s2/Text';
 
 const meta: Meta<typeof LightboxCarousel> = {
   title: 'AI/Lightbox',
@@ -268,4 +271,93 @@ function AttachmentDialogExample() {
 
 export const AttachmentDialog: Story = {
   render: () => <AttachmentDialogExample />
+};
+
+function AttachmentGridDialogExample({showCardContent}: {showCardContent: boolean}) {
+  let attachments = [
+    {
+      id: 'amsterdam',
+      name: 'Amsterdam',
+      src: 'https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/amsterdamslide__800x600.jpg',
+      alt: 'Amsterdam canal'
+    },
+    {
+      id: 'lands-end',
+      name: "Land's End",
+      src: 'https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/lands-endslide__800x600.jpg',
+      alt: "Land's End coastal landscape"
+    },
+    {
+      id: 'trust',
+      name: 'Trust',
+      src: 'https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/trustslide-2__800x600.jpg',
+      alt: 'Trust television series promotion'
+    },
+    {
+      id: 'foyles-war',
+      name: "Foyle's War",
+      src: 'https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/foyleswarslide__800x600.jpg',
+      alt: 'A man in a suit and fedora and a woman with coiffed hair'
+    },
+    {
+      id: 'great-britain-vote',
+      name: 'Great Britain Vote',
+      src: 'https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/britcomdavidslide__800x600.jpg',
+      alt: 'British flag with WILL-TV host David Thiel'
+    },
+    {
+      id: 'mid-american-gardener',
+      name: 'Mid-American Gardener',
+      src: 'https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/mag800-2__800x600.jpg',
+      alt: 'Mid-American Gardener panelists on the set'
+    }
+  ];
+
+  return (
+    <LightboxTrigger>
+      <AttachmentGrid
+        aria-label="Attachments"
+        items={attachments}
+        dependencies={[showCardContent]}
+        styles={style({width: 300})}>
+        {attachment => (
+          <AttachmentGridItem id={attachment.id} textValue={attachment.name}>
+            <AttachmentPreview mimeType="image/jpeg" slot="thumbnail" src={attachment.src} />
+            {showCardContent && (
+              <Content>
+                <Text slot="title">{attachment.name}</Text>
+                <Text slot="description">JPEG image</Text>
+              </Content>
+            )}
+          </AttachmentGridItem>
+        )}
+      </AttachmentGrid>
+      <LightboxCarousel>
+        <LightboxPicker aria-label="Choose photo" items={attachments}>
+          {attachment => (
+            <LightboxPickerItem id={attachment.id} aria-label={attachment.name}>
+              <Image src={attachment.src} alt="" />
+            </LightboxPickerItem>
+          )}
+        </LightboxPicker>
+        <LightboxItems>
+          {attachments.map(attachment => (
+            <LightboxItem key={attachment.id} id={attachment.id}>
+              <Image src={attachment.src} alt={attachment.alt} />
+            </LightboxItem>
+          ))}
+        </LightboxItems>
+      </LightboxCarousel>
+    </LightboxTrigger>
+  );
+}
+
+export const AttachmentGridDialog: StoryObj<typeof AttachmentGridDialogExample> = {
+  render: args => <AttachmentGridDialogExample {...args} />,
+  args: {
+    showCardContent: false
+  },
+  argTypes: {
+    showCardContent: {control: 'boolean'}
+  }
 };
