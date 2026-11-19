@@ -135,12 +135,7 @@ export function parseZonedDateTime(value: string, disambiguation?: Disambiguatio
 
   let ms: number;
   if (m[8]) {
-    let hourOffset = parseNumber(m[8], -23, 23);
-    date.offset =
-      Math.sign(hourOffset) *
-      (Math.abs(hourOffset) * 60 * 60 * 1000 +
-        parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000 +
-        parseNumber(m[10] ?? '0', 0, 59) * 1000);
+    date.offset = parseOffset(m[8], m[9], m[10]);
     ms = epochFromDate(date as ZonedDateTime) - date.offset;
 
     // Validate offset against parsed date.
@@ -187,8 +182,7 @@ export function parseAbsolute(value: string, timeZone: string): ZonedDateTime {
   date.day = parseNumber(m[3], 0, date.calendar.getDaysInMonth(date));
 
   if (m[8]) {
-    date.offset =
-      parseNumber(m[8], -23, 23) * 60 * 60 * 1000 + parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000;
+    date.offset = parseOffset(m[8], m[9]);
   }
 
   return toTimeZone(date as ZonedDateTime, timeZone);
@@ -209,6 +203,18 @@ function parseNumber(value: string, min: number, max: number) {
   }
 
   return val;
+}
+
+function parseOffset(hours: string, minutes = '0', seconds = '0') {
+  // Take the sign from the string rather than the parsed hours so that offsets
+  // such as -00:30 keep their sign, and minutes and seconds are applied in the same direction.
+  let sign = hours[0] === '-' ? -1 : 1;
+  return (
+    sign *
+    (Math.abs(parseNumber(hours, -23, 23)) * 60 * 60 * 1000 +
+      parseNumber(minutes, 0, 59) * 60 * 1000 +
+      parseNumber(seconds, 0, 59) * 1000)
+  );
 }
 
 export function timeToString(time: Time): string {
