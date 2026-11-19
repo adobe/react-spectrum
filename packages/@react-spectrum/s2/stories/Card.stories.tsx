@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from 'storybook/actions';
 import {ActionMenu} from '../src/ActionMenu';
 
 import {
@@ -128,6 +129,67 @@ export const Example: Story = {
         )}
       </Card>
     </div>
+  )
+};
+
+export const AsLink: Story = {
+  render: args => (
+    <Card {...args} href="https://adobe.com" target="_blank" rel="noopener noreferrer">
+      <CardPreview>
+        <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
+      </CardPreview>
+      <Content>
+        <Text slot="title">Card title</Text>
+        <Text slot="description">
+          Card description. Give a concise overview of the context or functionality that's mentioned
+          in the card title.
+        </Text>
+      </Content>
+      {args.size !== 'XS' && (
+        <>
+          <Divider />
+          <Footer>
+            <StatusLight size="S" variant="positive">
+              Published
+            </StatusLight>
+          </Footer>
+        </>
+      )}
+    </Card>
+  )
+};
+
+export const AsButton: Story = {
+  render: args => (
+    <Card
+      {...args}
+      onPress={() => action('onPress')()}
+      onPressStart={() => action('onPressStart')()}
+      onPressEnd={() => action('onPressEnd')()}
+      onAction={() => action('onAction')()}
+      onPressChange={() => action('onPressChange')()}
+      onPressUp={() => action('onPressUp')()}>
+      <CardPreview>
+        <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
+      </CardPreview>
+      <Content>
+        <Text slot="title">Card title</Text>
+        <Text slot="description">
+          Card description. Give a concise overview of the context or functionality that's mentioned
+          in the card title.
+        </Text>
+      </Content>
+      {args.size !== 'XS' && (
+        <>
+          <Divider />
+          <Footer>
+            <StatusLight size="S" variant="positive">
+              Published
+            </StatusLight>
+          </Footer>
+        </>
+      )}
+    </Card>
   )
 };
 
