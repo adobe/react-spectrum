@@ -1,0 +1,440 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {act, fireEvent, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  Attachment,
+  AttachmentGrid,
+  AttachmentGridItem,
+  AttachmentList,
+  LightboxCarousel,
+  LightboxCarouselProps,
+  LightboxItem,
+  LightboxItems,
+  LightboxPicker,
+  LightboxPickerItem,
+  LightboxTrigger
+} from '@react-spectrum/ai';
+import {I18nProvider} from 'react-aria/I18nProvider';
+import {Image} from '@react-spectrum/s2/Image';
+import {Key} from '@react-types/shared';
+import React from 'react';
+import userEvent from '@testing-library/user-event';
+
+const ids = ['one', 'two', 'three', 'four', 'five'];
+
+interface CarouselProps extends Omit<LightboxCarouselProps, 'children'> {
+  itemIds?: string[];
+  slideIds?: string[];
+  withControls?: boolean | string[];
+}
+
+function Carousel({
+  itemIds = ids,
+  slideIds = itemIds,
+  withControls = false,
+  ...props
+}: CarouselProps) {
+  return (
+    <LightboxCarousel aria-label="Photos" {...props}>
+      <LightboxPicker aria-label="Choose photo">
+        {itemIds.map(id => (
+          <LightboxPickerItem key={id} id={id} aria-label={`Photo ${id}`}>
+            <Image src={`https://example.com/${id}.png`} alt="" />
+          </LightboxPickerItem>
+        ))}
+      </LightboxPicker>
+      <LightboxItems>
+        {slideIds.map(id => (
+          <LightboxItem key={id} id={id} data-testid={`slide-${id}`}>
+            <Image src={`https://example.com/${id}.png`} alt={`Photo ${id}`} />
+            {(withControls === true ||
+              (Array.isArray(withControls) && withControls.includes(id))) && (
+              <>
+                <input aria-label={`Caption ${id}`} />
+                <button>Download {id}</button>
+              </>
+            )}
+          </LightboxItem>
+        ))}
+      </LightboxItems>
+    </LightboxCarousel>
+  );
+}
+
+function AttachmentExample({
+  layout = 'grid',
+  onAction
+}: {
+  layout?: 'grid' | 'list';
+  onAction?: (key: Key) => void;
+}) {
+  return (
+    <LightboxTrigger>
+      {layout === 'grid' ? (
+        <AttachmentGrid aria-label="Attachments" onAction={onAction}>
+          {ids.map(id => (
+            <AttachmentGridItem key={id} id={id} aria-label={`File ${id}`} textValue={`File ${id}`}>
+              <Image slot="thumbnail" src="https://example.com/image.png" alt="" />
+            </AttachmentGridItem>
+          ))}
+        </AttachmentGrid>
+      ) : (
+        <AttachmentList aria-label="Attachments" onAction={onAction}>
+          {ids.map(id => (
+            <Attachment key={id} id={id} aria-label={`File ${id}`} textValue={`File ${id}`}>
+              <Image slot="thumbnail" src="https://example.com/image.png" alt="" />
+            </Attachment>
+          ))}
+        </AttachmentList>
+      )}
+      <Carousel />
+    </LightboxTrigger>
+  );
+}
+
+const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
+describeOrSkip('Lightbox', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+  let scrollTo = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollTo');
+
+  beforeAll(() => {
+    Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+      configurable: true,
+      value: jest.fn()
+    });
+  });
+
+  afterAll(() => {
+    if (scrollTo) {
+      Object.defineProperty(HTMLElement.prototype, 'scrollTo', scrollTo);
+    } else {
+      Reflect.deleteProperty(HTMLElement.prototype, 'scrollTo');
+    }
+  });
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    user = userEvent.setup({delay: null});
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+    jest.restoreAllMocks();
+    jest.useRealTimers();
+  });
+
+  describe('attachment integration', () => {
+    it.each(['grid', 'list'] as const)(
+      'opens the matching slide from the attachment %s and navigates the modal without another onAction call',
+      async layout => {
+        let onAction = jest.fn();
+        let {getByLabelText, getByRole} = render(
+          <AttachmentExample layout={layout} onAction={onAction} />
+        );
+
+        await user.click(getByLabelText('File three'));
+
+        let dialog = within(getByRole('dialog'));
+        expect(within(dialog.getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName(
+          'Photo three'
+        );
+
+        await user.click(dialog.getByRole('button', {name: 'Next attachment'}));
+        expect(within(dialog.getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName(
+          'Photo four'
+        );
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('three');
+      }
+    );
+
+    it('opens the newly activated attachment after closing and reopening', async () => {
+      let {getByLabelText, getByRole, queryByRole} = render(<AttachmentExample />);
+
+      await user.click(getByLabelText('File two'));
+      await user.click(within(getByRole('dialog')).getByRole('button', {name: 'Dismiss'}));
+      act(() => jest.runAllTimers());
+      expect(queryByRole('dialog')).not.toBeInTheDocument();
+
+      await user.click(getByLabelText('File four'));
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo four');
+    });
+  });
+
+  describe('navigation buttons', () => {
+    it('navigates forward and backward using Next and Previous', async () => {
+      let {getByRole} = render(<Carousel defaultSelectedKey="two" />);
+
+      await user.click(getByRole('button', {name: 'Next attachment'}));
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo three');
+      await user.click(getByRole('button', {name: 'Previous attachment'}));
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo two');
+    });
+
+    it.each([
+      ['one', 'Previous attachment', 'Next attachment'],
+      ['five', 'Next attachment', 'Previous attachment']
+    ])(
+      'marks the boundary button %s/%s as aria-disabled and ignores activation',
+      async (selectedKey, disabledButton, enabledButton) => {
+        let onSelectionChange = jest.fn();
+        let {getByRole} = render(
+          <Carousel defaultSelectedKey={selectedKey} onSelectionChange={onSelectionChange} />
+        );
+        let button = getByRole('button', {name: disabledButton});
+        expect(button).toHaveAttribute('aria-disabled', 'true');
+        expect(getByRole('button', {name: enabledButton})).not.toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+
+        await user.click(button);
+        await user.keyboard('{Enter}');
+        expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName(
+          `Photo ${selectedKey}`
+        );
+        expect(onSelectionChange).not.toHaveBeenCalled();
+      }
+    );
+
+    it('disables both navigation actions when there is only one slide', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = render(
+        <Carousel
+          itemIds={['one']}
+          defaultSelectedKey="one"
+          onSelectionChange={onSelectionChange}
+        />
+      );
+      for (let name of ['Previous attachment', 'Next attachment']) {
+        let button = getByRole('button', {name});
+        expect(button).toHaveAttribute('aria-disabled', 'true');
+        await user.click(button);
+      }
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo one');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('panel keyboard navigation', () => {
+    it('navigates with panel arrow keys without wrapping at the boundaries', async () => {
+      let {getByRole} = render(<Carousel itemIds={['one', 'two']} />);
+      act(() => getByRole('tabpanel').focus());
+
+      await user.keyboard('{ArrowLeft}');
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo one');
+      await user.keyboard('{ArrowRight}');
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo two');
+      await user.keyboard('{ArrowRight}');
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo two');
+      await user.keyboard('{ArrowLeft}');
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo one');
+    });
+
+    it('reverses panel arrow-key navigation in RTL', async () => {
+      let {getByRole} = render(
+        <I18nProvider locale="ar-AE">
+          <Carousel defaultSelectedKey="two" />
+        </I18nProvider>
+      );
+      act(() => getByRole('tabpanel').focus());
+
+      await user.keyboard('{ArrowLeft}');
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo three');
+      await user.keyboard('{ArrowRight}');
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo two');
+    });
+
+    it('handles repeated arrow-key events while focus remains on the panel', () => {
+      let {getByRole} = render(<Carousel />);
+      act(() => getByRole('tabpanel').focus());
+
+      fireEvent.keyDown(getByRole('tabpanel'), {key: 'ArrowRight'});
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo two');
+      fireEvent.keyDown(getByRole('tabpanel'), {key: 'ArrowRight', repeat: true});
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo three');
+      expect(getByRole('tabpanel')).toHaveFocus();
+    });
+
+    it('preserves child-input arrow-key behavior without changing slides', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = render(
+        <Carousel defaultSelectedKey="two" withControls onSelectionChange={onSelectionChange} />
+      );
+      let input = getByRole('textbox', {name: 'Caption two'});
+      await user.click(input);
+      await user.type(input, 'abc');
+      await user.keyboard('{ArrowLeft}X{ArrowRight}');
+
+      expect(input).toHaveValue('abXc');
+      expect(input).toHaveFocus();
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo two');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('does not navigate when the keyboard event is already default-prevented', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = render(
+        <div onKeyDownCapture={e => e.preventDefault()}>
+          <Carousel defaultSelectedKey="two" onSelectionChange={onSelectionChange} />
+        </div>
+      );
+      act(() => getByRole('tabpanel').focus());
+
+      await user.keyboard('{ArrowLeft}{ArrowRight}');
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo two');
+      expect(getByRole('tabpanel')).toHaveFocus();
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('focus management', () => {
+    it('focuses the selected picker item when the modal opens', async () => {
+      let {getByLabelText, getByRole} = render(<AttachmentExample />);
+
+      await user.click(getByLabelText('File three'));
+      act(() => jest.runAllTimers());
+      expect(getByRole('tab', {name: 'Photo three'})).toHaveFocus();
+    });
+
+    it('synchronizes picker focus when controlled selection changes while focus remains inside the picker', async () => {
+      let {getByRole, rerender} = render(<Carousel selectedKey="one" />);
+      await user.tab();
+      expect(getByRole('tab', {name: 'Photo one'})).toHaveFocus();
+
+      rerender(<Carousel selectedKey="four" />);
+      expect(getByRole('tab', {name: 'Photo four'})).toHaveFocus();
+    });
+
+    it('focuses the first tabbable control in the incoming slide when navigating from the panel', async () => {
+      let {getByRole} = render(<Carousel withControls={['two']} />);
+      act(() => getByRole('tabpanel').focus());
+      expect(getByRole('tabpanel')).toHaveFocus();
+
+      await user.keyboard('{ArrowRight}');
+      expect(getByRole('textbox', {name: 'Caption two'})).toHaveFocus();
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo two');
+    });
+
+    it('focuses the incoming panel when it has no tabbable controls', async () => {
+      let {getByRole} = render(<Carousel />);
+      act(() => getByRole('tabpanel').focus());
+
+      await user.keyboard('{ArrowRight}');
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo two');
+      expect(getByRole('tabpanel')).toHaveFocus();
+    });
+
+    it('does not restore picker focus after focus moves outside and controlled selection changes', async () => {
+      let {getByRole, rerender} = render(
+        <>
+          <button>Outside</button>
+          <Carousel selectedKey="one" />
+        </>
+      );
+      let pickerItem = getByRole('tab', {name: 'Photo one'});
+      await user.click(pickerItem);
+      expect(pickerItem).toHaveFocus();
+
+      let outside = getByRole('button', {name: 'Outside'});
+      await user.click(outside);
+      rerender(
+        <>
+          <button>Outside</button>
+          <Carousel selectedKey="three" />
+        </>
+      );
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo three');
+      expect(outside).toHaveFocus();
+    });
+
+    it('preserves navigation button focus when changing slides', async () => {
+      let {getByRole} = render(<Carousel />);
+      let next = getByRole('button', {name: 'Next attachment'});
+
+      await user.click(next);
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo two');
+      expect(next).toHaveFocus();
+      let previous = getByRole('button', {name: 'Previous attachment'});
+      await user.click(previous);
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo one');
+      expect(previous).toHaveFocus();
+    });
+  });
+
+  it('updates the mounted slide window, keeping only selected and neighboring slides mounted and neighboring wrappers inert', async () => {
+    let {getByRole, getByTestId, queryByAltText} = render(<Carousel />);
+    let checkWindow = (selected: string, mounted: string[]) => {
+      for (let id of ids) {
+        if (mounted.includes(id)) {
+          let panel = getByTestId(`slide-${id}`);
+          expect(within(panel).getByAltText(`Photo ${id}`)).toBeInTheDocument();
+          let wrapper = panel.parentElement!;
+          if (id === selected) {
+            expect(wrapper).not.toHaveAttribute('inert');
+          } else {
+            expect(wrapper).toHaveAttribute('inert');
+          }
+        } else {
+          expect(queryByAltText(`Photo ${id}`)).not.toBeInTheDocument();
+        }
+      }
+      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName(
+        `Photo ${selected}`
+      );
+    };
+
+    checkWindow('one', ['one', 'two']);
+    await user.click(getByRole('button', {name: 'Next attachment'}));
+    checkWindow('two', ['one', 'two', 'three']);
+    await user.click(getByRole('button', {name: 'Next attachment'}));
+    checkWindow('three', ['two', 'three', 'four']);
+    await user.click(getByRole('tab', {name: 'Photo five'}));
+    checkWindow('five', ['four', 'five']);
+  });
+
+  describe('development warnings', () => {
+    let warn: jest.SpyInstance;
+
+    beforeEach(() => {
+      warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    it('warns when slide and picker item counts differ', () => {
+      render(<Carousel itemIds={['one', 'two']} slideIds={['one']} />);
+
+      expect(warn).toHaveBeenCalledWith(
+        'LightboxItems has 1 slides but LightboxPicker has 2 items. They must match.'
+      );
+    });
+
+    it.each([
+      {description: 'different IDs', slideIds: ['one', 'three']},
+      {description: 'different order', slideIds: ['two', 'one']}
+    ])('warns when slide and picker collections have $description', ({slideIds}) => {
+      render(<Carousel itemIds={['one', 'two']} slideIds={slideIds} />);
+
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Slides must be in the same order as picker items and use the same ids.'
+        )
+      );
+    });
+
+    it('does not warn when slide and picker collections match', () => {
+      render(<Carousel />);
+
+      expect(warn).not.toHaveBeenCalled();
+    });
+  });
+});
