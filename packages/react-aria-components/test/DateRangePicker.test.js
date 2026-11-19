@@ -106,6 +106,20 @@ describe('DateRangePicker', () => {
     expect(getByRole('grid')).toHaveClass('react-aria-CalendarGrid');
   });
 
+  it('moves an overflowing digit from the start field into the end field', async () => {
+    let {getAllByRole} = render(
+      <I18nProvider locale="ja-JP">
+        <TestDateRangePicker />
+      </I18nProvider>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[0]);
+    await user.keyboard('2026532');
+    expect(segments.map(s => s.textContent)).toEqual(['2026', '5', '3', '2', '月', '日']);
+    expect(segments[3]).toHaveFocus();
+  });
+
   it('should support the slot prop', () => {
     let {getByRole} = render(
       <DateRangePickerContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
