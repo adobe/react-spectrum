@@ -423,7 +423,7 @@ function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerPro
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
             [SectionContext, {name: 'ListBoxSection', render: ListBoxSectionInner}]
           ]}>
-          <SharedElementTransition>
+          <SharedElementTransition containerRef={listBoxRef}>
             <CollectionRoot
               collection={collection}
               scrollRef={listBoxRef}

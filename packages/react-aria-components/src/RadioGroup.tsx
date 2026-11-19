@@ -328,7 +328,7 @@ export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
           ],
           [FieldErrorContext, validation]
         ]}>
-        <SharedElementTransition>{renderProps.children}</SharedElementTransition>
+        <SharedElementTransition containerRef={ref}>{renderProps.children}</SharedElementTransition>
       </Provider>
     </dom.div>
   );
