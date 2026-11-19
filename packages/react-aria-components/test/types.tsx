@@ -96,3 +96,15 @@ motion(RAC.Text);
 motion(RAC.TextField);
 motion(RAC.ToggleButton);
 motion(RAC.Tooltip);
+
+// Hyphenated JSX attributes are not checked unless they are explicitly declared in the props.
+declare function buttonShortcut(value: RAC.ButtonProps['aria-keyshortcuts']): void;
+declare function toggleButtonShortcut(value: RAC.ToggleButtonProps['aria-keyshortcuts']): void;
+buttonShortcut('Control+Shift+N');
+buttonShortcut(undefined);
+toggleButtonShortcut('F5');
+toggleButtonShortcut(undefined);
+// @ts-expect-error aria-keyshortcuts must be a string.
+buttonShortcut(5);
+// @ts-expect-error aria-keyshortcuts must be a string.
+toggleButtonShortcut(5);

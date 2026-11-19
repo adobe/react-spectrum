@@ -62,6 +62,16 @@ describe('useButton tests', function () {
     expect(result.current.buttonProps.rel).toBeUndefined();
   });
 
+  it.each(['button', 'a', 'div', 'input', 'span'])(
+    'passes through aria-keyshortcuts for %s elements',
+    elementType => {
+      let {result} = renderHook(() =>
+        useButton({elementType, 'aria-keyshortcuts': 'Alt+ArrowLeft Control+Shift+N'})
+      );
+      expect(result.current.buttonProps['aria-keyshortcuts']).toBe('Alt+ArrowLeft Control+Shift+N');
+    }
+  );
+
   it('handles aria-disabled passthrough for button elements', function () {
     let props = {'aria-disabled': 'true'};
     let {result} = renderHook(() => useButton(props));
