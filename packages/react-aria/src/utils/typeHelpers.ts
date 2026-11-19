@@ -56,3 +56,19 @@ export function isElement(value: unknown): value is Element {
   // 1 = ELEMENT_NODE
   return isNode(value) && value.nodeType === 1;
 }
+
+/**
+ * Type guard that checks if a value is an HTMLElement. Uses nodeType, host property and
+ * namespace checks to distinguish HTMLElement from other values.
+ */
+export function isHTMLElement(value: unknown): value is HTMLElement {
+  return isElement(value) && value.namespaceURI === 'http://www.w3.org/1999/xhtml';
+}
+
+/**
+ * Type guard that checks if a value is an SVGElement. Uses nodeType, host property and
+ * namespace checks to distinguish SVGElement from other values.
+ */
+export function isSVGElement(value: unknown): value is SVGElement {
+  return isElement(value) && value.namespaceURI === 'http://www.w3.org/2000/svg';
+}
