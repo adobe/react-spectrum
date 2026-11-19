@@ -56,7 +56,7 @@ export function createEventHandler<T extends SyntheticEvent>(
       }
     };
 
-    handler(event);
+    handler(withEventFallback(event, e));
 
     // nested createEventHandler calls may already have stopped propagation
     if (
@@ -66,4 +66,24 @@ export function createEventHandler<T extends SyntheticEvent>(
       e.stopPropagation();
     }
   };
+}
+
+/**
+ * Native events (e.g. when using Preact instead of React) expose their fields as prototype getters,
+ * which an object spread drops. Read any field missing from the wrapper from the original event.
+ */
+function withEventFallback<T extends object>(event: T, original: object): T {
+  return new Proxy(event, {
+    get(target, prop) {
+      if (prop in target) {
+        return Reflect.get(target, prop);
+      }
+
+      let value = Reflect.get(original, prop, original);
+      return typeof value === 'function' ? value.bind(original) : value;
+    },
+    has(target, prop) {
+      return prop in target || prop in original;
+    }
+  });
 }
