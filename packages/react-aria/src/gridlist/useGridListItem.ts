@@ -362,8 +362,16 @@ export function useGridListItem<T>(
     if (keyboardNavigationBehavior === 'tab') {
       // Stop propagation for all events that originate from the children of the gridlist item since we don't want to trigger
       // grid level interactions (row navigation/typeselect/etc)
-      // exception made for Tab since that needs to propagate to useSelectableCollection to tab out of the gridlist, might be others?
-      if (getEventTarget(e) !== ref.current && e.key !== 'Tab') {
+      // exception made for Tab since that needs to propagate to useSelectableCollection to tab out of the gridlist.
+      // Rows that move focus to a child and handle arrow navigation themselves (e.g. NavigationTree) also let Escape,
+      // Home/End and PageUp/PageDown through, since the child has no use for them and the gridlist or an ancestor
+      // overlay handles them.
+      let shouldPropagate =
+        e.key === 'Tab' ||
+        (focusMode === 'child' &&
+          allowsArrowNavigation &&
+          ['Escape', 'Home', 'End', 'PageUp', 'PageDown'].includes(e.key));
+      if (getEventTarget(e) !== ref.current && !shouldPropagate) {
         e.stopPropagation();
         return;
       }
