@@ -123,6 +123,8 @@ itDrag('shows a grabbing cursor when a drag handle is pressed', {retry: 2}, asyn
     isPressed: button.element().hasAttribute('data-pressed')
   }));
   await userEvent.dragAndDrop(button, page.getByText('Drop here'));
+  // Reset WebKit's pointer state after the native drag before the next test.
+  await server.commands.mouseUp();
   expect(onDragStart).toHaveBeenCalledTimes(1);
   await expect.poll(() => onDrop).toHaveBeenCalledTimes(1);
   // During native dragging, the browser controls the cursor based on the drop effect.
