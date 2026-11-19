@@ -159,9 +159,9 @@ const itemsStyles = style({
   borderRadius: 'lg',
   width: 'full',
   height: 'full',
-  // Cap the stage at a 16:9 image (plus the item padding) so short, wide viewports
+  // Cap the stage at a 3:2 image (plus the item padding) so short, wide viewports
   // don't leave large empty gutters between the image and the nav buttons.
-  maxWidth: 'calc((100cqh - 8px) * 16 / 9 + 24px)',
+  maxWidth: 'calc((100cqh - 8px) * 3 / 2 + 24px)',
   display: 'flex',
   order: 1,
   overflowX: 'auto',
@@ -474,7 +474,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       // Safari ignores smooth scrolling after the scroll snap targets change. That means instead of adjacent slides smooth scrolling, they are instant.
       // This is fixed in Safari Tech Preview
       // https://bugs.webkit.org/show_bug.cgi?id=331157
-      behavior: 'smooth'
+      behavior: 'auto'
     });
   }, [selectedIndex, isRTL]);
 
