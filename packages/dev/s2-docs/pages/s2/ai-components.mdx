@@ -391,7 +391,7 @@ function PromptSuggestions() {
 
 ### Attachments and actions
 
-Use `PromptFieldAttachmentList` to render a preview of attached files the user has dragged onto the PromptField or added via the `InsertMenuButton` in the toolbar. Custom menu items and toolbar controls can be added as well.
+Use `PromptFieldAttachmentList` to render a preview of attached files the user has dragged onto the PromptField or added via the `InsertMenuButton` in the toolbar. Wrap the attachment list and a `LightboxCarousel` in a `LightboxTrigger` to let users activate an attachment to see images in a larger preview and browse attached files. Non-image files display a placeholder with their filename and file type. Custom menu items and toolbar controls can be added as well.
 
 ```tsx render type="s2" docs={docs.exports.Attachment} props={['isInvalid', 'isDisabled']}
 "use client";
@@ -402,6 +402,12 @@ import {
   AttachFileMenuItem,
   InsertMenuButton,
   InsertTextMenuItem,
+  LightboxCarousel,
+  LightboxItem,
+  LightboxItems,
+  LightboxPicker,
+  LightboxPickerItem,
+  LightboxTrigger,
   PromptField,
   PromptFieldAttachment,
   PromptFieldAttachmentList,
@@ -411,8 +417,9 @@ import {
   PromptFieldValue,
   PromptTokenField
 } from '@react-spectrum/ai';
-import {Text} from '@react-spectrum/s2';
+import {Image, Text} from '@react-spectrum/s2';
 import CommentText from '@react-spectrum/s2/icons/CommentText';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function PromptAttachments(props) {
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([
@@ -427,16 +434,47 @@ function PromptAttachments(props) {
       onAttachmentsChange={setAttachments}
       acceptedAttachmentTypes={['*/*']}>
       {/*- begin highlight -*/}
-      <PromptFieldAttachmentList dependencies={[props.isInvalid, props.isDisabled]}>
-        {attachment => (
-          <Attachment
-            textValue={attachment.file.name}
-            isInvalid={props.isInvalid}
-            isDisabled={props.isDisabled}>
-            <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
-          </Attachment>
-        )}
-      </PromptFieldAttachmentList>
+      <LightboxTrigger>
+        <PromptFieldAttachmentList dependencies={[props.isInvalid, props.isDisabled]}>
+          {attachment => (
+            <Attachment
+              id={attachment.id}
+              textValue={attachment.file.name}
+              isInvalid={props.isInvalid}
+              isDisabled={props.isDisabled}>
+              <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
+            </Attachment>
+          )}
+        </PromptFieldAttachmentList>
+        <LightboxCarousel>
+          <LightboxPicker aria-label="Choose attachment" items={attachments}>
+            {attachment => (
+              <LightboxPickerItem id={attachment.id} aria-label={attachment.file.name}>
+                <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, backgroundColor: 'gray-100', borderRadius: 'lg'})}>
+                  <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} alt="" />
+                </div>
+              </LightboxPickerItem>
+            )}
+          </LightboxPicker>
+          <LightboxItems>
+            {attachments.map(attachment => (
+              <LightboxItem key={attachment.id} id={attachment.id}>
+                {attachment.image ? (
+                  <Image src={attachment.image} alt={attachment.file.name} />
+                ) : (
+                  <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, font: 'body', color: 'white'})}>
+                    <div className={style({backgroundColor: 'gray-100', borderRadius: 'lg', padding: 16})}>
+                      <AttachmentPreview mimeType={attachment.file.type} />
+                    </div>
+                    <span>{attachment.file.name}</span>
+                    <span>{attachment.file.type}</span>
+                  </div>
+                )}
+              </LightboxItem>
+            ))}
+          </LightboxItems>
+        </LightboxCarousel>
+      </LightboxTrigger>
       {/*- end highlight -*/}
       <PromptTokenField placeholder="Describe the image" />
       <PromptFieldToolbar>
@@ -898,6 +936,46 @@ thumbnails within a `UserMessage`. Unlike `PromptFieldAttachmentList`, it does n
 #### AttachmentPreview
 
 <PropTable component={docs.exports.AttachmentPreview} links={docs.links} showDescription />
+
+### Lightbox
+
+```tsx links={{LightboxTrigger: '#lightboxtrigger', PromptFieldAttachmentList: '#promptfieldattachmentlist', LightboxCarousel: '#lightboxcarousel', LightboxPicker: '#lightboxpicker', LightboxPickerItem: '#lightboxpickeritem', LightboxItems: '#lightboxitems', LightboxItem: '#lightboxitem'}}
+<LightboxTrigger>
+  <PromptFieldAttachmentList />
+  <LightboxCarousel>
+    <LightboxPicker>
+      <LightboxPickerItem id="image" />
+    </LightboxPicker>
+    <LightboxItems>
+      <LightboxItem id="image" />
+    </LightboxItems>
+  </LightboxCarousel>
+</LightboxTrigger>
+```
+
+#### LightboxTrigger
+
+<PropTable component={docs.exports.LightboxTrigger} links={docs.links} showDescription />
+
+#### LightboxCarousel
+
+<PropTable component={docs.exports.LightboxCarousel} links={docs.links} showDescription />
+
+#### LightboxPicker
+
+<PropTable component={docs.exports.LightboxPicker} links={docs.links} showDescription />
+
+#### LightboxPickerItem
+
+<PropTable component={docs.exports.LightboxPickerItem} links={docs.links} showDescription />
+
+#### LightboxItems
+
+<PropTable component={docs.exports.LightboxItems} links={docs.links} showDescription />
+
+#### LightboxItem
+
+<PropTable component={docs.exports.LightboxItem} links={docs.links} showDescription />
 
 ### PromptTokenField
 

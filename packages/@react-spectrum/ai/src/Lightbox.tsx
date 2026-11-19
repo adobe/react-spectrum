@@ -59,19 +59,44 @@ import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
-export interface LightboxCarouselProps extends Omit<TabsProps, 'className' | 'orientation'> {
+export interface LightboxCarouselProps extends Omit<
+  TabsProps,
+  | 'className'
+  | 'style'
+  | 'render'
+  | 'children'
+  | 'orientation'
+  | 'keyboardActivation'
+  | 'isDisabled'
+  | 'disabledKeys'
+> {
+  children: ReactNode;
   // TODO: Support infinite carousel
   // isInfinite?: boolean;
 }
 
-export interface LightboxPickerProps<T> extends Omit<TabListProps<T>, 'className'> {}
-export interface LightboxPickerItemProps extends Omit<TabProps, 'className' | 'children'> {
+export interface LightboxPickerProps<T> extends Omit<
+  TabListProps<T>,
+  'className' | 'style' | 'render'
+> {}
+export interface LightboxPickerItemProps extends Omit<
+  TabProps,
+  'className' | 'style' | 'render' | 'children' | 'isDisabled'
+> {
   children: ReactNode;
 }
-export interface LightboxItemsProps<T> extends Omit<TabPanelsProps<T>, 'className'> {
+export interface LightboxItemsProps<T> extends Omit<
+  TabPanelsProps<T>,
+  'className' | 'style' | 'render' | 'children'
+> {
   children: ReactNode;
 }
-export interface LightboxItemProps extends Omit<TabPanelProps, 'className'> {}
+export interface LightboxItemProps extends Omit<
+  TabPanelProps,
+  'className' | 'style' | 'render' | 'children' | 'shouldForceMount'
+> {
+  children: ReactNode;
+}
 
 const carouselStyles = style({
   display: 'flex',
@@ -306,11 +331,11 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
   );
 
   // Wait until tab state has initialized its focus target before running autofocus.
-  return state?.selectionManager.focusedKey != null ? (
-    <FocusScope autoFocus={ctx?.isOpen ?? false}>{picker}</FocusScope>
-  ) : (
-    picker
-  );
+  if (state?.selectionManager.focusedKey != null) {
+    return <FocusScope autoFocus={ctx?.isOpen ?? false}>{picker}</FocusScope>;
+  }
+
+  return picker;
 }
 
 const thumbnailStyles = style({
@@ -746,7 +771,7 @@ export function LightboxItem(props: LightboxItemProps) {
       {renderProps => (
         <ImageContext.Provider
           value={{styles: imageStyles({...renderProps}), imgStyles: innerImageStyles}}>
-          {typeof props.children === 'function' ? props.children(renderProps) : props.children}
+          {props.children}
         </ImageContext.Provider>
       )}
     </RACTabPanel>
