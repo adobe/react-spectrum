@@ -137,7 +137,9 @@ async function createParcel(options, isDev = false) {
         '3000',
         '--dist-dir',
         options.outputDir,
-        path.join(generatedEntries, 'iframe.html')
+        path.join(generatedEntries, 'iframe.html'),
+        '--public-url',
+        './'
       ],
       {stdio: 'inherit'}
     );
