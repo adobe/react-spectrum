@@ -615,6 +615,8 @@ interface CarouselNavButtonProps extends Omit<ButtonProps, 'children'> {
   side?: 'start' | 'end';
 }
 
+const smallTouchScreen = '@media (not ((hover: hover) and (pointer: fine))) and (width < 40rem)';
+
 const carouselNavButtonStyles = style<
   ButtonRenderProps & {isInModal: boolean; side?: 'start' | 'end'}
 >({
@@ -622,7 +624,22 @@ const carouselNavButtonStyles = style<
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  size: 32,
+  position: {
+    default: 'static',
+    [smallTouchScreen]: 'absolute'
+  },
+  size: {
+    default: 32,
+    [smallTouchScreen]: 1
+  },
+  overflow: {
+    default: 'visible',
+    [smallTouchScreen]: 'hidden'
+  },
+  opacity: {
+    default: 1,
+    [smallTouchScreen]: 0
+  },
   flexShrink: 0,
   padding: 0,
   borderRadius: 'full',
