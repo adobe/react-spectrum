@@ -34,16 +34,10 @@ const ids = ['one', 'two', 'three', 'four', 'five'];
 
 interface CarouselProps extends Omit<LightboxCarouselProps, 'children'> {
   itemIds?: string[];
-  slideIds?: string[];
   withControls?: boolean | string[];
 }
 
-function Carousel({
-  itemIds = ids,
-  slideIds = itemIds,
-  withControls = false,
-  ...props
-}: CarouselProps) {
+function Carousel({itemIds = ids, withControls = false, ...props}: CarouselProps) {
   return (
     <LightboxCarousel aria-label="Photos" {...props}>
       <LightboxPicker aria-label="Choose photo">
@@ -54,7 +48,7 @@ function Carousel({
         ))}
       </LightboxPicker>
       <LightboxItems>
-        {slideIds.map(id => (
+        {itemIds.map(id => (
           <LightboxItem key={id} id={id} data-testid={`slide-${id}`}>
             <Image src={`https://example.com/${id}.png`} alt={`Photo ${id}`} />
             {(withControls === true ||
@@ -168,6 +162,32 @@ describeOrSkip('Lightbox', () => {
 
       await user.click(getByLabelText('File four'));
       expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo four');
+    });
+  });
+
+  describe('labelling', () => {
+    it('falls back to a default label for the inline region', () => {
+      let {getByRole} = render(<Carousel aria-label={undefined} />);
+      expect(getByRole('region')).toHaveAccessibleName('Attachment viewer');
+    });
+
+    it('supports aria-labelledby on the inline region', () => {
+      let {getByRole} = render(
+        <>
+          <h2 id="gallery-heading">Gallery</h2>
+          <Carousel aria-label={undefined} aria-labelledby="gallery-heading" />
+        </>
+      );
+      expect(getByRole('region')).toHaveAccessibleName('Gallery');
+    });
+
+    it('applies the id to the labelled region only', () => {
+      let {container, getByRole} = render(
+        <Carousel aria-labelledby="gallery-heading" id="gallery" />
+      );
+      expect(container.querySelectorAll('#gallery')).toHaveLength(1);
+      expect(getByRole('region')).toHaveAttribute('id', 'gallery');
+      expect(getByRole('region')).toHaveAttribute('aria-labelledby', 'gallery gallery-heading');
     });
   });
 
@@ -401,40 +421,5 @@ describeOrSkip('Lightbox', () => {
     checkWindow('three', ['two', 'three', 'four']);
     await user.click(getByRole('tab', {name: 'Photo five'}));
     checkWindow('five', ['four', 'five']);
-  });
-
-  describe('development warnings', () => {
-    let warn: jest.SpyInstance;
-
-    beforeEach(() => {
-      warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    });
-
-    it('warns when slide and picker item counts differ', () => {
-      render(<Carousel itemIds={['one', 'two']} slideIds={['one']} />);
-
-      expect(warn).toHaveBeenCalledWith(
-        'LightboxItems has 1 slides but LightboxPicker has 2 items. They must match.'
-      );
-    });
-
-    it.each([
-      {description: 'different IDs', slideIds: ['one', 'three']},
-      {description: 'different order', slideIds: ['two', 'one']}
-    ])('warns when slide and picker collections have $description', ({slideIds}) => {
-      render(<Carousel itemIds={['one', 'two']} slideIds={slideIds} />);
-
-      expect(warn).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'Slides must be in the same order as picker items and use the same ids.'
-        )
-      );
-    });
-
-    it('does not warn when slide and picker collections match', () => {
-      render(<Carousel />);
-
-      expect(warn).not.toHaveBeenCalled();
-    });
   });
 });

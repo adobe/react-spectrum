@@ -14,15 +14,7 @@ import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type:
 import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Button';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
-import {
-  Children,
-  isValidElement,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef
-} from 'react';
+import {Children, ReactNode, useCallback, useContext, useRef} from 'react';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {flushSync} from 'react-dom';
@@ -55,6 +47,7 @@ import {
 import {scrollFade} from './style/style-macro' with {type: 'macro'};
 import {scrollIntoView} from 'react-aria/private/utils/scrollIntoView';
 import {useKeyboard} from 'react-aria/useKeyboard';
+import {useLabels} from 'react-aria/private/utils/useLabels';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
@@ -161,7 +154,7 @@ const itemsStyles = style({
   height: 'full',
   // Cap the stage at a 3:2 image (plus the item padding) so short, wide viewports
   // don't leave large empty gutters between the image and the nav buttons.
-  maxWidth: 'calc((100cqh - 8px) * 3 / 2 + 24px)',
+  maxWidth: 'calc((100cqh - 8px) * 3 / 2 + 32px)',
   display: 'flex',
   order: 1,
   overflowX: 'auto',
@@ -194,6 +187,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
   let ctx = useContext(LightboxTriggerContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let {locale, direction} = useLocale();
+  let labelProps = useLabels(props, stringFormatter.format('lightbox.label'));
 
   let modalRef = useCallback(
     (el: HTMLDivElement | null) => {
@@ -231,7 +225,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
         }>
         <Modal ref={modalRef} className={style({width: 'full', height: 'full'})}>
           <Dialog
-            aria-label={props['aria-label'] ?? stringFormatter.format('lightbox.label')}
+            {...labelProps}
             className={style({
               position: 'relative',
               boxSizing: 'border-box',
@@ -253,6 +247,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
                 />
                 <RACTabs
                   {...props}
+                  id={undefined}
                   selectedKey={ctx?.activeKey}
                   onSelectionChange={ctx?.setActiveKey}
                   className={carouselStyles}
@@ -268,10 +263,10 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
   return (
     <div
       role="region"
-      aria-label={props['aria-label']}
+      {...labelProps}
       aria-roledescription={stringFormatter.format('lightbox.carousel')}
       style={{width: '100%', height: '100%'}}>
-      <RACTabs {...props} className={carouselStyles} />
+      <RACTabs {...props} id={undefined} className={carouselStyles} />
     </div>
   );
 }
@@ -342,7 +337,7 @@ const thumbnailStyles = style({
 });
 
 export function LightboxPickerItem(props: LightboxPickerItemProps) {
-  let isInModal = useContext(LightboxTriggerContext);
+  let isInModal = useContext(LightboxTriggerContext) != null;
 
   return (
     <RACTab {...props} className={renderProps => pickerItemStyles({...renderProps, isInModal})}>
@@ -356,30 +351,6 @@ export function LightboxPickerItem(props: LightboxPickerItemProps) {
 export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
   let slides = Children.toArray(props.children);
-  let collection = state?.collection;
-
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'production' || !collection || collection.size === 0) {
-      return;
-    }
-
-    let slideIds = Children.toArray(props.children).map(slide =>
-      isValidElement<LightboxItemProps>(slide) ? slide.props.id : undefined
-    );
-    let tabKeys = [...collection].map(item => item.key);
-    if (slideIds.length !== tabKeys.length) {
-      console.warn(
-        `LightboxItems has ${slideIds.length} slides but LightboxPicker has ${tabKeys.length} items. They must match.`
-      );
-    }
-    slideIds.forEach((id, i) => {
-      if (i < tabKeys.length && id !== tabKeys[i]) {
-        console.warn(
-          `LightboxItem at position ${i} has id "${String(id)}" but the matching LightboxPickerItem has id "${String(tabKeys[i])}". Slides must be in the same order as picker items and use the same ids.`
-        );
-      }
-    });
-  }, [props.children, collection]);
 
   if (state?.selectedItem == null) {
     return null;
@@ -754,13 +725,8 @@ const innerImageStyles = style({
 });
 
 export function LightboxItem(props: LightboxItemProps) {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
-    <RACTabPanel
-      {...props}
-      shouldForceMount
-      className={itemStyles}
-      aria-roledescription={stringFormatter.format('lightbox.slide')}>
+    <RACTabPanel {...props} shouldForceMount className={itemStyles}>
       {renderProps => (
         <ImageContext.Provider
           value={{styles: imageStyles({...renderProps}), imgStyles: innerImageStyles}}>

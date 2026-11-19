@@ -38,7 +38,7 @@ export function LightboxTrigger(props: LightboxTriggerProps) {
 
   return (
     <LightboxTriggerContext.Provider value={{isOpen, setIsOpen, onAction, activeKey, setActiveKey}}>
-      <div {...props}>{props.children}</div>
+      {props.children}
     </LightboxTriggerContext.Provider>
   );
 }
