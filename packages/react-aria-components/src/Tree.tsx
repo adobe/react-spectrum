@@ -52,6 +52,7 @@ import {
   DisabledBehavior,
   DragPreviewRenderer,
   Expandable,
+  FocusEvents,
   forwardRefType,
   GlobalDOMAttributes,
   HoverEvents,
@@ -114,6 +115,7 @@ import {TreeState, useTreeState} from 'react-stately/useTreeState';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 import {useCollator} from 'react-aria/useCollator';
 import {useControlledState} from 'react-stately/useControlledState';
+import {useFocus} from 'react-aria/useFocus';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useGridListSection, useGridListSelectionCheckbox} from 'react-aria/useGridList';
 import {useHover} from 'react-aria/useHover';
@@ -734,6 +736,7 @@ export interface TreeItemProps<T = object>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
+    FocusEvents<HTMLDivElement>,
     Pick<AriaTreeItemOptions, 'hasChildItems' | 'focusMode' | 'allowsArrowNavigation'>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
@@ -809,6 +812,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
       onHoverEnd: props.onHoverEnd
     });
 
+    let {focusProps: focusEventProps} = useFocus(props);
     let {isFocusVisible, focusProps} = useFocusRing();
     let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
       within: true
@@ -981,6 +985,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
             DOMProps,
             rowProps,
             focusProps,
+            focusEventProps,
             hoverProps,
             focusWithinProps,
             draggableSlotProps.itemProps
