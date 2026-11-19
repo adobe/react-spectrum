@@ -1593,6 +1593,32 @@ describe('ComboBox', function () {
       expect(queryByRole('listbox')).toBeFalsy();
     });
 
+    it('does not close when pressing the popover outside of an option', async function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+      await user.click(combobox);
+      await user.keyboard('{ArrowDown}');
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(getByRole('listbox')).toBeVisible();
+      onOpenChange.mockClear();
+
+      let popover = getByTestId('popover');
+      let notPrevented = fireEvent.mouseDown(popover);
+      fireEvent.mouseUp(popover);
+      expect(notPrevented).toBe(false);
+
+      await user.click(popover);
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(getByRole('listbox')).toBeVisible();
+      expect(combobox).toHaveFocus();
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(onBlur).not.toHaveBeenCalled();
+    });
+
     it('closes and commits custom value', async function () {
       let {getByRole, queryByRole} = render(
         <Provider theme={theme}>

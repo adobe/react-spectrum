@@ -753,6 +753,96 @@ describe('ComboBox', () => {
     expect(comboboxTester.getCombobox()).toHaveValue('Apple');
   });
 
+  describe('pressing inside the popover', () => {
+    let onPress = jest.fn();
+    let PopoverContentComboBox = props => (
+      <>
+        <ComboBox {...props}>
+          <Label>Favorite Animal</Label>
+          <Input />
+          <Button />
+          <Popover data-testid="popover">
+            <div data-testid="toolbar">
+              <Button onPress={onPress}>Reset selection</Button>
+              <Button>Another action</Button>
+            </div>
+            <span>Some text</span>
+            <input aria-label="Filter" />
+            <select aria-label="Sort">
+              <option>Name</option>
+            </select>
+            <input aria-label="Size" type="range" />
+            <ListBox>
+              <ListBoxItem id="1">Cat</ListBoxItem>
+              <ListBoxItem id="2">Dog</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </ComboBox>
+        <span>Outside</span>
+      </>
+    );
+
+    it('should keep the popover open and focus in the input when pressing a non-field part', async () => {
+      let onBlur = jest.fn();
+      let {container, getByTestId, getByRole, getByText} = render(
+        <PopoverContentComboBox onBlur={onBlur} />
+      );
+      let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+      let input = comboboxTester.getCombobox();
+      await user.click(input);
+      await user.keyboard('Ca');
+      expect(comboboxTester.getListbox()).toBeVisible();
+
+      let targets = [
+        getByTestId('popover'),
+        getByTestId('toolbar'),
+        getByRole('button', {name: 'Reset selection'}),
+        getByText('Some text')
+      ];
+      for (let target of targets) {
+        let notPrevented = fireEvent.mouseDown(target);
+        fireEvent.mouseUp(target);
+        expect(notPrevented).toBe(false);
+
+        await user.click(target);
+        act(() => jest.runAllTimers());
+        expect(comboboxTester.getListbox()).toBeVisible();
+        expect(input).toHaveFocus();
+        expect(input).toHaveValue('Ca');
+      }
+
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onBlur).not.toHaveBeenCalled();
+
+      // Pressing outside still commits (resets the input since custom values aren't allowed) and closes.
+      await user.click(getByText('Outside'));
+      act(() => jest.runAllTimers());
+      expect(comboboxTester.getListbox()).toBeNull();
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(input).toHaveValue('');
+    });
+
+    it('should let fields inside the popover take focus', async () => {
+      let {container, getByLabelText} = render(<PopoverContentComboBox />);
+      let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+      await comboboxTester.open();
+      expect(comboboxTester.getListbox()).toBeVisible();
+
+      for (let label of ['Filter', 'Sort', 'Size']) {
+        let field = getByLabelText(label);
+        let notPrevented = fireEvent.mouseDown(field);
+        fireEvent.mouseUp(field);
+        expect(notPrevented).toBe(true);
+      }
+
+      let filter = getByLabelText('Filter');
+      await user.click(filter);
+      act(() => jest.runAllTimers());
+      expect(filter).toHaveFocus();
+      expect(comboboxTester.getListbox()).toBeVisible();
+    });
+  });
+
   it('should support multiple selection', async () => {
     let onChange = jest.fn();
     let {container, getByTestId} = render(
