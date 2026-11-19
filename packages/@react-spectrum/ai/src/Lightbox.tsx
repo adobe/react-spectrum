@@ -205,7 +205,6 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
     [locale, direction]
   );
 
-  // Only render Lightbox Carousel inside a modal if there is a trigger
   if (ctx) {
     return (
       <ModalOverlay
@@ -252,14 +251,12 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
                     zIndex: 1
                   })}
                 />
-                {/* <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}> */}
                 <RACTabs
                   {...props}
                   selectedKey={ctx?.activeKey}
                   onSelectionChange={ctx?.setActiveKey}
                   className={carouselStyles}
                 />
-                {/* </LightBoxCarouselContext.Provider> */}
               </>
             )}
           </Dialog>
@@ -269,7 +266,6 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
   }
 
   return (
-    // <LightBoxCarouselContext.Provider value={{isInfinite: props.isInfinite}}>
     <div
       role="region"
       aria-label={props['aria-label']}
@@ -277,7 +273,6 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
       style={{width: '100%', height: '100%'}}>
       <RACTabs {...props} className={carouselStyles} />
     </div>
-    // </LightBoxCarouselContext.Provider>
   );
 }
 
@@ -331,8 +326,8 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
   );
 
   // Wait until tab state has initialized its focus target before running autofocus.
-  if (state?.selectionManager.focusedKey != null) {
-    return <FocusScope autoFocus={ctx?.isOpen ?? false}>{picker}</FocusScope>;
+  if (ctx?.isOpen && focusedKey != null) {
+    return <FocusScope autoFocus>{picker}</FocusScope>;
   }
 
   return picker;
@@ -364,7 +359,7 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   let collection = state?.collection;
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production' || !collection) {
+    if (process.env.NODE_ENV === 'production' || !collection || collection.size === 0) {
       return;
     }
 
@@ -422,7 +417,7 @@ function getScrollLeft(el: HTMLElement, index: number, isRTL: boolean) {
 }
 
 function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
-  let {children: renderPage, ...otherProps} = props;
+  let {children: renderPage} = props;
   let state = useContext(TabListStateContext)!;
   let isRTL = useLocale().direction === 'rtl';
   let ref = useRef<HTMLDivElement | null>(null);
@@ -578,12 +573,10 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
   let leadingPages = Math.max(0, selectedIndex - 1);
   let trailingPages = Math.max(0, size - selectedIndex - 2);
 
-  // TODO: are there actually otherProps, should i just mergeProps?
   return (
     <>
       <div
         ref={ref}
-        {...otherProps}
         {...keyboardProps}
         className={itemsStyles + ' ' + scrollFade({x: 16})}
         onScroll={onScroll}
