@@ -1,5 +1,6 @@
 import {
   AriaLabelingProps,
+  FocusEvents,
   GlobalDOMAttributes,
   HoverEvents,
   PressEvents,
@@ -110,6 +111,7 @@ export interface ColorSwatchPickerItemProps
     RenderProps<ColorSwatchPickerItemRenderProps>,
     HoverEvents,
     PressEvents,
+    FocusEvents<HTMLDivElement>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
