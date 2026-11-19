@@ -10,10 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-types/shared';
+import {Collection, Key, Node} from '@react-types/shared';
 import {getChildNodes} from './getChildNodes';
 
 const cache = new WeakMap<Iterable<unknown>, number>();
+const indexCache = new WeakMap<Iterable<unknown>, Map<Key, number>>();
+
+/** Returns an item's position among the collection's items, excluding section headings. */
+export function getItemIndex<T>(collection: Collection<Node<T>>, key: Key): number | undefined {
+  let indices = indexCache.get(collection);
+  if (!indices) {
+    let newIndices = new Map<Key, number>();
+    let visit = (items: Iterable<Node<T>>) => {
+      for (let item of items) {
+        if (item.type === 'section') {
+          visit(getChildNodes(item, collection));
+        } else if (item.type === 'item') {
+          newIndices.set(item.key, newIndices.size);
+        }
+      }
+    };
+    visit(collection);
+    indexCache.set(collection, newIndices);
+    cache.set(collection, newIndices.size);
+    indices = newIndices;
+  }
+
+  return indices.get(key);
+}
 
 export function getItemCount<T>(collection: Collection<Node<T>>): number {
   let count = cache.get(collection);
