@@ -19,6 +19,7 @@ import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {flushSync} from 'react-dom';
 import {FocusableElement, Key} from '@react-types/shared';
+import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
 import {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
 import {
@@ -286,10 +287,9 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
       return;
     }
 
-    if (previousSelectedKey.current == null) {
-      if (focusedKey != null) {
-        previousSelectedKey.current = selectedKey;
-      }
+    let isInitial = previousSelectedKey.current == null;
+    // Wait until tab state has initialized its focus target.
+    if (isInitial && focusedKey == null) {
       return;
     }
 
@@ -303,7 +303,12 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
     }
 
     previousSelectedKey.current = selectedKey;
-    if (
+    if (isInitial) {
+      // Focus the starting thumbnail when the modal opens.
+      if (ctx?.isOpen) {
+        focusSafely(selectedTab);
+      }
+    } else if (
       manager.isFocused &&
       focusedKey !== selectedKey &&
       nodeContains(tabList, getActiveElement(tabList.ownerDocument))
@@ -311,21 +316,14 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
       manager.setFocusedKey(selectedKey);
     }
 
-    scrollIntoView(tabList, selectedTab);
-  }, [selectedKey, focusedKey, manager]);
+    scrollIntoView(tabList, selectedTab, {inline: 'center'});
+  }, [selectedKey, focusedKey, manager, ctx?.isOpen]);
 
-  let picker = (
+  return (
     <div className={style({display: 'flex', justifyContent: 'center', order: 1})}>
       <RACTabList {...props} ref={ref} className={pickerStyles + ' ' + scrollFade({x: 16})} />
     </div>
   );
-
-  // Wait until tab state has initialized its focus target before running autofocus.
-  if (ctx?.isOpen && focusedKey != null) {
-    return <FocusScope autoFocus>{picker}</FocusScope>;
-  }
-
-  return picker;
 }
 
 const thumbnailStyles = style({
