@@ -80,11 +80,12 @@ describe('Button keyboard activation', () => {
 
   it('should allow virtual activation after a key press that moved focus to a native element', async () => {
     let onPress = vi.fn();
+    let onClick = vi.fn();
     let linkRef = React.createRef<HTMLAnchorElement>();
-    let {getByRole, getByText} = await render(
-      <>
+    let {getByRole} = await render(
+      <form onSubmit={e => e.preventDefault()}>
         <Button
-          id="trigger"
+          type="submit"
           onPressStart={e => {
             if (e.pointerType === 'keyboard') {
               // oxlint-disable-next-line rsp-rules/act-events-test
@@ -92,15 +93,15 @@ describe('Button keyboard activation', () => {
             }
           }}
           onPress={onPress}
+          onClick={onClick}
           autoFocus>
           Activate
         </Button>
         <a href="https://example.com" ref={linkRef}>
           Link
         </a>
-        {/* Label activation dispatches a trusted click with no pointerType, like a screen reader. */}
-        <label htmlFor="trigger">Label</label>
-      </>
+        <input aria-label="Implicit submission" />
+      </form>
     );
     await expect.element(getByRole('button')).toHaveFocus();
 
@@ -110,8 +111,17 @@ describe('Button keyboard activation', () => {
     await expect.element(getByRole('link')).toHaveFocus();
     expect(onPress).not.toHaveBeenCalled();
 
-    await userEvent.click(getByText('Label'));
+    // Implicit submission dispatches a trusted click with no pointerType, like a screen reader.
+    // Unlike label clicks, it does not inherit the pointerType of a preceding mouse click.
+    await userEvent.click(getByRole('textbox'));
+    await userEvent.keyboard('{Enter}');
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onPress).toHaveBeenLastCalledWith(expect.objectContaining({pointerType: 'virtual'}));
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        nativeEvent: expect.objectContaining({isTrusted: true, detail: 0, pointerType: ''})
+      })
+    );
   });
 });
