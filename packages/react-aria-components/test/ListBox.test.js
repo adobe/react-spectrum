@@ -272,6 +272,35 @@ describe('ListBox', () => {
     expect(groups[1]).toHaveAttribute('data-test-prop', 'test-section-2');
   });
 
+  it('should warn once when a DOM element is rendered inside a collection', () => {
+    let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let Veggie = props => <ListBoxItem {...props} />;
+    let items = [{id: 'lettuce'}, {id: 'tomato'}];
+    let renderSection = (extra, items) => (
+      <ListBox aria-label="Sandwich contents">
+        <ListBoxSection>
+          <Header>Veggies</Header>
+          {extra}
+          <Collection items={items}>{item => <Veggie>{item.id}</Veggie>}</Collection>
+        </ListBoxSection>
+      </ListBox>
+    );
+
+    let {getAllByRole, rerender} = render(renderSection(null, items));
+    expect(getAllByRole('option')).toHaveLength(2);
+    expect(warn).not.toHaveBeenCalled();
+
+    rerender(renderSection(<div>Remove me!!</div>, items));
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledWith(
+      'Unsupported element <div> found in collection. Only collection components such as items, sections, and headers can be rendered inside a collection. The <div> and its children will not be rendered.'
+    );
+
+    rerender(renderSection(<span>Remove me too!!</span>, [...items, {id: 'onion'}]));
+    expect(warn).toHaveBeenCalledTimes(1);
+    warn.mockRestore();
+  });
+
   it('should support dynamic collections', () => {
     let options = [
       {id: 1, name: 'Cat'},
@@ -2484,6 +2513,27 @@ describe('ListBox', () => {
       expect(() => revealed.rerender(<Reveal mode="visible" />)).toThrow(
         'Duplicate key "a" found in collection.'
       );
+    });
+
+    it('should not warn about collection components inside a hidden Activity', () => {
+      function App({mode}) {
+        return (
+          <ListBox aria-label="Test">
+            <React.Activity mode={mode}>
+              <ListBoxSection>
+                <Header>Veggies</Header>
+                <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+              </ListBoxSection>
+            </React.Activity>
+            <ListBoxItem id="ham">Ham</ListBoxItem>
+          </ListBox>
+        );
+      }
+
+      let {getAllByRole, rerender} = render(<App mode="hidden" />);
+      expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Ham']);
+      rerender(<App mode="visible" />);
+      expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Lettuce', 'Ham']);
     });
   }
 });
