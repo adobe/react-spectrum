@@ -322,18 +322,27 @@ export function useCalendarCell(
   // Focus the button in the DOM when the state updates.
   useEffect(() => {
     if (isFocused && ref.current) {
-      focusWithoutScrolling(ref.current);
+      // Focusing can trigger blur handlers on the previously focused element.
+      // Defer it until after the effect so those handlers can safely use flushSync.
+      let element = ref.current;
+      queueMicrotask(() => {
+        if (ref.current !== element || !element.isConnected) {
+          return;
+        }
 
-      // Scroll into view if navigating with a keyboard, otherwise
-      // try not to shift the view under the user's mouse/finger.
-      // If in a overlay, scrollIntoViewport will only cause scrolling
-      // up to the overlay scroll body to prevent overlay shifting.
-      // Also only scroll into view if the cell actually got focused.
-      // There are some cases where the cell might be disabled or inside,
-      // an inert container and we don't want to scroll then.
-      if (getInteractionModality() !== 'pointer' && getActiveElement() === ref.current) {
-        scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
-      }
+        focusWithoutScrolling(element);
+
+        // Scroll into view if navigating with a keyboard, otherwise
+        // try not to shift the view under the user's mouse/finger.
+        // If in a overlay, scrollIntoViewport will only cause scrolling
+        // up to the overlay scroll body to prevent overlay shifting.
+        // Also only scroll into view if the cell actually got focused.
+        // There are some cases where the cell might be disabled or inside,
+        // an inert container and we don't want to scroll then.
+        if (getInteractionModality() !== 'pointer' && getActiveElement() === element) {
+          scrollIntoViewport(element, {containingElement: getScrollParent(element)});
+        }
+      });
     }
   }, [isFocused, ref]);
 

@@ -14,6 +14,8 @@ jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button} from '../src/Button';
+import {Calendar, CalendarCell, CalendarGrid} from '../src/Calendar';
+import {CalendarDate} from '@internationalized/date';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Group} from '../src/Group';
@@ -402,6 +404,39 @@ describe('NumberField', () => {
     await user.paste('1.000');
     await user.keyboard('{Enter}');
     expect(input).toHaveValue('$1.00', 'Ambiguous value should be parsed using the current locale');
+  });
+
+  it('commits and announces a corrected value when focus moves in an effect', async () => {
+    let onChange = jest.fn();
+    let {getByRole, rerender} = render(
+      <TestNumberField defaultValue={5} maxValue={10} onChange={onChange} />
+    );
+    let input = getByRole('textbox');
+    await user.click(input);
+    await user.clear(input);
+    await user.type(input, '20');
+
+    using consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    await act(async () => {
+      rerender(
+        <>
+          <TestNumberField defaultValue={5} maxValue={10} onChange={onChange} />
+          <Calendar
+            autoFocus
+            aria-label="Calendar"
+            defaultFocusedValue={new CalendarDate(2026, 4, 1)}>
+            <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          </Calendar>
+        </>
+      );
+      await Promise.resolve();
+    });
+    expect(input).toHaveValue('10');
+    expect(onChange).toHaveBeenLastCalledWith(10);
+    expect(announce).toHaveBeenCalledWith('10', 'assertive');
+    expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+      expect.stringContaining('flushSync was called from inside a lifecycle method')
+    );
   });
 
   it('should support arabic singular and dual counts', async () => {
