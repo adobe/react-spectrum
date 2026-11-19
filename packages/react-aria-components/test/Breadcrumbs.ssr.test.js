@@ -14,6 +14,7 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Breadcrumbs SSR', function () {
   it('should render without errors', async function () {
+    let serverOptions;
     await testSSR(
       __filename,
       `
@@ -29,13 +30,18 @@ describe('Breadcrumbs SSR', function () {
     `,
       () => {
         // Assert that server rendered stuff into the HTML.
-        let options = screen.getAllByRole('listitem');
-        expect(options.map(o => o.textContent)).toEqual(['One', 'Two', 'Three']);
+        serverOptions = screen.getAllByRole('listitem');
+        expect(serverOptions.map(o => o.textContent)).toEqual(['One', 'Two', 'Three']);
       }
     );
 
     // Assert that hydrated UI matches what we expect.
-    let options = screen.getAllByRole('listitem');
-    expect(options.map(o => o.textContent)).toEqual(['One', 'Two', 'Three']);
+    let hydratedOptions = screen.getAllByRole('listitem');
+    expect(hydratedOptions.map(o => o.textContent)).toEqual(['One', 'Two', 'Three']);
+
+    // Assert that hydration reuses the server-rendered DOM nodes.
+    for (let i = 0; i < hydratedOptions.length; i++) {
+      expect(hydratedOptions[i]).toBe(serverOptions[i]);
+    }
   });
 });
