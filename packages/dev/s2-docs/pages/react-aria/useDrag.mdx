@@ -279,6 +279,9 @@ function Draggable() {
   <DropTarget />
 </div>
 ```
+
+To restrict mouse and touch dragging to the drag button as well, spread both `dragProps` and the button props onto the drag button element instead of the parent element.
+
 ## Disabling dragging
 If you need to temporarily disable dragging, you can pass the `isDisabled` option to `useDrag`. This will prevent dragging an element until it is re-enabled.
 
