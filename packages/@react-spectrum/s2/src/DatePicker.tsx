@@ -182,6 +182,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     <AriaDatePicker
       ref={ref}
       isRequired={isRequired}
+      placeholderValue={placeholderValue}
       {...dateFieldProps}
       style={UNSAFE_style}
       className={

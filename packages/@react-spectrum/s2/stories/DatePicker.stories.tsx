@@ -19,7 +19,7 @@ import {DatePicker} from '../src/DatePicker';
 import {Form} from '../src/Form';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
-import {parseDate, toZoned} from '@internationalized/date';
+import {parseDate, parseZonedDateTime, toZoned} from '@internationalized/date';
 import {style} from '../style' with {type: 'macro'};
 
 const events = ['onChange', 'onOpenChange'];
@@ -67,6 +67,14 @@ export const Zoned: Story = {
   args: {
     label: 'Birthday',
     defaultValue: toZoned(parseDate('2020-02-03'), 'America/New_York')
+  }
+};
+
+export const ZonedPlaceholder: Story = {
+  args: {
+    label: 'Appointment',
+    name: 'appointment',
+    placeholderValue: parseZonedDateTime('2026-11-01T09:30[UTC]')
   }
 };
 
