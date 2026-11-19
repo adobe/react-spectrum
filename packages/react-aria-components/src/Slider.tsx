@@ -87,6 +87,8 @@ export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElem
 export const SliderStateContext = createContext<SliderState | null>(null);
 export const SliderTrackContext =
   createContext<ContextValue<SliderTrackContextValue, HTMLDivElement>>(null);
+// useSliderState tracks per-thumb editability in a ref, so toggling SliderThumb's isDisabled
+// wouldn't re-render Slider to update NumberFieldContext. Report it here instead.
 const SliderThumbDisabledContext = createContext<
   ((index: number, isDisabled: boolean) => void) | null
 >(null);

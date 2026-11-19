@@ -452,6 +452,8 @@ export function SliderBase<T extends number | number[]>(
       }>
       {({state}) => {
         let maxLabelLength = 0;
+        // Also measure one step in from each bound: for decimal steps (e.g. 0–10 with step 0.1),
+        // 0.1 and 9.9 are wider than 0 and 10.
         let minStep = snapValueToStep(minValue + state.step, minValue, maxValue, state.step);
         let maxStep = snapValueToStep(maxValue - state.step, minValue, maxValue, state.step);
         let minFormatted = state.getFormattedValue(minValue);

@@ -56,6 +56,8 @@ const editableFieldGroup = style({
   }
 });
 
+// Hidden pseudo-elements in the same grid cell reserve the widest formatted min/max value so
+// the field doesn't resize as the slider moves.
 const editableInputSizer = css(`
   display: inline-grid;
   flex-grow: 1;
@@ -77,6 +79,7 @@ const editableInputSizer = css(`
   }
 `);
 
+// Sizes each range input to its current text so the range separator stays flush against it.
 const autoWidthInputSizer = css(`
   display: inline-grid;
   min-width: 0;
@@ -119,6 +122,7 @@ function focusClosestRangeInput(container: HTMLElement, clientX: number) {
     let [start, end] = inputs;
     let startRect = start.getBoundingClientRect();
     let endRect = end.getBoundingClientRect();
+    // Compare rendered rects to handle RTL layouts where the start input is on the right.
     let startIsRight = startRect.left > endRect.left;
     let [left, right] = startIsRight ? [endRect, startRect] : [startRect, endRect];
     let clickedRight = clientX >= (left.right + right.left) / 2;
