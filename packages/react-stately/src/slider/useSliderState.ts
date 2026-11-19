@@ -13,7 +13,7 @@
 import {clamp, snapValueToStep} from '../utils/number';
 
 import {LabelableProps, Orientation, RangeInputBase, ValueBase} from '@react-types/shared';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
 export interface SliderProps<T = number | number[]>
@@ -259,23 +259,11 @@ export function useSliderState<T extends number | number[]>(
   const [isDraggings, setDraggingsState] = useState<boolean[]>(
     new Array(values.length).fill(false)
   );
-  let [thumbEditability, setThumbEditability] = useState<Record<number, boolean>>({});
-  let setThumbEditable = useCallback((index: number, editable: boolean) => {
-    setThumbEditability(current =>
-      (current[index] ?? true) === editable ? current : {...current, [index]: editable}
-    );
-  }, []);
+  const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
   const valuesRef = useRef<number[]>(values);
   const isDraggingsRef = useRef<boolean[]>(isDraggings);
-
-  // Sync between interactions without discarding batched updates or pending drag values.
-  useEffect(() => {
-    if (!isDraggingsRef.current.some(Boolean)) {
-      valuesRef.current = values;
-    }
-  });
 
   let setValues = (values: number[]) => {
     valuesRef.current = values;
@@ -299,7 +287,11 @@ export function useSliderState<T extends number | number[]>(
   }
 
   function isThumbEditable(index: number) {
-    return !isDisabled && index in values && (thumbEditability[index] ?? true);
+    return isEditablesRef.current[index];
+  }
+
+  function setThumbEditable(index: number, editable: boolean) {
+    isEditablesRef.current[index] = editable;
   }
 
   function updateValue(index: number, value: number) {
@@ -322,6 +314,10 @@ export function useSliderState<T extends number | number[]>(
     if (isDisabled || !isThumbEditable(index)) {
       return;
     }
+    if (dragging) {
+      valuesRef.current = values;
+    }
+
     const wasDragging = isDraggingsRef.current[index];
     isDraggingsRef.current = replaceIndex(isDraggingsRef.current, index, dragging);
     setDraggings(isDraggingsRef.current);

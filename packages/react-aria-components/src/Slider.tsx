@@ -50,12 +50,16 @@ import React, {
   forwardRef,
   HTMLAttributes,
   OutputHTMLAttributes,
+  useCallback,
   useContext,
-  useRef
+  useEffect,
+  useRef,
+  useState
 } from 'react';
 import {SliderState, useSliderState} from 'react-stately/useSliderState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
@@ -83,6 +87,9 @@ export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElem
 export const SliderStateContext = createContext<SliderState | null>(null);
 export const SliderTrackContext =
   createContext<ContextValue<SliderTrackContextValue, HTMLDivElement>>(null);
+const SliderThumbDisabledContext = createContext<
+  ((index: number, isDisabled: boolean) => void) | null
+>(null);
 export const SliderFillContext = createContext<ContextValue<SliderFillProps, HTMLDivElement>>(null);
 export const SliderOutputContext =
   createContext<ContextValue<SliderOutputContextValue, HTMLOutputElement>>(null);
@@ -115,6 +122,13 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   [props, ref] = useContextProps(props, ref, SliderContext);
   let trackRef = useRef<HTMLDivElement>(null);
   let numberFieldRefs = useRef<(HTMLDivElement | null)[]>([]);
+  let isResettingRef = useRef(false);
+  let [disabledThumbs, setDisabledThumbs] = useState<Record<number, boolean>>({});
+  let setThumbDisabled = useCallback((index: number, isDisabled: boolean) => {
+    setDisabledThumbs(current =>
+      Boolean(current[index]) === isDisabled ? current : {...current, [index]: isDisabled}
+    );
+  }, []);
   let {direction} = useLocale();
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
@@ -124,6 +138,26 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
     state,
     trackRef
   );
+
+  // SliderThumb already handles form reset for each thumb. Ignore NumberField's own form reset
+  // handler so it doesn't duplicate updates or fire onChangeEnd on reset.
+  useEffect(() => {
+    let form = trackRef.current?.closest('form');
+    if (!form) {
+      return;
+    }
+    let onReset = () => {
+      isResettingRef.current = true;
+      queueMicrotask(() => {
+        isResettingRef.current = false;
+      });
+    };
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
+    form.addEventListener('reset', onReset, true);
+    return () => {
+      form.removeEventListener('reset', onReset, true);
+    };
+  }, []);
 
   let renderProps = useRenderProps({
     ...props,
@@ -150,9 +184,8 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
     step: state.step,
     formatOptions: props.formatOptions,
     value: state.values[index],
-    defaultValue: state.defaultValues[index],
     // A thumb can be individually disabled via SliderThumb's isDisabled.
-    isDisabled: state.isDisabled || !state.isThumbEditable(index),
+    isDisabled: state.isDisabled || Boolean(disabledThumbs[index]),
     // Label the NumberField with the slider's labelling ids (its Label and any aria-labelledby
     // passed to the Slider), falling back to the slider group's id (e.g. aria-label only).
     'aria-labelledby': groupProps['aria-labelledby'] || groupProps.id,
@@ -162,7 +195,14 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
     // key in the reading direction at the end of one input's text moves the caret into the next
     // enabled input, and vice versa at the start.
     onKeyDown(e) {
-      if (state.values.length <= 1 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
+      if (
+        state.values.length <= 1 ||
+        e.nativeEvent.isComposing ||
+        e.altKey ||
+        e.ctrlKey ||
+        e.metaKey ||
+        e.shiftKey
+      ) {
         return;
       }
 
@@ -207,9 +247,11 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
       }
     },
     onChange(val) {
-      // NumberField emits NaN when its input is cleared. Ignore that, and skip committing values
-      // that snap to the thumb's current value so no redundant onChange/onChangeEnd fires.
+      // NumberField emits NaN when its input is cleared, and also fires onChange on form reset
+      // (already handled by SliderThumb). Ignore both, and skip committing values that snap to
+      // the thumb's current value so no redundant onChange/onChangeEnd fires.
       if (
+        isResettingRef.current ||
         Number.isNaN(val) ||
         snapValueToStep(
           val,
@@ -274,6 +316,7 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
       values={[
         [SliderStateContext, state],
         [SliderTrackContext, {...trackProps, ref: trackRef}],
+        [SliderThumbDisabledContext, setThumbDisabled],
         [SliderOutputContext, outputProps],
         [LabelContext, {...labelProps, ref: labelRef}],
         // Lets a Group inside the slider (e.g. wrapping range inputs) inherit the disabled state.
@@ -467,8 +510,15 @@ export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 ) {
   let {inputRef: userInputRef = null} = props;
   let state = useContext(SliderStateContext)!;
+  let setThumbDisabled = useContext(SliderThumbDisabledContext);
   let {ref: trackRef} = useSlottedContext(SliderTrackContext)!;
   let {index = 0} = props;
+  useLayoutEffect(() => {
+    if (props.isDisabled && setThumbDisabled) {
+      setThumbDisabled(index, true);
+      return () => setThumbDisabled(index, false);
+    }
+  }, [index, props.isDisabled, setThumbDisabled]);
   let defaultInputRef = useRef<HTMLInputElement>(null);
   let inputRef = userInputRef || defaultInputRef;
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);

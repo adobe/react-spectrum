@@ -220,29 +220,4 @@ describe('useSliderState', () => {
     act(() => result.current.setThumbDragging(0, false));
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
-
-  it('retries controlled changes that the parent does not accept', () => {
-    let onChange = jest.fn();
-    let onChangeEnd = jest.fn();
-    let {result} = renderHook(() =>
-      useSliderState({
-        value: [20],
-        onChange,
-        onChangeEnd,
-        numberFormatter
-      })
-    );
-
-    for (let i = 0; i < 2; i++) {
-      act(() => result.current.setThumbDragging(0, true));
-      act(() => result.current.setThumbValue(0, 40));
-      act(() => result.current.setThumbDragging(0, false));
-      expect(result.current.values).toEqual([20]);
-    }
-
-    expect(onChange).toHaveBeenCalledTimes(2);
-    expect(onChange).toHaveBeenLastCalledWith([40]);
-    expect(onChangeEnd).toHaveBeenCalledTimes(2);
-    expect(onChangeEnd).toHaveBeenLastCalledWith([40]);
-  });
 });

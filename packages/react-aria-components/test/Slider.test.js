@@ -649,6 +649,7 @@ describe('Slider', () => {
   it.each([false, true])(
     'resets both editable range values (controlled: %s)',
     async isControlled => {
+      let onChangeEnd = jest.fn();
       function Example() {
         let [value, setValue] = useState([20, 80]);
         return (
@@ -657,7 +658,8 @@ describe('Slider', () => {
               aria-label="Range"
               defaultValue={[20, 80]}
               value={isControlled ? value : undefined}
-              onChange={setValue}>
+              onChange={setValue}
+              onChangeEnd={onChangeEnd}>
               <SliderTrack>
                 <SliderThumb index={0} name="start" aria-label="Minimum" />
                 <SliderThumb index={1} name="end" aria-label="Maximum" />
@@ -683,8 +685,10 @@ describe('Slider', () => {
       await user.click(maxInput);
       await user.clear(maxInput);
       await user.keyboard('60{Enter}');
+      onChangeEnd.mockClear();
       await user.click(getByRole('button', {name: 'Reset'}));
 
+      expect(onChangeEnd).not.toHaveBeenCalled();
       expect(getAllByRole('slider').map(input => input.value)).toEqual(['20', '80']);
       expect(minInput).toHaveValue('20');
       expect(maxInput).toHaveValue('80');
