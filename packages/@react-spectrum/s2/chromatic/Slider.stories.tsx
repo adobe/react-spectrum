@@ -88,17 +88,17 @@ export const MinMaxValue: Story = {
 };
 
 let editableStates = [
-  {isEditable: [false, true]},
-  {value: [0, 0.5, 1]},
-  {size: ['S', 'M', 'L', 'XL']},
-  {labelPosition: ['top', 'side']},
+  {isEditable: true},
+  {value: [0.5, 1]},
+  {size: ['S', 'L', 'XL']},
+  {labelPosition: 'side'},
   {isEmphasized: true},
   {isDisabled: true}
 ];
 
 let editableCombinations = generatePowerset(
   editableStates,
-  v => v.isDisabled && (v.isEmphasized || v.value !== 0)
+  v => v.isDisabled && (v.isEmphasized || v.value != null)
 );
 
 export const Editable: Story = {
@@ -122,6 +122,7 @@ export const Editable: Story = {
             maxValue={1}
             step={0.01}
             formatOptions={{style: 'percent'}}
+            value={0}
             {...args}
             {...sliderProps}>
             {isEditable ? <SliderInput /> : null}

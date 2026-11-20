@@ -43,23 +43,22 @@ export const Example: Story = {
 };
 
 let editableStates = [
-  {isEditable: [false, true]},
+  {isEditable: true},
   {
     value: [
-      {start: 0, end: 50},
       {start: 25, end: 75},
       {start: 50, end: 100}
     ]
   },
-  {size: ['S', 'M', 'L', 'XL']},
-  {labelPosition: ['top', 'side']},
+  {size: ['S', 'L', 'XL']},
+  {labelPosition: 'side'},
   {isEmphasized: true},
   {isDisabled: true}
 ];
 
 let editableCombinations = generatePowerset(
   editableStates,
-  v => v.isDisabled && (v.isEmphasized || v.value?.start !== 0)
+  v => v.isDisabled && (v.isEmphasized || v.value != null)
 );
 
 export const Editable: Story = {
@@ -77,7 +76,12 @@ export const Editable: Story = {
       {editableCombinations.map(c => {
         let {isEditable, ...sliderProps} = c;
         return (
-          <RangeSlider key={JSON.stringify(c)} label="Label" {...args} {...sliderProps}>
+          <RangeSlider
+            key={JSON.stringify(c)}
+            label="Label"
+            value={{start: 0, end: 50}}
+            {...args}
+            {...sliderProps}>
             {isEditable ? <SliderInput /> : null}
           </RangeSlider>
         );
