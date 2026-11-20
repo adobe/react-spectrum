@@ -13,14 +13,11 @@
 import {colorToken, getToken} from '../../../s2/style/tokens' with {type: 'macro'};
 import {
   colorTokenToString,
-  fontFamily,
-  fontSize,
-  fontSizeCalc,
-  fontWeight,
-  lineHeight,
   resolveColorToken,
   space
 } from '../../../s2/style/spectrum-theme' with {type: 'macro'};
+// Inline resolved font declarations instead of bundling the theme's font tables.
+import {font} from './prose-font' with {type: 'macro'};
 
 interface MacroContext {
   addAsset(asset: {type: string; content: string}): void;
@@ -232,7 +229,11 @@ export function prose(this: MacroContext | void) {
           if (condition === 'default') {
             continue;
           }
-          css += `${indent}${condition.startsWith(':') ? '&' : ''}${condition} { ${prop}: ${value[condition]}; }\n`;
+          if (typeof value[condition] === 'object') {
+            css += `${indent}${condition.startsWith(':') ? '&' : ''}${condition} {\n${emitProperties({[property]: value[condition]}, indent + '  ')}${indent}}\n`;
+          } else {
+            css += `${indent}${condition.startsWith(':') ? '&' : ''}${condition} { ${prop}: ${value[condition]}; }\n`;
+          }
         }
       } else {
         css += `${indent}${prop}: ${value};\n`;
@@ -319,32 +320,6 @@ function hash(v: string) {
     hash = ((hash << 5) + hash + v.charCodeAt(i)) >>> 0;
   }
   return hash;
-}
-
-// Text color per font category. Resolved from static token names so the values
-// can be inlined at build time when `./tokens` is imported as a macro (matching
-// how spectrum-theme consumes tokens); a dynamically computed token name cannot.
-const fontColor = {
-  body: colorTokenToString(resolveColorToken(colorToken('body-color'))),
-  heading: colorTokenToString(resolveColorToken(colorToken('heading-color'))),
-  title: colorTokenToString(resolveColorToken(colorToken('title-color'))),
-  detail: colorTokenToString(resolveColorToken(colorToken('detail-color'))),
-  code: colorTokenToString(resolveColorToken(colorToken('code-color'))),
-  ui: colorTokenToString(resolveColorToken(colorToken('body-color')))
-} as const;
-
-function font(value: keyof typeof fontSize) {
-  let type = value.split('-')[0];
-  let size = fontSize[value];
-  return {
-    fontFamily: fontFamily[type === 'code' ? 'code' : 'sans'],
-    '--fs': `pow(1.125, ${size})`,
-    fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`,
-    fontWeight:
-      fontWeight[type === 'heading' || type === 'title' || type === 'detail' ? type : 'normal'],
-    lineHeight: lineHeight[type],
-    color: fontColor[type as keyof typeof fontColor]
-  };
 }
 
 function margin(value: keyof typeof marginTop) {

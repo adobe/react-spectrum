@@ -28,7 +28,7 @@ import {GlobalDOMAttributes} from '@react-types/shared';
 import {HoverEvents} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, HTMLAttributes, useEffect, useRef} from 'react';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useId} from 'react-aria/useId';
@@ -78,7 +78,8 @@ export interface ButtonProps
     HoverEvents,
     SlotProps,
     RenderProps<ButtonRenderProps, 'button'>,
-    Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
+    Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'>,
+    Pick<HTMLAttributes<HTMLButtonElement>, 'draggable' | 'onDragStart' | 'onDrag' | 'onDragEnd'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element. A function may be provided to compute the class based on component state.
@@ -98,6 +99,8 @@ interface ButtonContextValue extends ButtonProps {
 }
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
+
+const dragPropNames = new Set(['draggable', 'onDragStart', 'onDrag', 'onDragEnd']);
 
 /**
  * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
@@ -156,7 +159,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
-  let DOMProps = filterDOMProps(props, {global: true});
+  let DOMProps = filterDOMProps(props, {global: true, propNames: dragPropNames});
   delete DOMProps.onClick;
 
   return (
