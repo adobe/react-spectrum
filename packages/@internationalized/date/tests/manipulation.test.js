@@ -118,6 +118,23 @@ describe('CalendarDate manipulation', function () {
       expect(date.add({years: 1})).toEqual(new CalendarDate('BC', 9, 9, 3));
     });
 
+    it('should use proleptic leap years in BC', function () {
+      // 1 BC and 5 BC are leap years (astronomical years 0 and -4), 4 BC is not.
+      expect(new CalendarDate('BC', 1, 2, 28).add({days: 1})).toEqual(
+        new CalendarDate('BC', 1, 2, 29)
+      );
+      expect(new CalendarDate('BC', 5, 2, 28).add({days: 1})).toEqual(
+        new CalendarDate('BC', 5, 2, 29)
+      );
+      expect(new CalendarDate('BC', 4, 2, 28).add({days: 1})).toEqual(
+        new CalendarDate('BC', 4, 3, 1)
+      );
+      expect(new CalendarDate('BC', 40, 12, 31).add({days: 60})).toEqual(
+        new CalendarDate('BC', 39, 3, 1)
+      );
+      expect(new CalendarDate('BC', 4, 2, 29)).toEqual(new CalendarDate('BC', 4, 2, 28));
+    });
+
     it('should add between BC and AD', function () {
       let date = new CalendarDate('BC', 1, 9, 3);
       expect(date.add({years: 1})).toEqual(new CalendarDate(1, 9, 3));
