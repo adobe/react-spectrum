@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {calculatePosition} from '../../src/overlays/calculatePosition';
+import {calculatePosition, calculatePositionInternal} from '../../src/overlays/calculatePosition';
 
 const FLIPPED_DIRECTION = {
   left: 'right'
@@ -101,6 +101,55 @@ const overlaySize = {
 const PROVIDER_OFFSET = 50;
 
 describe('calculatePosition', function () {
+  it('keeps an upward popover visible with the iOS keyboard open', () => {
+    let previousScrollTop = document.documentElement.scrollTop;
+    let previousBodyScrollTop = document.body.scrollTop;
+    document.documentElement.scrollTop = 466;
+
+    try {
+      let dimensions = {
+        width: 390,
+        height: 404,
+        totalWidth: 390,
+        totalHeight: 714,
+        top: 0,
+        left: 0,
+        scroll: {top: 466, left: 0}
+      };
+      let position = (offsetTop: number) =>
+        calculatePositionInternal(
+          'top',
+          {top: 680, left: 100, width: 100, height: 40},
+          {top: 0, left: 0, width: 200, height: 200},
+          {top: 0, left: 0, width: 200, height: 200},
+          {top: 0, bottom: 0, left: 0, right: 0},
+          8,
+          false,
+          dimensions,
+          dimensions,
+          {top: 0, left: 0, width: 0, height: 0},
+          8,
+          0,
+          false,
+          undefined,
+          0,
+          0,
+          true,
+          {pageTop: 466, offsetTop, height: 404, scale: 1} as VisualViewport
+        );
+
+      expect(position(0).maxHeight).toBe(198);
+      expect(position(310).maxHeight).toBe(198);
+
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 466;
+      expect(position(310).maxHeight).toBe(198);
+    } finally {
+      document.documentElement.scrollTop = previousScrollTop;
+      document.body.scrollTop = previousBodyScrollTop;
+    }
+  });
+
   function checkPositionCommon(
     title,
     expected,
