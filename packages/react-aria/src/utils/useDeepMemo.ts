@@ -28,3 +28,23 @@ export function useDeepMemo<T>(value: T, isEqual: (a: T, b: T) => boolean): T {
   lastValue.current = value;
   return value;
 }
+
+export function isEqual<T extends object>(a: T, b: T) {
+  if (a === b) {
+    return true;
+  }
+
+  let aKeys = Object.keys(a);
+  let bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) {
+    return false;
+  }
+
+  for (let key of aKeys) {
+    if (b[key] !== a[key]) {
+      return false;
+    }
+  }
+
+  return true;
+}
