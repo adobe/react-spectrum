@@ -28,6 +28,7 @@ import {
   nodeContains
 } from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
+import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import intlMessages from '../intl/*.json';
 import type {KeyboardEvent} from 'react';
@@ -91,6 +92,8 @@ export interface LightboxItemProps extends Omit<
 > {
   children: ReactNode;
 }
+
+const smallTouchScreen = '@media (not ((hover: hover) and (pointer: fine))) and (width < 40rem)';
 
 const carouselStyles = style({
   display: 'flex',
@@ -190,6 +193,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
   let {locale, direction} = useLocale();
   let labelProps = useLabels(props, stringFormatter.format('lightbox.label'));
 
+  // This pattern is borrowed from S2 Modal and used to handle RTL
   let modalRef = useCallback(
     (el: HTMLDivElement | null) => {
       if (el) {
@@ -231,7 +235,11 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
               position: 'relative',
               boxSizing: 'border-box',
               height: 'full',
-              padding: 24,
+              paddingX: {
+                default: 24,
+                [smallTouchScreen]: 0
+              },
+              paddingY: 24,
               color: 'white'
             })}>
             {({close}) => (
@@ -311,7 +319,7 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
     } else if (
       manager.isFocused &&
       focusedKey !== selectedKey &&
-      nodeContains(tabList, getActiveElement(tabList.ownerDocument))
+      nodeContains(tabList, getActiveElement(getOwnerDocument(tabList)))
     ) {
       manager.setFocusedKey(selectedKey);
     }
@@ -331,7 +339,10 @@ const thumbnailStyles = style({
   height: 64,
   objectFit: 'cover',
   borderRadius: 'default',
-  opacity: 0.8
+  opacity: {
+    default: 0.8,
+    isSelected: 1
+  }
 });
 
 export function LightboxPickerItem(props: LightboxPickerItemProps) {
@@ -339,9 +350,11 @@ export function LightboxPickerItem(props: LightboxPickerItemProps) {
 
   return (
     <RACTab {...props} className={renderProps => pickerItemStyles({...renderProps, isInModal})}>
-      <ImageContext.Provider value={{styles: thumbnailStyles}}>
-        {props.children}
-      </ImageContext.Provider>
+      {({isSelected}) => (
+        <ImageContext.Provider value={{styles: thumbnailStyles({isSelected})}}>
+          {props.children}
+        </ImageContext.Provider>
+      )}
     </RACTab>
   );
 }
@@ -455,14 +468,15 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       return;
     }
 
-    let activeElement = getActiveElement(el.ownerDocument) as FocusableElement | null;
+    let activeElement = getActiveElement(getOwnerDocument(el));
     if (!nodeContains(el.querySelector('[role="tabpanel"]'), activeElement)) {
       state.setSelectedKey(key);
       return;
     }
 
-    // Focus is in the current slide, so move it to the new one.
-    activeElement?.blur();
+    // Focus the container before the old slide becomes inert so its blur handler
+    // can clear the focus ring. This also keeps focus inside the Lightbox.
+    focusWithoutScrolling(el);
     // Re-render synchronously so the new slide is active before we focus it.
     flushSync(() => {
       state.setSelectedKey(key);
@@ -601,8 +615,6 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
 interface CarouselNavButtonProps extends Omit<ButtonProps, 'children'> {
   side?: 'start' | 'end';
 }
-
-const smallTouchScreen = '@media (not ((hover: hover) and (pointer: fine))) and (width < 40rem)';
 
 const carouselNavButtonStyles = style<
   ButtonRenderProps & {isInModal: boolean; side?: 'start' | 'end'}

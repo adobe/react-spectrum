@@ -355,6 +355,25 @@ describeOrSkip('Lightbox', () => {
       expect(getByRole('tabpanel')).toHaveFocus();
     });
 
+    it('clears the outgoing focus ring when changing slides', async () => {
+      let {getByRole} = render(<Carousel />);
+      await user.tab();
+      await user.tab();
+      let outgoingPanel = getByRole('tabpanel');
+      expect(outgoingPanel).toHaveFocus();
+      expect(outgoingPanel).toHaveAttribute('data-focus-visible', 'true');
+      let onBlur = jest.fn();
+      outgoingPanel.addEventListener('blur', onBlur, {once: true});
+
+      await user.keyboard('{ArrowRight}');
+
+      expect(outgoingPanel).not.toHaveAttribute('data-focused');
+      expect(outgoingPanel).not.toHaveAttribute('data-focus-visible');
+      expect(getByRole('tabpanel')).toHaveFocus();
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(getByRole('region')).toContainElement(onBlur.mock.calls[0][0].relatedTarget);
+    });
+
     it('does not restore picker focus after focus moves outside and controlled selection changes', async () => {
       let {getByRole, rerender} = render(
         <>
