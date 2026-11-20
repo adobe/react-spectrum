@@ -196,6 +196,26 @@
     width: var(--spacing-4);
     text-align: center;
 
+    &[draggable='true'] {
+      cursor: grab;
+      -webkit-user-drag: element;
+
+      &[data-pressed] {
+        cursor: grabbing;
+      }
+
+      @media not ((hover: hover) and (pointer: fine)) {
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          inset-inline-start: 0;
+          width: calc(4px + var(--spacing-4) + var(--spacing-2));
+        }
+      }
+    }
+
     &[data-focus-visible] {
       border-radius: 4px;
       outline: 2px solid var(--focus-ring-color);
