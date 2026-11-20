@@ -28,8 +28,7 @@ import React, {
   forwardRef,
   ReactNode,
   useContext,
-  useMemo,
-  useState
+  useMemo
 } from 'react';
 import {
   TabInner,
@@ -73,20 +72,16 @@ export interface WizardProps extends Omit<TabsProps, 'children' | 'selectedKey'>
   /** Handler called when the selected step changes. */
   onSelectionChange?: (key: Key) => void;
   /**
-   * The key of the last completed step (controlled). Every step up to and including the one after
-   * it is navigable by default.
+   * The keys of the completed steps. The application decides when a step is completed, for example
+   * once its fields are valid. Unless `allowsRandomAccess` is set, the steps up to and including
+   * the one after the last completed step are navigable, and the `next` button only moves to
+   * navigable steps. When omitted, the steps before the current step are completed, or none are
+   * when `allowsRandomAccess` is set.
    */
-  lastCompletedStep?: Key | null;
-  /** The key of the initially last completed step (uncontrolled). */
-  defaultLastCompletedStep?: Key;
+  completedKeys?: Iterable<Key>;
   /**
-   * Handler called when selecting a step completes the steps before it, in the same event as
-   * `onSelectionChange`.
-   */
-  onLastCompletedStepChange?: (key: Key | null) => void;
-  /**
-   * Whether every step that is not in `disabledKeys` is navigable at any time, rather than only
-   * completed steps and the one after them.
+   * Whether every step that is not in `disabledKeys` is navigable at any time, rather than only the
+   * steps up to and including the one after the last completed step.
    */
   allowsRandomAccess?: boolean;
 }
@@ -109,8 +104,7 @@ export const Wizard = /*#__PURE__*/ forwardRef(function Wizard(
   );
 });
 
-// Passes the wizard's default class name to className functions, and uses it when they return
-// undefined, rather than the one of the Tabs component it wraps.
+// Used so that Wizard can use render props for className with it's own default classname
 function withDefaultClassName<T>(
   className: ClassNameOrFunction<T> | undefined,
   defaultClassName: string
@@ -126,8 +120,6 @@ interface WizardInnerProps {
   tabsRef: ForwardedRef<HTMLDivElement>;
 }
 
-// The wizard state isn't part of the TabListStateContext, so the wizard provides it to its steps
-// separately. Steps read it when they render from the collection.
 const WizardStateContext = createContext<WizardState<unknown> | null>(null);
 
 export interface WizardStateOptions<T> {
@@ -139,15 +131,11 @@ export interface WizardStateOptions<T> {
   defaultSelectedKey?: Key;
   /** Handler called when the selected step changes. */
   onSelectionChange?: (key: Key) => void;
-  /** The key of the last completed step (controlled). */
-  lastCompletedStep?: Key | null;
-  /** The key of the initially last completed step (uncontrolled). */
-  defaultLastCompletedStep?: Key;
   /**
-   * Handler called when selecting a step completes the steps before it, in the same event as
-   * `onSelectionChange`.
+   * The keys of the completed steps. When omitted, the steps before the selected step are
+   * completed, or none are when random access is allowed.
    */
-  onLastCompletedStepChange?: (key: Key | null) => void;
+  completedKeys?: Iterable<Key>;
   /** Whether every step that is not in `disabledKeys` is navigable at any time. */
   allowsRandomAccess?: boolean;
   /** The step keys that are disabled. These steps are never navigable. */
@@ -161,11 +149,8 @@ export interface WizardState<T> {
   selectedKey: Key | null;
   /** Sets the current (selected) step. */
   setSelectedKey(key: Key): void;
-  /**
-   * The key of the last completed step. Every step up to and including the one after it is
-   * navigable by default.
-   */
-  lastCompletedStep: Key | null;
+  /** The keys of the completed steps. */
+  completedKeys: Set<Key>;
   /**
    * Keys that are not navigable.
    */
@@ -173,34 +158,33 @@ export interface WizardState<T> {
   /** The closest navigable step before the current step. */
   previousKey: Key | null;
   /**
-   * The closest step after the current step that isn't disabled. It may be an upcoming step, since
-   * moving to it is how the user completes the current step.
+   * The closest step after the current step that the user can move to. Unless the completed steps
+   * are provided, it may be an upcoming step, since moving to it is how the user completes the
+   * current step.
    */
   nextKey: Key | null;
 }
 
 /**
- * This hook controls the selected step and tracks the last completed step so it can derive which
- * steps are navigable. Completed steps and the current step are navigable; upcoming steps are not
- * unless random access is allowed. Unless it's controlled, the last completed step is derived from
- * the selection: it advances as the selection moves forward and is never rolled back, so previously
- * reached steps stay navigable after navigating backwards. `onLastCompletedStepChange` is called in
- * the same event as `onSelectionChange`, so a controlled last completed step can be updated along
- * with the selection.
+ * This hook controls the selected step, and derives which steps are completed and navigable. The
+ * application decides which steps are completed, or by default, the steps before the selected step
+ * are completed unless random access is allowed. The steps up to and including the one after the
+ * last completed step, and the selected step, are navigable; the steps after those are upcoming,
+ * and are not navigable unless random access is allowed.
  */
 export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> {
   let {
     collection,
     allowsRandomAccess = false,
     disabledKeys: disabledStepKeys,
-    onSelectionChange,
-    onLastCompletedStepChange
+    completedKeys: completedStepKeys,
+    onSelectionChange
   } = props;
 
-  // Steps disabled by the consumer, with disabledKeys or their isDisabled prop, are never navigable,
-  // however the wizard is configured.
+  // Steps disabled by the user are never navigable.
   let disabledSteps = useMemo(() => {
     let set = new Set<Key>(disabledStepKeys);
+    // aggregate steps disabled via individual props as well
     for (let step of collection) {
       if (step.props?.isDisabled) {
         set.add(step.key);
@@ -230,66 +214,36 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
           collection.getKeyAfter(key)
         ) ?? collection.getFirstKey());
 
-  let isLastCompletedStepControlled = props.lastCompletedStep !== undefined;
-  let [lastCompletedStepState, setLastCompletedStepState] = useState<Key | null>(
-    props.defaultLastCompletedStep ?? null
-  );
-  let lastCompletedStep = isLastCompletedStepControlled
-    ? (props.lastCompletedStep ?? null)
-    : lastCompletedStepState;
-
-  // When the uncontrolled last completed step is removed, the closest step before it that remains
-  // becomes the last completed step, so the user's progress isn't rolled back.
-  let [prevCollection, setPrevCollection] = useState(collection);
-  if (collection !== prevCollection) {
-    setPrevCollection(collection);
-    if (
-      !isLastCompletedStepControlled &&
-      lastCompletedStep != null &&
-      !collection.getItem(lastCompletedStep) &&
-      prevCollection.getItem(lastCompletedStep)
-    ) {
-      let key = prevCollection.getKeyBefore(lastCompletedStep);
-      while (key != null && !collection.getItem(key)) {
-        key = prevCollection.getKeyBefore(key);
+  let completedKeys = useMemo(() => {
+    // controlled
+    if (completedStepKeys) {
+      return new Set<Key>(completedStepKeys);
+    }
+    // uncontrolled and linear
+    let set = new Set<Key>();
+    if (!allowsRandomAccess && selectedKey != null) {
+      let key = collection.getKeyBefore(selectedKey);
+      while (key != null) {
+        set.add(key);
+        key = collection.getKeyBefore(key);
       }
-      lastCompletedStep = key;
-      setLastCompletedStepState(key);
     }
-  }
-  let lastCompletedIndex = getStepIndex(collection, lastCompletedStep);
-
-  // Steps are ordered by getKeyBefore and getKeyAfter, which Tabs also uses to move focus.
-  let stepBeforeSelected = selectedKey != null ? collection.getKeyBefore(selectedKey) : null;
-  let stepBeforeSelectedIndex = getStepIndex(collection, stepBeforeSelected);
-
-  // When uncontrolled, every step before the selected step is completed. Store it during render
-  // rather than syncing it in an effect, so it's correct on the first render and isn't rolled back
-  // when the selection moves backwards, even if the selection is controlled.
-  if (!isLastCompletedStepControlled && stepBeforeSelectedIndex > lastCompletedIndex) {
-    lastCompletedIndex = stepBeforeSelectedIndex;
-    lastCompletedStep = stepBeforeSelected;
-    setLastCompletedStepState(lastCompletedStep);
-  }
-
-  // Notify in the same event as the selection change, so a controlled lastCompletedStep can be
-  // updated along with the selection.
-  let setSelectedKey = (key: Key) => {
-    setSelectedKeyState(key);
-    let stepBefore = collection.getKeyBefore(key);
-    if (getStepIndex(collection, stepBefore) > lastCompletedIndex) {
-      onLastCompletedStepChange?.(stepBefore);
-    }
-  };
+    return set;
+  }, [collection, completedStepKeys, allowsRandomAccess, selectedKey]);
 
   let disabledKeys = useMemo(() => {
     let set = new Set<Key>(disabledSteps);
     if (!allowsRandomAccess) {
-      // Completed steps, the first step after them that isn't disabled, and the current step are
-      // navigable. The steps after those are upcoming, and are only navigable if allowsRandomAccess.
+      // In linear, everything after the last completed step is disabled.
+      let lastCompletedKey: Key | null = null;
+      for (let key of completedKeys) {
+        if (getStepIndex(collection, key) > getStepIndex(collection, lastCompletedKey)) {
+          lastCompletedKey = key;
+        }
+      }
       let nextStep = findEnabledStep(
-        lastCompletedStep != null && collection.getItem(lastCompletedStep)
-          ? collection.getKeyAfter(lastCompletedStep)
+        lastCompletedKey != null
+          ? collection.getKeyAfter(lastCompletedKey)
           : collection.getFirstKey(),
         disabledSteps,
         key => collection.getKeyAfter(key)
@@ -303,7 +257,7 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
       }
     }
     return set;
-  }, [collection, selectedKey, lastCompletedStep, allowsRandomAccess, disabledSteps]);
+  }, [collection, selectedKey, completedKeys, allowsRandomAccess, disabledSteps]);
 
   let previousKey =
     selectedKey != null
@@ -311,18 +265,23 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
           collection.getKeyBefore(key)
         )
       : null;
+  // When the application decides which steps are completed, the user can only move forward to a
+  // navigable step. Otherwise, moving to the next step is how the user completes the current step,
+  // so it may be an upcoming step.
   let nextKey =
     selectedKey != null
-      ? findEnabledStep(collection.getKeyAfter(selectedKey), disabledSteps, key =>
-          collection.getKeyAfter(key)
+      ? findEnabledStep(
+          collection.getKeyAfter(selectedKey),
+          completedStepKeys ? disabledKeys : disabledSteps,
+          key => collection.getKeyAfter(key)
         )
       : null;
 
   return {
     collection,
     selectedKey,
-    setSelectedKey,
-    lastCompletedStep,
+    setSelectedKey: setSelectedKeyState,
+    completedKeys,
     disabledKeys,
     previousKey,
     nextKey
@@ -353,9 +312,7 @@ function WizardInner({props, collection, tabsRef}: WizardInnerProps) {
     selectedKey,
     defaultSelectedKey,
     onSelectionChange,
-    lastCompletedStep,
-    defaultLastCompletedStep,
-    onLastCompletedStepChange,
+    completedKeys,
     allowsRandomAccess,
     disabledKeys,
     ...tabsProps
@@ -366,9 +323,7 @@ function WizardInner({props, collection, tabsRef}: WizardInnerProps) {
     selectedKey,
     defaultSelectedKey,
     onSelectionChange,
-    lastCompletedStep,
-    defaultLastCompletedStep,
-    onLastCompletedStepChange,
+    completedKeys,
     allowsRandomAccess,
     disabledKeys
   });
@@ -401,8 +356,6 @@ function WizardInner({props, collection, tabsRef}: WizardInnerProps) {
     }
   };
 
-  // Tabs treats null as a controlled empty selection, so passing it rather than undefined keeps Tabs
-  // controlled while there is no selected step (e.g. before the collection is populated).
   return (
     <Provider
       values={[
@@ -459,7 +412,7 @@ export interface WizardStepRenderProps extends TabRenderProps {
    */
   isCurrent: boolean;
   /**
-   * Whether the step is at or before the last completed step.
+   * Whether the step is completed.
    *
    * @selector [data-completed]
    */
@@ -485,7 +438,7 @@ export interface WizardStepProps
 export interface WizardStepAria {
   /** Whether this step is the current (selected) step. */
   isCurrent: boolean;
-  /** Whether this step is at or before the last completed step. */
+  /** Whether this step is completed. */
   isCompleted: boolean;
   /** The position of the step within the wizard, starting from 1. */
   stepNumber: number;
@@ -497,8 +450,8 @@ interface AriaWizardStepProps {
 }
 
 /**
- * Provides the state of a step within a wizard: whether it is the current step, whether it has
- * already been completed (it is at or before the last completed step), and its position.
+ * Provides the state of a step within a wizard: whether it is the current step, whether it is
+ * completed, and its position.
  */
 export function useWizardStep<T>(
   props: AriaWizardStepProps,
@@ -507,14 +460,12 @@ export function useWizardStep<T>(
   ref: RefObject<FocusableElement | null>
 ): WizardStepAria {
   let {key} = props;
-  let {collection, selectedKey, lastCompletedStep} = state;
+  let {collection, selectedKey, completedKeys} = state;
   let index = getStepIndex(collection, key);
-  let selectedIndex = getStepIndex(collection, selectedKey);
-  let lastCompletedIndex = getStepIndex(collection, lastCompletedStep);
 
   return {
-    isCurrent: index >= 0 && index === selectedIndex,
-    isCompleted: index >= 0 && index <= lastCompletedIndex,
+    isCurrent: key === selectedKey,
+    isCompleted: index >= 0 && completedKeys.has(key),
     stepNumber: index + 1
   };
 }

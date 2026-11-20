@@ -99,7 +99,7 @@ let steps = [
 
 ## Current step
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the current step. The selected key corresponds to the `id` prop of a `<WizardStep>`. Steps before the current step are marked as completed, and steps the user hasn't reached yet are disabled. Use the `data-current` and `data-completed` attributes to style them.
+Use the `defaultSelectedKey` or `selectedKey` prop to set the current step. The selected key corresponds to the `id` prop of a `<WizardStep>`. By default, steps before the current step are marked as completed, and steps after it are disabled. Use the `data-current` and `data-completed` attributes to style them.
 
 ```tsx render
 "use client";
@@ -136,9 +136,199 @@ function Example() {
 }
 ```
 
-Users can go back to any step they have reached, and return to where they left off. Set `allowsRandomAccess` to let users select any step. To restore saved progress, set `defaultLastCompletedStep` to the last step the user completed, or control it with the `lastCompletedStep` and `onLastCompletedStepChange` props.
-
 Buttons with `slot="previous"` and `slot="next"` move to the previous and next steps, skipping disabled steps. They can be placed anywhere inside the `Wizard`, and are disabled when there is no previous or next step.
+
+## Completed steps
+
+These examples create a project with a field on each step. The fields are defined in `ProjectFields.tsx`. Panels are unmounted when their step is not current, so the values are stored in state. Each example also controls the `selectedKey`, so that the next button can create the project on the last step.
+
+### Uncontrolled
+
+By default, the steps before the current step are completed. Users move forward with the next button, and can go back to a completed step, which marks the steps after it as not completed. To validate each step before moving forward, wrap the wizard in a [Form](Form), and move to the next step when the form is submitted. The browser only submits the form when the fields in the current step are valid. Otherwise, it displays the errors and focuses the first invalid field.
+
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/ProjectFields.tsx"]}
+"use client";
+import type {Key} from 'react-aria-components/Wizard';
+import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel} from 'vanilla-starter/Wizard';
+import {Button} from 'vanilla-starter/Button';
+import {Form} from 'vanilla-starter/Form';
+import {NameField, EmailField, Summary} from './ProjectFields';
+import {useState} from 'react';
+
+function Example() {
+  let [step, setStep] = useState<Key>('details');
+  let [name, setName] = useState('');
+  let [email, setEmail] = useState('');
+
+  return (
+    <Form
+      /*- begin highlight -*/
+      onSubmit={e => {
+        e.preventDefault();
+        if (step === 'details') {
+          setStep('members');
+        } else if (step === 'members') {
+          setStep('review');
+        } else {
+          alert(`Created ${name}!`);
+        }
+      }}>
+      {/*- end highlight -*/}
+      <Wizard selectedKey={step} onSelectionChange={setStep}>
+        <WizardStepList aria-label="Create project">
+          <WizardStep id="details">Details</WizardStep>
+          <WizardStep id="members">Members</WizardStep>
+          <WizardStep id="review">Review</WizardStep>
+        </WizardStepList>
+        <WizardPanels>
+          <WizardPanel id="details">
+            <NameField value={name} onChange={setName} />
+          </WizardPanel>
+          <WizardPanel id="members">
+            <EmailField value={email} onChange={setEmail} />
+          </WizardPanel>
+          <WizardPanel id="review">
+            <Summary name={name} email={email} />
+          </WizardPanel>
+        </WizardPanels>
+        <div className="wizard-buttons">
+          <Button slot="previous" variant="secondary">Back</Button>
+          {/*- begin highlight -*/}
+          <Button type="submit">{step === 'review' ? 'Create project' : 'Next'}</Button>
+          {/*- end highlight -*/}
+        </div>
+      </Wizard>
+    </Form>
+  );
+}
+```
+
+### Controlled
+
+Set `completedKeys` to decide which steps are completed, for example once a step's fields are valid, or to restore saved progress. Users can select the steps up to and including the one after the last completed step, and the next button is disabled until the current step is completed. Completed steps stay completed when users go back. Complete steps in order, so that users can't skip ahead of a step that isn't completed.
+
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/ProjectFields.tsx"]}
+"use client";
+import type {Key} from 'react-aria-components/Wizard';
+import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel} from 'vanilla-starter/Wizard';
+import {Button} from 'vanilla-starter/Button';
+import {NameField, EmailField, Summary, isValidName, isValidEmail} from './ProjectFields';
+import {useState} from 'react';
+
+function Example() {
+  let [step, setStep] = useState<Key>('details');
+  let [name, setName] = useState('');
+  let [email, setEmail] = useState('');
+
+  /*- begin highlight -*/
+  // A step is completed once its field is valid, and the steps before it are completed.
+  let completedKeys: Key[] = [];
+  if (isValidName(name)) {
+    completedKeys.push('details');
+    if (isValidEmail(email)) {
+      completedKeys.push('members');
+    }
+  }
+  /*- end highlight -*/
+
+  return (
+    <Wizard
+      selectedKey={step}
+      onSelectionChange={setStep}
+      ///- begin highlight -///
+      completedKeys={completedKeys}
+      ///- end highlight -///
+    >
+      <WizardStepList aria-label="Create project">
+        <WizardStep id="details">Details</WizardStep>
+        <WizardStep id="members">Members</WizardStep>
+        <WizardStep id="review">Review</WizardStep>
+      </WizardStepList>
+      <WizardPanels>
+        <WizardPanel id="details">
+          <NameField value={name} onChange={setName} />
+        </WizardPanel>
+        <WizardPanel id="members">
+          <EmailField value={email} onChange={setEmail} />
+        </WizardPanel>
+        <WizardPanel id="review">
+          <Summary name={name} email={email} />
+        </WizardPanel>
+      </WizardPanels>
+      <div className="wizard-buttons">
+        <Button slot="previous" variant="secondary">Back</Button>
+        {step === 'review'
+          ? <Button onPress={() => alert(`Created ${name}!`)}>Create project</Button>
+          : <Button slot="next">Next</Button>}
+      </div>
+    </Wizard>
+  );
+}
+```
+
+### Random access
+
+Set `allowsRandomAccess` to let users select any step, in any order. Steps are only completed when they are in `completedKeys`, so users can see which steps still need their attention. Users can reach the last step at any time, so check that every step is completed before creating the project.
+
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/ProjectFields.tsx"]}
+"use client";
+import type {Key} from 'react-aria-components/Wizard';
+import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel} from 'vanilla-starter/Wizard';
+import {Button} from 'vanilla-starter/Button';
+import {NameField, EmailField, Summary, isValidName, isValidEmail} from './ProjectFields';
+import {useState} from 'react';
+
+function Example() {
+  let [step, setStep] = useState<Key>('details');
+  let [name, setName] = useState('');
+  let [email, setEmail] = useState('');
+
+  /*- begin highlight -*/
+  // Each step is completed once its field is valid, in any order.
+  let completedKeys: Key[] = [];
+  if (isValidName(name)) {
+    completedKeys.push('details');
+  }
+  if (isValidEmail(email)) {
+    completedKeys.push('members');
+  }
+  /*- end highlight -*/
+
+  return (
+    <Wizard
+      selectedKey={step}
+      onSelectionChange={setStep}
+      ///- begin highlight -///
+      allowsRandomAccess
+      completedKeys={completedKeys}
+      ///- end highlight -///
+    >
+      <WizardStepList aria-label="Create project">
+        <WizardStep id="details">Details</WizardStep>
+        <WizardStep id="members">Members</WizardStep>
+        <WizardStep id="review">Review</WizardStep>
+      </WizardStepList>
+      <WizardPanels>
+        <WizardPanel id="details">
+          <NameField value={name} onChange={setName} />
+        </WizardPanel>
+        <WizardPanel id="members">
+          <EmailField value={email} onChange={setEmail} />
+        </WizardPanel>
+        <WizardPanel id="review">
+          <Summary name={name} email={email} />
+        </WizardPanel>
+      </WizardPanels>
+      <div className="wizard-buttons">
+        <Button slot="previous" variant="secondary">Back</Button>
+        {step === 'review'
+          ? <Button isDisabled={completedKeys.length < 2} onPress={() => alert(`Created ${name}!`)}>Create project</Button>
+          : <Button slot="next">Next</Button>}
+      </div>
+    </Wizard>
+  );
+}
+```
 
 ## API
 

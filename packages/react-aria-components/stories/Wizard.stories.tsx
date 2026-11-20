@@ -65,11 +65,7 @@ export const WizardExample: WizardStory = {
   render: (args: any) => (
     <div>
       <button>Focus landing point</button>
-      <Wizard
-        {...args}
-        className="wizard"
-        defaultSelectedKey="dns"
-        defaultLastCompletedStep="domain">
+      <Wizard {...args} className="wizard" defaultSelectedKey="dns">
         <WizardStepList aria-label="Email domain setup">
           {steps.map(step => (
             <WizardStep key={step.id} id={step.id}>
