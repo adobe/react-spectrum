@@ -56,6 +56,7 @@ import {
   forwardRefType,
   GlobalDOMAttributes,
   HoverEvents,
+  ItemDropTarget,
   Key,
   LinkDOMProps,
   MultipleSelection,
@@ -101,6 +102,7 @@ import React, {
   forwardRef,
   JSX,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -112,6 +114,7 @@ import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {TreeState, useTreeState} from 'react-stately/useTreeState';
+import {useAnimation, useEnterAnimation} from 'react-aria/private/utils/animation';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 import {useCollator} from 'react-aria/useCollator';
 import {useControlledState} from 'react-stately/useControlledState';
@@ -120,16 +123,32 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useGridListSection, useGridListSelectionCheckbox} from 'react-aria/useGridList';
 import {useHover} from 'react-aria/useHover';
 import {useId} from 'react-aria/useId';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useObjectRef} from 'react-aria/useObjectRef';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
+
+const emptyKeySet: Set<Key> = new Set();
+
+interface TreeAnimationContextValue {
+  exitingKeys: Set<Key>;
+  enteringKeys: Set<Key>;
+  renderedCollection: TreeCollection<unknown>;
+  onExitComplete: (key: Key) => void;
+}
+
+const TreeAnimationContext = createContext<TreeAnimationContextValue | null>(null);
 
 class TreeCollection<T> extends BaseCollection<T> {
   private expandedKeys: Set<Key> = new Set();
+  private renderedExpandedKeys: Set<Key> = new Set();
+  private exitingKeys: Set<Key> = emptyKeySet;
 
   withExpandedKeys(lastExpandedKeys: Set<Key>, expandedKeys: Set<Key>) {
     let collection = this.clone();
     collection.expandedKeys = expandedKeys;
+    collection.renderedExpandedKeys = expandedKeys;
 
     // Clone ancestor section nodes so React knows to re-render since the same item won't cause a new render but a clone creating a new object with the same value will
     // Without this change, the items won't expand and collapse when virtualized inside a section
@@ -138,6 +157,36 @@ class TreeCollection<T> extends BaseCollection<T> {
 
     collection.frozen = this.frozen;
     return collection;
+  }
+
+  // Only the renderer sees retained rows. Behavioral consumers keep the semantic collection.
+  withExitingKeys(exitingKeys: Set<Key>) {
+    if (exitingKeys.size === 0) {
+      return this;
+    }
+
+    let collection = this.clone();
+    collection.expandedKeys = this.expandedKeys;
+    collection.renderedExpandedKeys = new Set(this.expandedKeys);
+    collection.exitingKeys = exitingKeys;
+    for (let key of exitingKeys) {
+      let parentKey = this.getItem(key)?.parentKey;
+      while (parentKey != null) {
+        collection.renderedExpandedKeys.add(parentKey);
+        parentKey = this.getItem(parentKey)?.parentKey;
+      }
+    }
+    TreeCollection.cloneAncestorSections(exitingKeys, emptyKeySet, collection);
+    collection.frozen = this.frozen;
+    return collection;
+  }
+
+  private isRendered(node: Node<T>) {
+    return (
+      this.exitingKeys.size === 0 ||
+      this.exitingKeys.has(node.key) ||
+      isRowVisible(this, node.key, this.expandedKeys)
+    );
   }
 
   // diff lastExpandedKeys and expandedKeys so we only clone what has changed
@@ -167,13 +216,15 @@ class TreeCollection<T> extends BaseCollection<T> {
     let node: Node<T> | null = firstKey != null ? this.getItem(firstKey) : null;
 
     while (node) {
-      yield node as Node<T>;
+      if (this.isRendered(node)) {
+        yield node as Node<T>;
+      }
       if (node.type === 'section') {
         node = node.nextKey != null ? this.getItem(node.nextKey) : null;
       } else {
         // This will include both item and content nodes
         // We handle the content nodes in useCollectionRenderer and ListLayout
-        let key = this.getKeyAfter(node.key);
+        let key = this.getKeyAfterInternal(node.key, this.renderedExpandedKeys);
         node = key != null ? this.getItem(key) : null;
       }
     }
@@ -201,12 +252,16 @@ class TreeCollection<T> extends BaseCollection<T> {
   }
 
   getKeyAfter(key: Key) {
+    return this.getKeyAfterInternal(key, this.expandedKeys);
+  }
+
+  private getKeyAfterInternal(key: Key, expandedKeys: Set<Key>) {
     let node = this.getItem(key) as CollectionNode<T>;
     if (!node) {
       return null;
     }
 
-    if ((this.expandedKeys.has(node.key) || node.type !== 'item') && node.firstChildKey != null) {
+    if ((expandedKeys.has(node.key) || node.type !== 'item') && node.firstChildKey != null) {
       return node.firstChildKey;
     }
 
@@ -261,9 +316,11 @@ class TreeCollection<T> extends BaseCollection<T> {
         if (parent && parent.type === 'section' && node) {
           // Stop once either the node is null or the node is the parent's sibling
           while (node && node.key !== parent.nextKey) {
-            yield self.getItem(node.key)!;
+            if (self.isRendered(node)) {
+              yield self.getItem(node.key)!;
+            }
             // This will include content nodes which we skip in ListLayout
-            let key = self.getKeyAfter(node.key);
+            let key = self.getKeyAfterInternal(node.key, self.renderedExpandedKeys);
             node = key != null ? (self.getItem(key)! as CollectionNode<T>) : null;
           }
         } else {
@@ -449,16 +506,64 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
 
   let [lastCollection, setLastCollection] = useState(collection);
   let [lastExpandedKeys, setLastExpandedKeys] = useState(expandedKeys);
+  let [exitingKeys, setExitingKeys] = useState(emptyKeySet);
+  let [enteringKeys, setEnteringKeys] = useState(emptyKeySet);
   let [flattenedCollection, setFlattenedCollection] = useState(() =>
     collection.withExpandedKeys(lastExpandedKeys, expandedKeys)
   );
 
-  // if the lastExpandedKeys is not the same as the currentExpandedKeys or the collection has changed, then run this
-  if (!areSetsEqual(lastExpandedKeys, expandedKeys) || collection !== lastCollection) {
-    setFlattenedCollection(collection.withExpandedKeys(lastExpandedKeys, expandedKeys));
+  let expandedKeysChanged = !areSetsEqual(lastExpandedKeys, expandedKeys);
+  if (expandedKeysChanged || collection !== lastCollection) {
+    let nextCollection = collection.withExpandedKeys(lastExpandedKeys, expandedKeys);
+    let previousVisible = getVisibleItemKeys(flattenedCollection);
+    let nextVisible = getVisibleItemKeys(nextCollection);
+    let nextExiting = new Set<Key>();
+    let nextEntering = new Set<Key>();
+    // Virtualized rows may never mount (or unmount before finishing), so they cannot own exits.
+    if (!isVirtualized) {
+      for (let key of new Set([...exitingKeys, ...previousVisible])) {
+        if (collection.getItem(key) && !nextVisible.has(key)) {
+          nextExiting.add(key);
+        }
+      }
+      if (expandedKeysChanged) {
+        nextEntering = new Set(
+          [...nextVisible].filter(key => !previousVisible.has(key) && !exitingKeys.has(key))
+        );
+      }
+    }
+    setFlattenedCollection(nextCollection);
     setLastCollection(collection);
     setLastExpandedKeys(expandedKeys);
+    setExitingKeys(nextExiting);
+    setEnteringKeys(nextEntering);
   }
+
+  let onExitComplete = useCallback((key: Key) => {
+    setExitingKeys(keys => {
+      if (!keys.has(key)) {
+        return keys;
+      }
+      let next = new Set(keys);
+      next.delete(key);
+      return next;
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    if (enteringKeys.size > 0) {
+      setEnteringKeys(emptyKeySet);
+    }
+  }, [enteringKeys]);
+
+  let renderedCollection = useMemo(
+    () => flattenedCollection.withExitingKeys(exitingKeys),
+    [flattenedCollection, exitingKeys]
+  );
+  let animationContextValue = useMemo(
+    () => ({exitingKeys, enteringKeys, renderedCollection, onExitComplete}),
+    [exitingKeys, enteringKeys, renderedCollection, onExitComplete]
+  );
 
   let state = useTreeState({
     ...props,
@@ -612,6 +717,15 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
   }
 
   let DOMProps = filterDOMProps(props, {global: true});
+  let renderDropIndicator = useRenderDropIndicator(dragAndDropHooks, dropState);
+  let renderVisibleDropIndicator = useCallback(
+    (target: ItemDropTarget, source?: Node<unknown>) => {
+      return isRowVisible(state.collection, source?.key ?? target.key, expandedKeys)
+        ? renderDropIndicator?.(target)
+        : null;
+    },
+    [state.collection, expandedKeys, renderDropIndicator]
+  );
 
   return (
     <>
@@ -639,20 +753,21 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
           <Provider
             values={[
               [TreeStateContext, state],
+              [TreeAnimationContext, animationContextValue],
               [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
               [DropIndicatorContext, {render: TreeDropIndicatorWrapper}]
             ]}>
             {hasDropHooks && <RootDropIndicator />}
             <SharedElementTransition>
               <CollectionRoot
-                collection={state.collection}
+                collection={renderedCollection}
                 persistedKeys={useDndPersistedKeys(
                   state.selectionManager,
                   dragAndDropHooks,
                   dropState
                 )}
                 scrollRef={ref}
-                renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)}
+                renderDropIndicator={renderDropIndicator ? renderVisibleDropIndicator : undefined}
               />
             </SharedElementTransition>
           </Provider>
@@ -690,6 +805,21 @@ export interface TreeItemRenderProps extends ItemRenderProps {
    * @selector [data-focus-visible-within]
    */
   isFocusVisibleWithin: boolean;
+  /**
+   * Whether the tree item is currently entering, after its parent was expanded. Use this to apply
+   * animations.
+   *
+   * @selector [data-entering]
+   */
+  isEntering: boolean;
+  /**
+   * Whether the tree item is currently exiting, after its parent was collapsed. The row remains in
+   * the DOM until its animations complete, but is inert and excluded from keyboard navigation. Use
+   * this to apply animations.
+   *
+   * @selector [data-exiting]
+   */
+  isExiting: boolean;
   /** The state of the tree. */
   state: TreeState<unknown>;
   /** The unique id of the tree row. */
@@ -803,6 +933,18 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
       props.hasChildItems || [...state.collection.getChildren!(item.key)]?.length > 1;
     let level = rowProps['aria-level'] || 1;
 
+    let {exitingKeys, enteringKeys, onExitComplete} = useContext(TreeAnimationContext)!;
+    let isExiting = exitingKeys.has(item.key);
+    let [didEnterViaExpansion] = useState(() => enteringKeys.has(item.key));
+    let [isAnimationReady, setAnimationReady] = useState(!didEnterViaExpansion);
+    let isEntering = useEnterAnimation(ref, didEnterViaExpansion && isAnimationReady && !isExiting);
+    useTreeItemHeight(ref, isAnimationReady, setAnimationReady, isEntering, isExiting);
+    useAnimation(
+      ref,
+      isExiting,
+      useCallback(() => onExitComplete(item.key), [onExitComplete, item.key])
+    );
+
     let {hoverProps, isHovered} = useHover({
       // because of https://bugs.webkit.org/show_bug.cgi?id=214609, supporting hover styles when a item is ONLY isDraggable
       // results in hover styles sticking around after a reorder/drop operation...
@@ -859,6 +1001,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
         selectionMode,
         selectionBehavior,
         isFocusVisibleWithin,
+        isEntering,
+        isExiting,
         state,
         id: item.key,
         allowsDragging: !!dragState,
@@ -873,6 +1017,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
         hasChildItems,
         level,
         isFocusVisibleWithin,
+        isEntering,
+        isExiting,
         state,
         item.key,
         dragState,
@@ -952,7 +1098,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
 
     return (
       <>
-        {dropIndicator && !dropIndicator.isHidden && (
+        {dropIndicator && !dropIndicator.isHidden && !isExiting && (
           <div
             role="row"
             aria-level={rowProps['aria-level']}
@@ -1002,6 +1148,10 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
           data-focused={states.isFocused || undefined}
           data-focus-visible={isFocusVisible || undefined}
           data-pressed={states.isPressed || undefined}
+          data-entering={isEntering || undefined}
+          data-exiting={isExiting || undefined}
+          // @ts-ignore - compatibility with React < 19
+          inert={inertValue(isExiting || props.inert)}
           data-selection-mode={
             state.selectionManager.selectionMode === 'none'
               ? undefined
@@ -1279,6 +1429,7 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(
   SectionNode,
   <T extends any>(props: TreeSectionProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
     let state = useContext(TreeStateContext)!;
+    let {renderedCollection} = useContext(TreeAnimationContext)!;
     let {CollectionBranch} = useContext(CollectionRendererContext);
     let headingRef = useRef(null);
     ref = useObjectRef<HTMLDivElement>(ref);
@@ -1307,7 +1458,7 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(
             [GridListHeaderContext, {...rowProps, ref: headingRef}],
             [GridListHeaderInnerContext, {...rowHeaderProps}]
           ]}>
-          <CollectionBranch collection={state.collection} parent={item} />
+          <CollectionBranch collection={renderedCollection} parent={item} />
         </Provider>
       </dom.div>
     );
@@ -1324,6 +1475,95 @@ export const TreeHeader = (props: TreeHeaderProps): ReactNode => {
   );
 };
 
+function useTreeItemHeight(
+  ref: RefObject<HTMLElement | null>,
+  isReady: boolean,
+  setReady: (ready: boolean) => void,
+  isEntering: boolean,
+  isExiting: boolean
+) {
+  let restingHeight = useRef<string | null>(null);
+  let isSized = useRef(false);
+  let [hasHeightTransition, setHasHeightTransition] = useState(false);
+
+  // Observe only the resting geometry. Initial entry is staged before applying animation styles,
+  // so measuring never needs to remove selectors or cancel the consumer's keyframes.
+  useResizeObserver({
+    ref: hasHeightTransition ? ref : undefined,
+    box: 'border-box',
+    onResize() {
+      if (ref.current && !isEntering && !isExiting && !isSized.current) {
+        restingHeight.current = window.getComputedStyle(ref.current).height;
+      }
+    }
+  });
+
+  useLayoutEffect(() => {
+    let element = ref.current;
+    if (!element || typeof element.getAnimations !== 'function') {
+      setReady(true);
+      return;
+    }
+
+    let style = window.getComputedStyle(element);
+    let durations = style.transitionDuration.split(',');
+    let delays = style.transitionDelay.split(',');
+    let transitionsHeight = style.transitionProperty
+      .split(',')
+      .some(
+        (property, index) =>
+          ['height', 'all'].includes(property.trim()) &&
+          (parseFloat(durations[index % durations.length]) > 0 ||
+            parseFloat(delays[index % delays.length]) > 0)
+      );
+    setHasHeightTransition(transitionsHeight);
+    if (!transitionsHeight) {
+      element.style.removeProperty('--tree-item-height');
+      isSized.current = false;
+      setReady(true);
+      return;
+    }
+
+    if (!isSized.current && (!isReady || (!isEntering && !isExiting))) {
+      restingHeight.current = style.height;
+    }
+    if (!isReady) {
+      if (!isSized.current) {
+        element.style.setProperty('--tree-item-height', '0px');
+        isSized.current = true;
+      }
+      setReady(true);
+      return;
+    }
+    if (!isExiting && !isSized.current) {
+      return;
+    }
+    if (isExiting && !isSized.current) {
+      element.style.setProperty('--tree-item-height', restingHeight.current || style.height);
+      window.getComputedStyle(element).height;
+    }
+
+    element.style.setProperty(
+      '--tree-item-height',
+      isExiting ? '0px' : restingHeight.current || 'auto'
+    );
+    isSized.current = true;
+    if (!isEntering && !isExiting) {
+      let canceled = false;
+      Promise.allSettled(element.getAnimations().map(a => a.finished)).then(() => {
+        if (!canceled) {
+          element.style.setProperty('--tree-item-height', 'auto');
+          isSized.current = false;
+          restingHeight.current = window.getComputedStyle(element).height;
+        }
+      });
+      return () => {
+        canceled = true;
+      };
+    }
+  }, [ref, isReady, setReady, isEntering, isExiting]);
+}
+
 function areSetsEqual<T>(a: Set<T>, b: Set<T>) {
   if (a.size !== b.size) {
     return false;
@@ -1334,5 +1574,39 @@ function areSetsEqual<T>(a: Set<T>, b: Set<T>) {
       return false;
     }
   }
+  return true;
+}
+
+function getVisibleItemKeys<T>(collection: TreeCollection<T>) {
+  let keys = new Set<Key>();
+  let key = collection.getFirstKey();
+  while (key != null) {
+    if (collection.getItem(key)?.type === 'item') {
+      keys.add(key);
+    }
+    key = collection.getKeyAfter(key);
+  }
+  return keys;
+}
+
+function isRowVisible<T>(
+  collection: Pick<BaseCollection<T>, 'getItem'>,
+  key: Key,
+  expandedKeys: Set<Key>
+) {
+  let parentKey = collection.getItem(key)?.parentKey ?? null;
+  while (parentKey != null) {
+    let parent = collection.getItem(parentKey);
+    if (!parent) {
+      return false;
+    }
+
+    if (parent.type === 'item' && !expandedKeys.has(parent.key)) {
+      return false;
+    }
+
+    parentKey = parent.parentKey ?? null;
+  }
+
   return true;
 }

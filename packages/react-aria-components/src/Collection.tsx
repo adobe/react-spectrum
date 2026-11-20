@@ -171,7 +171,7 @@ export interface CollectionBranchProps {
   /** The parent node of the items to render. */
   parent: Node<unknown>;
   /** A function that renders a drop indicator between items. */
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode;
+  renderDropIndicator?: (target: ItemDropTarget, source?: Node<unknown>) => ReactNode;
 }
 
 export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
@@ -182,7 +182,7 @@ export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
   /** A ref to the scroll container for the collection. */
   scrollRef?: RefObject<HTMLElement | null>;
   /** A function that renders a drop indicator between items. */
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode;
+  renderDropIndicator?: (target: ItemDropTarget, source?: Node<unknown>) => ReactNode;
 }
 
 export interface CollectionRenderer {
@@ -210,7 +210,7 @@ export const DefaultCollectionRenderer: CollectionRenderer = {
 function useCollectionRender(
   collection: ICollection<Node<unknown>>,
   parent: Node<unknown> | null,
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget, source?: Node<unknown>) => ReactNode
 ) {
   return useCachedChildren({
     items: parent ? collection.getChildren!(parent.key) : collection,
@@ -229,7 +229,7 @@ function useCollectionRender(
 
       return (
         <>
-          {renderDropIndicator({type: 'item', key: node.key, dropPosition: 'before'})}
+          {renderDropIndicator({type: 'item', key: node.key, dropPosition: 'before'}, node)}
           {rendered}
           {renderAfterDropIndicators(collection, node, renderDropIndicator)}
         </>
@@ -241,7 +241,7 @@ function useCollectionRender(
 export function renderAfterDropIndicators(
   collection: ICollection<Node<unknown>>,
   node: Node<unknown>,
-  renderDropIndicator: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator: (target: ItemDropTarget, source?: Node<unknown>) => ReactNode
 ): ReactNode {
   let key = node.key;
   let keyAfter = collection.getKeyAfter(key);
@@ -269,11 +269,14 @@ export function renderAfterDropIndicators(
         (current.parentKey !== nextItemInFlattenedCollection.parentKey &&
           nextItemInFlattenedCollection.level < current.level))
     ) {
-      let indicator = renderDropIndicator({
-        type: 'item',
-        key: current.key,
-        dropPosition: 'after'
-      });
+      let indicator = renderDropIndicator(
+        {
+          type: 'item',
+          key: current.key,
+          dropPosition: 'after'
+        },
+        node
+      );
       if (isValidElement(indicator)) {
         afterIndicators.push(cloneElement(indicator, {key: `${current.key}-after`}));
       }
