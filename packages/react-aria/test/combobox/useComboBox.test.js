@@ -158,6 +158,28 @@ describe('useComboBox', function () {
     expect(commitSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('should call close instead of commit on Tab when multiple selection menu is open', function () {
+    let commitSpy = jest.fn();
+    let closeSpy = jest.fn();
+    let {result: state} = renderHook(p => useComboBoxState(p), {
+      initialProps: {...defaultProps, selectionMode: 'multiple'}
+    });
+    act(() => {
+      state.current.open(null, 'manual');
+    });
+    let openState = {...state.current, isOpen: true, commit: commitSpy, close: closeSpy};
+    let {result: openResult} = renderHook(p => useComboBox(p, openState), {
+      initialProps: {...props, selectionMode: 'multiple'}
+    });
+    act(() => {
+      openResult.current.inputProps.onKeyDown(
+        event({key: 'Tab', target: {}, currentTarget: {contains: () => true}})
+      );
+    });
+    expect(closeSpy).toHaveBeenCalledTimes(1);
+    expect(commitSpy).not.toHaveBeenCalled();
+  });
+
   it('calls open and toggle with the expected parameters when arrow down/up/trigger button is pressed', function () {
     let {result: state} = renderHook(props => useComboBoxState(props), {initialProps: props});
     state.current.open = openSpy;
