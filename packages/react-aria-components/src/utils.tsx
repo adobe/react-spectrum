@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, RefObject, DOMProps as SharedDOMProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  Collection,
+  Key,
+  Node,
+  RefObject,
+  DOMProps as SharedDOMProps
+} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {
@@ -402,6 +409,24 @@ export function removeDataAttributes<T>(props: T): T {
   }
 
   return filteredProps;
+}
+
+// A collapsed ancestor hides everything below it, so the highest one is the closest visible row.
+export function closestVisibleKey<T>(
+  collection: Collection<Node<T>>,
+  expandedKeys: Set<Key>,
+  key: Key
+): Key {
+  let target = key;
+  let node = collection.getItem(key);
+  while (node?.parentKey != null) {
+    let parent = collection.getItem(node.parentKey);
+    if (parent?.type === 'item' && !expandedKeys.has(node.parentKey)) {
+      target = node.parentKey;
+    }
+    node = parent;
+  }
+  return target;
 }
 
 // Override base type to change the default.
