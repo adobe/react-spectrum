@@ -1,0 +1,119 @@
+@import './theme.css';
+
+.react-aria-Wizard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: calc(var(--spacing) * 100);
+  max-width: 100%;
+  font: var(--font-size) system-ui;
+  color: var(--text-color);
+}
+
+.react-aria-WizardStepList {
+  display: flex;
+}
+
+.react-aria-WizardStep {
+  flex: 1;
+  /* The marker sits between two connector lines, with the label below. */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-areas:
+    'before marker after'
+    'label label label';
+  align-items: center;
+  gap: var(--spacing-2);
+  text-align: center;
+  outline: none;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+
+  .marker {
+    grid-area: marker;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    font-size: var(--font-size-sm);
+  }
+
+  .label {
+    grid-area: label;
+    padding-inline: var(--spacing-1);
+  }
+
+  &[data-selected] .marker,
+  &[data-completed] .marker {
+    background: var(--highlight-background);
+    border-color: var(--highlight-background);
+    color: var(--highlight-foreground);
+    forced-color-adjust: none;
+  }
+
+  &[data-selected] {
+    font-weight: 600;
+  }
+
+  &[data-hovered] {
+    color: var(--text-color-hover);
+  }
+
+  /* Steps the user hasn't reached yet. */
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+
+  &[data-focus-visible] .marker {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  /* Connector lines. Each step draws its half of the line to each neighbor,
+     so the lines connect the markers even when steps have different widths. */
+  &::before,
+  &::after {
+    content: '';
+    border-top: 1px solid var(--border-color);
+  }
+
+  &::before {
+    grid-area: before;
+  }
+
+  &::after {
+    grid-area: after;
+  }
+
+  &:first-child::before,
+  &:last-child::after {
+    display: none;
+  }
+
+  /* Highlight the line between two steps that are both selected or completed. */
+  &:is([data-selected], [data-completed]) {
+    &:has(+ :is([data-selected], [data-completed]))::after,
+    & + :is([data-selected], [data-completed])::before {
+      border-color: var(--highlight-background);
+    }
+  }
+}
+
+.react-aria-WizardPanel {
+  padding: var(--spacing-3);
+  border-radius: var(--radius);
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+  }
+}
+
+.wizard-buttons {
+  display: flex;
+  justify-content: space-between;
+}

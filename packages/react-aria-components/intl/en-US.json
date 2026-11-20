@@ -2,5 +2,8 @@
   "selectPlaceholder": "Select an item",
   "tableResizer": "Resizer",
   "dropzoneLabel": "DropZone",
-  "colorSwatchPicker": "Color swatches"
+  "colorSwatchPicker": "Color swatches",
+  "progressListItemCurrent": "Current",
+  "progressListItemCompleted": "Completed",
+  "progressListItemNotCompleted": "Not completed"
 }
