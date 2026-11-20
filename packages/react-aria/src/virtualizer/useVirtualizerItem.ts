@@ -21,6 +21,15 @@ interface IVirtualizer {
   updateItemSize(key: Key, size: Size): void;
 }
 
+interface Measurement {
+  key: Key;
+  ref: RefObject<HTMLElement | null>;
+  virtualizer: IVirtualizer;
+}
+
+let pendingMeasurements = new Map<HTMLElement, Measurement>();
+let isMeasurementQueued = false;
+
 export interface VirtualizerItemOptions {
   layoutInfo: LayoutInfo | null;
   virtualizer: IVirtualizer;
@@ -34,14 +43,7 @@ export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize
 
   let updateSize = useCallback(() => {
     if (key != null && ref.current) {
-      // if the virtualized item is not visible (aka display none on virtualized collection),
-      // we want to avoid reporting size 0 otherwise we get into a state where the virtualizer renders 0 items
-      // when it is hidden and thus won't remeasure when it is is unhidden
-      if (!isElementVisible(ref.current)) {
-        return;
-      }
-      let size = getSize(ref.current);
-      virtualizer.updateItemSize(key, size);
+      queueMeasure(ref.current, {key, ref, virtualizer});
     }
   }, [virtualizer, key, ref]);
 
@@ -89,11 +91,38 @@ export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize
   return {updateSize};
 }
 
-function getSize(node: HTMLElement): Size {
-  // Reset height before measuring so we get the intrinsic size
-  let height = node.style.height;
-  node.style.height = '';
-  let size = new Size(node.scrollWidth, node.scrollHeight);
-  node.style.height = height;
-  return size;
+function queueMeasure(node: HTMLElement, measurement: Measurement) {
+  pendingMeasurements.set(node, measurement);
+
+  if (!isMeasurementQueued) {
+    isMeasurementQueued = true;
+    queueMicrotask(measureItems);
+  }
+}
+
+function measureItems() {
+  let pending = pendingMeasurements;
+  pendingMeasurements = new Map();
+  isMeasurementQueued = false;
+  let measurements = [...pending].filter(([node, {ref}]) => {
+    // If the virtualized item is not visible (e.g. display: none on a virtualized collection),
+    // avoid reporting size 0. Otherwise, the virtualizer could render 0 items while hidden and
+    // would not remeasure when it becomes visible again.
+    return ref.current === node && isElementVisible(node);
+  });
+
+  let heights = measurements.map(([node]) => node.style.height);
+  for (let [node] of measurements) {
+    node.style.height = '';
+  }
+
+  let sizes = measurements.map(([node]) => new Size(node.scrollWidth, node.scrollHeight));
+
+  for (let [index, [node]] of measurements.entries()) {
+    node.style.height = heights[index];
+  }
+
+  for (let [index, [, {key, virtualizer}]] of measurements.entries()) {
+    virtualizer.updateItemSize(key, sizes[index]);
+  }
 }
