@@ -322,10 +322,8 @@ export function useCalendarCell(
   // Focus the button in the DOM when the state updates.
   useEffect(() => {
     if (isFocused && ref.current) {
-      // Focusing can trigger blur handlers on the previously focused element.
-      // Defer it until after the effect so those handlers can safely use flushSync.
       let element = ref.current;
-      queueMicrotask(() => {
+      let focus = () => {
         if (ref.current !== element || !element.isConnected) {
           return;
         }
@@ -342,7 +340,15 @@ export function useCalendarCell(
         if (getInteractionModality() !== 'pointer' && getActiveElement() === element) {
           scrollIntoViewport(element, {containingElement: getScrollParent(element)});
         }
-      });
+      };
+
+      // Focusing an input blurs it. Defer this when an input owns focus so its blur handler can
+      // safely use flushSync after the effect completes. Focus within the calendar remains sync.
+      if (getActiveElement()?.tagName === 'INPUT') {
+        queueMicrotask(focus);
+      } else {
+        focus();
+      }
     }
   }, [isFocused, ref]);
 
