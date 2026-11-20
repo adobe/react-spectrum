@@ -14,11 +14,12 @@ import {isAppleDevice, isIOS, isIPad, isIPhone} from '../../src/utils/platform';
 
 describe('platform detection', function () {
   afterEach(() => {
+    jest.restoreAllMocks();
     Reflect.deleteProperty(navigator, 'userAgentData');
   });
 
   it.each(['iPhone', 'iPad'])('detects %s with an iOS platform hint', platform => {
-    using _platform = jest.spyOn(navigator, 'platform', 'get').mockReturnValue(platform);
+    jest.spyOn(navigator, 'platform', 'get').mockReturnValue(platform);
     Object.defineProperty(navigator, 'userAgentData', {
       configurable: true,
       value: {platform: 'iOS'}
