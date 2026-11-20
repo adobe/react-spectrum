@@ -11,10 +11,8 @@ import {
   type WizardStepListProps,
   type WizardStepProps
 } from 'react-aria-components/Wizard';
-import {TabListStateContext} from 'react-aria-components/Tabs';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {Check} from 'lucide-react';
-import {useContext} from 'react';
 import {Button} from './Button';
 import './Wizard.css';
 
@@ -50,27 +48,15 @@ export function WizardPanel(props: WizardPanelProps) {
   return <RACWizardPanel {...props} />;
 }
 
-// Back and Next buttons that move between steps. Render inside the <Wizard>, outside <WizardPanels>.
+// Back and Next buttons that move between steps, skipping disabled steps. They can render anywhere
+// inside the <Wizard>, and are disabled when there is no previous or next step.
 export function WizardButtons() {
-  let state = useContext(TabListStateContext);
-  if (!state || state.selectedKey == null) {
-    return null;
-  }
-
-  let {collection, selectedKey, setSelectedKey} = state;
-  let previousKey = collection.getKeyBefore(selectedKey);
-  let nextKey = collection.getKeyAfter(selectedKey);
   return (
     <div className="wizard-buttons">
-      <Button
-        variant="secondary"
-        isDisabled={previousKey == null}
-        onPress={() => setSelectedKey(previousKey)}>
+      <Button slot="previous" variant="secondary">
         Back
       </Button>
-      <Button isDisabled={nextKey == null} onPress={() => setSelectedKey(nextKey)}>
-        Next
-      </Button>
+      <Button slot="next">Next</Button>
     </div>
   );
 }

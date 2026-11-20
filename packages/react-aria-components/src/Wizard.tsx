@@ -9,7 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ClassNameOrFunction, PossibleLinkDOMRenderProps, RenderProps} from './utils';
+import {ButtonContext} from './Button';
+import {
+  ClassNameOrFunction,
+  DEFAULT_SLOT,
+  PossibleLinkDOMRenderProps,
+  Provider,
+  RenderProps
+} from './utils';
 import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
@@ -41,12 +48,16 @@ import {
   TabsRenderProps
 } from './Tabs';
 import {useControlledState} from 'react-stately/useControlledState';
+import {useId} from 'react-aria/useId';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface WizardProps extends Omit<TabsProps, 'children' | 'selectedKey'> {
-  /** The children of the component (a `WizardStepList` and optional `WizardPanels`). */
+  /**
+   * The children of the component (a `WizardStepList` and optional `WizardPanels`). Buttons with
+   * `slot="previous"` and `slot="next"` move to the previous and next steps.
+   */
   children?: ReactNode;
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -98,14 +109,14 @@ export const Wizard = /*#__PURE__*/ forwardRef(function Wizard(
   );
 });
 
-// Passes the wizard's default class name to className functions, rather than the one of the
-// Tabs component it wraps.
+// Passes the wizard's default class name to className functions, and uses it when they return
+// undefined, rather than the one of the Tabs component it wraps.
 function withDefaultClassName<T>(
   className: ClassNameOrFunction<T> | undefined,
   defaultClassName: string
 ): ClassNameOrFunction<T> {
   return typeof className === 'function'
-    ? values => className({...values, defaultClassName})
+    ? values => className({...values, defaultClassName}) ?? defaultClassName
     : (className ?? defaultClassName);
 }
 
@@ -159,6 +170,13 @@ export interface WizardState<T> {
    * Keys that are not navigable.
    */
   disabledKeys: Set<Key>;
+  /** The closest navigable step before the current step. */
+  previousKey: Key | null;
+  /**
+   * The closest step after the current step that isn't disabled. It may be an upcoming step, since
+   * moving to it is how the user completes the current step.
+   */
+  nextKey: Key | null;
 }
 
 /**
@@ -179,6 +197,18 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
     onLastCompletedStepChange
   } = props;
 
+  // Steps disabled by the consumer, with disabledKeys or their isDisabled prop, are never navigable,
+  // however the wizard is configured.
+  let disabledSteps = useMemo(() => {
+    let set = new Set<Key>(disabledStepKeys);
+    for (let step of collection) {
+      if (step.props?.isDisabled) {
+        set.add(step.key);
+      }
+    }
+    return set;
+  }, [collection, disabledStepKeys]);
+
   let [selectedKeyState, setSelectedKeyState] = useControlledState<Key | null>(
     props.selectedKey,
     props.defaultSelectedKey ?? null,
@@ -191,7 +221,14 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
       : undefined
   );
 
-  let selectedKey = selectedKeyState ?? collection.getFirstKey();
+  // Like Tabs, select the first step that isn't disabled when no step is selected or the selected
+  // step is removed, or the first step if every step is disabled.
+  let selectedKey =
+    selectedKeyState != null && collection.getItem(selectedKeyState)
+      ? selectedKeyState
+      : (findEnabledStep(collection.getFirstKey(), disabledSteps, key =>
+          collection.getKeyAfter(key)
+        ) ?? collection.getFirstKey());
 
   let isLastCompletedStepControlled = props.lastCompletedStep !== undefined;
   let [lastCompletedStepState, setLastCompletedStepState] = useState<Key | null>(
@@ -200,6 +237,26 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
   let lastCompletedStep = isLastCompletedStepControlled
     ? (props.lastCompletedStep ?? null)
     : lastCompletedStepState;
+
+  // When the uncontrolled last completed step is removed, the closest step before it that remains
+  // becomes the last completed step, so the user's progress isn't rolled back.
+  let [prevCollection, setPrevCollection] = useState(collection);
+  if (collection !== prevCollection) {
+    setPrevCollection(collection);
+    if (
+      !isLastCompletedStepControlled &&
+      lastCompletedStep != null &&
+      !collection.getItem(lastCompletedStep) &&
+      prevCollection.getItem(lastCompletedStep)
+    ) {
+      let key = prevCollection.getKeyBefore(lastCompletedStep);
+      while (key != null && !collection.getItem(key)) {
+        key = prevCollection.getKeyBefore(key);
+      }
+      lastCompletedStep = key;
+      setLastCompletedStepState(key);
+    }
+  }
   let lastCompletedIndex = getStepIndex(collection, lastCompletedStep);
 
   // Steps are ordered by getKeyBefore and getKeyAfter, which Tabs also uses to move focus.
@@ -226,15 +283,17 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
   };
 
   let disabledKeys = useMemo(() => {
-    // Steps disabled by the consumer are never navigable, however the wizard is configured.
-    let set = new Set<Key>(disabledStepKeys);
+    let set = new Set<Key>(disabledSteps);
     if (!allowsRandomAccess) {
-      // Completed steps, the step after them, and the current step are navigable. The steps after
-      // those are upcoming, and are only navigable if allowsRandomAccess.
-      let nextStep =
+      // Completed steps, the first step after them that isn't disabled, and the current step are
+      // navigable. The steps after those are upcoming, and are only navigable if allowsRandomAccess.
+      let nextStep = findEnabledStep(
         lastCompletedStep != null && collection.getItem(lastCompletedStep)
           ? collection.getKeyAfter(lastCompletedStep)
-          : collection.getFirstKey();
+          : collection.getFirstKey(),
+        disabledSteps,
+        key => collection.getKeyAfter(key)
+      );
       let key = nextStep != null ? collection.getKeyAfter(nextStep) : null;
       while (key != null) {
         if (key !== selectedKey) {
@@ -244,15 +303,43 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
       }
     }
     return set;
-  }, [collection, selectedKey, lastCompletedStep, allowsRandomAccess, disabledStepKeys]);
+  }, [collection, selectedKey, lastCompletedStep, allowsRandomAccess, disabledSteps]);
+
+  let previousKey =
+    selectedKey != null
+      ? findEnabledStep(collection.getKeyBefore(selectedKey), disabledKeys, key =>
+          collection.getKeyBefore(key)
+        )
+      : null;
+  let nextKey =
+    selectedKey != null
+      ? findEnabledStep(collection.getKeyAfter(selectedKey), disabledSteps, key =>
+          collection.getKeyAfter(key)
+        )
+      : null;
 
   return {
     collection,
     selectedKey,
     setSelectedKey,
     lastCompletedStep,
-    disabledKeys
+    disabledKeys,
+    previousKey,
+    nextKey
   };
+}
+
+// The closest step to the given one, including itself, in the direction of getNextKey that isn't in
+// disabledKeys.
+function findEnabledStep(
+  key: Key | null,
+  disabledKeys: Set<Key>,
+  getNextKey: (key: Key) => Key | null
+): Key | null {
+  while (key != null && disabledKeys.has(key)) {
+    key = getNextKey(key);
+  }
+  return key;
 }
 
 // The position of a step within the wizard, or -1 if the key isn't one of its steps.
@@ -286,10 +373,42 @@ function WizardInner({props, collection, tabsRef}: WizardInnerProps) {
     disabledKeys
   });
 
+  // Buttons with the previous and next slots move to the previous and next steps, and are disabled
+  // when there isn't one. The slots of an outer ButtonContext, such as the close slot of a Dialog,
+  // are kept so that their buttons still work within the wizard.
+  let buttonContext = useContext(ButtonContext);
+  let outerButtonSlots =
+    buttonContext && 'slots' in buttonContext ? buttonContext.slots : undefined;
+  let {previousKey, nextKey} = state;
+  let buttonSlots = {
+    [DEFAULT_SLOT]: {},
+    ...outerButtonSlots,
+    previous: {
+      isDisabled: props.isDisabled || previousKey == null,
+      onPress: () => {
+        if (previousKey != null) {
+          state.setSelectedKey(previousKey);
+        }
+      }
+    },
+    next: {
+      isDisabled: props.isDisabled || nextKey == null,
+      onPress: () => {
+        if (nextKey != null) {
+          state.setSelectedKey(nextKey);
+        }
+      }
+    }
+  };
+
   // Tabs treats null as a controlled empty selection, so passing it rather than undefined keeps Tabs
   // controlled while there is no selected step (e.g. before the collection is populated).
   return (
-    <WizardStateContext.Provider value={state}>
+    <Provider
+      values={[
+        [WizardStateContext, state],
+        [ButtonContext, {slots: buttonSlots}]
+      ]}>
       <TabsInner
         props={{
           ...tabsProps,
@@ -302,7 +421,7 @@ function WizardInner({props, collection, tabsRef}: WizardInnerProps) {
         collection={collection}
         tabsRef={tabsRef}
       />
-    </WizardStateContext.Provider>
+    </Provider>
   );
 }
 
@@ -422,6 +541,18 @@ export const WizardStep = /*#__PURE__*/ createLeafComponent(
     let stateText = isCompleted
       ? stringFormatter.format('progressListItemCompleted')
       : stringFormatter.format('progressListItemNotCompleted');
+    let stateTextId = useId();
+
+    // Steps other than the current one announce whether they're completed with visually hidden
+    // text. An aria-label or aria-labelledby replaces the text content of the step, so the state is
+    // added to it.
+    let ariaLabel = props['aria-label'];
+    let ariaLabelledby = props['aria-labelledby'];
+    if (!isCurrent && ariaLabelledby) {
+      ariaLabelledby = `${stateTextId} ${ariaLabelledby}`;
+    } else if (!isCurrent && ariaLabel) {
+      ariaLabel = `${stateText} ${ariaLabel}`;
+    }
 
     // Adds the step state to the render props that Tab provides.
     let getRenderProps = <R extends TabRenderProps>(renderProps: R): R & WizardStepRenderProps => ({
@@ -443,12 +574,18 @@ export const WizardStep = /*#__PURE__*/ createLeafComponent(
       ),
       style: typeof style === 'function' ? values => style(getRenderProps(values)) : style,
       render: render ? (domProps, values) => render(domProps, getRenderProps(values)) : undefined,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
       'aria-current': isCurrent ? 'step' : undefined,
       'data-current': isCurrent || undefined,
       'data-completed': isCompleted || undefined,
       children: renderProps => (
         <>
-          {!isCurrent && <VisuallyHidden elementType="span">{stateText}</VisuallyHidden>}
+          {!isCurrent && (
+            <VisuallyHidden elementType="span" id={stateTextId}>
+              {stateText}
+            </VisuallyHidden>
+          )}
           {typeof children === 'function' ? children(getRenderProps(renderProps)) : children}
         </>
       )

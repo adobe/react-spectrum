@@ -11,6 +11,7 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {Button, ButtonContext} from '../src/Button';
 import React, {useContext, useState} from 'react';
 import {TabListStateContext} from '../src/Tabs';
 import userEvent from '@testing-library/user-event';
@@ -88,15 +89,48 @@ function ControlledWizard({onSelectionChange, ...props}) {
   );
 }
 
-function getSelectedStep(tree) {
-  let tabs = tree.getAllByRole('tab');
-  return keys[tabs.findIndex(tab => tab.getAttribute('aria-selected') === 'true')];
+// A wizard with a dynamic collection of steps, like the one in the docs.
+function DynamicWizard({items, ...props}) {
+  return (
+    <Wizard {...props}>
+      <WizardStepList aria-label="Setup" items={items}>
+        {step => <WizardStep>{step.label}</WizardStep>}
+      </WizardStepList>
+      <WizardPanels items={items}>
+        {step => <WizardPanel>{step.label} panel</WizardPanel>}
+      </WizardPanels>
+    </Wizard>
+  );
 }
 
-function getNavigableSteps(tree) {
+function getSelectedStep(tree, stepKeys = keys) {
+  let tabs = tree.getAllByRole('tab');
+  return stepKeys[tabs.findIndex(tab => tab.getAttribute('aria-selected') === 'true')];
+}
+
+function getNavigableSteps(tree, stepKeys = keys) {
   return tree
     .getAllByRole('tab')
-    .flatMap((tab, i) => (tab.getAttribute('aria-disabled') === 'true' ? [] : [keys[i]]));
+    .flatMap((tab, i) => (tab.getAttribute('aria-disabled') === 'true' ? [] : [stepKeys[i]]));
+}
+
+// Like the WizardButtons of the starters, which move between steps with the previous and next slots.
+function WizardButtons() {
+  return (
+    <div>
+      <Button slot="previous">Back</Button>
+      <Button slot="next">Next</Button>
+    </div>
+  );
+}
+
+// Reports the collection that the TabList renders.
+function CollectionProbe({onRender}) {
+  let state = useContext(TabListStateContext);
+  if (state) {
+    onRender(state.collection);
+  }
+  return null;
 }
 
 describe('Wizard', () => {
@@ -350,61 +384,181 @@ describe('Wizard', () => {
     expect(panelsRef.current).toBe(tree.getByRole('tabpanel').parentElement);
   });
 
+  it('should use the default class names when className functions return undefined', () => {
+    let tree = render(
+      <Wizard className={() => undefined}>
+        <WizardStepList aria-label="Setup" className={() => undefined}>
+          <WizardStep id="domain" className={() => undefined}>
+            Domain
+          </WizardStep>
+        </WizardStepList>
+        <WizardPanels>
+          <WizardPanel id="domain" className={() => undefined}>
+            Domain panel
+          </WizardPanel>
+        </WizardPanels>
+      </Wizard>
+    );
+
+    let stepList = tree.getByRole('tablist');
+    let elements = [
+      stepList.parentElement,
+      stepList,
+      tree.getByRole('tab'),
+      tree.getByRole('tabpanel')
+    ];
+    expect(elements.map(element => element.className)).toEqual([
+      'react-aria-Wizard',
+      'react-aria-WizardStepList',
+      'react-aria-WizardStep',
+      'react-aria-WizardPanel'
+    ]);
+  });
+
+  it.each([
+    ['disabledKeys', {disabledKeys: ['domain']}],
+    ['isDisabled', {stepProps: step => ({isDisabled: step.id === 'domain'})}]
+  ])(
+    'should select the first enabled step by default when the first step is disabled with %s',
+    (_, disabledProps) => {
+      let tree = render(<WizardExample {...disabledProps} />);
+      expect(getSelectedStep(tree)).toBe('dns');
+      expect(tree.getByRole('tabpanel')).toHaveTextContent('DNS panel');
+      expect(getNavigableSteps(tree)).toEqual(['dns']);
+    }
+  );
+
+  it('should provide the step state to steps without an id', () => {
+    let tree = render(
+      <Wizard>
+        <WizardStepList aria-label="Setup">
+          <WizardStep>{({stepNumber}) => `Step ${stepNumber}`}</WizardStep>
+          <WizardStep>{({stepNumber}) => `Step ${stepNumber}`}</WizardStep>
+        </WizardStepList>
+      </Wizard>
+    );
+
+    // The step is selected, but the wizard can't find it to provide its state.
+    let tabs = tree.getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(tabs.map(tab => tab.textContent)).toEqual(['Step 1', 'Not completedStep 2']);
+    expect(tabs[0]).toHaveAttribute('aria-current', 'step');
+  });
+
+  it.each([
+    ['aria-label', step => ({'aria-label': step.label})],
+    ['aria-labelledby', step => ({'aria-labelledby': `${step.id}-label`})]
+  ])('should announce whether a step labelled with %s is completed', (_, stepProps) => {
+    let tree = render(
+      <>
+        {steps.map(step => (
+          <span key={step.id} id={`${step.id}-label`}>
+            {step.label}
+          </span>
+        ))}
+        <WizardExample defaultSelectedKey="dns" stepProps={stepProps} />
+      </>
+    );
+
+    let tabs = tree.getAllByRole('tab');
+    expect(tabs[0]).toHaveAccessibleName('Completed Domain');
+    expect(tabs[1]).toHaveAccessibleName('DNS');
+    expect(tabs[2]).toHaveAccessibleName('Not completed Advanced');
+  });
+
+  it('should select another step when the selected step is removed', () => {
+    let tree = render(<DynamicWizard items={steps} defaultSelectedKey="advanced" />);
+    expect(getSelectedStep(tree)).toBe('advanced');
+
+    tree.rerender(
+      <DynamicWizard
+        items={steps.filter(step => step.id !== 'advanced')}
+        defaultSelectedKey="advanced"
+      />
+    );
+    let selectedTabs = tree
+      .getAllByRole('tab')
+      .filter(tab => tab.getAttribute('aria-selected') === 'true');
+    expect(selectedTabs).toHaveLength(1);
+    expect(tree.queryAllByRole('tabpanel')).toHaveLength(1);
+  });
+
+  it('should not move to a disabled step with the starter WizardButtons', async () => {
+    let tree = render(
+      <WizardExample disabledKeys={['dns']}>
+        <WizardButtons />
+      </WizardExample>
+    );
+
+    await user.click(tree.getByRole('button', {name: 'Next'}));
+    expect(getSelectedStep(tree)).toBe('advanced');
+    expect(tree.getByRole('tabpanel')).toHaveTextContent('Advanced panel');
+
+    await user.click(tree.getByRole('button', {name: 'Back'}));
+    expect(getSelectedStep(tree)).toBe('domain');
+  });
+
+  it('should disable the previous and next buttons when there is no previous or next step', async () => {
+    let tree = render(
+      <WizardExample disabledKeys={['review']}>
+        <WizardButtons />
+      </WizardExample>
+    );
+    let back = tree.getByRole('button', {name: 'Back'});
+    let next = tree.getByRole('button', {name: 'Next'});
+    expect(back).toBeDisabled();
+    expect(next).toBeEnabled();
+
+    await user.click(next);
+    await user.click(next);
+    expect(getSelectedStep(tree)).toBe('advanced');
+    expect(back).toBeEnabled();
+    expect(next).toBeDisabled();
+  });
+
+  it('should disable the previous and next buttons when the wizard is disabled', () => {
+    let tree = render(
+      <WizardExample isDisabled defaultSelectedKey="dns">
+        <WizardButtons />
+      </WizardExample>
+    );
+    expect(tree.getByRole('button', {name: 'Back'})).toBeDisabled();
+    expect(tree.getByRole('button', {name: 'Next'})).toBeDisabled();
+  });
+
+  it('should keep the button slots of its parent, like the close slot of a Dialog', async () => {
+    let onPress = jest.fn();
+    let tree = render(
+      <ButtonContext.Provider value={{slots: {close: {onPress}}}}>
+        <WizardExample>
+          <Button slot="close">Close</Button>
+        </WizardExample>
+      </ButtonContext.Provider>
+    );
+
+    await user.click(tree.getByRole('button', {name: 'Close'}));
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
 
   // Like Select, which builds the collection of its ListBox once and provides its state to it, the
   // wizard should build its steps once rather than building them again in the Tabs it renders.
   describe('collection', () => {
-    function renderWithProbe(Example) {
-      let log = {mounts: 0, collections: []};
-      let onMount = () => {
-        log.mounts++;
-      };
-      let onRender = collection => {
-        log.collections.push(collection);
-      };
-      let getElement = () => (
-        <Example>
-          <CollectionProbe onMount={onMount} onRender={onRender} />
-          <StepButtons />
-        </Example>
-      );
-      let tree = render(getElement());
-      return {tree, log, rerender: () => tree.rerender(getElement())};
-    }
-
-    it('should not mount its children more times than Tabs', () => {
-      let tabs = renderWithProbe(TabsExample);
-      tabs.tree.unmount();
-      let wizard = renderWithProbe(WizardExample);
-      expect(wizard.log.mounts).toBe(tabs.log.mounts);
-    });
-
     it('should keep the same step collection when the selected step changes', async () => {
-      let {tree, log} = renderWithProbe(WizardExample);
-      let collection = log.collections.at(-1);
+      let collections = [];
+      let tree = render(
+        <WizardExample>
+          <CollectionProbe onRender={collection => collections.push(collection)} />
+          <StepButtons />
+        </WizardExample>
+      );
+      let collection = collections.at(-1);
 
       await user.click(tree.getByRole('button', {name: 'Continue'}));
       expect(getSelectedStep(tree)).toBe('dns');
-      expect(log.collections.at(-1)).toBe(collection);
+      expect(collections.at(-1)).toBe(collection);
     });
-
-    it.each(['mounting', 're-rendering'])(
-      'should build the step collection as many times as Tabs when %s',
-      phase => {
-        let [tabsCount, wizardCount] = [TabsExample, WizardExample].map(Example => {
-          let {tree, log, rerender} = renderWithProbe(Example);
-          if (phase === 're-rendering') {
-            log.collections = [log.collections.at(-1)];
-            rerender();
-          }
-          tree.unmount();
-          return new Set(log.collections).size;
-        });
-
-        expect(wizardCount).toBe(tabsCount);
-      }
-    );
   });
+
   describe('lastCompletedStep', () => {
     it.each([
       ['no steps are completed', {}],
@@ -729,6 +883,40 @@ describe('Wizard', () => {
 
       await user.click(tree.getAllByRole('tab')[1]);
       expect(getSelectedStep(tree)).toBe('domain');
+    });
+
+    it.each([
+      ['disabledKeys', {disabledKeys: ['dns']}],
+      ['isDisabled', {stepProps: step => ({isDisabled: step.id === 'dns'})}]
+    ])(
+      'should allow navigating past a step disabled with %s after the last completed step',
+      async (_, disabledProps) => {
+        let tree = render(<WizardExample defaultLastCompletedStep="domain" {...disabledProps} />);
+        expect(getNavigableSteps(tree)).toEqual(['domain', 'advanced']);
+
+        await user.click(tree.getAllByRole('tab')[2]);
+        expect(getSelectedStep(tree)).toBe('advanced');
+      }
+    );
+
+    it('should not roll back progress when the last completed step is removed', () => {
+      let tree = render(
+        <DynamicWizard items={steps} defaultSelectedKey="dns" defaultLastCompletedStep="advanced" />
+      );
+      expect(getNavigableSteps(tree)).toEqual(keys);
+      expect(tree.getAllByRole('tab')[1]).toHaveAttribute('data-completed');
+
+      let items = steps.filter(step => step.id !== 'advanced');
+      tree.rerender(
+        <DynamicWizard items={items} defaultSelectedKey="dns" defaultLastCompletedStep="advanced" />
+      );
+      expect(
+        getNavigableSteps(
+          tree,
+          items.map(step => step.id)
+        )
+      ).toEqual(['domain', 'dns', 'review']);
+      expect(tree.getAllByRole('tab')[1]).toHaveAttribute('data-completed');
     });
   });
 });

@@ -442,9 +442,13 @@ export function TabInner({props, forwardedRef, item}: TabInnerProps): JSX.Elemen
   delete DOMProps.id;
   delete DOMProps.onClick;
 
+  // useTab labels the tab with the props of its item. Wizard steps change those labels to include
+  // whether the step is completed, so the props passed here take precedence.
+  let labelProps = {'aria-label': props['aria-label'], 'aria-labelledby': props['aria-labelledby']};
+
   return (
     <ElementType
-      {...mergeProps(DOMProps, renderProps, tabProps, focusProps, hoverProps)}
+      {...mergeProps(DOMProps, renderProps, tabProps, labelProps, focusProps, hoverProps)}
       ref={ref}
       data-selected={isSelected || undefined}
       data-disabled={isDisabled || undefined}
