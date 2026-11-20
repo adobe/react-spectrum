@@ -27,9 +27,64 @@ interface AriaHideOutsideOptions {
   shouldUseInert?: boolean;
 }
 
-// Keeps a ref count of all hidden elements. Added to when hiding an element, and
-// subtracted from when showing it again. When it reaches zero, aria-hidden is removed.
-let refCountMap = new WeakMap<Element, number>();
+type HideMark = 'inert' | 'aria-hidden';
+
+interface HiddenState {
+  // The mark each active ariaHideOutside call wants for this element, keyed by call id.
+  marks: Map<number, HideMark>;
+  // The mark ariaHideOutside currently has on the element, if any.
+  applied: HideMark | null;
+  // The element's own values from before the first call hid it, used to undo the applied mark.
+  ariaHidden: string | null;
+  inert: boolean;
+}
+
+// Tracks every element hidden by ariaHideOutside. The mark that is actually applied is
+// recomputed whenever a call adds or removes its entry: any 'inert' entry wins, otherwise
+// the element gets aria-hidden="true". Only the mark that was applied is ever undone, so a
+// value the app sets on the other one in the meantime is kept. When no entries are left,
+// the applied mark goes back to its original value. This lets calls that hide with inert
+// (e.g. usePopover, useModalOverlay) and calls that hide with aria-hidden (e.g. useComboBox)
+// overlap on the same element.
+let hiddenStateMap = new WeakMap<Element, HiddenState>();
+let nextCallId = 0;
+
+function updateHidden(element: Element, state: HiddenState) {
+  let mark: HideMark | null = null;
+  for (let callMark of state.marks.values()) {
+    mark = callMark;
+    if (mark === 'inert') {
+      // inert is stronger than aria-hidden (it also blocks focus and pointer events), so it wins.
+      break;
+    }
+  }
+
+  if (mark === state.applied) {
+    return;
+  }
+
+  if (state.applied === 'inert') {
+    (element as HTMLElement).inert = state.inert;
+  } else if (state.applied === 'aria-hidden') {
+    if (state.ariaHidden == null) {
+      element.removeAttribute('aria-hidden');
+    } else {
+      element.setAttribute('aria-hidden', state.ariaHidden);
+    }
+  }
+
+  if (mark === 'inert') {
+    (element as HTMLElement).inert = true;
+  } else if (mark === 'aria-hidden') {
+    element.setAttribute('aria-hidden', 'true');
+  }
+
+  state.applied = mark;
+  if (mark == null) {
+    hiddenStateMap.delete(element);
+  }
+}
+
 interface ObserverWrapper {
   visibleNodes: Set<Element>;
   hiddenNodes: Set<Element>;
@@ -55,25 +110,10 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
 
-  let getHidden = (element: Element) => {
-    return shouldUseInert && element instanceof windowObj.HTMLElement
-      ? element.inert
-      : element.getAttribute('aria-hidden') === 'true';
-  };
+  let callId = nextCallId++;
 
-  let setHidden = (element: Element, hidden: boolean) => {
-    if (shouldUseInert && element instanceof windowObj.HTMLElement) {
-      element.inert = hidden;
-    } else if (hidden) {
-      element.setAttribute('aria-hidden', 'true');
-    } else {
-      element.removeAttribute('aria-hidden');
-      if (element instanceof windowObj.HTMLElement) {
-        // We only ever call setHidden with hidden = false when the nodeCount is 1 aka
-        // we are trying to make the element visible to screen readers again, so remove inert as well
-        element.inert = false;
-      }
-    }
+  let getMark = (element: Element): HideMark => {
+    return shouldUseInert && element instanceof windowObj.HTMLElement ? 'inert' : 'aria-hidden';
   };
 
   let shadowRootsToWatch = new Set<ShadowRoot>();
@@ -146,20 +186,32 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
   };
 
   let hide = (node: Element) => {
-    let refCount = refCountMap.get(node) ?? 0;
+    let mark = getMark(node);
+    let state = hiddenStateMap.get(node);
+    if (!state) {
+      // If the element was already hidden by the app with the mark this call would use,
+      // there's nothing for us to do. An element the app only set aria-hidden on still
+      // gets inert from an inert call, so it can't take focus behind a modal.
+      let alreadyHidden =
+        mark === 'inert'
+          ? (node as HTMLElement).inert
+          : node.getAttribute('aria-hidden') === 'true';
+      if (alreadyHidden) {
+        return;
+      }
 
-    // If already aria-hidden, and the ref count is zero, then this element
-    // was already hidden and there's nothing for us to do.
-    if (getHidden(node) && refCount === 0) {
-      return;
+      state = {
+        marks: new Map(),
+        applied: null,
+        ariaHidden: node.getAttribute('aria-hidden'),
+        inert: node instanceof windowObj.HTMLElement ? node.inert : false
+      };
+      hiddenStateMap.set(node, state);
     }
 
-    if (refCount === 0) {
-      setHidden(node, true);
-    }
-
+    state.marks.set(callId, mark);
     hiddenNodes.add(node);
-    refCountMap.set(node, refCount + 1);
+    updateHidden(node, state);
   };
 
   // If there is already a MutationObserver listening from a previous call,
@@ -273,15 +325,9 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     }
 
     for (let node of hiddenNodes) {
-      let count = refCountMap.get(node);
-      if (count == null) {
-        continue;
-      }
-      if (count === 1) {
-        setHidden(node, false);
-        refCountMap.delete(node);
-      } else {
-        refCountMap.set(node, count - 1);
+      let state = hiddenStateMap.get(node);
+      if (state?.marks.delete(callId)) {
+        updateHidden(node, state);
       }
     }
 
