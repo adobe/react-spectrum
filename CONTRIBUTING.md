@@ -12,9 +12,9 @@ We adhere to the Adobe [code of conduct](https://github.com/adobe/react-spectrum
 ### Bugs
 We use [GitHub issues](https://github.com/adobe/react-spectrum/issues) to track work and log bugs. Please check existing issues before filing anything new. We do our best to respond to issues within a few days. If you would like to contribute a fix, please let us know by leaving a comment on the issue.
 
-The best way to reduce back and forth on a bug is provide a small code example exhibiting the issue along with steps to reproduce it. If you would like to work on a bugfix yourself, make sure an issue exists first.
+The best way to reduce back and forth on a bug is to provide a simple, real-life example of how it occurs, a small code example exhibiting the issue, and steps to reproduce it. If you would like to work on a bugfix yourself, make sure an issue exists first.
 
-Please follow the issue templates when filing new ones and add as much information as possible.
+Please follow the issue templates when filing new ones and fill in the information they ask for.
 
 ### Feature requests
 Our components can always be improved upon. If you have a feature request, you can use our Feature Request issue template. For larger scopes of work, it is a good idea to open a Request For Comments (RFC) first to gather feedback from the team. Please follow our RFC [template](https://github.com/adobe/react-spectrum/blob/main/rfcs/template.md). Make a PR to add your RFC to the [rfcs folder](https://github.com/adobe/react-spectrum/tree/main/rfcs) to give the team and the community a chance to discuss the proposal.
@@ -31,6 +31,7 @@ A few things to keep in mind before submitting a pull request:
 - Reference the issue in the description
 - Make sure linting and tests pass
 - Include relevant unit tests
+- For performance changes, include benchmark results. See [performance changes](#performance-changes)
 - Add/update stories in storybook for your changes
 - Update documentation
 - Remember that all submissions require review, please be patient.
@@ -54,6 +55,7 @@ If there is no issue, include the information requested by the relevant[bug repo
 
 For bug fixes, include:
 
+- A simple, real-life example of how the issue occurs, such as what someone is trying to do in your app when they run into it. If you found the issue by reading code or running tests, explain how it could happen in a real app.
 - What happens and what you expected to happen.
 - What you are trying to accomplish and how the bug affects you.
 - Reproduction steps and a minimal example we can use to verify the problem.
@@ -64,6 +66,10 @@ For features, explain the current limitation, the concrete use case, and how the
 Documentation and routine maintenance changes should explain their purpose; they do not need an artificial bug report or reproduction.
 
 Search existing issues and PRs before opening either, and link related work when you find it. A PR can also be the starting point for a design discussion; opening it does not mean the proposed scope or approach has been approved.
+
+### Performance changes
+
+If a PR is meant to improve performance, show that it does with data from the [benchmark harness](perf/README.md). Compare your change against its base branch in scenarios that exercise the code you changed, confirm the result, and include it in the PR as described in [Share the result](perf/README.md#4-share-the-result). If no scenario covers your change, [add one](perf/README.md#add-a-scenario). Don't claim an improvement the harness hasn't confirmed.
 
 ## AI-assisted contributions
 Setting expectations: the AI doesn't contribute to React Spectrum, you do. The AI is a tool, but you are still the author, and you own every line, every decision, and every explanation.
@@ -93,9 +99,17 @@ Even if you haven't tested all of these, it's hugely helpful to us to know where
 
 One of the biggest issues we face with the rise of AI contributions is the wrong root cause but with a lot of details asserting why it is, in fact, the issue. Press the AI, and ask both it and yourself "is this the root cause, or a symptom?" and "what else could cause this?" before committing to a solution.
 
-### Keep a human in the loop of the conversation
+### Keep a human in the loop
 
-When you iterate between reviews, be sure you can say what changed and why, one sentence is enough. A PR that transforms completely between every review without explanation is exhausting to follow and makes us feel like we're arguing with a machine instead of collaborating with a person.
+A human must be part of the entire process, from the first issue or comment through the final review, not just when new commits are pushed. That means you:
+
+- Agree on the problem and approach before implementing.
+- Review and understand every change before opening the PR or pushing new commits.
+- Write or review every issue, PR description, and comment before it's posted.
+
+Don't let an agent open an issue or PR, or respond to reviewers, on its own.
+
+When you iterate between reviews, be sure you can say what changed and why; one sentence is enough. A PR that transforms completely between every review without explanation is exhausting to follow and makes us feel like we're arguing with a machine instead of collaborating with a person.
 
 
 #### Requirements of front end code

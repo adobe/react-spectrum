@@ -11,6 +11,9 @@ body:
     id: general-summary
     attributes:
       label: Provide a general summary of the issue here
+      description: |
+        Include a simple, real-life example of how the issue occurs, such as what someone is trying to do in your app when they run into it.
+        If you found the issue by reading code or running tests, explain how it could happen in a real app.
     validations:
       required: true
   - type: textarea
