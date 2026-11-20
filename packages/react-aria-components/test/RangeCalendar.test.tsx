@@ -34,8 +34,11 @@ import {
   today
 } from '@internationalized/date';
 import {DateValue} from 'react-stately/useRangeCalendarState';
+import {ListBox, ListBoxItem} from '../src/ListBox';
+import {Popover} from '../src/Popover';
 import {RangeValue} from '@react-types/shared';
 import React from 'react';
+import {Select, SelectValue} from '../src/Select';
 import userEvent from '@testing-library/user-event';
 
 let TestCalendar = ({calendarProps = {}, gridProps = {}, cellProps = {}}) => (
@@ -624,6 +627,50 @@ describe('RangeCalendar', () => {
         .map(o => o.textContent)
     ).toEqual(Array.from({length: 20}, (_, i) => String(i + 2020)));
     expect(grid).toHaveAttribute('aria-label', 'Appointment date, June 2030');
+  });
+
+  it('should keep the anchor date when selecting a month from a popover picker', async () => {
+    let onChange = jest.fn();
+    let tree = render(
+      <RangeCalendar
+        aria-label="Trip dates"
+        defaultFocusedValue={new CalendarDate(2026, 4, 1)}
+        onChange={onChange}>
+        <header>
+          <CalendarMonthPicker>
+            {props => (
+              <Select {...props}>
+                <Button>
+                  <SelectValue />
+                </Button>
+                <Popover>
+                  <ListBox items={props.items}>
+                    {item => <ListBoxItem>{item.formatted}</ListBoxItem>}
+                  </ListBox>
+                </Popover>
+              </Select>
+            )}
+          </CalendarMonthPicker>
+        </header>
+        <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+      </RangeCalendar>
+    );
+
+    let grid = tree.getByRole('grid');
+    await user.click(within(grid).getByText('8'));
+    expect(onChange).not.toHaveBeenCalled();
+
+    await user.click(tree.getByRole('button', {name: /month/}));
+    await user.click(within(tree.getByRole('listbox')).getByText('Jun'));
+    expect(grid).toHaveAttribute('aria-label', 'Trip dates, June 2026');
+    expect(onChange).not.toHaveBeenCalled();
+
+    await user.click(within(grid).getByText('10'));
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith({
+      start: new CalendarDate(2026, 4, 8),
+      end: new CalendarDate(2026, 6, 10)
+    });
   });
 
   it('should support weeksInMonth prop', async () => {
