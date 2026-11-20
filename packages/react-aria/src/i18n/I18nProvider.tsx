@@ -27,6 +27,16 @@ export interface I18nProviderProps {
   children: ReactNode;
   /** The locale to apply to the children. */
   locale?: string;
+  /**
+   * The writing direction to apply to the children, overriding the direction implied by the
+   * locale. Use this for content whose direction comes from the content itself rather than from
+   * the reading order of the UI, such as a media playback bar that stays `'ltr'` in an RTL UI.
+   * Set `dir` on an element inside the provider as well, so that CSS logical properties resolve
+   * the same way the components do.
+   *
+   * @default the direction implied by the locale
+   */
+  direction?: Direction;
 }
 
 const I18nContext = React.createContext<Locale | null>(null);
@@ -39,13 +49,13 @@ interface I18nProviderWithLocaleProps extends I18nProviderProps {
  * Internal component that handles the case when locale is provided.
  */
 function I18nProviderWithLocale(props: I18nProviderWithLocaleProps): JSX.Element {
-  let {locale, children} = props;
+  let {locale, direction, children} = props;
   let value: Locale = React.useMemo(
     () => ({
       locale,
-      direction: isRTL(locale) ? 'rtl' : 'ltr'
+      direction: direction ?? (isRTL(locale) ? 'rtl' : 'ltr')
     }),
-    [locale]
+    [locale, direction]
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
@@ -53,31 +63,36 @@ function I18nProviderWithLocale(props: I18nProviderWithLocaleProps): JSX.Element
 
 interface I18nProviderWithDefaultLocaleProps {
   children: ReactNode;
+  direction?: Direction;
 }
 
 /**
  * Internal component that handles the case when no locale is provided.
  */
 function I18nProviderWithDefaultLocale(props: I18nProviderWithDefaultLocaleProps): JSX.Element {
-  let {children} = props;
+  let {direction, children} = props;
   let defaultLocale = useDefaultLocale();
+  let value: Locale = React.useMemo(
+    () => (direction ? {locale: defaultLocale.locale, direction} : defaultLocale),
+    [defaultLocale, direction]
+  );
 
-  return <I18nContext.Provider value={defaultLocale}>{children}</I18nContext.Provider>;
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
 /**
  * Provides the locale for the application to all child components.
  */
 export function I18nProvider(props: I18nProviderProps): JSX.Element {
-  let {locale, children} = props;
+  let {locale, direction, children} = props;
 
   // Conditionally render different components to avoid calling useDefaultLocale.
   // This is necessary because useDefaultLocale triggers a re-render.
   if (locale) {
-    return <I18nProviderWithLocale locale={locale} children={children} />;
+    return <I18nProviderWithLocale locale={locale} direction={direction} children={children} />;
   }
 
-  return <I18nProviderWithDefaultLocale children={children} />;
+  return <I18nProviderWithDefaultLocale direction={direction} children={children} />;
 }
 
 /**
