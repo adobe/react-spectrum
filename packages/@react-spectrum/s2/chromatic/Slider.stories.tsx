@@ -106,7 +106,7 @@ export const Editable: Story = {
     <div
       className={style({
         display: 'grid',
-        gridTemplateColumns: 'repeat(6, minmax(0, 260px))',
+        gridTemplateColumns: 'repeat(3, minmax(0, 360px))',
         gridAutoFlow: 'row',
         alignItems: 'center',
         justifyItems: 'start',
