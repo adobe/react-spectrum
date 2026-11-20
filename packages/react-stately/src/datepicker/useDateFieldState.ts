@@ -13,9 +13,11 @@
 import {
   Calendar,
   CalendarIdentifier,
+  DateFields,
   DateFormatter,
   GregorianCalendar,
   isEqualCalendar,
+  TimeFields,
   toCalendar
 } from '@internationalized/date';
 import {
@@ -129,6 +131,12 @@ export interface DateFieldState extends FormValidationState {
   /** Sets the value of the given segment. */
   setSegment(type: 'era', value: string): void;
   setSegment(type: DateSegmentType, value: number): void;
+  /**
+   * Sets multiple fields at once, e.g. when pasting a complete date. Fields are in the field's
+   * calendar system, hours are in 24 hour time, and fields that are not displayed are ignored.
+   * The offset, if provided, is used to resolve ambiguous times in zoned values.
+   */
+  setFields(fields: DateFields & TimeFields & {offset?: number}): void;
   /** Updates the remaining unfilled segments with the placeholder value. */
   confirmPlaceholder(): void;
   /** Clears the value of the given segment, reverting it to the placeholder. */
@@ -418,6 +426,25 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     },
     setSegment(part, v: string | number) {
       setValue(displayValue.set(part, v, placeholder));
+    },
+    setFields(fields) {
+      // Convert hours to the field's hour cycle, then apply each displayed segment in order so the
+      // day period is applied after the hour.
+      let parsed = new IncompleteDate(calendar, hourCycle, fields);
+      let result = displayValue;
+      for (let segment of displaySegments) {
+        let value = parsed[segment];
+        if (value != null) {
+          result = result.set(segment, value, placeholder);
+        }
+      }
+      // Setting fields clears the offset, so restore it afterward. It only applies to the pasted
+      // time, so ignore it when the time is not displayed.
+      if (fields.offset != null && displaySegments.includes('hour')) {
+        result = result.copy();
+        result.offset = fields.offset;
+      }
+      setValue(result);
     },
     confirmPlaceholder() {
       if (props.isDisabled || props.isReadOnly) {
