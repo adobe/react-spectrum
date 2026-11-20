@@ -163,6 +163,46 @@ describe('Focusable', function () {
     );
   });
 
+  it('should warn if focusable child is itself inert', async function () {
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    // jsdom doesn't implement inert, so set the property before the check runs.
+    render(
+      <Focusable>
+        <span
+          role="button"
+          ref={el => {
+            if (el) {
+              el.inert = true;
+            }
+          }}>
+          Button
+        </span>
+      </Focusable>
+    );
+
+    expect(spy).toHaveBeenCalledWith(
+      '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'
+    );
+  });
+
+  it('should not warn if focusable child is inside an inert subtree', async function () {
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    // jsdom doesn't implement inert, so set the property as ariaHideOutside does.
+    let container = document.createElement('div');
+    container.inert = true;
+    document.body.appendChild(container);
+    render(
+      <Focusable>
+        <span role="button">Button</span>
+      </Focusable>,
+      {container}
+    );
+
+    expect(spy).not.toHaveBeenCalledWith(
+      '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'
+    );
+  });
+
   it('should warn if child does not have a role', async function () {
     using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(
