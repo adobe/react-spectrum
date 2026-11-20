@@ -561,6 +561,7 @@ function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
       <div
         ref={ref}
         {...keyboardProps}
+        tabIndex={-1}
         className={itemsStyles + ' ' + scrollFade({x: 16})}
         onScroll={onScroll}
         onScrollEnd={onScrollEnd}>
