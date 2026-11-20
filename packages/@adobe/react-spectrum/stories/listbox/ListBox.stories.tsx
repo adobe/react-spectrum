@@ -476,6 +476,26 @@ export const WithDisabledOptions: ListBoxStory = {
   name: 'with disabled options'
 };
 
+export const DisabledListBox: ListBoxStory = {
+  render: () => (
+    <ListBox flexGrow={1} aria-labelledby="label" items={withSection} isDisabled>
+      {item => (
+        <Section key={item.name} items={item.children} title={item.name}>
+          {item => <Item key={item.name}>{item.name}</Item>}
+        </Section>
+      )}
+    </ListBox>
+  ),
+  decorators: [
+    Story => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    )
+  ],
+  name: 'disabled ListBox'
+};
+
 export const StaticWithDisabledOptions: ListBoxStory = {
   render: () => (
     <ListBox flexGrow={1} aria-labelledby="label" disabledKeys={['3', '5']}>
