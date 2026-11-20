@@ -292,6 +292,32 @@ describe('Sheet', () => {
     expect(document.activeElement).toBe(tree.getByRole('button', {name: 'Open sheet'}));
   });
 
+  it('restores focus to the element returned by a restoreFocus function', async () => {
+    function Test() {
+      let [showTrigger, setShowTrigger] = React.useState(true);
+      let fallbackRef = React.useRef(null);
+      return (
+        <>
+          <Button ref={fallbackRef}>Fallback</Button>
+          {showTrigger && (
+            <TestSheet
+              overlayProps={{
+                restoreFocus: ({defaultTarget}) => defaultTarget ?? fallbackRef.current
+              }}>
+              <Button onPress={() => setShowTrigger(false)}>Remove trigger</Button>
+            </TestSheet>
+          )}
+        </>
+      );
+    }
+
+    let tree = render(<Test />);
+    await open(tree);
+    await user.click(tree.getByRole('button', {name: 'Remove trigger'}));
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toBe(tree.getByRole('button', {name: 'Fallback'}));
+  });
+
   it('defers hiding outside content and focusing the dialog until the enter animation completes', async () => {
     // jsdom skips enter animations unless getAnimations is implemented.
     Element.prototype.getAnimations = () => [];
