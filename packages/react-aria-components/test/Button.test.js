@@ -211,6 +211,27 @@ describe('Button', () => {
     expect(button).not.toHaveClass('focus');
   });
 
+  it('should remain unfocused when keyboard modality changes immediately after blur', async () => {
+    let {getByRole} = render(<Button>Test</Button>);
+    let button = getByRole('button');
+
+    await user.click(button);
+    expect(button).toHaveAttribute('data-focused');
+    expect(button).not.toHaveAttribute('data-focus-visible');
+
+    act(() => {
+      button.blur();
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+    });
+    expect(button).not.toHaveAttribute('data-focused');
+    expect(button).not.toHaveAttribute('data-focus-visible');
+
+    await user.tab();
+    expect(button).toHaveAttribute('data-focused');
+    expect(button).toHaveAttribute('data-focus-visible');
+  });
+
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();

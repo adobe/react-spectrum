@@ -106,6 +106,38 @@ describe('DateField', () => {
     }
   });
 
+  it.each([
+    ['hour cycle', {locale: 'en-US', hourCycle: 24}],
+    ['calendar', {locale: 'en-US-u-ca-japanese', hourCycle: 12}]
+  ])('resets incomplete edits when the %s changes', async (_, nextProps) => {
+    let onChange = jest.fn();
+    function Test({locale = 'en-US', hourCycle = 12}) {
+      return (
+        <I18nProvider locale={locale}>
+          <DateField granularity="minute" hourCycle={hourCycle} onChange={onChange}>
+            <Label>Date</Label>
+            <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          </DateField>
+        </I18nProvider>
+      );
+    }
+
+    let {getByRole, rerender} = render(<Test />);
+    let month = getByRole('group').querySelector('[data-type="month"]');
+    await user.click(month);
+    await user.keyboard('2');
+    expect(month).toHaveAttribute('aria-valuenow', '2');
+    expect(month).not.toHaveAttribute('data-placeholder');
+
+    rerender(<Test />);
+    expect(month).toHaveAttribute('aria-valuenow', '2');
+
+    rerender(<Test {...nextProps} />);
+    month = getByRole('group').querySelector('[data-type="month"]');
+    expect(month).toHaveAttribute('data-placeholder', 'true');
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <DateFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>

@@ -147,12 +147,11 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
   }, [serverErrors, name]);
 
   // Show server errors when the form gets a new value, and clear when the user changes the value.
-  let [lastServerErrors, setLastServerErrors] = useState(serverErrors);
-  let [isServerErrorCleared, setServerErrorCleared] = useState(false);
-  if (serverErrors !== lastServerErrors) {
-    setLastServerErrors(serverErrors);
-    setServerErrorCleared(false);
+  let [clearedServerErrors, setClearedServerErrors] = useState<ValidationErrors | null>(null);
+  if (clearedServerErrors !== null && serverErrors !== clearedServerErrors) {
+    setClearedServerErrors(null);
   }
+  let isServerErrorCleared = serverErrors === clearedServerErrors;
 
   let serverError: ValidationResult | null = useMemo(
     () => getValidationResult(isServerErrorCleared ? [] : serverErrorMessages),
@@ -216,7 +215,7 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
         setCommitQueued(false);
       }
 
-      setServerErrorCleared(true);
+      setClearedServerErrors(serverErrors);
     },
     commitValidation() {
       // Commit validation state so the user sees it on blur/change/submit. Also clear any server errors.
@@ -224,7 +223,7 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
       if (validationBehavior === 'native') {
         setCommitQueued(true);
       }
-      setServerErrorCleared(true);
+      setClearedServerErrors(serverErrors);
     }
   };
 }
