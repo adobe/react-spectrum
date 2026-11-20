@@ -335,4 +335,28 @@ describe('TextField', () => {
       });
     }
   });
+
+  if (React.version.startsWith('19')) {
+    it('does not warn about a missing label while hidden by Activity', () => {
+      using warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      let Test = ({mode, count = 0}) => (
+        <React.Activity mode={mode}>
+          <TextField data-count={count}>
+            <Label>Name</Label>
+            <Input />
+          </TextField>
+        </React.Activity>
+      );
+
+      let {container, rerender} = render(<Test mode="visible" />);
+      rerender(<Test mode="hidden" />);
+      rerender(<Test mode="hidden" count={1} />);
+      expect(warn).not.toHaveBeenCalled();
+
+      rerender(<Test mode="visible" count={1} />);
+      let label = container.querySelector('label');
+      expect(label.id).toBeTruthy();
+      expect(container.querySelector('input')).toHaveAttribute('aria-labelledby', label.id);
+    });
+  }
 });
