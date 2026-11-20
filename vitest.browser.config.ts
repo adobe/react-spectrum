@@ -270,7 +270,17 @@ export default defineConfig({
           browser: 'firefox',
           name: 'firefox-desktop',
           viewport: {width: 1280, height: 720},
-          headless: true
+          headless: true,
+          provider: playwright({
+            launchOptions: {
+              firefoxUserPrefs: {
+                // Headless Firefox on Linux reports pointer: none and hover: none without a physical
+                // pointer device. 0x02 (fine) | 0x04 (hover) = 0x06 matches a desktop mouse.
+                'ui.primaryPointerCapabilities': 0x06,
+                'ui.allPointerCapabilities': 0x06
+              }
+            }
+          })
         },
         {
           browser: 'webkit',
@@ -325,11 +335,11 @@ export default defineConfig({
         mouseDownOnElement: async (
           {page, iframe}: any,
           selector: string,
-          offsetX: number = 5,
+          offsetX?: number,
           offsetY?: number
         ) => {
           const box = await iframe.locator(selector).boundingBox();
-          const x = box.x + offsetX;
+          const x = box.x + (offsetX ?? box.width / 2);
           const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY;
           await page.mouse.move(x, y);
           await page.mouse.down();
