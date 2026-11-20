@@ -44,7 +44,6 @@ import {pressScale} from './pressScale';
 import type {SliderState} from 'react-stately/useSliderState';
 import {snapValueToStep} from 'react-stately/private/utils/number';
 import {useFocusableRef} from './useDOMRef';
-import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SliderBaseProps<T>
@@ -166,17 +165,9 @@ const output = style({
   gridArea: 'output',
   textAlign: {
     labelPosition: {
-      top: {
-        direction: {
-          ltr: 'end',
-          rtl: 'start'
-        }
-      },
+      top: 'end',
       side: {
-        direction: {
-          ltr: 'start',
-          rtl: 'end'
-        },
+        default: 'start',
         isInForm: 'end'
       }
     }
@@ -432,7 +423,6 @@ export function SliderBase<T extends number | number[]>(
     sliderRef,
     ...ariaProps
   } = props;
-  let {direction} = useLocale();
   // SliderInput is currently the only supported child.
   let hasInput = !!children;
 
@@ -485,7 +475,7 @@ export function SliderBase<T extends number | number[]>(
               minWidth: `${maxLabelLength}ch`,
               fontVariantNumeric: 'tabular-nums'
             }}
-            className={output({direction, labelPosition, isInForm: !!formContext})}
+            className={output({labelPosition, isInForm: !!formContext})}
           />
         ) : null;
 
