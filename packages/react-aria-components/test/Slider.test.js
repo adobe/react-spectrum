@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render
+} from '@react-spectrum/test-utils-internal';
 import {Group} from '../src/Group';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
@@ -487,6 +493,123 @@ describe('Slider', () => {
 
     await user.pointer({keys: '[/MouseLeft]', target: track});
     expect(onChangeEnd).toHaveBeenCalledTimes(2);
+  });
+
+  describe('with PointerEvent', () => {
+    installPointerEvent();
+
+    it('commits pending NumberField text before a range track press starts dragging', async () => {
+      let onChangeEnd = jest.fn();
+      let errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      function ControlledRange() {
+        let [value, setValue] = useState([20, 80]);
+        return (
+          <Slider value={value} onChange={setValue} onChangeEnd={onChangeEnd}>
+            <Label>Price</Label>
+            <SliderTrack>
+              <SliderThumb index={0} aria-label="Minimum" />
+              <SliderThumb index={1} aria-label="Maximum" />
+            </SliderTrack>
+            <NumberField slot="0" aria-label="Minimum">
+              <Input />
+            </NumberField>
+            <NumberField slot="1" aria-label="Maximum">
+              <Input />
+            </NumberField>
+          </Slider>
+        );
+      }
+      let {getAllByRole, getByRole} = render(<ControlledRange />);
+
+      let sliders = getAllByRole('slider');
+      let minInput = getByRole('textbox', {name: 'Minimum Price'});
+      let maxInput = getByRole('textbox', {name: 'Maximum Price'});
+      let track = getByRole('group').querySelector('.react-aria-SliderTrack');
+      jest.spyOn(track, 'getBoundingClientRect').mockReturnValue({
+        left: 0,
+        right: 100,
+        top: 0,
+        bottom: 20,
+        width: 100,
+        height: 20,
+        x: 0,
+        y: 0,
+        toJSON: () => ({})
+      });
+
+      await user.click(minInput);
+      await user.clear(minInput);
+      await user.keyboard('40');
+      expect(onChangeEnd).not.toHaveBeenCalled();
+
+      fireEvent.pointerDown(track, {
+        button: 0,
+        pointerId: 1,
+        pointerType: 'mouse',
+        clientX: 90,
+        clientY: 10
+      });
+      expect(sliders[0]).toHaveValue('40');
+      expect(sliders[1]).toHaveValue('90');
+      expect(minInput).toHaveValue('40');
+      expect(maxInput).toHaveValue('90');
+      expect(onChangeEnd).toHaveBeenCalledTimes(1);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([40, 80]);
+      fireEvent.pointerUp(window, {pointerId: 1});
+      expect(onChangeEnd).toHaveBeenCalledTimes(2);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([40, 90]);
+
+      // Mouse and touch track presses without a preceding pointerdown also commit pending text
+      await user.click(minInput);
+      await user.clear(minInput);
+      await user.keyboard('30');
+      fireEvent.mouseDown(track, {button: 0, clientX: 70, clientY: 10});
+      expect(sliders[0]).toHaveValue('30');
+      expect(sliders[1]).toHaveValue('70');
+      expect(onChangeEnd).toHaveBeenCalledTimes(3);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([30, 90]);
+      fireEvent.mouseUp(window);
+      expect(onChangeEnd).toHaveBeenCalledTimes(4);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([30, 70]);
+
+      await user.click(minInput);
+      await user.clear(minInput);
+      await user.keyboard('35');
+      fireEvent.touchStart(track, {changedTouches: [{identifier: 2, clientX: 85, clientY: 10}]});
+      expect(sliders[0]).toHaveValue('35');
+      expect(sliders[1]).toHaveValue('85');
+      expect(onChangeEnd).toHaveBeenCalledTimes(5);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([35, 70]);
+      fireEvent.touchEnd(window, {changedTouches: [{identifier: 2, clientX: 85, clientY: 10}]});
+      expect(onChangeEnd).toHaveBeenCalledTimes(6);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([35, 85]);
+
+      expect(errorSpy).not.toHaveBeenCalled();
+      jest.restoreAllMocks();
+    });
+  });
+
+  it('keeps the composed NumberField ref stable across value updates', async () => {
+    let refSpy = jest.fn();
+    let {getByRole} = render(
+      <Slider defaultValue={30}>
+        <Label>Opacity</Label>
+        <SliderTrack>
+          <SliderThumb />
+        </SliderTrack>
+        <NumberField slot="0" ref={refSpy}>
+          <Input />
+        </NumberField>
+      </Slider>
+    );
+
+    expect(refSpy).toHaveBeenCalledTimes(1);
+    let slider = getByRole('slider');
+    await user.tab();
+    expect(document.activeElement).toBe(slider);
+    await user.keyboard('{ArrowRight}{ArrowRight}');
+    expect(slider).toHaveValue('32');
+    expect(refSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should support composing a NumberField inside Slider', async () => {

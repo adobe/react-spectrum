@@ -260,6 +260,7 @@ export const FieldGroup = forwardRef(function FieldGroup(
         if (
           !e.defaultPrevented &&
           e.pointerType === 'mouse' &&
+          e.button === 0 &&
           !(getEventTarget(e) as Element).closest('button,input,textarea,[role="button"]')
         ) {
           e.preventDefault();

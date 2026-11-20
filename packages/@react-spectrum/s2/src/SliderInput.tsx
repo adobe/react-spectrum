@@ -217,6 +217,7 @@ export const SliderInput = /*#__PURE__*/ forwardRef(function SliderInput(
           if (
             !state.isDisabled &&
             e.pointerType === 'mouse' &&
+            e.button === 0 &&
             !(getEventTarget(e) as Element).closest('input')
           ) {
             e.preventDefault();

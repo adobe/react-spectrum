@@ -53,6 +53,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState
 } from 'react';
@@ -134,6 +135,13 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   let {direction} = useLocale();
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
+  let numberFieldRefCallbacks = useMemo(
+    () =>
+      Array.from({length: state.values.length}, (_, index) => (el: HTMLDivElement | null) => {
+        numberFieldRefs.current[index] = el;
+      }),
+    [state.values.length]
+  );
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let {groupProps, trackProps, labelProps, outputProps} = useSlider(
     {...props, label},
@@ -178,9 +186,7 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   // edits that thumb's value, and its constraints mirror the thumb's (neighboring thumbs in a range
   // slider limit its min/max).
   let getNumberFieldProps = (index: number): WithRef<NumberFieldProps, HTMLDivElement> => ({
-    ref: el => {
-      numberFieldRefs.current[index] = el;
-    },
+    ref: numberFieldRefCallbacks[index],
     minValue: state.getThumbMinValue(index),
     maxValue: state.getThumbMaxValue(index),
     step: state.step,
@@ -290,14 +296,10 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   // input first so the text is committed before the track press starts a drag. Otherwise the
   // commit (which toggles thumb dragging in onChange above) would happen mid-drag, ending the
   // gesture and firing onChangeEnd early.
-  function onTrackPress(e: React.PointerEvent<HTMLDivElement>) {
+  function commitActiveNumberField(e: React.SyntheticEvent<HTMLDivElement>) {
     if (
       state.isDisabled ||
       e.defaultPrevented ||
-      e.button !== 0 ||
-      e.altKey ||
-      e.ctrlKey ||
-      e.metaKey ||
       !nodeContains(trackRef.current, getEventTarget(e))
     ) {
       return;
@@ -328,7 +330,22 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
       <dom.div
         {...mergeProps(DOMProps, renderProps, groupProps, {
           // Capture phase so this runs before the track's own press handling.
-          onPointerDownCapture: onTrackPress
+          onPointerDownCapture(e: React.PointerEvent<HTMLDivElement>) {
+            if (
+              e.pointerType === 'mouse' &&
+              (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
+            ) {
+              return;
+            }
+            commitActiveNumberField(e);
+          },
+          onMouseDownCapture(e: React.MouseEvent<HTMLDivElement>) {
+            if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+              return;
+            }
+            commitActiveNumberField(e);
+          },
+          onTouchStartCapture: commitActiveNumberField
         })}
         ref={ref}
         slot={props.slot || undefined}

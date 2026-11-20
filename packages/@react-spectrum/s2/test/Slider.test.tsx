@@ -211,6 +211,18 @@ describe('Slider and RangeSlider with SliderInput', () => {
     });
 
     await user.click(minInput);
+    // Secondary mouse buttons should not shift focus or prevent default context menu behavior
+    let rightClick = new PointerEvent('pointerdown', {
+      bubbles: true,
+      cancelable: true,
+      pointerType: 'mouse',
+      button: 2,
+      clientX: 160
+    });
+    fireEvent(fieldGroup, rightClick);
+    expect(rightClick.defaultPrevented).toBe(false);
+    expect(document.activeElement).toBe(minInput);
+
     fireEvent.pointerDown(fieldGroup, {pointerType: 'mouse', clientX: 160});
     expect(document.activeElement).toBe(maxInput);
 
