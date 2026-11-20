@@ -6099,7 +6099,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/types@npm:2.16.4, @parcel/types@npm:^2.16.3":
+"@parcel/types@npm:2.16.4":
   version: 2.16.4
   resolution: "@parcel/types@npm:2.16.4"
   dependencies:
@@ -24003,7 +24003,6 @@ __metadata:
   resolution: "parcel-reporter-turbosnap-stats@workspace:packages/dev/parcel-reporter-turbosnap-stats"
   dependencies:
     "@parcel/plugin": "npm:^2.16.3"
-    "@parcel/types": "npm:^2.16.3"
   languageName: unknown
   linkType: soft
 

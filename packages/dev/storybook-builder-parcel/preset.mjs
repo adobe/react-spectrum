@@ -15,15 +15,23 @@ import {fileURLToPath} from 'node:url';
 import {createProxyMiddleware} from 'http-proxy-middleware';
 import fs from 'node:fs';
 import {spawn} from 'node:child_process';
+import {createRequire} from 'node:module';
+import readline from 'node:readline';
+import {stripVTControlCharacters} from 'node:util';
 
 import {generateIframeModern} from './gen-iframe-modern.mjs';
 import {generatePreviewModern, generateSetupAddons} from './gen-preview-modern.mjs';
 
 const PARCEL_V3 = Boolean(process.env.PARCEL_V3);
 
+const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const generatedEntries = path.join(__dirname, 'generated-entries');
+
+// Prefixes the stats line that parcel-reporter-turbosnap-stats prints to
+// stdout. Must match STATS_MARKER in that package's StatsReporter.ts.
+const STATS_MARKER = 'TURBOSNAP_STATS_JSON:';
 
 // Module-scope so the top-level `bail()` can reach it. Aligns with
 // builder-webpack5's pattern of holding a single watcher handle on the module.
@@ -89,10 +97,13 @@ export async function start({options, router}) {
 }
 
 export async function build({options}) {
-  const parcel = await createParcel(options);
-  if (!PARCEL_V3) {
-    await parcel.run();
+  if (PARCEL_V3) {
+    // Resolves once parcel3 has finished, with the preview stats when
+    // --stats-json is set. Storybook writes them to preview-stats.json.
+    return createParcel(options);
   }
+  const parcel = await createParcel(options);
+  await parcel.run();
 }
 
 // No core presets to register; previewAnnotations come transitively from
@@ -127,12 +138,28 @@ async function createParcel(options, isDev = false) {
   );
 
   if (PARCEL_V3) {
+    let config = path.resolve(options.configDir, '.parcelrc-v3');
+    // TurboSnap stats (`storybook build --stats-json`).
+    let collectStats = !isDev && Boolean(options.statsJson);
+    if (collectStats) {
+      // The parcel3 CLI can only add reporters through .parcelrc, so extend
+      // the Storybook config with the stats reporter.
+      let statsConfig = path.join(generatedEntries, '.parcelrc-stats');
+      fs.writeFileSync(
+        statsConfig,
+        JSON.stringify({
+          extends: [config],
+          reporters: ['...', require.resolve('parcel-reporter-turbosnap-stats/StatsReporter.ts')]
+        })
+      );
+      config = statsConfig;
+    }
     let parcel = spawn(
       'parcel3',
       [
         isDev ? 'serve' : 'build',
         '--config',
-        path.resolve(options.configDir, '.parcelrc-v3'),
+        config,
         '-p',
         '3000',
         '--dist-dir',
@@ -141,18 +168,24 @@ async function createParcel(options, isDev = false) {
         '--public-url',
         './'
       ],
-      {stdio: 'inherit'}
+      {stdio: ['inherit', collectStats ? 'pipe' : 'inherit', 'inherit']}
     );
     if (!isDev) {
-      await new Promise((resolve, reject) => {
-        parcel.on('close', code => {
-          if (code === 0) {
-            resolve();
-          } else {
-            reject();
-          }
-        });
-      });
+      let statsJson = collectStats ? readStatsJson(parcel.stdout) : null;
+      let code = await new Promise(resolve => parcel.on('close', resolve));
+      if (code !== 0) {
+        throw new Error(`parcel3 build exited with code ${code}`);
+      }
+      if (statsJson) {
+        let json = await statsJson;
+        if (json == null) {
+          throw new Error(
+            'parcel-reporter-turbosnap-stats did not output any stats. See the Parcel output above for errors.'
+          );
+        }
+        let stats = JSON.parse(json);
+        return {toJson: () => stats};
+      }
     }
   } else {
     return new Parcel({
@@ -161,17 +194,7 @@ async function createParcel(options, isDev = false) {
       mode: isDev ? 'development' : 'production',
       serveOptions: isDev ? {port: 3000} : null,
       hmrOptions: isDev ? {port: 3001} : null,
-      additionalReporters: [
-        {packageName: '@parcel/reporter-cli', resolveFrom: __filename},
-        ...(options.statsJson
-          ? [
-              {
-                packageName: 'parcel-reporter-turbosnap-stats',
-                resolveFrom: __filename
-              }
-            ]
-          : [])
-      ],
+      additionalReporters: [{packageName: '@parcel/reporter-cli', resolveFrom: __filename}],
       targets: {
         storybook: {
           distDir: options.outputDir,
@@ -188,4 +211,24 @@ async function createParcel(options, isDev = false) {
       }
     });
   }
+}
+
+// Forwards parcel3's stdout, except for the line printed by
+// parcel-reporter-turbosnap-stats. Resolves with the JSON from that line, or
+// undefined if it was never printed.
+function readStatsJson(stdout) {
+  return new Promise(resolve => {
+    let json;
+    let lines = readline.createInterface({input: stdout, crlfDelay: Infinity});
+    lines.on('line', line => {
+      let index = line.indexOf(STATS_MARKER);
+      if (index === -1) {
+        process.stdout.write(line + '\n');
+      } else {
+        // parcel3 wraps console output in ANSI styles.
+        json = stripVTControlCharacters(line.slice(index + STATS_MARKER.length));
+      }
+    });
+    lines.on('close', () => resolve(json));
+  });
 }
