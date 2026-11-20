@@ -276,10 +276,12 @@ export const Tabs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tabs(
 interface TabsInnerProps {
   props: TabsProps;
   collection: ICollection<Node<any>>;
-  tabsRef: RefObject<HTMLDivElement | null>;
+  tabsRef: ForwardedRef<HTMLDivElement>;
 }
 
-function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
+// Renders tabs from a collection that has already been built, so that a component that builds the
+// collection itself (e.g. Wizard) doesn't build it again.
+export function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps): JSX.Element {
   let {orientation = 'horizontal'} = props;
   let state = useTabListState({
     ...props,
@@ -394,62 +396,68 @@ class TabItemNode extends CollectionNode<unknown> {
  */
 export const Tab = /*#__PURE__*/ createLeafComponent(
   TabItemNode,
-  (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
-    let state = useContext(TabListStateContext)!;
-    let ref = useObjectRef<any>(forwardedRef);
-    let {tabProps, isSelected, isDisabled, isPressed} = useTab(
-      {key: item.key, ...props},
-      state,
-      ref
-    );
-    let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-    let {hoverProps, isHovered} = useHover({
-      isDisabled,
-      onHoverStart: props.onHoverStart,
-      onHoverEnd: props.onHoverEnd,
-      onHoverChange: props.onHoverChange
-    });
-
-    let renderProps = useRenderProps<TabRenderProps, any>({
-      ...props,
-      id: undefined,
-      children: item.rendered,
-      defaultClassName: 'react-aria-Tab',
-      values: {
-        isSelected,
-        isDisabled,
-        isFocused,
-        isFocusVisible,
-        isPressed,
-        isHovered
-      }
-    });
-
-    let ElementType = item.props.href ? dom.a : dom.div;
-    let DOMProps = filterDOMProps(props as any, {
-      global: true,
-      propNames: new Set(['aria-current'])
-    });
-    delete DOMProps.id;
-    delete DOMProps.onClick;
-
-    return (
-      <ElementType
-        {...mergeProps(DOMProps, renderProps, tabProps, focusProps, hoverProps)}
-        ref={ref}
-        data-selected={isSelected || undefined}
-        data-disabled={isDisabled || undefined}
-        data-focused={isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}
-        data-pressed={isPressed || undefined}
-        data-hovered={isHovered || undefined}>
-        <SelectionIndicatorContext.Provider value={{isSelected}}>
-          {renderProps.children}
-        </SelectionIndicatorContext.Provider>
-      </ElementType>
-    );
-  }
+  (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => (
+    <TabInner props={props} forwardedRef={forwardedRef} item={item} />
+  )
 );
+
+interface TabInnerProps {
+  props: TabProps;
+  forwardedRef: ForwardedRef<HTMLDivElement>;
+  item: Node<unknown>;
+}
+
+// Renders a tab for an item in the collection. Wizard also renders its steps with it.
+export function TabInner({props, forwardedRef, item}: TabInnerProps): JSX.Element {
+  let state = useContext(TabListStateContext)!;
+  let ref = useObjectRef<any>(forwardedRef);
+  let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key, ...props}, state, ref);
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({
+    isDisabled,
+    onHoverStart: props.onHoverStart,
+    onHoverEnd: props.onHoverEnd,
+    onHoverChange: props.onHoverChange
+  });
+
+  let renderProps = useRenderProps<TabRenderProps, any>({
+    ...props,
+    id: undefined,
+    defaultClassName: 'react-aria-Tab',
+    values: {
+      isSelected,
+      isDisabled,
+      isFocused,
+      isFocusVisible,
+      isPressed,
+      isHovered
+    }
+  });
+
+  let ElementType = item.props.href ? dom.a : dom.div;
+  let DOMProps = filterDOMProps(props as any, {
+    global: true,
+    propNames: new Set(['aria-current'])
+  });
+  delete DOMProps.id;
+  delete DOMProps.onClick;
+
+  return (
+    <ElementType
+      {...mergeProps(DOMProps, renderProps, tabProps, focusProps, hoverProps)}
+      ref={ref}
+      data-selected={isSelected || undefined}
+      data-disabled={isDisabled || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-pressed={isPressed || undefined}
+      data-hovered={isHovered || undefined}>
+      <SelectionIndicatorContext.Provider value={{isSelected}}>
+        {renderProps.children}
+      </SelectionIndicatorContext.Provider>
+    </ElementType>
+  );
+}
 
 export interface TabPanelsProps<T>
   extends

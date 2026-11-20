@@ -350,6 +350,61 @@ describe('Wizard', () => {
     expect(panelsRef.current).toBe(tree.getByRole('tabpanel').parentElement);
   });
 
+
+  // Like Select, which builds the collection of its ListBox once and provides its state to it, the
+  // wizard should build its steps once rather than building them again in the Tabs it renders.
+  describe('collection', () => {
+    function renderWithProbe(Example) {
+      let log = {mounts: 0, collections: []};
+      let onMount = () => {
+        log.mounts++;
+      };
+      let onRender = collection => {
+        log.collections.push(collection);
+      };
+      let getElement = () => (
+        <Example>
+          <CollectionProbe onMount={onMount} onRender={onRender} />
+          <StepButtons />
+        </Example>
+      );
+      let tree = render(getElement());
+      return {tree, log, rerender: () => tree.rerender(getElement())};
+    }
+
+    it('should not mount its children more times than Tabs', () => {
+      let tabs = renderWithProbe(TabsExample);
+      tabs.tree.unmount();
+      let wizard = renderWithProbe(WizardExample);
+      expect(wizard.log.mounts).toBe(tabs.log.mounts);
+    });
+
+    it('should keep the same step collection when the selected step changes', async () => {
+      let {tree, log} = renderWithProbe(WizardExample);
+      let collection = log.collections.at(-1);
+
+      await user.click(tree.getByRole('button', {name: 'Continue'}));
+      expect(getSelectedStep(tree)).toBe('dns');
+      expect(log.collections.at(-1)).toBe(collection);
+    });
+
+    it.each(['mounting', 're-rendering'])(
+      'should build the step collection as many times as Tabs when %s',
+      phase => {
+        let [tabsCount, wizardCount] = [TabsExample, WizardExample].map(Example => {
+          let {tree, log, rerender} = renderWithProbe(Example);
+          if (phase === 're-rendering') {
+            log.collections = [log.collections.at(-1)];
+            rerender();
+          }
+          tree.unmount();
+          return new Set(log.collections).size;
+        });
+
+        expect(wizardCount).toBe(tabsCount);
+      }
+    );
+  });
   describe('lastCompletedStep', () => {
     it.each([
       ['no steps are completed', {}],
