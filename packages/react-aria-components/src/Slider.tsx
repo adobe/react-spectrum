@@ -122,7 +122,8 @@ export interface SliderRenderProps {
 export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slider<
   T extends number | number[]
 >(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, SliderContext);
+  let domRef: RefObject<HTMLDivElement | null>;
+  [props, domRef] = useContextProps(props, ref, SliderContext);
   let trackRef = useRef<HTMLDivElement>(null);
   let numberFieldRefs = useRef<(HTMLDivElement | null)[]>([]);
   let isResettingRef = useRef(false);
@@ -295,25 +296,53 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   // When the user presses the track while a bound NumberField has uncommitted text, blur the
   // input first so the text is committed before the track press starts a drag. Otherwise the
   // commit (which toggles thumb dragging in onChange above) would happen mid-drag, ending the
-  // gesture and firing onChangeEnd early.
-  function commitActiveNumberField(e: React.SyntheticEvent<HTMLDivElement>) {
-    if (
-      state.isDisabled ||
-      e.defaultPrevented ||
-      !nodeContains(trackRef.current, getEventTarget(e))
-    ) {
+  // gesture and firing onChangeEnd early. Use native capture listeners so this runs before
+  // React's delegated listeners collect bubble handlers (in React 16, synthetic capture and bubble
+  // handlers are collected upfront before capture runs, leaving the track handler with stale state).
+  useEffect(() => {
+    let el = domRef.current;
+    if (!el || state.isDisabled) {
       return;
     }
 
-    // Commit pending text before the track handles the press and starts dragging.
-    let active = getActiveElement(e.currentTarget.ownerDocument);
-    if (
-      active?.tagName === 'INPUT' &&
-      numberFieldRefs.current.some(field => nodeContains(field, active))
-    ) {
-      (active as HTMLInputElement).blur();
-    }
-  }
+    let commitActiveNumberField = (e: Event) => {
+      if (e.defaultPrevented || !nodeContains(trackRef.current, getEventTarget(e) as Node)) {
+        return;
+      }
+
+      // Commit pending text before the track handles the press and starts dragging.
+      let active = getActiveElement(el.ownerDocument);
+      if (
+        active?.tagName === 'INPUT' &&
+        numberFieldRefs.current.some(field => nodeContains(field, active))
+      ) {
+        (active as HTMLInputElement).blur();
+      }
+    };
+
+    let onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+        return;
+      }
+      commitActiveNumberField(e);
+    };
+
+    let onMouseDown = (e: MouseEvent) => {
+      if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+        return;
+      }
+      commitActiveNumberField(e);
+    };
+
+    el.addEventListener('pointerdown', onPointerDown, true);
+    el.addEventListener('mousedown', onMouseDown, true);
+    el.addEventListener('touchstart', commitActiveNumberField, {capture: true, passive: true});
+    return () => {
+      el.removeEventListener('pointerdown', onPointerDown, true);
+      el.removeEventListener('mousedown', onMouseDown, true);
+      el.removeEventListener('touchstart', commitActiveNumberField, true);
+    };
+  }, [domRef, state.isDisabled]);
 
   return (
     <Provider
@@ -328,26 +357,8 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
         [NumberFieldContext, numberFieldContext]
       ]}>
       <dom.div
-        {...mergeProps(DOMProps, renderProps, groupProps, {
-          // Capture phase so this runs before the track's own press handling.
-          onPointerDownCapture(e: React.PointerEvent<HTMLDivElement>) {
-            if (
-              e.pointerType === 'mouse' &&
-              (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
-            ) {
-              return;
-            }
-            commitActiveNumberField(e);
-          },
-          onMouseDownCapture(e: React.MouseEvent<HTMLDivElement>) {
-            if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-              return;
-            }
-            commitActiveNumberField(e);
-          },
-          onTouchStartCapture: commitActiveNumberField
-        })}
-        ref={ref}
+        {...mergeProps(DOMProps, renderProps, groupProps)}
+        ref={domRef}
         slot={props.slot || undefined}
         data-orientation={state.orientation}
         data-disabled={state.isDisabled || undefined}
