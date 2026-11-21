@@ -327,14 +327,14 @@ export default defineConfig({
         mouseDownOnElement: async (
           {page, iframe}: any,
           selector: string,
-          offsetX: number = 5,
+          offsetX?: number,
           offsetY?: number
         ) => {
           const locator = iframe.locator(selector);
           const box = await locator.boundingBox();
           const rect = await locator.evaluate((el: Element) => el.getBoundingClientRect().toJSON());
           const scale = rect.width ? box.width / rect.width : 1;
-          const x = box.x + offsetX * scale;
+          const x = offsetX == null ? box.x + box.width / 2 : box.x + offsetX * scale;
           const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY * scale;
           await page.mouse.move(x, y);
           await page.mouse.down();
