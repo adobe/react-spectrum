@@ -15,6 +15,7 @@ import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {RangeSlider} from '../src/RangeSlider';
+import {SliderInput} from '../src/SliderInput';
 
 const meta: Meta<typeof RangeSlider> = {
   component: RangeSlider,
@@ -26,6 +27,7 @@ const meta: Meta<typeof RangeSlider> = {
   argTypes: {
     onChangeEnd: {table: {category: 'Events'}},
     label: {control: {type: 'text'}},
+    labelPosition: {control: 'radio', options: ['top', 'side']},
     contextualHelp: {table: {disable: true}}
   },
   title: 'RangeSlider'
@@ -41,6 +43,21 @@ export const Example: Story = {
     defaultValue: {
       start: 30,
       end: 60
+    }
+  }
+};
+
+export const Editable: Story = {
+  render: args => (
+    <RangeSlider {...args}>
+      <SliderInput />
+    </RangeSlider>
+  ),
+  args: {
+    label: 'Range',
+    defaultValue: {
+      start: 25,
+      end: 75
     }
   }
 };
