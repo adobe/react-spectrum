@@ -39,7 +39,12 @@ import {
   useRef,
   useState
 } from 'react';
-import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {
+  getActiveElement,
+  getEventTarget,
+  getParentElement,
+  nodeContains
+} from '../utils/shadowdom/DOMFunctions';
 import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
 import {getItemCount} from 'react-stately/private/collections/getItemCount';
 import {getItemId, listData} from '../listbox/utils';
@@ -61,6 +66,7 @@ import {useRouter} from '../utils/openLink';
 import {useSelectableCollection} from '../selection/useSelectableCollection';
 import {useTextField} from '../textfield/useTextField';
 import {useUpdateEffect} from '../utils/useUpdateEffect';
+import {willOpenKeyboard} from '../utils/keyboard';
 
 export interface AriaComboBoxProps<T, M extends SelectionMode = 'single'>
   extends ComboBoxProps<T, M>, DOMProps, InputDOMProps, AriaLabelingProps {
@@ -504,6 +510,26 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       : undefined
   );
 
+  // Pressing a part of the popover that can't take focus (padding, text, or a native button in
+  // Safari) moves focus to the body, and the input's blur would commit and close the popover.
+  // Keep focus in the input, except for fields that need it. This is a native listener because
+  // usePress stops mousedown propagation. Skipped when the input is inside the popover (mobile trays).
+  useEvent(
+    popoverRef,
+    'mousedown',
+    state.isOpen
+      ? e => {
+          let popover = popoverRef.current;
+          if (
+            !nodeContains(popover, inputRef.current) &&
+            !isFieldTarget(getEventTarget(e) as Element, popover)
+          ) {
+            e.preventDefault();
+          }
+        }
+      : undefined
+  );
+
   return {
     labelProps: {
       ...labelProps,
@@ -557,6 +583,20 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     validationErrors,
     validationDetails
   };
+}
+
+function isFieldTarget(target: Element | null, popover: Element | null): boolean {
+  for (let element = target; element && element !== popover; element = getParentElement(element)) {
+    if (
+      willOpenKeyboard(element) ||
+      element instanceof HTMLSelectElement ||
+      (element instanceof HTMLInputElement && element.type === 'range')
+    ) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // This is a modified version of useSlotId that uses useEffect instead of useLayoutEffect.

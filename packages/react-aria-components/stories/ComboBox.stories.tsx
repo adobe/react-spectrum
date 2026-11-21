@@ -17,6 +17,7 @@ import {ComboBox, ComboBoxProps, ComboBoxStateContext} from '../src/ComboBox';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {Group} from '../src/Group';
 import {Input} from '../src/Input';
+import {Key} from '@react-types/shared';
 import {Label} from '../src/Label';
 import {ListBox} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
@@ -409,6 +410,47 @@ export const WithCreateOption = {
             <MyListBoxItem>Kangaroo</MyListBoxItem>
             <MyListBoxItem>Panda</MyListBoxItem>
             <MyListBoxItem>Snake</MyListBoxItem>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+  }
+};
+
+export const WithPopoverContent = {
+  render: function WithPopoverContent() {
+    let [selectedKey, setSelectedKey] = useState<Key | null>(null);
+
+    return (
+      <ComboBox selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+        <Label style={{display: 'block'}}>Favorite Animal</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>
+              ▼
+            </span>
+          </Button>
+        </div>
+        <Popover
+          placement="bottom start"
+          style={{padding: 12, background: 'Canvas', border: '1px solid gray'}}>
+          <div style={{display: 'flex', gap: 24, marginBottom: 8}}>
+            <Button onPress={() => setSelectedKey(null)}>Reset selection</Button>
+            <button type="button">Native button</button>
+          </div>
+          <p style={{margin: '0 0 8px'}}>
+            Pressing the padding, this text, or the buttons keeps the popover open.
+          </p>
+          <input
+            aria-label="Note"
+            placeholder="A field that takes focus"
+            style={{marginBottom: 8}}
+          />
+          <ListBox data-testid="combo-box-list-box" className={styles.menu}>
+            <MyListBoxItem id="cat">Cat</MyListBoxItem>
+            <MyListBoxItem id="dog">Dog</MyListBoxItem>
+            <MyListBoxItem id="kangaroo">Kangaroo</MyListBoxItem>
           </ListBox>
         </Popover>
       </ComboBox>
