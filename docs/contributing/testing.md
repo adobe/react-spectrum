@@ -8,7 +8,7 @@ Test suites are split by type:
 - **Visual regression tests (VRT)** — `yarn chromatic`
 - **High-contrast-mode VRT** — `yarn chromatic:forced-colors`
 
-Maintainers run the Chromatic VRT suites themselves — don't run `yarn chromatic` / `yarn chromatic:forced-colors`. You can still start the VRT Storybooks locally to verify visual state: `yarn start:chromatic` and `yarn start:chromatic-fc`.
+Maintainers run the Chromatic VRT suites themselves — don't run `yarn chromatic` / `yarn chromatic:forced-colors` or their `-parcel3` siblings. You can still start the VRT Storybooks locally to verify visual state: `yarn start:chromatic` and `yarn start:chromatic-fc`.
 
 Tests are **not** co-located with source — each package keeps them in a sibling `test/` directory. The file suffix routes the test to a runner: `*.ssr.test.*` → `yarn test:ssr`, `*.browser.test.*` → `yarn test:browser`, plain `*.test.*` → `yarn test` (Jest). Shared test helpers live in `@react-aria/test-utils` / `@react-spectrum/test-utils` (the `User` event abstraction and per-component testers).
 
