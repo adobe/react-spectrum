@@ -7,7 +7,7 @@
       "@parcel/transformer-storybook-v3",
       "..."
     ],
-    "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
+    "js:packages/**/intl/**/*.json": ["parcel-transformer-intl"],
     "packages/@adobe/**/*.css": [
       "../parcel-v3/PostCSSTransformer.mjs",
       {
