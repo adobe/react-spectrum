@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {afterAll, beforeAll, describe, expect, it, vi} from 'vitest';
 import {createPortal} from 'react-dom';
-import {describe, expect, it, vi} from 'vitest';
-import {getScrollParent} from '../../src/utils/getScrollParent';
+import {getScrollParent, getSnapParent} from '../../src/utils/getScrollParent';
 import {getScrollParents} from '../../src/utils/getScrollParents';
 import {isScrollable} from '../../src/utils/isScrollable';
 import {Key} from '@react-types/shared';
@@ -46,6 +46,12 @@ export const STYLESHEET = Object.freeze(`
   .scroll-y { height: 300vh; }
   .scroll-x { width: 300vw; }
 
+  .display-none { display: none; }
+  .display-flex { display: flex; }
+  .display-block { display: block; }
+  .display-inline { display: inline; }
+  .display-contents { display: contents; }
+
   .overflow-auto { overflow: auto; }
   .overflow-hidden { overflow: hidden; }
 
@@ -54,8 +60,14 @@ export const STYLESHEET = Object.freeze(`
   .overflow-y-auto { overflow-y: auto; }
   .overflow-y-hidden { overflow-y: hidden; }
 
+  .snap-both { scroll-snap-type: both mandatory; }
   .snap-block { scroll-snap-type: block mandatory; }
   .snap-inline { scroll-snap-type: inline mandatory; }
+  .snap-x { scroll-snap-type: x; }
+  .snap-y { scroll-snap-type: y; }
+
+  .snap-align-start { scroll-snap-align: start; }
+  .snap-align-end { scroll-snap-align: end; }
 
   .position-relative { position: relative; }
   .position-absolute { position: absolute; }
@@ -171,10 +183,64 @@ function supportsModernSignature(): boolean {
   }
 }
 
+async function getNativeSnapParent(element: Element): Promise<Element | null> {
+  let actions: Array<() => unknown> = [];
+
+  let ownerDocument = element.ownerDocument;
+
+  let scrollingElements: Element[] = [];
+  let propagatingTargets: Array<Element | Document> = [];
+
+  let cursor: Element | null = element;
+
+  while (cursor != null) {
+    let root = cursor.getRootNode() as ShadowRoot | Document;
+    cursor = cursor.assignedSlot ?? cursor.parentElement ?? ('host' in root ? root.host : null);
+
+    if (cursor == null) break;
+
+    let isRoot = cursor.contains(ownerDocument.scrollingElement);
+
+    let propagatingTarget = isRoot ? ownerDocument : cursor;
+    let scrollingElement = isRoot ? ownerDocument.scrollingElement! : cursor;
+
+    actions.push(() => scrollingElement.scrollTo(0, 0));
+
+    scrollingElements.push(scrollingElement);
+    propagatingTargets.push(propagatingTarget);
+
+    if (isRoot) break;
+  }
+
+  let signal = AbortSignal.timeout(100);
+
+  let scrolled = new Promise<boolean>(resolve => {
+    signal.addEventListener('abort', () => resolve(false), {once: true});
+
+    for (let propagatingTarget of propagatingTargets) {
+      propagatingTarget.addEventListener('scroll', () => resolve(true), {
+        once: true,
+        signal
+      });
+    }
+  });
+
+  for (let scroll of actions) scroll();
+  await scrolled;
+
+  let snapParent = scrollingElements.find(element => {
+    return element.scrollTop !== 0 || element.scrollLeft !== 0;
+  });
+
+  return snapParent ?? null;
+}
+
 function getNativeScrollParents(element: Element): Element[] {
-  let scrollingElement = element.contains(element.ownerDocument.scrollingElement)
-    ? element.ownerDocument.scrollingElement!
-    : element;
+  let ownerDocument = element.ownerDocument;
+
+  let isRoot = element.contains(ownerDocument.scrollingElement);
+
+  let scrollingElement = isRoot ? ownerDocument.scrollingElement! : element;
 
   let scrollParents: Element[] = [];
   let cursor: Element | null = scrollingElement;
@@ -195,8 +261,418 @@ function getNativeScrollParents(element: Element): Element[] {
   return scrollParents;
 }
 
+describe('getSnapParent', () => {
+  describe('supports querying the potentially scrollable snap ancestor', () => {
+    it('should return a block snappable ancestor', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let scrollRef = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto snap-block" ref={scrollRef}>
+                <div className="content scroll-y" />
+                <div className="snap-align-start" ref={ref} />
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actualBlock = getSnapParent(ref.current!, {axis: 'block'});
+      let actualInline = getSnapParent(ref.current!, {axis: 'inline'});
+
+      expect(actualBlock).toBe(scrollRef.current);
+      expect(actualBlock).toBe(expected);
+      expect(actualInline).toBe(null);
+    });
+
+    it('should return an inline snappable ancestor', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let scrollRef = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto display-flex snap-inline" ref={scrollRef}>
+                <div className="content scroll-x" />
+                <div className="snap-align-start" ref={ref} />
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actualBlock = getSnapParent(ref.current!, {axis: 'block'});
+      let actualInline = getSnapParent(ref.current!, {axis: 'inline'});
+
+      expect(actualBlock).toBe(null);
+      expect(actualInline).toBe(scrollRef.current);
+      expect(actualInline).toBe(expected);
+    });
+
+    it('should return an inline snappable ancestor for a physical axis', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let scrollRef = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto snap-x" ref={scrollRef}>
+                <div className="content scroll-x" />
+                <div className="snap-align-start" ref={ref} />
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let actualBlock = getSnapParent(ref.current!, {axis: 'block'});
+      let actualInline = getSnapParent(ref.current!, {axis: 'inline'});
+
+      expect(actualBlock).toBe(null);
+      expect(actualInline).toBe(scrollRef.current);
+    });
+
+    it('should return null for a non-snappable ancestor', async () => {
+      let ref = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto">
+                <div className="content scroll-y" />
+                <div className="snap-align-start" ref={ref} />
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actual = getSnapParent(ref.current!);
+
+      expect(actual).toBe(null);
+      expect(actual).toBe(expected);
+    });
+
+    it('should not skip past a non-snappable ancestor', async () => {
+      let ref = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto snap-block">
+                <div className="content scroll-y" />
+                <div className="container overflow-auto">
+                  <div className="content scroll-y" />
+                  <div className="snap-align-start" ref={ref} />
+                </div>
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actual = getSnapParent(ref.current!);
+
+      expect(actual).toBe(null);
+      expect(actual).toBe(expected);
+    });
+
+    it('should not skip past a potentially scrollable ancestor', async () => {
+      let ref = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto snap-block">
+                <div className="content scroll-y" />
+                <div className="container overflow-auto">
+                  <div className="snap-align-start" ref={ref} />
+                </div>
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actual = getSnapParent(ref.current!);
+
+      expect(actual).toBe(null);
+      expect(actual).toBe(expected);
+    });
+
+    it('should return the root scrolling element for a snappable root', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let scrollRef = createRef<HTMLHtmlElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US" className="snap-block" ref={scrollRef}>
+            <body>
+              <div className="content scroll-y" />
+              <div className="snap-align-start" ref={ref} />
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actualBlock = getSnapParent(ref.current!, {axis: 'block'});
+      let actualInline = getSnapParent(ref.current!, {axis: 'inline'});
+
+      expect(actualBlock).toBe(scrollRef.current);
+      expect(actualBlock).toBe(expected);
+      expect(actualInline).toBe(null);
+    });
+
+    it('should return null for a snappable body', async () => {
+      let ref = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body className="snap-block">
+              <div className="content scroll-y" />
+              <div className="snap-align-start" ref={ref} />
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actual = getSnapParent(ref.current!);
+
+      expect(actual).toBe(null);
+      expect(actual).toBe(expected);
+    });
+  });
+
+  describe('supports interaction modalities', () => {
+    it('should return a hidden snappable ancestor under virtual modality', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let scrollRef = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-hidden snap-block" ref={scrollRef}>
+                <div className="content scroll-y" />
+                <div className="snap-align-start" ref={ref} />
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actualVirtual = getSnapParent(ref.current!);
+      let actualPointer = getSnapParent(ref.current!, {modality: 'pointer'});
+
+      expect(actualVirtual).toBe(scrollRef.current);
+      expect(actualVirtual).toBe(expected);
+      expect(actualPointer).toBe(null);
+    });
+
+    it('should return null for a hidden snappable axis under pointer modality', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let scrollRef = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div
+                className="container overflow-y-auto overflow-x-hidden snap-both"
+                ref={scrollRef}>
+                <div className="content scroll-y" />
+                <div className="snap-align-start" ref={ref} />
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let actualBlock = getSnapParent(ref.current!, {modality: 'pointer', axis: 'block'});
+      let actualInline = getSnapParent(ref.current!, {modality: 'pointer', axis: 'inline'});
+
+      expect(actualBlock).toBe(scrollRef.current);
+      expect(actualInline).toBe(null);
+    });
+
+    it('should not skip past a hidden ancestor under pointer modality', async () => {
+      let ref = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto snap-block">
+                <div className="content scroll-y" />
+                <div className="container overflow-hidden">
+                  <div className="content scroll-y" />
+                  <div className="snap-align-start" ref={ref} />
+                </div>
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actualPointer = getSnapParent(ref.current!, {modality: 'pointer'});
+
+      expect(actualPointer).toBe(null);
+      expect(actualPointer).toBe(expected);
+    });
+
+    it('should return null for a hidden snappable root under pointer modality', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let scrollRef = createRef<HTMLHtmlElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US" className="snap-block" ref={scrollRef}>
+            <body className="overflow-hidden">
+              <div className="content scroll-y" />
+              <div className="snap-align-start" ref={ref} />
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actualVirtual = getSnapParent(ref.current!);
+      let actualPointer = getSnapParent(ref.current!, {modality: 'pointer'});
+
+      expect(actualVirtual).toBe(scrollRef.current);
+      expect(actualVirtual).toBe(expected);
+      expect(actualPointer).toBe(null);
+    });
+  });
+
+  describe('supports checking for actual overflow', () => {
+    it('should return null for a non-scrollable snappable ancestor', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let scrollRef = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto snap-block" ref={scrollRef}>
+                <div className="snap-align-start" ref={ref} />
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actualPotential = getSnapParent(ref.current!);
+      let actual = getSnapParent(ref.current!, {scrollable: true});
+
+      expect(actualPotential).toBe(scrollRef.current);
+      expect(actual).toBe(null);
+      expect(actual).toBe(expected);
+    });
+
+    it('should return null for a non-scrollable snappable axis', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let scrollRef = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto snap-both" ref={scrollRef}>
+                <div className="content scroll-y" />
+                <div className="snap-align-start" ref={ref} />
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let actualBlock = getSnapParent(ref.current!, {scrollable: true, axis: 'block'});
+      let actualInline = getSnapParent(ref.current!, {scrollable: true, axis: 'inline'});
+
+      expect(actualBlock).toBe(scrollRef.current);
+      expect(actualInline).toBe(null);
+    });
+  });
+
+  describe('supports quirks mode documents', () => {
+    it('should return the root scrolling element for a snappable root', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let scrollRef = createRef<HTMLBodyElement>();
+
+      await render(
+        <Document doctype="quirks">
+          <html lang="en-US" className="snap-block">
+            <body ref={scrollRef}>
+              <div className="content scroll-y" />
+              <div className="snap-align-start" ref={ref} />
+            </body>
+          </html>
+        </Document>
+      );
+
+      let scrollingElement = ref.current?.ownerDocument.scrollingElement;
+      let bodyElement = ref.current?.ownerDocument.body;
+
+      expect(scrollingElement).toBe(bodyElement);
+      expect(scrollRef.current).toBe(bodyElement);
+
+      let expected = await getNativeSnapParent(ref.current!);
+      let actual = getSnapParent(ref.current!);
+
+      expect(actual).toBe(scrollRef.current);
+      expect(actual).toBe(expected);
+    });
+  });
+
+  describe('supports a boundary container', () => {
+    it('should return null past the boundary', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let containerRef = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto snap-block">
+                <div className="content scroll-y" />
+                <div ref={containerRef}>
+                  <div className="snap-align-start" ref={ref} />
+                </div>
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let actual = getSnapParent(ref.current!, {container: containerRef.current});
+
+      expect(actual).toBe(null);
+    });
+  });
+});
+
 describe('getScrollParent (legacy)', () => {
-  describe('supports querying the nearest scrollable ancestor', () => {
+  describe('supports querying the nearest potentially scrollable ancestor', () => {
     it('should return the nearest scrollable ancestor', async () => {
       let ref = createRef<HTMLDivElement>();
       let scrollRef = createRef<HTMLDivElement>();
@@ -363,7 +839,7 @@ describe('getScrollParent (legacy)', () => {
       expect(actual).not.toBe(expected);
     });
 
-    it('should return null without a scrollable root', async () => {
+    it('should return null for a hidden root', async () => {
       let ref = createRef<HTMLDivElement>();
       let scrollRef = createRef<HTMLHtmlElement>();
 
@@ -738,7 +1214,7 @@ describe('getScrollParent (legacy)', () => {
     beforeAll(() => vi.mocked(shadowDOM).mockReturnValue(true));
     afterAll(() => vi.mocked(shadowDOM).mockReturnValue(false));
 
-    it('should the nearest scrollable ancestor', async () => {
+    it('should return the nearest scrollable ancestor', async () => {
       let ref = createRef<HTMLDivElement>();
       let scrollRef = createRef<HTMLDivElement>();
 
@@ -855,7 +1331,7 @@ describe('getScrollParent (legacy)', () => {
 });
 
 describe('getScrollParents (legacy)', () => {
-  describe('supports querying all scrollable ancestors', () => {
+  describe('supports querying all potentially scrollable ancestors', () => {
     it('should return all scrollable ancestors nearest first', async () => {
       let ref = createRef<HTMLDivElement>();
       let rootRef = createRef<HTMLHtmlElement>();
@@ -1032,7 +1508,7 @@ describe('getScrollParents (legacy)', () => {
       expect(actual).toEqual(expected);
     });
 
-    it('should return an empty list without a scrollable root', async () => {
+    it('should return an empty list for a hidden root', async () => {
       let ref = createRef<HTMLDivElement>();
       let rootRef = createRef<HTMLHtmlElement>();
 
@@ -1598,36 +2074,6 @@ describe.skipIf(!supportsModernSignature())('getScrollParent', () => {
     });
   });
 
-  describe('supports scroll snapping', () => {
-    it('should return the nearest snappable ancestor', async () => {
-      let ref = createRef<HTMLDivElement>();
-      let scrollRef = createRef<HTMLDivElement>();
-      let containerRef = createRef<HTMLDivElement>();
-
-      await render(
-        <Document doctype="html">
-          <html lang="en-US">
-            <body>
-              <div className="container overflow-auto snap-block" ref={scrollRef}>
-                <div className="content scroll-y" />
-                <div className="container overflow-auto" ref={containerRef}>
-                  <div className="content scroll-y" />
-                  <div ref={ref} />
-                </div>
-              </div>
-            </body>
-          </html>
-        </Document>
-      );
-
-      let actual = getScrollParent(ref.current!);
-      let actualSnapping = getScrollParent(ref.current!, {snappable: true});
-
-      expect(actual).toBe(containerRef.current);
-      expect(actualSnapping).toBe(scrollRef.current);
-    });
-  });
-
   describe('supports a boundary container', () => {
     it('should return null past the boundary', async () => {
       let ref = createRef<HTMLDivElement>();
@@ -1779,35 +2225,6 @@ describe.skipIf(!supportsModernSignature())('getScrollParents', () => {
 
       expect(actualInline).toEqual([scrollXRef.current]);
       expect(actualBlock).toEqual([scrollYRef.current, rootRef.current]);
-    });
-  });
-
-  describe('supports scroll snapping', () => {
-    it('should return the snappable ancestors', async () => {
-      let ref = createRef<HTMLDivElement>();
-      let scrollRef = createRef<HTMLDivElement>();
-      let containerRef = createRef<HTMLDivElement>();
-
-      await render(
-        <Document doctype="html">
-          <html lang="en-US">
-            <body>
-              <div className="content scroll-y" />
-              <div className="container overflow-auto snap-block" ref={scrollRef}>
-                <div className="content scroll-y" />
-                <div className="container overflow-auto" ref={containerRef}>
-                  <div className="content scroll-y" />
-                  <div ref={ref} />
-                </div>
-              </div>
-            </body>
-          </html>
-        </Document>
-      );
-
-      let actualSnapping = getScrollParents(ref.current!, {snappable: true});
-
-      expect(actualSnapping).toEqual([scrollRef.current]);
     });
   });
 

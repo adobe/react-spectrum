@@ -35,6 +35,10 @@ export const STYLESHEET = Object.freeze(`
   .scroll-x { width: 300vw; }
 
   .display-none { display: none; }
+  .display-flex { display: flex; }
+  .display-block { display: block; }
+  .display-inline { display: inline; }
+  .display-contents { display: contents; }
 
   .overflow-visible { overflow: visible; }
   .overflow-hidden { overflow: hidden; }
@@ -53,11 +57,6 @@ export const STYLESHEET = Object.freeze(`
   .overflow-y-clip { overflow-y: clip; }
   .overflow-y-scroll { overflow-y: scroll; }
   .overflow-y-auto { overflow-y: auto; }
-
-  .snap-none { scroll-snap-type: none; }
-  .snap-block { scroll-snap-type: block mandatory; }
-  .snap-inline { scroll-snap-type: inline mandatory; }
-  .snap-both { scroll-snap-type: both mandatory; }
 `);
 
 interface DocumentProps extends React.PropsWithChildren {
@@ -220,7 +219,7 @@ async function isNativeScrollable(
 }
 
 describe('isScrollable (legacy)', () => {
-  describe('supports potentially-scrollable container', () => {
+  describe('supports potentially scrollable container', () => {
     it('should return false for visible overflow', async () => {
       let ref = createRef<HTMLDivElement>();
 
@@ -441,6 +440,98 @@ describe('isScrollable (legacy)', () => {
           <html lang="en-US" className="overflow-clip" ref={ref}>
             <body>
               <div className="content" />
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await isNativeScrollable(ref.current!);
+      let actual = isScrollable(ref.current!);
+
+      expect(actual).toBe(false);
+      expect(actual).toBe(expected);
+    });
+
+    it('should return false for an inline box', async () => {
+      let ref = createRef<HTMLSpanElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <span className="container overflow-auto" ref={ref}>
+                <div className="content" />
+              </span>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await isNativeScrollable(ref.current!);
+      let actual = isScrollable(ref.current!);
+
+      expect(actual).toBe(false);
+      expect(actual).toBe(expected);
+    });
+
+    it('should return true for an inline root', async () => {
+      let ref = createRef<HTMLHtmlElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US" className="display-inline" ref={ref}>
+            <body>
+              <div className="content" />
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await isNativeScrollable(ref.current!);
+      let actual = isScrollable(ref.current!);
+
+      expect(actual).toBe(true);
+      expect(actual).toBe(expected);
+    });
+
+    it('should return false for an element replaced by its contents', async () => {
+      let ref = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="container overflow-auto display-contents" ref={ref}>
+                <div className="content" />
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = await isNativeScrollable(ref.current!);
+      let actual = isScrollable(ref.current!);
+
+      expect(actual).toBe(false);
+      expect(actual).toBe(expected);
+    });
+
+    it('should return false for a table row group', async () => {
+      let ref = createRef<HTMLTableSectionElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <table>
+                <tbody className="container overflow-auto" ref={ref}>
+                  <tr>
+                    <td>
+                      <div className="content" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </body>
           </html>
         </Document>
@@ -1258,130 +1349,6 @@ describe.skipIf(!supportsModernSignature())('isScrollable', () => {
       expect(actualBlock).toBe(expectedBlock);
       expect(actualInline).toBe(true);
       expect(actualInline).toBe(expectedInline);
-    });
-  });
-
-  describe('supports scroll snapping', () => {
-    it('should return true for block snappable', async () => {
-      let ref = createRef<HTMLDivElement>();
-
-      await render(
-        <Document doctype="html">
-          <html lang="en-US">
-            <body>
-              <div className="container overflow-auto snap-block" ref={ref}>
-                <div className="content" />
-              </div>
-            </body>
-          </html>
-        </Document>
-      );
-
-      let actualBlock = isScrollable(ref.current!, {snappable: true, axis: 'block'});
-      let actualInline = isScrollable(ref.current!, {snappable: true, axis: 'inline'});
-
-      expect(actualBlock).toBe(true);
-      expect(actualInline).toBe(false);
-    });
-
-    it('should return true for inline snappable', async () => {
-      let ref = createRef<HTMLDivElement>();
-
-      await render(
-        <Document doctype="html">
-          <html lang="en-US">
-            <body>
-              <div className="container overflow-auto snap-inline" ref={ref}>
-                <div className="content" />
-              </div>
-            </body>
-          </html>
-        </Document>
-      );
-
-      let actualBlock = isScrollable(ref.current!, {snappable: true, axis: 'block'});
-      let actualInline = isScrollable(ref.current!, {snappable: true, axis: 'inline'});
-
-      expect(actualBlock).toBe(false);
-      expect(actualInline).toBe(true);
-    });
-
-    it('should return false for non-snappable', async () => {
-      let ref = createRef<HTMLDivElement>();
-
-      await render(
-        <Document doctype="html">
-          <html lang="en-US">
-            <body>
-              <div className="container overflow-auto snap-none" ref={ref}>
-                <div className="content" />
-              </div>
-            </body>
-          </html>
-        </Document>
-      );
-
-      let actual = isScrollable(ref.current!, {snappable: true});
-
-      expect(actual).toBe(false);
-    });
-
-    it('should return true for hidden overflow', async () => {
-      let ref = createRef<HTMLDivElement>();
-
-      await render(
-        <Document doctype="html">
-          <html lang="en-US">
-            <body>
-              <div className="container overflow-hidden snap-block" ref={ref}>
-                <div className="content" />
-              </div>
-            </body>
-          </html>
-        </Document>
-      );
-
-      let actual = isScrollable(ref.current!, {snappable: true});
-
-      expect(actual).toBe(true);
-    });
-
-    it('should return true for root snappable', async () => {
-      let ref = createRef<HTMLHtmlElement>();
-
-      await render(
-        <Document doctype="html">
-          <html lang="en-US" className="snap-block" ref={ref}>
-            <body>
-              <div className="content" />
-            </body>
-          </html>
-        </Document>
-      );
-
-      let actualBlock = isScrollable(ref.current!, {snappable: true, axis: 'block'});
-      let actualInline = isScrollable(ref.current!, {snappable: true, axis: 'inline'});
-
-      expect(actualBlock).toBe(true);
-      expect(actualInline).toBe(false);
-    });
-
-    it('should return false for body snappable', async () => {
-      let ref = createRef<HTMLHtmlElement>();
-
-      await render(
-        <Document doctype="html">
-          <html lang="en-US" ref={ref}>
-            <body className="snap-block">
-              <div className="content" />
-            </body>
-          </html>
-        </Document>
-      );
-
-      let actual = isScrollable(ref.current!, {snappable: true});
-
-      expect(actual).toBe(false);
     });
   });
 

@@ -43,13 +43,6 @@ export function getScrollTopDirection(node: BoundingNode): 'ascending' | 'descen
 function getScrollOffset(node: BoundingNode, axis: Axis): number {
   let scrollingElement = getScrollingElement(node);
 
-  // TODO: Leave this to each callsite that needs it or force it here?
-  // https://issues.chromium.org/issues/40839168
-  // if (isWebKit() && !isIOS() && ownerWindow.devicePixelRatio !== 1) {
-  //   top = Math.round(scrollOffsetBlock);
-  //   left = Math.round(scrollOffsetInline);
-  // }
-
   switch (axis) {
     case 'block':
       return scrollingElement.scrollTop;
@@ -78,10 +71,13 @@ function getMaxScrollOffset(node: BoundingNode, axis: Axis): number {
   let overflowingElement = getOverflowingElement(node);
 
   let style = ownerWindow.getComputedStyle(overflowingElement);
-  let [overflowX, overflowY = overflowX] = String(style.overflow).split(' ');
 
-  let isScrollableBlock = /(auto|scroll|hidden)/.test(overflowY + style.overflowY);
-  let isScrollableInline = /(auto|scroll|hidden)/.test(overflowX + style.overflowX);
+  // JSDOM may not provide a computed style, so we fallback to visible overflow.
+  let {overflow = '', overflowX = '', overflowY = ''} = style;
+  let [shorthandX, shorthandY = shorthandX] = overflow.split(' ');
+
+  let isScrollableBlock = /(auto|scroll|hidden)/.test(shorthandY + overflowY);
+  let isScrollableInline = /(auto|scroll|hidden)/.test(shorthandX + overflowX);
 
   // Bail if an element is not scrollable in the given axis.
   if (axis === 'block' && !isScrollableBlock && !isDocument(node)) return 0;
@@ -111,9 +107,9 @@ function getScrollDirection(node: BoundingNode, axis: Axis): 'ascending' | 'desc
   let writingElement = getWritingElement(node);
   let style = ownerWindow.getComputedStyle(writingElement);
 
-  let isFlexDisplay = /flex/.test(style.display);
-  let isFlexReverseBlock = /column-reverse/.test(style.flexDirection);
-  let isFlexReverseInline = /row-reverse/.test(style.flexDirection);
+  let isFlexDisplay = /(flex)/.test(style.display);
+  let isFlexReverseBlock = /(column-reverse)/.test(style.flexDirection);
+  let isFlexReverseInline = /(row-reverse)/.test(style.flexDirection);
 
   // A viewport is never a flex container, so it only follows the writing direction
   // and any reversed content falls outside of its scrollable overflow region.

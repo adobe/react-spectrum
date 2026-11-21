@@ -29,7 +29,7 @@ export interface ScrollParentOptions extends ScrollableOptions {
 }
 
 /**
- * Returns all (scrollable) ancestors of a given element.
+ * Returns all container-bound (scrollable) ancestors of a given element.
  * https://drafts.csswg.org/cssom-view/#dom-htmlelement-scrollparent.
  */
 export function getScrollParents(element: Element, options?: ScrollParentOptions): Element[];
@@ -52,10 +52,7 @@ export function getScrollParents(element: Element, options?: ScrollParentOptions
  * Returns the container-bound (scrollable) ancestor of an element. Yields intermediary
  * ancestors as nodes of a scrollable flat-tree that composes the element.
  */
-export function* genScrollParents(
-  element: Element,
-  options: ScrollGeneratorOptions = {}
-): Generator<Element, Element | null> {
+export function* genScrollParents(element: Element, options: ScrollGeneratorOptions = {}) {
   let {container = 'all'} = options;
 
   let node: Node | null = null;
@@ -74,10 +71,10 @@ export function* genScrollParents(
 
     // A shadow root cant be a scroll parent so skip to its host.
     if (isShadowRoot(node) && shadowDOM()) node = node.host;
-    else if (isShadowRoot(node)) return null;
+    else if (isShadowRoot(node)) return cursor;
 
     // A fixed element without a containing block has no scroll parent.
-    if (node == null && style.position === 'fixed') return null;
+    if (node == null && style.position === 'fixed') return cursor;
 
     // Bail if we traverse past a (custom) boundary (inclusive).
     if (isNode(container) && !nodeContains(container, node)) return cursor;

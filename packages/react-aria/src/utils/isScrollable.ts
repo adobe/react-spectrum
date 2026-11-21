@@ -20,16 +20,14 @@ import {nodeContains} from './shadowdom/DOMFunctions';
 export interface ScrollableOptions extends Omit<ScrollOptions, 'behavior'> {
   /** Whether the container must overflow. */
   scrollable?: boolean;
-  /** Whether the container must be snap-enabled. */
-  snappable?: boolean;
   /** A logical axis to restrict the scroll to. */
   axis?: Axis;
 }
 
 /**
- * Checks whether a container is potentially scroll(snap)able using modality.
+ * Checks whether a container is potentially scrollable using modality.
+ * https://drafts.csswg.org/css-overflow-3/#scrolling.
  */
-// TODO: Revisit https://github.com/adobe/react-spectrum/pull/5513#issuecomment-1847614274
 export function isScrollable(node: BoundingNode, options?: ScrollableOptions): boolean;
 /** @deprecated Use 'isScrollable(element, {scrollable: true})' instead. */
 export function isScrollable(node: BoundingNode, checkForOverflow?: boolean): boolean;
@@ -38,10 +36,7 @@ export function isScrollable(node: BoundingNode, options?: ScrollableOptions | b
     return isScrollable(node, {scrollable: options});
   }
 
-  let {scrollable = false, snappable = false, modality = 'pointer', axis = 'both'} = options;
-
-  // A snap always originates from the user agent so force 'virtual' modality.
-  modality = snappable ? 'virtual' : modality;
+  let {axis, modality = 'pointer', scrollable = false} = options;
 
   let ownerWindow = getOwnerWindow(node);
   let ownerDocument = getOwnerDocument(node);
@@ -64,30 +59,32 @@ export function isScrollable(node: BoundingNode, options?: ScrollableOptions | b
   let style = ownerWindow.getComputedStyle(stylingElement);
   let overflowStyle = ownerWindow.getComputedStyle(overflowingElement);
 
-  let [snapType] = String(style.scrollSnapType).split(' ');
-  let [overflowX, overflowY = overflowX] = String(overflowStyle.overflow).split(' ');
+  // Overflow only applies to block, flex and grid containers, so bail for inline boxes,
+  // table tracks or elements replaced by their contents. The root is always blockified.
+  // https://drafts.csswg.org/css-overflow/#overflow-properties
+  if (/(contents|inline|inline list-item)$/.test(style.display)) return false;
+  else if (/(table-(row|column|header|footer))/.test(style.display)) return false;
 
-  let isScrollableBlock = /(auto|scroll)/.test(overflowY + overflowStyle.overflowY);
-  let isScrollableInline = /(auto|scroll)/.test(overflowX + overflowStyle.overflowX);
+  // JSDOM may not provide a computed style, so we fallback to visible overflow.
+  let {overflow = '', overflowX = '', overflowY = ''} = overflowStyle;
+  let [shorthandX, shorthandY = shorthandX] = overflow.split(' ');
+
+  let isScrollableBlock = /(auto|scroll)/.test(shorthandY + overflowY);
+  let isScrollableInline = /(auto|scroll)/.test(shorthandX + overflowX);
 
   if (isDocument(node)) {
-    isScrollableBlock ||= /(visible)/.test(overflowY + overflowStyle.overflowY);
-    isScrollableInline ||= /(visible)/.test(overflowX + overflowStyle.overflowX);
+    isScrollableBlock ||= /(^$|visible)/.test(shorthandY + overflowY);
+    isScrollableInline ||= /(^$|visible)/.test(shorthandX + overflowX);
   }
 
   if (modality !== 'pointer' && isDocument(node)) {
-    isScrollableBlock ||= /(clip)/.test(overflowY + overflowStyle.overflowY);
-    isScrollableInline ||= /(clip)/.test(overflowX + overflowStyle.overflowX);
+    isScrollableBlock ||= /(clip)/.test(shorthandY + overflowY);
+    isScrollableInline ||= /(clip)/.test(shorthandX + overflowX);
   }
 
   if (modality !== 'pointer') {
-    isScrollableBlock ||= /(hidden)/.test(overflowY + overflowStyle.overflowY);
-    isScrollableInline ||= /(hidden)/.test(overflowX + overflowStyle.overflowX);
-  }
-
-  if (snappable) {
-    isScrollableBlock &&= /(both|block|y)/.test(snapType);
-    isScrollableInline &&= /(both|inline|x)/.test(snapType);
+    isScrollableBlock ||= /(hidden)/.test(shorthandY + overflowY);
+    isScrollableInline ||= /(hidden)/.test(shorthandX + overflowX);
   }
 
   if (scrollable) {

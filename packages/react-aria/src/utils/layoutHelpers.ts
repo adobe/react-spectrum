@@ -62,7 +62,7 @@ export function getScrollingElement(node: BoundingNode): Element {
 }
 
 /**
- * Returns the flow propagating element of a document. This is typically the body element.
+ * Returns the flow propagating element of a bounding node. This is typically the node itself.
  * https://www.w3.org/TR/css-writing-modes/#principal-flow.
  */
 export function getWritingElement(node: BoundingNode): Element {
@@ -88,7 +88,7 @@ export function getWritingElement(node: BoundingNode): Element {
 }
 
 /**
- * Returns overflow propagating element of a document. This is typically the body element.
+ * Returns overflow propagating element of a bounding node. This is typically the node itself.
  * https://www.w3.org/TR/css-overflow-3/#overflow-propagation.
  */
 export function getOverflowingElement(node: BoundingNode): Element {
@@ -107,9 +107,12 @@ export function getOverflowingElement(node: BoundingNode): Element {
   let rootStyle = ownerWindow.getComputedStyle(ownerDocument.documentElement);
   let bodyStyle = ownerWindow.getComputedStyle(ownerDocument.body);
 
-  let [overflowX, overflowY = overflowX] = String(rootStyle.overflow).split(' ');
-  let isRootVisibleBlock = /(visible)/.test(overflowY + rootStyle.overflowY);
-  let isRootVisibleInline = /(visible)/.test(overflowX + rootStyle.overflowX);
+  // JSDOM may not provide a computed style, so we fallback to visible overflow.
+  let {overflow = '', overflowX = '', overflowY = ''} = rootStyle;
+  let [shorthandX, shorthandY = shorthandX] = overflow.split(' ');
+
+  let isRootVisibleBlock = /(^$|visible)/.test(shorthandY + overflowY);
+  let isRootVisibleInline = /(^$|visible)/.test(shorthandX + overflowX);
   let isBodyHidden = /(none)/.test(rootStyle.display + bodyStyle.display);
 
   if (!isRootVisibleBlock || !isRootVisibleInline || isBodyHidden) {
