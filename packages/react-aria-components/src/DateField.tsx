@@ -27,6 +27,7 @@ import {
   useSlottedContext
 } from './utils';
 import {createCalendar} from '@internationalized/date';
+import {createFocusManager} from 'react-aria/private/focus/FocusScope';
 import {
   DateFieldState,
   DateSegmentType,
@@ -51,7 +52,9 @@ import React, {
   forwardRef,
   JSX,
   ReactElement,
+  RefObject,
   useContext,
+  useImperativeHandle,
   useRef
 } from 'react';
 import {TextContext} from './Text';
@@ -61,6 +64,21 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useObjectRef} from 'react-aria/useObjectRef';
+
+function useFocusFirstSegment(
+  ref: ForwardedRef<HTMLDivElement>,
+  fieldRef: RefObject<HTMLDivElement | null>
+) {
+  let domRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(ref, () =>
+    Object.assign(domRef.current!, {
+      focus() {
+        createFocusManager(fieldRef).focusFirst();
+      }
+    })
+  );
+  return domRef;
+}
 
 export interface DateFieldRenderProps {
   /**
@@ -155,6 +173,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
+  ref = useFocusFirstSegment(ref, fieldRef);
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let inputRef = useRef<HTMLInputElement>(null);
   let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} =
@@ -243,6 +262,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
+  ref = useFocusFirstSegment(ref, fieldRef);
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let inputRef = useRef<HTMLInputElement>(null);
   let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} =

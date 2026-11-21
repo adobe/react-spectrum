@@ -34,6 +34,19 @@ describe('DateField', () => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
+  it('focuses the first segment when focus() is called on the root ref', () => {
+    let ref = React.createRef();
+    let {getAllByRole} = render(
+      <DateField ref={ref}>
+        <Label>Birth date</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </DateField>
+    );
+
+    act(() => ref.current.focus());
+    expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+  });
+
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(
       <DateField data-foo="bar">
