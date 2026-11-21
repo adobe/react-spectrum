@@ -12,9 +12,12 @@
 
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
-import {RangeSlider} from '../src/RangeSlider';
+import {RangeSlider, RangeSliderProps} from '../src/RangeSlider';
+import {SliderInput} from '../src/SliderInput';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof RangeSlider> = {
   component: RangeSlider,
@@ -37,6 +40,54 @@ export const Example: Story = {
       end: 60
     }
   }
+};
+
+let editableStates = [
+  {isEditable: true},
+  {
+    value: [
+      {start: 25, end: 75},
+      {start: 50, end: 100}
+    ]
+  },
+  {size: ['S', 'L', 'XL']},
+  {labelPosition: 'side'},
+  {isEmphasized: true},
+  {isDisabled: true}
+];
+
+let editableCombinations = generatePowerset(
+  editableStates,
+  v => v.isDisabled && (v.isEmphasized || v.value != null)
+);
+
+export const Editable: Story = {
+  render: (args: RangeSliderProps) => (
+    <div
+      className={style({
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, minmax(0, 360px))',
+        gridAutoFlow: 'row',
+        alignItems: 'center',
+        justifyItems: 'start',
+        gap: 24,
+        width: '100vw'
+      })}>
+      {editableCombinations.map(c => {
+        let {isEditable, ...sliderProps} = c;
+        return (
+          <RangeSlider
+            key={JSON.stringify(c)}
+            label="Label"
+            value={{start: 0, end: 50}}
+            {...args}
+            {...sliderProps}>
+            {isEditable ? <SliderInput /> : null}
+          </RangeSlider>
+        );
+      })}
+    </div>
+  )
 };
 
 export const ContextualHelpExample: Story = {

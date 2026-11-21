@@ -272,7 +272,17 @@ export default defineConfig({
           browser: 'firefox',
           name: 'firefox-desktop',
           viewport: {width: 1280, height: 720},
-          headless: true
+          headless: true,
+          provider: playwright({
+            launchOptions: {
+              firefoxUserPrefs: {
+                // Headless Firefox on Linux reports pointer: none and hover: none without a physical
+                // pointer device. 0x02 (fine) | 0x04 (hover) = 0x06 matches a desktop mouse.
+                'ui.primaryPointerCapabilities': 0x06,
+                'ui.allPointerCapabilities': 0x06
+              }
+            }
+          })
         },
         {
           browser: 'webkit',
