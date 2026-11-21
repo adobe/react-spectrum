@@ -263,6 +263,7 @@ export class BaseNode<T> {
  */
 export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
+  type: string;
   node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
@@ -270,6 +271,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
+    this.type = type;
     this.node = null;
   }
 
@@ -423,6 +425,19 @@ export class ElementNode<T> extends BaseNode<T> {
   removeAttribute(): void {}
 }
 
+// React doesn't attach refs inside hidden subtrees (e.g. a hidden Activity), so collection
+// components there won't have a node yet even though they are supported.
+function hasHiddenAncestor(element: ElementNode<unknown>): boolean {
+  let parent = element.parentNode;
+  while (parent instanceof ElementNode) {
+    if (parent.isHidden) {
+      return true;
+    }
+    parent = parent.parentNode;
+  }
+  return false;
+}
+
 /**
  * A mutable Document in the fake DOM. It owns an immutable Collection instance,
  * which is lazily copied on write during updates.
@@ -440,6 +455,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   private subscriptions: Set<() => void> = new Set();
   private queuedRender = false;
   private inSubscription = false;
+  private hasWarnedUnsupportedElement = false;
 
   constructor(collection: C) {
     // @ts-ignore
@@ -469,7 +485,21 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   private addNode(element: ElementNode<T>): void {
-    if (element.isHidden || element.node == null) {
+    if (element.isHidden) {
+      return;
+    }
+
+    if (element.node == null) {
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        !this.hasWarnedUnsupportedElement &&
+        !hasHiddenAncestor(element)
+      ) {
+        this.hasWarnedUnsupportedElement = true;
+        console.warn(
+          `Unsupported element <${element.type}> found in collection. Only collection components such as items, sections, and headers can be rendered inside a collection. The <${element.type}> and its children will not be rendered.`
+        );
+      }
       return;
     }
 
