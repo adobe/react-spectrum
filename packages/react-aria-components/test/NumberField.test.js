@@ -521,6 +521,53 @@ describe('NumberField', () => {
     expect(input).toHaveValue('24');
   });
 
+  it('should allow deleting a unit one character at a time', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <TestNumberField
+        defaultValue={5}
+        onChange={onChange}
+        formatOptions={{style: 'unit', unit: 'milliliter'}}
+      />
+    );
+    let input = getByRole('textbox');
+    expect(input).toHaveValue('5 mL');
+    await user.tab();
+    await user.keyboard('{ArrowRight}');
+    await user.keyboard('{Backspace}');
+    expect(input).toHaveValue('5 m');
+
+    // Editing the number while a partial unit remains commits the new value.
+    // Select the digit explicitly rather than relying on caret position after an edit,
+    // which differs between React versions (React 16/17 move it to the end).
+    act(() => input.setSelectionRange(0, 1));
+    await user.keyboard('8');
+    expect(input).toHaveValue('8 m');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('8 mL');
+    expect(onChange).toHaveBeenLastCalledWith(8);
+
+    await user.keyboard('{ArrowRight>4/}{Backspace}{Backspace}');
+    expect(input).toHaveValue('8 ');
+  });
+
+  it('should allow deleting a long unit one character at a time', async () => {
+    let {getByRole} = render(
+      <TestNumberField
+        defaultValue={5}
+        formatOptions={{style: 'unit', unit: 'gram', unitDisplay: 'long'}}
+      />
+    );
+    let input = getByRole('textbox');
+    expect(input).toHaveValue('5 grams');
+    await user.tab();
+    await user.keyboard('{ArrowRight}');
+    for (let value of ['5 gram', '5 gra', '5 gr', '5 g', '5 ']) {
+      await user.keyboard('{Backspace}');
+      expect(input).toHaveValue(value);
+    }
+  });
+
   it('supports onChange', async () => {
     let onChange = jest.fn();
     let {getByRole} = render(<TestNumberField defaultValue={200} onChange={onChange} />);
