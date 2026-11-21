@@ -613,3 +613,42 @@ export const InModal: ComboBoxStory = {
     </DialogTrigger>
   )
 };
+
+let disabledFirstItems: (ComboBoxItem & {isDisabled: boolean})[] = [
+  ...Array.from({length: 15}, (_, i) => ({
+    id: `disabled-${i + 1}`,
+    name: `Disabled ${i + 1}`,
+    isDisabled: true
+  })),
+  {id: 'cat', name: 'Cat', isDisabled: false},
+  {id: 'dog', name: 'Dog', isDisabled: false},
+  {id: 'kangaroo', name: 'Kangaroo', isDisabled: false}
+];
+
+export const ComboBoxScrollToFirstEnabledItem: ComboBoxStory = {
+  render: () => (
+    <ComboBox defaultItems={disabledFirstItems}>
+      <Label style={{display: 'block'}}>Favorite Animal</Label>
+      <div style={{display: 'flex'}}>
+        <Input />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>
+            ▼
+          </span>
+        </Button>
+      </div>
+      <Popover>
+        <ListBox className={styles.menu} style={{maxHeight: 200, overflow: 'auto'}}>
+          {(item: ComboBoxItem & {isDisabled: boolean}) => (
+            <MyListBoxItem isDisabled={item.isDisabled}>{item.name}</MyListBoxItem>
+          )}
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  ),
+  parameters: {
+    description: {
+      data: 'Focus the input and press ArrowDown. Focus moves to "Cat", the first enabled option, and the list should scroll so "Cat" is visible. Check with StrictMode both on and off (see #10690).'
+    }
+  }
+};
