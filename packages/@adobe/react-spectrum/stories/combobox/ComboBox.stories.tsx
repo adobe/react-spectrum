@@ -445,6 +445,11 @@ export const SeverSideFiltering: ComboBoxStory = {
   name: 'server side filtering with useAsyncList'
 };
 
+export const ServerSideFilteringInitiallyEmpty: ComboBoxStory = {
+  render: args => <AsyncInitiallyEmptyExample {...args} />,
+  name: 'server side filtering with useAsyncList (initially empty)'
+};
+
 export const SeverSideFilteringControlled: ComboBoxStory = {
   render: args => <AsyncLoadingExampleControlledKey {...args} />,
   name: 'server side filtering with useAsyncList (controlled key)'
@@ -597,6 +602,50 @@ function AsyncLoadingExample(props) {
   return (
     <ComboBox
       label="Star Wars Character Lookup"
+      {...props}
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      loadingState={list.loadingState}
+      onLoadMore={chain(props?.onLoadMore, list.loadMore)}>
+      {(item: any) => <Item key={item.name}>{item.name}</Item>}
+    </ComboBox>
+  );
+}
+
+function AsyncInitiallyEmptyExample(props) {
+  interface StarWarsChar {
+    name: string;
+    url: string;
+  }
+
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor, filterText}) {
+      if (!filterText) {
+        return {items: []};
+      }
+
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup (Initially Empty)"
       {...props}
       items={list.items}
       inputValue={list.filterText}

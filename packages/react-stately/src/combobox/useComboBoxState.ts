@@ -383,6 +383,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
   let toggleMenu = useCallback(
     (focusStrategy: FocusStrategy | null = null) => {
       if (triggerState.isOpen) {
+        closedDueToEmpty.current = false;
         updateLastCollection();
       }
 
@@ -415,15 +416,15 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
   useEffect(() => {
     // Open and close menu automatically when the input value changes if the input is focused,
     // and there are items in the collection or allowEmptyCollection is true.
-    if (
-      isFocused &&
-      (filteredCollection.size > 0 || allowsEmptyCollection) &&
-      !triggerState.isOpen &&
-      inputValue !== lastValue &&
-      menuTrigger !== 'manual'
-    ) {
-      // oxlint-disable-next-line react/react-compiler
-      open(null, 'input');
+    if (isFocused && !triggerState.isOpen && inputValue !== lastValue && menuTrigger !== 'manual') {
+      if (filteredCollection.size > 0 || allowsEmptyCollection) {
+        closedDueToEmpty.current = false;
+        // oxlint-disable-next-line react/react-compiler
+        open(null, 'input');
+      } else {
+        // Track pending empty collection so async items arriving on a later render open the menu.
+        closedDueToEmpty.current = true;
+      }
     }
 
     // Close the menu if the collection is empty. Don't close menu if filtered collection size is 0
@@ -438,8 +439,8 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
       closeMenu();
     }
 
-    // Re-open the menu when items become non-empty after being auto-closed due to
-    // an empty collection (e.g. async load completed with results after a previous empty response).
+    // Open or re-open the menu when items become non-empty after being skipped or auto-closed
+    // due to an empty collection (e.g. initially-empty or subsequent async searches).
     // This works for both controlled items on ComboBox and Collection patterns
     // (where items are provided on the ListBox rather than the ComboBox).
     if (
@@ -459,6 +460,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
       displayValue !== lastValueRef.current &&
       selectionMode === 'single'
     ) {
+      closedDueToEmpty.current = false;
       closeMenu();
     }
 
@@ -602,6 +604,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
         open(null, 'focus');
       }
     } else {
+      closedDueToEmpty.current = false;
       if (shouldCloseOnBlur && !props.isReadOnly) {
         commitValue();
       }

@@ -1297,6 +1297,117 @@ describe('ComboBox', () => {
     ).toBeInTheDocument();
   });
 
+  it.each(['ComboBox', 'ListBox'])(
+    'should open on first character typed with initially-empty useAsyncList (%s items)',
+    async itemsTarget => {
+      const ASYNC_DELAY_MS = 50;
+      let onOpenChange = jest.fn();
+
+      function itemsForFilterText(filterText) {
+        if (!filterText) {
+          return [];
+        }
+        return [{id: 1, name: 'Luke Skywalker'}];
+      }
+
+      function InitiallyEmptyAsyncComboBox() {
+        let list = useAsyncList({
+          getKey: item => item.id,
+          async load({filterText}) {
+            let rows = itemsForFilterText(filterText);
+            await new Promise(resolve => setTimeout(resolve, ASYNC_DELAY_MS));
+            return {items: rows};
+          }
+        });
+
+        return (
+          <ComboBox
+            items={itemsTarget === 'ComboBox' ? list.items : undefined}
+            inputValue={list.filterText}
+            onInputChange={list.setFilterText}
+            onOpenChange={onOpenChange}>
+            <Label>SW Characters</Label>
+            <Input />
+            <Button>{'<'}</Button>
+            <Popover>
+              <ListBox items={itemsTarget === 'ListBox' ? list.items : undefined}>
+                {item => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
+              </ListBox>
+            </Popover>
+          </ComboBox>
+        );
+      }
+
+      let {container, queryByRole} = render(<InitiallyEmptyAsyncComboBox />);
+      let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+      await act(async () => {
+        jest.runAllTimers();
+      });
+
+      await user.tab();
+      expect(queryByRole('listbox')).toBeNull();
+
+      await user.keyboard('l');
+      expect(queryByRole('listbox')).toBeNull();
+      await act(async () => {
+        jest.runAllTimers();
+      });
+      expect(comboboxTester.getListbox()).toBeVisible();
+      expect(
+        within(comboboxTester.getListbox()).getByRole('option', {name: 'Luke Skywalker'})
+      ).toBeInTheDocument();
+      expect(onOpenChange.mock.calls).toEqual([[true, 'input']]);
+
+      await user.keyboard('{Backspace}');
+      await act(async () => {
+        jest.runAllTimers();
+      });
+      expect(queryByRole('listbox')).toBeNull();
+      expect(onOpenChange.mock.calls).toEqual([
+        [true, 'input'],
+        [false, undefined]
+      ]);
+    }
+  );
+
+  it('should not open if dismissed with Escape while initially-empty async load is pending', async () => {
+    let onOpenChange = jest.fn();
+
+    function PendingAsyncComboBox() {
+      let [items, setItems] = useState([]);
+      return (
+        <ComboBox
+          items={items}
+          onInputChange={value => {
+            if (value) {
+              setTimeout(() => setItems([{id: 1, name: 'Luke Skywalker'}]), 50);
+            }
+          }}
+          onOpenChange={onOpenChange}>
+          <Label>SW Characters</Label>
+          <Input />
+          <Button>{'<'}</Button>
+          <Popover>
+            <ListBox>{item => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}</ListBox>
+          </Popover>
+        </ComboBox>
+      );
+    }
+
+    let {queryByRole} = render(<PendingAsyncComboBox />);
+    await user.tab();
+    await user.keyboard('l');
+    expect(queryByRole('listbox')).toBeNull();
+
+    await user.keyboard('{Escape}');
+    await act(async () => {
+      jest.runAllTimers();
+    });
+    expect(queryByRole('listbox')).toBeNull();
+    expect(onOpenChange).not.toHaveBeenCalled();
+  });
+
   it('should still close the menu when uncontrolled items are empty', async () => {
     let onOpenChange = jest.fn();
 
