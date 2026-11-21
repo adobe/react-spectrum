@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, LabelableProps} from '@react-types/shared';
-import {ElementType, LabelHTMLAttributes} from 'react';
+import {ElementType, LabelHTMLAttributes, useEffect, useRef} from 'react';
 import {useId} from '../utils/useId';
 import {useLabels} from '../utils/useLabels';
 
@@ -55,11 +55,20 @@ export function useLabel(props: LabelAriaProps): LabelAria {
       id: labelId,
       htmlFor: labelElementType === 'label' ? id : undefined
     };
-  } else if (!ariaLabelledby && !ariaLabel && process.env.NODE_ENV !== 'production') {
-    console.warn(
-      'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
-    );
   }
+
+  // Warn in an effect rather than during render, so subtrees hidden by <Activity>
+  // (which render without running effects) don't warn while their label slot is detached.
+  let isMissingLabel = !label && !ariaLabelledby && !ariaLabel;
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (isMissingLabel && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+      console.warn(
+        'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
+      );
+      hasWarned.current = true;
+    }
+  }, [isMissingLabel]);
 
   let fieldProps = useLabels({
     id,
