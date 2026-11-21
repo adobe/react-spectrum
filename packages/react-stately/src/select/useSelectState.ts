@@ -197,6 +197,10 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
   };
 
   // oxlint-disable-next-line react/react-compiler
+  let validationState = useFormValidationState({
+    ...props,
+    value: Array.isArray(displayValue) && displayValue.length === 0 ? null : (displayValue as any)
+  });
   let listState = useListState({
     ...props,
     selectionMode,
@@ -206,7 +210,13 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
     onSelectionChange: (keys: Selection) => {
       // impossible, but TS doesn't know that
       if (keys === 'all') {
-        return;
+        keys = new Set(
+          [...listState.collection.getKeys()].filter(
+            key =>
+              listState.collection.getItem(key)?.type === 'item' &&
+              !listState.selectionManager.isDisabled(key)
+          )
+        );
       }
 
       if (selectionMode === 'single') {
@@ -229,11 +239,6 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
       .map(key => listState.collection.getItem(key))
       .filter(item => item != null);
   }, [listState.selectionManager.selectedKeys, listState.collection]);
-
-  let validationState = useFormValidationState({
-    ...props,
-    value: Array.isArray(displayValue) && displayValue.length === 0 ? null : (displayValue as any)
-  });
 
   let [isFocused, setFocused] = useState(false);
   let [initialValue] = useState(displayValue);
