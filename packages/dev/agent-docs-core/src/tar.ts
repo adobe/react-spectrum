@@ -46,18 +46,18 @@ function parseOctal(buf: Buffer, offset: number, length: number): number {
 
 function parsePaxRecords(buf: Buffer): Record<string, string> {
   const records: Record<string, string> = {};
-  const text = buf.toString('utf8');
   let idx = 0;
-  while (idx < text.length) {
-    const spaceIdx = text.indexOf(' ', idx);
+  while (idx < buf.length) {
+    const spaceIdx = buf.indexOf(0x20, idx);
     if (spaceIdx === -1) {
       break;
     }
-    const len = parseInt(text.slice(idx, spaceIdx), 10);
-    if (!Number.isFinite(len) || len <= 0) {
+    const len = parseInt(buf.subarray(idx, spaceIdx).toString('ascii'), 10);
+    if (!Number.isFinite(len) || len <= 0 || idx + len > buf.length) {
       break;
     }
-    const record = text.slice(spaceIdx + 1, idx + len - 1);
+    const recordEnd = buf[idx + len - 1] === 0x0a ? idx + len - 1 : idx + len;
+    const record = buf.subarray(spaceIdx + 1, recordEnd).toString('utf8');
     const eqIdx = record.indexOf('=');
     if (eqIdx !== -1) {
       records[record.slice(0, eqIdx)] = record.slice(eqIdx + 1);

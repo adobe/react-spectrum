@@ -231,7 +231,7 @@ export function matchPackageSliceInIndex(
         message: `Exact documentation snapshot for ${packageName}@${requestedVersion} is not published or patch-verified; using nearest same-minor snapshot ${packageName}@${chosen} (snapshot ${pkgMap[chosen].snapshotId}). Pass --strict-version to fail instead.`,
         details: {
           requestedVersion,
-          FallbackVersion: chosen,
+          fallbackVersion: chosen,
           availableVersions
         }
       }
@@ -413,7 +413,7 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
   if (lockInfo?.lockfileKind === 'unsupported' && installedByPkg.size === 0) {
     warnings.push({
       code: 'WARN_UNSUPPORTED_LOCKFILE',
-      message: `Found unsupported binary lockfile '${lockInfo.lockfilePath}' without installed node_modules. Install dependencies or pass --version <pkg@ver>.`
+      message: `Found unsupported lockfile '${lockInfo.lockfilePath}' without installed node_modules. Install dependencies or pass --version <pkg@ver>.`
     });
   }
 
@@ -550,6 +550,13 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
         code: 'WARN_USING_LATEST_FALLBACK',
         message: `No @react-spectrum/* or react-aria* dependencies found in '${cwd}'; explicitly falling back to latest published snapshots.`
       });
+    } else if (lockInfo?.lockfileKind === 'unsupported' && installedByPkg.size === 0) {
+      throw new AgentDocsError(
+        'ERR_UNSUPPORTED_LOCKFILE',
+        `Found unsupported lockfile '${lockInfo.lockfilePath}' without installed node_modules. Install dependencies or pass --version <pkg@ver>.`,
+        EXIT_CODES.INVALID_ARGS,
+        {details: {lockfilePath: lockInfo.lockfilePath}}
+      );
     } else {
       throw new AgentDocsError(
         'ERR_WORKSPACE_REQUIRED',
@@ -565,6 +572,10 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
       pkgName === '@react-spectrum/s2' ||
       pkgName === 'react-aria-components' ||
       req.source === 'override';
+    const isSnapshotOmittedWorkspacePkg =
+      Boolean(options.snapshotOverride) &&
+      req.source !== 'override' &&
+      Boolean(snapshotSlices && !snapshotSlices[pkgName]);
     try {
       const matched = matchPackageSliceInIndex(index, pkgName, req.version, {
         strictVersion: options.strictVersion,
@@ -588,7 +599,12 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
         availableVersions: matched.availableVersions
       };
     } catch (err) {
-      if (!isPrimary && !options.strictVersion && err instanceof AgentDocsError) {
+      if (
+        ((!isPrimary && !options.strictVersion) ||
+          (isSnapshotOmittedWorkspacePkg &&
+            (!options.strictVersion || req.importer !== 'workspace'))) &&
+        err instanceof AgentDocsError
+      ) {
         deferredAuxErrors.push(err);
         warnings.push({
           code: 'WARN_AUX_PACKAGE_SLICE_UNAVAILABLE',

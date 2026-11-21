@@ -33,15 +33,19 @@ function currentCli(t, brand = 's2') {
   const cache = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-cli-'));
   t.after(() => fs.rmSync(cache, {recursive: true, force: true}));
   return (...args) =>
-    execFileSync(process.execPath, [bin, '--version', 'latest', ...args], {
-      cwd: REPO_ROOT,
-      env: {
-        ...process.env,
-        RSP_AGENT_DOCS_SNAPSHOT_SOURCE: SNAPSHOT_SOURCE,
-        RSP_AGENT_DOCS_CACHE_DIR: cache
-      },
-      encoding: 'utf8'
-    });
+    execFileSync(
+      process.execPath,
+      [bin, ...(args.includes('--version') ? [] : ['--version', 'latest']), ...args],
+      {
+        cwd: REPO_ROOT,
+        env: {
+          ...process.env,
+          RSP_AGENT_DOCS_SNAPSHOT_SOURCE: SNAPSHOT_SOURCE,
+          RSP_AGENT_DOCS_CACHE_DIR: cache
+        },
+        encoding: 'utf8'
+      }
+    );
 }
 
 test('CLI finds documented exports by name and offers choices for ambiguous exports', t => {
@@ -776,6 +780,48 @@ test('CLI handles partial-batch resilience (exit code 0 with valid entries prese
     assert.ok(comboExport);
     assert.ok(comboExport.props.some(prop => prop.name === 'allowsCustomValue'));
     assert.ok(comboExport.events.some(event => event.name === 'onInputChange'));
+
+    // Combining --events-only and --render-props returns both events and render props (union, not empty)
+    const combinedApiJson = JSON.parse(
+      execFileSync(
+        process.execPath,
+        [
+          racCliBin,
+          'api',
+          'rac:ComboBox',
+          '--export',
+          'ComboBox',
+          '--events-only',
+          '--render-props',
+          '--version',
+          'latest',
+          '--json'
+        ],
+        {cwd: REPO_ROOT, env, encoding: 'utf8'}
+      )
+    );
+    assert.equal(combinedApiJson.exports[0].props.length, 0);
+    assert.ok(combinedApiJson.exports[0].events.length > 0);
+    assert.ok(combinedApiJson.exports[0].renderProps.length > 0);
+
+    // Repeatable --version flags merge instead of dropping earlier flags
+    const repeatableVerJson = JSON.parse(
+      execFileSync(
+        process.execPath,
+        [
+          s2CliBin,
+          'resolve',
+          '--version',
+          '@react-spectrum/s2@latest',
+          '--version',
+          'react-aria-components@latest',
+          '--json'
+        ],
+        {cwd: REPO_ROOT, env, encoding: 'utf8'}
+      )
+    );
+    assert.ok(repeatableVerJson.resolution.packages['@react-spectrum/s2']);
+    assert.ok(repeatableVerJson.resolution.packages['react-aria-components']);
 
     const missingPropArgs = [
       racCliBin,

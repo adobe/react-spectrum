@@ -24,6 +24,7 @@ import {
   SnapshotSummaryInfo
 } from './types.js';
 import crypto from 'node:crypto';
+import {fileURLToPath} from 'node:url';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -68,7 +69,7 @@ function isLocalSource(source: string): boolean {
 
 function localSourcePath(source: string): string {
   if (source.startsWith('file://')) {
-    return decodeURIComponent(new URL(source).pathname);
+    return fileURLToPath(source);
   }
   return path.resolve(source);
 }
@@ -243,6 +244,12 @@ export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promi
     fs.renameSync(tmpPath, cachedIndexPath);
     return parsed;
   } catch (err) {
+    if (
+      err instanceof AgentDocsError &&
+      (err.code === 'ERR_CATALOG_SCHEMA_TOO_NEW' || err.code === 'ERR_CACHE_INTEGRITY')
+    ) {
+      throw err;
+    }
     // Graceful stale-if-error fallback when cached index exists
     if (fs.existsSync(cachedIndexPath)) {
       const parsed = JSON.parse(fs.readFileSync(cachedIndexPath, 'utf8')) as SnapshotIndex;
@@ -470,7 +477,7 @@ export function readSliceEntryBySlug(
     return null;
   }
   const entry = JSON.parse(fs.readFileSync(jsonPath, 'utf8')) as CatalogEntryIR;
-  assertCompatibleSchema(entry.schemaVersion, `Catalog entry ${entry.id}`);
+  assertCompatibleSchema(entry.minReaderSchemaVersion, `Catalog entry ${entry.id}`);
   const markdown = fs.existsSync(mdPath) ? fs.readFileSync(mdPath, 'utf8') : '';
   return {entry, markdown};
 }

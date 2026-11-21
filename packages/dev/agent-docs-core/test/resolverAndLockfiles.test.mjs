@@ -381,10 +381,7 @@ test('resolves workspace dependencies across npm v3, Yarn Berry, Yarn Classic, p
     );
     await assert.rejects(
       () => resolveWorkspace({cwd: bunDir, snapshotSource, cacheDir}),
-      err =>
-        err.code === 'ERR_WORKSPACE_REQUIRED' ||
-        err.code === 'ERR_UNSUPPORTED_LOCKFILE' ||
-        err.message.includes('bun.lock')
+      err => err.code === 'ERR_UNSUPPORTED_LOCKFILE' && err.message.includes('bun.lock')
     );
   } finally {
     fs.rmSync(tmp, {recursive: true, force: true});
@@ -415,7 +412,11 @@ test('distinguishes unverified patch releases from verified surface-equivalent p
       cacheDir
     });
     assert.equal(nonStrictUnverified.packages['@react-spectrum/s2'].exactMatch, false);
-    assert.ok(nonStrictUnverified.warnings.some(w => w.code === 'WARN_EXACT_PATCH_UNAVAILABLE'));
+    const patchWarning = nonStrictUnverified.warnings.find(
+      w => w.code === 'WARN_EXACT_PATCH_UNAVAILABLE'
+    );
+    assert.ok(patchWarning);
+    assert.equal(patchWarning.details?.fallbackVersion, '1.2.0');
 
     await assert.rejects(
       () => resolveWorkspace({cwd: unverifiedApp, snapshotSource, cacheDir, strictVersion: true}),
@@ -544,6 +545,73 @@ test('does not replace unavailable installed or locked auxiliary versions with c
       versionOverride: 'react-aria-components@1.0.0'
     });
     assert.equal(fallback.packages['@internationalized/date'].packageVersion, '3.8.0');
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
+
+test('allows --snapshot override for a historical S2-only snapshot inside a workspace with nested RAC', async () => {
+  const {resolveWorkspace} = await corePromise;
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-hist-snap-'));
+  try {
+    const snapshotSource = await createSyntheticSnapshotRepo(path.join(tmp, 'repo'));
+    // Write manifest for snap-s2-1.2.0 (S2-only historical snapshot)
+    const idxPath = path.join(snapshotSource, 'index.json');
+    const idx = JSON.parse(fs.readFileSync(idxPath, 'utf8'));
+    const s2Ptr = idx.packages['@react-spectrum/s2']['1.2.0'];
+    const manifestRel = 'by-id/snap-s2-1.2.0/manifest.json';
+    const manifestAbs = path.join(snapshotSource, manifestRel);
+    const manifestBuf = Buffer.from(
+      JSON.stringify({
+        schemaVersion: 1,
+        minReaderSchemaVersion: 1,
+        snapshotId: 'snap-s2-1.2.0',
+        slices: {'@react-spectrum/s2': s2Ptr}
+      })
+    );
+    fs.mkdirSync(path.dirname(manifestAbs), {recursive: true});
+    fs.writeFileSync(manifestAbs, manifestBuf);
+    idx.snapshots['snap-s2-1.2.0'].manifestPath = manifestRel;
+    idx.snapshots['snap-s2-1.2.0'].manifestSha256 = crypto
+      .createHash('sha256')
+      .update(manifestBuf)
+      .digest('hex');
+    idx.snapshots['snap-s2-1.2.0'].manifestBytes = manifestBuf.length;
+    fs.writeFileSync(idxPath, JSON.stringify(idx, null, 2));
+
+    // Create an S2 workspace that also has nested react-aria-components inside node_modules/@react-spectrum/s2
+    const appDir = path.join(tmp, 's2-app');
+    const s2Dir = path.join(appDir, 'node_modules/@react-spectrum/s2');
+    const nestedRacDir = path.join(s2Dir, 'node_modules/react-aria-components');
+    fs.mkdirSync(nestedRacDir, {recursive: true});
+    fs.writeFileSync(
+      path.join(appDir, 'package.json'),
+      JSON.stringify({name: 's2-app', dependencies: {'@react-spectrum/s2': '1.8.2'}})
+    );
+    fs.writeFileSync(
+      path.join(s2Dir, 'package.json'),
+      JSON.stringify({name: '@react-spectrum/s2', version: '1.8.2'})
+    );
+    fs.writeFileSync(
+      path.join(nestedRacDir, 'package.json'),
+      JSON.stringify({name: 'react-aria-components', version: '1.22.1'})
+    );
+
+    const res = await resolveWorkspace({
+      cwd: appDir,
+      snapshotSource,
+      cacheDir: path.join(tmp, 'cache'),
+      snapshotOverride: 'snap-s2-1.2.0'
+    });
+    assert.equal(res.packages['@react-spectrum/s2']?.snapshotId, 'snap-s2-1.2.0');
+    assert.equal(res.packages['react-aria-components'], undefined);
+    assert.ok(
+      res.warnings.some(
+        w =>
+          w.code === 'WARN_AUX_PACKAGE_SLICE_UNAVAILABLE' &&
+          w.packageName === 'react-aria-components'
+      )
+    );
   } finally {
     fs.rmSync(tmp, {recursive: true, force: true});
   }

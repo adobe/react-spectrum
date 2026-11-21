@@ -1214,11 +1214,12 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
           )
         )
       : items;
+  const filterByKind = Boolean(options.eventsOnly || options.renderPropsOnly);
   const visibleExports = exportsList.map(exp => ({
     ...exp,
-    props: options.eventsOnly || options.renderPropsOnly ? [] : exp.props,
-    events: options.renderPropsOnly ? [] : exp.events,
-    renderProps: options.eventsOnly ? [] : exp.renderProps
+    props: filterByKind ? [] : exp.props,
+    events: !filterByKind || options.eventsOnly ? exp.events : [],
+    renderProps: !filterByKind || options.renderPropsOnly ? exp.renderProps : []
   }));
   exportsList = visibleExports.map(exp => ({
     ...exp,

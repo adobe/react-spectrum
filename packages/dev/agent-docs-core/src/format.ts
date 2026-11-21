@@ -150,7 +150,11 @@ export function formatReadOutput(result: ReadDocsResult, options: ReadOutputOpti
     }
     const {entry, markdown, sectionIndex, ...metadata} = item;
     if (sectionIndex) {
-      const {includedSections, omittedSections, ...outlineMetadata} = metadata;
+      const {
+        includedSections: _includedSections,
+        omittedSections: _omittedSections,
+        ...outlineMetadata
+      } = metadata;
       return options.jsonContent === 'markdown'
         ? {...outlineMetadata, markdown}
         : {...outlineMetadata, sectionIndex};

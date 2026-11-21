@@ -187,7 +187,7 @@ export async function runAgentDocsCli(
       strict: true,
       options: {
         help: {type: 'boolean', short: 'h'},
-        version: {type: 'string'},
+        version: {type: 'string', multiple: true},
         'cli-version': {type: 'boolean', short: 'v'},
         json: {type: 'boolean'},
         cwd: {type: 'string'},
@@ -228,6 +228,7 @@ export async function runAgentDocsCli(
       return EXIT_CODES.OK;
     }
 
+    const versionOverride = parsed.values.version?.filter(Boolean).join(',') || undefined;
     const common: CommonQueryOptions = {
       cwd: parsed.values.cwd,
       cacheDir: parsed.values['cache-dir'],
@@ -235,7 +236,7 @@ export async function runAgentDocsCli(
       offline: Boolean(parsed.values.offline),
       allowLatestFallback: Boolean(parsed.values['allow-latest']),
       strictVersion: Boolean(parsed.values['strict-version']),
-      versionOverride: parsed.values.version,
+      versionOverride,
       snapshotOverride: parsed.values.snapshot,
       defaultLibrary
     };

@@ -446,3 +446,129 @@ import state from 'docs:react-stately';
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });
+
+test('captures S2 style macro imports, isolates historical S2 assets from repoRoot, and detects asset-only patch changes', async () => {
+  const {verifyAndRecordEquivalentPatch} = await import(
+    new URL('../../s2-docs/scripts/generateDocSnapshots.mjs', import.meta.url).href
+  );
+  const racSdk = await import(
+    new URL('../../cli/react-aria/dist/cli/react-aria/src/sdk.js', import.meta.url).href
+  );
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-assets-macro-'));
+  try {
+    // 1. Style macro `with {type: 'macro'}` import is captured and preserved, and repoRoot assets are NOT leaked into targetRoot
+    const repoWithHeadAssets = path.join(tmp, 'head-repo');
+    write(
+      repoWithHeadAssets,
+      'packages/dev/s2-docs/src/iconAliases.js',
+      "export const iconAliases = {leaked: ['Button']};\n"
+    );
+    write(
+      repoWithHeadAssets,
+      'packages/dev/s2-docs/src/styleProperties.ts',
+      "export const colorProperties = {leakedColor: ['red']};\nexport const spacingTypeValues = {4: '4px'};\n"
+    );
+
+    const target = path.join(tmp, 'target');
+    const snapshots = path.join(tmp, 'snapshots');
+    createTarget(target);
+    write(
+      target,
+      'packages/dev/s2-docs/pages/s2/Button.mdx',
+      `# Button
+
+\`\`\`tsx
+import {Button} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Button styles={style({margin: 8})} />;
+\`\`\`
+`
+    );
+    const snap = await generateSnapshotFromTarget({
+      targetRoot: target,
+      repoRoot: repoWithHeadAssets,
+      outRoot: snapshots,
+      snapshotId: 'macro-snap',
+      sourceCommit: 'test',
+      extractorCommit: 'test',
+      libraries: ['s2']
+    });
+    updateSnapshotsIndex(snapshots, [snap], {markAsLatest: true});
+    const entry = JSON.parse(
+      fs.readFileSync(path.join(snapshots, 'by-id/macro-snap/entries/s2/Button.json'), 'utf8')
+    );
+    assert.ok(
+      entry.imports.includes("import {style} from '@react-spectrum/s2/style' with {type: 'macro'};")
+    );
+    const assets = JSON.parse(
+      fs.readFileSync(path.join(snapshots, 'by-id/macro-snap/s2-assets.json'), 'utf8')
+    );
+    assert.deepEqual(assets.iconAliases, {});
+    assert.deepEqual(assets.styleMacro.categories, {});
+
+    // 2. verifyAndRecordEquivalentPatch detects S2 asset-only patch changes (e.g. new icon)
+    const gitRepo = path.join(tmp, 'git-repo');
+    createTarget(gitRepo, '1.0.0');
+    write(gitRepo, `${PACKAGE_DIR}/s2wf-icons/S2_Icon_Edit_20_N.svg`, '<svg />');
+    const git = (...args) =>
+      execFileSync(
+        'git',
+        [
+          '-c',
+          'user.name=Test',
+          '-c',
+          'user.email=test@example.com',
+          '-c',
+          'commit.gpgsign=false',
+          ...args
+        ],
+        {cwd: gitRepo, stdio: 'pipe'}
+      );
+    git('init');
+    git('add', '.');
+    git('commit', '-m', '1.0.0');
+    git('tag', `${PACKAGE}@1.0.0`);
+
+    write(
+      gitRepo,
+      `${PACKAGE_DIR}/package.json`,
+      JSON.stringify({name: PACKAGE, version: '1.0.1', source: 'src/index.ts'})
+    );
+    write(gitRepo, `${PACKAGE_DIR}/s2wf-icons/S2_Icon_Sparkles_20_N.svg`, '<svg />');
+    git('add', '.');
+    git('commit', '-m', '1.0.1 new icon');
+    git('tag', `${PACKAGE}@1.0.1`);
+
+    const outRoot = path.join(tmp, 'git-snaps');
+    const baseSnap = await extractGitRefSnapshot({
+      gitRef: `${PACKAGE}@1.0.0`,
+      repoRoot: gitRepo,
+      outRoot,
+      libraries: ['s2']
+    });
+    updateSnapshotsIndex(outRoot, [baseSnap], {markAsLatest: true});
+    const check = await verifyAndRecordEquivalentPatch({
+      outRoot,
+      packageName: PACKAGE,
+      baseVersion: '1.0.0',
+      patchVersion: '1.0.1',
+      baseRef: `${PACKAGE}@1.0.0`,
+      patchRef: `${PACKAGE}@1.0.1`,
+      repoRoot: gitRepo
+    });
+    assert.equal(check.equivalent, false);
+
+    // 3. @react-aria/cli programmatic SDK defaults to `rac` library ranking
+    const racRes = await racSdk.searchDocs({
+      query: 'Button',
+      cwd: target,
+      snapshotSource: process.env.RSP_AGENT_DOCS_TEST_SNAPSHOT_SOURCE,
+      cacheDir: path.join(tmp, 'rac-sdk-cache'),
+      versionOverride: 'latest'
+    });
+    assert.equal(racRes.results[0].library, 'rac');
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});

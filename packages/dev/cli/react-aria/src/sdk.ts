@@ -10,4 +10,41 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  type ApiDocsResult,
+  type CommonQueryOptions,
+  prefetchDocs as corePrefetchDocs,
+  queryApi as coreQueryApi,
+  readDocs as coreReadDocs,
+  resolveWorkspace as coreResolveWorkspace,
+  searchDocs as coreSearchDocs,
+  type PrefetchDocsResult,
+  type QueryApiOptions,
+  type ReadDocsOptions,
+  type ReadDocsResult,
+  type ResolutionState,
+  type SearchDocsOptions,
+  type SearchDocsResult
+} from '../../../agent-docs-core/src/index.js';
+
 export * from '../../../agent-docs-core/src/index.js';
+
+export function resolveWorkspace(options: CommonQueryOptions = {}): Promise<ResolutionState> {
+  return coreResolveWorkspace({defaultLibrary: 'rac', ...options});
+}
+
+export function searchDocs(options: SearchDocsOptions): Promise<SearchDocsResult> {
+  return coreSearchDocs({defaultLibrary: 'rac', ...options});
+}
+
+export function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult> {
+  return coreReadDocs({defaultLibrary: 'rac', ...options});
+}
+
+export function queryApi(options: QueryApiOptions): Promise<ApiDocsResult> {
+  return coreQueryApi({defaultLibrary: 'rac', ...options});
+}
+
+export function prefetchDocs(options: CommonQueryOptions = {}): Promise<PrefetchDocsResult> {
+  return corePrefetchDocs({defaultLibrary: 'rac', ...options});
+}

@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
+import {fileURLToPath} from 'node:url';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 
 async function main() {
   const transport = new StdioClientTransport({
     command: 'node',
-    args: [new URL('../dist/mcp/react-aria/src/index.js', import.meta.url).pathname],
+    args: [fileURLToPath(new URL('../dist/mcp/react-aria/src/index.js', import.meta.url))],
     env: process.env
   });
 

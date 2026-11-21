@@ -309,6 +309,23 @@ function measureLegacyMcp() {
   };
 }
 
+function collectReadVersionViolations(results, expectedPackages) {
+  const violations = [];
+  for (const item of results) {
+    if (!item.ok) {
+      violations.push(`Read failed for '${item.requestedId}': ${item.error.code}`);
+      continue;
+    }
+    const expected = expectedPackages?.[item.provenance.packageName];
+    if (expected && item.provenance.packageVersion !== expected) {
+      violations.push(
+        `'${item.id}' used ${item.provenance.packageName}@${item.provenance.packageVersion}; expected ${expected}`
+      );
+    }
+  }
+  return violations;
+}
+
 async function measureCandidateV2(options) {
   const coreModulePath = path.join(
     REPO_ROOT,
@@ -379,18 +396,9 @@ async function measureCandidateV2(options) {
             snapshotSource: snapshotRepoDir,
             defaultLibrary: scenario.v2Plan.brand === 'rac' ? 'rac' : 's2'
           });
-          for (const item of res.results) {
-            if (!item.ok) {
-              versionViolations.push(`Read failed for '${item.requestedId}': ${item.error.code}`);
-              continue;
-            }
-            const expected = scenario.assertions.expectedPackages?.[item.provenance.packageName];
-            if (expected && item.provenance.packageVersion !== expected) {
-              versionViolations.push(
-                `'${item.id}' used ${item.provenance.packageName}@${item.provenance.packageVersion}; expected ${expected}`
-              );
-            }
-          }
+          versionViolations.push(
+            ...collectReadVersionViolations(res.results, scenario.assertions.expectedPackages)
+          );
           markdownText += '\n' + core.formatReadMarkdown(res);
           lastJsonEnvelope = res;
         }

@@ -5178,74 +5178,74 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-darwin-arm64@npm:3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@parcel/parcel3-darwin-arm64@npm:3.0.0-alpha.2"
+"@parcel/parcel3-darwin-arm64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-darwin-arm64@npm:3.0.0-alpha.3"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-darwin-x64@npm:3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@parcel/parcel3-darwin-x64@npm:3.0.0-alpha.2"
+"@parcel/parcel3-darwin-x64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-darwin-x64@npm:3.0.0-alpha.3"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-arm64-musl@npm:3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@parcel/parcel3-linux-arm64-musl@npm:3.0.0-alpha.2"
+"@parcel/parcel3-linux-arm64-musl@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-linux-arm64-musl@npm:3.0.0-alpha.3"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-arm64@npm:3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@parcel/parcel3-linux-arm64@npm:3.0.0-alpha.2"
+"@parcel/parcel3-linux-arm64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-linux-arm64@npm:3.0.0-alpha.3"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-x64-musl@npm:3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@parcel/parcel3-linux-x64-musl@npm:3.0.0-alpha.2"
+"@parcel/parcel3-linux-x64-musl@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-linux-x64-musl@npm:3.0.0-alpha.3"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-x64@npm:3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@parcel/parcel3-linux-x64@npm:3.0.0-alpha.2"
+"@parcel/parcel3-linux-x64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-linux-x64@npm:3.0.0-alpha.3"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-win32-arm64@npm:3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@parcel/parcel3-win32-arm64@npm:3.0.0-alpha.2"
+"@parcel/parcel3-win32-arm64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-win32-arm64@npm:3.0.0-alpha.3"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-win32-x64@npm:3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@parcel/parcel3-win32-x64@npm:3.0.0-alpha.2"
+"@parcel/parcel3-win32-x64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-win32-x64@npm:3.0.0-alpha.3"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3@npm:^3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@parcel/parcel3@npm:3.0.0-alpha.2"
+"@parcel/parcel3@npm:^3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3@npm:3.0.0-alpha.3"
   dependencies:
-    "@parcel/parcel3-darwin-arm64": "npm:3.0.0-alpha.2"
-    "@parcel/parcel3-darwin-x64": "npm:3.0.0-alpha.2"
-    "@parcel/parcel3-linux-arm64": "npm:3.0.0-alpha.2"
-    "@parcel/parcel3-linux-arm64-musl": "npm:3.0.0-alpha.2"
-    "@parcel/parcel3-linux-x64": "npm:3.0.0-alpha.2"
-    "@parcel/parcel3-linux-x64-musl": "npm:3.0.0-alpha.2"
-    "@parcel/parcel3-win32-arm64": "npm:3.0.0-alpha.2"
-    "@parcel/parcel3-win32-x64": "npm:3.0.0-alpha.2"
+    "@parcel/parcel3-darwin-arm64": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-darwin-x64": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-linux-arm64": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-linux-arm64-musl": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-linux-x64": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-linux-x64-musl": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-win32-arm64": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-win32-x64": "npm:3.0.0-alpha.3"
   dependenciesMeta:
     "@parcel/parcel3-darwin-arm64":
       optional: true
@@ -5265,7 +5265,7 @@ __metadata:
       optional: true
   bin:
     parcel3: bin/parcel3
-  checksum: 10c0/7dcaf43e2e39e781de2f5fdb4df982bc22da99c3d1c23e21efef00bf7de5581697bb8d165dddceddd3d06db6bb74510255badfa875944b47307103c10f82c873
+  checksum: 10c0/a77b2c92529917083f9c8c60c15f97e862139c300b4ae1c0a57bdbd6e87b2fd35a6d7a6354889508f123a79bfc5ee5fa6cf9d8b54fad41682bfb48e0e1f7d04c
   languageName: node
   linkType: hard
 
@@ -17273,31 +17273,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@npm:2.3.2":
-  version: 2.3.2
-  resolution: "fsevents@npm:2.3.2"
-  dependencies:
-    node-gyp: "npm:latest"
-  checksum: 10c0/be78a3efa3e181cda3cf7a4637cb527bcebb0bd0ea0440105a3bb45b86f9245b307dc10a2507e8f4498a7d4ec349d1910f4d73e4d4495b16103106e07eee735b
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
 "fsevents@npm:^2.3.3, fsevents@npm:~2.3.2, fsevents@npm:~2.3.3":
   version: 2.3.3
   resolution: "fsevents@npm:2.3.3"
   dependencies:
     node-gyp: "npm:latest"
   checksum: 10c0/a1f0c44595123ed717febbc478aa952e47adfc28e2092be66b8ab1635147254ca6cfe1df792a8997f22716d4cbafc73309899ff7bfac2ac3ad8cf2e4ecc3ec60
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
-"fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>":
-  version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
-  dependencies:
-    node-gyp: "npm:latest"
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -24708,7 +24689,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.57.0, playwright-core@npm:>=1.2.0":
+"playwright-core@npm:1.65.1":
+  version: 1.65.1
+  resolution: "playwright-core@npm:1.65.1"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/4406d4f8eff668a93aaada8382d25fcce8da5f679e9f31311888178d631ed0270eb40c0288129e41e15709c957a31932cac9753fdb332547a19bc3541d317e44
+  languageName: node
+  linkType: hard
+
+"playwright-core@npm:>=1.2.0":
   version: 1.57.0
   resolution: "playwright-core@npm:1.57.0"
   bin:
@@ -24718,17 +24708,13 @@ __metadata:
   linkType: hard
 
 "playwright@npm:^1.14.0, playwright@npm:^1.45.3, playwright@npm:^1.57.0":
-  version: 1.57.0
-  resolution: "playwright@npm:1.57.0"
+  version: 1.65.1
+  resolution: "playwright@npm:1.65.1"
   dependencies:
-    fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.57.0"
-  dependenciesMeta:
-    fsevents:
-      optional: true
+    playwright-core: "npm:1.65.1"
   bin:
     playwright: cli.js
-  checksum: 10c0/ab03c99a67b835bdea9059f516ad3b6e42c21025f9adaa161a4ef6bc7ca716dcba476d287140bb240d06126eb23f889a8933b8f5f1f1a56b80659d92d1358899
+  checksum: 10c0/30ce029c9fb2a6e88cf81b150b978fd60edb59b8af5a6460f5576f0fe6e2bb739454109f0ce4904eac63cb2cf10390518d7d71d335fd695b5897734a5af7250d
   languageName: node
   linkType: hard
 
@@ -25399,7 +25385,7 @@ __metadata:
     "@parcel/optimizer-terser": "npm:^2.16.3"
     "@parcel/packager-react-static": "npm:^2.16.3"
     "@parcel/packager-ts": "npm:^2.16.3"
-    "@parcel/parcel3": "npm:^3.0.0-alpha.2"
+    "@parcel/parcel3": "npm:^3.0.0-alpha.3"
     "@parcel/reporter-bundle-analyzer": "npm:^2.16.3"
     "@parcel/reporter-cli": "npm:^2.16.3"
     "@parcel/resolver-glob": "npm:^2.16.3"

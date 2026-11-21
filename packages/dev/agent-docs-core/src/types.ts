@@ -170,6 +170,7 @@ export interface CatalogSectionIR {
 
 export interface CatalogEntryIR {
   schemaVersion: number;
+  minReaderSchemaVersion?: number;
   id: string;
   slug: string;
   library: LibraryId;

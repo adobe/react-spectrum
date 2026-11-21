@@ -143,15 +143,26 @@ export async function verifyAndRecordEquivalentPatch({
       repoRoot
     });
 
+    const collectJsonFiles = dirPath => {
+      if (!fs.existsSync(dirPath)) {
+        return [];
+      }
+      const results = [];
+      for (const entry of fs.readdirSync(dirPath, {withFileTypes: true})) {
+        const full = path.join(dirPath, entry.name);
+        if (entry.isDirectory()) {
+          results.push(...collectJsonFiles(full));
+        } else if (entry.isFile() && entry.name.endsWith('.json')) {
+          results.push(full);
+        }
+      }
+      return results.sort();
+    };
+
     const computeDocumentationDigest = (dir, snapId) => {
-      let entriesDir = path.join(dir, 'by-id', snapId, 'entries');
-      let jsonFiles = fs.existsSync(entriesDir)
-        ? execFileSync('find', [entriesDir, '-name', '*.json'], {encoding: 'utf8'})
-            .trim()
-            .split('\n')
-            .filter(Boolean)
-            .sort()
-        : [];
+      let snapDir = path.join(dir, 'by-id', snapId);
+      let entriesDir = path.join(snapDir, 'entries');
+      let jsonFiles = collectJsonFiles(entriesDir);
       let normalizedEntries = jsonFiles
         .map(fp => {
           let parsed = JSON.parse(fs.readFileSync(fp, 'utf8'));
@@ -169,16 +180,26 @@ export async function verifyAndRecordEquivalentPatch({
           };
         })
         .filter(Boolean);
-      const version = JSON.parse(
-        fs.readFileSync(path.join(dir, 'by-id', snapId, 'manifest.json'), 'utf8')
-      ).packages[packageName];
+      const version = JSON.parse(fs.readFileSync(path.join(snapDir, 'manifest.json'), 'utf8'))
+        .packages[packageName];
       if (!version || normalizedEntries.length === 0) {
         throw new Error(
           `No documentation was extracted for ${packageName} in snapshot '${snapId}'.`
         );
       }
+      let normalizedAssets = null;
+      if (packageName === '@react-spectrum/s2') {
+        let assetsPath = path.join(snapDir, 's2-assets.json');
+        if (fs.existsSync(assetsPath)) {
+          let rawAssets = JSON.parse(fs.readFileSync(assetsPath, 'utf8'));
+          delete rawAssets.packageVersion;
+          normalizedAssets = rawAssets;
+        }
+      }
       return sha256Hex(
-        JSON.stringify(normalizedEntries).split(`${packageName}@${version}`).join(packageName)
+        JSON.stringify({entries: normalizedEntries, assets: normalizedAssets})
+          .split(`${packageName}@${version}`)
+          .join(packageName)
       );
     };
 

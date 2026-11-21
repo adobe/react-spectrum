@@ -451,19 +451,33 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
  * year, so existing objects with different content are never overwritten.
  */
 async function uploadImmutableIfAbsent(storage, item, buf) {
+  const assertMatches = existing => {
+    if (existing.sha256 !== item.expectedSha256 || existing.bytes !== item.expectedBytes) {
+      throw new Error(
+        `Refusing to overwrite immutable object '${item.key}': remote has ${existing.sha256 || 'unknown SHA-256'} (${existing.bytes}B), expected ${item.expectedSha256} (${item.expectedBytes}B). Publish under a new snapshot ID instead.`
+      );
+    }
+  };
   let existing = await storage.headObject(item.key);
-  if (!existing) {
+  if (existing) {
+    assertMatches(existing);
+    return;
+  }
+  try {
     await storage.putImmutableObject(item.key, buf, {
       sha256: item.expectedSha256,
       contentType: contentTypeForPath(item.key),
       cacheControl: IMMUTABLE_CACHE_CONTROL
     });
-    return;
-  }
-  if (existing.sha256 !== item.expectedSha256 || existing.bytes !== item.expectedBytes) {
-    throw new Error(
-      `Refusing to overwrite immutable object '${item.key}': remote has ${existing.sha256 || 'unknown SHA-256'} (${existing.bytes}B), expected ${item.expectedSha256} (${item.expectedBytes}B). Publish under a new snapshot ID instead.`
-    );
+  } catch (err) {
+    if (err?.code === 'PreconditionFailed') {
+      let raced = await storage.headObject(item.key);
+      if (raced) {
+        assertMatches(raced);
+        return;
+      }
+    }
+    throw err;
   }
 }
 
@@ -552,9 +566,9 @@ export async function publishStagedSnapshots({
         `Post-upload byte size mismatch on '${item.key}': expected ${item.expectedBytes}, got ${head.bytes}`
       );
     }
-    if (head.sha256 && head.sha256 !== item.expectedSha256) {
+    if (head.sha256 !== item.expectedSha256) {
       throw new Error(
-        `Post-upload SHA-256 mismatch on '${item.key}': expected ${item.expectedSha256}, got ${head.sha256}`
+        `Post-upload SHA-256 mismatch on '${item.key}': expected ${item.expectedSha256}, got ${head.sha256 || 'missing'}`
       );
     }
   }

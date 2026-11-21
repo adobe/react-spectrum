@@ -367,7 +367,143 @@ test('publishSnapshots 3-step publisher retries CAS ETag races and preserves mon
       /Refusing to overwrite immutable object/
     );
     assert.deepEqual(fs.readFileSync(path.join(bucketRoot, s182.sliceRel)), publishedSlice);
+
+    // Concurrent immutable upload race (PreconditionFailed with matching remote bytes/SHA-256) succeeds idempotently,
+    // while Step 2 verification rejects objects missing remote sha256 metadata.
+    const s190 = writeStagedSnap('snap-190', '1.9.0');
+    const freshIdx = JSON.parse(fs.readFileSync(path.join(stagedRoot, 'index.json'), 'utf8'));
+    freshIdx.packages['@react-spectrum/s2']['1.9.0'] = {
+      snapshotId: 'snap-190',
+      packageVersion: '1.9.0',
+      sliceRelPath: s190.sliceRel,
+      sliceSha256: s190.sliceSha,
+      sliceBytes: s190.sliceBytes,
+      entryCount: 1
+    };
+    freshIdx.snapshots['snap-190'] = {
+      snapshotId: 'snap-190',
+      gitRef: '@react-spectrum/s2@1.9.0',
+      gitSha: 'abcdef123456',
+      extractorVersion: '0.1.0',
+      manifestRelPath: s190.manifestRel,
+      manifestSha256: s190.manifestSha,
+      packages: {'@react-spectrum/s2': '1.9.0'}
+    };
+    fs.writeFileSync(path.join(stagedRoot, 'index.json'), JSON.stringify(freshIdx));
+    let simulatedRace = false;
+    const racingStorage = {
+      ...baseStorage,
+      async putImmutableObject(relKey, bodyBuf, meta) {
+        if (!simulatedRace && relKey === s190.sliceRel) {
+          simulatedRace = true;
+          await baseStorage.putImmutableObject(relKey, bodyBuf, meta);
+          const conflict = new Error('Simulated concurrent immutable upload');
+          conflict.code = 'PreconditionFailed';
+          throw conflict;
+        }
+        return baseStorage.putImmutableObject(relKey, bodyBuf, meta);
+      }
+    };
+    await publishStagedSnapshots({
+      stagedDir: stagedRoot,
+      storage: racingStorage,
+      snapshotIds: ['snap-190']
+    });
+    assert.equal(simulatedRace, true);
+
+    const missingShaStorage = {
+      ...baseStorage,
+      async headObject(relKey) {
+        const head = await baseStorage.headObject(relKey);
+        return head ? {...head, sha256: null} : null;
+      }
+    };
+    await assert.rejects(
+      () =>
+        publishStagedSnapshots({
+          stagedDir: stagedRoot,
+          storage: missingShaStorage,
+          snapshotIds: ['snap-190']
+        }),
+      /Post-upload SHA-256 mismatch|Refusing to overwrite immutable object/
+    );
   } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
+
+test('parses multi-byte UTF-8 PAX tar paths, allows additive entry schemaVersion, and never falls back to stale cache on future index schema', async () => {
+  const {loadSnapshotIndex, readSliceEntryBySlug, unpackTarGzBufferToDir} = await corePromise;
+  const {packTarGz} = await tarModPromise;
+  const {createServer} = await import('node:http');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-pax-schema-'));
+  let server;
+  try {
+    // 1. Multi-byte UTF-8 PAX path (>100 bytes forces PAX header)
+    const longUtf8Path = `entries/s2/${'café-über-日本語-'.repeat(8)}doc.json`;
+    const gz = packTarGz([{path: longUtf8Path, content: '{"ok":true}'}]);
+    const dest = path.join(tmp, 'unpacked');
+    unpackTarGzBufferToDir(gz, dest);
+    assert.equal(fs.readFileSync(path.join(dest, longUtf8Path), 'utf8'), '{"ok":true}');
+
+    // 2. Additive schemaVersion bump with minReaderSchemaVersion: 1 succeeds in readSliceEntryBySlug
+    const sliceDir = path.join(tmp, 'slice');
+    const entryPath = path.join(sliceDir, 'entries/s2/Button.json');
+    fs.mkdirSync(path.dirname(entryPath), {recursive: true});
+    fs.writeFileSync(
+      entryPath,
+      JSON.stringify({
+        schemaVersion: 2,
+        minReaderSchemaVersion: 1,
+        id: 's2:Button',
+        slug: 'Button',
+        library: 's2',
+        packageName: '@react-spectrum/s2',
+        packageVersion: '1.0.0',
+        kind: 'component',
+        title: 'Button',
+        summary: 'Button',
+        keywords: [],
+        sourceUrl: '',
+        imports: [],
+        compositionRules: [],
+        exports: [],
+        sections: []
+      })
+    );
+    const loadedEntry = readSliceEntryBySlug(sliceDir, 's2', 'Button');
+    assert.equal(loadedEntry?.entry.id, 's2:Button');
+
+    // 3. Stale cached index MUST NOT mask ERR_CATALOG_SCHEMA_TOO_NEW on refresh
+    let minReader = 1;
+    server = createServer((req, res) => {
+      res.writeHead(200, {'Content-Type': 'application/json'});
+      res.end(
+        JSON.stringify({
+          schemaVersion: minReader,
+          minReaderSchemaVersion: minReader,
+          updatedAt: new Date().toISOString(),
+          latest: {},
+          packages: {},
+          snapshots: {}
+        })
+      );
+    });
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+    const {port} = server.address();
+    const sourceUrl = `http://127.0.0.1:${port}`;
+    const cacheDir = path.join(tmp, 'cache');
+    await loadSnapshotIndex({snapshotSource: sourceUrl, cacheDir});
+    minReader = 99;
+    await assert.rejects(
+      () => loadSnapshotIndex({snapshotSource: sourceUrl, cacheDir, forceRefreshIndex: true}),
+      err => err.code === 'ERR_CATALOG_SCHEMA_TOO_NEW'
+    );
+  } finally {
+    if (server?.listening) {
+      server.closeAllConnections();
+      await new Promise(resolve => server.close(resolve));
+    }
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });

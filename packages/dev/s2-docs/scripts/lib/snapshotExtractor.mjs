@@ -16,6 +16,7 @@ import glob from 'fast-glob';
 import {mdxToMarkdown} from 'mdast-util-mdx';
 import {packTarGz} from './tarArchive.mjs';
 import path from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {Project, SyntaxKind, ts} from 'ts-morph';
 import remarkMdx from 'remark-mdx';
 import remarkParse from 'remark-parse';
@@ -1130,14 +1131,16 @@ function parseMdxIntoStructuredDoc({
   let importsBySource = new Map();
   let bindingSources = new Map();
   let importStmtRe =
-    /^import[ \t]+\{([^}]+)\}[ \t]+from[ \t]+['"]((?:@react-spectrum\/s2|react-aria-components|react-aria|react-stately|@internationalized\/[\w-]+)(?:\/[\w-]+)?)['"];?$/gm;
+    /^import[ \t]+\{([^}]+)\}[ \t]+from[ \t]+['"]((?:@react-spectrum\/s2|react-aria-components|react-aria|react-stately|@internationalized\/[\w-]+)(?:\/[\w-]+)?)['"](?:[ \t]+(with[ \t]+\{[^}]+\}))?;?$/gm;
   let im;
   while ((im = importStmtRe.exec(mdText)) !== null) {
-    let [, specifiers, source] = im;
-    if (importsBySource.size === 3 && !importsBySource.has(source)) {
+    let [, specifiers, source, rawWithClause] = im;
+    let withClause = rawWithClause ? rawWithClause.replace(/\s+/g, ' ').trim() : '';
+    let sourceKey = withClause ? `${source}\0${withClause}` : source;
+    if (importsBySource.size === 3 && !importsBySource.has(sourceKey)) {
       continue;
     }
-    let bindings = importsBySource.get(source) || new Map();
+    let entry = importsBySource.get(sourceKey) || {source, withClause, bindings: new Map()};
     for (let specifier of specifiers.split(',')) {
       let binding = specifier.trim().replace(/\s+/g, ' ');
       let match = binding.match(/^(type )?([\w$]+)(?: as ([\w$]+))?$/);
@@ -1147,21 +1150,22 @@ function parseMdxIntoStructuredDoc({
       let [, typeOnly, imported, alias] = match;
       let local = alias || imported;
       let owner = bindingSources.get(local);
-      if (owner && owner !== source) {
+      if (owner && owner !== sourceKey) {
         continue;
       }
-      let previous = bindings.get(local);
+      let previous = entry.bindings.get(local);
       if (!previous || (!typeOnly && previous === `type ${binding}`)) {
-        bindings.set(local, binding);
+        entry.bindings.set(local, binding);
       }
-      bindingSources.set(local, source);
+      bindingSources.set(local, sourceKey);
     }
-    if (bindings.size > 0) {
-      importsBySource.set(source, bindings);
+    if (entry.bindings.size > 0) {
+      importsBySource.set(sourceKey, entry);
     }
   }
-  let imports = [...importsBySource].map(
-    ([source, bindings]) => `import {${[...bindings.values()].join(', ')}} from '${source}';`
+  let imports = [...importsBySource.values()].map(
+    ({source, withClause, bindings}) =>
+      `import {${[...bindings.values()].join(', ')}} from '${source}'${withClause ? ` ${withClause}` : ''};`
   );
 
   if (imports.length === 0 && exportsIR.length > 0) {
@@ -1405,9 +1409,10 @@ function buildStyleCategoriesFromModule(styleMod) {
 
 /**
  * Extracts S2 style macro token definitions, workflow icons, and illustrations from `targetRoot`
- * (falling back gracefully when older tags lack helper files).
+ * (leaving optional metadata empty when older tags lack helper files so HEAD assets never leak
+ * into historical snapshots).
  */
-async function extractS2Assets(targetRoot, repoRoot, s2Version) {
+async function extractS2Assets(targetRoot, s2Version) {
   let s2Dir = path.join(targetRoot, 'packages/@react-spectrum/s2');
   if (!fs.existsSync(s2Dir)) {
     return null;
@@ -1425,18 +1430,15 @@ async function extractS2Assets(targetRoot, repoRoot, s2Version) {
   }
   let icons = [...iconSet].sort((a, b) => a.localeCompare(b));
 
-  // Optional icon aliases from targetRoot (or repoRoot fallback for search synonyms)
+  // Optional icon aliases from targetRoot only (never fall back to HEAD)
   let iconAliases = {};
-  for (let rootCandidate of [targetRoot, repoRoot]) {
-    let aliasFile = path.join(rootCandidate, 'packages/dev/s2-docs/src/iconAliases.js');
-    if (fs.existsSync(aliasFile)) {
-      try {
-        let mod = await import(`file://${aliasFile}`);
-        iconAliases = mod.iconAliases || {};
-        break;
-      } catch {
-        // ignore
-      }
+  let aliasFile = path.join(targetRoot, 'packages/dev/s2-docs/src/iconAliases.js');
+  if (fs.existsSync(aliasFile)) {
+    try {
+      let mod = await import(pathToFileURL(aliasFile).href);
+      iconAliases = mod.iconAliases || {};
+    } catch {
+      // ignore
     }
   }
 
@@ -1455,20 +1457,17 @@ async function extractS2Assets(targetRoot, repoRoot, s2Version) {
     })
     .sort((a, b) => a.subpath.localeCompare(b.subpath));
 
-  // 3. Style macro properties & token values
+  // 3. Style macro properties & token values from targetRoot only (never fall back to HEAD)
   let styleCategories = {};
   let spacingScale = {};
-  for (let rootCandidate of [targetRoot, repoRoot]) {
-    let stylePropsPath = path.join(rootCandidate, 'packages/dev/s2-docs/src/styleProperties.ts');
-    if (fs.existsSync(stylePropsPath)) {
-      try {
-        let styleMod = loadStylePropertiesModule(stylePropsPath);
-        styleCategories = buildStyleCategoriesFromModule(styleMod);
-        spacingScale = styleMod.spacingTypeValues || {};
-        break;
-      } catch {
-        // ignore if styleProperties cannot be evaluated on older tag
-      }
+  let stylePropsPath = path.join(targetRoot, 'packages/dev/s2-docs/src/styleProperties.ts');
+  if (fs.existsSync(stylePropsPath)) {
+    try {
+      let styleMod = loadStylePropertiesModule(stylePropsPath);
+      styleCategories = buildStyleCategoriesFromModule(styleMod);
+      spacingScale = styleMod.spacingTypeValues || {};
+    } catch {
+      // ignore if styleProperties cannot be evaluated on older tag
     }
   }
 
@@ -1807,10 +1806,10 @@ export async function generateSnapshotFromTarget({
         }
         let ownerPkgName = entryLib === 'rac' ? 'react-aria-components' : entryLib;
         let ownerPkg = ctx.packagesByName.get(ownerPkgName);
+        if (entryLib === 'react-stately' && !ownerPkg) {
+          continue;
+        }
         if (entryLib === 'react-stately') {
-          if (!ownerPkg) {
-            continue;
-          }
           docsLayouts[ownerPkg.name] = 's2-docs';
         }
         ownerPkg ||= racPkg;
@@ -1976,9 +1975,7 @@ export async function generateSnapshotFromTarget({
 
   // Extract S2 assets (`s2-assets.json`) if S2 was extracted
   let s2Assets =
-    libraries.includes('s2') && s2Pkg
-      ? await extractS2Assets(targetRoot, repoRoot, s2Pkg.version)
-      : null;
+    libraries.includes('s2') && s2Pkg ? await extractS2Assets(targetRoot, s2Pkg.version) : null;
 
   // Build search index items
   const toSearchRecord = entry => ({

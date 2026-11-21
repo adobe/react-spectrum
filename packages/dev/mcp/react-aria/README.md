@@ -108,7 +108,7 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 | `resolve_versions` | `{ cwd?: string, version?: string, snapshot?: string }` | Resolve exact installed/lockfile `react-aria-components`, `react-aria`, `react-stately`, and `@internationalized/*` package versions and return a reusable `resolution` context. |
 | `search_docs` | `{ query: string, cwd?: string, resolution?: object, library?: string, version?: string, snapshot?: string, limit?: number }` | Search version-matched React Aria Components, hooks, guides, and patterns (defaults to ranking React Aria first). |
 | `read_docs` | `{ ids: string \| string[], sections?: string[], maxTokens?: number, cursor?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Batch-read multiple version-matched components, hooks, or guides in a single call with per-entry provenance and partial-batch resilience. |
-| `get_component_api` | `{ target: string, prop?: string, cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Inspect structured TypeScript API definitions (props, events, render props, generics, overloads) for a React Aria component or hook. |
+| `get_component_api` | `{ id: string, exportName?: string, props?: string[], format?: 'markdown' \| 'json', cwd?: string, resolution?: object, version?: string, snapshot?: string }` | Inspect structured TypeScript API definitions (props, events, render props, generics, overloads) for a React Aria component or hook. |
 
 Set `listSections: true` to retrieve headings and section IDs without their content. Pass `sectionHeadings` with the exact headings or IDs to read, for example `["Value"]` on `rac:ComboBox`.
 
