@@ -225,7 +225,7 @@
     border-color: transparent;
     border-radius: var(--radius-sm);
 
-    &[data-focus-visible] {
+    &:focus-visible {
       outline: 2px solid var(--focus-ring-color);
       outline-offset: 2px;
     }
