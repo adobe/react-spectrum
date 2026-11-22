@@ -117,6 +117,9 @@ export async function verifyAndRecordEquivalentPatch({
   patchVersion,
   baseRef,
   patchRef,
+  baseExtraction = null,
+  libraries = null,
+  commitPatchOnDiff = false,
   repoRoot = REPO_ROOT
 }) {
   let pkgSubdir =
@@ -129,72 +132,47 @@ export async function verifyAndRecordEquivalentPatch({
   // Compare API and documentation while ignoring the package version stamped into generated prose.
   let tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-patch-verify-'));
   try {
-    let library = packageName === '@react-spectrum/s2' ? 's2' : 'rac';
-    let baseRes = await extractGitRefSnapshot({
-      gitRef: baseRef,
-      outRoot: path.join(tmpDir, 'base'),
-      libraries: [library],
-      repoRoot
-    });
+    let extractLibraries = libraries || [packageName === '@react-spectrum/s2' ? 's2' : 'rac'];
+    let baseRes =
+      baseExtraction ||
+      (await extractGitRefSnapshot({
+        gitRef: baseRef,
+        outRoot: path.join(tmpDir, 'base'),
+        libraries: extractLibraries,
+        repoRoot
+      }));
+    let patchTmpRoot = path.join(tmpDir, 'patch');
     let patchRes = await extractGitRefSnapshot({
       gitRef: patchRef,
-      outRoot: path.join(tmpDir, 'patch'),
-      libraries: [library],
+      outRoot: patchTmpRoot,
+      libraries: extractLibraries,
       repoRoot
     });
 
-    const collectJsonFiles = dirPath => {
-      if (!fs.existsSync(dirPath)) {
-        return [];
-      }
-      const results = [];
-      for (const entry of fs.readdirSync(dirPath, {withFileTypes: true})) {
-        const full = path.join(dirPath, entry.name);
-        if (entry.isDirectory()) {
-          results.push(...collectJsonFiles(full));
-        } else if (entry.isFile() && entry.name.endsWith('.json')) {
-          results.push(full);
-        }
-      }
-      return results.sort();
-    };
-
-    const computeDocumentationDigest = (dir, snapId) => {
-      let snapDir = path.join(dir, 'by-id', snapId);
-      let entriesDir = path.join(snapDir, 'entries');
-      let jsonFiles = collectJsonFiles(entriesDir);
-      let normalizedEntries = jsonFiles
-        .map(fp => {
-          let parsed = JSON.parse(fs.readFileSync(fp, 'utf8'));
-          if (parsed.packageName !== packageName) {
-            return null;
-          }
-          return {
-            id: parsed.id,
-            title: parsed.title,
-            summary: parsed.summary,
-            imports: parsed.imports,
-            compositionRules: parsed.compositionRules,
-            sections: parsed.sections,
-            exports: parsed.exports
-          };
-        })
-        .filter(Boolean);
-      const version = JSON.parse(fs.readFileSync(path.join(snapDir, 'manifest.json'), 'utf8'))
-        .packages[packageName];
+    const computeDocumentationDigest = res => {
+      let normalizedEntries = (res.entries || [])
+        .filter(parsed => parsed.packageName === packageName)
+        .sort((a, b) => a.id.localeCompare(b.id))
+        .map(parsed => ({
+          id: parsed.id,
+          title: parsed.title,
+          summary: parsed.summary,
+          imports: parsed.imports,
+          compositionRules: parsed.compositionRules,
+          sections: parsed.sections,
+          exports: parsed.exports
+        }));
+      const version = res.manifest?.packages?.[packageName];
       if (!version || normalizedEntries.length === 0) {
         throw new Error(
-          `No documentation was extracted for ${packageName} in snapshot '${snapId}'.`
+          `No documentation was extracted for ${packageName} in snapshot '${res.manifest?.snapshotId}'.`
         );
       }
       let normalizedAssets = null;
-      if (packageName === '@react-spectrum/s2') {
-        let assetsPath = path.join(snapDir, 's2-assets.json');
-        if (fs.existsSync(assetsPath)) {
-          let rawAssets = JSON.parse(fs.readFileSync(assetsPath, 'utf8'));
-          delete rawAssets.packageVersion;
-          normalizedAssets = rawAssets;
-        }
+      if (packageName === '@react-spectrum/s2' && res.s2Assets) {
+        let rawAssets = {...res.s2Assets};
+        delete rawAssets.packageVersion;
+        normalizedAssets = rawAssets;
       }
       return sha256Hex(
         JSON.stringify({entries: normalizedEntries, assets: normalizedAssets})
@@ -203,15 +181,10 @@ export async function verifyAndRecordEquivalentPatch({
       );
     };
 
-    let baseDigest = computeDocumentationDigest(
-      path.join(tmpDir, 'base'),
-      baseRes.manifest.snapshotId
-    );
-    let patchDigest = computeDocumentationDigest(
-      path.join(tmpDir, 'patch'),
-      patchRes.manifest.snapshotId
-    );
+    let baseDigest = computeDocumentationDigest(baseRes);
+    let patchDigest = computeDocumentationDigest(patchRes);
     let equivalent = baseDigest === patchDigest;
+    let dedicatedSnapshotId = null;
 
     if (equivalent) {
       let indexPath = path.join(outRoot, 'index.json');
@@ -224,6 +197,15 @@ export async function verifyAndRecordEquivalentPatch({
       set.add(patchVersion);
       pkgRecord.verifiedEquivalentPatches = [...set].sort();
       fs.writeFileSync(indexPath, JSON.stringify(indexData, null, 2) + '\n', 'utf8');
+    } else if (commitPatchOnDiff) {
+      let patchSnapId = patchRes.manifest.snapshotId;
+      let srcSnapDir = path.join(patchTmpRoot, 'by-id', patchSnapId);
+      let destSnapDir = path.join(outRoot, 'by-id', patchSnapId);
+      fs.mkdirSync(path.dirname(destSnapDir), {recursive: true});
+      fs.rmSync(destSnapDir, {recursive: true, force: true});
+      fs.cpSync(srcSnapDir, destSnapDir, {recursive: true});
+      updateSnapshotsIndex(outRoot, [patchRes]);
+      dedicatedSnapshotId = patchSnapId;
     }
 
     return {
@@ -231,6 +213,7 @@ export async function verifyAndRecordEquivalentPatch({
       baseVersion,
       patchVersion,
       equivalent,
+      dedicatedSnapshotId,
       changedSourceFiles: diffOut ? diffOut.split('\n').filter(Boolean) : []
     };
   } finally {

@@ -57,23 +57,32 @@ function renderHelpText(brand: BrandId, version: string): string {
     '  --cwd <dir>              Resolve workspace dependencies from <dir> (default: process.cwd())'
   );
   lines.push(
-    '  --version <spec>         Override package version (e.g. 1.2.0, latest, @react-spectrum/s2@1.2.0)'
+    '  --version <spec>         Override package version (repeatable; e.g. 1.2.0, latest, @react-spectrum/s2@1.2.0)'
   );
   lines.push('  --snapshot <id>          Pin an exact immutable snapshot ID');
-  lines.push('  --max-tokens <N>         Bound rendered read output (~4 UTF-8 bytes/token)');
-  lines.push('  --cursor <value>         Resume a truncated read for one document');
-  lines.push('  --list-sections          List available headings and section IDs');
-  lines.push('  --section <heading|id>   Read a specific section (repeatable)');
-  lines.push('  --json-content <type>    Read JSON content: entry (default) or markdown');
-  lines.push('  --include-resolution    Include full workspace resolution in JSON output');
   lines.push(
     '  --strict-version         Fail instead of warning when an unverified patch falls back to same-minor'
+  );
+  lines.push(
+    '  --allow-latest           Fall back to latest published docs when workspace has no matching packages'
   );
   lines.push('  --offline                Read strictly from local cache without network requests');
   lines.push('  --cache-dir <dir>        Override shared documentation cache directory');
   lines.push('  --snapshot-source <src>  Override snapshot CDN URL or local snapshot directory');
+  lines.push('  --include-resolution     Include full workspace resolution in JSON output');
   lines.push('  --json                   Output structured JSON envelope (apiVersion: 1)');
+  lines.push('  -v, --cli-version        Show CLI package version');
   lines.push('  -h, --help               Show this help text');
+  lines.push('');
+  lines.push('Read Flags:');
+  lines.push(
+    '  --sections <list>        Comma-separated section kinds (usage,api,accessibility,styling,testing,guide,all)'
+  );
+  lines.push('  --list-sections          List available headings and section IDs');
+  lines.push('  --section <heading|id>   Read a specific section (repeatable)');
+  lines.push('  --max-tokens <N>         Bound rendered read output (~4 UTF-8 bytes/token)');
+  lines.push('  --cursor <value>         Resume a truncated read for one document');
+  lines.push('  --json-content <type>    Read JSON content: entry (default) or markdown');
   return lines.join('\n') + '\n';
 }
 
@@ -165,6 +174,83 @@ function parseSectionsArg(raw: string | undefined): SectionFilter[] | undefined 
     }
   }
   return items;
+}
+
+const COMMON_COMMAND_FLAGS = [
+  'help',
+  'version',
+  'json',
+  'cwd',
+  'include-resolution',
+  'snapshot',
+  'strict-version',
+  'offline',
+  'allow-latest',
+  'cache-dir',
+  'snapshot-source'
+] as const;
+
+const SUBCOMMAND_ALLOWED_FLAGS: Record<string, ReadonlySet<string>> = {
+  manifest: new Set(['help', 'json', 'version']),
+  resolve: new Set(COMMON_COMMAND_FLAGS),
+  search: new Set([...COMMON_COMMAND_FLAGS, 'library', 'limit']),
+  read: new Set([
+    ...COMMON_COMMAND_FLAGS,
+    'sections',
+    'list-sections',
+    'section',
+    'cursor',
+    'json-content',
+    'max-tokens'
+  ]),
+  api: new Set([...COMMON_COMMAND_FLAGS, 'export', 'prop', 'events-only', 'render-props']),
+  tokens: new Set([...COMMON_COMMAND_FLAGS, 'property']),
+  icons: new Set([...COMMON_COMMAND_FLAGS, 'illustrations']),
+  prefetch: new Set(COMMON_COMMAND_FLAGS)
+};
+
+function validateSubcommandFlags(
+  subcommand: string,
+  values: Record<string, unknown>,
+  restPositionals: string[],
+  cliCommandPrefix: string
+): void {
+  const allowed = SUBCOMMAND_ALLOWED_FLAGS[subcommand];
+  if (!allowed) {
+    return;
+  }
+  for (const [flag, val] of Object.entries(values)) {
+    if (val === undefined || val === false) {
+      continue;
+    }
+    if (Array.isArray(val) && val.length === 0) {
+      continue;
+    }
+    if (!allowed.has(flag)) {
+      throw new AgentDocsError(
+        'ERR_INVALID_ARGS',
+        `Flag '--${flag}' is not valid for '${cliCommandPrefix} ${subcommand}'.`,
+        EXIT_CODES.INVALID_ARGS
+      );
+    }
+  }
+  if (
+    (subcommand === 'manifest' || subcommand === 'resolve' || subcommand === 'prefetch') &&
+    restPositionals.length > 0
+  ) {
+    throw new AgentDocsError(
+      'ERR_INVALID_ARGS',
+      `Command '${cliCommandPrefix} ${subcommand}' does not accept positional arguments (got: ${restPositionals.join(' ')}).`,
+      EXIT_CODES.INVALID_ARGS
+    );
+  }
+  if (subcommand === 'api' && restPositionals.length > 1) {
+    throw new AgentDocsError(
+      'ERR_INVALID_ARGS',
+      `Command '${cliCommandPrefix} api' accepts a single <id-or-export> argument (got: ${restPositionals.join(' ')}).`,
+      EXIT_CODES.INVALID_ARGS
+    );
+  }
 }
 
 export async function runAgentDocsCli(
@@ -262,6 +348,8 @@ export async function runAgentDocsCli(
         EXIT_CODES.INVALID_ARGS
       );
     }
+
+    validateSubcommandFlags(subcommand, parsed.values, restPositionals, cliCommandPrefix);
 
     switch (subcommand) {
       case 'manifest': {

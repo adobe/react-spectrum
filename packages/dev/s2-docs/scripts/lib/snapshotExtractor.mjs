@@ -246,9 +246,7 @@ function createTargetWorkspaceContext(targetRoot, repoRoot) {
     }
 
     let pkgDir = path.dirname(pkgJsonPath);
-    let supportsSubpathExports = Boolean(
-      pkgJson.exports && (pkgJson.exports['./*'] || pkgJson.exports['./*'] !== undefined)
-    );
+    let supportsSubpathExports = Boolean(pkgJson.exports && pkgJson.exports['./*'] !== undefined);
     let sourceEntry =
       (typeof pkgJson.exports?.['.'] === 'object' &&
         (pkgJson.exports['.']?.source || pkgJson.exports['.']?.types)) ||
@@ -640,13 +638,6 @@ export function extractExportIR(ctx, pkgName, exportName, library) {
     let propType = targetPropsDecl.getType();
     for (let sym of propType.getProperties()) {
       let name = sym.getName();
-      if (
-        OMITTED_PROP_NAMES.has(name) ||
-        name.startsWith('aria-atomic') ||
-        name.startsWith('onAuxClick')
-      ) {
-        // Keep standard aria-label/aria-labelledby/aria-describedby/aria-details, skip noisy raw HTML DOM attributes unless component-owned
-      }
       if (OMITTED_PROP_NAMES.has(name)) {
         continue;
       }
@@ -2019,18 +2010,15 @@ export async function generateSnapshotFromTarget({
     return buf;
   };
 
-  // Group entries by `packageName@packageVersion` to create independent per-package slices!
+  // Group entries by `packageName@packageVersion` to create independent per-package slices.
+  // Slices pack `.json` IR only (`agent-docs-core` renders Markdown from the IR at query time),
+  // avoiding redundant loose `entries/*` uploads and duplicate `.md` payloads.
   let entriesByPkg = new Map();
   for (let entry of entries) {
     let relBase = `entries/${entry.library}/${entry.slug}`;
     let jsonStr = JSON.stringify(entry, null, 2) + '\n';
-    let mdStr = renderEntryMarkdown(entry, {compact: true});
-
-    writeSnapshotArtifact(`${relBase}.json`, jsonStr);
-    writeSnapshotArtifact(`${relBase}.md`, mdStr);
 
     catalogTarEntries.push({path: `${relBase}.json`, content: jsonStr});
-    catalogTarEntries.push({path: `${relBase}.md`, content: mdStr});
 
     let pkgKey = `${entry.packageName}@${entry.packageVersion}`;
     if (!entriesByPkg.has(pkgKey)) {
@@ -2044,7 +2032,6 @@ export async function generateSnapshotFromTarget({
     let bucket = entriesByPkg.get(pkgKey);
     bucket.entries.push(entry);
     bucket.tarFiles.push({path: `${relBase}.json`, content: jsonStr});
-    bucket.tarFiles.push({path: `${relBase}.md`, content: mdStr});
   }
 
   if (s2Assets) {
@@ -2150,7 +2137,9 @@ export async function generateSnapshotFromTarget({
   return {
     manifest: finalManifest,
     slices: sliceMetadataByPackage,
-    entryCount: entries.length
+    entryCount: entries.length,
+    entries,
+    s2Assets
   };
 }
 

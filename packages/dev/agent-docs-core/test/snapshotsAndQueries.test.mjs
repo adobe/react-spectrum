@@ -495,11 +495,23 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
       libraries: ['s2']
     });
     updateSnapshotsIndex(snapshots, [snap], {markAsLatest: true});
-    const entry = JSON.parse(
-      fs.readFileSync(path.join(snapshots, 'by-id/macro-snap/entries/s2/Button.json'), 'utf8')
+    assert.equal(
+      fs.existsSync(path.join(snapshots, 'by-id/macro-snap/entries')),
+      false,
+      'Snapshot must not emit redundant loose entries/ directory'
+    );
+    const manifest = JSON.parse(
+      fs.readFileSync(path.join(snapshots, 'by-id/macro-snap/manifest.json'), 'utf8')
     );
     assert.ok(
-      entry.imports.includes("import {style} from '@react-spectrum/s2/style' with {type: 'macro'};")
+      !Object.keys(manifest.files).some(rel => rel.startsWith('entries/') || rel.endsWith('.md')),
+      'Manifest must not reference loose entries/ or .md artifacts'
+    );
+    const entry = snap.entries.find(e => e.id === 's2:Button');
+    assert.ok(
+      entry?.imports.includes(
+        "import {style} from '@react-spectrum/s2/style' with {type: 'macro'};"
+      )
     );
     const assets = JSON.parse(
       fs.readFileSync(path.join(snapshots, 'by-id/macro-snap/s2-assets.json'), 'utf8')
@@ -555,9 +567,15 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
       patchVersion: '1.0.1',
       baseRef: `${PACKAGE}@1.0.0`,
       patchRef: `${PACKAGE}@1.0.1`,
-      repoRoot: gitRepo
+      repoRoot: gitRepo,
+      baseExtraction: baseSnap,
+      libraries: ['s2'],
+      commitPatchOnDiff: true
     });
     assert.equal(check.equivalent, false);
+    assert.ok(check.dedicatedSnapshotId);
+    const updatedIdx = JSON.parse(fs.readFileSync(path.join(outRoot, 'index.json'), 'utf8'));
+    assert.equal(updatedIdx.packages[PACKAGE]['1.0.1']?.snapshotId, check.dedicatedSnapshotId);
 
     // 3. @react-aria/cli programmatic SDK defaults to `rac` library ranking
     const racRes = await racSdk.searchDocs({

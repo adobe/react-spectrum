@@ -36,6 +36,7 @@ import {dirname, join, parse} from 'path';
 import {existsSync} from 'fs';
 import {fileURLToPath} from 'url';
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
+import {RootsListChangedNotificationSchema} from '@modelcontextprotocol/sdk/types.js';
 import {StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js';
 import {z} from 'zod';
 
@@ -139,7 +140,14 @@ function fileUriToPathSafe(uri: string): string | null {
   }
 }
 
-async function discoverMcpClientRoots(server: McpServer): Promise<string[]> {
+interface RootsCache {
+  roots: string[] | null;
+}
+
+async function discoverMcpClientRoots(server: McpServer, cache: RootsCache): Promise<string[]> {
+  if (cache.roots !== null) {
+    return cache.roots;
+  }
   const caps = server.server.getClientCapabilities();
   if (!caps?.roots) {
     return [];
@@ -153,6 +161,7 @@ async function discoverMcpClientRoots(server: McpServer): Promise<string[]> {
         paths.push(fsPath);
       }
     }
+    cache.roots = paths;
     return paths;
   } catch {
     return [];
@@ -161,6 +170,7 @@ async function discoverMcpClientRoots(server: McpServer): Promise<string[]> {
 
 async function resolveMcpQueryOptions(
   server: McpServer,
+  rootsCache: RootsCache,
   defaultLibrary: LibraryId,
   serverDefaultCwd: string | undefined,
   toolArgs: {
@@ -223,7 +233,7 @@ async function resolveMcpQueryOptions(
   }
 
   // 4. MCP `roots/list` workspace discovery
-  const clientRoots = await discoverMcpClientRoots(server);
+  const clientRoots = await discoverMcpClientRoots(server, rootsCache);
   if (clientRoots.length === 1) {
     return {
       cwd: clientRoots[0],
@@ -293,6 +303,9 @@ function toolErrorResult(err: unknown) {
           error: {
             code: err.code,
             message: err.message,
+            ...(err.suggestions && err.suggestions.length > 0
+              ? {suggestions: err.suggestions}
+              : {}),
             details: err.details
           }
         }
@@ -326,6 +339,10 @@ export async function createAgentDocsMcpServer(
       instructions: `Version-aware documentation and API server for ${isS2 ? 'React Spectrum S2 and React Aria' : 'React Aria Components, hooks, React Stately, and @internationalized/*'}. Prefer batched 'read_docs' and 'search_docs'; pass 'cwd' when working across multiple workspace roots.`
     }
   );
+  const rootsCache: RootsCache = {roots: null};
+  server.server.setNotificationHandler(RootsListChangedNotificationSchema, () => {
+    rootsCache.roots = null;
+  });
 
   // Opportunistic SEP-2640 Skills-over-MCP resource
   server.registerResource(
@@ -394,6 +411,7 @@ export async function createAgentDocsMcpServer(
       try {
         const queryOpts = await resolveMcpQueryOptions(
           server,
+          rootsCache,
           defaultLibrary,
           options.defaultCwd,
           args
@@ -436,6 +454,7 @@ export async function createAgentDocsMcpServer(
       try {
         const queryOpts = await resolveMcpQueryOptions(
           server,
+          rootsCache,
           defaultLibrary,
           options.defaultCwd,
           args
@@ -505,8 +524,16 @@ export async function createAgentDocsMcpServer(
     },
     async args => {
       try {
+        if (args.jsonContent !== undefined && args.format !== 'json') {
+          throw new AgentDocsError(
+            'ERR_INVALID_ARGS',
+            "'jsonContent' requires format: 'json'.",
+            EXIT_CODES.INVALID_ARGS
+          );
+        }
         const queryOpts = await resolveMcpQueryOptions(
           server,
+          rootsCache,
           defaultLibrary,
           options.defaultCwd,
           args
@@ -528,7 +555,11 @@ export async function createAgentDocsMcpServer(
           cursor: args.cursor,
           output
         });
-        return toolSuccessText(formatReadOutput(res, output));
+        const text = formatReadOutput(res, output);
+        const allFailed = res.results.length > 0 && res.results.every(item => !item.ok);
+        return allFailed
+          ? {isError: true, content: [{type: 'text' as const, text}]}
+          : toolSuccessText(text);
       } catch (err) {
         return toolErrorResult(err);
       }
@@ -563,6 +594,7 @@ export async function createAgentDocsMcpServer(
       try {
         const queryOpts = await resolveMcpQueryOptions(
           server,
+          rootsCache,
           defaultLibrary,
           options.defaultCwd,
           args
@@ -607,6 +639,7 @@ export async function createAgentDocsMcpServer(
         try {
           const queryOpts = await resolveMcpQueryOptions(
             server,
+            rootsCache,
             defaultLibrary,
             options.defaultCwd,
             args
@@ -648,6 +681,7 @@ export async function createAgentDocsMcpServer(
         try {
           const queryOpts = await resolveMcpQueryOptions(
             server,
+            rootsCache,
             defaultLibrary,
             options.defaultCwd,
             args

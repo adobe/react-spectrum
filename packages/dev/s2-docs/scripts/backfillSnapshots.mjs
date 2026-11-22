@@ -195,6 +195,9 @@ export async function runBackfill({
         patchVersion: patchInfo.version,
         baseRef: series.baseline.tag,
         patchRef: patchInfo.tag,
+        baseExtraction: baseSummary,
+        libraries: series.libraries,
+        commitPatchOnDiff: true,
         repoRoot
       });
 
@@ -204,16 +207,10 @@ export async function runBackfill({
           equivalentTo: series.baseline.version
         });
       } else {
-        // Patch changed public API or docs -> extract its own dedicated snapshot!
-        let patchSummary = await extractGitRefSnapshot({
-          gitRef: patchInfo.tag,
-          outRoot,
-          libraries: series.libraries,
-          repoRoot
-        });
+        // Patch changed public API, docs, or assets -> reuse already-extracted dedicated snapshot
         dedicatedPatchSnapshots.push({
           tag: patchInfo.tag,
-          snapshotId: patchSummary.manifest.snapshotId
+          snapshotId: check.dedicatedSnapshotId
         });
       }
     }

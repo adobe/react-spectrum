@@ -616,3 +616,22 @@ test('allows --snapshot override for a historical S2-only snapshot inside a work
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });
+
+test('ranks SemVer prereleases below stable releases and compares numeric prerelease identifiers numerically', async () => {
+  const {compareSemverAsc, compareSemverDesc} = await corePromise;
+  const versions = ['1.2.0', '1.2.0-beta.2', '1.2.0-beta.10', '1.2.0-alpha.1', '1.2.1-rc.1'];
+  assert.deepEqual([...versions].sort(compareSemverAsc), [
+    '1.2.0-alpha.1',
+    '1.2.0-beta.2',
+    '1.2.0-beta.10',
+    '1.2.0',
+    '1.2.1-rc.1'
+  ]);
+  assert.deepEqual([...versions].sort(compareSemverDesc), [
+    '1.2.1-rc.1',
+    '1.2.0',
+    '1.2.0-beta.10',
+    '1.2.0-beta.2',
+    '1.2.0-alpha.1'
+  ]);
+});

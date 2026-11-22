@@ -484,13 +484,21 @@ test('CLI icons rank exact names first and report each unmatched term', t => {
   assert.match(mixed.markdown, /No matches for: `zzzz-no-such-asset`/);
 });
 
-test('CLI tokens match multi-word queries and say when nothing matches', t => {
+test('CLI tokens match multi-word queries accurately and say when nothing matches', t => {
   const run = currentCli(t);
   const blue = JSON.parse(run('tokens', '--json', 'blue background'));
   const background = blue.properties.find(p => p.property === 'backgroundColor');
   assert.ok(background);
   assert.ok(background.matchedValues.length > 0);
   assert.ok(background.matchedValues.every(value => value.includes('blue')));
+
+  // Multi-word value queries intersect on individual values ("blue subtle" -> blue-subtle, not red-subtle or blue)
+  const blueSubtle = JSON.parse(
+    run('tokens', '--json', 'blue subtle', '--property', 'backgroundColor')
+  );
+  assert.equal(blueSubtle.properties.length, 1);
+  assert.deepEqual(blueSubtle.properties[0].matchedValues, ['blue-subtle']);
+  assert.doesNotMatch(blueSubtle.markdown, /\(\+\d+ more\)/);
 
   const missing = JSON.parse(run('tokens', '--json', 'zzzz-no-such-token'));
   assert.deepEqual(missing.properties, []);
@@ -500,20 +508,35 @@ test('CLI tokens match multi-word queries and say when nothing matches', t => {
   );
 });
 
-test('CLI api warns about each prop filter that matches nothing', t => {
+test('CLI api warns about each unique unmatched prop, omits empty exports, and prefers prop names over descriptions', t => {
   const run = currentCli(t);
-  const args = ['api', 's2:ComboBox', '--prop', 'selectedKeyz,onInputChange'];
+  const args = ['api', 's2:ComboBox', '--prop', 'selectedKeyz,selectedKeyz,onInputChange'];
   const markdown = run(...args);
   assert.match(markdown, /\[WARN_PROP_NOT_FOUND\].*'selectedKeyz' \(did you mean `selectedKey`/);
   assert.match(markdown, /`onInputChange`/);
 
   const json = JSON.parse(run(...args, '--json'));
-  const warning = json.warnings.find(item => item.code === 'WARN_PROP_NOT_FOUND');
-  assert.equal(warning.details.filter, 'selectedKeyz');
-  assert.equal(warning.details.suggestions[0], 'selectedKey');
+  const notFoundWarnings = json.warnings.filter(item => item.code === 'WARN_PROP_NOT_FOUND');
+  assert.equal(notFoundWarnings.length, 1, 'Duplicate unmatched filters should warn once');
+  assert.equal(notFoundWarnings[0].details.filter, 'selectedKeyz');
+  assert.equal(notFoundWarnings[0].details.suggestions[0], 'selectedKey');
+  assert.ok(
+    json.exports.every(
+      exp => exp.props.length > 0 || exp.events.length > 0 || exp.renderProps.length > 0
+    ),
+    'Filtered api output must omit exports with zero matching members'
+  );
   assert.ok(
     !JSON.parse(run('api', 's2:ComboBox', '--prop', 'onInputChange', '--json')).warnings.length
   );
+
+  // Prefix search supports s2:, rac:, aria:, i18n: uniformly
+  const racPrefix = JSON.parse(run('search', 'rac:Button', '--limit', '3', '--json'));
+  assert.ok(racPrefix.results.length > 0);
+  assert.ok(racPrefix.results.every(hit => hit.library === 'rac'));
+  const ariaPrefix = JSON.parse(run('search', 'aria:useButton', '--limit', '3', '--json'));
+  assert.ok(ariaPrefix.results.length > 0);
+  assert.ok(ariaPrefix.results.every(hit => hit.library === 'react-aria'));
 });
 
 test('CLI search states shared follow-up flags once in Markdown', t => {
@@ -719,11 +742,15 @@ test('CLI handles partial-batch resilience (exit code 0 with valid entries prese
     assert.ok(Math.ceil(Buffer.byteLength(singleBoundedRaw) / 4) <= 4000);
     assert.equal(JSON.parse(singleBoundedRaw).results[0].truncated, true);
 
-    // Malformed numeric flags and S2-only commands in the react-aria CLI are invalid arguments
+    // Malformed numeric flags, invalid per-subcommand flags/positionals, and S2-only commands in the react-aria CLI are invalid arguments
     for (const [bin, args] of [
       [s2CliBin, ['read', 's2:Button', '--max-tokens', 'abc']],
       [s2CliBin, ['read', 's2:Button', '--max-tokens', '1']],
       [s2CliBin, ['search', 'button', '--limit', '0']],
+      [s2CliBin, ['search', 'button', '--events-only']],
+      [s2CliBin, ['read', 's2:Button', '--property', 'gap']],
+      [s2CliBin, ['resolve', 'extra-arg']],
+      [s2CliBin, ['api', 's2:Button', 'extra-arg']],
       [racCliBin, ['tokens', 'padding']],
       [racCliBin, ['icons', 'Edit']]
     ]) {
@@ -953,12 +980,16 @@ test('MCP v2 servers support roots/list workspace discovery, reusable resolution
   });
   const client = new Client(
     {name: 'mcp-v2-test-client', version: '1.0.0'},
-    {capabilities: {roots: {listChanged: false}}}
+    {capabilities: {roots: {listChanged: true}}}
   );
 
-  client.setRequestHandler(ListRootsRequestSchema, async () => ({
-    roots: [{uri: pathToFileURL(appWorkspaceDir).href, name: 'workspace-app'}]
-  }));
+  let rootsRequestCount = 0;
+  client.setRequestHandler(ListRootsRequestSchema, async () => {
+    rootsRequestCount++;
+    return {
+      roots: [{uri: pathToFileURL(appWorkspaceDir).href, name: 'workspace-app'}]
+    };
+  });
 
   try {
     await client.connect(transport);
@@ -1073,6 +1104,56 @@ test('MCP v2 servers support roots/list workspace discovery, reusable resolution
     });
     assert.equal(conflictingRes.isError, true);
     assert.match(conflictingRes.content[0].text, /cannot be combined/);
+
+    // `read_docs` rejects jsonContent when format !== 'json', and returns isError: true when every requested ID fails
+    const badJsonContentRes = await client.callTool({
+      name: 'read_docs',
+      arguments: {
+        ids: ['rac:Button'],
+        format: 'markdown',
+        jsonContent: 'markdown',
+        resolution: resolvedState
+      }
+    });
+    assert.equal(badJsonContentRes.isError, true);
+    assert.equal(JSON.parse(badJsonContentRes.content[0].text).error.code, 'ERR_INVALID_ARGS');
+
+    const allMissingMcpRes = await client.callTool({
+      name: 'read_docs',
+      arguments: {ids: ['rac:NoSuchComponentXYZ'], format: 'json', resolution: resolvedState}
+    });
+    assert.equal(allMissingMcpRes.isError, true);
+    assert.equal(
+      JSON.parse(allMissingMcpRes.content[0].text).results[0].error.code,
+      'ERR_ENTRY_NOT_FOUND'
+    );
+
+    // Error results surface `suggestions` when available (e.g. misspelled prop)
+    const propErrRes = await client.callTool({
+      name: 'get_component_api',
+      arguments: {
+        id: 'rac:ComboBox',
+        exportName: 'ComboBox',
+        props: ['onInptChange'],
+        resolution: resolvedState
+      }
+    });
+    assert.equal(propErrRes.isError, true);
+    const propErrPayload = JSON.parse(propErrRes.content[0].text);
+    assert.equal(propErrPayload.error.code, 'ERR_PROP_NOT_FOUND');
+    assert.equal(propErrPayload.error.suggestions[0], 'onInputChange');
+
+    // `roots/list` is cached across calls and re-fetched only after `notifications/roots/list_changed`
+    assert.equal(rootsRequestCount, 1);
+    await client.callTool({name: 'resolve_versions', arguments: {}});
+    assert.equal(rootsRequestCount, 1, 'Expected cached MCP roots across tool calls');
+    await client.sendRootsListChanged();
+    await client.callTool({name: 'resolve_versions', arguments: {}});
+    assert.equal(
+      rootsRequestCount,
+      2,
+      'Expected roots cache invalidation after list_changed notification'
+    );
 
     // 4. `SEP-2640` evergreen skill resource (`skills://react-spectrum-s2/SKILL.md`)
     const {resources} = await client.listResources();

@@ -22,12 +22,14 @@
  */
 
 import crypto from 'node:crypto';
-import {execFileSync} from 'node:child_process';
+import {execFile} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import fs from 'node:fs';
 import os from 'node:os';
-import {parseArgs} from 'node:util';
+import {parseArgs, promisify} from 'node:util';
 import path from 'node:path';
+
+const execFileAsync = promisify(execFile);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../..');
@@ -283,9 +285,23 @@ export function createLocalBucketStorage(bucketRootDir) {
   };
 }
 
+async function runWithConcurrency(items, concurrency, worker) {
+  const limit = Math.max(1, Math.min(concurrency, items.length || 1));
+  let cursor = 0;
+  await Promise.all(
+    Array.from({length: limit}, async () => {
+      while (cursor < items.length) {
+        let index = cursor++;
+        await worker(items[index], index);
+      }
+    })
+  );
+}
+
 /**
  * Storage adapter backed by `aws s3api` with native S3 conditional writes (`--if-match` /
- * `--if-none-match`).
+ * `--if-none-match`). Uses async subprocess execution so uploads and verifications can run with
+ * bounded concurrency.
  */
 export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
   const cleanPrefix = prefix.replace(/^\/+|\/+$/g, '');
@@ -293,34 +309,27 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
 
   return {
     async putImmutableObject(relKey, bodyBuf, {sha256, contentType, cacheControl}) {
-      let tmpFile = path.join(
-        os.tmpdir(),
-        `rsp-s3-put-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`
-      );
+      let tmpFile = path.join(os.tmpdir(), `rsp-s3-put-${process.pid}-${crypto.randomUUID()}`);
       fs.writeFileSync(tmpFile, bodyBuf);
       try {
-        execFileSync(
-          'aws',
-          [
-            's3api',
-            'put-object',
-            '--bucket',
-            bucketName,
-            '--key',
-            fullKey(relKey),
-            '--body',
-            tmpFile,
-            '--content-type',
-            contentType,
-            '--cache-control',
-            cacheControl,
-            '--metadata',
-            `sha256=${sha256}`,
-            '--if-none-match',
-            '*'
-          ],
-          {stdio: 'pipe'}
-        );
+        await execFileAsync('aws', [
+          's3api',
+          'put-object',
+          '--bucket',
+          bucketName,
+          '--key',
+          fullKey(relKey),
+          '--body',
+          tmpFile,
+          '--content-type',
+          contentType,
+          '--cache-control',
+          cacheControl,
+          '--metadata',
+          `sha256=${sha256}`,
+          '--if-none-match',
+          '*'
+        ]);
       } catch (err) {
         let stderr = String(err.stderr || err.message || '');
         if (
@@ -341,21 +350,17 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
 
     async headObject(relKey) {
       try {
-        let out = execFileSync(
-          'aws',
-          [
-            's3api',
-            'head-object',
-            '--bucket',
-            bucketName,
-            '--key',
-            fullKey(relKey),
-            '--output',
-            'json'
-          ],
-          {stdio: 'pipe', encoding: 'utf8'}
-        );
-        let parsed = JSON.parse(out);
+        let {stdout} = await execFileAsync('aws', [
+          's3api',
+          'head-object',
+          '--bucket',
+          bucketName,
+          '--key',
+          fullKey(relKey),
+          '--output',
+          'json'
+        ]);
+        let parsed = JSON.parse(stdout);
         return {
           bytes: parsed.ContentLength,
           sha256: parsed.Metadata?.sha256 || null,
@@ -368,23 +373,19 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
     },
 
     async getConditionalObject(relKey) {
-      let tmpOut = path.join(os.tmpdir(), `rsp-s3-get-${process.pid}-${Date.now()}`);
+      let tmpOut = path.join(os.tmpdir(), `rsp-s3-get-${process.pid}-${crypto.randomUUID()}`);
       try {
-        let metaOut = execFileSync(
-          'aws',
-          [
-            's3api',
-            'get-object',
-            '--bucket',
-            bucketName,
-            '--key',
-            fullKey(relKey),
-            tmpOut,
-            '--output',
-            'json'
-          ],
-          {stdio: 'pipe', encoding: 'utf8'}
-        );
+        let {stdout: metaOut} = await execFileAsync('aws', [
+          's3api',
+          'get-object',
+          '--bucket',
+          bucketName,
+          '--key',
+          fullKey(relKey),
+          tmpOut,
+          '--output',
+          'json'
+        ]);
         let meta = JSON.parse(metaOut);
         return {
           body: fs.readFileSync(tmpOut, 'utf8'),
@@ -402,7 +403,7 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
     },
 
     async putConditionalObject(relKey, bodyStr, {ifMatch, ifNoneMatch, contentType, cacheControl}) {
-      let tmpFile = path.join(os.tmpdir(), `rsp-s3-idx-${process.pid}-${Date.now()}`);
+      let tmpFile = path.join(os.tmpdir(), `rsp-s3-idx-${process.pid}-${crypto.randomUUID()}`);
       fs.writeFileSync(tmpFile, bodyStr, 'utf8');
       try {
         let args = [
@@ -426,8 +427,8 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
         } else if (ifNoneMatch) {
           args.push('--if-none-match', ifNoneMatch);
         }
-        let out = execFileSync('aws', args, {stdio: 'pipe', encoding: 'utf8'});
-        return {etag: JSON.parse(out).ETag};
+        let {stdout} = await execFileAsync('aws', args);
+        return {etag: JSON.parse(stdout).ETag};
       } catch (err) {
         let stderr = String(err.stderr || err.message || '');
         if (
@@ -491,6 +492,7 @@ export async function publishStagedSnapshots({
   snapshotIds = null,
   dryRun = false,
   maxCasRetries = 5,
+  concurrency = 16,
   onBeforeCasPut = null
 }) {
   let stagedIndexPath = path.join(stagedDir, 'index.json');
@@ -503,9 +505,9 @@ export async function publishStagedSnapshots({
     throw new Error(`No snapshots found in ${stagedIndexPath}`);
   }
 
-  let uploadedObjects = [];
+  let objectsToPublish = [];
 
-  // STEP 1: Upload all immutable objects under `by-id/<snapshotId>/**`
+  // STEP 1: Verify local integrity and upload all immutable objects under `by-id/<snapshotId>/**`
   for (let snapId of targetIds) {
     let manifestRel = `by-id/${snapId}/manifest.json`;
     let manifestDisk = path.join(stagedDir, ...manifestRel.split('/'));
@@ -539,11 +541,7 @@ export async function publishStagedSnapshots({
           `Local integrity check failed before upload for ${item.key}: expected ${item.expectedSha256} (${item.expectedBytes}B), got ${actualSha} (${buf.length}B)`
         );
       }
-
-      if (!dryRun) {
-        await uploadImmutableIfAbsent(storage, item, buf);
-      }
-      uploadedObjects.push(item);
+      objectsToPublish.push({item, buf});
     }
   }
 
@@ -551,12 +549,16 @@ export async function publishStagedSnapshots({
     return {
       dryRun: true,
       snapshotIds: targetIds,
-      verifiedObjects: uploadedObjects.length
+      verifiedObjects: objectsToPublish.length
     };
   }
 
+  await runWithConcurrency(objectsToPublish, concurrency, async ({item, buf}) => {
+    await uploadImmutableIfAbsent(storage, item, buf);
+  });
+
   // STEP 2: Verify completeness & SHA-256 of EVERY uploaded object BEFORE touching `index.json`!
-  for (let item of uploadedObjects) {
+  await runWithConcurrency(objectsToPublish, concurrency, async ({item}) => {
     let head = await storage.headObject(item.key);
     if (!head) {
       throw new Error(`Post-upload verification failed: missing remote object '${item.key}'`);
@@ -571,7 +573,8 @@ export async function publishStagedSnapshots({
         `Post-upload SHA-256 mismatch on '${item.key}': expected ${item.expectedSha256}, got ${head.sha256 || 'missing'}`
       );
     }
-  }
+  });
+  let uploadedObjects = objectsToPublish.map(entry => entry.item);
 
   // Subset `fullStagedIndex` to only `targetIds` if filtered
   let filteredStagedIndex = fullStagedIndex;

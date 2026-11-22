@@ -266,9 +266,11 @@ export async function loadSnapshotManifest(
 ): Promise<SnapshotManifest> {
   const cacheDir = resolveDefaultCacheDir(options.cacheDir);
   const source = resolveSnapshotSource(options.snapshotSource);
+  const local = isLocalSource(source);
   const key = sha256Buffer(Buffer.from(`${source}/${snapshot.manifestPath}`));
   const cachedPath = path.join(cacheDir, 'manifests', `${key}.json`);
-  const raw = fs.existsSync(cachedPath)
+  const useDiskCache = !local && fs.existsSync(cachedPath);
+  const raw = useDiskCache
     ? fs.readFileSync(cachedPath)
     : await fetchSourceBytes(
         source,
@@ -295,7 +297,7 @@ export async function loadSnapshotManifest(
       EXIT_CODES.INTEGRITY_OR_SCHEMA
     );
   }
-  if (!fs.existsSync(cachedPath)) {
+  if (!local && !fs.existsSync(cachedPath)) {
     fs.mkdirSync(path.dirname(cachedPath), {recursive: true});
     const tmpPath = `${cachedPath}.tmp-${process.pid}-${Date.now()}`;
     fs.writeFileSync(tmpPath, raw);

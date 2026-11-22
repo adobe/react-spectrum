@@ -217,7 +217,7 @@ Per MCP's runtime tool discovery model (`tools/list`), legacy v1 `list_*_pages`,
 1. **Single-file evergreen `SKILL.md` (`~4 KB`)** for `.well-known/agent-skills/` and plugin distribution—containing zero version-sensitive prop lists or import paths, instructing agents to run 1–2 batched lookups and obey the returned versioned guidance.
 2. **Four separated Agent Plugin bundles under `plugins/`** (supporting both portable Agent Plugins 1.0 `plugin.json` and `.claude-plugin/plugin.json` + `plugins/marketplace.json`):
    - **`plugins/react-spectrum` & `plugins/react-aria` (Recommended default):** Skill-only bundles with **no `mcp.json`**, ensuring CLI-capable hosts never spawn idle background `stdio` MCP processes or pay duplicate tool-schema context overhead.
-   - **`plugins/react-spectrum-mcp` & `plugins/react-aria-mcp`:** Optional MCP-enabled bundles (`.mcp.json` at plugin root; `.claude-plugin/plugin.json` omits `mcpServers` to prevent duplicate server registration in hosts that read both manifests).
+   - **`plugins/react-spectrum-mcp` & `plugins/react-aria-mcp`:** Optional MCP-enabled bundles (`mcp.json` at plugin root, referenced via `"mcpServers": "./mcp.json"` in `plugin.json` and `.claude-plugin/plugin.json`).
 
 `validateGeneratedPlugins()` enforces frontmatter constraints, bans version-sensitive leaks in `SKILL.md`, and verifies zero duplicate MCP definitions across manifests.
 
@@ -234,7 +234,7 @@ Per MCP's runtime tool discovery model (`tools/list`), legacy v1 `list_*_pages`,
 Snapshot IDs use the source commit date for both HEAD and tags. Artifacts record `sourceDate`, not a wall-clock creation time, so rebuilding unchanged inputs produces identical immutable bytes and can be republished idempotently. Changed extraction output still requires a new documentation revision.
 
 #### Shared User Cache (`packages/dev/agent-docs-core/src/cache.ts`)
-- Stores unpacked slices under the OS user cache (`~/.cache/react-spectrum-agent-docs`, `~/Library/Caches/...`, or `%LOCALAPPDATA%`), keeping consumer repositories completely clean.
+- Stores unpacked slices under the OS user cache (`~/.cache/adobe-spectrum-agent-docs`, `~/Library/Caches/adobe-spectrum-agent-docs`, or `%LOCALAPPDATA%\adobe-spectrum-agent-docs`), keeping consumer repositories completely clean.
 - Verifies downloaded `.tar.gz` SHA-256 and byte length against `index.json` **before** decompression.
 - Uses a custom zero-dependency tar unpacker (`tarArchive.mjs` / `cache.ts`) that rejects `..` path traversal, absolute paths, symlinks/hardlinks, device/FIFO entries, and oversized archives (`ERR_ARCHIVE_SECURITY`).
 - Coordinates concurrent CLI/MCP processes via per-slice lockfiles + staging temp directories + atomic `fs.renameSync`.
@@ -244,7 +244,7 @@ Snapshot IDs use the source commit date for both HEAD and tags. Artifacts record
 
 ## 5. Security & Reliability Considerations
 
-- **Archive & Supply-Chain Integrity:** Every slice pointer in `index.json` embeds `sliceSha256` and `sliceBytes`. Any corrupted or tampered archive fails closed (`ERR_INTEGRITY_MISMATCH`, exit code `5`) prior to extraction, and custom tar validation blocks zip-slip and symlink escape attacks.
+- **Archive & Supply-Chain Integrity:** Every slice pointer in `index.json` embeds `sliceSha256` and `sliceBytes`. Any corrupted or tampered archive fails closed (`ERR_CACHE_INTEGRITY`, exit code `5`) prior to extraction, and custom tar validation blocks zip-slip and symlink escape attacks.
 - **Concurrent Process & CI Safety:** Both local cache extraction (lockfile + atomic rename) and remote S3 index updates (`If-Match` ETag compare-and-swap) are concurrency-safe and covered by automated fault-injection tests.
 - **Untrusted Workspace Inputs:** Lockfile parsers operate as pure bounded text/JSON readers without executing workspace scripts or arbitrary code.
 
@@ -275,7 +275,7 @@ Token estimates use four UTF-8 bytes per token across six standard tasks. The v2
 1. **Keep static Agent Skills and add a `version` flag to skill installers:** Rejected. Still writes hundreds of files into repositories, cannot represent mixed per-package version graphs (e.g., S2 internal RAC vs. direct app RAC) without duplicating slices per project, and goes stale whenever `package.json` or lockfiles change.
 2. **Match a single release-wide snapshot to the workspace's entire dependency vector:** Rejected. Independent SemVer upgrades across `@react-spectrum/s2`, `react-aria-components`, and `@internationalized/*` frequently produce valid combinations that never existed in one monorepo release tag. Per-package slice resolution solves this cleanly.
 3. **Require `resolve` before `search` or `read`:** Rejected. A mandatory `resolve → search → read` sequence forces 3 tool calls per task. Auto-resolving inside `search`/`read` hits the 1–2 lookup target while keeping `resolve` available for diagnostics and MCP session reuse.
-4. **Bundle `.mcp.json` inside the primary CLI skill plugin:** Rejected. Installing the recommended plugin in CLI-capable agents would unnecessarily boot background `stdio` MCP servers and inject duplicate tool schemas into model context. Separating `react-spectrum` (CLI skill) from `react-spectrum-mcp` avoids that overhead.
+4. **Bundle `mcp.json` inside the primary CLI skill plugin:** Rejected. Installing the recommended plugin in CLI-capable agents would unnecessarily boot background `stdio` MCP servers and inject duplicate tool schemas into model context. Separating `react-spectrum` (CLI skill) from `react-spectrum-mcp` avoids that overhead.
 5. **Retain deprecated v1 `list_*_pages` / `get_*_page` aliases in MCP v2:** Rejected. MCP clients discover tools dynamically via `tools/list` at session startup; keeping 1-page waterfall aliases alongside batched `read_docs` increases tool-selection ambiguity and token overhead without aiding backwards compatibility.
 
 ---

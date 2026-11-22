@@ -354,10 +354,27 @@ export async function searchDocs(options: SearchDocsOptions): Promise<SearchDocs
     options.cliCommandPrefix || (options.defaultLibrary === 'rac' ? 'react-aria' : 'spectrum');
   const followUpFlags = formatFollowUpFlags(options, resolution);
 
-  const statelyPrefix = /^(?:react-stately|stately):/i.exec(query)?.[0];
-  const library = options.library ?? (statelyPrefix ? 'react-stately' : undefined);
-  const searchTerm =
-    statelyPrefix && library === 'react-stately' ? query.slice(statelyPrefix.length).trim() : query;
+  const prefixMatch =
+    /^(s2|spectrum|rac|react-aria-components|react-aria|aria|react-stately|stately|internationalized|i18n):/i.exec(
+      query
+    );
+  const prefixMap: Record<string, LibraryId> = {
+    s2: 's2',
+    spectrum: 's2',
+    rac: 'rac',
+    'react-aria-components': 'rac',
+    'react-aria': 'react-aria',
+    aria: 'react-aria',
+    'react-stately': 'react-stately',
+    stately: 'react-stately',
+    internationalized: 'internationalized',
+    i18n: 'internationalized'
+  };
+  const prefixedLibrary = prefixMatch ? prefixMap[prefixMatch[1].toLowerCase()] : undefined;
+  const remainderAfterPrefix = prefixMatch ? query.slice(prefixMatch[0].length).trim() : '';
+  const usePrefix = Boolean(prefixedLibrary && remainderAfterPrefix);
+  const library = options.library ?? (usePrefix ? prefixedLibrary : undefined);
+  const searchTerm = usePrefix && library === prefixedLibrary ? remainderAfterPrefix : query;
   const rawQueryLower = searchTerm.toLowerCase();
   const terms = tokenizeQuery(searchTerm).map(token => ({
     token,
@@ -1201,31 +1218,26 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
     }
   }
 
-  const propNeedles = (options.propFilter || '')
-    .split(',')
-    .map(s => s.trim().toLowerCase())
-    .filter(Boolean);
-  const filterMembers = <T extends {name: string; description: string}>(items: T[]): T[] =>
-    propNeedles.length > 0
-      ? items.filter(p =>
-          propNeedles.some(
-            needle =>
-              p.name.toLowerCase().includes(needle) || p.description.toLowerCase().includes(needle)
-          )
-        )
-      : items;
+  const uniqueRawFilters: Array<{filter: string; needle: string}> = [];
+  const seenNeedles = new Set<string>();
+  for (const raw of (options.propFilter || '').split(',')) {
+    const filter = raw.trim();
+    if (!filter) {
+      continue;
+    }
+    const needle = filter.toLowerCase();
+    if (!seenNeedles.has(needle)) {
+      seenNeedles.add(needle);
+      uniqueRawFilters.push({filter, needle});
+    }
+  }
+  const propNeedles = uniqueRawFilters.map(item => item.needle);
   const filterByKind = Boolean(options.eventsOnly || options.renderPropsOnly);
   const visibleExports = exportsList.map(exp => ({
     ...exp,
     props: filterByKind ? [] : exp.props,
     events: !filterByKind || options.eventsOnly ? exp.events : [],
     renderProps: !filterByKind || options.renderPropsOnly ? exp.renderProps : []
-  }));
-  exportsList = visibleExports.map(exp => ({
-    ...exp,
-    props: filterMembers(exp.props),
-    events: filterMembers(exp.events),
-    renderProps: filterMembers(exp.renderProps)
   }));
 
   // Report every filter that matched nothing, so a partly wrong list is never silently narrowed.
@@ -1234,6 +1246,32 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
     ...exp.events,
     ...exp.renderProps
   ]);
+  // Prefer member-name matches per needle; fall back to description matching only if no name matched.
+  const nameMatchedNeedles = new Set(
+    propNeedles.filter(needle => visibleMembers.some(p => p.name.toLowerCase().includes(needle)))
+  );
+  const memberMatchesNeedle = (member: {name: string; description: string}, needle: string) => {
+    if (member.name.toLowerCase().includes(needle)) {
+      return true;
+    }
+    return !nameMatchedNeedles.has(needle) && member.description.toLowerCase().includes(needle);
+  };
+  const filterMembers = <T extends {name: string; description: string}>(items: T[]): T[] =>
+    propNeedles.length > 0
+      ? items.filter(p => propNeedles.some(needle => memberMatchesNeedle(p, needle)))
+      : items;
+  exportsList = visibleExports.map(exp => ({
+    ...exp,
+    props: filterMembers(exp.props),
+    events: filterMembers(exp.events),
+    renderProps: filterMembers(exp.renderProps)
+  }));
+  if (propNeedles.length > 0 || filterByKind) {
+    exportsList = exportsList.filter(
+      exp => exp.props.length > 0 || exp.events.length > 0 || exp.renderProps.length > 0
+    );
+  }
+
   const memberNames = [...new Set(visibleMembers.map(p => p.name))];
   const suggestMembers = (needle: string): string[] =>
     memberNames
@@ -1242,17 +1280,8 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
       .sort((a, b) => a.distance - b.distance || a.name.localeCompare(b.name))
       .slice(0, 5)
       .map(({name}) => name);
-  const unmatchedFilters = (options.propFilter || '')
-    .split(',')
-    .map(s => s.trim())
-    .filter(Boolean)
-    .map(filter => ({filter, needle: filter.toLowerCase()}))
-    .filter(
-      ({needle}) =>
-        !visibleMembers.some(
-          p => p.name.toLowerCase().includes(needle) || p.description.toLowerCase().includes(needle)
-        )
-    )
+  const unmatchedFilters = uniqueRawFilters
+    .filter(({needle}) => !visibleMembers.some(p => memberMatchesNeedle(p, needle)))
     .map(({filter, needle}) => ({filter, suggestions: suggestMembers(needle)}));
   const apiTarget = exportName ? `'${exportName}' in '${item.id}'` : `'${item.id}'`;
   const describeUnmatched = ({filter, suggestions}: {filter: string; suggestions: string[]}) =>
@@ -1306,6 +1335,16 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
       mdLines.push(`> [${warning.code}] ${warning.message}`);
     }
   }
+  if (exportsList.length === 0 && filterByKind) {
+    mdLines.push('');
+    const kindLabel =
+      options.eventsOnly && options.renderPropsOnly
+        ? 'events or render props'
+        : options.eventsOnly
+          ? 'events'
+          : 'render props';
+    mdLines.push(`_No matching ${kindLabel} found on ${apiTarget}._`);
+  }
   for (const exp of exportsList) {
     mdLines.push('');
     mdLines.push(renderDetailedExportMarkdown(exp));
@@ -1357,10 +1396,12 @@ export async function queryTokens(options: QueryTokensOptions = {}): Promise<Tok
   }
 
   const propNeedle = options.propertyFilter?.toLowerCase() || null;
-  // Every word must hit the property (name, category, description) or one of its values,
-  // so "blue background" finds the blue values of `backgroundColor`.
+  // Every word must hit the property (name, category, description) or all non-property words
+  // must intersect on a single value, so "blue background" finds blue values of `backgroundColor`
+  // and "blue 100" finds `blue-100` instead of `red-100`.
   const queryWords = (options.query || '').toLowerCase().split(/\s+/).filter(Boolean);
-  const matchedProps: TokensDocsResult['properties'] = [];
+  const matchedProps: Array<TokensDocsResult['properties'][number] & {matchingValueCount: number}> =
+    [];
   const spacingScale = assets.styleMacro?.spacingScale ?? {};
 
   for (const [categoryName, catMap] of Object.entries(assets.styleMacro?.categories || {})) {
@@ -1378,29 +1419,33 @@ export async function queryTokens(options: QueryTokensOptions = {}): Promise<Tok
       });
       const allValues = [...new Set([...(def.values || []), ...spacingValues].map(String))];
       const desc = def.description || `${categoryName} style macro property`;
+      let matchingValues = allValues;
       if (queryWords.length > 0) {
         const haystack = `${propName}\n${categoryName}\n${desc}`.toLowerCase();
-        const valHits = allValues.filter(v => queryWords.some(w => v.toLowerCase().includes(w)));
-        const everyWordHits = queryWords.every(
-          w => haystack.includes(w) || allValues.some(v => v.toLowerCase().includes(w))
-        );
-        if (!everyWordHits) {
+        const valueWords = queryWords.filter(w => !haystack.includes(w));
+        if (valueWords.length > 0) {
+          matchingValues = allValues.filter(v => {
+            const lower = v.toLowerCase();
+            return valueWords.every(w => lower.includes(w));
+          });
+        } else {
+          const allWordValHits = allValues.filter(v => {
+            const lower = v.toLowerCase();
+            return queryWords.every(w => lower.includes(w));
+          });
+          matchingValues = allWordValHits.length > 0 ? allWordValHits : allValues;
+        }
+        if (matchingValues.length === 0) {
           continue;
         }
-        matchedProps.push({
-          property: propName,
-          description: desc,
-          matchedValues: (valHits.length > 0 ? valHits : allValues).slice(0, 40),
-          totalValueCount: allValues.length
-        });
-      } else {
-        matchedProps.push({
-          property: propName,
-          description: desc,
-          matchedValues: allValues.slice(0, 40),
-          totalValueCount: allValues.length
-        });
       }
+      matchedProps.push({
+        property: propName,
+        description: desc,
+        matchedValues: matchingValues.slice(0, 40),
+        matchingValueCount: matchingValues.length,
+        totalValueCount: allValues.length
+      });
     }
   }
 
@@ -1418,16 +1463,36 @@ export async function queryTokens(options: QueryTokensOptions = {}): Promise<Tok
       `_No style macro properties or values matched ${searched || 'this request'}. Search by a property name (\`backgroundColor\`) or a value (\`blue\`)._`
     );
   }
-  for (const p of matchedProps.slice(0, 25)) {
-    mdLines.push(`## \`${p.property}\` (${p.totalValueCount} allowed values)`);
+  const MAX_RENDERED_PROPS = 25;
+  for (const p of matchedProps.slice(0, MAX_RENDERED_PROPS)) {
+    const countLabel =
+      p.matchingValueCount < p.totalValueCount
+        ? `${p.matchingValueCount} matching of ${p.totalValueCount} allowed values`
+        : `${p.totalValueCount} allowed values`;
+    mdLines.push(`## \`${p.property}\` (${countLabel})`);
     if (p.description) {
       mdLines.push(p.description);
     }
+    const remainingMatching = p.matchingValueCount - p.matchedValues.length;
     mdLines.push(
-      `Values: ${p.matchedValues.map(v => `\`${v}\``).join(', ')}${p.totalValueCount > p.matchedValues.length ? ` … (+${p.totalValueCount - p.matchedValues.length} more)` : ''}`
+      `Values: ${p.matchedValues.map(v => `\`${v}\``).join(', ')}${remainingMatching > 0 ? ` … (+${remainingMatching} more)` : ''}`
     );
     mdLines.push('');
   }
+  if (matchedProps.length > MAX_RENDERED_PROPS) {
+    mdLines.push(
+      `_Showing ${MAX_RENDERED_PROPS} of ${matchedProps.length} matching properties. Narrow results with \`--property <name>\` or a more specific query._`
+    );
+  }
+
+  const publicProperties: TokensDocsResult['properties'] = matchedProps.map(
+    ({property, description, matchedValues, totalValueCount}) => ({
+      property,
+      description,
+      matchedValues,
+      totalValueCount
+    })
+  );
 
   return {
     apiVersion: API_VERSION,
@@ -1442,7 +1507,7 @@ export async function queryTokens(options: QueryTokensOptions = {}): Promise<Tok
     snapshots: collectEnvelopeSnapshots(index, [s2Prov.snapshotId]),
     resolution,
     warnings: warningsForPackages(resolution, [s2Prov.packageName]),
-    properties: matchedProps,
+    properties: publicProperties,
     markdown: mdLines.join('\n').trim() + '\n'
   };
 }
@@ -1523,7 +1588,11 @@ export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsR
     const aliasLower = alias.toLowerCase();
     const knownTargets = targets.filter(target => nameSet.has(target));
     for (const term of normalized) {
-      if (aliasLower.includes(term) || term.includes(aliasLower)) {
+      const aliasMatchesTerm =
+        aliasLower === term ||
+        (term.length >= 2 && aliasLower.includes(term)) ||
+        (aliasLower.length >= 3 && term.includes(aliasLower));
+      if (aliasMatchesTerm) {
         for (const target of knownTargets) {
           addMatch(target, 1, term);
         }

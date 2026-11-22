@@ -183,6 +183,34 @@ test('rejects path-traversal tar entries, symlink tar entries, SHA-256 tampering
     assert.equal(dirA, dirB);
     assert.equal(dirB, dirC);
     assert.equal(fs.existsSync(path.join(dirA, 'slice-manifest.json')), true);
+
+    // Local snapshot manifests bypass the disk cache so in-place local rebuilds are immediately visible
+    const {loadSnapshotManifest} = await corePromise;
+    const localManifestDir = path.join(tmp, 'local-manifest-snap');
+    const localManifestRel = 'by-id/local-1/manifest.json';
+    const localManifestAbs = path.join(localManifestDir, localManifestRel);
+    fs.mkdirSync(path.dirname(localManifestAbs), {recursive: true});
+    const manifestV1 = {
+      schemaVersion: 1,
+      snapshotId: 'local-1',
+      packages: {'@react-spectrum/s2': '1.0.0'},
+      files: {},
+      slices: {}
+    };
+    fs.writeFileSync(localManifestAbs, JSON.stringify(manifestV1));
+    const localCache = path.join(tmp, 'c-local-manifest');
+    const firstRead = await loadSnapshotManifest(
+      {snapshotId: 'local-1', manifestPath: localManifestRel},
+      {snapshotSource: localManifestDir, cacheDir: localCache}
+    );
+    assert.equal(firstRead.packages['@react-spectrum/s2'], '1.0.0');
+    const manifestV2 = {...manifestV1, packages: {'@react-spectrum/s2': '1.0.1'}};
+    fs.writeFileSync(localManifestAbs, JSON.stringify(manifestV2));
+    const secondRead = await loadSnapshotManifest(
+      {snapshotId: 'local-1', manifestPath: localManifestRel},
+      {snapshotSource: localManifestDir, cacheDir: localCache}
+    );
+    assert.equal(secondRead.packages['@react-spectrum/s2'], '1.0.1');
   } finally {
     fs.rmSync(tmp, {recursive: true, force: true});
   }

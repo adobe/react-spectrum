@@ -114,27 +114,74 @@ function resolveInstalledPackageFromAnchor(
   return null;
 }
 
-function parseSemverTuple(ver: string): {major: number; minor: number; patch: number} | null {
-  const m = ver.match(/^(\d+)\.(\d+)\.(\d+)/);
+interface ParsedSemver {
+  major: number;
+  minor: number;
+  patch: number;
+  prerelease: string[];
+}
+
+function parseSemverTuple(ver: string): ParsedSemver | null {
+  const m = ver.match(/^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+.*)?$/);
   if (!m) {
     return null;
   }
-  return {major: Number(m[1]), minor: Number(m[2]), patch: Number(m[3])};
+  return {
+    major: Number(m[1]),
+    minor: Number(m[2]),
+    patch: Number(m[3]),
+    prerelease: m[4] ? m[4].split('.') : []
+  };
 }
 
-function compareSemverDesc(a: string, b: string): number {
+function comparePrereleaseAsc(a: string[], b: string[]): number {
+  if (a.length === 0 && b.length === 0) {
+    return 0;
+  }
+  if (a.length === 0) {
+    return 1;
+  }
+  if (b.length === 0) {
+    return -1;
+  }
+  const len = Math.min(a.length, b.length);
+  for (let i = 0; i < len; i++) {
+    if (a[i] === b[i]) {
+      continue;
+    }
+    const aNum = /^\d+$/.test(a[i]);
+    const bNum = /^\d+$/.test(b[i]);
+    if (aNum && bNum) {
+      return Number(a[i]) - Number(b[i]);
+    }
+    if (aNum !== bNum) {
+      return aNum ? -1 : 1;
+    }
+    return a[i].localeCompare(b[i]);
+  }
+  return a.length - b.length;
+}
+
+export function compareSemverAsc(a: string, b: string): number {
   const pa = parseSemverTuple(a);
   const pb = parseSemverTuple(b);
   if (!pa || !pb) {
-    return b.localeCompare(a);
+    return a.localeCompare(b);
   }
   if (pa.major !== pb.major) {
-    return pb.major - pa.major;
+    return pa.major - pb.major;
   }
   if (pa.minor !== pb.minor) {
-    return pb.minor - pa.minor;
+    return pa.minor - pb.minor;
   }
-  return pb.patch - pa.patch;
+  if (pa.patch !== pb.patch) {
+    return pa.patch - pb.patch;
+  }
+  return comparePrereleaseAsc(pa.prerelease, pb.prerelease);
+}
+
+export function compareSemverDesc(a: string, b: string): number {
+  return compareSemverAsc(b, a);
 }
 
 /**
@@ -214,11 +261,8 @@ export function matchPackageSliceInIndex(
     : [];
 
   if (sameMinorCandidates.length > 0 && !options.strictVersion) {
-    // Prefer highest patch <= requestedVersion in same minor, otherwise closest patch in same minor
-    const lowerOrEqual = sameMinorCandidates.find(v => {
-      const t = parseSemverTuple(v)!;
-      return t.patch <= reqTuple!.patch;
-    });
+    // Prefer highest version <= requestedVersion in same minor (respecting SemVer prerelease precedence), otherwise closest in same minor
+    const lowerOrEqual = sameMinorCandidates.find(v => compareSemverAsc(v, requestedVersion) <= 0);
     const chosen = lowerOrEqual || sameMinorCandidates[0];
     return {
       pointer: pkgMap[chosen],

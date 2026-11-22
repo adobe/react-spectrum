@@ -6700,7 +6700,6 @@ __metadata:
   resolution: "@react-aria/mcp@workspace:packages/dev/mcp/react-aria"
   dependencies:
     "@modelcontextprotocol/sdk": "npm:^1.17.3"
-    "@swc/helpers": "npm:^0.5.0"
     typescript: "npm:^7.0.2"
     zod: "npm:^3.23.8"
   bin:
@@ -7692,7 +7691,6 @@ __metadata:
   resolution: "@react-spectrum/mcp@workspace:packages/dev/mcp/s2"
   dependencies:
     "@modelcontextprotocol/sdk": "npm:^1.17.3"
-    "@swc/helpers": "npm:^0.5.0"
     typescript: "npm:^7.0.2"
     zod: "npm:^3.23.8"
   bin:
