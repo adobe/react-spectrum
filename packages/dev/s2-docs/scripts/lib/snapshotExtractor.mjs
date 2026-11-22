@@ -2327,9 +2327,14 @@ export function updateSnapshotsIndex(outRoot, snapshotResults, options = {}) {
     const manifestBytes = fs.readFileSync(
       path.join(outRoot, 'by-id', manifest.snapshotId, 'manifest.json')
     );
+    let channelName =
+      typeof options.channel === 'string' && options.channel.trim() ? options.channel.trim() : null;
+
     indexData.snapshots[manifest.snapshotId] = {
       snapshotId: manifest.snapshotId,
       docRevision: manifest.docRevision,
+      ...(manifest.generatedAt ? {generatedAt: manifest.generatedAt} : {}),
+      ...(channelName ? {channel: channelName} : {}),
       sourceTag: manifest.sourceTag,
       sourceCommit: manifest.sourceCommit,
       extractorCommit: manifest.extractorCommit,
@@ -2342,9 +2347,6 @@ export function updateSnapshotsIndex(outRoot, snapshotResults, options = {}) {
       catalogSha256: manifest.files['catalog.tar.gz']?.sha256,
       catalogBytes: manifest.files['catalog.tar.gz']?.bytes
     };
-
-    let channelName =
-      typeof options.channel === 'string' && options.channel.trim() ? options.channel.trim() : null;
 
     if (channelName) {
       indexData.channels ??= {};

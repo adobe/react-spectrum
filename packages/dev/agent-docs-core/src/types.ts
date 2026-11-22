@@ -74,6 +74,8 @@ export interface PackageSlicePointer {
 export interface SnapshotSummaryInfo {
   snapshotId: string;
   docRevision: number;
+  generatedAt?: string;
+  channel?: string;
   sourceTag: string | null;
   sourceCommit: string;
   extractorCommit: string;

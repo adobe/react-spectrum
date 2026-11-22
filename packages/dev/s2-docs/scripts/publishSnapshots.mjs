@@ -36,6 +36,62 @@ const REPO_ROOT = path.resolve(__dirname, '../../../..');
 
 export const IMMUTABLE_CACHE_CONTROL = 'public,max-age=31536000,immutable';
 export const INDEX_CACHE_CONTROL = 'public,max-age=60,stale-while-revalidate=300';
+export const DEFAULT_RETAIN_CHANNEL_SNAPSHOTS = 5;
+
+const SAFE_SNAPSHOT_ID_RE = /^[a-zA-Z0-9._-]+$/;
+
+function assertValidSnapshotId(snapshotId) {
+  if (
+    typeof snapshotId !== 'string' ||
+    !SAFE_SNAPSHOT_ID_RE.test(snapshotId) ||
+    snapshotId === '.' ||
+    snapshotId === '..'
+  ) {
+    throw new Error(`Unsafe snapshot ID: '${snapshotId}'`);
+  }
+}
+
+function normalizeRetainCount(value) {
+  if (value === undefined || value === null) {
+    return DEFAULT_RETAIN_CHANNEL_SNAPSHOTS;
+  }
+  const n = typeof value === 'number' ? value : Number(value);
+  if (!Number.isInteger(n) || n < 0) {
+    throw new Error(`retainChannelSnapshots must be a non-negative integer, got '${value}'`);
+  }
+  return n;
+}
+
+function compareSnapshotsNewestFirst(a, b) {
+  let aTime = typeof a.generatedAt === 'string' ? a.generatedAt : '';
+  let bTime = typeof b.generatedAt === 'string' ? b.generatedAt : '';
+  if (aTime !== bTime) {
+    return aTime < bTime ? 1 : -1;
+  }
+  if (a.snapshotId !== b.snapshotId) {
+    return a.snapshotId < b.snapshotId ? 1 : -1;
+  }
+  return (b.docRevision || 0) - (a.docRevision || 0);
+}
+
+function collectReferencedSnapshotIds(packagesMap, channelsMap, extraIds = []) {
+  let referenced = new Set(extraIds);
+  for (let verMap of Object.values(packagesMap || {})) {
+    for (let ptr of Object.values(verMap || {})) {
+      if (ptr?.snapshotId) {
+        referenced.add(ptr.snapshotId);
+      }
+    }
+  }
+  for (let pkgMap of Object.values(channelsMap || {})) {
+    for (let ptr of Object.values(pkgMap || {})) {
+      if (ptr?.snapshotId) {
+        referenced.add(ptr.snapshotId);
+      }
+    }
+  }
+  return referenced;
+}
 
 function sha256Hex(buf) {
   return crypto.createHash('sha256').update(buf).digest('hex');
@@ -127,8 +183,13 @@ function isNewerStableSemver(candidate, current) {
 /**
  * Pure deterministic index merge used during CAS loop: merges `stagedIndex` additions
  * into `remoteIndex` without dropping any snapshots or verified patches added by peers.
+ *
+ * Superseded channel snapshots (no longer referenced by `packages` or active `channels`)
+ * are kept up to `options.retainChannelSnapshots` per channel (newest-first) and evicted
+ * once older than the retention window.
  */
-export function mergeSnapshotIndices(remoteIndex, stagedIndex) {
+export function mergeSnapshotIndices(remoteIndex, stagedIndex, options = {}) {
+  let retainChannelSnapshots = normalizeRetainCount(options.retainChannelSnapshots);
   let base = remoteIndex || {
     schemaVersion: stagedIndex.schemaVersion || 1,
     minReaderSchemaVersion: stagedIndex.minReaderSchemaVersion || 1,
@@ -138,10 +199,13 @@ export function mergeSnapshotIndices(remoteIndex, stagedIndex) {
     packages: {}
   };
 
-  let mergedSnapshots = {...(base.snapshots || {})};
+  let mergedSnapshots = {};
+  for (let [snapId, snapInfo] of Object.entries(base.snapshots || {})) {
+    mergedSnapshots[snapId] = {...snapInfo};
+  }
   for (let [snapId, snapInfo] of Object.entries(stagedIndex.snapshots || {})) {
     if (!(snapId in mergedSnapshots)) {
-      mergedSnapshots[snapId] = snapInfo;
+      mergedSnapshots[snapId] = {...snapInfo};
     }
   }
 
@@ -181,13 +245,13 @@ export function mergeSnapshotIndices(remoteIndex, stagedIndex) {
     }
   }
 
-  let previousChannelSnapshotIds = new Set();
+  let channelBySnapshotId = new Map();
   let mergedChannels = {};
   for (let [channelName, pkgMap] of Object.entries(base.channels || {})) {
     mergedChannels[channelName] = {...(pkgMap || {})};
     for (let ptr of Object.values(pkgMap || {})) {
       if (ptr?.snapshotId) {
-        previousChannelSnapshotIds.add(ptr.snapshotId);
+        channelBySnapshotId.set(ptr.snapshotId, channelName);
       }
     }
   }
@@ -196,29 +260,45 @@ export function mergeSnapshotIndices(remoteIndex, stagedIndex) {
       ...(mergedChannels[channelName] || {}),
       ...(pkgMap || {})
     };
+    for (let ptr of Object.values(pkgMap || {})) {
+      if (ptr?.snapshotId) {
+        channelBySnapshotId.set(ptr.snapshotId, channelName);
+      }
+    }
   }
 
-  // Prune channel snapshot entries that were superseded and are no longer referenced anywhere.
-  if (previousChannelSnapshotIds.size > 0) {
-    let referencedSnapshotIds = new Set(Object.keys(stagedIndex.snapshots || {}));
-    for (let verMap of Object.values(mergedPackages)) {
-      for (let ptr of Object.values(verMap || {})) {
-        if (ptr?.snapshotId) {
-          referencedSnapshotIds.add(ptr.snapshotId);
-        }
-      }
+  // Ensure snapshots known to come from a channel keep their `channel` tag even after superseding,
+  // so future publishes can evict them once they fall outside `retainChannelSnapshots`.
+  for (let [snapId, channelName] of channelBySnapshotId) {
+    if (mergedSnapshots[snapId] && !mergedSnapshots[snapId].channel) {
+      mergedSnapshots[snapId] = {...mergedSnapshots[snapId], channel: channelName};
     }
-    for (let pkgMap of Object.values(mergedChannels)) {
-      for (let ptr of Object.values(pkgMap || {})) {
-        if (ptr?.snapshotId) {
-          referencedSnapshotIds.add(ptr.snapshotId);
-        }
-      }
+  }
+
+  // Group superseded, unreferenced channel snapshots per channel and evict beyond retention count.
+  let referencedSnapshotIds = collectReferencedSnapshotIds(
+    mergedPackages,
+    mergedChannels,
+    Object.keys(stagedIndex.snapshots || {})
+  );
+  let supersededByChannel = new Map();
+  for (let [snapId, snapInfo] of Object.entries(mergedSnapshots)) {
+    let channelName = snapInfo?.channel;
+    if (!channelName || referencedSnapshotIds.has(snapId)) {
+      continue;
     }
-    for (let oldSnapId of previousChannelSnapshotIds) {
-      if (!referencedSnapshotIds.has(oldSnapId)) {
-        delete mergedSnapshots[oldSnapId];
-      }
+    let list = supersededByChannel.get(channelName) || [];
+    list.push({
+      snapshotId: snapId,
+      generatedAt: snapInfo.generatedAt,
+      docRevision: snapInfo.docRevision
+    });
+    supersededByChannel.set(channelName, list);
+  }
+  for (let list of supersededByChannel.values()) {
+    list.sort(compareSnapshotsNewestFirst);
+    for (let evicted of list.slice(retainChannelSnapshots)) {
+      delete mergedSnapshots[evicted.snapshotId];
     }
   }
 
@@ -358,6 +438,37 @@ export function createLocalBucketStorage(bucketRootDir) {
         fs.closeSync(fd);
         fs.rmSync(lockFile, {force: true});
       }
+    },
+
+    async deletePrefix(relPrefix) {
+      let clean = String(relPrefix || '').replace(/^\/+/, '');
+      let match = /^by-id\/([^/]+)\/?$/.exec(clean);
+      if (!match) {
+        throw new Error(`Refusing to delete non-snapshot prefix: '${relPrefix}'`);
+      }
+      assertValidSnapshotId(match[1]);
+      let targetDir = path.resolve(bucketRootDir, 'by-id', match[1]);
+      let allowedParent = path.resolve(bucketRootDir, 'by-id');
+      if (!targetDir.startsWith(allowedParent + path.sep)) {
+        throw new Error(`Refusing to delete path outside snapshot root: '${relPrefix}'`);
+      }
+      if (!fs.existsSync(targetDir)) {
+        return {deletedCount: 0};
+      }
+      let deletedCount = 0;
+      const countFiles = dir => {
+        for (let entry of fs.readdirSync(dir, {withFileTypes: true})) {
+          let full = path.join(dir, entry.name);
+          if (entry.isDirectory()) {
+            countFiles(full);
+          } else if (!entry.name.endsWith('.__s3meta__.json')) {
+            deletedCount++;
+          }
+        }
+      };
+      countFiles(targetDir);
+      fs.rmSync(targetDir, {recursive: true, force: true});
+      return {deletedCount};
     }
   };
 }
@@ -528,6 +639,66 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots', options = {
       } finally {
         fs.rmSync(tmpFile, {force: true});
       }
+    },
+
+    async deletePrefix(relPrefix) {
+      let clean = String(relPrefix || '').replace(/^\/+/, '');
+      let match = /^by-id\/([^/]+)\/?$/.exec(clean);
+      if (!match) {
+        throw new Error(`Refusing to delete non-snapshot prefix: '${relPrefix}'`);
+      }
+      assertValidSnapshotId(match[1]);
+      let s3Prefix = fullKey(`by-id/${match[1]}/`);
+      let keys = [];
+      let continuationToken = null;
+      do {
+        let listArgs = [
+          's3api',
+          'list-objects-v2',
+          '--bucket',
+          bucketName,
+          '--prefix',
+          s3Prefix,
+          '--output',
+          'json'
+        ];
+        if (continuationToken) {
+          listArgs.push('--continuation-token', continuationToken);
+        }
+        let {stdout} = await execAws('aws', listArgs);
+        let parsed = stdout?.trim() ? JSON.parse(stdout) : {};
+        for (let obj of parsed.Contents || []) {
+          if (obj?.Key && obj.Key.startsWith(s3Prefix)) {
+            keys.push(obj.Key);
+          }
+        }
+        continuationToken = parsed.IsTruncated ? parsed.NextContinuationToken : null;
+      } while (continuationToken);
+
+      let deletedCount = 0;
+      for (let i = 0; i < keys.length; i += 1000) {
+        let batch = keys.slice(i, i + 1000);
+        let tmpPayload = path.join(os.tmpdir(), `rsp-s3-del-${process.pid}-${crypto.randomUUID()}`);
+        fs.writeFileSync(
+          tmpPayload,
+          JSON.stringify({Objects: batch.map(Key => ({Key})), Quiet: true}),
+          'utf8'
+        );
+        try {
+          await execAws('aws', [
+            's3api',
+            'delete-objects',
+            '--bucket',
+            bucketName,
+            '--delete',
+            `file://${tmpPayload}`
+          ]);
+          deletedCount += batch.length;
+        } finally {
+          fs.rmSync(tmpPayload, {force: true});
+        }
+      }
+      return {deletedCount};
     }
   };
 }
@@ -567,6 +738,45 @@ async function uploadImmutableIfAbsent(storage, item, buf) {
   }
 }
 
+async function pruneEvictedChannelSnapshots(
+  storage,
+  remoteParsed,
+  mergedIndex,
+  pruneEvictedChannelArtifacts
+) {
+  let evictedSnapshotIds = [];
+  if (remoteParsed?.snapshots) {
+    let liveReferenced = collectReferencedSnapshotIds(mergedIndex.packages, mergedIndex.channels);
+    for (let snapId of Object.keys(remoteParsed.snapshots)) {
+      if (!(snapId in mergedIndex.snapshots) && !liveReferenced.has(snapId)) {
+        evictedSnapshotIds.push(snapId);
+      }
+    }
+  }
+  let prunedSnapshotIds = [];
+  let pruneWarnings = [];
+  if (
+    !pruneEvictedChannelArtifacts ||
+    evictedSnapshotIds.length === 0 ||
+    typeof storage.deletePrefix !== 'function'
+  ) {
+    return {evictedSnapshotIds, prunedSnapshotIds, pruneWarnings};
+  }
+  for (let snapId of evictedSnapshotIds) {
+    try {
+      assertValidSnapshotId(snapId);
+      await storage.deletePrefix(`by-id/${snapId}/`);
+      prunedSnapshotIds.push(snapId);
+    } catch (pruneErr) {
+      pruneWarnings.push({
+        snapshotId: snapId,
+        message: String(pruneErr?.message || pruneErr)
+      });
+    }
+  }
+  return {evictedSnapshotIds, prunedSnapshotIds, pruneWarnings};
+}
+
 /**
  * Executes the 3-step verified & conditional publication protocol for all snapshots
  * staged in `stagedDir`.
@@ -578,8 +788,11 @@ export async function publishStagedSnapshots({
   dryRun = false,
   maxCasRetries = 5,
   concurrency = 16,
+  retainChannelSnapshots = DEFAULT_RETAIN_CHANNEL_SNAPSHOTS,
+  pruneEvictedChannelArtifacts = true,
   onBeforeCasPut = null
 }) {
+  let effectiveRetain = normalizeRetainCount(retainChannelSnapshots);
   let stagedIndexPath = path.join(stagedDir, 'index.json');
   if (!fs.existsSync(stagedIndexPath)) {
     throw new Error(`Staged index.json not found at ${stagedIndexPath}`);
@@ -698,7 +911,9 @@ export async function publishStagedSnapshots({
   for (let attempt = 1; attempt <= maxCasRetries; attempt++) {
     let currentRemote = await storage.getConditionalObject('index.json');
     let remoteParsed = currentRemote ? JSON.parse(currentRemote.body) : null;
-    let mergedIndex = mergeSnapshotIndices(remoteParsed, filteredStagedIndex);
+    let mergedIndex = mergeSnapshotIndices(remoteParsed, filteredStagedIndex, {
+      retainChannelSnapshots: effectiveRetain
+    });
     let mergedStr = JSON.stringify(mergedIndex, null, 2) + '\n';
 
     if (onBeforeCasPut) {
@@ -712,12 +927,26 @@ export async function publishStagedSnapshots({
         contentType: 'application/json;charset=utf-8',
         cacheControl: INDEX_CACHE_CONTROL
       });
+
+      // STEP 4 (post-commit): Best-effort deletion of evicted channel snapshot `by-id/<id>/` objects.
+      // Only snapshots removed from `index.json` AND guaranteed unreferenced in `mergedIndex` are deleted.
+      let {evictedSnapshotIds, prunedSnapshotIds, pruneWarnings} =
+        await pruneEvictedChannelSnapshots(
+          storage,
+          remoteParsed,
+          mergedIndex,
+          pruneEvictedChannelArtifacts
+        );
+
       return {
         dryRun: false,
         snapshotIds: targetIds,
         verifiedObjects: uploadedObjects.length,
         indexEtag: putRes.etag,
-        casAttempts: attempt
+        casAttempts: attempt,
+        evictedSnapshotIds,
+        prunedSnapshotIds,
+        ...(pruneWarnings.length > 0 ? {pruneWarnings} : {})
       };
     } catch (err) {
       if (err.code === 'PreconditionFailed' && attempt < maxCasRetries) {
@@ -739,6 +968,8 @@ async function main() {
       prefix: {type: 'string'},
       'local-bucket-dir': {type: 'string'},
       snapshot: {type: 'string', multiple: true},
+      'retain-channel-snapshots': {type: 'string'},
+      'no-prune-channel-artifacts': {type: 'boolean'},
       'dry-run': {type: 'boolean'},
       help: {type: 'boolean', short: 'h'}
     }
@@ -750,16 +981,20 @@ async function main() {
         'Usage: node packages/dev/s2-docs/scripts/publishSnapshots.mjs [options]',
         '',
         'Options:',
-        '  --staged-dir <dir>         Local snapshot build directory (default: packages/dev/s2-docs/dist/snapshots)',
-        '  --bucket <s3-bucket-name>  Target AWS S3 bucket name (without s3://)',
-        '  --prefix <key-prefix>      Target S3 key prefix (default: snapshots)',
-        '  --local-bucket-dir <dir>   Publish into a local directory simulating S3 conditional writes',
-        '  --snapshot <id>            Publish only specific snapshot ID(s) (repeatable)',
-        '  --dry-run                  Validate hashes and object list without uploading'
+        '  --staged-dir <dir>                  Local snapshot build directory (default: packages/dev/s2-docs/dist/snapshots)',
+        '  --bucket <s3-bucket-name>           Target AWS S3 bucket name (without s3://)',
+        '  --prefix <key-prefix>               Target S3 key prefix (default: snapshots)',
+        '  --local-bucket-dir <dir>            Publish into a local directory simulating S3 conditional writes',
+        '  --snapshot <id>                     Publish only specific snapshot ID(s) (repeatable)',
+        `  --retain-channel-snapshots <count>  Number of superseded channel snapshots to retain per channel (default: ${DEFAULT_RETAIN_CHANNEL_SNAPSHOTS})`,
+        '  --no-prune-channel-artifacts        Evict expired channel entries from index.json without deleting by-id/ storage objects',
+        '  --dry-run                           Validate hashes and object list without uploading'
       ].join('\n')
     );
     return;
   }
+
+  const retainChannelSnapshots = normalizeRetainCount(values['retain-channel-snapshots']);
 
   const stagedDir = path.resolve(
     values['staged-dir'] || path.join(REPO_ROOT, 'packages/dev/s2-docs/dist/snapshots')
@@ -781,11 +1016,19 @@ async function main() {
     stagedDir,
     storage,
     snapshotIds: values.snapshot?.length ? values.snapshot : null,
-    dryRun: Boolean(values['dry-run'])
+    dryRun: Boolean(values['dry-run']),
+    retainChannelSnapshots,
+    pruneEvictedChannelArtifacts: !values['no-prune-channel-artifacts']
   });
+  const pruneSummary = res.prunedSnapshotIds?.length
+    ? `, pruned ${res.prunedSnapshotIds.length} expired channel snapshot(s)`
+    : '';
   console.log(
-    `Published ${res.snapshotIds.length} snapshot(s) (${res.verifiedObjects} verified objects${res.casAttempts ? `, CAS attempts: ${res.casAttempts}` : ''}).`
+    `Published ${res.snapshotIds.length} snapshot(s) (${res.verifiedObjects} verified objects${res.casAttempts ? `, CAS attempts: ${res.casAttempts}` : ''}${pruneSummary}).`
   );
+  for (const warning of res.pruneWarnings || []) {
+    console.warn(`Warning: failed to prune '${warning.snapshotId}': ${warning.message}`);
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {

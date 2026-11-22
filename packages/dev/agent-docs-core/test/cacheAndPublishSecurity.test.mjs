@@ -1032,14 +1032,205 @@ test('canary channel index updates and CAS merges never overwrite stable latest 
       snapshots: {'20260422-canary-g333-d1': idx2.snapshots['20260422-canary-g333-d1']},
       packages: {}
     };
-    const mergedCanary2 = mergeSnapshotIndices(merged, stagedCanary2);
+    const mergedCanary2Immediate = mergeSnapshotIndices(merged, stagedCanary2, {
+      retainChannelSnapshots: 0
+    });
     assert.equal(
-      mergedCanary2.channels?.canary?.['@react-spectrum/s2']?.snapshotId,
+      mergedCanary2Immediate.channels?.canary?.['@react-spectrum/s2']?.snapshotId,
       '20260422-canary-g333-d1'
     );
-    assert.equal(mergedCanary2.snapshots['20260421-canary-g222-d1'], undefined);
-    assert.ok(mergedCanary2.snapshots['20260422-canary-g333-d1']);
-    assert.ok(mergedCanary2.snapshots['20260420-s2-1.8.2-g111-d1']);
+    assert.equal(mergedCanary2Immediate.snapshots['20260421-canary-g222-d1'], undefined);
+    assert.ok(mergedCanary2Immediate.snapshots['20260422-canary-g333-d1']);
+    assert.ok(mergedCanary2Immediate.snapshots['20260420-s2-1.8.2-g111-d1']);
+
+    // Default retention keeps superseded canary in `snapshots` (tagged with `channel: 'canary'`)
+    const mergedCanary2Retained = mergeSnapshotIndices(merged, stagedCanary2, {
+      retainChannelSnapshots: 1
+    });
+    assert.equal(mergedCanary2Retained.snapshots['20260421-canary-g222-d1']?.channel, 'canary');
+    assert.ok(mergedCanary2Retained.snapshots['20260422-canary-g333-d1']);
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
+
+test('publishStagedSnapshots enforces canary retention window and prunes expired by-id/ artifacts safely', async () => {
+  const {createAwsS3Storage, createLocalBucketStorage, publishStagedSnapshots} =
+    await publishModPromise;
+  const {updateSnapshotsIndex} = await import(
+    pathToFileURL(path.join(REPO_ROOT, 'packages/dev/s2-docs/scripts/lib/snapshotExtractor.mjs'))
+      .href
+  );
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-canary-prune-'));
+  try {
+    const bucketDir = path.join(tmp, 'bucket');
+    const storage = createLocalBucketStorage(bucketDir);
+
+    const stageSnapshot = (stageName, snapshotId, {channel = null, generatedAt}) => {
+      const stagedDir = path.join(tmp, stageName);
+      const sliceRel = `by-id/${snapshotId}/packages/s2.tar.gz`;
+      const sliceAbs = path.join(stagedDir, ...sliceRel.split('/'));
+      const sliceBuf = Buffer.from(`slice-${snapshotId}`, 'utf8');
+      fs.mkdirSync(path.dirname(sliceAbs), {recursive: true});
+      fs.writeFileSync(sliceAbs, sliceBuf);
+      const sliceSha = crypto.createHash('sha256').update(sliceBuf).digest('hex');
+
+      const manifest = {
+        schemaVersion: 1,
+        snapshotId,
+        docRevision: 1,
+        generatedAt,
+        sourceTag: channel ? null : '@react-spectrum/s2@1.8.2',
+        sourceCommit: 'abc123',
+        extractorCommit: 'abc123',
+        docsLayouts: {s2: 's2-docs'},
+        packages: {'@react-spectrum/s2': '1.8.2'},
+        files: {
+          'packages/s2.tar.gz': {sha256: sliceSha, bytes: sliceBuf.length}
+        },
+        slices: {
+          '@react-spectrum/s2': {
+            packageName: '@react-spectrum/s2',
+            packageVersion: '1.8.2',
+            snapshotId,
+            docRevision: 1,
+            sliceRelPath: sliceRel,
+            sliceSha256: sliceSha,
+            sliceBytes: sliceBuf.length,
+            entryCount: 1
+          }
+        }
+      };
+      fs.writeFileSync(
+        path.join(stagedDir, 'by-id', snapshotId, 'manifest.json'),
+        JSON.stringify(manifest, null, 2)
+      );
+      updateSnapshotsIndex(
+        stagedDir,
+        [{manifest, slices: manifest.slices}],
+        channel ? {channel} : {markAsLatest: true}
+      );
+      return stagedDir;
+    };
+
+    // 1. Publish stable snapshot + 3 sequential canary snapshots with retainChannelSnapshots: 1
+    const stableId = '20260420-s2-1.8.2-g111-d1';
+    const c1 = '20260421-canary-g222-d1';
+    const c2 = '20260422-canary-g333-d1';
+    const c3 = '20260423-canary-g444-d1';
+    const c4 = '20260424-canary-g555-d1';
+
+    await publishStagedSnapshots({
+      stagedDir: stageSnapshot('s-stable', stableId, {generatedAt: '2026-04-20T00:00:00.000Z'}),
+      storage,
+      retainChannelSnapshots: 1
+    });
+    const r1 = await publishStagedSnapshots({
+      stagedDir: stageSnapshot('s-c1', c1, {
+        channel: 'canary',
+        generatedAt: '2026-04-21T00:00:00.000Z'
+      }),
+      storage,
+      retainChannelSnapshots: 1
+    });
+    assert.deepEqual(r1.prunedSnapshotIds, []);
+
+    const r2 = await publishStagedSnapshots({
+      stagedDir: stageSnapshot('s-c2', c2, {
+        channel: 'canary',
+        generatedAt: '2026-04-22T00:00:00.000Z'
+      }),
+      storage,
+      retainChannelSnapshots: 1
+    });
+    assert.deepEqual(r2.evictedSnapshotIds, []);
+    assert.deepEqual(r2.prunedSnapshotIds, []);
+    assert.ok(fs.existsSync(path.join(bucketDir, 'by-id', c1, 'manifest.json')));
+
+    // 3rd canary exceeds retainChannelSnapshots=1 -> c1 evicted from index AND pruned from bucket
+    const r3 = await publishStagedSnapshots({
+      stagedDir: stageSnapshot('s-c3', c3, {
+        channel: 'canary',
+        generatedAt: '2026-04-23T00:00:00.000Z'
+      }),
+      storage,
+      retainChannelSnapshots: 1
+    });
+    assert.deepEqual(r3.evictedSnapshotIds, [c1]);
+    assert.deepEqual(r3.prunedSnapshotIds, [c1]);
+    assert.equal(fs.existsSync(path.join(bucketDir, 'by-id', c1)), false);
+    assert.ok(fs.existsSync(path.join(bucketDir, 'by-id', c2, 'manifest.json')));
+    assert.ok(fs.existsSync(path.join(bucketDir, 'by-id', c3, 'manifest.json')));
+    assert.ok(fs.existsSync(path.join(bucketDir, 'by-id', stableId, 'manifest.json')));
+
+    const idxAfter3 = JSON.parse(fs.readFileSync(path.join(bucketDir, 'index.json'), 'utf8'));
+    assert.equal(idxAfter3.snapshots[c1], undefined);
+    assert.ok(idxAfter3.snapshots[c2]);
+    assert.ok(idxAfter3.snapshots[c3]);
+    assert.ok(idxAfter3.snapshots[stableId]);
+    assert.equal(idxAfter3.channels.canary['@react-spectrum/s2'].snapshotId, c3);
+
+    // 4th canary with pruneEvictedChannelArtifacts: false evicts c2 from index but keeps its files
+    const r4 = await publishStagedSnapshots({
+      stagedDir: stageSnapshot('s-c4', c4, {
+        channel: 'canary',
+        generatedAt: '2026-04-24T00:00:00.000Z'
+      }),
+      storage,
+      retainChannelSnapshots: 1,
+      pruneEvictedChannelArtifacts: false
+    });
+    assert.deepEqual(r4.evictedSnapshotIds, [c2]);
+    assert.deepEqual(r4.prunedSnapshotIds, []);
+    assert.ok(fs.existsSync(path.join(bucketDir, 'by-id', c2, 'manifest.json')));
+
+    // 2. S3 storage deletePrefix paginates list-objects-v2, batch-deletes, and rejects non-snapshot prefixes
+    const awsCalls = [];
+    const s3 = createAwsS3Storage('test-bucket', 'snapshots', {
+      execAws: async (_cmd, args) => {
+        awsCalls.push(args);
+        if (args[1] === 'list-objects-v2') {
+          if (args.includes('--continuation-token')) {
+            return {
+              stdout: JSON.stringify({
+                Contents: [{Key: `snapshots/by-id/${c1}/packages/s2.tar.gz`}],
+                IsTruncated: false
+              })
+            };
+          }
+          return {
+            stdout: JSON.stringify({
+              Contents: [{Key: `snapshots/by-id/${c1}/manifest.json`}],
+              IsTruncated: true,
+              NextContinuationToken: 'tok-2'
+            })
+          };
+        }
+        if (args[1] === 'delete-objects') {
+          const fileArg = args[args.indexOf('--delete') + 1];
+          const payload = JSON.parse(fs.readFileSync(fileArg.replace(/^file:\/\//, ''), 'utf8'));
+          assert.deepEqual(
+            payload.Objects.map(o => o.Key),
+            [`snapshots/by-id/${c1}/manifest.json`, `snapshots/by-id/${c1}/packages/s2.tar.gz`]
+          );
+          return {stdout: '{}'};
+        }
+        throw new Error(`Unexpected aws call: ${args.join(' ')}`);
+      }
+    });
+
+    const delRes = await s3.deletePrefix(`by-id/${c1}/`);
+    assert.equal(delRes.deletedCount, 2);
+    assert.equal(awsCalls.filter(a => a[1] === 'list-objects-v2').length, 2);
+    assert.equal(awsCalls.filter(a => a[1] === 'delete-objects').length, 1);
+
+    for (const badPrefix of ['', 'index.json', 'by-id/', 'by-id/../etc/', 'by-id/a/b/']) {
+      await assert.rejects(() => s3.deletePrefix(badPrefix), /Refusing to delete|Unsafe snapshot/);
+      await assert.rejects(
+        () => storage.deletePrefix(badPrefix),
+        /Refusing to delete|Unsafe snapshot/
+      );
+    }
   } finally {
     fs.rmSync(tmp, {recursive: true, force: true});
   }
