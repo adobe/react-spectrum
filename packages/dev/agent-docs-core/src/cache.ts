@@ -12,6 +12,9 @@
 
 import {
   AgentDocsError,
+  API_VERSION,
+  CacheClearResult,
+  CacheStatusResult,
   CatalogEntryIR,
   DEFAULT_SNAPSHOT_CDN_URL,
   EXIT_CODES,
@@ -731,4 +734,132 @@ export function readSliceS2Assets(sliceDir: string): S2Assets | null {
     return null;
   }
   return JSON.parse(fs.readFileSync(p, 'utf8')) as S2Assets;
+}
+
+function measureDirectoryBytes(targetPath: string): number {
+  let total = 0;
+  const stat = fs.lstatSync(targetPath);
+  if (stat.isFile()) {
+    return stat.size;
+  }
+  if (!stat.isDirectory()) {
+    return 0;
+  }
+  for (const entry of fs.readdirSync(targetPath, {withFileTypes: true})) {
+    const child = path.join(targetPath, entry.name);
+    if (entry.isDirectory()) {
+      total += measureDirectoryBytes(child);
+    } else if (entry.isFile()) {
+      total += fs.lstatSync(child).size;
+    }
+  }
+  return total;
+}
+
+function readSliceExtractedAt(slicePath: string): string | null {
+  const readyPath = path.join(slicePath, '.ready.json');
+  if (!fs.existsSync(readyPath)) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(fs.readFileSync(readyPath, 'utf8')) as {extractedAt?: unknown};
+    return typeof parsed.extractedAt === 'string' ? parsed.extractedAt : null;
+  } catch {
+    return null;
+  }
+}
+
+export function getCacheStatus(options: {cacheDir?: string} = {}): CacheStatusResult {
+  const cacheDir = resolveDefaultCacheDir(options.cacheDir);
+  if (!fs.existsSync(cacheDir)) {
+    return {
+      apiVersion: API_VERSION,
+      cacheDir,
+      exists: false,
+      indexCount: 0,
+      manifestCount: 0,
+      sliceCount: 0,
+      totalBytes: 0,
+      slices: []
+    };
+  }
+
+  let indexCount = 0;
+  for (const entry of fs.readdirSync(cacheDir, {withFileTypes: true})) {
+    if (
+      entry.isFile() &&
+      entry.name.startsWith('index-') &&
+      entry.name.endsWith('.json') &&
+      !entry.name.endsWith('.meta.json')
+    ) {
+      indexCount++;
+    }
+  }
+
+  const manifestsDir = path.join(cacheDir, 'manifests');
+  let manifestCount = 0;
+  if (fs.existsSync(manifestsDir)) {
+    for (const entry of fs.readdirSync(manifestsDir, {withFileTypes: true})) {
+      if (entry.isFile() && entry.name.endsWith('.json')) {
+        manifestCount++;
+      }
+    }
+  }
+
+  const slicesDir = path.join(cacheDir, 'slices');
+  const slices: CacheStatusResult['slices'] = [];
+  if (fs.existsSync(slicesDir)) {
+    for (const entry of fs.readdirSync(slicesDir, {withFileTypes: true})) {
+      if (!entry.isDirectory() || entry.name.includes('.tmp-')) {
+        continue;
+      }
+      const slicePath = path.join(slicesDir, entry.name);
+      slices.push({
+        key: entry.name,
+        bytes: measureDirectoryBytes(slicePath),
+        extractedAt: readSliceExtractedAt(slicePath)
+      });
+    }
+    slices.sort((a, b) => a.key.localeCompare(b.key));
+  }
+
+  return {
+    apiVersion: API_VERSION,
+    cacheDir,
+    exists: true,
+    indexCount,
+    manifestCount,
+    sliceCount: slices.length,
+    totalBytes: measureDirectoryBytes(cacheDir),
+    slices
+  };
+}
+
+export function clearCacheDir(options: {cacheDir?: string} = {}): CacheClearResult {
+  const cacheDir = resolveDefaultCacheDir(options.cacheDir);
+  const resolved = path.resolve(cacheDir);
+  const home = path.resolve(os.homedir());
+  if (path.dirname(resolved) === resolved || resolved === home) {
+    throw new AgentDocsError(
+      'ERR_INVALID_ARGS',
+      `Refusing to clear unsafe cache directory '${resolved}'.`,
+      EXIT_CODES.INVALID_ARGS
+    );
+  }
+  const status = getCacheStatus({cacheDir: resolved});
+  if (!status.exists) {
+    return {
+      apiVersion: API_VERSION,
+      cacheDir: resolved,
+      cleared: false,
+      removedBytes: 0
+    };
+  }
+  fs.rmSync(resolved, {recursive: true, force: true});
+  return {
+    apiVersion: API_VERSION,
+    cacheDir: resolved,
+    cleared: true,
+    removedBytes: status.totalBytes
+  };
 }

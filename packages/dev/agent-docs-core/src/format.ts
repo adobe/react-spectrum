@@ -11,6 +11,8 @@
  */
 
 import {
+  CacheClearResult,
+  CacheStatusResult,
   DocWarning,
   PrefetchDocsResult,
   ReadDocsResult,
@@ -187,4 +189,39 @@ export function formatPrefetchMarkdown(result: PrefetchDocsResult): string {
     );
   }
   return lines.join('\n') + '\n';
+}
+
+function formatHumanBytes(bytes: number): string {
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KiB`;
+  }
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MiB`;
+}
+
+export function formatCacheStatusMarkdown(result: CacheStatusResult): string {
+  const lines: string[] = [
+    '# Documentation Cache Status',
+    `Cache directory: \`${result.cacheDir}\``,
+    `Status: ${result.exists ? 'present' : 'empty (not created)'}`,
+    `Total size: ${formatHumanBytes(result.totalBytes)} (${result.sliceCount} slice(s), ${result.manifestCount} manifest(s), ${result.indexCount} index(es))`
+  ];
+  if (result.slices.length > 0) {
+    lines.push('');
+    lines.push('## Cached Slices');
+    for (const s of result.slices) {
+      const ts = s.extractedAt ? `, extracted ${s.extractedAt}` : '';
+      lines.push(`- \`${s.key}\` (${formatHumanBytes(s.bytes)}${ts})`);
+    }
+  }
+  return lines.join('\n') + '\n';
+}
+
+export function formatCacheClearMarkdown(result: CacheClearResult): string {
+  if (!result.cleared) {
+    return `Cache directory \`${result.cacheDir}\` was already empty.\n`;
+  }
+  return `Cleared documentation cache at \`${result.cacheDir}\` (freed ${formatHumanBytes(result.removedBytes)}).\n`;
 }

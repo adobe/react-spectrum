@@ -2284,6 +2284,18 @@ export function updateSnapshotsIndex(outRoot, snapshotResults, options = {}) {
       catalogBytes: manifest.files['catalog.tar.gz']?.bytes
     };
 
+    let channelName =
+      typeof options.channel === 'string' && options.channel.trim() ? options.channel.trim() : null;
+
+    if (channelName) {
+      indexData.channels ??= {};
+      indexData.channels[channelName] ??= {};
+      for (let [pkgName, sliceInfo] of Object.entries(slices)) {
+        indexData.channels[channelName][pkgName] = {...sliceInfo};
+      }
+      continue;
+    }
+
     for (let [pkgName, sliceInfo] of Object.entries(slices)) {
       if (!indexData.packages[pkgName]) {
         indexData.packages[pkgName] = {};

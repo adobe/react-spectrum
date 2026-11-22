@@ -42,14 +42,21 @@ export async function extractGitRefSnapshot({
   libraries,
   filterSlugs = null,
   markAsLatest = false,
+  channel = null,
   repoRoot = REPO_ROOT
 }) {
+  let normalizedChannel =
+    typeof channel === 'string' && channel.trim()
+      ? channel.trim().replace(/[^a-zA-Z0-9._-]/g, '-')
+      : null;
   let extractorCommit = git(['rev-parse', '--short=12', 'HEAD'], repoRoot);
   if (!gitRef || gitRef === 'HEAD') {
     let sourceCommit = git(['rev-parse', '--short=12', 'HEAD'], repoRoot);
     let sourceDate = git(['show', '-s', '--format=%cI', 'HEAD'], repoRoot);
     let dateStr = sourceDate.slice(0, 10).replace(/-/g, '');
-    let snapshotId = `${dateStr}-g${sourceCommit}-d${docRevision}`;
+    let snapshotId = normalizedChannel
+      ? `${dateStr}-${normalizedChannel}-g${sourceCommit}-d${docRevision}`
+      : `${dateStr}-g${sourceCommit}-d${docRevision}`;
     let res = await generateSnapshotFromTarget({
       targetRoot: repoRoot,
       repoRoot,
@@ -63,7 +70,10 @@ export async function extractGitRefSnapshot({
       libraries,
       filterSlugs
     });
-    updateSnapshotsIndex(outRoot, [res], {markAsLatest});
+    updateSnapshotsIndex(outRoot, [res], {
+      markAsLatest: !normalizedChannel && markAsLatest,
+      channel: normalizedChannel
+    });
     return res;
   }
 
@@ -71,7 +81,9 @@ export async function extractGitRefSnapshot({
   let commitDateIso = git(['show', '-s', '--format=%cI', `${gitRef}^{commit}`], repoRoot);
   let dateStr = commitDateIso.slice(0, 10).replace(/-/g, '');
   let safeTagSlug = gitRef.replace(/^@/, '').replace(/[/@]/g, '-');
-  let snapshotId = `${dateStr}-${safeTagSlug}-g${sourceCommit}-d${docRevision}`;
+  let snapshotId = normalizedChannel
+    ? `${dateStr}-${normalizedChannel}-${safeTagSlug}-g${sourceCommit}-d${docRevision}`
+    : `${dateStr}-${safeTagSlug}-g${sourceCommit}-d${docRevision}`;
 
   let tmpWorktree = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-doc-snapshot-'));
   try {
@@ -89,7 +101,10 @@ export async function extractGitRefSnapshot({
       libraries,
       filterSlugs
     });
-    updateSnapshotsIndex(outRoot, [res], {markAsLatest});
+    updateSnapshotsIndex(outRoot, [res], {
+      markAsLatest: !normalizedChannel && markAsLatest,
+      channel: normalizedChannel
+    });
     return res;
   } finally {
     try {
@@ -227,6 +242,7 @@ async function main() {
     options: {
       out: {type: 'string'},
       tag: {type: 'string'},
+      channel: {type: 'string'},
       'doc-revision': {type: 'string'},
       libraries: {type: 'string'},
       'filter-slugs': {type: 'string'},
@@ -297,13 +313,15 @@ async function main() {
   }
 
   let ref = values.tag || 'HEAD';
+  let channel = values.channel ? values.channel.trim() || null : null;
   let res = await extractGitRefSnapshot({
     gitRef: ref,
     outRoot,
     docRevision,
     libraries,
     filterSlugs,
-    markAsLatest: ref === 'HEAD'
+    markAsLatest: !channel && ref === 'HEAD',
+    channel
   });
   console.log(
     `Generated snapshot ${res.manifest.snapshotId} (${res.entryCount} entries) -> ${outRoot}`

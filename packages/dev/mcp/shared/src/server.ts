@@ -438,12 +438,12 @@ export async function createAgentDocsMcpServer(
       .string()
       .optional()
       .describe(
-        'Optional explicit version override (e.g. "latest" or "@react-spectrum/s2@1.8.2").'
+        'Optional explicit version override (e.g. "latest", "canary", or "@react-spectrum/s2@1.8.2").'
       ),
     packageVersions: z
       .record(z.string(), z.string())
       .optional()
-      .describe('Optional map of package names to exact semver versions (or "latest").'),
+      .describe('Optional map of package names to exact semver versions (or "latest" / "canary").'),
     snapshot: z.string().optional().describe('Optional immutable snapshotId override.'),
     resolution: RESOLUTION_SCHEMA.optional().describe(
       'Optional reusable resolution state returned by resolve_versions. Pass it unmodified; do not combine with cwd, version, packageVersions, or snapshot.'
@@ -764,6 +764,12 @@ export async function createAgentDocsMcpServer(
             .enum(['icons', 'illustrations'])
             .optional()
             .describe('Asset set to search: "icons" (default) or "illustrations".'),
+          style: z
+            .enum(['linear', 'gradient', 'gradient1', 'gradient2'])
+            .optional()
+            .describe(
+              'Optional illustration style filter (only valid with kind: "illustrations"): "linear", "gradient", "gradient1", or "gradient2".'
+            ),
           format: FORMAT_ENUM.optional().describe('Output format: "markdown" (default) or "json".'),
           ...commonContextSchema
         },
@@ -782,7 +788,8 @@ export async function createAgentDocsMcpServer(
           const res = await queryIcons({
             ...queryOpts,
             terms,
-            illustrations: args.kind === 'illustrations'
+            illustrations: args.kind === 'illustrations',
+            illustrationStyle: args.style
           });
           return toolSuccessText(
             args.format === 'json' ? formatQueryJson(res, args.includeResolution) : res.markdown

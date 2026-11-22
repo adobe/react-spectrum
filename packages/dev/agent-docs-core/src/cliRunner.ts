@@ -16,11 +16,15 @@ import {
   BrandId,
   CommonQueryOptions,
   EXIT_CODES,
+  IllustrationStyleFilter,
   LibraryId,
   SectionFilter
 } from './types.js';
+import {clearCacheDir, getCacheStatus, resolveDefaultCacheDir} from './cache.js';
 import {fileURLToPath} from 'node:url';
 import {
+  formatCacheClearMarkdown,
+  formatCacheStatusMarkdown,
   formatPrefetchMarkdown,
   formatQueryJson,
   formatReadOutput,
@@ -87,7 +91,7 @@ function renderHelpText(brand: BrandId, version: string): string {
     '  --cwd <dir>              Resolve workspace dependencies from <dir> (default: process.cwd())'
   );
   lines.push(
-    '  --version <spec>         Override package version (repeatable; e.g. 1.2.0, latest, @react-spectrum/s2@1.2.0)'
+    '  --version <spec>         Override package version (repeatable; e.g. 1.2.0, latest, canary, @react-spectrum/s2@1.2.0)'
   );
   lines.push('  --snapshot <id>          Pin an exact immutable snapshot ID');
   lines.push(
@@ -140,6 +144,30 @@ function parseLibraryArg(raw: string | undefined): LibraryId | undefined {
   throw new AgentDocsError(
     'ERR_INVALID_ARGS',
     `Unsupported --library '${raw}'. Expected one of: s2, rac, react-aria, react-stately, internationalized.`,
+    EXIT_CODES.INVALID_ARGS
+  );
+}
+
+function parseIllustrationStyleArg(raw: string | undefined): IllustrationStyleFilter | undefined {
+  if (!raw) {
+    return undefined;
+  }
+  const lower = raw.trim().toLowerCase();
+  if (lower === 'linear') {
+    return 'linear';
+  }
+  if (lower === 'gradient') {
+    return 'gradient';
+  }
+  if (lower === 'gradient1' || lower === 'generic1' || lower === 'gradient/generic1') {
+    return 'gradient1';
+  }
+  if (lower === 'gradient2' || lower === 'generic2' || lower === 'gradient/generic2') {
+    return 'gradient2';
+  }
+  throw new AgentDocsError(
+    'ERR_INVALID_ARGS',
+    `Unsupported --style '${raw}'. Expected one of: linear, gradient, gradient1, gradient2.`,
     EXIT_CODES.INVALID_ARGS
   );
 }
@@ -244,8 +272,9 @@ const SUBCOMMAND_ALLOWED_FLAGS: Record<string, ReadonlySet<string>> = {
     'include-deprecated'
   ]),
   tokens: new Set([...COMMON_COMMAND_FLAGS, 'property']),
-  icons: new Set([...COMMON_COMMAND_FLAGS, 'illustrations']),
-  prefetch: new Set(COMMON_COMMAND_FLAGS)
+  icons: new Set([...COMMON_COMMAND_FLAGS, 'illustrations', 'style']),
+  prefetch: new Set(COMMON_COMMAND_FLAGS),
+  cache: new Set(['help', 'json', 'cache-dir'])
 };
 
 function validateSubcommandFlags(
@@ -342,6 +371,7 @@ export async function runAgentDocsCli(
         'include-deprecated': {type: 'boolean'},
         property: {type: 'string'},
         illustrations: {type: 'boolean'},
+        style: {type: 'string'},
         snapshot: {type: 'string'},
         'strict-version': {type: 'boolean'},
         offline: {type: 'boolean'},
@@ -515,7 +545,8 @@ export async function runAgentDocsCli(
         const result = await queryIcons({
           ...common,
           terms: restPositionals,
-          illustrations: Boolean(parsed.values.illustrations)
+          illustrations: Boolean(parsed.values.illustrations),
+          illustrationStyle: parseIllustrationStyleArg(parsed.values.style)
         });
         if (wantJson) {
           writeOut(formatQueryJson(result, includeResolution));
@@ -533,6 +564,49 @@ export async function runAgentDocsCli(
           writeOut(formatPrefetchMarkdown(result));
         }
         return EXIT_CODES.OK;
+      }
+
+      case 'cache': {
+        if (restPositionals.length > 1) {
+          throw new AgentDocsError(
+            'ERR_INVALID_ARGS',
+            `Usage: ${cliCommandPrefix} cache [status|path|clear] [--cache-dir dir] [--json]`,
+            EXIT_CODES.INVALID_ARGS
+          );
+        }
+        const action = restPositionals[0] || 'status';
+        if (action === 'status') {
+          const result = getCacheStatus({cacheDir: parsed.values['cache-dir']});
+          if (wantJson) {
+            writeOut(JSON.stringify(result, null, 2) + '\n');
+          } else {
+            writeOut(formatCacheStatusMarkdown(result));
+          }
+          return EXIT_CODES.OK;
+        }
+        if (action === 'path') {
+          const cacheDir = resolveDefaultCacheDir(parsed.values['cache-dir']);
+          if (wantJson) {
+            writeOut(JSON.stringify({apiVersion: API_VERSION, cacheDir}, null, 2) + '\n');
+          } else {
+            writeOut(`${cacheDir}\n`);
+          }
+          return EXIT_CODES.OK;
+        }
+        if (action === 'clear') {
+          const result = clearCacheDir({cacheDir: parsed.values['cache-dir']});
+          if (wantJson) {
+            writeOut(JSON.stringify(result, null, 2) + '\n');
+          } else {
+            writeOut(formatCacheClearMarkdown(result));
+          }
+          return EXIT_CODES.OK;
+        }
+        throw new AgentDocsError(
+          'ERR_INVALID_ARGS',
+          `Unknown cache action '${action}'. Expected one of: status, path, clear.`,
+          EXIT_CODES.INVALID_ARGS
+        );
       }
 
       default:

@@ -181,6 +181,17 @@ export function mergeSnapshotIndices(remoteIndex, stagedIndex) {
     }
   }
 
+  let mergedChannels = {};
+  for (let [channelName, pkgMap] of Object.entries(base.channels || {})) {
+    mergedChannels[channelName] = {...(pkgMap || {})};
+  }
+  for (let [channelName, pkgMap] of Object.entries(stagedIndex.channels || {})) {
+    mergedChannels[channelName] = {
+      ...(mergedChannels[channelName] || {}),
+      ...(pkgMap || {})
+    };
+  }
+
   return {
     schemaVersion: Math.max(base.schemaVersion || 1, stagedIndex.schemaVersion || 1),
     minReaderSchemaVersion: Math.max(
@@ -189,6 +200,7 @@ export function mergeSnapshotIndices(remoteIndex, stagedIndex) {
     ),
     updatedAt: new Date().toISOString(),
     latest: mergedLatest,
+    ...(Object.keys(mergedChannels).length > 0 ? {channels: mergedChannels} : {}),
     snapshots: mergedSnapshots,
     packages: mergedPackages
   };
@@ -635,10 +647,20 @@ export async function publishStagedSnapshots({
         subPackages[pkg] = kept;
       }
     }
+    let subChannels = {};
+    for (let [channelName, pkgMap] of Object.entries(fullStagedIndex.channels || {})) {
+      let kept = Object.fromEntries(
+        Object.entries(pkgMap || {}).filter(([, ptr]) => idSet.has(ptr.snapshotId))
+      );
+      if (Object.keys(kept).length > 0) {
+        subChannels[channelName] = kept;
+      }
+    }
     filteredStagedIndex = {
       ...fullStagedIndex,
       snapshots: subSnapshots,
-      packages: subPackages
+      packages: subPackages,
+      ...(Object.keys(subChannels).length > 0 ? {channels: subChannels} : {channels: undefined})
     };
   }
 

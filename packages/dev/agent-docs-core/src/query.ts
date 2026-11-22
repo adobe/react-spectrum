@@ -23,6 +23,7 @@ import {
   EXIT_CODES,
   ExportApiIR,
   IconsDocsResult,
+  IllustrationStyleFilter,
   LibraryId,
   PackageSlicePointer,
   PrefetchDocsResult,
@@ -109,10 +110,17 @@ async function openSliceForProvenance(
   let ptr: PackageSlicePointer | undefined =
     index.packages[prov.packageName]?.[prov.packageVersion];
   if (!ptr || ptr.snapshotId !== prov.snapshotId) {
-    const snapshot = index.snapshots[prov.snapshotId];
-    ptr = snapshot
-      ? (await loadSnapshotManifest(snapshot, options)).slices[prov.packageName]
-      : undefined;
+    const channelPtr = Object.values(index.channels || {})
+      .map(ch => ch[prov.packageName])
+      .find(candidate => candidate && candidate.snapshotId === prov.snapshotId);
+    if (channelPtr) {
+      ptr = channelPtr;
+    } else {
+      const snapshot = index.snapshots[prov.snapshotId];
+      ptr = snapshot
+        ? (await loadSnapshotManifest(snapshot, options)).slices[prov.packageName]
+        : undefined;
+    }
   }
   if (!ptr) {
     throw new AgentDocsError(
@@ -1793,9 +1801,33 @@ export async function queryTokens(options: QueryTokensOptions = {}): Promise<Tok
 export interface QueryIconsOptions extends CommonQueryOptions {
   terms: string | string[];
   illustrations?: boolean;
+  illustrationStyle?: IllustrationStyleFilter;
+}
+
+function matchesIllustrationStyle(canonicalId: string, style: IllustrationStyleFilter): boolean {
+  if (style === 'linear') {
+    return canonicalId.startsWith('linear/');
+  }
+  if (style === 'gradient') {
+    return canonicalId.startsWith('gradient/');
+  }
+  if (style === 'gradient1') {
+    return canonicalId.startsWith('gradient/generic1/');
+  }
+  if (style === 'gradient2') {
+    return canonicalId.startsWith('gradient/generic2/');
+  }
+  return true;
 }
 
 export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsResult> {
+  if (options.illustrationStyle && !options.illustrations) {
+    throw new AgentDocsError(
+      'ERR_INVALID_ARGS',
+      "Illustration style filter ('--style' / 'style') can only be used when searching illustrations ('--illustrations' / kind: 'illustrations').",
+      EXIT_CODES.INVALID_ARGS
+    );
+  }
   const rawTerms = Array.isArray(options.terms) ? options.terms : [options.terms];
   const normalized = Array.from(
     new Set(
@@ -1841,13 +1873,19 @@ export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsR
   const kind = options.illustrations ? 'illustrations' : 'icons';
   const illustrationSubpaths = new Map<string, string>();
   const allNames = options.illustrations
-    ? (assets.illustrations || []).map(item => {
-        const canonicalId = item.id.includes('/')
-          ? item.id
-          : item.subpath.replace(/^@react-spectrum\/s2\/illustrations\//, '') || item.id;
-        illustrationSubpaths.set(canonicalId, item.subpath);
-        return canonicalId;
-      })
+    ? (assets.illustrations || [])
+        .map(item => {
+          const canonicalId = item.id.includes('/')
+            ? item.id
+            : item.subpath.replace(/^@react-spectrum\/s2\/illustrations\//, '') || item.id;
+          illustrationSubpaths.set(canonicalId, item.subpath);
+          return canonicalId;
+        })
+        .filter(
+          canonicalId =>
+            !options.illustrationStyle ||
+            matchesIllustrationStyle(canonicalId, options.illustrationStyle)
+        )
     : assets.icons || [];
   const aliases: Record<string, string[]> = options.illustrations
     ? {}
@@ -1911,9 +1949,10 @@ export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsR
     }
   }
 
+  const styleNote = options.illustrationStyle ? ` (style: ${options.illustrationStyle})` : '';
   const mdLines: string[] = [
     `# S2 ${options.illustrations ? 'Illustrations' : 'Workflow Icons'} (\`${s2Prov.packageName}@${s2Prov.packageVersion}\`)`,
-    `Matched ${sortedMatches.length} of ${allNames.length} ${kind} for: ${normalized.map(t => `\`${t}\``).join(', ')}`,
+    `Matched ${sortedMatches.length} of ${allNames.length} ${kind}${styleNote} for: ${normalized.map(t => `\`${t}\``).join(', ')}`,
     '',
     ...(importExample ? ['```tsx', importExample, '```', ''] : []),
     sortedMatches.length > 0
@@ -1928,6 +1967,7 @@ export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsR
     apiVersion: API_VERSION,
     terms: normalized,
     assetKind: kind,
+    ...(options.illustrationStyle ? {styleFilter: options.illustrationStyle} : {}),
     provenance: {
       packageName: s2Prov.packageName,
       packageVersion: s2Prov.packageVersion,
@@ -2072,11 +2112,13 @@ export function getCapabilityManifest(
           },
           {
             name: 'icons',
-            summary: 'Search S2 workflow icons and linear illustrations by name or alias.',
-            usage: `${cliName} icons <term...> [--illustrations] [--json]`,
+            summary:
+              'Search S2 workflow icons and illustrations (linear/gradient) by name or alias.',
+            usage: `${cliName} icons <term...> [--illustrations] [--style linear|gradient|gradient1|gradient2] [--json]`,
             flags: [
               '--cwd',
               '--illustrations',
+              '--style',
               '--version',
               '--snapshot',
               '--offline',
@@ -2099,6 +2141,12 @@ export function getCapabilityManifest(
         'Download and SHA-256 verify documentation slices for the workspace into the user cache for offline/CI use.',
       usage: `${cliName} prefetch [--cwd path] [--cache-dir dir] [--json]`,
       flags: ['--cwd', '--cache-dir', '--version', '--snapshot', '--json', '--include-resolution']
+    },
+    {
+      name: 'cache',
+      summary: 'Inspect, print the path of, or clear the local documentation cache.',
+      usage: `${cliName} cache [status|path|clear] [--cache-dir dir] [--json]`,
+      flags: ['--cache-dir', '--json']
     },
     {
       name: 'manifest',

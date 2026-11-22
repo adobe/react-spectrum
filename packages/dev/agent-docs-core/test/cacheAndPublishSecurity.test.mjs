@@ -917,3 +917,101 @@ test('loadSnapshotIndex sends If-None-Match ETag on refresh and handles 304 Not 
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });
+
+test('canary channel index updates and CAS merges never overwrite stable latest or packages pointers', async () => {
+  const {mergeSnapshotIndices} = await publishModPromise;
+  const {updateSnapshotsIndex} = await import(
+    pathToFileURL(path.join(REPO_ROOT, 'packages/dev/s2-docs/scripts/lib/snapshotExtractor.mjs'))
+      .href
+  );
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-canary-publish-'));
+  try {
+    const outRoot = path.join(tmp, 'snapshots');
+    const makeExtraction = (snapshotId, pkgVer, sha) => {
+      const snapDir = path.join(outRoot, 'by-id', snapshotId);
+      fs.mkdirSync(snapDir, {recursive: true});
+      const manifest = {
+        schemaVersion: 1,
+        snapshotId,
+        docRevision: 1,
+        generatedAt: '2026-04-20T00:00:00.000Z',
+        sourceTag: null,
+        sourceCommit: 'abcdef123456',
+        extractorCommit: 'abcdef123456',
+        docsLayouts: {s2: 's2-docs'},
+        packages: {'@react-spectrum/s2': pkgVer},
+        files: {'catalog.tar.gz': {sha256: sha, bytes: 64}},
+        slices: {}
+      };
+      fs.writeFileSync(path.join(snapDir, 'manifest.json'), JSON.stringify(manifest));
+      return {
+        manifest,
+        slices: {
+          '@react-spectrum/s2': {
+            packageName: '@react-spectrum/s2',
+            packageVersion: pkgVer,
+            snapshotId,
+            docRevision: 1,
+            sliceRelPath: `by-id/${snapshotId}/packages/s2.tar.gz`,
+            sliceSha256: sha,
+            sliceBytes: 64,
+            entryCount: 1,
+            verifiedEquivalentPatches: []
+          }
+        }
+      };
+    };
+
+    const stableExt = makeExtraction('20260420-s2-1.8.2-g111-d1', '1.8.2', 'a'.repeat(64));
+    updateSnapshotsIndex(outRoot, [stableExt], {markAsLatest: true});
+
+    const canaryExt = makeExtraction('20260421-canary-g222-d1', '1.8.2', 'b'.repeat(64));
+    const idx = updateSnapshotsIndex(outRoot, [canaryExt], {channel: 'canary'});
+
+    assert.equal(idx.latest['@react-spectrum/s2'], '1.8.2');
+    assert.equal(
+      idx.packages['@react-spectrum/s2']['1.8.2'].snapshotId,
+      '20260420-s2-1.8.2-g111-d1',
+      'Stable packages pointer must not be overwritten by canary'
+    );
+    assert.equal(
+      idx.channels?.canary?.['@react-spectrum/s2']?.snapshotId,
+      '20260421-canary-g222-d1'
+    );
+    assert.ok(idx.snapshots['20260421-canary-g222-d1']);
+
+    // Merging a canary-only staged index into a stable remote index preserves stable pointers and adds channels.canary
+    const remoteStable = {
+      schemaVersion: 1,
+      minReaderSchemaVersion: 1,
+      updatedAt: '2026-04-20T00:00:00.000Z',
+      latest: {'@react-spectrum/s2': '1.8.2'},
+      snapshots: {'20260420-s2-1.8.2-g111-d1': idx.snapshots['20260420-s2-1.8.2-g111-d1']},
+      packages: {
+        '@react-spectrum/s2': {'1.8.2': idx.packages['@react-spectrum/s2']['1.8.2']}
+      }
+    };
+    const stagedCanary = {
+      schemaVersion: 1,
+      minReaderSchemaVersion: 1,
+      updatedAt: '2026-04-21T00:00:00.000Z',
+      latest: {},
+      channels: {canary: {'@react-spectrum/s2': idx.channels.canary['@react-spectrum/s2']}},
+      snapshots: {'20260421-canary-g222-d1': idx.snapshots['20260421-canary-g222-d1']},
+      packages: {}
+    };
+    const merged = mergeSnapshotIndices(remoteStable, stagedCanary);
+    assert.equal(merged.latest['@react-spectrum/s2'], '1.8.2');
+    assert.equal(
+      merged.packages['@react-spectrum/s2']['1.8.2'].snapshotId,
+      '20260420-s2-1.8.2-g111-d1'
+    );
+    assert.equal(
+      merged.channels?.canary?.['@react-spectrum/s2']?.snapshotId,
+      '20260421-canary-g222-d1'
+    );
+    assert.equal(remoteStable.channels, undefined, 'remoteStable must not be mutated');
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});

@@ -99,6 +99,7 @@ export interface SnapshotIndex {
   minReaderSchemaVersion: number;
   updatedAt: string;
   latest: Record<string, string>;
+  channels?: Record<string, Record<string, PackageSlicePointer>>;
   packages: Record<string, Record<string, PackageSlicePointer>>;
   snapshots: Record<string, SnapshotSummaryInfo>;
 }
@@ -411,10 +412,13 @@ export interface TokensDocsResult {
   markdown: string;
 }
 
+export type IllustrationStyleFilter = 'linear' | 'gradient' | 'gradient1' | 'gradient2';
+
 export interface IconsDocsResult {
   apiVersion: typeof API_VERSION;
   terms: string[];
   assetKind: 'icons' | 'illustrations';
+  styleFilter?: IllustrationStyleFilter | null;
   provenance: {
     packageName: string;
     packageVersion: string;
@@ -429,6 +433,28 @@ export interface IconsDocsResult {
   unmatchedTerms: string[];
   importExample: string;
   markdown: string;
+}
+
+export interface CacheStatusResult {
+  apiVersion: typeof API_VERSION;
+  cacheDir: string;
+  exists: boolean;
+  indexCount: number;
+  manifestCount: number;
+  sliceCount: number;
+  totalBytes: number;
+  slices: Array<{
+    key: string;
+    bytes: number;
+    extractedAt: string | null;
+  }>;
+}
+
+export interface CacheClearResult {
+  apiVersion: typeof API_VERSION;
+  cacheDir: string;
+  cleared: boolean;
+  removedBytes: number;
 }
 
 export interface PrefetchDocsResult {

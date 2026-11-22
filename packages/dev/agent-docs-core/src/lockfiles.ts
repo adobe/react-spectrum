@@ -40,23 +40,98 @@ function isExactSemver(ver: string): boolean {
   return /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(ver);
 }
 
+interface NpmLockPackageEntry {
+  version?: string;
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  optionalDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+}
+
+interface NpmV1DepEntry {
+  version?: string;
+  dependencies?: Record<string, NpmV1DepEntry>;
+}
+
+function collectEntryDeclaredDeps(entry: NpmLockPackageEntry | undefined): string[] {
+  if (!entry) {
+    return [];
+  }
+  return [
+    ...Object.keys(entry.dependencies || {}),
+    ...Object.keys(entry.devDependencies || {}),
+    ...Object.keys(entry.optionalDependencies || {}),
+    ...Object.keys(entry.peerDependencies || {})
+  ];
+}
+
 /**
- * Parses npm `package-lock.json` v2/v3 `packages` map relative to `workspaceDir`.
- * Returns null when the lockfile belongs to an ancestor project that doesn't include the workspace.
+ * Parses npm `package-lock.json` v2/v3 `packages` map (and v1 `dependencies` tree at root)
+ * relative to `workspaceDir`. Returns null when the lockfile belongs to an ancestor project that
+ * doesn't include the workspace, and avoids attributing root-hoisted sibling workspace packages
+ * that the target workspace didn't declare.
  */
 function parseNpmPackageLock(
   lockPath: string,
   lockRootDir: string,
   workspaceDir: string,
+  declaredWorkspaceSpecs: Record<string, string>,
   candidatePkgNames: string[]
 ): LockfileResolutionResult | null {
   const json = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
-  const packagesMap: Record<string, {version?: string}> = json.packages || {};
   const wsRel = normalizePosixRel(lockRootDir, workspaceDir);
+
+  // npm lockfile v1 (`dependencies` tree, no `packages` map; npm v1 did not support workspaces)
+  if (!json.packages) {
+    if (wsRel !== '.') {
+      return null;
+    }
+    if (!json.dependencies || typeof json.dependencies !== 'object') {
+      return {
+        lockfilePath: lockPath,
+        lockfileKind: 'unsupported',
+        workspacePackages: {},
+        nestedPackages: {}
+      };
+    }
+    const depsMap = json.dependencies as Record<string, NpmV1DepEntry>;
+    const workspacePackages: Record<string, string> = {};
+    const nestedPackages: Record<string, Record<string, string>> = {};
+    for (const pkgName of candidatePkgNames) {
+      const entry = depsMap[pkgName];
+      if (!entry?.version || !isExactSemver(entry.version)) {
+        continue;
+      }
+      workspacePackages[pkgName] = entry.version;
+      for (const nestedCandidate of candidatePkgNames) {
+        if (nestedCandidate === pkgName) {
+          continue;
+        }
+        const nestedVer = entry.dependencies?.[nestedCandidate]?.version;
+        if (nestedVer && isExactSemver(nestedVer)) {
+          nestedPackages[pkgName] ??= {};
+          nestedPackages[pkgName][nestedCandidate] = nestedVer;
+        }
+      }
+    }
+    return {
+      lockfilePath: lockPath,
+      lockfileKind: 'npm',
+      workspacePackages,
+      nestedPackages
+    };
+  }
+
+  const packagesMap: Record<string, NpmLockPackageEntry> = json.packages;
   if (wsRel !== '.' && !packagesMap[wsRel]) {
     return null;
   }
   const wsPrefix = wsRel === '.' ? '' : `${wsRel}/`;
+  const wsDeclaredSet = new Set<string>([
+    ...Object.keys(declaredWorkspaceSpecs),
+    ...collectEntryDeclaredDeps(packagesMap[wsRel])
+  ]);
+  const restrictRootHoistToDeclared = wsRel !== '.';
 
   const workspacePackages: Record<string, string> = {};
   const nestedPackages: Record<string, Record<string, string>> = {};
@@ -64,14 +139,17 @@ function parseNpmPackageLock(
   for (const pkgName of candidatePkgNames) {
     const localKey = `${wsPrefix}node_modules/${pkgName}`;
     const rootKey = `node_modules/${pkgName}`;
-    const entry = packagesMap[localKey] || packagesMap[rootKey];
-    const resolvedBaseKey = packagesMap[localKey]
-      ? localKey
-      : packagesMap[rootKey]
-        ? rootKey
-        : null;
+    const hasLocal = Boolean(packagesMap[localKey]?.version);
+    const canUseRoot = !restrictRootHoistToDeclared || wsDeclaredSet.has(pkgName);
+    const hasRoot = canUseRoot && Boolean(packagesMap[rootKey]?.version);
+    const resolvedBaseKey = hasLocal ? localKey : hasRoot ? rootKey : null;
+    const entry = resolvedBaseKey ? packagesMap[resolvedBaseKey] : undefined;
     if (entry?.version && resolvedBaseKey) {
       workspacePackages[pkgName] = entry.version;
+      const entryDeps = new Set([
+        ...Object.keys(entry.dependencies || {}),
+        ...Object.keys(entry.optionalDependencies || {})
+      ]);
       for (const nestedCandidate of candidatePkgNames) {
         if (nestedCandidate === pkgName) {
           continue;
@@ -80,6 +158,13 @@ function parseNpmPackageLock(
         if (packagesMap[nestedKey]?.version) {
           nestedPackages[pkgName] ??= {};
           nestedPackages[pkgName][nestedCandidate] = packagesMap[nestedKey].version!;
+        } else if (
+          entryDeps.has(nestedCandidate) &&
+          packagesMap[`node_modules/${nestedCandidate}`]?.version
+        ) {
+          nestedPackages[pkgName] ??= {};
+          nestedPackages[pkgName][nestedCandidate] =
+            packagesMap[`node_modules/${nestedCandidate}`].version!;
         }
       }
     }
@@ -119,28 +204,33 @@ function parsePnpmLock(
     const importersIdx = lines.findIndex(l => /^importers:\s*$/.test(l));
     if (importersIdx !== -1) {
       let targetIdx = -1;
+      let targetIsEmptyInline = false;
       for (let i = importersIdx + 1; i < lines.length; i++) {
         if (/^\S/.test(lines[i])) {
           break;
         }
-        const m = lines[i].match(/^ {2}['"]?([^'"\s:]+)['"]?:\s*$/);
-        if (m && m[1] === wsRel) {
+        const m = lines[i].match(/^ {2}(?:['"]([^'"]+)['"]|([^\s:'"]+)):\s*(\{\})?\s*$/);
+        const importerKey = m ? (m[1] ?? m[2]) : null;
+        if (importerKey === wsRel) {
           targetIdx = i + 1;
+          targetIsEmptyInline = Boolean(m?.[3]);
           break;
         }
       }
       if (targetIdx === -1) {
         return null;
       }
-      parsePnpmDepBlockLines(
-        lines.slice(targetIdx),
-        6,
-        8,
-        candidateSet,
-        workspacePackages,
-        workspaceRawVersions,
-        true
-      );
+      if (!targetIsEmptyInline) {
+        parsePnpmDepBlockLines(
+          lines.slice(targetIdx),
+          6,
+          8,
+          candidateSet,
+          workspacePackages,
+          workspaceRawVersions,
+          true
+        );
+      }
     }
   } else {
     parsePnpmDepBlockLines(
@@ -188,7 +278,10 @@ function parsePnpmDepBlockLines(
   const verLineRe = new RegExp(`^ {${versionIndent}}version:\\s*(.+)$`);
 
   for (const line of lines) {
-    if (stopAtImporterIndent && (/^ {2}['"]?[^'"\s:]+['"]?:\s*$/.test(line) || /^\S/.test(line))) {
+    if (
+      stopAtImporterIndent &&
+      (/^ {2}(?:['"][^'"]+['"]|[^\s:'"]+):\s*(?:\{\})?\s*$/.test(line) || /^\S/.test(line))
+    ) {
       break;
     }
     if (blockHeaderRe.test(line)) {
@@ -528,11 +621,23 @@ export function resolveFromWorkspaceLockfile(
     const isAncestor = curr !== startDir;
     const npmLock = path.join(curr, 'package-lock.json');
     if (fs.existsSync(npmLock)) {
-      return parseNpmPackageLock(npmLock, curr, startDir, candidatePkgNames);
+      return parseNpmPackageLock(
+        npmLock,
+        curr,
+        startDir,
+        declaredWorkspaceSpecs,
+        candidatePkgNames
+      );
     }
     const npmShrinkwrap = path.join(curr, 'npm-shrinkwrap.json');
     if (fs.existsSync(npmShrinkwrap)) {
-      return parseNpmPackageLock(npmShrinkwrap, curr, startDir, candidatePkgNames);
+      return parseNpmPackageLock(
+        npmShrinkwrap,
+        curr,
+        startDir,
+        declaredWorkspaceSpecs,
+        candidatePkgNames
+      );
     }
     const pnpmLock = path.join(curr, 'pnpm-lock.yaml');
     if (fs.existsSync(pnpmLock)) {

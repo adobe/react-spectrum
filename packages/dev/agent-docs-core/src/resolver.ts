@@ -311,8 +311,8 @@ function parseVersionOverrides(
     .filter(Boolean);
 
   for (const part of parts) {
-    if (part === 'latest') {
-      overrides['*'] = 'latest';
+    if (part === 'latest' || part === 'canary') {
+      overrides['*'] = part;
       continue;
     }
     const atIdx = part.lastIndexOf('@');
@@ -519,8 +519,10 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
     string,
     {
       version: string;
+      requestedVersion?: string;
       importer: string;
       source: 'installed' | 'lockfile' | 'override' | 'latest-fallback';
+      channelPointer?: PackageSlicePointer;
     }
   >();
 
@@ -544,10 +546,29 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
         source: 'override'
       });
     }
+  } else if (overrides['*'] === 'canary') {
+    const canaryChannel = index.channels?.canary;
+    if (!canaryChannel || Object.keys(canaryChannel).length === 0) {
+      throw new AgentDocsError(
+        'ERR_SNAPSHOT_NOT_FOUND',
+        "No 'canary' channel snapshots are published in this index.",
+        EXIT_CODES.NOT_FOUND
+      );
+    }
+    effectiveRequest.clear();
+    for (const [canaryPkg, ptr] of Object.entries(canaryChannel)) {
+      effectiveRequest.set(canaryPkg, {
+        version: ptr.packageVersion,
+        requestedVersion: 'canary',
+        importer: 'workspace',
+        source: 'override',
+        channelPointer: ptr
+      });
+    }
   }
 
   for (const [pkg, ver] of Object.entries(overrides)) {
-    if (pkg === '*' && ver === 'latest') {
+    if (pkg === '*' && (ver === 'latest' || ver === 'canary')) {
       continue;
     } else if (ver === 'latest') {
       const latestVer = index.latest[pkg];
@@ -562,6 +583,22 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
         version: latestVer,
         importer: 'workspace',
         source: 'override'
+      });
+    } else if (ver === 'canary') {
+      const canaryPtr = index.channels?.canary?.[pkg];
+      if (!canaryPtr) {
+        throw new AgentDocsError(
+          'ERR_SNAPSHOT_NOT_FOUND',
+          `No canary snapshot published for package '${pkg}'.`,
+          EXIT_CODES.NOT_FOUND
+        );
+      }
+      effectiveRequest.set(pkg, {
+        version: canaryPtr.packageVersion,
+        requestedVersion: 'canary',
+        importer: 'workspace',
+        source: 'override',
+        channelPointer: canaryPtr
       });
     } else {
       effectiveRequest.set(pkg, {
@@ -632,6 +669,20 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
       req.source !== 'override' &&
       Boolean(snapshotSlices && !snapshotSlices[pkgName]);
     try {
+      if (req.channelPointer && !options.snapshotOverride) {
+        resolvedPackages[pkgName] = {
+          packageName: pkgName,
+          packageVersion: req.channelPointer.packageVersion,
+          requestedVersion: req.requestedVersion || req.version,
+          importer: req.importer,
+          source: req.source,
+          snapshotId: req.channelPointer.snapshotId,
+          exactMatch: true,
+          slicePath: req.channelPointer.sliceRelPath,
+          sliceSha256: req.channelPointer.sliceSha256
+        };
+        continue;
+      }
       const matched = matchPackageSliceInIndex(index, pkgName, req.version, {
         strictVersion: options.strictVersion,
         snapshotOverride: options.snapshotOverride,
@@ -643,7 +694,7 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
       resolvedPackages[pkgName] = {
         packageName: pkgName,
         packageVersion: matched.matchedVersion,
-        requestedVersion: req.version,
+        requestedVersion: req.requestedVersion || req.version,
         importer: req.importer,
         source: req.source,
         snapshotId: matched.pointer.snapshotId,
@@ -687,16 +738,21 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
       : ['@internationalized/date', '@internationalized/number', 'react-stately'];
     for (const auxPkg of auxiliaryPackages) {
       const auxVer = !effectiveRequest.has(auxPkg) ? snapSummary.packages[auxPkg] : undefined;
+      const channelAuxPtr =
+        primaryProv.requestedVersion === 'canary' ? index.channels?.canary?.[auxPkg] : undefined;
       const auxPtr = options.snapshotOverride
         ? snapshotSlices?.[auxPkg]
-        : auxVer
-          ? index.packages[auxPkg]?.[auxVer]
-          : undefined;
+        : channelAuxPtr && channelAuxPtr.snapshotId === primaryProv.snapshotId
+          ? channelAuxPtr
+          : auxVer
+            ? index.packages[auxPkg]?.[auxVer]
+            : undefined;
       if (auxVer && auxPtr) {
         resolvedPackages[auxPkg] = {
           packageName: auxPkg,
           packageVersion: auxVer,
-          requestedVersion: auxVer,
+          requestedVersion:
+            primaryProv.requestedVersion === 'canary' && channelAuxPtr ? 'canary' : auxVer,
           importer: primaryProv.packageName,
           source: primaryProv.source,
           snapshotId: auxPtr.snapshotId,

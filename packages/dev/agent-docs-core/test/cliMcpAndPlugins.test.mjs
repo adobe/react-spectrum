@@ -11,6 +11,7 @@
  */
 
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import fs from 'node:fs';
@@ -1409,4 +1410,379 @@ test('CLI supports bare --version / -V, rejects --version on manifest, and reads
     fs.readFileSync(path.join(REPO_ROOT, 'packages/dev/cli/s2/package.json'), 'utf8')
   );
   assert.equal(readPackageVersion(s2EntryUrl), s2Pkg.version);
+});
+
+test('CLI supports illustration --style filters, cache status/path/clear, and MCP exposes style, canary, and includeDeprecated parity', async () => {
+  const {runAgentDocsCli} = await corePromise;
+  const {packTarGz} = await import(
+    pathToFileURL(path.join(REPO_ROOT, 'packages/dev/s2-docs/scripts/lib/tarArchive.mjs')).href
+  );
+  const {Client} = await import('@modelcontextprotocol/sdk/client/index.js');
+  const {StdioClientTransport} = await import('@modelcontextprotocol/sdk/client/stdio.js');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-features-'));
+
+  try {
+    const snapRoot = path.join(tmp, 'snapshots');
+    const cacheDir = path.join(tmp, 'cache');
+    const appDir = path.join(tmp, 'app');
+    fs.mkdirSync(path.join(appDir, 'node_modules/@react-spectrum/s2'), {recursive: true});
+    fs.writeFileSync(
+      path.join(appDir, 'package.json'),
+      JSON.stringify({name: 'feature-app', dependencies: {'@react-spectrum/s2': '1.8.2'}})
+    );
+    fs.writeFileSync(
+      path.join(appDir, 'node_modules/@react-spectrum/s2/package.json'),
+      JSON.stringify({name: '@react-spectrum/s2', version: '1.8.2'})
+    );
+
+    const buildS2Slice = (snapshotId, summaryText) => {
+      const entry = {
+        schemaVersion: 1,
+        id: 's2:Badge',
+        library: 's2',
+        packageName: '@react-spectrum/s2',
+        packageVersion: '1.8.2',
+        slug: 'Badge',
+        title: 'Badge',
+        kind: 'component',
+        summary: summaryText,
+        keywords: ['badge'],
+        sourceUrl: 'https://react-spectrum.adobe.com/Badge',
+        imports: ["import {Badge} from '@react-spectrum/s2';"],
+        compositionRules: [],
+        sections: [
+          {
+            id: 'usage',
+            kind: 'usage',
+            heading: 'Usage',
+            markdown: summaryText
+          },
+          {
+            id: 'api',
+            kind: 'api',
+            heading: 'API',
+            markdown: 'Props for Badge.'
+          }
+        ],
+        exports: [
+          {
+            name: 'Badge',
+            exportKind: 'component',
+            typeParameters: [],
+            props: [
+              {name: 'variant', type: "'accent' | 'neutral'", required: false, description: ''},
+              {
+                name: 'legacyTone',
+                type: 'string',
+                required: false,
+                deprecated: true,
+                description: 'Deprecated tone prop.'
+              }
+            ],
+            events: [],
+            renderProps: [],
+            slots: [],
+            callSignatures: [],
+            constraints: []
+          }
+        ]
+      };
+      const assets = {
+        icons: ['Folder', 'Search'],
+        iconAliases: {},
+        illustrations: [
+          {id: 'linear/Folder', subpath: '@react-spectrum/s2/illustrations/linear/Folder'},
+          {
+            id: 'gradient/generic1/Folder',
+            subpath: '@react-spectrum/s2/illustrations/gradient/generic1/Folder'
+          },
+          {
+            id: 'gradient/generic2/Folder',
+            subpath: '@react-spectrum/s2/illustrations/gradient/generic2/Folder'
+          }
+        ]
+      };
+      const gz = packTarGz([
+        {
+          path: 'slice-manifest.json',
+          content: JSON.stringify({schemaVersion: 1, snapshotId, packageName: '@react-spectrum/s2'})
+        },
+        {
+          path: 'search-index.json',
+          content: JSON.stringify([
+            {
+              id: entry.id,
+              library: entry.library,
+              packageName: entry.packageName,
+              packageVersion: entry.packageVersion,
+              slug: entry.slug,
+              title: entry.title,
+              kind: entry.kind,
+              summary: entry.summary,
+              keywords: ['badge']
+            }
+          ])
+        },
+        {path: 'entries/s2/Badge.json', content: JSON.stringify(entry)},
+        {path: 's2-assets.json', content: JSON.stringify(assets)}
+      ]);
+      const rel = `by-id/${snapshotId}/packages/s2.tar.gz`;
+      const abs = path.join(snapRoot, rel);
+      fs.mkdirSync(path.dirname(abs), {recursive: true});
+      fs.writeFileSync(abs, gz);
+      const sha = crypto.createHash('sha256').update(gz).digest('hex');
+      const manifest = {
+        schemaVersion: 1,
+        snapshotId,
+        docRevision: 1,
+        generatedAt: '2026-04-20T00:00:00.000Z',
+        sourceTag: null,
+        sourceCommit: 'abc123456789',
+        extractorCommit: 'abc123456789',
+        docsLayouts: {s2: 's2-docs'},
+        packages: {'@react-spectrum/s2': '1.8.2'},
+        files: {},
+        slices: {
+          '@react-spectrum/s2': {
+            packageName: '@react-spectrum/s2',
+            packageVersion: '1.8.2',
+            snapshotId,
+            docRevision: 1,
+            sliceRelPath: rel,
+            sliceSha256: sha,
+            sliceBytes: gz.length,
+            entryCount: 1
+          }
+        }
+      };
+      const manifestRel = `by-id/${snapshotId}/manifest.json`;
+      const manifestBytes = Buffer.from(JSON.stringify(manifest), 'utf8');
+      fs.writeFileSync(path.join(snapRoot, manifestRel), manifestBytes);
+      return {
+        pointer: manifest.slices['@react-spectrum/s2'],
+        summary: {
+          snapshotId,
+          docRevision: 1,
+          generatedAt: manifest.generatedAt,
+          sourceTag: null,
+          sourceCommit: manifest.sourceCommit,
+          extractorCommit: manifest.extractorCommit,
+          docsLayouts: manifest.docsLayouts,
+          packages: manifest.packages,
+          manifestPath: manifestRel,
+          manifestSha256: crypto.createHash('sha256').update(manifestBytes).digest('hex'),
+          manifestBytes: manifestBytes.length
+        }
+      };
+    };
+
+    const stable = buildS2Slice('snap-stable-182', 'Stable Badge docs.');
+    const canary = buildS2Slice('20260421-canary-gabcdef123456-d1', 'Canary Badge docs.');
+    fs.writeFileSync(
+      path.join(snapRoot, 'index.json'),
+      JSON.stringify({
+        schemaVersion: 1,
+        minReaderSchemaVersion: 1,
+        updatedAt: '2026-04-21T00:00:00.000Z',
+        latest: {'@react-spectrum/s2': '1.8.2'},
+        channels: {canary: {'@react-spectrum/s2': canary.pointer}},
+        packages: {'@react-spectrum/s2': {'1.8.2': stable.pointer}},
+        snapshots: {
+          'snap-stable-182': stable.summary,
+          '20260421-canary-gabcdef123456-d1': canary.summary
+        }
+      })
+    );
+
+    const runCli = async args => {
+      let stdout = '';
+      let stderr = '';
+      const code = await runAgentDocsCli('s2', '1.0.0', args, {
+        stdout: text => {
+          stdout += text;
+        },
+        stderr: text => {
+          stderr += text;
+        }
+      });
+      return {code, stdout, stderr};
+    };
+
+    // 1. CLI `icons --illustrations --style` filtering + rejecting `--style` without `--illustrations`
+    const linearRes = await runCli([
+      'icons',
+      'Folder',
+      '--illustrations',
+      '--style',
+      'linear',
+      '--cwd',
+      appDir,
+      '--snapshot-source',
+      snapRoot,
+      '--cache-dir',
+      cacheDir,
+      '--json'
+    ]);
+    assert.equal(linearRes.code, 0, linearRes.stderr);
+    const linearJson = JSON.parse(linearRes.stdout);
+    assert.equal(linearJson.styleFilter, 'linear');
+    assert.deepEqual(linearJson.matches, ['linear/Folder']);
+
+    const gradRes = await runCli([
+      'icons',
+      'Folder',
+      '--illustrations',
+      '--style',
+      'gradient',
+      '--cwd',
+      appDir,
+      '--snapshot-source',
+      snapRoot,
+      '--cache-dir',
+      cacheDir,
+      '--json'
+    ]);
+    assert.equal(gradRes.code, 0, gradRes.stderr);
+    assert.deepEqual(JSON.parse(gradRes.stdout).matches, [
+      'gradient/generic1/Folder',
+      'gradient/generic2/Folder'
+    ]);
+
+    const grad2Res = await runCli([
+      'icons',
+      'Folder',
+      '--illustrations',
+      '--style',
+      'gradient2',
+      '--cwd',
+      appDir,
+      '--snapshot-source',
+      snapRoot,
+      '--cache-dir',
+      cacheDir,
+      '--json'
+    ]);
+    assert.equal(grad2Res.code, 0, grad2Res.stderr);
+    assert.deepEqual(JSON.parse(grad2Res.stdout).matches, ['gradient/generic2/Folder']);
+
+    const invalidStyleRes = await runCli([
+      'icons',
+      'Folder',
+      '--style',
+      'linear',
+      '--cwd',
+      appDir,
+      '--snapshot-source',
+      snapRoot,
+      '--cache-dir',
+      cacheDir
+    ]);
+    assert.equal(invalidStyleRes.code, 2);
+    assert.match(invalidStyleRes.stderr, /only be used when searching illustrations/i);
+
+    // 2. CLI `cache path`, `cache status`, and `cache clear`
+    const pathRes = await runCli(['cache', 'path', '--cache-dir', cacheDir]);
+    assert.equal(pathRes.code, 0);
+    assert.equal(pathRes.stdout.trim(), cacheDir);
+
+    const statusPopulated = await runCli(['cache', 'status', '--cache-dir', cacheDir, '--json']);
+    assert.equal(statusPopulated.code, 0);
+    const statusObj = JSON.parse(statusPopulated.stdout);
+    assert.equal(statusObj.exists, true);
+    assert.equal(statusObj.sliceCount, 1);
+    assert.ok(statusObj.totalBytes > 0);
+
+    const clearRes = await runCli(['cache', 'clear', '--cache-dir', cacheDir, '--json']);
+    assert.equal(clearRes.code, 0);
+    const clearObj = JSON.parse(clearRes.stdout);
+    assert.equal(clearObj.cleared, true);
+    assert.ok(clearObj.removedBytes > 0);
+
+    const statusAfterClear = await runCli(['cache', 'status', '--cache-dir', cacheDir, '--json']);
+    assert.equal(JSON.parse(statusAfterClear.stdout).exists, false);
+    assert.equal(JSON.parse(statusAfterClear.stdout).sliceCount, 0);
+
+    const badCacheAction = await runCli(['cache', 'prune', '--cache-dir', cacheDir]);
+    assert.equal(badCacheAction.code, 2);
+    assert.match(badCacheAction.stderr, /Unknown cache action 'prune'/);
+
+    // 3. MCP parity: `search_s2_icons` style filter, `read_docs` / `get_component_api` includeDeprecated, and `canary` channel
+    const serverBin = path.join(REPO_ROOT, 'packages/dev/mcp/s2/dist/mcp/s2/src/index.js');
+    const transport = new StdioClientTransport({
+      command: process.execPath,
+      args: [serverBin, '--cwd', appDir],
+      env: {
+        ...process.env,
+        RSP_AGENT_DOCS_SNAPSHOT_SOURCE: snapRoot,
+        RSP_AGENT_DOCS_CACHE_DIR: cacheDir
+      }
+    });
+    const client = new Client({name: 'feature-parity-test', version: '1.0.0'});
+    try {
+      await client.connect(transport);
+
+      const mcpIconGrad1 = await client.callTool({
+        name: 'search_s2_icons',
+        arguments: {query: 'Folder', kind: 'illustrations', style: 'gradient1', format: 'json'}
+      });
+      assert.ok(!mcpIconGrad1.isError, mcpIconGrad1.content?.[0]?.text);
+      const mcpIconGrad1Json = JSON.parse(mcpIconGrad1.content[0].text);
+      assert.equal(mcpIconGrad1Json.styleFilter, 'gradient1');
+      assert.deepEqual(mcpIconGrad1Json.matches, ['gradient/generic1/Folder']);
+
+      const mcpIconBadStyle = await client.callTool({
+        name: 'search_s2_icons',
+        arguments: {query: 'Folder', kind: 'icons', style: 'linear'}
+      });
+      assert.equal(mcpIconBadStyle.isError, true);
+
+      const mcpReadDefault = await client.callTool({
+        name: 'read_docs',
+        arguments: {ids: 's2:Badge', sections: ['api'], format: 'json'}
+      });
+      assert.ok(!mcpReadDefault.isError, mcpReadDefault.content?.[0]?.text);
+      const defaultParsed = JSON.parse(mcpReadDefault.content[0].text);
+      assert.ok(defaultParsed.results?.[0]?.ok, mcpReadDefault.content[0].text);
+      const defaultProps = defaultParsed.results[0].entry.exports[0].props;
+      assert.deepEqual(
+        defaultProps.map(p => p.name),
+        ['variant']
+      );
+
+      const mcpReadWithDeprecated = await client.callTool({
+        name: 'read_docs',
+        arguments: {ids: 's2:Badge', sections: ['api'], includeDeprecated: true, format: 'json'}
+      });
+      const deprecatedProps = JSON.parse(mcpReadWithDeprecated.content[0].text).results[0].entry
+        .exports[0].props;
+      assert.deepEqual(
+        deprecatedProps.map(p => p.name),
+        ['variant', 'legacyTone']
+      );
+
+      const mcpApiWithDeprecated = await client.callTool({
+        name: 'get_component_api',
+        arguments: {id: 's2:Badge', includeDeprecated: true, format: 'json'}
+      });
+      assert.deepEqual(
+        JSON.parse(mcpApiWithDeprecated.content[0].text).exports[0].props.map(p => p.name),
+        ['variant', 'legacyTone']
+      );
+
+      const mcpCanaryRead = await client.callTool({
+        name: 'read_docs',
+        arguments: {ids: 's2:Badge', version: 'canary', format: 'markdown'}
+      });
+      assert.ok(!mcpCanaryRead.isError, mcpCanaryRead.content?.[0]?.text);
+      assert.match(mcpCanaryRead.content[0].text, /Canary Badge docs\./);
+    } finally {
+      try {
+        await client.close();
+      } catch {
+        // ignore
+      }
+    }
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
 });

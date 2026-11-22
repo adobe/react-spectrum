@@ -109,6 +109,7 @@ ${
 \`\`\`sh
 spectrum tokens padding --cwd <app-dir>
 spectrum icons "search" --cwd <app-dir>
+spectrum icons "folder" --illustrations --style linear --cwd <app-dir>
 \`\`\`
 `
     : ''

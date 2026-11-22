@@ -926,3 +926,294 @@ test('picks closest higher same-minor fallback, treats --version latest order-in
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });
+
+test('resolves canary channel pointers without affecting stable latest resolution', async () => {
+  const {resolveWorkspace} = await corePromise;
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-canary-'));
+  try {
+    const snapshotSource = path.join(tmp, 'snapshots');
+    fs.mkdirSync(snapshotSource);
+    const ptr = (packageName, packageVersion, snapshotId) => ({
+      packageName,
+      packageVersion,
+      snapshotId,
+      sliceRelPath: `by-id/${snapshotId}/packages/${packageName.replace(/[^a-z0-9]/gi, '_')}.tar.gz`,
+      sliceSha256: 'a'.repeat(64),
+      sliceBytes: 128,
+      entryCount: 1
+    });
+    fs.writeFileSync(
+      path.join(snapshotSource, 'index.json'),
+      JSON.stringify({
+        schemaVersion: 1,
+        minReaderSchemaVersion: 1,
+        updatedAt: '2026-04-20T00:00:00.000Z',
+        latest: {'@react-spectrum/s2': '1.8.2', 'react-aria-components': '1.22.1'},
+        channels: {
+          canary: {
+            '@react-spectrum/s2': ptr(
+              '@react-spectrum/s2',
+              '1.8.2',
+              '20260421-canary-gabcdef123456-d1'
+            ),
+            'react-aria-components': ptr(
+              'react-aria-components',
+              '1.22.1',
+              '20260421-canary-gabcdef123456-d1'
+            ),
+            '@internationalized/date': ptr(
+              '@internationalized/date',
+              '3.8.0',
+              '20260421-canary-gabcdef123456-d1'
+            )
+          }
+        },
+        packages: {
+          '@react-spectrum/s2': {
+            '1.8.2': ptr('@react-spectrum/s2', '1.8.2', 'snap-stable-182')
+          },
+          'react-aria-components': {
+            '1.22.1': ptr('react-aria-components', '1.22.1', 'snap-stable-1221')
+          }
+        },
+        snapshots: {
+          'snap-stable-182': {
+            snapshotId: 'snap-stable-182',
+            packages: {'@react-spectrum/s2': '1.8.2'}
+          },
+          'snap-stable-1221': {
+            snapshotId: 'snap-stable-1221',
+            packages: {'react-aria-components': '1.22.1'}
+          },
+          '20260421-canary-gabcdef123456-d1': {
+            snapshotId: '20260421-canary-gabcdef123456-d1',
+            packages: {
+              '@react-spectrum/s2': '1.8.2',
+              'react-aria-components': '1.22.1',
+              '@internationalized/date': '3.8.0'
+            }
+          }
+        }
+      })
+    );
+
+    const cacheDir = path.join(tmp, 'cache');
+    const appDir = path.join(tmp, 'app');
+    fs.mkdirSync(path.join(appDir, 'node_modules/react-aria-components'), {recursive: true});
+    fs.writeFileSync(
+      path.join(appDir, 'package.json'),
+      JSON.stringify({name: 'app', dependencies: {'react-aria-components': '1.22.1'}})
+    );
+    fs.writeFileSync(
+      path.join(appDir, 'node_modules/react-aria-components/package.json'),
+      JSON.stringify({name: 'react-aria-components', version: '1.22.1'})
+    );
+
+    // 1. Wildcard `--version canary` resolves all canary packages to the canary snapshot (even though packageVersion matches stable 1.8.2!)
+    const canaryAll = await resolveWorkspace({
+      cwd: appDir,
+      snapshotSource,
+      cacheDir,
+      versionOverride: 'canary'
+    });
+    assert.equal(
+      canaryAll.packages['@react-spectrum/s2'].snapshotId,
+      '20260421-canary-gabcdef123456-d1'
+    );
+    assert.equal(canaryAll.packages['@react-spectrum/s2'].requestedVersion, 'canary');
+    assert.equal(canaryAll.packages['@react-spectrum/s2'].exactMatch, true);
+    assert.equal(
+      canaryAll.packages['react-aria-components'].snapshotId,
+      '20260421-canary-gabcdef123456-d1'
+    );
+
+    // 2. Per-package `@react-spectrum/s2@canary` keeps workspace RAC on stable while using canary S2 + canary auxiliary slice
+    const canaryS2Only = await resolveWorkspace({
+      cwd: appDir,
+      snapshotSource,
+      cacheDir,
+      versionOverride: '@react-spectrum/s2@canary'
+    });
+    assert.equal(
+      canaryS2Only.packages['@react-spectrum/s2'].snapshotId,
+      '20260421-canary-gabcdef123456-d1'
+    );
+    assert.equal(canaryS2Only.packages['react-aria-components'].snapshotId, 'snap-stable-1221');
+    assert.equal(
+      canaryS2Only.packages['@internationalized/date']?.snapshotId,
+      '20260421-canary-gabcdef123456-d1'
+    );
+
+    // 3. `--version latest` continues resolving stable snapshots
+    const latestAll = await resolveWorkspace({
+      cwd: appDir,
+      snapshotSource,
+      cacheDir,
+      versionOverride: 'latest'
+    });
+    assert.equal(latestAll.packages['@react-spectrum/s2'].snapshotId, 'snap-stable-182');
+    assert.equal(latestAll.packages['react-aria-components'].snapshotId, 'snap-stable-1221');
+
+    // 4. Requesting canary when absent throws ERR_SNAPSHOT_NOT_FOUND
+    const noCanarySource = path.join(tmp, 'no-canary');
+    fs.mkdirSync(noCanarySource);
+    fs.writeFileSync(
+      path.join(noCanarySource, 'index.json'),
+      JSON.stringify({
+        schemaVersion: 1,
+        minReaderSchemaVersion: 1,
+        updatedAt: '2026-04-20T00:00:00.000Z',
+        latest: {'@react-spectrum/s2': '1.8.2'},
+        packages: {},
+        snapshots: {}
+      })
+    );
+    await assert.rejects(
+      () =>
+        resolveWorkspace({
+          cwd: appDir,
+          snapshotSource: noCanarySource,
+          cacheDir,
+          versionOverride: 'canary'
+        }),
+      err => err.code === 'ERR_SNAPSHOT_NOT_FOUND'
+    );
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
+
+test('hardens lockfile parsing for npm v1, inline empty pnpm importers, and npm monorepo root-hoisted sibling isolation', async () => {
+  const {resolveFromWorkspaceLockfile} = await corePromise;
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-lock-hardening-'));
+  try {
+    const candidates = ['@react-spectrum/s2', 'react-aria-components'];
+
+    // 1. npm lockfile v1 (dependencies tree, no `packages` map)
+    const npmV1Dir = path.join(tmp, 'npm-v1');
+    const npmV1Sub = path.join(npmV1Dir, 'nested/sub');
+    fs.mkdirSync(npmV1Sub, {recursive: true});
+    fs.writeFileSync(
+      path.join(npmV1Dir, 'package-lock.json'),
+      JSON.stringify({
+        name: 'npm-v1-app',
+        lockfileVersion: 1,
+        dependencies: {
+          '@react-spectrum/s2': {
+            version: '1.2.0',
+            dependencies: {
+              'react-aria-components': {version: '1.4.0'}
+            }
+          }
+        }
+      })
+    );
+    const v1Root = resolveFromWorkspaceLockfile(
+      npmV1Dir,
+      {'@react-spectrum/s2': '^1.2.0'},
+      candidates
+    );
+    assert.equal(v1Root?.lockfileKind, 'npm');
+    assert.equal(v1Root?.workspacePackages['@react-spectrum/s2'], '1.2.0');
+    assert.equal(v1Root?.nestedPackages['@react-spectrum/s2']?.['react-aria-components'], '1.4.0');
+    assert.equal(
+      resolveFromWorkspaceLockfile(npmV1Sub, {}, candidates),
+      null,
+      'Ancestor npm v1 lockfile must not apply to subdirectories'
+    );
+
+    // Unrecognized package-lock.json without `packages` or `dependencies` reports unsupported
+    const npmUnknownDir = path.join(tmp, 'npm-unknown');
+    fs.mkdirSync(npmUnknownDir, {recursive: true});
+    fs.writeFileSync(
+      path.join(npmUnknownDir, 'package-lock.json'),
+      JSON.stringify({lockfileVersion: 99})
+    );
+    const unknownLock = resolveFromWorkspaceLockfile(npmUnknownDir, {}, candidates);
+    assert.equal(unknownLock?.lockfileKind, 'unsupported');
+
+    // 2. pnpm inline empty importer (`'apps/empty': {}`) does not scan into the next importer
+    const pnpmMono = path.join(tmp, 'pnpm-inline-empty');
+    const pnpmEmptyApp = path.join(pnpmMono, 'apps/empty');
+    const pnpmS2App = path.join(pnpmMono, 'apps/s2');
+    fs.mkdirSync(pnpmEmptyApp, {recursive: true});
+    fs.mkdirSync(pnpmS2App, {recursive: true});
+    fs.writeFileSync(
+      path.join(pnpmMono, 'pnpm-lock.yaml'),
+      [
+        "lockfileVersion: '9.0'",
+        'importers:',
+        "  'apps/empty': {}",
+        '  apps/s2:',
+        '    dependencies:',
+        "      '@react-spectrum/s2':",
+        '        specifier: ^1.8.0',
+        '        version: 1.8.2(react@19.0.0)'
+      ].join('\n')
+    );
+    const emptyRes = resolveFromWorkspaceLockfile(pnpmEmptyApp, {}, candidates);
+    assert.equal(emptyRes?.lockfileKind, 'pnpm');
+    assert.deepEqual(emptyRes?.workspacePackages, {});
+    const s2Res = resolveFromWorkspaceLockfile(
+      pnpmS2App,
+      {'@react-spectrum/s2': '^1.8.0'},
+      candidates
+    );
+    assert.equal(s2Res?.workspacePackages['@react-spectrum/s2'], '1.8.2');
+
+    // 3. npm v3 monorepo does not attribute sibling workspace's root-hoisted @react-spectrum/s2
+    const npmMono = path.join(tmp, 'npm-hoist-isolation');
+    const racOnlyWs = path.join(npmMono, 'apps/rac-only');
+    const s2Ws = path.join(npmMono, 'apps/s2-app');
+    fs.mkdirSync(racOnlyWs, {recursive: true});
+    fs.mkdirSync(s2Ws, {recursive: true});
+    fs.writeFileSync(
+      path.join(npmMono, 'package-lock.json'),
+      JSON.stringify({
+        name: 'mono',
+        lockfileVersion: 3,
+        packages: {
+          '': {workspaces: ['apps/*']},
+          'apps/rac-only': {
+            dependencies: {'react-aria-components': '^1.22.0'}
+          },
+          'apps/s2-app': {
+            dependencies: {'@react-spectrum/s2': '^1.8.0'}
+          },
+          'node_modules/@react-spectrum/s2': {
+            version: '1.8.2',
+            dependencies: {'react-aria-components': '^1.22.0'}
+          },
+          'node_modules/react-aria-components': {
+            version: '1.22.1'
+          }
+        }
+      })
+    );
+    const racOnlyLock = resolveFromWorkspaceLockfile(
+      racOnlyWs,
+      {'react-aria-components': '^1.22.0'},
+      candidates
+    );
+    assert.equal(racOnlyLock?.workspacePackages['react-aria-components'], '1.22.1');
+    assert.equal(
+      racOnlyLock?.workspacePackages['@react-spectrum/s2'],
+      undefined,
+      'Sibling workspace root-hoisted @react-spectrum/s2 must not leak into apps/rac-only'
+    );
+
+    const s2WsLock = resolveFromWorkspaceLockfile(
+      s2Ws,
+      {'@react-spectrum/s2': '^1.8.0'},
+      candidates
+    );
+    assert.equal(s2WsLock?.workspacePackages['@react-spectrum/s2'], '1.8.2');
+    assert.equal(
+      s2WsLock?.nestedPackages['@react-spectrum/s2']?.['react-aria-components'],
+      '1.22.1',
+      'Transitive hoisted react-aria-components declared by @react-spectrum/s2 is preserved'
+    );
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
