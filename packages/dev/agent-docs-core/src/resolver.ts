@@ -538,8 +538,16 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
   }
 
   if (overrides['*'] === 'latest') {
+    const latestEntries = Object.entries(index.latest || {});
+    if (latestEntries.length === 0) {
+      throw new AgentDocsError(
+        'ERR_SNAPSHOT_NOT_FOUND',
+        "No 'latest' snapshots are published in this index.",
+        EXIT_CODES.NOT_FOUND
+      );
+    }
     effectiveRequest.clear();
-    for (const [latestPkg, latestVer] of Object.entries(index.latest)) {
+    for (const [latestPkg, latestVer] of latestEntries) {
       effectiveRequest.set(latestPkg, {
         version: latestVer,
         importer: 'workspace',

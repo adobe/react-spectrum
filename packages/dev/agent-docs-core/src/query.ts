@@ -161,7 +161,7 @@ function parseQualifiedId(
     if (prefix === 's2' || prefix === 'spectrum') {
       return {library: 's2', slug};
     }
-    if (prefix === 'rac' || prefix === 'aria-components') {
+    if (prefix === 'rac' || prefix === 'aria-components' || prefix === 'react-aria-components') {
       return {library: 'rac', slug};
     }
     if (prefix === 'react-aria' || prefix === 'aria') {

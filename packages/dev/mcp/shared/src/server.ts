@@ -239,6 +239,7 @@ async function resolveMcpQueryOptions(
 
   // 2. Explicit `cwd` or explicit version/snapshot override in tool arguments
   if (toolArgs.cwd || versionOverride || toolArgs.snapshot) {
+    const isSelfContainedOverride = toolArgs.version === 'latest' || toolArgs.version === 'canary';
     let resolvedCwd = toolArgs.cwd || serverDefaultCwd || process.env.RSP_WORKSPACE_ROOT;
     if (!resolvedCwd) {
       const clientRoots = await discoverMcpClientRoots(server, rootsCache);
@@ -252,6 +253,12 @@ async function resolveMcpQueryOptions(
         });
         if (matchedRoots.length === 1) {
           resolvedCwd = matchedRoots[0].root;
+        } else if (matchedRoots.length > 1 && !isSelfContainedOverride) {
+          throw new AgentDocsError(
+            'ERR_AMBIGUOUS_WORKSPACE_ROOTS',
+            `Multiple MCP workspace roots contain React Spectrum / React Aria dependencies (${matchedRoots.map(c => c.root).join(', ')}). Pass 'cwd' explicitly to select the target workspace.`,
+            EXIT_CODES.INVALID_ARGS
+          );
         }
       }
     }

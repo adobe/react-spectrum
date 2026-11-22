@@ -129,7 +129,7 @@ function parseLibraryArg(raw: string | undefined): LibraryId | undefined {
   if (lower === 's2' || lower === 'spectrum') {
     return 's2';
   }
-  if (lower === 'rac' || lower === 'react-aria-components') {
+  if (lower === 'rac' || lower === 'react-aria-components' || lower === 'aria-components') {
     return 'rac';
   }
   if (lower === 'react-aria' || lower === 'aria') {
@@ -250,7 +250,7 @@ const COMMON_COMMAND_FLAGS = [
 ] as const;
 
 const SUBCOMMAND_ALLOWED_FLAGS: Record<string, ReadonlySet<string>> = {
-  manifest: new Set(['help', 'json', 'cli-version']),
+  manifest: new Set(['help', 'json']),
   resolve: new Set(COMMON_COMMAND_FLAGS),
   search: new Set([...COMMON_COMMAND_FLAGS, 'library', 'limit']),
   read: new Set([
@@ -295,9 +295,10 @@ function validateSubcommandFlags(
       continue;
     }
     if (!allowed.has(flag)) {
+      const displayFlag = flag === 'V' ? '-V' : `--${flag}`;
       throw new AgentDocsError(
         'ERR_INVALID_ARGS',
-        `Flag '--${flag}' is not valid for '${cliCommandPrefix} ${subcommand}'.`,
+        `Flag '${displayFlag}' is not valid for '${cliCommandPrefix} ${subcommand}'.`,
         EXIT_CODES.INVALID_ARGS
       );
     }
@@ -353,6 +354,7 @@ export async function runAgentDocsCli(
         help: {type: 'boolean', short: 'h'},
         version: {type: 'string', multiple: true},
         'cli-version': {type: 'boolean', short: 'v'},
+        V: {type: 'boolean', short: 'V'},
         json: {type: 'boolean'},
         cwd: {type: 'string'},
         library: {type: 'string'},
@@ -384,7 +386,7 @@ export async function runAgentDocsCli(
     wantJson = Boolean(parsed.values.json);
     const [subcommand, ...restPositionals] = parsed.positionals;
 
-    if (parsed.values['cli-version'] && !subcommand) {
+    if ((parsed.values['cli-version'] || parsed.values.V) && !subcommand) {
       writeOut(`${packageVersion}\n`);
       return EXIT_CODES.OK;
     }

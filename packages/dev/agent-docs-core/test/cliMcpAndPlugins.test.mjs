@@ -593,6 +593,10 @@ test('CLI follow-up commands preserve version and workspace options', () => {
     const {results} = JSON.parse(run('search', 'Select', '--library', 'rac'));
     const select = results.find(hit => hit.id === 'rac:Select');
     assert.ok(select);
+    const aliasResults = JSON.parse(
+      run('search', 'Select', '--library', 'aria-components')
+    ).results;
+    assert.ok(aliasResults.some(hit => hit.id === 'rac:Select'));
     const workspaceFlags = `--cwd '${path.join(tmpDir, "team'\\''s app")}' --version latest`;
     const cacheFlags = `--cache-dir ${path.join(tmpDir, 'cache')} --snapshot-source ${SNAPSHOT_SOURCE} --offline`;
     assert.deepEqual(select.followUpCommands, [
@@ -1289,6 +1293,42 @@ test('MCP multi-root discovery ignores unrelated roots under allowLatestFallback
     assert.match(searchMd, /Next: call `read_docs` with `ids: \["[^"]+"\]`/);
     assert.doesNotMatch(searchMd, /Next: `(?:spectrum|react-aria) read /);
     assert.doesNotMatch(searchMd, /Append to every `Next` command/);
+
+    // 4. Two matching roots + partial version override without `cwd` fails with ERR_AMBIGUOUS_WORKSPACE_ROOTS,
+    //    whereas a self-contained `version: 'latest'` succeeds
+    const secondAppRoot = path.join(tmp, 'spectrum-app-2');
+    fs.mkdirSync(path.join(secondAppRoot, 'node_modules/react-aria-components'), {recursive: true});
+    fs.writeFileSync(
+      path.join(secondAppRoot, 'package.json'),
+      JSON.stringify({name: 'spectrum-app-2', dependencies: {'react-aria-components': '1.22.1'}})
+    );
+    fs.writeFileSync(
+      path.join(secondAppRoot, 'node_modules/react-aria-components/package.json'),
+      JSON.stringify({name: 'react-aria-components', version: '1.22.1'})
+    );
+    client.setRequestHandler(ListRootsRequestSchema, async () => ({
+      roots: [
+        {uri: pathToFileURL(appRoot).href, name: 'spectrum-app'},
+        {uri: pathToFileURL(secondAppRoot).href, name: 'spectrum-app-2'}
+      ]
+    }));
+    await client.sendRootsListChanged();
+
+    const ambiguousPartialRes = await client.callTool({
+      name: 'resolve_versions',
+      arguments: {packageVersions: {'@react-spectrum/s2': 'latest'}}
+    });
+    assert.equal(ambiguousPartialRes.isError, true);
+    assert.equal(
+      JSON.parse(ambiguousPartialRes.content[0].text).error.code,
+      'ERR_AMBIGUOUS_WORKSPACE_ROOTS'
+    );
+
+    const selfContainedLatestRes = await client.callTool({
+      name: 'resolve_versions',
+      arguments: {version: 'latest'}
+    });
+    assert.ok(!selfContainedLatestRes.isError, selfContainedLatestRes.content?.[0]?.text);
   } finally {
     try {
       await client.close();
@@ -1385,14 +1425,29 @@ test('CLI supports bare --version / -V, rejects --version on manifest, and reads
     assert.equal(out.trim(), '9.8.7');
   }
 
-  let manifestErr = '';
-  const manifestCode = await runAgentDocsCli('s2', '9.8.7', ['manifest', '--version', '1.2.0'], {
-    stderr: text => {
-      manifestErr += text;
+  let upperVJsonOut = '';
+  const upperVJsonCode = await runAgentDocsCli('s2', '9.8.7', ['-V', '--json'], {
+    stdout: text => {
+      upperVJsonOut += text;
     }
   });
-  assert.equal(manifestCode, 2);
-  assert.match(manifestErr, /--version.*not valid for 'spectrum manifest'/i);
+  assert.equal(upperVJsonCode, 0);
+  assert.equal(upperVJsonOut.trim(), '9.8.7');
+
+  for (const badArgs of [
+    ['manifest', '--version', '1.2.0'],
+    ['manifest', '--cli-version'],
+    ['manifest', '-V']
+  ]) {
+    let manifestErr = '';
+    const manifestCode = await runAgentDocsCli('s2', '9.8.7', badArgs, {
+      stderr: text => {
+        manifestErr += text;
+      }
+    });
+    assert.equal(manifestCode, 2, `Expected exit 2 for ${badArgs.join(' ')}`);
+    assert.match(manifestErr, /not valid for 'spectrum manifest'/i);
+  }
 
   let manifestOut = '';
   const okCode = await runAgentDocsCli('s2', '9.8.7', ['manifest', '--json'], {

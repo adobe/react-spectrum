@@ -1192,12 +1192,18 @@ workflows:
               only: main
           requires:
             - s2-docs-production
-      - publish-agent-snapshots:
+      - test-agent-docs:
           filters:
             branches:
               only: main
           requires:
             - install
+      - publish-agent-snapshots:
+          filters:
+            branches:
+              only: main
+          requires:
+            - test-agent-docs
 
   nightly:
     triggers:

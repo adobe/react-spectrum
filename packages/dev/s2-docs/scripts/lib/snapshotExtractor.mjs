@@ -1306,7 +1306,33 @@ function parseMdxIntoStructuredDoc({
     });
   };
 
+  let activeFence = null;
+  const updateFenceState = line => {
+    let fenceMatch = line.match(/^\s*(`{3,}|~{3,})/);
+    if (!fenceMatch) {
+      return false;
+    }
+    let marker = fenceMatch[1];
+    if (!activeFence) {
+      activeFence = {char: marker[0], length: marker.length};
+      return true;
+    }
+    if (
+      marker[0] === activeFence.char &&
+      marker.length >= activeFence.length &&
+      /^\s*$/.test(line.slice(fenceMatch[0].length))
+    ) {
+      activeFence = null;
+      return true;
+    }
+    return false;
+  };
+
   for (let line of lines) {
+    if (updateFenceState(line) || activeFence) {
+      currentLines.push(line);
+      continue;
+    }
     let h1 = line.match(/^#\s+(.+)$/);
     if (h1) {
       pageTitle = h1[1].trim();
@@ -1582,11 +1608,10 @@ function createMarkdownGuideEntry({
   sourceUrl
 }) {
   let clean = rawMarkdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '').trim();
-  let titleMatch = clean.match(/^#\s+(.+)$/m);
-  let title = titleMatch ? titleMatch[1].trim() : fallbackTitle;
-  let bodyWithoutH1 = clean.replace(/^#\s+.+$/m, '').trim();
+  let title = fallbackTitle;
+  let foundH1 = false;
 
-  let lines = bodyWithoutH1.split(/\r?\n/);
+  let lines = clean.split(/\r?\n/);
   let sections = [];
   let curHeading = 'Overview';
   let curLevel = 2;
@@ -1607,7 +1632,38 @@ function createMarkdownGuideEntry({
     });
   };
 
+  let activeFence = null;
   for (let line of lines) {
+    let fenceMatch = line.match(/^\s*(`{3,}|~{3,})/);
+    if (fenceMatch) {
+      let marker = fenceMatch[1];
+      if (!activeFence) {
+        activeFence = {char: marker[0], length: marker.length};
+        curLines.push(line);
+        continue;
+      }
+      if (
+        marker[0] === activeFence.char &&
+        marker.length >= activeFence.length &&
+        /^\s*$/.test(line.slice(fenceMatch[0].length))
+      ) {
+        activeFence = null;
+        curLines.push(line);
+        continue;
+      }
+    }
+    if (activeFence) {
+      curLines.push(line);
+      continue;
+    }
+    if (!foundH1) {
+      let h1 = line.match(/^#\s+(.+)$/);
+      if (h1) {
+        title = h1[1].trim();
+        foundH1 = true;
+        continue;
+      }
+    }
     let hm = line.match(/^(#{2,3})\s+(.+)$/);
     if (hm) {
       flush();
@@ -1831,6 +1887,10 @@ export async function generateSnapshotFromTarget({
 
       for (let relMdx of racMdxFiles) {
         let slug = relMdx.replace(/\.mdx$/, '').replace(/\/index$/, '') || 'index';
+        // `@internationalized/*` pages under `pages/react-aria/internationalized/` are handled in section 3
+        if (slug.startsWith('internationalized/')) {
+          continue;
+        }
         let matchesPageFilter =
           !slugAllowSet || slugAllowSet.has(`rac:${slug}`) || slugAllowSet.has(slug);
         if (
@@ -1843,45 +1903,6 @@ export async function generateSnapshotFromTarget({
         let absPath = path.join(activeRacDir, relMdx);
         let raw = fs.readFileSync(absPath, 'utf8');
         if (raw.includes('<meta http-equiv="refresh"')) {
-          continue;
-        }
-
-        // Route `internationalized/*` pages inside `s2-docs/pages/react-aria/internationalized/` to `@internationalized/*`
-        let intlRelSlug = slug.startsWith('internationalized/')
-          ? slug.replace(/^internationalized\//, '')
-          : null;
-        let intlPkg = intlRelSlug
-          ? ctx.packagesByName.get(`@internationalized/${intlRelSlug.split('/')[0]}`) ||
-            ctx.packagesByName.get('@internationalized/date')
-          : null;
-        if (intlRelSlug && intlPkg) {
-          docsLayouts[intlPkg.name] = 's2-docs';
-          let parsedIntl = parseMdxIntoStructuredDoc({
-            ctx,
-            rawMdx: raw,
-            filePath: absPath,
-            slug: intlRelSlug,
-            library: 'internationalized',
-            defaultPackageName: intlPkg.name,
-            supportsSubpathExports: false
-          });
-          entries.push({
-            schemaVersion: CATALOG_SCHEMA_VERSION,
-            id: `internationalized:${intlRelSlug}`,
-            slug: intlRelSlug,
-            library: 'internationalized',
-            kind: 'utility',
-            title: parsedIntl.title,
-            packageName: intlPkg.name,
-            packageVersion: intlPkg.version,
-            summary: parsedIntl.summary,
-            keywords: parsedIntl.keywords,
-            imports: parsedIntl.imports,
-            compositionRules: parsedIntl.compositionRules,
-            sections: parsedIntl.sections,
-            exports: parsedIntl.exports,
-            sourceUrl: `https://react-aria.adobe.com/internationalized/${intlRelSlug}`
-          });
           continue;
         }
 
@@ -2004,16 +2025,24 @@ export async function generateSnapshotFromTarget({
     }
   }
 
-  // 3. Extract `@internationalized/*` docs
+  // 3. Extract `@internationalized/*` docs (live under `pages/react-aria/internationalized/` in s2-docs)
   if (libraries.includes('internationalized')) {
-    let s2IntlDir = path.join(s2DocsPagesDir, 'internationalized');
-    if (fs.existsSync(s2IntlDir)) {
+    let intlDirs = [
+      path.join(s2DocsPagesDir, 'react-aria', 'internationalized'),
+      path.join(s2DocsPagesDir, 'internationalized')
+    ].filter(dir => fs.existsSync(dir));
+    let seenIntlSlugs = new Set();
+    for (let s2IntlDir of intlDirs) {
       let intlMdxFiles = glob.sync('**/*.mdx', {cwd: s2IntlDir, ignore: ['**/error.mdx']}).sort();
       for (let relMdx of intlMdxFiles) {
         let slug = relMdx.replace(/\.mdx$/, '').replace(/\/index$/, '') || 'index';
+        if (seenIntlSlugs.has(slug)) {
+          continue;
+        }
         if (
           slugAllowSet &&
           !slugAllowSet.has(`internationalized:${slug}`) &&
+          !slugAllowSet.has(`internationalized/${slug}`) &&
           !slugAllowSet.has(slug)
         ) {
           continue;
@@ -2025,9 +2054,13 @@ export async function generateSnapshotFromTarget({
         if (!intlPkg) {
           continue;
         }
-        docsLayouts[intlPkg.name] = 's2-docs';
         let absPath = path.join(s2IntlDir, relMdx);
         let raw = fs.readFileSync(absPath, 'utf8');
+        if (raw.includes('<meta http-equiv="refresh"')) {
+          continue;
+        }
+        seenIntlSlugs.add(slug);
+        docsLayouts[intlPkg.name] = 's2-docs';
         let parsed = parseMdxIntoStructuredDoc({
           ctx,
           rawMdx: raw,
@@ -2244,6 +2277,32 @@ export async function generateSnapshotFromTarget({
  * existing package/version pointers unless a higher `docRevision` is published for the same package
  * version.
  */
+function pruneUnreferencedChannelSnapshots(indexData, candidateIds, keepSnapshotId) {
+  if (candidateIds.size === 0) {
+    return;
+  }
+  let referenced = new Set([keepSnapshotId]);
+  for (let verMap of Object.values(indexData.packages || {})) {
+    for (let ptr of Object.values(verMap || {})) {
+      if (ptr?.snapshotId) {
+        referenced.add(ptr.snapshotId);
+      }
+    }
+  }
+  for (let pkgMap of Object.values(indexData.channels || {})) {
+    for (let ptr of Object.values(pkgMap || {})) {
+      if (ptr?.snapshotId) {
+        referenced.add(ptr.snapshotId);
+      }
+    }
+  }
+  for (let oldSnapId of candidateIds) {
+    if (!referenced.has(oldSnapId)) {
+      delete indexData.snapshots[oldSnapId];
+    }
+  }
+}
+
 export function updateSnapshotsIndex(outRoot, snapshotResults, options = {}) {
   let indexPath = path.join(outRoot, 'index.json');
   let indexData = {
@@ -2289,10 +2348,16 @@ export function updateSnapshotsIndex(outRoot, snapshotResults, options = {}) {
 
     if (channelName) {
       indexData.channels ??= {};
+      let prevChannelSnapshotIds = new Set(
+        Object.values(indexData.channels[channelName] || {})
+          .map(ptr => ptr?.snapshotId)
+          .filter(Boolean)
+      );
       indexData.channels[channelName] ??= {};
       for (let [pkgName, sliceInfo] of Object.entries(slices)) {
         indexData.channels[channelName][pkgName] = {...sliceInfo};
       }
+      pruneUnreferencedChannelSnapshots(indexData, prevChannelSnapshotIds, manifest.snapshotId);
       continue;
     }
 

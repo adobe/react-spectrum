@@ -1011,7 +1011,79 @@ test('canary channel index updates and CAS merges never overwrite stable latest 
       '20260421-canary-g222-d1'
     );
     assert.equal(remoteStable.channels, undefined, 'remoteStable must not be mutated');
+
+    // Advancing canary to a newer snapshot prunes the superseded unreferenced canary from `snapshots`
+    const canaryExt2 = makeExtraction('20260422-canary-g333-d1', '1.8.2', 'c'.repeat(64));
+    const idx2 = updateSnapshotsIndex(outRoot, [canaryExt2], {channel: 'canary'});
+    assert.equal(
+      idx2.channels?.canary?.['@react-spectrum/s2']?.snapshotId,
+      '20260422-canary-g333-d1'
+    );
+    assert.equal(idx2.snapshots['20260421-canary-g222-d1'], undefined);
+    assert.ok(idx2.snapshots['20260420-s2-1.8.2-g111-d1'], 'Stable snapshot must be preserved');
+
+    const stagedCanary2 = {
+      schemaVersion: 1,
+      minReaderSchemaVersion: 1,
+      updatedAt: '2026-04-22T00:00:00.000Z',
+      latest: {},
+      channels: {canary: {'@react-spectrum/s2': idx2.channels.canary['@react-spectrum/s2']}},
+      snapshots: {'20260422-canary-g333-d1': idx2.snapshots['20260422-canary-g333-d1']},
+      packages: {}
+    };
+    const mergedCanary2 = mergeSnapshotIndices(merged, stagedCanary2);
+    assert.equal(
+      mergedCanary2.channels?.canary?.['@react-spectrum/s2']?.snapshotId,
+      '20260422-canary-g333-d1'
+    );
+    assert.equal(mergedCanary2.snapshots['20260421-canary-g222-d1'], undefined);
+    assert.ok(mergedCanary2.snapshots['20260422-canary-g333-d1']);
+    assert.ok(mergedCanary2.snapshots['20260420-s2-1.8.2-g111-d1']);
   } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
+
+test('loadSnapshotManifest discards corrupt cached manifest on disk and refetches cleanly', async () => {
+  const {loadSnapshotManifest} = await corePromise;
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-corrupt-manifest-'));
+  const manifestObj = {
+    schemaVersion: 1,
+    minReaderSchemaVersion: 1,
+    snapshotId: 'snap-heal-1',
+    slices: {}
+  };
+  const manifestBytes = Buffer.from(JSON.stringify(manifestObj), 'utf8');
+  const manifestSha = crypto.createHash('sha256').update(manifestBytes).digest('hex');
+  let fetchCount = 0;
+  const server = http.createServer((req, res) => {
+    fetchCount++;
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(manifestBytes);
+  });
+  try {
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+    const sourceUrl = `http://127.0.0.1:${server.address().port}`;
+    const manifestPath = 'by-id/snap-heal-1/manifest.json';
+    const key = crypto.createHash('sha256').update(`${sourceUrl}/${manifestPath}`).digest('hex');
+    const cachedManifestPath = path.join(tmp, 'manifests', `${key}.json`);
+    fs.mkdirSync(path.dirname(cachedManifestPath), {recursive: true});
+    fs.writeFileSync(cachedManifestPath, '{corrupted json');
+
+    const loaded = await loadSnapshotManifest(
+      {
+        snapshotId: 'snap-heal-1',
+        manifestPath,
+        manifestSha256: manifestSha,
+        manifestBytes: manifestBytes.length
+      },
+      {cacheDir: tmp, snapshotSource: sourceUrl}
+    );
+    assert.equal(loaded.snapshotId, 'snap-heal-1');
+    assert.equal(fetchCount, 1);
+    assert.equal(fs.readFileSync(cachedManifestPath, 'utf8'), manifestBytes.toString('utf8'));
+  } finally {
+    await new Promise(resolve => server.close(resolve));
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });

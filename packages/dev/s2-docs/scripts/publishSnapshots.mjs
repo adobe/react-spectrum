@@ -181,15 +181,45 @@ export function mergeSnapshotIndices(remoteIndex, stagedIndex) {
     }
   }
 
+  let previousChannelSnapshotIds = new Set();
   let mergedChannels = {};
   for (let [channelName, pkgMap] of Object.entries(base.channels || {})) {
     mergedChannels[channelName] = {...(pkgMap || {})};
+    for (let ptr of Object.values(pkgMap || {})) {
+      if (ptr?.snapshotId) {
+        previousChannelSnapshotIds.add(ptr.snapshotId);
+      }
+    }
   }
   for (let [channelName, pkgMap] of Object.entries(stagedIndex.channels || {})) {
     mergedChannels[channelName] = {
       ...(mergedChannels[channelName] || {}),
       ...(pkgMap || {})
     };
+  }
+
+  // Prune channel snapshot entries that were superseded and are no longer referenced anywhere.
+  if (previousChannelSnapshotIds.size > 0) {
+    let referencedSnapshotIds = new Set(Object.keys(stagedIndex.snapshots || {}));
+    for (let verMap of Object.values(mergedPackages)) {
+      for (let ptr of Object.values(verMap || {})) {
+        if (ptr?.snapshotId) {
+          referencedSnapshotIds.add(ptr.snapshotId);
+        }
+      }
+    }
+    for (let pkgMap of Object.values(mergedChannels)) {
+      for (let ptr of Object.values(pkgMap || {})) {
+        if (ptr?.snapshotId) {
+          referencedSnapshotIds.add(ptr.snapshotId);
+        }
+      }
+    }
+    for (let oldSnapId of previousChannelSnapshotIds) {
+      if (!referencedSnapshotIds.has(oldSnapId)) {
+        delete mergedSnapshots[oldSnapId];
+      }
+    }
   }
 
   return {

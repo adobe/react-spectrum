@@ -461,6 +461,43 @@ export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promi
   }
 }
 
+function parseAndValidateManifest(
+  raw: Buffer,
+  snapshot: SnapshotSummaryInfo,
+  maxManifestBytes: number
+): SnapshotManifest {
+  if (
+    raw.length > maxManifestBytes ||
+    (snapshot.manifestSha256 && sha256Buffer(raw) !== snapshot.manifestSha256) ||
+    (snapshot.manifestBytes !== undefined && raw.length !== snapshot.manifestBytes)
+  ) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Integrity mismatch for snapshot manifest '${snapshot.manifestPath}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
+  let manifest: SnapshotManifest;
+  try {
+    manifest = JSON.parse(raw.toString('utf8')) as SnapshotManifest;
+  } catch {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Corrupt JSON in snapshot manifest '${snapshot.manifestPath}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
+  assertCompatibleSchema(manifest.minReaderSchemaVersion, `Snapshot ${snapshot.snapshotId}`);
+  if (manifest.snapshotId !== snapshot.snapshotId || !manifest.slices) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Invalid package slice manifest for snapshot '${snapshot.snapshotId}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
+  return manifest;
+}
+
 export async function loadSnapshotManifest(
   snapshot: SnapshotSummaryInfo,
   options: CacheAccessOptions = {}
@@ -476,36 +513,31 @@ export async function loadSnapshotManifest(
   );
   const key = sha256Buffer(Buffer.from(`${source}/${cleanManifestPath}`));
   const cachedPath = path.join(cacheDir, 'manifests', `${key}.json`);
-  const useDiskCache = !local && fs.existsSync(cachedPath);
-  const raw = useDiskCache
-    ? fs.readFileSync(cachedPath)
-    : await fetchSourceBytes(
-        source,
-        cleanManifestPath,
-        Boolean(options.offline || process.env.RSP_AGENT_DOCS_OFFLINE === '1'),
-        maxManifestBytes
-      );
-  if (
-    raw.length > maxManifestBytes ||
-    (snapshot.manifestSha256 && sha256Buffer(raw) !== snapshot.manifestSha256) ||
-    (snapshot.manifestBytes !== undefined && raw.length !== snapshot.manifestBytes)
-  ) {
-    throw new AgentDocsError(
-      'ERR_CACHE_INTEGRITY',
-      `Integrity mismatch for snapshot manifest '${snapshot.manifestPath}'.`,
-      EXIT_CODES.INTEGRITY_OR_SCHEMA
-    );
+  if (!local && fs.existsSync(cachedPath)) {
+    try {
+      const cachedRaw = fs.readFileSync(cachedPath);
+      return parseAndValidateManifest(cachedRaw, snapshot, maxManifestBytes);
+    } catch (err) {
+      if (err instanceof AgentDocsError && err.code === 'ERR_CATALOG_SCHEMA_TOO_NEW') {
+        throw err;
+      }
+      // Discard corrupt/truncated disk cache entry and re-fetch cleanly
+      try {
+        fs.rmSync(cachedPath, {force: true});
+      } catch {
+        // ignore cleanup failure
+      }
+    }
   }
-  const manifest = JSON.parse(raw.toString('utf8')) as SnapshotManifest;
-  assertCompatibleSchema(manifest.minReaderSchemaVersion, `Snapshot ${snapshot.snapshotId}`);
-  if (manifest.snapshotId !== snapshot.snapshotId || !manifest.slices) {
-    throw new AgentDocsError(
-      'ERR_CACHE_INTEGRITY',
-      `Invalid package slice manifest for snapshot '${snapshot.snapshotId}'.`,
-      EXIT_CODES.INTEGRITY_OR_SCHEMA
-    );
-  }
-  if (!local && !fs.existsSync(cachedPath)) {
+
+  const raw = await fetchSourceBytes(
+    source,
+    cleanManifestPath,
+    Boolean(options.offline || process.env.RSP_AGENT_DOCS_OFFLINE === '1'),
+    maxManifestBytes
+  );
+  const manifest = parseAndValidateManifest(raw, snapshot, maxManifestBytes);
+  if (!local) {
     fs.mkdirSync(path.dirname(cachedPath), {recursive: true});
     const tmpPath = `${cachedPath}.tmp-${process.pid}-${Date.now()}`;
     fs.writeFileSync(tmpPath, raw);

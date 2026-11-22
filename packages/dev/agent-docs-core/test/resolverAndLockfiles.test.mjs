@@ -1078,6 +1078,32 @@ test('resolves canary channel pointers without affecting stable latest resolutio
         }),
       err => err.code === 'ERR_SNAPSHOT_NOT_FOUND'
     );
+
+    // 5. Requesting latest when index.latest is empty throws ERR_SNAPSHOT_NOT_FOUND (not ERR_WORKSPACE_REQUIRED)
+    const emptyLatestSource = path.join(tmp, 'empty-latest');
+    fs.mkdirSync(emptyLatestSource);
+    fs.writeFileSync(
+      path.join(emptyLatestSource, 'index.json'),
+      JSON.stringify({
+        schemaVersion: 1,
+        minReaderSchemaVersion: 1,
+        updatedAt: '2026-04-20T00:00:00.000Z',
+        latest: {},
+        channels: {canary: {}},
+        packages: {},
+        snapshots: {}
+      })
+    );
+    await assert.rejects(
+      () =>
+        resolveWorkspace({
+          cwd: appDir,
+          snapshotSource: emptyLatestSource,
+          cacheDir,
+          versionOverride: 'latest'
+        }),
+      err => err.code === 'ERR_SNAPSHOT_NOT_FOUND'
+    );
   } finally {
     fs.rmSync(tmp, {recursive: true, force: true});
   }

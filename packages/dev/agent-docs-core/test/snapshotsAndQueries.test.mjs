@@ -1025,3 +1025,160 @@ test('keeps S2 illustration variants unique with valid JS import identifiers, po
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });
+
+test('tracks code fences when splitting headings and isolates @internationalized/* library & slug filters', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-fence-intl-'));
+  try {
+    const target = path.join(tmp, 'target');
+    const snapshots = path.join(tmp, 'snapshots');
+    createTarget(target);
+
+    // 1. MDX doc and Markdown guide with heading-like lines inside fenced code blocks
+    write(
+      target,
+      'packages/dev/s2-docs/pages/s2/Button.mdx',
+      [
+        '# Real Button Title',
+        '',
+        '## Setup',
+        '',
+        '```sh',
+        '# Install dependencies',
+        'npm install @react-spectrum/s2',
+        '## Not a section heading',
+        '```',
+        '',
+        '## Usage',
+        '',
+        'Use Button to trigger actions.'
+      ].join('\n')
+    );
+    write(
+      target,
+      'packages/dev/s2-docs/skills/react-spectrum-s2/fenced-guide.md',
+      [
+        '# Fenced Guide Title',
+        '',
+        '## Template',
+        '',
+        '```md',
+        '# Fake H1 inside fence',
+        '## Fake H2 inside fence',
+        '```',
+        '',
+        '## Real Next Section',
+        '',
+        'Body text.'
+      ].join('\n')
+    );
+
+    // 2. `@internationalized/date` doc under `pages/react-aria/internationalized/`
+    write(
+      target,
+      'packages/react-aria-components/package.json',
+      JSON.stringify({name: 'react-aria-components', version: '1.0.0', source: 'src/index.ts'})
+    );
+    write(
+      target,
+      'packages/react-aria-components/src/index.ts',
+      'export interface ButtonProps { isDisabled?: boolean; }\nexport function Button(props: ButtonProps) { return props; }\n'
+    );
+    write(
+      target,
+      'packages/@internationalized/date/package.json',
+      JSON.stringify({name: '@internationalized/date', version: '3.8.0', source: 'src/index.ts'})
+    );
+    write(
+      target,
+      'packages/@internationalized/date/src/index.ts',
+      'export class CalendarDate { readonly year: number = 2026; }\n'
+    );
+    write(
+      target,
+      'packages/dev/s2-docs/pages/react-aria/ComboBox.mdx',
+      `import docs from 'docs:react-aria-components';\n\n# ComboBox\n\nRAC ComboBox.\n`
+    );
+    write(
+      target,
+      'packages/dev/s2-docs/pages/react-aria/Button.mdx',
+      `import docs from 'docs:react-aria-components';\n\n# Button\n\nRAC Button.\n`
+    );
+    write(
+      target,
+      'packages/dev/s2-docs/pages/react-aria/internationalized/date/CalendarDate.mdx',
+      `# CalendarDate\n\nRepresents a date without time.\n`
+    );
+
+    const fencedSnap = await generateSnapshotFromTarget({
+      targetRoot: target,
+      repoRoot: target,
+      outRoot: snapshots,
+      snapshotId: 'snap-fenced',
+      sourceCommit: 'test',
+      extractorCommit: 'test',
+      libraries: ['s2']
+    });
+    const btnEntry = fencedSnap.entries.find(e => e.id === 's2:Button');
+    assert.equal(btnEntry?.title, 'Real Button Title');
+    assert.deepEqual(
+      btnEntry?.sections.map(s => s.heading),
+      ['Setup', 'Usage']
+    );
+    assert.match(btnEntry.sections[0].markdown, /# Install dependencies/);
+    assert.match(btnEntry.sections[0].markdown, /## Not a section heading/);
+
+    const guideEntry = fencedSnap.entries.find(e => e.id === 's2:guide/fenced-guide');
+    assert.equal(guideEntry?.title, 'Fenced Guide Title');
+    assert.deepEqual(
+      guideEntry?.sections.map(s => s.heading),
+      ['Template', 'Real Next Section']
+    );
+    assert.match(guideEntry.sections[0].markdown, /## Fake H2 inside fence/);
+
+    // `--libraries rac` excludes `@internationalized/*`
+    const racOnly = await generateSnapshotFromTarget({
+      targetRoot: target,
+      repoRoot: target,
+      outRoot: snapshots,
+      snapshotId: 'snap-rac-only',
+      sourceCommit: 'test',
+      extractorCommit: 'test',
+      libraries: ['rac']
+    });
+    assert.ok(racOnly.entries.some(e => e.id === 'rac:Button'));
+    assert.equal(
+      racOnly.entries.some(e => e.library === 'internationalized'),
+      false
+    );
+
+    // `--libraries internationalized` + `--filter-slugs internationalized:date/CalendarDate` extracts it
+    const intlFiltered = await generateSnapshotFromTarget({
+      targetRoot: target,
+      repoRoot: target,
+      outRoot: snapshots,
+      snapshotId: 'snap-intl-only',
+      sourceCommit: 'test',
+      extractorCommit: 'test',
+      libraries: ['internationalized'],
+      filterSlugs: ['internationalized:date/CalendarDate']
+    });
+    assert.deepEqual(
+      intlFiltered.entries.map(e => e.id),
+      ['internationalized:date/CalendarDate']
+    );
+
+    // `react-aria-components:` prefix alias resolves identically to `rac:` in `readDocs`
+    updateSnapshotsIndex(snapshots, [racOnly], {markAsLatest: true});
+    const aliasRead = await readDocs({
+      ids: ['react-aria-components:Button'],
+      cwd: target,
+      snapshotSource: snapshots,
+      cacheDir: path.join(tmp, 'cache'),
+      versionOverride: 'latest'
+    });
+    assert.equal(aliasRead.results[0].ok, true);
+    assert.equal(aliasRead.results[0].id, 'rac:Button');
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
