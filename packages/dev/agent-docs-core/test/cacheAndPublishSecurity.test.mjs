@@ -471,6 +471,7 @@ test('parses multi-byte UTF-8 PAX tar paths, allows additive entry schemaVersion
     // 1. Multi-byte UTF-8 PAX path (>100 bytes forces PAX header)
     const longUtf8Path = `entries/s2/${'café-über-日本語-'.repeat(8)}doc.json`;
     const gz = packTarGz([{path: longUtf8Path, content: '{"ok":true}'}]);
+    assert.equal(gz[9], 0x03, 'gzip OS header byte must be normalized to Unix (0x03)');
     const dest = path.join(tmp, 'unpacked');
     unpackTarGzBufferToDir(gz, dest);
     assert.equal(fs.readFileSync(path.join(dest, longUtf8Path), 'utf8'), '{"ok":true}');

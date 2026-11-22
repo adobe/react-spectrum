@@ -150,7 +150,12 @@ export function packTarGz(entries) {
 
   chunks.push(Buffer.alloc(BLOCK_SIZE * 2, 0));
   let tarBuffer = Buffer.concat(chunks);
-  return zlib.gzipSync(tarBuffer, {level: 9});
+  let gz = zlib.gzipSync(tarBuffer, {level: 9});
+  // Normalize the RFC 1952 gzip OS header byte (offset 9) to Unix (0x03) so digests match across macOS and Linux.
+  if (gz.length >= 10) {
+    gz[9] = 0x03;
+  }
+  return gz;
 }
 
 function readCString(buf, offset, length) {

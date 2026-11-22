@@ -67,6 +67,11 @@ test('CLI finds documented exports by name and offers choices for ambiguous expo
   const ariaOption = JSON.parse(run('api', 'react-aria:useOption', '--json'));
   assert.equal(ariaOption.resolvedId, option.resolvedId);
   assert.deepEqual(ariaOption.exports, option.exports);
+
+  const explicitExportOption = JSON.parse(
+    run('api', 'react-aria:ListBox/useListBox', '--export', 'useOption', '--json')
+  );
+  assert.deepEqual(explicitExportOption.imports, ["import {useOption} from 'react-aria';"]);
   assert.throws(
     () => run('api', 'MenuItem', '--json'),
     err => {
@@ -510,7 +515,15 @@ test('CLI tokens match multi-word queries accurately and say when nothing matche
   );
   assert.equal(blueSubtle.properties.length, 1);
   assert.deepEqual(blueSubtle.properties[0].matchedValues, ['blue-subtle']);
+  assert.equal(blueSubtle.properties[0].matchingValueCount, 1);
+  assert.ok(blueSubtle.properties[0].totalValueCount > 1);
   assert.doesNotMatch(blueSubtle.markdown, /\(\+\d+ more\)/);
+
+  const allBg = JSON.parse(run('tokens', '--json', '--property', 'backgroundColor'));
+  const allBgProp = allBg.properties.find(p => p.property === 'backgroundColor');
+  assert.ok(allBgProp);
+  assert.equal(allBgProp.matchingValueCount, allBgProp.totalValueCount);
+  assert.ok(allBgProp.matchingValueCount > allBgProp.matchedValues.length);
 
   const missing = JSON.parse(run('tokens', '--json', 'zzzz-no-such-token'));
   assert.deepEqual(missing.properties, []);

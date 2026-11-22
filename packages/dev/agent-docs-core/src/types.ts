@@ -407,6 +407,7 @@ export interface TokensDocsResult {
     property: string;
     description: string;
     matchedValues: string[];
+    matchingValueCount: number;
     totalValueCount: number;
   }>;
   markdown: string;

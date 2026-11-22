@@ -1425,11 +1425,9 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
   });
   let item = readRes.results[0];
   let exportName = options.exportName;
-  let resolvedByExport = false;
   if (item && !item.ok && item.error.code === 'ERR_ENTRY_NOT_FOUND') {
     const match = await findApiExport(options, readRes.resolution);
     if (match) {
-      resolvedByExport = true;
       exportName ??= match.exportName;
       readRes = await readDocs({
         ...options,
@@ -1589,13 +1587,14 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
   }));
 
   let imports = item.entry.imports;
-  if (resolvedByExport && exportName) {
+  if (exportName) {
+    const targetExportName = rawExportsList[0]?.name ?? exportName;
     const focusedImports = imports.flatMap(statement => {
       const match = /^(import\s+\{)([^}]+)(\}\s+from\s+.+)$/.exec(statement);
       const binding = match?.[2]
         .split(',')
         .map(specifier => specifier.trim())
-        .find(specifier => specifier.replace(/^type\s+/, '').split(/\s+/)[0] === exportName);
+        .find(specifier => specifier.replace(/^type\s+/, '').split(/\s+/)[0] === targetExportName);
       return match && binding ? [`${match[1]}${binding}${match[3]}`] : [];
     });
     if (focusedImports.length > 0) {
@@ -1686,8 +1685,7 @@ export async function queryTokens(options: QueryTokensOptions = {}): Promise<Tok
   // must intersect on a single value, so "blue background" finds blue values of `backgroundColor`
   // and "blue 100" finds `blue-100` instead of `red-100`.
   const queryWords = (options.query || '').toLowerCase().split(/\s+/).filter(Boolean);
-  const matchedProps: Array<TokensDocsResult['properties'][number] & {matchingValueCount: number}> =
-    [];
+  const matchedProps: TokensDocsResult['properties'] = [];
   const spacingScale = assets.styleMacro?.spacingScale ?? {};
 
   for (const [categoryName, catMap] of Object.entries(assets.styleMacro?.categories || {})) {
@@ -1771,14 +1769,7 @@ export async function queryTokens(options: QueryTokensOptions = {}): Promise<Tok
     );
   }
 
-  const publicProperties: TokensDocsResult['properties'] = matchedProps.map(
-    ({property, description, matchedValues, totalValueCount}) => ({
-      property,
-      description,
-      matchedValues,
-      totalValueCount
-    })
-  );
+  const publicProperties: TokensDocsResult['properties'] = matchedProps;
 
   return {
     apiVersion: API_VERSION,
