@@ -343,7 +343,7 @@ describe('Disclosure', () => {
   });
 
   it('should not set data-entering or data-exiting on initial render', () => {
-    const {container, rerender} = render(
+    const {container} = render(
       <Disclosure>
         <Heading level={3}>
           <Button slot="trigger">Trigger</Button>
@@ -356,9 +356,11 @@ describe('Disclosure', () => {
     const panel = container.querySelector('.react-aria-DisclosurePanel');
     expect(panel).not.toHaveAttribute('data-entering');
     expect(panel).not.toHaveAttribute('data-exiting');
+  });
 
-    rerender(
-      <Disclosure isExpanded>
+  it('should not set data-entering on initial render when already expanded', () => {
+    const {container} = render(
+      <Disclosure defaultExpanded>
         <Heading level={3}>
           <Button slot="trigger">Trigger</Button>
         </Heading>
@@ -367,6 +369,7 @@ describe('Disclosure', () => {
         </DisclosurePanel>
       </Disclosure>
     );
+    const panel = container.querySelector('.react-aria-DisclosurePanel');
     expect(panel).not.toHaveAttribute('data-entering');
     expect(panel).not.toHaveAttribute('data-exiting');
   });

@@ -44,10 +44,10 @@ import React, {
   forwardRef,
   ReactNode,
   useContext,
-  useRef
+  useState
 } from 'react';
-import {useFocusRing} from 'react-aria/useFocusRing';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
+import {useFocusRing} from 'react-aria/useFocusRing';
 import {useId} from 'react-aria/useId';
 
 export interface DisclosureGroupProps
@@ -309,8 +309,8 @@ export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(
       within: true
     });
     let isExiting = useExitAnimation(panelRef, isExpanded);
-    let isInitiallyExpanded = useRef(isExpanded);
-    let isEntering = useEnterAnimation(panelRef) && !isInitiallyExpanded.current;
+    let [isInitiallyExpanded] = useState(isExpanded);
+    let isEntering = useEnterAnimation(panelRef) && !isInitiallyExpanded;
     let renderProps = useRenderProps({
       ...props,
       defaultClassName: 'react-aria-DisclosurePanel',
