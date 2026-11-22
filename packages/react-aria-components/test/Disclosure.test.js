@@ -375,12 +375,13 @@ describe('Disclosure', () => {
   });
 
   it('should expose isEntering and isExiting as render props on DisclosurePanel', async () => {
-    const {getByRole, container} = render(
+    const {getByRole, getByTestId} = render(
       <Disclosure>
         <Heading level={3}>
           <Button slot="trigger">Trigger</Button>
         </Heading>
         <DisclosurePanel
+          data-testid="panel"
           className={({isEntering, isExiting}) =>
             [isEntering && 'entering', isExiting && 'exiting'].filter(Boolean).join(' ')
           }>
@@ -388,7 +389,7 @@ describe('Disclosure', () => {
         </DisclosurePanel>
       </Disclosure>
     );
-    const panel = container.querySelector('.react-aria-DisclosurePanel');
+    const panel = getByTestId('panel');
     const button = getByRole('button');
 
     expect(panel).not.toHaveClass('entering');
