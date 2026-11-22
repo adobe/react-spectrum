@@ -110,6 +110,8 @@ export interface PropIR {
   defaultValue?: string;
   description: string;
   inheritedFrom?: string;
+  deprecated?: boolean;
+  deprecationMessage?: string;
 }
 
 export interface RenderPropIR {
@@ -117,6 +119,8 @@ export interface RenderPropIR {
   type: string;
   selector?: string;
   description: string;
+  deprecated?: boolean;
+  deprecationMessage?: string;
 }
 
 export interface GenericParamIR {

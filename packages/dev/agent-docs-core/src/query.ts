@@ -605,12 +605,157 @@ function renderReadSectionIndex(entry: CatalogEntryIR, sections: ReadSectionRef[
   return renderReadEntry(entry, []) + '\n' + outline + '\n';
 }
 
+function getChunkPartCount(chunk: ReadChunk): number {
+  if ('section' in chunk) {
+    return chunk.section.markdown.split('\n').length;
+  }
+  const {apiExport} = chunk;
+  return apiExport.props.length + apiExport.events.length + apiExport.renderProps.length;
+}
+
+function sliceRange<T>(items: T[], start: number, end: number, baseOffset: number): T[] {
+  const localStart = Math.max(0, start - baseOffset);
+  const localEnd = Math.min(items.length, end - baseOffset);
+  return localStart < localEnd ? items.slice(localStart, localEnd) : [];
+}
+
+function findUnclosedFence(lines: string[]): string | null {
+  let openFence: string | null = null;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('```')) {
+      openFence = openFence ? null : trimmed;
+    }
+  }
+  return openFence;
+}
+
+function sliceReadChunk(chunk: ReadChunk, partStart: number, partEnd: number): ReadChunk {
+  if ('section' in chunk) {
+    const lines = chunk.section.markdown.split('\n');
+    const sliceLines = lines.slice(partStart, partEnd);
+    const prefixFence = partStart > 0 ? findUnclosedFence(lines.slice(0, partStart)) : null;
+    const outputLines = prefixFence ? [prefixFence, ...sliceLines] : [...sliceLines];
+    if (partEnd < lines.length && findUnclosedFence(outputLines)) {
+      outputLines.push('```');
+    }
+    return {
+      ...chunk,
+      section: {
+        ...chunk.section,
+        markdown: outputLines.join('\n')
+      }
+    };
+  }
+  const exp = chunk.apiExport;
+  const propsLen = exp.props.length;
+  const eventsLen = exp.events.length;
+  const slicedExport: ExportApiIR = {
+    ...exp,
+    description: partStart === 0 ? exp.description : undefined,
+    constraints: partStart === 0 ? exp.constraints : [],
+    callSignatures: partStart === 0 ? exp.callSignatures : [],
+    typeText: partStart === 0 ? exp.typeText : undefined,
+    props: sliceRange(exp.props, partStart, partEnd, 0),
+    events: sliceRange(exp.events, partStart, partEnd, propsLen),
+    renderProps: sliceRange(exp.renderProps, partStart, partEnd, propsLen + eventsLen)
+  };
+  return {
+    ...chunk,
+    apiExport: slicedExport
+  };
+}
+
+function parseReadCursor(
+  raw: string | undefined,
+  cursorKey: string,
+  chunks: ReadChunk[],
+  listSections: boolean
+): {start: number; startPart: number} | null {
+  if (raw === undefined) {
+    return {start: 0, startPart: 0};
+  }
+  const match = /^(\d+)(?:_(\d+))?\.([a-f0-9]+)$/.exec(raw);
+  if (!match || match[3] !== cursorKey) {
+    return null;
+  }
+  const start = Number(match[1]);
+  const startPart = match[2] !== undefined ? Number(match[2]) : 0;
+  if (!Number.isSafeInteger(start) || start < 0 || start >= chunks.length) {
+    return null;
+  }
+  if (!Number.isSafeInteger(startPart) || startPart < 0) {
+    return null;
+  }
+  if (startPart > 0 && (listSections || startPart >= getChunkPartCount(chunks[start]))) {
+    return null;
+  }
+  return {start, startPart};
+}
+
+function filterExportDeprecatedMembers(exp: ExportApiIR, includeDeprecated: boolean): ExportApiIR {
+  if (includeDeprecated) {
+    return exp;
+  }
+  return {
+    ...exp,
+    props: exp.props.filter(p => !p.deprecated),
+    events: exp.events.filter(e => !e.deprecated),
+    renderProps: exp.renderProps.filter(rp => !rp.deprecated)
+  };
+}
+
 type ReadSuccess = Extract<ReadItemResult, {ok: true}>;
 
 interface ReadPage {
   start: number;
+  startPart: number;
   end: number;
+  totalFirstChunkParts: number;
+  allowSubChunking: boolean;
   project: (end: number) => ReadSuccess;
+  projectSlice: (partEnd: number) => ReadSuccess;
+}
+
+function fitOversizedFirstChunk(
+  result: ReadDocsResult,
+  pageIndex: number,
+  page: ReadPage,
+  entryLimit: number,
+  outputTokens: () => number
+): {fitted: boolean; minSliceTokens: number} {
+  if (!page.allowSubChunking || page.totalFirstChunkParts <= page.startPart + 1) {
+    return {fitted: false, minSliceTokens: 0};
+  }
+  let lo = page.startPart + 1;
+  let hi = page.totalFirstChunkParts - 1;
+  let best = -1;
+  let minSliceTokens = 0;
+
+  while (lo <= hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    result.results[pageIndex] = page.projectSlice(mid);
+    const tokens = outputTokens();
+    if (mid === page.startPart + 1) {
+      minSliceTokens = tokens;
+    }
+    if (tokens <= entryLimit) {
+      best = mid;
+      lo = mid + 1;
+    } else {
+      hi = mid - 1;
+    }
+  }
+
+  if (best !== -1) {
+    result.results[pageIndex] = page.projectSlice(best);
+    return {fitted: true, minSliceTokens};
+  }
+  if (minSliceTokens === 0) {
+    result.results[pageIndex] = page.projectSlice(page.startPart + 1);
+    minSliceTokens = outputTokens();
+  }
+  return {fitted: false, minSliceTokens};
 }
 
 function boundReadResult(
@@ -631,7 +776,8 @@ function boundReadResult(
     new AgentDocsError(
       'ERR_INVALID_ARGS',
       `The token budget ${maxTokens} is too small for ${subject} (requires at least ${required}). Increase --max-tokens or request fewer entries.`,
-      EXIT_CODES.INVALID_ARGS
+      EXIT_CODES.INVALID_ARGS,
+      {details: {maxTokens, minimumTokens: required}}
     );
 
   for (const [i, page] of pages) {
@@ -650,14 +796,23 @@ function boundReadResult(
       const next = page.project(end);
       result.results[i] = next;
       const tokens = outputTokens();
-      if (tokens > entryLimit) {
+      if (tokens <= entryLimit) {
+        current = next;
+        continue;
+      }
+      if (end === page.start + 1) {
+        const sliced = fitOversizedFirstChunk(result, i, page, entryLimit, outputTokens);
+        if (sliced.fitted) {
+          break;
+        }
         result.results[i] = current;
-        if (pages.size === 1 && end === page.start + 1) {
-          throw budgetError(tokens, 'the next section or API export');
+        if (pages.size === 1) {
+          throw budgetError(sliced.minSliceTokens || tokens, 'the next section or API export');
         }
         break;
       }
-      current = next;
+      result.results[i] = current;
+      break;
     }
   }
 }
@@ -667,6 +822,7 @@ export interface ReadDocsOptions extends CommonQueryOptions {
   sections?: SectionFilter[];
   listSections?: boolean;
   sectionHeadings?: string[];
+  includeDeprecated?: boolean;
   maxTokens?: number;
   cursor?: string;
   output?: ReadOutputOptions;
@@ -732,6 +888,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     ...(sections ? ['--sections', sections.join(',')] : []),
     ...(options.listSections ? ['--list-sections'] : []),
     ...headings.flatMap(heading => ['--section', quoteShellArg(heading)]),
+    ...(options.includeDeprecated ? ['--include-deprecated'] : []),
     ...(options.maxTokens === undefined ? [] : ['--max-tokens', String(options.maxTokens)]),
     ...(options.output?.format === 'json' ? ['--json'] : []),
     ...(options.output?.jsonContent === 'markdown' ? ['--json-content', 'markdown'] : []),
@@ -863,7 +1020,12 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
       continue;
     }
 
-    const {entry: fullEntry, prov} = matchedData;
+    const {entry: rawEntry, prov} = matchedData;
+    const includeDeprecated = Boolean(options.includeDeprecated);
+    const fullEntry: CatalogEntryIR = {
+      ...rawEntry,
+      exports: rawEntry.exports.map(exp => filterExportDeprecatedMembers(exp, includeDeprecated))
+    };
     usedSnapshots.add(prov.snapshotId);
     relevantPackages.add(prov.packageName);
     const allChunks = getReadChunks(fullEntry);
@@ -878,7 +1040,13 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
     const {chunks} = selection;
     const selectedIds = new Set(chunks.map(chunk => chunk.id));
     const filteredIds = allChunks.map(chunk => chunk.id).filter(id => !selectedIds.has(id));
-    const cursorScope = [fullEntry.id, prov.snapshotId, prov.sliceSha256, sections];
+    const cursorScope = [
+      fullEntry.id,
+      prov.snapshotId,
+      prov.sliceSha256,
+      sections,
+      ...(includeDeprecated ? ['deprecated'] : [])
+    ];
     const cursorKey = createHash('sha256')
       .update(
         JSON.stringify(
@@ -889,21 +1057,21 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
       )
       .digest('hex')
       .slice(0, 20);
-    const [offset] = options.cursor?.split('.', 1) ?? [];
-    const start = Number(offset ?? 0);
-    if (
-      options.cursor !== undefined &&
-      (options.cursor !== `${start}.${cursorKey}` ||
-        !Number.isSafeInteger(start) ||
-        start < 0 ||
-        start >= chunks.length)
-    ) {
+    const parsedCursor = parseReadCursor(
+      options.cursor,
+      cursorKey,
+      chunks,
+      Boolean(options.listSections)
+    );
+    if (!parsedCursor) {
       throw new AgentDocsError(
         'ERR_INVALID_ARGS',
         'This cursor does not match the document, snapshot, or section selection. Start a new read or use the original options.',
         EXIT_CODES.INVALID_ARGS
       );
     }
+    const {start, startPart} = parsedCursor;
+    const firstChunkParts = start < chunks.length ? getChunkPartCount(chunks[start]) : 0;
 
     const header =
       options.cursor !== undefined || options.listSections || headings.length > 0
@@ -915,8 +1083,12 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
                 ? fullEntry.compositionRules
                 : []
           };
-    const project = (end: number): ReadSuccess => {
-      const selected = chunks.slice(start, end);
+    const buildReadSuccess = (
+      selected: ReadChunk[],
+      omittedAfterEnd: string[],
+      truncated: boolean,
+      nextCursor: string | undefined
+    ): ReadSuccess => {
       const sectionIndex = options.listSections
         ? selected.map(({id, heading, category, level}) => ({id, heading, category, level}))
         : undefined;
@@ -931,8 +1103,6 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
           ? []
           : selected.flatMap(chunk => ('apiExport' in chunk ? [chunk.apiExport] : []))
       };
-      const truncated = end < chunks.length;
-      const nextCursor = truncated ? `${end}.${cursorKey}` : undefined;
       return {
         requestedId,
         ok: true,
@@ -950,9 +1120,7 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
           : renderReadEntry(pageEntry, selected),
         sectionIndex,
         includedSections: [...new Set(selected.map(chunk => chunk.id))],
-        omittedSections: [
-          ...new Set([...filteredIds, ...chunks.slice(end).map(chunk => chunk.id)])
-        ],
+        omittedSections: [...new Set([...filteredIds, ...omittedAfterEnd])],
         truncated,
         nextCursor,
         continueCommand:
@@ -961,8 +1129,53 @@ export async function readDocs(options: ReadDocsOptions): Promise<ReadDocsResult
             : undefined
       };
     };
+
+    const project = (end: number): ReadSuccess => {
+      let selected: ReadChunk[];
+      if (end <= start) {
+        selected = [];
+      } else if (startPart > 0) {
+        selected = [
+          sliceReadChunk(chunks[start], startPart, firstChunkParts),
+          ...chunks.slice(start + 1, end)
+        ];
+      } else {
+        selected = chunks.slice(start, end);
+      }
+      const truncated = end < chunks.length;
+      const nextCursor = truncated
+        ? end === start && startPart > 0
+          ? `${start}_${startPart}.${cursorKey}`
+          : `${end}.${cursorKey}`
+        : undefined;
+      return buildReadSuccess(
+        selected,
+        chunks.slice(end).map(chunk => chunk.id),
+        truncated,
+        nextCursor
+      );
+    };
+
+    const projectSlice = (partEnd: number): ReadSuccess => {
+      const selected = [sliceReadChunk(chunks[start], startPart, partEnd)];
+      return buildReadSuccess(
+        selected,
+        chunks.slice(start + 1).map(chunk => chunk.id),
+        true,
+        `${start}_${partEnd}.${cursorKey}`
+      );
+    };
+
     if (start < chunks.length) {
-      pages.set(results.length, {start, end: chunks.length, project});
+      pages.set(results.length, {
+        start,
+        startPart,
+        end: chunks.length,
+        totalFirstChunkParts: firstChunkParts,
+        allowSubChunking: !options.listSections,
+        project,
+        projectSlice
+      });
     }
     results.push(project(chunks.length));
   }
@@ -996,6 +1209,24 @@ export interface QueryApiOptions extends CommonQueryOptions {
   propFilter?: string;
   eventsOnly?: boolean;
   renderPropsOnly?: boolean;
+  includeDeprecated?: boolean;
+}
+
+function formatMemberDescription(member: {
+  description: string;
+  deprecated?: boolean;
+  deprecationMessage?: string;
+}): string {
+  const parts: string[] = [];
+  if (member.deprecated) {
+    parts.push(
+      member.deprecationMessage ? `*(deprecated: ${member.deprecationMessage})*` : '*(deprecated)*'
+    );
+  }
+  if (member.description) {
+    parts.push(member.description);
+  }
+  return (parts.join(' ') || '—').replace(/\|/g, '\\|');
 }
 
 function renderDetailedExportMarkdown(exp: ExportApiIR, headingLevel = 2): string {
@@ -1034,13 +1265,18 @@ function renderDetailedExportMarkdown(exp: ExportApiIR, headingLevel = 2): strin
   const props = exp.props;
   if (props.length > 0) {
     lines.push('');
-    lines.push(`${heading}# Props`);
-    lines.push('| Prop | Type | Default | Inherited From | Description |');
+    if (exp.exportKind === 'class') {
+      lines.push(`${heading}# Properties & Methods`);
+      lines.push('| Member | Type | Default | Inherited From | Description |');
+    } else {
+      lines.push(`${heading}# Props`);
+      lines.push('| Prop | Type | Default | Inherited From | Description |');
+    }
     lines.push('|---|---|---|---|---|');
     for (const p of props) {
       const req = p.required ? '**required**' : p.defaultValue || '—';
       lines.push(
-        `| \`${p.name}\` | \`${p.type.replace(/\|/g, '\\|')}\` | ${req.replace(/\|/g, '\\|')} | ${p.inheritedFrom ? `\`${p.inheritedFrom}\`` : '—'} | ${(p.description || '—').replace(/\|/g, '\\|')} |`
+        `| \`${p.name}\` | \`${p.type.replace(/\|/g, '\\|')}\` | ${req.replace(/\|/g, '\\|')} | ${p.inheritedFrom ? `\`${p.inheritedFrom}\`` : '—'} | ${formatMemberDescription(p)} |`
       );
     }
   }
@@ -1052,7 +1288,7 @@ function renderDetailedExportMarkdown(exp: ExportApiIR, headingLevel = 2): strin
     lines.push('|---|---|---|');
     for (const ev of events) {
       lines.push(
-        `| \`${ev.name}\` | \`${ev.type.replace(/\|/g, '\\|')}\` | ${(ev.description || '—').replace(/\|/g, '\\|')} |`
+        `| \`${ev.name}\` | \`${ev.type.replace(/\|/g, '\\|')}\` | ${formatMemberDescription(ev)} |`
       );
     }
   }
@@ -1064,7 +1300,7 @@ function renderDetailedExportMarkdown(exp: ExportApiIR, headingLevel = 2): strin
     lines.push('|---|---|---|---|');
     for (const rp of rps) {
       lines.push(
-        `| \`${rp.name}\` | \`${rp.type.replace(/\|/g, '\\|')}\` | ${rp.selector ? `\`${rp.selector}\`` : '—'} | ${(rp.description || '—').replace(/\|/g, '\\|')} |`
+        `| \`${rp.name}\` | \`${rp.type.replace(/\|/g, '\\|')}\` | ${rp.selector ? `\`${rp.selector}\`` : '—'} | ${formatMemberDescription(rp)} |`
       );
     }
   }
@@ -1172,10 +1408,12 @@ async function findApiExport(
 }
 
 export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult> {
+  const includeDeprecated = Boolean(options.includeDeprecated);
   let readRes = await readDocs({
     ...options,
     ids: [options.id],
-    sections: ['api']
+    sections: ['api'],
+    includeDeprecated: true
   });
   let item = readRes.results[0];
   let exportName = options.exportName;
@@ -1189,7 +1427,8 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
         ...options,
         resolution: readRes.resolution,
         ids: [match.id],
-        sections: ['api']
+        sections: ['api'],
+        includeDeprecated: true
       });
       item = readRes.results[0];
     }
@@ -1203,11 +1442,11 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
     );
   }
 
-  let exportsList = item.entry.exports || [];
+  let rawExportsList = item.entry.exports || [];
   if (exportName) {
     const needle = exportName.toLowerCase();
-    exportsList = exportsList.filter(e => e.name.toLowerCase() === needle);
-    if (exportsList.length === 0) {
+    rawExportsList = rawExportsList.filter(e => e.name.toLowerCase() === needle);
+    if (rawExportsList.length === 0) {
       const available = (item.entry.exports || []).map(e => e.name);
       throw new AgentDocsError(
         'ERR_ENTRY_NOT_FOUND',
@@ -1217,6 +1456,18 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
       );
     }
   }
+  const hiddenDeprecatedNames = includeDeprecated
+    ? new Set<string>()
+    : new Set(
+        rawExportsList.flatMap(exp =>
+          [...exp.props, ...exp.events, ...exp.renderProps]
+            .filter(m => m.deprecated)
+            .map(m => m.name.toLowerCase())
+        )
+      );
+  let exportsList = rawExportsList.map(exp =>
+    filterExportDeprecatedMembers(exp, includeDeprecated)
+  );
 
   const uniqueRawFilters: Array<{filter: string; needle: string}> = [];
   const seenNeedles = new Set<string>();
@@ -1282,15 +1533,38 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
       .map(({name}) => name);
   const unmatchedFilters = uniqueRawFilters
     .filter(({needle}) => !visibleMembers.some(p => memberMatchesNeedle(p, needle)))
-    .map(({filter, needle}) => ({filter, suggestions: suggestMembers(needle)}));
+    .map(({filter, needle}) => ({
+      filter,
+      matchesHiddenDeprecated: [...hiddenDeprecatedNames].some(name => name.includes(needle)),
+      suggestions: suggestMembers(needle)
+    }));
   const apiTarget = exportName ? `'${exportName}' in '${item.id}'` : `'${item.id}'`;
-  const describeUnmatched = ({filter, suggestions}: {filter: string; suggestions: string[]}) =>
-    `'${filter}'${suggestions.length > 0 ? ` (did you mean ${suggestions.map(s => `\`${s}\``).join(', ')}?)` : ''}`;
+  const describeUnmatched = ({
+    filter,
+    matchesHiddenDeprecated,
+    suggestions
+  }: {
+    filter: string;
+    matchesHiddenDeprecated: boolean;
+    suggestions: string[];
+  }) => {
+    const hints: string[] = [];
+    if (matchesHiddenDeprecated) {
+      hints.push('matches a deprecated member — pass --include-deprecated to view it');
+    }
+    if (suggestions.length > 0) {
+      hints.push(`did you mean ${suggestions.map(s => `\`${s}\``).join(', ')}?`);
+    }
+    return `'${filter}'${hints.length > 0 ? ` (${hints.join('; ')})` : ''}`;
+  };
 
   if (propNeedles.length > 0 && unmatchedFilters.length === propNeedles.length) {
+    const deprecatedHint = unmatchedFilters.some(u => u.matchesHiddenDeprecated)
+      ? ' Re-run with --include-deprecated to include @deprecated members.'
+      : '';
     throw new AgentDocsError(
       'ERR_PROP_NOT_FOUND',
-      `Prop filter ${unmatchedFilters.map(u => `'${u.filter}'`).join(', ')} not found on ${apiTarget}.`,
+      `Prop filter ${unmatchedFilters.map(u => `'${u.filter}'`).join(', ')} not found on ${apiTarget}.${deprecatedHint}`,
       EXIT_CODES.NOT_FOUND,
       {suggestions: [...new Set(unmatchedFilters.flatMap(u => u.suggestions))].slice(0, 5)}
     );
@@ -1722,12 +1996,13 @@ export function getCapabilityManifest(
       name: 'read',
       summary:
         'Read compact usage, anatomy, styling, accessibility, and API docs for one or more IDs in a single call.',
-      usage: `${cliName} read <id...> [--sections usage,api,accessibility,styling,testing,guide,all] [--list-sections | --section heading-or-id] [--max-tokens N] [--cursor value] [--json [--json-content entry|markdown]]`,
+      usage: `${cliName} read <id...> [--sections usage,api,accessibility,styling,testing,guide,all] [--list-sections | --section heading-or-id] [--include-deprecated] [--max-tokens N] [--cursor value] [--json [--json-content entry|markdown]]`,
       flags: [
         '--cwd',
         '--sections',
         '--list-sections',
         '--section',
+        '--include-deprecated',
         '--max-tokens',
         '--cursor',
         '--version',
@@ -1742,13 +2017,14 @@ export function getCapabilityManifest(
     {
       name: 'api',
       summary: 'Inspect TypeScript APIs by document ID or export name.',
-      usage: `${cliName} api <id-or-export> [--export Name] [--prop filter] [--events-only] [--render-props] [--json]`,
+      usage: `${cliName} api <id-or-export> [--export Name] [--prop filter] [--events-only] [--render-props] [--include-deprecated] [--json]`,
       flags: [
         '--cwd',
         '--export',
         '--prop',
         '--events-only',
         '--render-props',
+        '--include-deprecated',
         '--version',
         '--snapshot',
         '--offline',

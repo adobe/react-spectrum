@@ -180,6 +180,8 @@ async function resolveMcpQueryOptions(
     snapshot?: string;
     resolution?: unknown;
     offline?: boolean;
+    strictVersion?: boolean;
+    allowLatestFallback?: boolean;
   }
 ): Promise<CommonQueryOptions> {
   const versionOverride = serializePackageVersionsOverride(
@@ -207,6 +209,8 @@ async function resolveMcpQueryOptions(
     return {
       resolution: parsed.data as ResolutionState,
       offline: toolArgs.offline,
+      strictVersion: toolArgs.strictVersion,
+      allowLatestFallback: toolArgs.allowLatestFallback,
       defaultLibrary
     };
   }
@@ -218,6 +222,8 @@ async function resolveMcpQueryOptions(
       versionOverride,
       snapshotOverride: toolArgs.snapshot,
       offline: toolArgs.offline,
+      strictVersion: toolArgs.strictVersion,
+      allowLatestFallback: toolArgs.allowLatestFallback,
       defaultLibrary
     };
   }
@@ -228,6 +234,8 @@ async function resolveMcpQueryOptions(
     return {
       cwd: configuredRoot,
       offline: toolArgs.offline,
+      strictVersion: toolArgs.strictVersion,
+      allowLatestFallback: toolArgs.allowLatestFallback,
       defaultLibrary
     };
   }
@@ -238,6 +246,8 @@ async function resolveMcpQueryOptions(
     return {
       cwd: clientRoots[0],
       offline: toolArgs.offline,
+      strictVersion: toolArgs.strictVersion,
+      allowLatestFallback: toolArgs.allowLatestFallback,
       defaultLibrary
     };
   }
@@ -248,6 +258,8 @@ async function resolveMcpQueryOptions(
         const state = await resolveWorkspace({
           cwd: root,
           offline: toolArgs.offline,
+          strictVersion: toolArgs.strictVersion,
+          allowLatestFallback: toolArgs.allowLatestFallback,
           defaultLibrary
         });
         candidateResolutions.push({root, state});
@@ -259,6 +271,8 @@ async function resolveMcpQueryOptions(
       return {
         resolution: candidateResolutions[0].state,
         offline: toolArgs.offline,
+        strictVersion: toolArgs.strictVersion,
+        allowLatestFallback: toolArgs.allowLatestFallback,
         defaultLibrary
       };
     }
@@ -277,6 +291,18 @@ async function resolveMcpQueryOptions(
     return {
       cwd: process.cwd(),
       offline: toolArgs.offline,
+      strictVersion: toolArgs.strictVersion,
+      allowLatestFallback: toolArgs.allowLatestFallback,
+      defaultLibrary
+    };
+  }
+
+  if (toolArgs.allowLatestFallback) {
+    return {
+      cwd: process.cwd(),
+      offline: toolArgs.offline,
+      strictVersion: toolArgs.strictVersion,
+      allowLatestFallback: true,
       defaultLibrary
     };
   }
@@ -389,6 +415,16 @@ export async function createAgentDocsMcpServer(
       .boolean()
       .optional()
       .describe('Include full workspace resolution in JSON output.'),
+    strictVersion: z
+      .boolean()
+      .optional()
+      .describe(
+        'Fail instead of warning when an unverified patch falls back to the same minor version.'
+      ),
+    allowLatestFallback: z
+      .boolean()
+      .optional()
+      .describe('Fall back to latest published docs when the workspace has no matching packages.'),
     offline: z.boolean().optional().describe('Use only cached snapshots without network requests.')
   };
 
@@ -403,6 +439,8 @@ export async function createAgentDocsMcpServer(
         version: commonContextSchema.version,
         packageVersions: commonContextSchema.packageVersions,
         snapshot: commonContextSchema.snapshot,
+        strictVersion: commonContextSchema.strictVersion,
+        allowLatestFallback: commonContextSchema.allowLatestFallback,
         offline: commonContextSchema.offline
       },
       annotations: {readOnlyHint: true}
@@ -517,6 +555,10 @@ export async function createAgentDocsMcpServer(
           .enum(['entry', 'markdown'])
           .optional()
           .describe('Content for JSON output: structured entry (default) or rendered Markdown.'),
+        includeDeprecated: z
+          .boolean()
+          .optional()
+          .describe('Include @deprecated props, events, and render props in API output.'),
         format: FORMAT_ENUM.optional().describe('Output format: "markdown" (default) or "json".'),
         ...commonContextSchema
       },
@@ -551,6 +593,7 @@ export async function createAgentDocsMcpServer(
           sections: args.sections as SectionFilter[] | undefined,
           listSections: args.listSections,
           sectionHeadings: args.sectionHeadings,
+          includeDeprecated: args.includeDeprecated,
           maxTokens: args.maxTokens,
           cursor: args.cursor,
           output
@@ -585,6 +628,15 @@ export async function createAgentDocsMcpServer(
           .array(z.string())
           .optional()
           .describe('Optional list of prop/event names to filter.'),
+        eventsOnly: z.boolean().optional().describe('Return only event handler props (on*).'),
+        renderPropsOnly: z
+          .boolean()
+          .optional()
+          .describe('Return only render props and CSS data-attribute states.'),
+        includeDeprecated: z
+          .boolean()
+          .optional()
+          .describe('Include @deprecated props, events, and render props.'),
         format: FORMAT_ENUM.optional().describe('Output format: "markdown" (default) or "json".'),
         ...commonContextSchema
       },
@@ -603,7 +655,10 @@ export async function createAgentDocsMcpServer(
           ...queryOpts,
           id: args.id,
           exportName: args.exportName,
-          propFilter: args.props ? args.props.join(',') : undefined
+          propFilter: args.props ? args.props.join(',') : undefined,
+          eventsOnly: args.eventsOnly,
+          renderPropsOnly: args.renderPropsOnly,
+          includeDeprecated: args.includeDeprecated
         });
         return toolSuccessText(
           args.format === 'json' ? formatQueryJson(res, args.includeResolution) : res.markdown

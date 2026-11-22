@@ -362,6 +362,7 @@ function getJsDocSummary(node) {
       defaultValue: undefined,
       selector: undefined,
       deprecated: false,
+      deprecationMessage: undefined,
       isPrivate: false
     };
   }
@@ -372,6 +373,7 @@ function getJsDocSummary(node) {
       defaultValue: undefined,
       selector: undefined,
       deprecated: false,
+      deprecationMessage: undefined,
       isPrivate: false
     };
   }
@@ -383,6 +385,7 @@ function getJsDocSummary(node) {
   let defaultValue;
   let selector;
   let deprecated = false;
+  let deprecationMessage;
   let isPrivate = false;
 
   for (let tag of doc.getTags()) {
@@ -394,12 +397,15 @@ function getJsDocSummary(node) {
       selector = text;
     } else if (tagName === 'deprecated') {
       deprecated = true;
+      if (text) {
+        deprecationMessage = text;
+      }
     } else if (tagName === 'private' || tagName === 'internal') {
       isPrivate = true;
     }
   }
 
-  return {description, defaultValue, selector, deprecated, isPrivate};
+  return {description, defaultValue, selector, deprecated, deprecationMessage, isPrivate};
 }
 
 function resolveSymbolSourceFile(ctx, pkgName, symbolName) {
@@ -632,6 +638,187 @@ export function extractExportIR(ctx, pkgName, exportName, library) {
   let events = [];
   let slots = new Set();
 
+  if (exportKind === 'class' && primaryDecl?.getKind() === SyntaxKind.ClassDeclaration) {
+    const isHiddenMember = decl =>
+      Boolean(
+        decl.hasModifier?.(SyntaxKind.PrivateKeyword) ||
+        decl.hasModifier?.(SyntaxKind.ProtectedKeyword)
+      );
+
+    // 1. Constructors -> callSignatures
+    const seenCtorSigs = new Set();
+    for (let ctor of primaryDecl.getConstructors()) {
+      if (isHiddenMember(ctor)) {
+        continue;
+      }
+      let overloads = typeof ctor.getOverloads === 'function' ? ctor.getOverloads() : [];
+      let ctorDecls = overloads.length > 0 ? overloads : [ctor];
+      for (let cDecl of ctorDecls) {
+        let cDoc = getJsDocSummary(cDecl);
+        if (cDoc.isPrivate) {
+          continue;
+        }
+        let params = cDecl.getParameters().map(pDecl => {
+          let pTypeNode = pDecl.getTypeNode?.();
+          let pType = pTypeNode
+            ? cleanTypeString(pTypeNode.getText())
+            : cleanTypeString(pDecl.getType().getText(pDecl));
+          let pDoc = getJsDocSummary(pDecl);
+          return {
+            name: pDecl.getName(),
+            type: pType,
+            optional: Boolean(pDecl.isOptional?.() || pDecl.hasQuestionToken?.()),
+            description: pDoc.description
+          };
+        });
+        let sigStr = `new ${exportName}(${params.map(p => `${p.name}${p.optional ? '?' : ''}: ${p.type}`).join(', ')}): ${exportName}`;
+        if (!seenCtorSigs.has(sigStr)) {
+          seenCtorSigs.add(sigStr);
+          callSignatures.push({
+            signature: sigStr,
+            parameters: params,
+            returnType: exportName
+          });
+        }
+      }
+    }
+
+    // 2. Public properties, parameter properties, and getters -> props
+    const seenMemberNames = new Set();
+    const addClassMember = item => {
+      if (!item.name || item.name.startsWith('#') || seenMemberNames.has(item.name)) {
+        return;
+      }
+      seenMemberNames.add(item.name);
+      props.push(item);
+    };
+
+    for (let propDecl of primaryDecl.getProperties()) {
+      let name = propDecl.getName();
+      if (isHiddenMember(propDecl) || name.startsWith('#')) {
+        continue;
+      }
+      let docInfo = getJsDocSummary(propDecl);
+      if (docInfo.isPrivate) {
+        continue;
+      }
+      let typeNode = propDecl.getTypeNode?.();
+      let typeText = typeNode
+        ? cleanTypeString(typeNode.getText())
+        : cleanTypeString(propDecl.getType().getText(propDecl));
+      addClassMember({
+        name,
+        type: typeText,
+        required: false,
+        defaultValue: docInfo.defaultValue,
+        description: docInfo.description,
+        deprecated: docInfo.deprecated || undefined,
+        deprecationMessage: docInfo.deprecationMessage
+      });
+    }
+
+    for (let ctor of primaryDecl.getConstructors()) {
+      if (isHiddenMember(ctor)) {
+        continue;
+      }
+      for (let paramDecl of ctor.getParameters()) {
+        if (!paramDecl.isParameterProperty?.() || isHiddenMember(paramDecl)) {
+          continue;
+        }
+        let docInfo = getJsDocSummary(paramDecl);
+        if (docInfo.isPrivate) {
+          continue;
+        }
+        let typeNode = paramDecl.getTypeNode?.();
+        let typeText = typeNode
+          ? cleanTypeString(typeNode.getText())
+          : cleanTypeString(paramDecl.getType().getText(paramDecl));
+        addClassMember({
+          name: paramDecl.getName(),
+          type: typeText,
+          required: false,
+          defaultValue: docInfo.defaultValue,
+          description: docInfo.description,
+          deprecated: docInfo.deprecated || undefined,
+          deprecationMessage: docInfo.deprecationMessage
+        });
+      }
+    }
+
+    for (let getterDecl of primaryDecl.getGetAccessors()) {
+      let name = getterDecl.getName();
+      if (isHiddenMember(getterDecl) || name.startsWith('#')) {
+        continue;
+      }
+      let docInfo = getJsDocSummary(getterDecl);
+      if (docInfo.isPrivate) {
+        continue;
+      }
+      let retNode = getterDecl.getReturnTypeNode?.();
+      let typeText = retNode
+        ? cleanTypeString(retNode.getText())
+        : cleanTypeString(getterDecl.getReturnType().getText(getterDecl));
+      addClassMember({
+        name,
+        type: typeText,
+        required: false,
+        defaultValue: docInfo.defaultValue,
+        description: docInfo.description,
+        deprecated: docInfo.deprecated || undefined,
+        deprecationMessage: docInfo.deprecationMessage
+      });
+    }
+
+    // 3. Public methods -> props (with function signature type)
+    for (let methodDecl of primaryDecl.getMethods()) {
+      let name = methodDecl.getName();
+      if (isHiddenMember(methodDecl) || name.startsWith('#')) {
+        continue;
+      }
+      let docInfo = getJsDocSummary(methodDecl);
+      if (docInfo.isPrivate) {
+        continue;
+      }
+      let overloads =
+        typeof methodDecl.getOverloads === 'function' ? methodDecl.getOverloads() : [];
+      let methodDecls = overloads.length > 0 ? overloads : [methodDecl];
+      let formatMethodSig = mDecl => {
+        let params = mDecl.getParameters().map(pDecl => {
+          let pTypeNode = pDecl.getTypeNode?.();
+          let pType = pTypeNode
+            ? cleanTypeString(pTypeNode.getText())
+            : cleanTypeString(pDecl.getType().getText(pDecl));
+          let prefix = pDecl.isRestParameter?.() ? '...' : '';
+          let optional = pDecl.isOptional?.() || pDecl.hasQuestionToken?.() ? '?' : '';
+          return `${prefix}${pDecl.getName()}${optional}: ${pType}`;
+        });
+        let retNode = mDecl.getReturnTypeNode?.();
+        let retType = retNode
+          ? cleanTypeString(retNode.getText())
+          : cleanTypeString(mDecl.getReturnType().getText(mDecl));
+        return `(${params.join(', ')}) => ${retType}`;
+      };
+      let signatures = [...new Set(methodDecls.map(formatMethodSig))];
+      let overloadDoc =
+        docInfo.description ||
+        methodDecls.map(d => getJsDocSummary(d).description).find(Boolean) ||
+        '';
+      let isDeprecated = docInfo.deprecated || methodDecls.some(d => getJsDocSummary(d).deprecated);
+      let depMsg =
+        docInfo.deprecationMessage ||
+        methodDecls.map(d => getJsDocSummary(d).deprecationMessage).find(Boolean);
+      addClassMember({
+        name,
+        type: signatures.join(' | '),
+        required: false,
+        defaultValue: undefined,
+        description: overloadDoc,
+        deprecated: isDeprecated || undefined,
+        deprecationMessage: depMsg
+      });
+    }
+  }
+
   let targetPropsDecl = propsDecl || (exportKind === 'interface' ? primaryDecl : null);
   if (targetPropsDecl) {
     let ownInterfaceName = targetPropsDecl.getName?.() || `${exportName}Props`;
@@ -646,7 +833,7 @@ export function extractExportIR(ctx, pkgName, exportName, library) {
         continue;
       }
       let docInfo = getJsDocSummary(decl);
-      if (docInfo.deprecated || docInfo.isPrivate) {
+      if (docInfo.isPrivate) {
         continue;
       }
 
@@ -694,7 +881,9 @@ export function extractExportIR(ctx, pkgName, exportName, library) {
         inheritedFrom:
           inheritedFrom && GENERIC_INHERITED_INTERFACES.has(inheritedFrom)
             ? inheritedFrom
-            : undefined
+            : undefined,
+        deprecated: docInfo.deprecated || undefined,
+        deprecationMessage: docInfo.deprecationMessage
       };
 
       if (/^on[A-Z]/.test(name)) {
@@ -705,8 +894,13 @@ export function extractExportIR(ctx, pkgName, exportName, library) {
     }
   }
 
-  // Sort component-specific props first (required first, then alphabetical), inherited props after
+  // Sort active component-specific props first (required first, then alphabetical), inherited & deprecated after
   const sortMembers = (a, b) => {
+    let aDeprecated = a.deprecated ? 1 : 0;
+    let bDeprecated = b.deprecated ? 1 : 0;
+    if (aDeprecated !== bDeprecated) {
+      return aDeprecated - bDeprecated;
+    }
     let aInherited = a.inheritedFrom ? 1 : 0;
     let bInherited = b.inheritedFrom ? 1 : 0;
     if (aInherited !== bInherited) {
@@ -732,7 +926,7 @@ export function extractExportIR(ctx, pkgName, exportName, library) {
         continue;
       }
       let docInfo = getJsDocSummary(decl);
-      if (docInfo.deprecated || docInfo.isPrivate) {
+      if (docInfo.isPrivate) {
         continue;
       }
       let rType = decl.getTypeNode?.()
@@ -742,10 +936,19 @@ export function extractExportIR(ctx, pkgName, exportName, library) {
         name: sym.getName(),
         type: rType,
         selector: docInfo.selector,
-        description: docInfo.description
+        description: docInfo.description,
+        deprecated: docInfo.deprecated || undefined,
+        deprecationMessage: docInfo.deprecationMessage
       });
     }
-    renderProps.sort((a, b) => a.name.localeCompare(b.name));
+    renderProps.sort((a, b) => {
+      let aDeprecated = a.deprecated ? 1 : 0;
+      let bDeprecated = b.deprecated ? 1 : 0;
+      if (aDeprecated !== bDeprecated) {
+        return aDeprecated - bDeprecated;
+      }
+      return a.name.localeCompare(b.name);
+    });
   }
 
   if (

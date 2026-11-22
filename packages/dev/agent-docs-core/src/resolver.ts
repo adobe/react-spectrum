@@ -503,6 +503,13 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
             nestedVersion: nestedLockVer
           }
         });
+      } else if (!wsVer && !installedByPkg.has(nestedPkg)) {
+        instances.push({
+          packageName: nestedPkg,
+          version: nestedLockVer,
+          importer: '@react-spectrum/s2',
+          source: 'lockfile'
+        });
       }
     }
   }

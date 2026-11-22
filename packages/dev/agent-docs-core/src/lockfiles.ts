@@ -107,6 +107,7 @@ function parsePnpmLock(
   const wsRel = normalizePosixRel(lockRootDir, workspaceDir);
   const candidateSet = new Set(candidatePkgNames);
   const workspacePackages: Record<string, string> = {};
+  const workspaceRawVersions: Record<string, string> = {};
 
   const lines = text.split(/\r?\n/).filter(l => l.trim() && !l.trim().startsWith('#'));
   const hasImporters = lines.some(l => /^importers:\s*$/.test(l));
@@ -131,17 +132,40 @@ function parsePnpmLock(
       if (targetIdx === -1) {
         return null;
       }
-      parsePnpmDepBlockLines(lines.slice(targetIdx), 6, 8, candidateSet, workspacePackages, true);
+      parsePnpmDepBlockLines(
+        lines.slice(targetIdx),
+        6,
+        8,
+        candidateSet,
+        workspacePackages,
+        workspaceRawVersions,
+        true
+      );
     }
   } else {
-    parsePnpmDepBlockLines(lines, 2, 4, candidateSet, workspacePackages, false);
+    parsePnpmDepBlockLines(
+      lines,
+      2,
+      4,
+      candidateSet,
+      workspacePackages,
+      workspaceRawVersions,
+      false
+    );
   }
+
+  const nestedPackages = parsePnpmNestedPackages(
+    lines,
+    workspacePackages,
+    workspaceRawVersions,
+    candidateSet
+  );
 
   return {
     lockfilePath: lockPath,
     lockfileKind: 'pnpm',
     workspacePackages,
-    nestedPackages: {}
+    nestedPackages
   };
 }
 
@@ -151,6 +175,7 @@ function parsePnpmDepBlockLines(
   versionIndent: number,
   candidateSet: Set<string>,
   workspacePackages: Record<string, string>,
+  workspaceRawVersions: Record<string, string>,
   stopAtImporterIndent: boolean
 ): void {
   let inDepsBlock = false;
@@ -191,9 +216,11 @@ function parsePnpmDepBlockLines(
         pendingPkg = name;
         continue;
       }
-      const ver = stripPeerSuffix(inlineVal);
+      const raw = inlineVal.replace(/^['"]|['"]$/g, '').trim();
+      const ver = stripPeerSuffix(raw);
       if (isExactSemver(ver)) {
         workspacePackages[name] = ver;
+        workspaceRawVersions[name] = raw;
       }
       pendingPkg = null;
       continue;
@@ -201,9 +228,11 @@ function parsePnpmDepBlockLines(
     if (pendingPkg) {
       const verMatch = line.match(verLineRe);
       if (verMatch) {
-        const ver = stripPeerSuffix(verMatch[1]);
+        const raw = verMatch[1].replace(/^['"]|['"]$/g, '').trim();
+        const ver = stripPeerSuffix(raw);
         if (isExactSemver(ver)) {
           workspacePackages[pendingPkg] = ver;
+          workspaceRawVersions[pendingPkg] = raw;
         }
         pendingPkg = null;
       }
@@ -211,9 +240,167 @@ function parsePnpmDepBlockLines(
   }
 }
 
+function matchPnpmEntryOwner(
+  entryKey: string,
+  workspacePackages: Record<string, string>,
+  workspaceRawVersions: Record<string, string>
+): {pkgName: string; exactMatch: boolean} | null {
+  const cleanKey = entryKey.replace(/^\/+/, '');
+  for (const [pkgName, exactVer] of Object.entries(workspacePackages)) {
+    const rawVer = workspaceRawVersions[pkgName] || exactVer;
+    if (cleanKey === `${pkgName}@${rawVer}` || cleanKey === `${pkgName}/${rawVer}`) {
+      return {pkgName, exactMatch: true};
+    }
+    if (
+      cleanKey === `${pkgName}@${exactVer}` ||
+      cleanKey === `${pkgName}/${exactVer}` ||
+      cleanKey.startsWith(`${pkgName}@${exactVer}(`) ||
+      cleanKey.startsWith(`${pkgName}/${exactVer}(`) ||
+      cleanKey.startsWith(`${pkgName}/${exactVer}_`)
+    ) {
+      return {pkgName, exactMatch: false};
+    }
+  }
+  return null;
+}
+
+function scanPnpmSectionNestedDeps(
+  lines: string[],
+  sectionName: 'snapshots' | 'packages',
+  workspacePackages: Record<string, string>,
+  workspaceRawVersions: Record<string, string>,
+  candidateSet: Set<string>,
+  nestedPackages: Record<string, Record<string, string>>,
+  exactMatchedPkgs: Set<string>
+): void {
+  const sectionIdx = lines.findIndex(
+    l => l === `${sectionName}:` || l.startsWith(`${sectionName}: `)
+  );
+  if (sectionIdx === -1) {
+    return;
+  }
+
+  let activeOwner: string | null = null;
+  let activeIsExact = false;
+  let inDeps = false;
+
+  for (let i = sectionIdx + 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^\S/.test(line)) {
+      break;
+    }
+    const entryMatch = line.match(/^ {2}(?:['"]([^'"]+)['"]|([^\s:'"]+)):\s*(?:\{\})?\s*$/);
+    if (entryMatch) {
+      inDeps = false;
+      const entryKey = entryMatch[1] ?? entryMatch[2];
+      const match = matchPnpmEntryOwner(entryKey, workspacePackages, workspaceRawVersions);
+      if (!match || (exactMatchedPkgs.has(match.pkgName) && !match.exactMatch)) {
+        activeOwner = null;
+        continue;
+      }
+      activeOwner = match.pkgName;
+      activeIsExact = match.exactMatch;
+      if (activeIsExact) {
+        exactMatchedPkgs.add(activeOwner);
+        nestedPackages[activeOwner] = {};
+      }
+      continue;
+    }
+    if (!activeOwner) {
+      continue;
+    }
+    if (/^ {4}(dependencies|optionalDependencies):\s*$/.test(line)) {
+      inDeps = true;
+      continue;
+    }
+    if (/^ {4}[a-zA-Z_]+:/.test(line)) {
+      inDeps = false;
+      continue;
+    }
+    if (!inDeps) {
+      continue;
+    }
+    const depMatch = line.match(/^ {6}['"]?([^'"\s:]+)['"]?:\s*['"]?(.+?)['"]?\s*$/);
+    if (!depMatch) {
+      continue;
+    }
+    const depName = depMatch[1];
+    if (depName === activeOwner || !candidateSet.has(depName)) {
+      continue;
+    }
+    const depVer = stripPeerSuffix(depMatch[2]);
+    if (!isExactSemver(depVer)) {
+      continue;
+    }
+    nestedPackages[activeOwner] ??= {};
+    if (activeIsExact || !nestedPackages[activeOwner][depName]) {
+      nestedPackages[activeOwner][depName] = depVer;
+    }
+  }
+}
+
+function parsePnpmNestedPackages(
+  lines: string[],
+  workspacePackages: Record<string, string>,
+  workspaceRawVersions: Record<string, string>,
+  candidateSet: Set<string>
+): Record<string, Record<string, string>> {
+  const nestedPackages: Record<string, Record<string, string>> = {};
+  if (Object.keys(workspacePackages).length === 0) {
+    return nestedPackages;
+  }
+  const exactMatchedPkgs = new Set<string>();
+  // pnpm v9 stores resolved dependency edges under `snapshots:`; v6–v8 stores them under `packages:`.
+  scanPnpmSectionNestedDeps(
+    lines,
+    'snapshots',
+    workspacePackages,
+    workspaceRawVersions,
+    candidateSet,
+    nestedPackages,
+    exactMatchedPkgs
+  );
+  const missingFromSnapshots: Record<string, string> = {};
+  for (const [pkg, ver] of Object.entries(workspacePackages)) {
+    if (!nestedPackages[pkg] || Object.keys(nestedPackages[pkg]).length === 0) {
+      missingFromSnapshots[pkg] = ver;
+    }
+  }
+  if (Object.keys(missingFromSnapshots).length > 0) {
+    scanPnpmSectionNestedDeps(
+      lines,
+      'packages',
+      missingFromSnapshots,
+      workspaceRawVersions,
+      candidateSet,
+      nestedPackages,
+      exactMatchedPkgs
+    );
+  }
+  return nestedPackages;
+}
+
+interface YarnLockBlock {
+  version: string;
+  dependencies: Record<string, string>;
+}
+
+function lookupYarnBlock(
+  descriptorToBlock: Map<string, YarnLockBlock>,
+  pkgName: string,
+  spec: string
+): YarnLockBlock | undefined {
+  const cleanSpec = spec.startsWith('npm:') ? spec.slice(4) : spec;
+  return (
+    descriptorToBlock.get(`${pkgName}@npm:${cleanSpec}`) ||
+    descriptorToBlock.get(`${pkgName}@${cleanSpec}`)
+  );
+}
+
 /**
  * Parses Yarn Berry (v2–v4) and Yarn Classic (v1) `yarn.lock` matched strictly against
- * the selected workspace's declared dependency specifiers in `package.json`.
+ * the selected workspace's declared dependency specifiers in `package.json`, including
+ * direct transitive dependencies declared inside matched package blocks.
  */
 function parseYarnLock(
   lockPath: string,
@@ -222,46 +409,88 @@ function parseYarnLock(
 ): LockfileResolutionResult {
   const text = fs.readFileSync(lockPath, 'utf8');
   const isBerry = text.includes('__metadata:');
+  const candidateSet = new Set(candidatePkgNames);
   const workspacePackages: Record<string, string> = {};
+  const nestedPackages: Record<string, Record<string, string>> = {};
 
-  // Build exact descriptor -> resolved version lookup from yarn.lock blocks
-  const descriptorToVersion = new Map<string, string>();
+  // Build exact descriptor -> {version, dependencies} lookup from yarn.lock blocks
+  const descriptorToBlock = new Map<string, YarnLockBlock>();
   const lines = text.split(/\r?\n/);
   let activeDescriptors: string[] = [];
+  let activeBlock: YarnLockBlock | null = null;
+  let inDepsSection = false;
+
+  const commitActiveBlock = () => {
+    if (activeBlock && activeBlock.version && activeDescriptors.length > 0) {
+      for (const desc of activeDescriptors) {
+        descriptorToBlock.set(desc, activeBlock);
+      }
+    }
+    activeDescriptors = [];
+    activeBlock = null;
+    inDepsSection = false;
+  };
 
   for (const line of lines) {
     if (!line.trim() || line.startsWith('#')) {
       continue;
     }
     if (!line.startsWith(' ') && line.endsWith(':')) {
+      commitActiveBlock();
       const header = line.slice(0, -1).trim();
       activeDescriptors = header.split(',').map(part => part.trim().replace(/^['"]|['"]$/g, ''));
+      activeBlock = {version: '', dependencies: {}};
       continue;
     }
-    if (activeDescriptors.length > 0) {
-      const berryVer = line.match(/^\s{2}version:\s*['"]?([^'"]+)['"]?\s*$/);
-      const classicVer = line.match(/^\s{2}version\s+"([^"]+)"\s*$/);
-      const ver = berryVer?.[1] || classicVer?.[1];
-      if (ver && isExactSemver(ver)) {
-        for (const desc of activeDescriptors) {
-          descriptorToVersion.set(desc, ver);
-        }
-        activeDescriptors = [];
-      }
+    if (!activeBlock) {
+      continue;
+    }
+    const berryVer = line.match(/^ {2}version:\s*['"]?([^'"]+)['"]?\s*$/);
+    const classicVer = line.match(/^ {2}version\s+"([^"]+)"\s*$/);
+    const ver = berryVer?.[1] || classicVer?.[1];
+    if (ver && isExactSemver(ver)) {
+      activeBlock.version = ver;
+      continue;
+    }
+    if (/^ {2}(dependencies|optionalDependencies):\s*$/.test(line)) {
+      inDepsSection = true;
+      continue;
+    }
+    if (/^ {2}\S/.test(line)) {
+      inDepsSection = false;
+      continue;
+    }
+    if (!inDepsSection) {
+      continue;
+    }
+    const berryDep = line.match(/^ {4}['"]?([^'"\s:]+)['"]?:\s*['"]?([^'"]+?)['"]?\s*$/);
+    const classicDep = !berryDep ? line.match(/^ {4}['"]?([^'"\s]+)['"]?\s+"([^"]+)"\s*$/) : null;
+    const depMatch = berryDep || classicDep;
+    if (depMatch) {
+      activeBlock.dependencies[depMatch[1]] = depMatch[2].trim();
     }
   }
+  commitActiveBlock();
 
   for (const pkgName of candidatePkgNames) {
     const spec = declaredWorkspaceSpecs[pkgName];
     if (!spec) {
       continue;
     }
-    const cleanSpec = spec.startsWith('npm:') ? spec.slice(4) : spec;
-    const berryDesc = `${pkgName}@npm:${cleanSpec}`;
-    const classicDesc = `${pkgName}@${cleanSpec}`;
-    const resolved = descriptorToVersion.get(berryDesc) || descriptorToVersion.get(classicDesc);
-    if (resolved) {
-      workspacePackages[pkgName] = resolved;
+    const block = lookupYarnBlock(descriptorToBlock, pkgName, spec);
+    if (!block) {
+      continue;
+    }
+    workspacePackages[pkgName] = block.version;
+    for (const [depName, depSpec] of Object.entries(block.dependencies)) {
+      if (depName === pkgName || !candidateSet.has(depName)) {
+        continue;
+      }
+      const nestedBlock = lookupYarnBlock(descriptorToBlock, depName, depSpec);
+      if (nestedBlock && isExactSemver(nestedBlock.version)) {
+        nestedPackages[pkgName] ??= {};
+        nestedPackages[pkgName][depName] = nestedBlock.version;
+      }
     }
   }
 
@@ -269,7 +498,7 @@ function parseYarnLock(
     lockfilePath: lockPath,
     lockfileKind: isBerry ? 'yarn-berry' : 'yarn-classic',
     workspacePackages,
-    nestedPackages: {}
+    nestedPackages
   };
 }
 

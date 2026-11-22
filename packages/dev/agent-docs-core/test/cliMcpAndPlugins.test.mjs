@@ -399,6 +399,14 @@ test('CLI preserves API signatures and examples from real hook and class pages',
   assert.match(date, /`CalendarDate` \(class\)/);
   assert.match(date, /new CalendarDate\(2022, 2, 3\)/);
   assert.match(date, /date\.add\(\{weeks: 1\}\)/);
+  const dateApi = JSON.parse(run('api', 'internationalized:date/CalendarDate', '--json'));
+  const calendarDateExport = dateApi.exports.find(e => e.name === 'CalendarDate');
+  assert.ok(calendarDateExport);
+  assert.ok(
+    calendarDateExport.callSignatures.some(s => s.signature.startsWith('new CalendarDate('))
+  );
+  assert.ok(calendarDateExport.props.some(p => p.name === 'year'));
+  assert.ok(calendarDateExport.props.some(p => p.name === 'add'));
 });
 
 test('CLI tokens show the documented numeric spacing scale for longhands and shorthands', t => {
@@ -1127,6 +1135,34 @@ test('MCP v2 servers support roots/list workspace discovery, reusable resolution
       JSON.parse(allMissingMcpRes.content[0].text).results[0].error.code,
       'ERR_ENTRY_NOT_FOUND'
     );
+
+    // MCP v2 feature parity: `get_component_api` supports eventsOnly, renderPropsOnly, includeDeprecated,
+    // and `resolve_versions` supports strictVersion and allowLatestFallback
+    const eventsOnlyRes = await client.callTool({
+      name: 'get_component_api',
+      arguments: {
+        id: 'rac:ComboBox',
+        exportName: 'ComboBox',
+        eventsOnly: true,
+        renderPropsOnly: true,
+        includeDeprecated: false,
+        format: 'json',
+        resolution: resolvedState
+      }
+    });
+    assert.ok(!eventsOnlyRes.isError, eventsOnlyRes.content?.[0]?.text);
+    const eventsOnlyPayload = JSON.parse(eventsOnlyRes.content[0].text);
+    assert.equal(eventsOnlyPayload.exports[0].props.length, 0);
+    assert.ok(eventsOnlyPayload.exports[0].events.length > 0);
+    assert.ok(eventsOnlyPayload.exports[0].renderProps.length > 0);
+
+    const allowLatestRes = await client.callTool({
+      name: 'resolve_versions',
+      arguments: {cwd: serverStartDir, allowLatestFallback: true}
+    });
+    assert.ok(!allowLatestRes.isError, allowLatestRes.content?.[0]?.text);
+    const allowLatestPayload = JSON.parse(allowLatestRes.content[0].text);
+    assert.ok(Object.keys(allowLatestPayload.resolution.packages).length > 0);
 
     // Error results surface `suggestions` when available (e.g. misspelled prop)
     const propErrRes = await client.callTool({

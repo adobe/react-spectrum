@@ -82,6 +82,7 @@ function renderHelpText(brand: BrandId, version: string): string {
   lines.push('  --section <heading|id>   Read a specific section (repeatable)');
   lines.push('  --max-tokens <N>         Bound rendered read output (~4 UTF-8 bytes/token)');
   lines.push('  --cursor <value>         Resume a truncated read for one document');
+  lines.push('  --include-deprecated     Include @deprecated props, events, and render props');
   lines.push('  --json-content <type>    Read JSON content: entry (default) or markdown');
   return lines.join('\n') + '\n';
 }
@@ -201,9 +202,17 @@ const SUBCOMMAND_ALLOWED_FLAGS: Record<string, ReadonlySet<string>> = {
     'section',
     'cursor',
     'json-content',
-    'max-tokens'
+    'max-tokens',
+    'include-deprecated'
   ]),
-  api: new Set([...COMMON_COMMAND_FLAGS, 'export', 'prop', 'events-only', 'render-props']),
+  api: new Set([
+    ...COMMON_COMMAND_FLAGS,
+    'export',
+    'prop',
+    'events-only',
+    'render-props',
+    'include-deprecated'
+  ]),
   tokens: new Set([...COMMON_COMMAND_FLAGS, 'property']),
   icons: new Set([...COMMON_COMMAND_FLAGS, 'illustrations']),
   prefetch: new Set(COMMON_COMMAND_FLAGS)
@@ -290,6 +299,7 @@ export async function runAgentDocsCli(
         export: {type: 'string'},
         'events-only': {type: 'boolean'},
         'render-props': {type: 'boolean'},
+        'include-deprecated': {type: 'boolean'},
         property: {type: 'string'},
         illustrations: {type: 'boolean'},
         snapshot: {type: 'string'},
@@ -409,6 +419,7 @@ export async function runAgentDocsCli(
           sections: parseSectionsArg(parsed.values.sections),
           listSections: parsed.values['list-sections'],
           sectionHeadings: parsed.values.section,
+          includeDeprecated: Boolean(parsed.values['include-deprecated']),
           maxTokens,
           cursor: parsed.values.cursor,
           output,
@@ -434,7 +445,8 @@ export async function runAgentDocsCli(
           exportName: parsed.values.export,
           propFilter: parsed.values.prop,
           eventsOnly: Boolean(parsed.values['events-only']),
-          renderPropsOnly: Boolean(parsed.values['render-props'])
+          renderPropsOnly: Boolean(parsed.values['render-props']),
+          includeDeprecated: Boolean(parsed.values['include-deprecated'])
         });
         if (wantJson) {
           writeOut(formatQueryJson(result, includeResolution));

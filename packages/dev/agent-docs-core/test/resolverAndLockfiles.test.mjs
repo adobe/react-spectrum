@@ -617,6 +617,195 @@ test('allows --snapshot override for a historical S2-only snapshot inside a work
   }
 });
 
+test('resolves nested RAC and @internationalized/* dependencies for Yarn Berry, Yarn Classic, and pnpm lockfiles', async () => {
+  const {resolveFromWorkspaceLockfile, resolveWorkspace} = await corePromise;
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-nested-lockfiles-'));
+  try {
+    const candidates = ['@react-spectrum/s2', 'react-aria-components', '@internationalized/date'];
+
+    // 1. Yarn Berry: S2 nests RAC 1.22.1 and @internationalized/date 3.8.0 while workspace uses RAC 1.4.0
+    const berryDir = path.join(tmp, 'berry-nested');
+    fs.mkdirSync(berryDir, {recursive: true});
+    fs.writeFileSync(
+      path.join(berryDir, 'yarn.lock'),
+      [
+        '__metadata:',
+        '  version: 8',
+        '',
+        '"@react-spectrum/s2@npm:^1.8.0":',
+        '  version: 1.8.2',
+        '  resolution: "@react-spectrum/s2@npm:1.8.2"',
+        '  dependencies:',
+        '    react-aria-components: "npm:^1.22.0"',
+        '    "@internationalized/date": ^3.8.0',
+        '',
+        '"react-aria-components@npm:^1.22.0":',
+        '  version: 1.22.1',
+        '',
+        '"react-aria-components@npm:^1.4.0":',
+        '  version: 1.4.0',
+        '',
+        '"@internationalized/date@npm:^3.8.0":',
+        '  version: 3.8.0'
+      ].join('\n')
+    );
+    const berryLock = resolveFromWorkspaceLockfile(
+      berryDir,
+      {'@react-spectrum/s2': '^1.8.0', 'react-aria-components': '^1.4.0'},
+      candidates
+    );
+    assert.equal(
+      berryLock?.nestedPackages['@react-spectrum/s2']?.['react-aria-components'],
+      '1.22.1'
+    );
+    assert.equal(
+      berryLock?.nestedPackages['@react-spectrum/s2']?.['@internationalized/date'],
+      '3.8.0'
+    );
+
+    // 2. Yarn Classic v1 nested dependencies
+    const classicDir = path.join(tmp, 'classic-nested');
+    fs.mkdirSync(classicDir, {recursive: true});
+    fs.writeFileSync(
+      path.join(classicDir, 'yarn.lock'),
+      [
+        '# yarn lockfile v1',
+        '',
+        '"@react-spectrum/s2@^1.8.0":',
+        '  version "1.8.2"',
+        '  dependencies:',
+        '    react-aria-components "^1.22.0"',
+        '    "@internationalized/date" "^3.8.0"',
+        '',
+        'react-aria-components@^1.22.0:',
+        '  version "1.22.1"',
+        '',
+        '"@internationalized/date@^3.8.0":',
+        '  version "3.8.0"'
+      ].join('\n')
+    );
+    const classicLock = resolveFromWorkspaceLockfile(
+      classicDir,
+      {'@react-spectrum/s2': '^1.8.0'},
+      candidates
+    );
+    assert.equal(
+      classicLock?.nestedPackages['@react-spectrum/s2']?.['react-aria-components'],
+      '1.22.1'
+    );
+    assert.equal(
+      classicLock?.nestedPackages['@react-spectrum/s2']?.['@internationalized/date'],
+      '3.8.0'
+    );
+
+    // 3. pnpm v9 snapshots: nested dependencies + peer-qualified exact match
+    const pnpmV9Dir = path.join(tmp, 'pnpm-v9-nested');
+    fs.mkdirSync(pnpmV9Dir, {recursive: true});
+    fs.writeFileSync(
+      path.join(pnpmV9Dir, 'pnpm-lock.yaml'),
+      [
+        "lockfileVersion: '9.0'",
+        'importers:',
+        '  .:',
+        '    dependencies:',
+        "      '@react-spectrum/s2':",
+        '        specifier: ^1.8.0',
+        '        version: 1.8.2(react@19.0.0)',
+        'snapshots:',
+        "  '@react-spectrum/s2@1.8.2(react@18.0.0)':",
+        '    dependencies:',
+        '      react-aria-components: 1.4.0(react@18.0.0)',
+        "  '@react-spectrum/s2@1.8.2(react@19.0.0)':",
+        '    dependencies:',
+        '      react-aria-components: 1.22.1(react@19.0.0)',
+        "      '@internationalized/date': 3.8.0"
+      ].join('\n')
+    );
+    const pnpmV9Lock = resolveFromWorkspaceLockfile(
+      pnpmV9Dir,
+      {'@react-spectrum/s2': '^1.8.0'},
+      candidates
+    );
+    assert.equal(
+      pnpmV9Lock?.nestedPackages['@react-spectrum/s2']?.['react-aria-components'],
+      '1.22.1'
+    );
+    assert.equal(
+      pnpmV9Lock?.nestedPackages['@react-spectrum/s2']?.['@internationalized/date'],
+      '3.8.0'
+    );
+
+    // 4. pnpm v8 packages: fallback
+    const pnpmV8Dir = path.join(tmp, 'pnpm-v8-nested');
+    fs.mkdirSync(pnpmV8Dir, {recursive: true});
+    fs.writeFileSync(
+      path.join(pnpmV8Dir, 'pnpm-lock.yaml'),
+      [
+        "lockfileVersion: '6.0'",
+        'dependencies:',
+        "  '@react-spectrum/s2':",
+        '    specifier: ^1.8.0',
+        '    version: 1.8.2(react@19.0.0)',
+        'packages:',
+        '  /@react-spectrum/s2@1.8.2(react@19.0.0):',
+        '    dependencies:',
+        '      react-aria-components: 1.22.1(react@19.0.0)'
+      ].join('\n')
+    );
+    const pnpmV8Lock = resolveFromWorkspaceLockfile(
+      pnpmV8Dir,
+      {'@react-spectrum/s2': '^1.8.0'},
+      candidates
+    );
+    assert.equal(
+      pnpmV8Lock?.nestedPackages['@react-spectrum/s2']?.['react-aria-components'],
+      '1.22.1'
+    );
+
+    // 5. End-to-end resolveWorkspace:
+    //    (a) Lockfile-only S2 workspace without direct RAC resolves transitive RAC from Yarn Classic lockfile
+    //    (b) Direct RAC differing from S2 nested RAC emits WARN_MULTIPLE_PACKAGE_INSTANCES
+    const snapshotSource = await createSyntheticSnapshotRepo(tmp);
+    fs.writeFileSync(
+      path.join(classicDir, 'package.json'),
+      JSON.stringify({name: 's2-only-classic', dependencies: {'@react-spectrum/s2': '^1.8.0'}})
+    );
+    const transitiveRes = await resolveWorkspace({
+      cwd: classicDir,
+      snapshotSource,
+      cacheDir: path.join(tmp, 'cache-transitive'),
+      defaultLibrary: 's2'
+    });
+    assert.equal(transitiveRes.packages['react-aria-components']?.packageVersion, '1.22.1');
+    assert.equal(transitiveRes.packages['react-aria-components']?.importer, '@react-spectrum/s2');
+
+    fs.writeFileSync(
+      path.join(berryDir, 'package.json'),
+      JSON.stringify({
+        name: 's2-divergent-berry',
+        dependencies: {'@react-spectrum/s2': '^1.8.0', 'react-aria-components': '^1.4.0'}
+      })
+    );
+    const divergentRes = await resolveWorkspace({
+      cwd: berryDir,
+      snapshotSource,
+      cacheDir: path.join(tmp, 'cache-divergent'),
+      defaultLibrary: 's2'
+    });
+    assert.equal(divergentRes.packages['react-aria-components']?.packageVersion, '1.4.0');
+    assert.ok(
+      divergentRes.warnings.some(
+        w =>
+          w.code === 'WARN_MULTIPLE_PACKAGE_INSTANCES' &&
+          w.packageName === 'react-aria-components' &&
+          w.details?.nestedVersion === '1.22.1'
+      )
+    );
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
+
 test('ranks SemVer prereleases below stable releases and compares numeric prerelease identifiers numerically', async () => {
   const {compareSemverAsc, compareSemverDesc} = await corePromise;
   const versions = ['1.2.0', '1.2.0-beta.2', '1.2.0-beta.10', '1.2.0-alpha.1', '1.2.1-rc.1'];

@@ -590,3 +590,259 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });
+
+test('extracts class constructors/properties/methods, gates @deprecated members behind includeDeprecated, and sub-chunks oversized sections under maxTokens', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-class-deprecated-subchunk-'));
+  try {
+    const target = path.join(tmp, 'target');
+    const snapshots = path.join(tmp, 'snapshots');
+    createTarget(target);
+    write(
+      target,
+      'packages/@react-spectrum/s2/src/Button.tsx',
+      `export interface ButtonProps {
+  /** Active label prop. */
+  label: string;
+  /**
+   * Legacy quiet appearance.
+   * @deprecated Use isQuiet instead.
+   */
+  quiet?: boolean;
+  /**
+   * Press handler.
+   */
+  onPress?: () => void;
+  /**
+   * Legacy click handler.
+   * @deprecated Use onPress instead.
+   */
+  onOldClick?: () => void;
+  /** @private */
+  internalSecret?: string;
+${Array.from({length: 18}, (_, i) => `  /** Extra option ${i + 1} for testing large API tables. */\n  extraOption${i + 1}?: string;`).join('\n')}
+}
+export function Button(props: ButtonProps) {
+  return props;
+}
+
+/** Represents a custom widget value. */
+export class WidgetValue {
+  /** Current count value. */
+  readonly count: number;
+  private secretState: string;
+  #hashState = 0;
+
+  /** Creates a widget value from a count. */
+  constructor(count: number);
+  constructor(count: number, label: string);
+  constructor(...args: any[]) {
+    this.count = args[0] || 0;
+    this.secretState = String(args[1] || '');
+    void this.secretState;
+    void this.#hashState;
+  }
+
+  /** Whether the count is positive. */
+  get isPositive(): boolean {
+    return this.count > 0;
+  }
+
+  /** Adds a delta to the count. */
+  add(delta: number): WidgetValue {
+    return new WidgetValue(this.count + delta);
+  }
+
+  /**
+   * Legacy reset helper.
+   * @deprecated Create a new WidgetValue(0) instead.
+   */
+  reset(): WidgetValue {
+    return new WidgetValue(0);
+  }
+
+  private hiddenHelper(): void {}
+}
+`
+    );
+    write(
+      target,
+      'packages/@react-spectrum/s2/src/index.ts',
+      "export {Button, WidgetValue} from './Button';\n"
+    );
+    const longProseLines = [
+      'Here is an oversized guide section with a multi-line code example:',
+      '',
+      '```tsx',
+      ...Array.from(
+        {length: 28},
+        (_, i) =>
+          `const line${i + 1} = 'Oversized example statement number ${i + 1} with plenty of descriptive text';`
+      ),
+      '```',
+      '',
+      'Final closing note after the code fence.'
+    ].join('\n');
+    write(
+      target,
+      'packages/dev/s2-docs/pages/s2/Button.mdx',
+      `# Button
+
+## Oversized Guide
+
+${longProseLines}
+
+## API
+
+<PropTable component={docs.exports.Button} />
+<InterfaceType {...docs.exports.WidgetValue} />
+`
+    );
+    await generate(target, snapshots, 'features');
+    const opts = {
+      cwd: target,
+      snapshotSource: snapshots,
+      cacheDir: path.join(tmp, 'cache'),
+      versionOverride: '1.0.0'
+    };
+
+    // 1. Class member extraction: constructors, public properties/getters/methods extracted; private/# excluded
+    const classApiDefault = await queryApi({...opts, id: 's2:Button', exportName: 'WidgetValue'});
+    const widgetExport = classApiDefault.exports[0];
+    assert.equal(widgetExport.exportKind, 'class');
+    assert.ok(
+      widgetExport.callSignatures.some(s =>
+        s.signature.includes('new WidgetValue(count: number): WidgetValue')
+      )
+    );
+    assert.ok(
+      widgetExport.callSignatures.some(s =>
+        s.signature.includes('new WidgetValue(count: number, label: string): WidgetValue')
+      )
+    );
+    const defaultMemberNames = widgetExport.props.map(p => p.name);
+    assert.ok(defaultMemberNames.includes('count'));
+    assert.ok(defaultMemberNames.includes('isPositive'));
+    assert.ok(defaultMemberNames.includes('add'));
+    assert.equal(defaultMemberNames.includes('secretState'), false);
+    assert.equal(defaultMemberNames.includes('#hashState'), false);
+    assert.equal(defaultMemberNames.includes('hiddenHelper'), false);
+    assert.equal(
+      defaultMemberNames.includes('reset'),
+      false,
+      'Deprecated class method hidden by default'
+    );
+    assert.match(classApiDefault.markdown, /### Properties & Methods/);
+
+    // 2. Deprecated props/events/methods: hidden by default, surfaced with includeDeprecated: true
+    const buttonApiDefault = await queryApi({...opts, id: 's2:Button', exportName: 'Button'});
+    assert.equal(
+      buttonApiDefault.exports[0].props.some(p => p.name === 'quiet'),
+      false
+    );
+    assert.equal(
+      buttonApiDefault.exports[0].events.some(e => e.name === 'onOldClick'),
+      false
+    );
+    assert.equal(
+      buttonApiDefault.exports[0].props.some(p => p.name === 'internalSecret'),
+      false
+    );
+
+    // Searching a hidden deprecated prop hints --include-deprecated
+    await assert.rejects(
+      () => queryApi({...opts, id: 's2:Button', exportName: 'Button', propFilter: 'quiet'}),
+      err => {
+        assert.equal(err.code, 'ERR_PROP_NOT_FOUND');
+        assert.match(err.message, /--include-deprecated/);
+        return true;
+      }
+    );
+
+    const buttonApiWithDep = await queryApi({
+      ...opts,
+      id: 's2:Button',
+      exportName: 'Button',
+      includeDeprecated: true
+    });
+    const quietProp = buttonApiWithDep.exports[0].props.find(p => p.name === 'quiet');
+    assert.equal(quietProp?.deprecated, true);
+    assert.match(quietProp?.deprecationMessage || '', /Use isQuiet instead/);
+    assert.match(buttonApiWithDep.markdown, /\*\(deprecated: Use isQuiet instead\.\)\*/);
+    assert.ok(
+      buttonApiWithDep.exports[0].events.some(e => e.name === 'onOldClick' && e.deprecated)
+    );
+
+    // 3. Oversized single prose section sub-chunks gracefully under maxTokens and resumes cleanly via cursor
+    const prosePages = [];
+    let cursor;
+    for (let guard = 0; guard < 12; guard++) {
+      const page = await readDocs({
+        ...opts,
+        ids: ['s2:Button'],
+        sectionHeadings: ['Oversized Guide'],
+        maxTokens: 280,
+        cursor,
+        output: {format: 'markdown'}
+      });
+      const item = page.results[0];
+      assert.ok(item.ok);
+      prosePages.push(item);
+      if (!item.truncated) {
+        break;
+      }
+      assert.ok(item.nextCursor);
+      cursor = item.nextCursor;
+    }
+    assert.ok(prosePages.length >= 2, 'Oversized prose section must split into multiple sub-pages');
+    assert.equal(prosePages.at(-1).truncated, false);
+    const combinedProse = prosePages.map(p => p.markdown).join('\n');
+    assert.match(combinedProse, /const line1 =/);
+    assert.match(combinedProse, /const line28 =/);
+    assert.match(combinedProse, /Final closing note after the code fence/);
+    for (const p of prosePages) {
+      const fenceCount = (p.markdown.match(/^```/gm) || []).length;
+      assert.equal(
+        fenceCount % 2,
+        0,
+        'Sub-chunked markdown page must keep fenced code blocks balanced'
+      );
+    }
+
+    // 4. Oversized single API export sub-chunks its props table gracefully under maxTokens
+    const apiPages = [];
+    cursor = undefined;
+    for (let guard = 0; guard < 12; guard++) {
+      const page = await readDocs({
+        ...opts,
+        ids: ['s2:Button'],
+        sections: ['api'],
+        sectionHeadings: ['Button'],
+        maxTokens: 280,
+        cursor,
+        output: {format: 'markdown'}
+      });
+      const item = page.results[0];
+      assert.ok(item.ok);
+      apiPages.push(item);
+      if (!item.truncated) {
+        break;
+      }
+      assert.ok(item.nextCursor);
+      cursor = item.nextCursor;
+    }
+    assert.ok(apiPages.length >= 2, 'Oversized API export must split into multiple sub-pages');
+    assert.equal(apiPages.at(-1).truncated, false);
+    const seenExtraOptions = apiPages.flatMap(p =>
+      p.entry.exports.flatMap(e => e.props.map(prop => prop.name))
+    );
+    assert.ok(seenExtraOptions.includes('extraOption1'));
+    assert.ok(seenExtraOptions.includes('extraOption18'));
+    assert.equal(
+      seenExtraOptions.length,
+      new Set(seenExtraOptions).size,
+      'Resumed API sub-pages must not duplicate props'
+    );
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});

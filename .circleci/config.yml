@@ -409,6 +409,20 @@ jobs:
             node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
             node scripts/testCJS.cjs
 
+  test-agent-docs:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: validate agent plugins
+          command: yarn generate:plugins --check
+
+      - run:
+          name: build and test agent docs CLI and MCP
+          command: yarn test:agent-docs
+
   test-browser:
     docker:
       - image: mcr.microsoft.com/playwright:v1.60.0-noble
@@ -916,6 +930,30 @@ jobs:
           dir: s2
           bucket: s3://react-spectrum-prod
 
+  publish-agent-snapshots:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+      - aws-cli/install
+      - run:
+          name: Check AWS credentials
+          command: |
+            if [ -z "$AWS_ROLE_ARN" ]; then
+              echo "AWS credentials not found"
+              circleci-agent step halt
+            fi
+      - aws-cli/setup:
+          role_arn: $AWS_ROLE_ARN
+          region: $AWS_DEFAULT_REGION
+          role_session_name: 'CircleCI-Deploy-Session'
+      - run:
+          name: generate agent documentation snapshots
+          command: yarn generate:snapshots
+      - run:
+          name: publish agent documentation snapshots to S3
+          command: node packages/dev/s2-docs/scripts/publishSnapshots.mjs --bucket react-spectrum-prod --prefix snapshots
+
   comment:
     executor: rsp
     steps:
@@ -982,6 +1020,9 @@ workflows:
           requires:
             - install-18
       - test-build:
+          requires:
+            - install
+      - test-agent-docs:
           requires:
             - install
       - test-browser:
@@ -1086,6 +1127,7 @@ workflows:
             - test-ssr-18
             - test-18
             - test-build
+            - test-agent-docs
             - storybook
             - storybook-s2
       - deploy-s3-stage:
@@ -1150,6 +1192,12 @@ workflows:
               only: main
           requires:
             - s2-docs-production
+      - publish-agent-snapshots:
+          filters:
+            branches:
+              only: main
+          requires:
+            - install
 
   nightly:
     triggers:
