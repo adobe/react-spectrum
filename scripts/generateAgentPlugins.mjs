@@ -24,20 +24,27 @@
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
 
 async function loadSkillsContentModule() {
+  const sourcePath = path.join(REPO_ROOT, 'packages/dev/agent-docs-core/src/skillsContent.ts');
   const compiledCandidate = path.join(
     REPO_ROOT,
     'packages/dev/cli/s2/dist/agent-docs-core/src/skillsContent.js'
   );
-  if (!fs.existsSync(compiledCandidate)) {
+  const needsBuild =
+    !fs.existsSync(compiledCandidate) ||
+    (fs.existsSync(sourcePath) &&
+      fs.statSync(sourcePath).mtimeMs > fs.statSync(compiledCandidate).mtimeMs);
+  if (needsBuild) {
     execFileSync('yarn', ['build:cli'], {cwd: REPO_ROOT, stdio: 'inherit'});
   }
-  return import(pathToFileURL(compiledCandidate).href);
+  const mtimeTag = Math.floor(fs.statSync(compiledCandidate).mtimeMs);
+  return import(`${pathToFileURL(compiledCandidate).href}?v=${mtimeTag}`);
 }
 
 function readPkgVersion(relPkgJsonPath) {
@@ -239,7 +246,7 @@ export async function generateAllAgentPlugins({
     }))
   });
 
-  execFileSync('yarn', ['format', ...jsonFiles], {cwd: REPO_ROOT, stdio: 'inherit'});
+  execFileSync('yarn', ['format', ...jsonFiles], {cwd: REPO_ROOT, stdio: 'pipe'});
 
   const validation = validateGeneratedPlugins(pluginsOutRoot);
   if (!validation.ok) {
@@ -247,6 +254,82 @@ export async function generateAllAgentPlugins({
   }
 
   return {bundles: bundles.map(b => b.pluginDirName), validation};
+}
+
+function collectRelativeFiles(rootDir) {
+  if (!fs.existsSync(rootDir)) {
+    return new Map();
+  }
+  const files = new Map();
+  const walk = rel => {
+    const abs = rel ? path.join(rootDir, rel) : rootDir;
+    for (const entry of fs.readdirSync(abs, {withFileTypes: true})) {
+      const childRel = rel ? `${rel}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) {
+        walk(childRel);
+      } else if (entry.isFile()) {
+        files.set(childRel, fs.readFileSync(path.join(rootDir, childRel), 'utf8'));
+      }
+    }
+  };
+  walk('');
+  return files;
+}
+
+function diffFileMaps(label, actualMap, expectedMap) {
+  const diffs = [];
+  for (const [relPath, expectedContent] of expectedMap.entries()) {
+    if (!actualMap.has(relPath)) {
+      diffs.push(`${label}/${relPath}: missing generated file`);
+    } else if (actualMap.get(relPath) !== expectedContent) {
+      diffs.push(`${label}/${relPath}: content is out of date with generator`);
+    }
+  }
+  for (const relPath of actualMap.keys()) {
+    if (!expectedMap.has(relPath)) {
+      diffs.push(`${label}/${relPath}: unexpected stale file not produced by generator`);
+    }
+  }
+  return diffs;
+}
+
+/**
+ * Verifies both structural plugin invariants AND that committed `plugins/**` and
+ * `packages/dev/agent-docs-core/skills/**` exactly match freshly generated output.
+ */
+export async function checkGeneratedPluginsFreshness({
+  pluginsRoot = path.join(REPO_ROOT, 'plugins'),
+  coreSkillsRoot = path.join(REPO_ROOT, 'packages/dev/agent-docs-core/skills')
+} = {}) {
+  const validation = validateGeneratedPlugins(pluginsRoot);
+  const errors = [...validation.errors];
+
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-plugin-check-'));
+  try {
+    const expectedPluginsRoot = path.join(tmpDir, 'plugins');
+    const expectedSkillsRoot = path.join(tmpDir, 'skills');
+    await generateAllAgentPlugins({
+      pluginsOutRoot: expectedPluginsRoot,
+      coreSkillsOutRoot: expectedSkillsRoot
+    });
+
+    errors.push(
+      ...diffFileMaps(
+        'plugins',
+        collectRelativeFiles(pluginsRoot),
+        collectRelativeFiles(expectedPluginsRoot)
+      ),
+      ...diffFileMaps(
+        'packages/dev/agent-docs-core/skills',
+        collectRelativeFiles(coreSkillsRoot),
+        collectRelativeFiles(expectedSkillsRoot)
+      )
+    );
+  } finally {
+    fs.rmSync(tmpDir, {recursive: true, force: true});
+  }
+
+  return {ok: errors.length === 0, errors};
 }
 
 /**
@@ -371,12 +454,16 @@ export function validateGeneratedPlugins(pluginsRoot = path.join(REPO_ROOT, 'plu
 async function main() {
   const checkOnly = process.argv.includes('--check');
   if (checkOnly) {
-    const res = validateGeneratedPlugins();
+    const res = await checkGeneratedPluginsFreshness();
     if (!res.ok) {
-      console.error(`Plugin validation failed:\n  - ${res.errors.join('\n  - ')}`);
+      console.error(
+        `Agent plugin validation/freshness check failed:\n  - ${res.errors.join('\n  - ')}\nRun 'yarn generate:plugins' to regenerate.`
+      );
       process.exit(1);
     }
-    console.log('Validated all 4 agent plugin bundles across portable and Claude surfaces.');
+    console.log(
+      'Validated all 4 agent plugin bundles and verified generated files are up to date.'
+    );
     return;
   }
 

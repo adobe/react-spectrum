@@ -27,6 +27,9 @@ assert.ok(SNAPSHOT_SOURCE, 'Run yarn test:agent-docs to build binaries and test 
 const pluginModPromise = import(
   pathToFileURL(path.join(REPO_ROOT, 'scripts/generateAgentPlugins.mjs')).href
 );
+const corePromise = import(
+  pathToFileURL(path.join(REPO_ROOT, 'packages/dev/cli/s2/dist/agent-docs-core/src/index.js')).href
+);
 
 function currentCli(t, brand = 's2') {
   const bin = path.join(REPO_ROOT, `packages/dev/cli/${brand}/dist/cli/${brand}/src/index.js`);
@@ -1335,7 +1338,75 @@ test('validateGeneratedPlugins enforces CLI vs MCP separation, duplicate-server 
     const leakCheck = validateGeneratedPlugins(pluginsDir);
     assert.equal(leakCheck.ok, false);
     assert.ok(leakCheck.errors.some(e => e.includes('subpath import')));
+    fs.writeFileSync(skillPath, origSkill);
+
+    // Freshness check: passes when matching generator output, fails on drift or extra stale files
+    const {checkGeneratedPluginsFreshness} = await pluginModPromise;
+    const freshCheck = await checkGeneratedPluginsFreshness({
+      pluginsRoot: pluginsDir,
+      coreSkillsRoot: skillsDir
+    });
+    assert.equal(freshCheck.ok, true);
+
+    fs.writeFileSync(skillPath, origSkill + '\n<!-- stale drift -->\n');
+    const driftedCheck = await checkGeneratedPluginsFreshness({
+      pluginsRoot: pluginsDir,
+      coreSkillsRoot: skillsDir
+    });
+    assert.equal(driftedCheck.ok, false);
+    assert.ok(driftedCheck.errors.some(e => e.includes('out of date with generator')));
+    fs.writeFileSync(skillPath, origSkill);
+
+    const staleExtra = path.join(pluginsDir, 'react-spectrum/stale.txt');
+    fs.writeFileSync(staleExtra, 'stale');
+    const extraCheck = await checkGeneratedPluginsFreshness({
+      pluginsRoot: pluginsDir,
+      coreSkillsRoot: skillsDir
+    });
+    assert.equal(extraCheck.ok, false);
+    assert.ok(extraCheck.errors.some(e => e.includes('unexpected stale file')));
   } finally {
     fs.rmSync(tmp, {recursive: true, force: true});
   }
+});
+
+test('CLI supports bare --version / -V, rejects --version on manifest, and reads package version by walking up directories', async () => {
+  const {readPackageVersion, runAgentDocsCli} = await corePromise;
+
+  for (const flag of ['--version', '-V', '-v', '--cli-version']) {
+    let out = '';
+    const code = await runAgentDocsCli('s2', '9.8.7', [flag], {
+      stdout: text => {
+        out += text;
+      }
+    });
+    assert.equal(code, 0, `Expected exit 0 for bare ${flag}`);
+    assert.equal(out.trim(), '9.8.7');
+  }
+
+  let manifestErr = '';
+  const manifestCode = await runAgentDocsCli('s2', '9.8.7', ['manifest', '--version', '1.2.0'], {
+    stderr: text => {
+      manifestErr += text;
+    }
+  });
+  assert.equal(manifestCode, 2);
+  assert.match(manifestErr, /--version.*not valid for 'spectrum manifest'/i);
+
+  let manifestOut = '';
+  const okCode = await runAgentDocsCli('s2', '9.8.7', ['manifest', '--json'], {
+    stdout: text => {
+      manifestOut += text;
+    }
+  });
+  assert.equal(okCode, 0);
+  const manifestObj = JSON.parse(manifestOut);
+  assert.equal(manifestObj.cliName, 'spectrum');
+  assert.equal(manifestObj.packageVersion, '9.8.7');
+
+  const s2EntryUrl = new URL('../../cli/s2/dist/cli/s2/src/index.js', import.meta.url).href;
+  const s2Pkg = JSON.parse(
+    fs.readFileSync(path.join(REPO_ROOT, 'packages/dev/cli/s2/package.json'), 'utf8')
+  );
+  assert.equal(readPackageVersion(s2EntryUrl), s2Pkg.version);
 });

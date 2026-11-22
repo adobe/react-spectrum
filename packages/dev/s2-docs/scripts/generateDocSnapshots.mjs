@@ -214,6 +214,7 @@ export async function verifyAndRecordEquivalentPatch({
       patchVersion,
       equivalent,
       dedicatedSnapshotId,
+      patchExtraction: equivalent ? null : patchRes,
       changedSourceFiles: diffOut ? diffOut.split('\n').filter(Boolean) : []
     };
   } finally {

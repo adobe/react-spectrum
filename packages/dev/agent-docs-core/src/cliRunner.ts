@@ -19,6 +19,7 @@ import {
   LibraryId,
   SectionFilter
 } from './types.js';
+import {fileURLToPath} from 'node:url';
 import {
   formatPrefetchMarkdown,
   formatQueryJson,
@@ -27,6 +28,7 @@ import {
   formatSearchMarkdown,
   ReadOutputOptions
 } from './format.js';
+import fs from 'node:fs';
 import {
   getCapabilityManifest,
   prefetchDocs,
@@ -37,7 +39,35 @@ import {
   searchDocs
 } from './query.js';
 import {parseArgs} from 'node:util';
+import path from 'node:path';
 import {resolveWorkspace} from './resolver.js';
+
+/**
+ * Walks up from a compiled or source entrypoint URL to locate the nearest enclosing `package.json`
+ * and read its `version`. Avoids brittle fixed `../` depths when TypeScript `rootDir` changes.
+ */
+export function readPackageVersion(entryUrl: string, fallback = '0.1.0'): string {
+  try {
+    let dir = path.dirname(fileURLToPath(entryUrl));
+    for (let i = 0; i < 8; i++) {
+      const candidate = path.join(dir, 'package.json');
+      if (fs.existsSync(candidate)) {
+        const parsed = JSON.parse(fs.readFileSync(candidate, 'utf8')) as {version?: unknown};
+        if (typeof parsed.version === 'string' && parsed.version.trim()) {
+          return parsed.version;
+        }
+      }
+      const parent = path.dirname(dir);
+      if (parent === dir) {
+        break;
+      }
+      dir = parent;
+    }
+  } catch {
+    // ignore and return fallback
+  }
+  return fallback;
+}
 
 function renderHelpText(brand: BrandId, version: string): string {
   const manifest = getCapabilityManifest(brand, version);
@@ -71,7 +101,7 @@ function renderHelpText(brand: BrandId, version: string): string {
   lines.push('  --snapshot-source <src>  Override snapshot CDN URL or local snapshot directory');
   lines.push('  --include-resolution     Include full workspace resolution in JSON output');
   lines.push('  --json                   Output structured JSON envelope (apiVersion: 1)');
-  lines.push('  -v, --cli-version        Show CLI package version');
+  lines.push('  -v, -V, --cli-version    Show CLI package version (also bare `--version`)');
   lines.push('  -h, --help               Show this help text');
   lines.push('');
   lines.push('Read Flags:');
@@ -192,7 +222,7 @@ const COMMON_COMMAND_FLAGS = [
 ] as const;
 
 const SUBCOMMAND_ALLOWED_FLAGS: Record<string, ReadonlySet<string>> = {
-  manifest: new Set(['help', 'json', 'version']),
+  manifest: new Set(['help', 'json', 'cli-version']),
   resolve: new Set(COMMON_COMMAND_FLAGS),
   search: new Set([...COMMON_COMMAND_FLAGS, 'library', 'limit']),
   read: new Set([
@@ -274,6 +304,16 @@ export async function runAgentDocsCli(
   const cliCommandPrefix = brand === 's2' ? 'spectrum' : 'react-aria';
 
   let wantJson = argv.includes('--json');
+
+  // Support standard bare `spectrum --version` / `-V` / `-v` / `--cli-version` before parseArgs,
+  // where `--version <spec>` expects a package-version override argument on subcommands.
+  if (
+    argv.length === 1 &&
+    (argv[0] === '--version' || argv[0] === '-V' || argv[0] === '-v' || argv[0] === '--cli-version')
+  ) {
+    writeOut(`${packageVersion}\n`);
+    return EXIT_CODES.OK;
+  }
 
   try {
     const parsed = parseArgs({

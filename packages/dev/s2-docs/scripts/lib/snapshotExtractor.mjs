@@ -1452,154 +1452,6 @@ function parseMdxIntoStructuredDoc({
   };
 }
 
-/**
- * Deterministically renders a `CatalogEntryIR` into clean, compact Markdown for pre-rendered `.md`
- * slices.
- */
-export function renderEntryMarkdown(entry, options = {}) {
-  let includeCategories = options.categories ? new Set(options.categories) : null;
-  let compact = options.compact ?? false;
-
-  let out = [];
-  out.push(`# ${entry.title} (\`${entry.id}\` — \`${entry.packageName}@${entry.packageVersion}\`)`);
-  if (entry.summary) {
-    out.push('');
-    out.push(entry.summary);
-  }
-
-  if (
-    entry.imports.length > 0 &&
-    (!includeCategories || includeCategories.has('usage') || includeCategories.has('api'))
-  ) {
-    out.push('');
-    out.push('## Imports');
-    out.push('```tsx');
-    for (let imp of entry.imports) {
-      out.push(imp);
-    }
-    out.push('```');
-  }
-
-  if (
-    entry.compositionRules.length > 0 &&
-    (!includeCategories || includeCategories.has('usage') || includeCategories.has('accessibility'))
-  ) {
-    out.push('');
-    out.push('## Implementation Rules');
-    for (let rule of entry.compositionRules) {
-      out.push(`- ${rule}`);
-    }
-  }
-
-  let matchingSections = entry.sections.filter(sec =>
-    !includeCategories
-      ? sec.category !== 'styling' || entry.kind !== 'component' || !compact
-      : includeCategories.has(sec.category)
-  );
-  if (compact && matchingSections.length > 3) {
-    matchingSections = matchingSections.slice(0, 3);
-  }
-
-  for (let sec of matchingSections) {
-    out.push('');
-    out.push(`${'#'.repeat(Math.max(2, sec.level))} ${sec.heading}`);
-    out.push('');
-    out.push(sec.markdown);
-  }
-
-  if (entry.exports.length > 0 && (!includeCategories || includeCategories.has('api'))) {
-    out.push('');
-    out.push('## API');
-    for (let exp of entry.exports) {
-      let tp =
-        exp.typeParameters.length > 0
-          ? `<${exp.typeParameters
-              .map(
-                t =>
-                  `${t.name}${t.constraint ? ` extends ${t.constraint}` : ''}${t.defaultType ? ` = ${t.defaultType}` : ''}`
-              )
-              .join(', ')}>`
-          : '';
-      out.push('');
-      out.push(`### \`${exp.name}${tp}\` (${exp.exportKind})`);
-      if (exp.description) {
-        out.push(exp.description);
-      }
-
-      if (exp.callSignatures.length > 0) {
-        out.push('```ts');
-        for (let sig of exp.callSignatures) {
-          out.push(sig.signature);
-        }
-        out.push('```');
-      }
-
-      if (exp.typeText) {
-        out.push('```ts');
-        out.push(`type ${exp.name}${tp} = ${exp.typeText}`);
-        out.push('```');
-      }
-
-      if (exp.constraints.length > 0) {
-        out.push('');
-        out.push('**Constraints:**');
-        for (let c of exp.constraints) {
-          out.push(`- ${c.description}`);
-        }
-      }
-
-      let directProps = exp.props.filter(p => !p.inheritedFrom);
-      let inheritedProps = exp.props.filter(p => p.inheritedFrom);
-      let shownProps = compact ? directProps : exp.props;
-
-      if (shownProps.length > 0) {
-        out.push('');
-        out.push('| Prop | Type | Default | Description |');
-        out.push('|---|---|---|---|');
-        for (let p of shownProps) {
-          let req = p.required ? ' *(required)*' : '';
-          let def = p.defaultValue ? `\`${p.defaultValue}\`` : '—';
-          let desc = (p.description || '—').replace(/\|/g, '\\|');
-          out.push(
-            `| \`${p.name}\`${req} | \`${p.type.replace(/\|/g, '\\|')}\` | ${def} | ${desc} |`
-          );
-        }
-      }
-      if (compact && inheritedProps.length > 0) {
-        let groups = [...new Set(inheritedProps.map(p => p.inheritedFrom))];
-        out.push(
-          `\n*Inherited prop groups (${inheritedProps.length} props omitted in compact view): ${groups.map(g => `\`${g}\``).join(', ')}. Use \`api ${entry.id}\` or \`--sections all\` for full inherited members.*`
-        );
-      }
-
-      let directEvents = exp.events.filter(e => !e.inheritedFrom);
-      let shownEvents = compact ? directEvents : exp.events;
-      if (shownEvents.length > 0) {
-        out.push('');
-        out.push('| Event | Type | Description |');
-        out.push('|---|---|---|');
-        for (let ev of shownEvents) {
-          let desc = (ev.description || '—').replace(/\|/g, '\\|');
-          out.push(`| \`${ev.name}\` | \`${ev.type.replace(/\|/g, '\\|')}\` | ${desc} |`);
-        }
-      }
-
-      if (exp.renderProps.length > 0) {
-        out.push('');
-        out.push('| Render Prop | Type | CSS Selector | Description |');
-        out.push('|---|---|---|---|');
-        for (let rp of exp.renderProps) {
-          let sel = rp.selector ? `\`${rp.selector}\`` : '—';
-          let desc = (rp.description || '—').replace(/\|/g, '\\|');
-          out.push(`| \`${rp.name}\` | \`${rp.type.replace(/\|/g, '\\|')}\` | ${sel} | ${desc} |`);
-        }
-      }
-    }
-  }
-
-  return out.join('\n').trim() + '\n';
-}
-
 function loadStylePropertiesModule(stylePropsPath) {
   let rawTs = fs.readFileSync(stylePropsPath, 'utf8');
   let transpiled = ts.transpileModule(rawTs, {
@@ -1666,8 +1518,10 @@ async function extractS2Assets(targetRoot, s2Version) {
     try {
       let mod = await import(pathToFileURL(aliasFile).href);
       iconAliases = mod.iconAliases || {};
-    } catch {
-      // ignore
+    } catch (err) {
+      console.warn(
+        `[snapshotExtractor] Failed to load icon aliases from '${aliasFile}': ${err instanceof Error ? err.message : String(err)}`
+      );
     }
   }
 
@@ -1695,8 +1549,10 @@ async function extractS2Assets(targetRoot, s2Version) {
       let styleMod = loadStylePropertiesModule(stylePropsPath);
       styleCategories = buildStyleCategoriesFromModule(styleMod);
       spacingScale = styleMod.spacingTypeValues || {};
-    } catch {
-      // ignore if styleProperties cannot be evaluated on older tag
+    } catch (err) {
+      console.warn(
+        `[snapshotExtractor] Failed to evaluate S2 style macro properties from '${stylePropsPath}': ${err instanceof Error ? err.message : String(err)}`
+      );
     }
   }
 
@@ -1794,10 +1650,12 @@ function createMarkdownGuideEntry({
  * Extracts a complete or filtered versioned snapshot from `targetRoot` and writes:
  *
  * - `<outDir>/by-id/<snapshotId>/manifest.json`
- * - `<outDir>/by-id/<snapshotId>/packages/<encodedPkg>@<ver>.tar.gz`
+ * - `<outDir>/by-id/<snapshotId>/packages/<encodedPkg>@<ver>.tar.gz` (containing `entries/*.json`,
+ *   `search-index.json`, `slice-manifest.json`, and optional `s2-assets.json`)
  * - `<outDir>/by-id/<snapshotId>/catalog.tar.gz`
- * - `<outDir>/by-id/<snapshotId>/entries/...` & `search-index.json` & `s2-assets.json` and returns
- *   the snapshot summary for merging into `<outDir>/index.json`.
+ * - `<outDir>/by-id/<snapshotId>/search-index.json` & optional `s2-assets.json`
+ *
+ * Returns the snapshot summary for merging into `<outDir>/index.json`.
  */
 export async function generateSnapshotFromTarget({
   targetRoot,

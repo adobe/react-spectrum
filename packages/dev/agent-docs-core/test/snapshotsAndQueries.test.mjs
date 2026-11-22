@@ -314,11 +314,13 @@ test('backfills equivalent patches and dedicated API or documentation changes fr
         {cwd: repoRoot, stdio: 'pipe'}
       );
     git('init', '--quiet');
+    const changedDocPage = PAGE.replace('Revision one.', 'Changed documentation.');
     for (const [version, source, page] of [
       ['1.0.0', SOURCE, PAGE],
       ['1.0.1', SOURCE, PAGE],
       ['1.0.2', SOURCE.replace("'S' | 'M'", "'S' | 'M' | 'L'"), PAGE],
-      ['1.0.3', SOURCE, PAGE.replace('Revision one.', 'Changed documentation.')]
+      ['1.0.3', SOURCE, changedDocPage],
+      ['1.0.4', SOURCE, changedDocPage]
     ]) {
       write(
         repoRoot,
@@ -333,7 +335,10 @@ test('backfills equivalent patches and dedicated API or documentation changes fr
     }
     const outRoot = path.join(tmp, 'snapshots');
     const result = await runBackfill({repoRoot, outRoot});
-    assert.deepEqual(result.verifiedPatches, [{tag: `${PACKAGE}@1.0.1`, equivalentTo: '1.0.0'}]);
+    assert.deepEqual(result.verifiedPatches, [
+      {tag: `${PACKAGE}@1.0.1`, equivalentTo: '1.0.0'},
+      {tag: `${PACKAGE}@1.0.4`, equivalentTo: '1.0.3'}
+    ]);
     assert.deepEqual(
       result.dedicatedPatchSnapshots.map(snapshot => snapshot.tag),
       [`${PACKAGE}@1.0.2`, `${PACKAGE}@1.0.3`]
@@ -343,6 +348,7 @@ test('backfills equivalent patches and dedicated API or documentation changes fr
       assert.ok(index.snapshots[snapshot.snapshotId]);
     }
     assert.deepEqual(index.packages[PACKAGE]['1.0.0'].verifiedEquivalentPatches, ['1.0.1']);
+    assert.deepEqual(index.packages[PACKAGE]['1.0.3'].verifiedEquivalentPatches, ['1.0.4']);
     const firstHead = await extractGitRefSnapshot({
       gitRef: 'HEAD',
       repoRoot,

@@ -187,15 +187,19 @@ export async function runBackfill({
       continue;
     }
 
+    let activeBaseVersion = series.baseline.version;
+    let activeBaseTag = series.baseline.tag;
+    let activeBaseExtraction = baseSummary;
+
     for (let patchInfo of series.patches) {
       let check = await verifyAndRecordEquivalentPatch({
         outRoot,
         packageName: series.packageName,
-        baseVersion: series.baseline.version,
+        baseVersion: activeBaseVersion,
         patchVersion: patchInfo.version,
-        baseRef: series.baseline.tag,
+        baseRef: activeBaseTag,
         patchRef: patchInfo.tag,
-        baseExtraction: baseSummary,
+        baseExtraction: activeBaseExtraction,
         libraries: series.libraries,
         commitPatchOnDiff: true,
         repoRoot
@@ -204,14 +208,18 @@ export async function runBackfill({
       if (check.equivalent) {
         verifiedPatches.push({
           tag: patchInfo.tag,
-          equivalentTo: series.baseline.version
+          equivalentTo: activeBaseVersion
         });
       } else {
         // Patch changed public API, docs, or assets -> reuse already-extracted dedicated snapshot
+        // and advance the active baseline so later patches in the same minor compare against it.
         dedicatedPatchSnapshots.push({
           tag: patchInfo.tag,
           snapshotId: check.dedicatedSnapshotId
         });
+        activeBaseVersion = patchInfo.version;
+        activeBaseTag = patchInfo.tag;
+        activeBaseExtraction = check.patchExtraction;
       }
     }
   }

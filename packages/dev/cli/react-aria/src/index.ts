@@ -11,19 +11,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fileURLToPath} from 'node:url';
-import fs from 'node:fs';
-import {runAgentDocsCli} from '../../../agent-docs-core/src/cliRunner.js';
+import {readPackageVersion, runAgentDocsCli} from '../../../agent-docs-core/src/cliRunner.js';
 
-function readOwnVersion(): string {
-  try {
-    const pkgUrl = new URL('../../../../package.json', import.meta.url);
-    const parsed = JSON.parse(fs.readFileSync(fileURLToPath(pkgUrl), 'utf8'));
-    return parsed.version || '0.1.0';
-  } catch {
-    return '0.1.0';
-  }
-}
-
-const exitCode = await runAgentDocsCli('rac', readOwnVersion());
+const exitCode = await runAgentDocsCli('rac', readPackageVersion(import.meta.url));
 process.exitCode = exitCode;

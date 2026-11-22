@@ -14,6 +14,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import fs from 'node:fs';
+import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import {test} from 'node:test';
@@ -845,4 +846,74 @@ test('mergeSnapshotIndices preserves existing pointers at same docRevision witho
     mergeSnapshotIndices(preRemote, preNewerStaged).latest['@react-spectrum/s2'],
     '2.0.0-rc.1'
   );
+});
+
+test('loadSnapshotIndex sends If-None-Match ETag on refresh and handles 304 Not Modified by resetting TTL', async () => {
+  const {loadSnapshotIndex} = await corePromise;
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-etag-cache-'));
+  const seenHeaders = [];
+  const indexPayload = {
+    schemaVersion: 1,
+    minReaderSchemaVersion: 1,
+    updatedAt: '2026-04-20T00:00:00.000Z',
+    latest: {'@react-spectrum/s2': '1.9.0'},
+    snapshots: {},
+    packages: {}
+  };
+  let etag = '"idx-etag-v1"';
+  const server = http.createServer((req, res) => {
+    seenHeaders.push(req.headers['if-none-match'] || null);
+    if (req.headers['if-none-match'] === etag) {
+      res.writeHead(304, {ETag: etag});
+      res.end();
+      return;
+    }
+    res.writeHead(200, {'Content-Type': 'application/json', ETag: etag});
+    res.end(JSON.stringify(indexPayload));
+  });
+
+  try {
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+    const port = server.address().port;
+    const sourceUrl = `http://127.0.0.1:${port}`;
+
+    // 1. Initial fetch returns 200 and caches both index + ETag
+    const first = await loadSnapshotIndex({cacheDir: tmp, snapshotSource: sourceUrl});
+    assert.equal(first.latest['@react-spectrum/s2'], '1.9.0');
+    assert.deepEqual(seenHeaders, [null]);
+
+    // 2. Expire cached index mtime -> conditional fetch sends If-None-Match and receives 304
+    const indexFile = fs
+      .readdirSync(tmp)
+      .find(
+        name => name.startsWith('index-') && name.endsWith('.json') && !name.endsWith('.meta.json')
+      );
+    assert.ok(indexFile);
+    const indexPath = path.join(tmp, indexFile);
+    const expired = new Date(Date.now() - 20 * 60 * 1000);
+    fs.utimesSync(indexPath, expired, expired);
+
+    const second = await loadSnapshotIndex({cacheDir: tmp, snapshotSource: sourceUrl});
+    assert.equal(second.latest['@react-spectrum/s2'], '1.9.0');
+    assert.deepEqual(seenHeaders, [null, '"idx-etag-v1"']);
+
+    // 3. 304 refreshed the cached file mtime -> next call hits TTL cache without an HTTP request
+    const third = await loadSnapshotIndex({cacheDir: tmp, snapshotSource: sourceUrl});
+    assert.equal(third.latest['@react-spectrum/s2'], '1.9.0');
+    assert.equal(seenHeaders.length, 2);
+
+    // 4. When server ETag changes and forceRefreshIndex is set -> 200 updates cache & ETag
+    etag = '"idx-etag-v2"';
+    indexPayload.latest['@react-spectrum/s2'] = '1.9.1';
+    const fourth = await loadSnapshotIndex({
+      cacheDir: tmp,
+      snapshotSource: sourceUrl,
+      forceRefreshIndex: true
+    });
+    assert.equal(fourth.latest['@react-spectrum/s2'], '1.9.1');
+    assert.deepEqual(seenHeaders, [null, '"idx-etag-v1"', '"idx-etag-v1"']);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
 });

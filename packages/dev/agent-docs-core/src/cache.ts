@@ -110,6 +110,128 @@ function resolveBoundedMaxBytes(
   return declaredBytes;
 }
 
+async function readResponseBytesBounded(
+  response: Response,
+  url: string,
+  maxBytes: number
+): Promise<Buffer> {
+  const declaredLength = Number(response.headers.get('content-length'));
+  if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
+    throw downloadTooLargeError(url, maxBytes);
+  }
+  if (!response.body) {
+    return Buffer.alloc(0);
+  }
+  const chunks: Buffer[] = [];
+  let total = 0;
+  const reader = response.body.getReader();
+  for (;;) {
+    const {done, value} = await reader.read();
+    if (done) {
+      break;
+    }
+    total += value.byteLength;
+    if (total > maxBytes) {
+      await reader.cancel();
+      throw downloadTooLargeError(url, maxBytes);
+    }
+    chunks.push(Buffer.from(value));
+  }
+  return Buffer.concat(chunks, total);
+}
+
+async function fetchIndexConditional(
+  source: string,
+  offline: boolean,
+  maxBytes: number,
+  ifNoneMatch?: string
+): Promise<
+  | {notModified: true; etag: string | null}
+  | {notModified: false; bytes: Buffer; etag: string | null}
+> {
+  if (offline) {
+    throw new AgentDocsError(
+      'ERR_OFFLINE_CACHE_MISS',
+      "Offline mode is enabled and 'index.json' is not present in local cache. Run 'prefetch' while online first.",
+      EXIT_CODES.OFFLINE_OR_NETWORK
+    );
+  }
+
+  const url = `${source}/index.json`;
+  const headers: Record<string, string> = {'User-Agent': 'adobe-spectrum-agent-docs/1.0'};
+  if (ifNoneMatch) {
+    headers['If-None-Match'] = ifNoneMatch;
+  }
+
+  try {
+    const response = await fetch(url, {
+      headers,
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
+    });
+
+    if (response.status === 304) {
+      return {notModified: true, etag: response.headers.get('etag') || ifNoneMatch || null};
+    }
+    if (response.status === 404) {
+      throw new AgentDocsError(
+        'ERR_SNAPSHOT_NOT_FOUND',
+        `Snapshot artifact not found at '${url}' (HTTP 404).`,
+        EXIT_CODES.NOT_FOUND
+      );
+    }
+    if (!response.ok) {
+      throw new AgentDocsError(
+        'ERR_NETWORK_FETCH',
+        `Snapshot fetch failed for '${url}' (HTTP ${response.status}).`,
+        EXIT_CODES.OFFLINE_OR_NETWORK
+      );
+    }
+
+    const bytes = await readResponseBytesBounded(response, url, maxBytes);
+    return {notModified: false, bytes, etag: response.headers.get('etag')};
+  } catch (err) {
+    if (err instanceof AgentDocsError) {
+      throw err;
+    }
+    throw new AgentDocsError(
+      'ERR_NETWORK_FETCH',
+      `Failed to fetch '${url}': ${err instanceof Error ? err.message : String(err)}`,
+      EXIT_CODES.OFFLINE_OR_NETWORK
+    );
+  }
+}
+
+function readCachedIndexEtag(metaPath: string): string | undefined {
+  if (!fs.existsSync(metaPath)) {
+    return undefined;
+  }
+  try {
+    const parsed = JSON.parse(fs.readFileSync(metaPath, 'utf8')) as {etag?: unknown};
+    return typeof parsed.etag === 'string' && parsed.etag.trim() ? parsed.etag : undefined;
+  } catch {
+    try {
+      fs.rmSync(metaPath, {force: true});
+    } catch {
+      // ignore cleanup error
+    }
+    return undefined;
+  }
+}
+
+function writeCachedIndexEtag(metaPath: string, etag: string | null): void {
+  if (!etag) {
+    try {
+      fs.rmSync(metaPath, {force: true});
+    } catch {
+      // ignore cleanup error
+    }
+    return;
+  }
+  const tmpPath = `${metaPath}.tmp-${process.pid}-${Date.now()}`;
+  fs.writeFileSync(tmpPath, JSON.stringify({etag}), 'utf8');
+  fs.renameSync(tmpPath, metaPath);
+}
+
 async function fetchSourceBytes(
   source: string,
   relPath: string,
@@ -170,29 +292,7 @@ async function fetchSourceBytes(
       );
     }
 
-    const declaredLength = Number(response.headers.get('content-length'));
-    if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
-      throw downloadTooLargeError(url, maxBytes);
-    }
-    if (!response.body) {
-      return Buffer.alloc(0);
-    }
-    const chunks: Buffer[] = [];
-    let total = 0;
-    const reader = response.body.getReader();
-    for (;;) {
-      const {done, value} = await reader.read();
-      if (done) {
-        break;
-      }
-      total += value.byteLength;
-      if (total > maxBytes) {
-        await reader.cancel();
-        throw downloadTooLargeError(url, maxBytes);
-      }
-      chunks.push(Buffer.from(value));
-    }
-    return Buffer.concat(chunks, total);
+    return await readResponseBytesBounded(response, url, maxBytes);
   } catch (err) {
     if (err instanceof AgentDocsError) {
       throw err;
@@ -263,7 +363,8 @@ function readCachedIndexFile(filePath: string): SnapshotIndex | null {
 }
 
 /**
- * Loads `index.json` with TTL caching, offline fallback, and `minReaderSchemaVersion` guard.
+ * Loads `index.json` with TTL caching, conditional ETag (`If-None-Match` / `304 Not Modified`)
+ * revalidation, offline fallback, and `minReaderSchemaVersion` guard.
  */
 export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promise<SnapshotIndex> {
   const cacheDir = resolveDefaultCacheDir(options.cacheDir);
@@ -273,6 +374,7 @@ export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promi
   fs.mkdirSync(cacheDir, {recursive: true});
   const sourceHash = crypto.createHash('sha256').update(source).digest('hex').slice(0, 12);
   const cachedIndexPath = path.join(cacheDir, `index-${sourceHash}.json`);
+  const cachedMetaPath = path.join(cacheDir, `index-${sourceHash}.meta.json`);
 
   // For local directory sources, always read directly for zero-stale developer/bench loops unless offline-only cached
   if (isLocalSource(source)) {
@@ -293,23 +395,49 @@ export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promi
     );
   }
 
-  if (fs.existsSync(cachedIndexPath) && !options.forceRefreshIndex) {
+  let cachedOnDisk: SnapshotIndex | null = null;
+  if (fs.existsSync(cachedIndexPath)) {
     const stat = fs.statSync(cachedIndexPath);
-    if (offline || Date.now() - stat.mtimeMs < INDEX_TTL_MS) {
-      const cached = readCachedIndexFile(cachedIndexPath);
-      if (cached) {
-        return cached;
-      }
+    cachedOnDisk = readCachedIndexFile(cachedIndexPath);
+    if (
+      cachedOnDisk &&
+      !options.forceRefreshIndex &&
+      (offline || Date.now() - stat.mtimeMs < INDEX_TTL_MS)
+    ) {
+      return cachedOnDisk;
     }
   }
 
+  const cachedEtag = cachedOnDisk ? readCachedIndexEtag(cachedMetaPath) : undefined;
+
   try {
-    const raw = await fetchSourceBytes(source, 'index.json', offline, MAX_INDEX_BYTES);
-    const parsed = JSON.parse(raw.toString('utf8')) as SnapshotIndex;
+    const res = await fetchIndexConditional(source, offline, MAX_INDEX_BYTES, cachedEtag);
+    if (res.notModified && cachedOnDisk) {
+      const now = new Date();
+      try {
+        fs.utimesSync(cachedIndexPath, now, now);
+      } catch {
+        // ignore mtime refresh error
+      }
+      if (res.etag && res.etag !== cachedEtag) {
+        writeCachedIndexEtag(cachedMetaPath, res.etag);
+      }
+      return cachedOnDisk;
+    }
+    if (res.notModified) {
+      throw new AgentDocsError(
+        'ERR_NETWORK_FETCH',
+        `Received unexpected HTTP 304 for '${source}/index.json' without a cached index.`,
+        EXIT_CODES.OFFLINE_OR_NETWORK
+      );
+    }
+
+    const parsed = JSON.parse(res.bytes.toString('utf8')) as SnapshotIndex;
     assertCompatibleSchema(parsed.minReaderSchemaVersion, 'Snapshot index');
     const tmpPath = `${cachedIndexPath}.tmp-${process.pid}-${Date.now()}`;
-    fs.writeFileSync(tmpPath, raw);
+    fs.writeFileSync(tmpPath, res.bytes);
     fs.renameSync(tmpPath, cachedIndexPath);
+    writeCachedIndexEtag(cachedMetaPath, res.etag);
     return parsed;
   } catch (err) {
     if (
@@ -319,6 +447,9 @@ export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promi
       throw err;
     }
     // Graceful stale-if-error fallback when cached index exists
+    if (cachedOnDisk) {
+      return cachedOnDisk;
+    }
     const cached = readCachedIndexFile(cachedIndexPath);
     if (cached) {
       return cached;
@@ -575,16 +706,15 @@ export function readSliceEntryBySlug(
   sliceDir: string,
   library: string,
   slug: string
-): {entry: CatalogEntryIR; markdown: string} | null {
+): {entry: CatalogEntryIR} | null {
   const cleanSlug = slug.replace(/^\/+|\/+$/g, '');
   if (!isSafeEntrySlug(library) || !isSafeEntrySlug(cleanSlug)) {
     return null;
   }
   const entriesRoot = path.resolve(sliceDir, 'entries');
   const jsonPath = path.resolve(entriesRoot, library, `${cleanSlug}.json`);
-  const mdPath = path.resolve(entriesRoot, library, `${cleanSlug}.md`);
   // Defense in depth: never read outside the slice's entries directory.
-  if (!jsonPath.startsWith(entriesRoot + path.sep) || !mdPath.startsWith(entriesRoot + path.sep)) {
+  if (!jsonPath.startsWith(entriesRoot + path.sep)) {
     return null;
   }
   if (!fs.existsSync(jsonPath)) {
@@ -592,8 +722,7 @@ export function readSliceEntryBySlug(
   }
   const entry = JSON.parse(fs.readFileSync(jsonPath, 'utf8')) as CatalogEntryIR;
   assertCompatibleSchema(entry.minReaderSchemaVersion, `Catalog entry ${entry.id}`);
-  const markdown = fs.existsSync(mdPath) ? fs.readFileSync(mdPath, 'utf8') : '';
-  return {entry, markdown};
+  return {entry};
 }
 
 export function readSliceS2Assets(sliceDir: string): S2Assets | null {

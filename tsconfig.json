@@ -51,6 +51,7 @@
     "packages/@react-spectrum/s2/icon.d.ts",
     "packages/dev/s2-docs/pages/**",
     "packages/dev/s2-docs/dist/**",
+    "packages/dev/agent-docs-core/dist/**",
     "packages/dev/mcp/*/dist/**",
     "packages/dev/cli/*/dist/**",
     // Pulls in playwright-core's Protocol types, which use deprecated `module`
