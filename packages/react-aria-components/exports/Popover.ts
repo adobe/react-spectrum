@@ -14,8 +14,13 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {Popover, PopoverContext} from '../src/Popover';
-export type {PopoverProps, PopoverRenderProps} from '../src/Popover';
+export {Popover, PopoverOverlay, PopoverContext} from '../src/Popover';
+export type {
+  PopoverProps,
+  PopoverRenderProps,
+  PopoverOverlayProps,
+  PopoverOverlayRenderProps
+} from '../src/Popover';
 export type {Placement} from 'react-aria/useOverlayPosition';
 
 export {DialogTrigger, Dialog} from '../src/Dialog';

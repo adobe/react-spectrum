@@ -71,5 +71,10 @@ export type {
 export {Button} from '../src/Button';
 export type {ButtonProps, ButtonRenderProps} from '../src/Button';
 
-export {Popover} from '../src/Popover';
-export type {PopoverProps, PopoverRenderProps} from '../src/Popover';
+export {Popover, PopoverOverlay} from '../src/Popover';
+export type {
+  PopoverProps,
+  PopoverRenderProps,
+  PopoverOverlayProps,
+  PopoverOverlayRenderProps
+} from '../src/Popover';
