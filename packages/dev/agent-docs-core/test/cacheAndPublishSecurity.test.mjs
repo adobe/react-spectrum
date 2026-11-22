@@ -805,4 +805,44 @@ test('mergeSnapshotIndices preserves existing pointers at same docRevision witho
     }
   });
   await assert.rejects(() => s3AccessDenied.headObject('by-id/s1/manifest.json'), /Command failed/);
+
+  // 4. Prerelease latest comparison uses SemVer numeric precedence and never downgrades
+  const prePointer = (ver, snapId) => ({
+    snapshotId: snapId,
+    docRevision: 1,
+    packageVersion: ver,
+    sliceRelPath: `by-id/${snapId}/packages/s2.tar.gz`,
+    sliceSha256: 'c'.repeat(64),
+    sliceBytes: 100,
+    entryCount: 1
+  });
+  const preRemote = {
+    schemaVersion: 1,
+    minReaderSchemaVersion: 1,
+    updatedAt: '2026-04-20T00:00:00.000Z',
+    latest: {'@react-spectrum/s2': '2.0.0-beta.10'},
+    snapshots: {},
+    packages: {'@react-spectrum/s2': {'2.0.0-beta.10': prePointer('2.0.0-beta.10', 'snap-b10')}}
+  };
+  const preOlderStaged = {
+    schemaVersion: 1,
+    minReaderSchemaVersion: 1,
+    updatedAt: '2026-04-21T00:00:00.000Z',
+    latest: {'@react-spectrum/s2': '2.0.0-beta.2'},
+    snapshots: {},
+    packages: {'@react-spectrum/s2': {'2.0.0-beta.2': prePointer('2.0.0-beta.2', 'snap-b2')}}
+  };
+  assert.equal(
+    mergeSnapshotIndices(preRemote, preOlderStaged).latest['@react-spectrum/s2'],
+    '2.0.0-beta.10'
+  );
+  const preNewerStaged = {
+    ...preOlderStaged,
+    latest: {'@react-spectrum/s2': '2.0.0-rc.1'},
+    packages: {'@react-spectrum/s2': {'2.0.0-rc.1': prePointer('2.0.0-rc.1', 'snap-rc1')}}
+  };
+  assert.equal(
+    mergeSnapshotIndices(preRemote, preNewerStaged).latest['@react-spectrum/s2'],
+    '2.0.0-rc.1'
+  );
 });

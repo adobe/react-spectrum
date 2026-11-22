@@ -168,6 +168,28 @@ async function discoverMcpClientRoots(server: McpServer, cache: RootsCache): Pro
   }
 }
 
+async function probeMatchingMcpRoots(
+  clientRoots: string[],
+  options: {offline?: boolean; strictVersion?: boolean; defaultLibrary: LibraryId}
+): Promise<Array<{root: string; state: ResolutionState}>> {
+  const matched: Array<{root: string; state: ResolutionState}> = [];
+  for (const root of clientRoots) {
+    try {
+      const state = await resolveWorkspace({
+        cwd: root,
+        offline: options.offline,
+        strictVersion: options.strictVersion,
+        allowLatestFallback: false,
+        defaultLibrary: options.defaultLibrary
+      });
+      matched.push({root, state});
+    } catch {
+      // Root does not contain Spectrum/Aria dependencies
+    }
+  }
+  return matched;
+}
+
 async function resolveMcpQueryOptions(
   server: McpServer,
   rootsCache: RootsCache,
@@ -217,8 +239,24 @@ async function resolveMcpQueryOptions(
 
   // 2. Explicit `cwd` or explicit version/snapshot override in tool arguments
   if (toolArgs.cwd || versionOverride || toolArgs.snapshot) {
+    let resolvedCwd = toolArgs.cwd || serverDefaultCwd || process.env.RSP_WORKSPACE_ROOT;
+    if (!resolvedCwd) {
+      const clientRoots = await discoverMcpClientRoots(server, rootsCache);
+      if (clientRoots.length === 1) {
+        resolvedCwd = clientRoots[0];
+      } else if (clientRoots.length > 1) {
+        const matchedRoots = await probeMatchingMcpRoots(clientRoots, {
+          offline: toolArgs.offline,
+          strictVersion: toolArgs.strictVersion,
+          defaultLibrary
+        });
+        if (matchedRoots.length === 1) {
+          resolvedCwd = matchedRoots[0].root;
+        }
+      }
+    }
     return {
-      cwd: toolArgs.cwd || serverDefaultCwd || process.cwd(),
+      cwd: resolvedCwd || process.cwd(),
       versionOverride,
       snapshotOverride: toolArgs.snapshot,
       offline: toolArgs.offline,
@@ -252,21 +290,11 @@ async function resolveMcpQueryOptions(
     };
   }
   if (clientRoots.length > 1) {
-    const candidateResolutions: Array<{root: string; state: ResolutionState}> = [];
-    for (const root of clientRoots) {
-      try {
-        const state = await resolveWorkspace({
-          cwd: root,
-          offline: toolArgs.offline,
-          strictVersion: toolArgs.strictVersion,
-          allowLatestFallback: toolArgs.allowLatestFallback,
-          defaultLibrary
-        });
-        candidateResolutions.push({root, state});
-      } catch {
-        // Root does not contain Spectrum/Aria dependencies
-      }
-    }
+    const candidateResolutions = await probeMatchingMcpRoots(clientRoots, {
+      offline: toolArgs.offline,
+      strictVersion: toolArgs.strictVersion,
+      defaultLibrary
+    });
     if (candidateResolutions.length === 1) {
       return {
         resolution: candidateResolutions[0].state,
@@ -282,6 +310,15 @@ async function resolveMcpQueryOptions(
         `Multiple MCP workspace roots contain React Spectrum / React Aria dependencies (${candidateResolutions.map(c => c.root).join(', ')}). Pass 'cwd' explicitly to select the target workspace.`,
         EXIT_CODES.INVALID_ARGS
       );
+    }
+    if (toolArgs.allowLatestFallback) {
+      return {
+        cwd: clientRoots[0],
+        offline: toolArgs.offline,
+        strictVersion: toolArgs.strictVersion,
+        allowLatestFallback: true,
+        defaultLibrary
+      };
     }
   }
 
@@ -506,7 +543,7 @@ export async function createAgentDocsMcpServer(
         return toolSuccessText(
           args.format === 'json'
             ? formatQueryJson(res, args.includeResolution)
-            : formatSearchMarkdown(res)
+            : formatSearchMarkdown(res, {surface: 'mcp'})
         );
       } catch (err) {
         return toolErrorResult(err);

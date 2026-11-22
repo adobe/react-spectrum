@@ -12,7 +12,7 @@
  */
 
 import {execFileSync} from 'node:child_process';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import fs from 'node:fs';
 import {
   generateSnapshotFromTarget,
@@ -309,7 +309,7 @@ async function main() {
   );
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   main().catch(err => {
     console.error(err);
     process.exit(1);

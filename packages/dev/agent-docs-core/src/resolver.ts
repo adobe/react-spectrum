@@ -261,9 +261,9 @@ export function matchPackageSliceInIndex(
     : [];
 
   if (sameMinorCandidates.length > 0 && !options.strictVersion) {
-    // Prefer highest version <= requestedVersion in same minor (respecting SemVer prerelease precedence), otherwise closest in same minor
+    // Prefer highest version <= requestedVersion in same minor (respecting SemVer prerelease precedence), otherwise closest higher version in same minor
     const lowerOrEqual = sameMinorCandidates.find(v => compareSemverAsc(v, requestedVersion) <= 0);
-    const chosen = lowerOrEqual || sameMinorCandidates[0];
+    const chosen = lowerOrEqual || sameMinorCandidates[sameMinorCandidates.length - 1];
     return {
       pointer: pkgMap[chosen],
       matchedVersion: chosen,
@@ -535,16 +535,20 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
     }
   }
 
+  if (overrides['*'] === 'latest') {
+    effectiveRequest.clear();
+    for (const [latestPkg, latestVer] of Object.entries(index.latest)) {
+      effectiveRequest.set(latestPkg, {
+        version: latestVer,
+        importer: 'workspace',
+        source: 'override'
+      });
+    }
+  }
+
   for (const [pkg, ver] of Object.entries(overrides)) {
     if (pkg === '*' && ver === 'latest') {
-      effectiveRequest.clear();
-      for (const [latestPkg, latestVer] of Object.entries(index.latest)) {
-        effectiveRequest.set(latestPkg, {
-          version: latestVer,
-          importer: 'workspace',
-          source: 'override'
-        });
-      }
+      continue;
     } else if (ver === 'latest') {
       const latestVer = index.latest[pkg];
       if (!latestVer) {
@@ -680,7 +684,7 @@ export async function resolveWorkspace(options: CommonQueryOptions = {}): Promis
   if (primaryProv && snapSummary) {
     const auxiliaryPackages = s2Prov
       ? ['@internationalized/date', '@internationalized/number', 'react-aria', 'react-stately']
-      : ['react-stately'];
+      : ['@internationalized/date', '@internationalized/number', 'react-stately'];
     for (const auxPkg of auxiliaryPackages) {
       const auxVer = !effectiveRequest.has(auxPkg) ? snapSummary.packages[auxPkg] : undefined;
       const auxPtr = options.snapshotOverride

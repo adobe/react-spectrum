@@ -27,7 +27,7 @@
 
 import {execFileSync} from 'node:child_process';
 import {extractGitRefSnapshot, verifyAndRecordEquivalentPatch} from './generateDocSnapshots.mjs';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import {parseArgs} from 'node:util';
 import path from 'node:path';
 
@@ -281,7 +281,7 @@ async function main() {
   );
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   main().catch(err => {
     console.error(err);
     process.exit(1);

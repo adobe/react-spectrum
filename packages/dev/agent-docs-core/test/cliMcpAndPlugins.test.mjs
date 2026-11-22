@@ -1207,6 +1207,95 @@ test('MCP v2 servers support roots/list workspace discovery, reusable resolution
   }
 });
 
+test('MCP multi-root discovery ignores unrelated roots under allowLatestFallback, honors roots with explicit version, and formats MCP search_docs guidance', async () => {
+  const {Client} = await import('@modelcontextprotocol/sdk/client/index.js');
+  const {StdioClientTransport} = await import('@modelcontextprotocol/sdk/client/stdio.js');
+  const {ListRootsRequestSchema} = await import('@modelcontextprotocol/sdk/types.js');
+
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-mcp-multiroot-'));
+  const serverStartDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-mcp-multiroot-cwd-'));
+  const unrelatedRoot = path.join(tmp, 'unrelated-docs');
+  const appRoot = path.join(tmp, 'spectrum-app');
+  fs.mkdirSync(unrelatedRoot, {recursive: true});
+  fs.writeFileSync(path.join(unrelatedRoot, 'package.json'), JSON.stringify({name: 'unrelated'}));
+  fs.mkdirSync(path.join(appRoot, 'node_modules/react-aria-components'), {recursive: true});
+  fs.writeFileSync(
+    path.join(appRoot, 'package.json'),
+    JSON.stringify({name: 'spectrum-app', dependencies: {'react-aria-components': '1.22.1'}})
+  );
+  fs.writeFileSync(
+    path.join(appRoot, 'node_modules/react-aria-components/package.json'),
+    JSON.stringify({name: 'react-aria-components', version: '1.22.1'})
+  );
+
+  const entry = path.join(REPO_ROOT, 'packages/dev/mcp/s2/dist/mcp/s2/src/index.js');
+  const transport = new StdioClientTransport({
+    command: process.execPath,
+    args: [entry],
+    cwd: serverStartDir,
+    env: {
+      ...process.env,
+      RSP_AGENT_DOCS_SNAPSHOT_SOURCE: SNAPSHOT_SOURCE,
+      RSP_AGENT_DOCS_CACHE_DIR: path.join(tmp, 'cache')
+    }
+  });
+  const client = new Client(
+    {name: 'mcp-multiroot-test-client', version: '1.0.0'},
+    {capabilities: {roots: {listChanged: true}}}
+  );
+  client.setRequestHandler(ListRootsRequestSchema, async () => ({
+    roots: [
+      {uri: pathToFileURL(unrelatedRoot).href, name: 'unrelated-docs'},
+      {uri: pathToFileURL(appRoot).href, name: 'spectrum-app'}
+    ]
+  }));
+
+  try {
+    await client.connect(transport);
+
+    // 1. Multi-root with allowLatestFallback: true resolves the single Spectrum/Aria root instead of throwing ERR_AMBIGUOUS_WORKSPACE_ROOTS
+    const multiRootRes = await client.callTool({
+      name: 'resolve_versions',
+      arguments: {allowLatestFallback: true}
+    });
+    assert.ok(!multiRootRes.isError, multiRootRes.content?.[0]?.text);
+    const multiRootPayload = JSON.parse(multiRootRes.content[0].text);
+    assert.equal(multiRootPayload.resolution.workspacePackageName, 'spectrum-app');
+
+    // 2. Explicit version override without `cwd` still discovers `appRoot` via roots/list
+    const overrideRes = await client.callTool({
+      name: 'resolve_versions',
+      arguments: {version: '@react-spectrum/s2@latest'}
+    });
+    assert.ok(!overrideRes.isError, overrideRes.content?.[0]?.text);
+    const overridePayload = JSON.parse(overrideRes.content[0].text);
+    assert.equal(overridePayload.resolution.workspacePackageName, 'spectrum-app');
+    assert.equal(
+      overridePayload.resolution.packages['react-aria-components']?.packageVersion,
+      '1.22.1'
+    );
+
+    // 3. `search_docs` Markdown uses MCP `read_docs` guidance, not CLI shell commands
+    const searchMdRes = await client.callTool({
+      name: 'search_docs',
+      arguments: {query: 'Button', limit: 3, format: 'markdown'}
+    });
+    assert.ok(!searchMdRes.isError, searchMdRes.content?.[0]?.text);
+    const searchMd = searchMdRes.content[0].text;
+    assert.match(searchMd, /Next: call `read_docs` with `ids: \["[^"]+"\]`/);
+    assert.doesNotMatch(searchMd, /Next: `(?:spectrum|react-aria) read /);
+    assert.doesNotMatch(searchMd, /Append to every `Next` command/);
+  } finally {
+    try {
+      await client.close();
+    } catch {
+      // ignore
+    }
+    fs.rmSync(tmp, {recursive: true, force: true});
+    fs.rmSync(serverStartDir, {recursive: true, force: true});
+  }
+});
+
 test('validateGeneratedPlugins enforces CLI vs MCP separation, duplicate-server prevention, and version-neutral SKILL.md', async () => {
   const {generateAllAgentPlugins, validateGeneratedPlugins} = await pluginModPromise;
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-plugins-'));

@@ -824,3 +824,105 @@ test('ranks SemVer prereleases below stable releases and compares numeric prerel
     '1.2.0-alpha.1'
   ]);
 });
+
+test('picks closest higher same-minor fallback, treats --version latest order-independently, and adds @internationalized/* for react-aria-only workspaces', async () => {
+  const {resolveWorkspace} = await corePromise;
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-resolver-edge-'));
+  try {
+    const snapshotSource = path.join(tmp, 'snapshots');
+    fs.mkdirSync(snapshotSource);
+    const pointer = (packageVersion, snapshotId) => ({
+      packageVersion,
+      snapshotId,
+      sliceRelPath: 'unused',
+      sliceSha256: 'unused'
+    });
+    fs.writeFileSync(
+      path.join(snapshotSource, 'index.json'),
+      JSON.stringify({
+        schemaVersion: 1,
+        latest: {
+          '@react-spectrum/s2': '1.2.9',
+          'react-aria': '3.40.0',
+          '@internationalized/date': '3.8.0',
+          '@internationalized/number': '3.6.0'
+        },
+        packages: {
+          '@react-spectrum/s2': {
+            '1.2.2': pointer('1.2.2', 'snap-122'),
+            '1.2.9': pointer('1.2.9', 'snap-129')
+          },
+          'react-aria': {'3.40.0': pointer('3.40.0', 'snap-aria')},
+          'react-stately': {'3.38.0': pointer('3.38.0', 'snap-aria')},
+          '@internationalized/date': {'3.8.0': pointer('3.8.0', 'snap-aria')},
+          '@internationalized/number': {'3.6.0': pointer('3.6.0', 'snap-aria')}
+        },
+        snapshots: {
+          'snap-122': {snapshotId: 'snap-122', packages: {'@react-spectrum/s2': '1.2.2'}},
+          'snap-129': {snapshotId: 'snap-129', packages: {'@react-spectrum/s2': '1.2.9'}},
+          'snap-aria': {
+            snapshotId: 'snap-aria',
+            packages: {
+              'react-aria': '3.40.0',
+              'react-stately': '3.38.0',
+              '@internationalized/date': '3.8.0',
+              '@internationalized/number': '3.6.0'
+            }
+          }
+        }
+      })
+    );
+
+    const cacheDir = path.join(tmp, 'cache');
+
+    // 1. Closest higher same-minor patch: requesting 1.2.1 with [1.2.2, 1.2.9] available picks 1.2.2, not 1.2.9
+    const appDir = path.join(tmp, 'app-121');
+    fs.mkdirSync(path.join(appDir, 'node_modules/@react-spectrum/s2'), {recursive: true});
+    fs.writeFileSync(
+      path.join(appDir, 'package.json'),
+      JSON.stringify({name: 'app-121', dependencies: {'@react-spectrum/s2': '1.2.1'}})
+    );
+    fs.writeFileSync(
+      path.join(appDir, 'node_modules/@react-spectrum/s2/package.json'),
+      JSON.stringify({name: '@react-spectrum/s2', version: '1.2.1'})
+    );
+    const closest = await resolveWorkspace({cwd: appDir, snapshotSource, cacheDir});
+    assert.equal(closest.packages['@react-spectrum/s2'].packageVersion, '1.2.2');
+
+    // 2. Order-independent `latest` + package-specific override
+    const firstOrder = await resolveWorkspace({
+      cwd: appDir,
+      snapshotSource,
+      cacheDir,
+      versionOverride: '@react-spectrum/s2@1.2.2,latest'
+    });
+    const secondOrder = await resolveWorkspace({
+      cwd: appDir,
+      snapshotSource,
+      cacheDir,
+      versionOverride: 'latest,@react-spectrum/s2@1.2.2'
+    });
+    assert.equal(firstOrder.packages['@react-spectrum/s2'].packageVersion, '1.2.2');
+    assert.equal(secondOrder.packages['@react-spectrum/s2'].packageVersion, '1.2.2');
+    assert.equal(firstOrder.packages['react-aria'].packageVersion, '3.40.0');
+    assert.equal(secondOrder.packages['react-aria'].packageVersion, '3.40.0');
+
+    // 3. react-aria-only workspace gets @internationalized/date & @internationalized/number from the matching snapshot
+    const ariaApp = path.join(tmp, 'aria-only');
+    fs.mkdirSync(path.join(ariaApp, 'node_modules/react-aria'), {recursive: true});
+    fs.writeFileSync(
+      path.join(ariaApp, 'package.json'),
+      JSON.stringify({name: 'aria-only', dependencies: {'react-aria': '3.40.0'}})
+    );
+    fs.writeFileSync(
+      path.join(ariaApp, 'node_modules/react-aria/package.json'),
+      JSON.stringify({name: 'react-aria', version: '3.40.0'})
+    );
+    const ariaRes = await resolveWorkspace({cwd: ariaApp, snapshotSource, cacheDir});
+    assert.equal(ariaRes.packages['@internationalized/date']?.packageVersion, '3.8.0');
+    assert.equal(ariaRes.packages['@internationalized/number']?.packageVersion, '3.6.0');
+    assert.equal(ariaRes.packages['react-stately']?.packageVersion, '3.38.0');
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});

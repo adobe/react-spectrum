@@ -24,8 +24,15 @@ const {generateSnapshotFromTarget, updateSnapshotsIndex} = await import(
 const {createLocalBucketStorage, publishStagedSnapshots} = await import(
   new URL('../../s2-docs/scripts/publishSnapshots.mjs', import.meta.url).href
 );
-const {loadSnapshotIndex, prefetchDocs, queryApi, readDocs, resolveWorkspace, searchDocs} =
-  await import(new URL('../../cli/s2/dist/agent-docs-core/src/index.js', import.meta.url).href);
+const {
+  loadSnapshotIndex,
+  prefetchDocs,
+  queryApi,
+  queryIcons,
+  readDocs,
+  resolveWorkspace,
+  searchDocs
+} = await import(new URL('../../cli/s2/dist/agent-docs-core/src/index.js', import.meta.url).href);
 const {extractGitRefSnapshot} = await import(
   new URL('../../s2-docs/scripts/generateDocSnapshots.mjs', import.meta.url).href
 );
@@ -758,6 +765,23 @@ ${longProseLines}
       }
     );
 
+    // Filtering to eventsOnly must NOT hint --include-deprecated for a deprecated non-event prop
+    await assert.rejects(
+      () =>
+        queryApi({
+          ...opts,
+          id: 's2:Button',
+          exportName: 'Button',
+          eventsOnly: true,
+          propFilter: 'quiet'
+        }),
+      err => {
+        assert.equal(err.code, 'ERR_PROP_NOT_FOUND');
+        assert.doesNotMatch(err.message, /--include-deprecated/);
+        return true;
+      }
+    );
+
     const buttonApiWithDep = await queryApi({
       ...opts,
       id: 's2:Button',
@@ -841,6 +865,155 @@ ${longProseLines}
       seenExtraOptions.length,
       new Set(seenExtraOptions).size,
       'Resumed API sub-pages must not duplicate props'
+    );
+  } finally {
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
+
+test('keeps S2 illustration variants unique with valid JS import identifiers, populates typeText for type aliases, and routes non-hook react-aria pages properly', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-illustrations-type-aria-'));
+  try {
+    const target = path.join(tmp, 'target');
+    const snapshots = path.join(tmp, 'snapshots');
+    createTarget(target);
+
+    // 1. S2 illustrations: distinct variants for Cloud + numeric-starting 3D
+    write(
+      target,
+      `${PACKAGE_DIR}/spectrum-illustrations/linear/Cloud.tsx`,
+      'export default function Cloud() { return null; }\n'
+    );
+    write(
+      target,
+      `${PACKAGE_DIR}/spectrum-illustrations/gradient/generic1/Cloud.tsx`,
+      'export default function Cloud() { return null; }\n'
+    );
+    write(
+      target,
+      `${PACKAGE_DIR}/spectrum-illustrations/gradient/generic2/Cloud.tsx`,
+      'export default function Cloud() { return null; }\n'
+    );
+    write(
+      target,
+      `${PACKAGE_DIR}/spectrum-illustrations/linear/3D.tsx`,
+      'export default function ThreeD() { return null; }\n'
+    );
+
+    // 2. Type alias export for typeText verification
+    write(
+      target,
+      `${PACKAGE_DIR}/src/index.ts`,
+      `${SOURCE}\n/** Allowed selection modes. */\nexport type SelectionMode = 'none' | 'single' | 'multiple';\n`
+    );
+    write(
+      target,
+      'packages/dev/s2-docs/pages/s2/Button.mdx',
+      `import docs from 'docs:@react-spectrum/s2';\n\n# Button\n\n<InterfaceType {...docs.exports.SelectionMode} />\n`
+    );
+
+    // 3. Non-hook react-aria pages vs RAC testing guide
+    write(
+      target,
+      'packages/react-aria-components/package.json',
+      JSON.stringify({name: 'react-aria-components', version: '1.0.0', source: 'src/index.ts'})
+    );
+    write(
+      target,
+      'packages/react-aria-components/src/index.ts',
+      'export interface ButtonProps { isDisabled?: boolean; }\nexport function Button(props: ButtonProps) { return props; }\n'
+    );
+    write(
+      target,
+      'packages/react-aria/package.json',
+      JSON.stringify({name: 'react-aria', version: '3.40.0', source: 'src/index.ts'})
+    );
+    write(
+      target,
+      'packages/react-aria/src/index.ts',
+      'export interface FocusScopeProps { contain?: boolean; }\nexport function FocusScope(props: FocusScopeProps) { return props; }\n'
+    );
+    write(
+      target,
+      'packages/@react-aria/focus/package.json',
+      JSON.stringify({name: '@react-aria/focus', version: '3.20.0', source: 'src/index.ts'})
+    );
+    write(
+      target,
+      'packages/@react-aria/focus/src/index.ts',
+      'export interface FocusScopeProps { contain?: boolean; }\nexport function FocusScope(props: FocusScopeProps) { return props; }\n'
+    );
+    write(
+      target,
+      'packages/dev/s2-docs/pages/react-aria/ComboBox.mdx',
+      `import docs from 'docs:react-aria-components';\n\n# ComboBox\n\nRAC ComboBox component.\n`
+    );
+    write(
+      target,
+      'packages/dev/s2-docs/pages/react-aria/FocusScope.mdx',
+      `import docs from 'docs:@react-aria/focus';\n\n# FocusScope\n\n<PropTable component={docs.exports.FocusScope} />\n`
+    );
+    write(
+      target,
+      'packages/dev/s2-docs/pages/react-aria/testing.mdx',
+      `import testUtilDocs from 'docs:@react-aria/test-utils';\n\n# Testing\n\nGuide for testing RAC components.\n`
+    );
+
+    const snap = await generateSnapshotFromTarget({
+      targetRoot: target,
+      repoRoot: target,
+      outRoot: snapshots,
+      snapshotId: 'snap-med-fixes',
+      sourceCommit: 'test',
+      extractorCommit: 'test',
+      libraries: ['s2', 'rac']
+    });
+    updateSnapshotsIndex(snapshots, [snap], {markAsLatest: true});
+
+    // Non-hook react-aria page routes to `react-aria:FocusScope` and sets docsLayouts['react-aria']
+    assert.ok(snap.entries.some(e => e.id === 'react-aria:FocusScope'));
+    assert.equal(
+      snap.entries.some(e => e.id === 'rac:FocusScope'),
+      false
+    );
+    assert.ok(snap.entries.some(e => e.id === 'rac:testing'));
+    assert.equal(snap.manifest.docsLayouts['react-aria'], 's2-docs');
+
+    const opts = {
+      cwd: target,
+      snapshotSource: snapshots,
+      cacheDir: path.join(tmp, 'cache'),
+      versionOverride: 'latest'
+    };
+
+    // Illustrations preserve all 3 Cloud variants and generate a valid JS identifier for `3D`
+    const clouds = await queryIcons({...opts, terms: ['Cloud'], illustrations: true});
+    assert.deepEqual(clouds.matches, [
+      'gradient/generic1/Cloud',
+      'gradient/generic2/Cloud',
+      'linear/Cloud'
+    ]);
+    assert.equal(
+      clouds.importExample,
+      "import Cloud from '@react-spectrum/s2/illustrations/gradient/generic1/Cloud';"
+    );
+
+    const threeD = await queryIcons({...opts, terms: ['3D'], illustrations: true});
+    assert.deepEqual(threeD.matches, ['linear/3D']);
+    assert.equal(
+      threeD.importExample,
+      "import Illustration3D from '@react-spectrum/s2/illustrations/linear/3D';"
+    );
+
+    // Type alias `typeText` is extracted and rendered in both `queryApi` and `readDocs`
+    const typeApi = await queryApi({...opts, id: 's2:Button', exportName: 'SelectionMode'});
+    assert.equal(typeApi.exports[0].exportKind, 'type');
+    assert.equal(typeApi.exports[0].typeText, "'none' | 'single' | 'multiple'");
+    assert.match(typeApi.markdown, /type SelectionMode = 'none' \| 'single' \| 'multiple'/);
+    const readRes = await readDocs({...opts, ids: ['s2:Button']});
+    assert.match(
+      readRes.results[0].markdown,
+      /type SelectionMode = 'none' \| 'single' \| 'multiple'/
     );
   } finally {
     fs.rmSync(tmp, {recursive: true, force: true});

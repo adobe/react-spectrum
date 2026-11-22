@@ -23,7 +23,7 @@
 
 import crypto from 'node:crypto';
 import {execFile} from 'node:child_process';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import fs from 'node:fs';
 import os from 'node:os';
 import {parseArgs, promisify} from 'node:util';
@@ -67,6 +67,33 @@ function parseSemver(v) {
   };
 }
 
+function comparePrerelease(aPre, bPre) {
+  let aParts = aPre.split('.');
+  let bParts = bPre.split('.');
+  let len = Math.max(aParts.length, bParts.length);
+  for (let i = 0; i < len; i++) {
+    if (i >= aParts.length) {
+      return -1;
+    }
+    if (i >= bParts.length) {
+      return 1;
+    }
+    let aNum = /^\d+$/.test(aParts[i]);
+    let bNum = /^\d+$/.test(bParts[i]);
+    if (aNum && bNum) {
+      let diff = Number(aParts[i]) - Number(bParts[i]);
+      if (diff !== 0) {
+        return diff;
+      }
+    } else if (aNum !== bNum) {
+      return aNum ? -1 : 1;
+    } else if (aParts[i] !== bParts[i]) {
+      return aParts[i] < bParts[i] ? -1 : 1;
+    }
+  }
+  return 0;
+}
+
 function isNewerStableSemver(candidate, current) {
   if (!current) {
     return true;
@@ -88,7 +115,13 @@ function isNewerStableSemver(candidate, current) {
   if (a.minor !== b.minor) {
     return a.minor > b.minor;
   }
-  return a.patch >= b.patch;
+  if (a.patch !== b.patch) {
+    return a.patch > b.patch;
+  }
+  if (a.prerelease && b.prerelease) {
+    return comparePrerelease(a.prerelease, b.prerelease) >= 0;
+  }
+  return true;
 }
 
 /**
@@ -703,7 +736,7 @@ async function main() {
   );
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   main().catch(err => {
     console.error(err);
     process.exit(1);

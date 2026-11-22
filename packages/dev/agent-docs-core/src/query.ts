@@ -1456,11 +1456,16 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
       );
     }
   }
+  const filterByKind = Boolean(options.eventsOnly || options.renderPropsOnly);
   const hiddenDeprecatedNames = includeDeprecated
     ? new Set<string>()
     : new Set(
         rawExportsList.flatMap(exp =>
-          [...exp.props, ...exp.events, ...exp.renderProps]
+          [
+            ...(filterByKind ? [] : exp.props),
+            ...(!filterByKind || options.eventsOnly ? exp.events : []),
+            ...(!filterByKind || options.renderPropsOnly ? exp.renderProps : [])
+          ]
             .filter(m => m.deprecated)
             .map(m => m.name.toLowerCase())
         )
@@ -1483,7 +1488,6 @@ export async function queryApi(options: QueryApiOptions): Promise<ApiDocsResult>
     }
   }
   const propNeedles = uniqueRawFilters.map(item => item.needle);
-  const filterByKind = Boolean(options.eventsOnly || options.renderPropsOnly);
   const visibleExports = exportsList.map(exp => ({
     ...exp,
     props: filterByKind ? [] : exp.props,
@@ -1835,8 +1839,15 @@ export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsR
   }
 
   const kind = options.illustrations ? 'illustrations' : 'icons';
+  const illustrationSubpaths = new Map<string, string>();
   const allNames = options.illustrations
-    ? (assets.illustrations || []).map(i => i.id)
+    ? (assets.illustrations || []).map(item => {
+        const canonicalId = item.id.includes('/')
+          ? item.id
+          : item.subpath.replace(/^@react-spectrum\/s2\/illustrations\//, '') || item.id;
+        illustrationSubpaths.set(canonicalId, item.subpath);
+        return canonicalId;
+      })
     : assets.icons || [];
   const aliases: Record<string, string[]> = options.illustrations
     ? {}
@@ -1852,9 +1863,14 @@ export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsR
 
   for (const name of allNames) {
     const lower = name.toLowerCase();
+    const baseLower = options.illustrations ? path.posix.basename(name).toLowerCase() : lower;
     for (const term of normalized) {
-      if (lower.includes(term)) {
-        addMatch(name, lower === term ? 0 : lower.startsWith(term) ? 2 : 3, term);
+      if (lower === term || baseLower === term) {
+        addMatch(name, 0, term);
+      } else if (lower.startsWith(term) || baseLower.startsWith(term)) {
+        addMatch(name, 2, term);
+      } else if (lower.includes(term)) {
+        addMatch(name, 3, term);
       }
     }
   }
@@ -1882,10 +1898,16 @@ export async function queryIcons(options: QueryIconsOptions): Promise<IconsDocsR
   let importExample = '';
   if (sampleName) {
     const subpath = options.illustrations
-      ? assets.illustrations.find(i => i.id === sampleName)?.subpath
+      ? illustrationSubpaths.get(sampleName)
       : `@react-spectrum/s2/icons/${sampleName}`;
     if (subpath) {
-      importExample = `import ${sampleName} from '${subpath}';`;
+      const rawIdentifier = path.posix.basename(sampleName).replace(/[^A-Za-z0-9_$]/g, '');
+      const fallbackPrefix = options.illustrations ? 'Illustration' : 'Icon';
+      const importIdentifier =
+        !rawIdentifier || /^[0-9]/.test(rawIdentifier)
+          ? `${fallbackPrefix}${rawIdentifier}`
+          : rawIdentifier;
+      importExample = `import ${importIdentifier} from '${subpath}';`;
     }
   }
 

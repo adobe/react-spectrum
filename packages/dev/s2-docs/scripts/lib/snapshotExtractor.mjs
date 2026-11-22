@@ -152,19 +152,40 @@ function parseEsmMetadata(rawMdx) {
   return {tags, section, description, docsImports};
 }
 
-function getHookLibrary(rawMdx, hookName) {
+function getReactAriaPageLibrary(rawMdx, pageName, slug) {
   let {docsImports} = parseEsmMetadata(rawMdx);
-  // A page may document several related hooks from both libraries. Use the
-  // package of the export that matches the page name.
-  for (let [, alias, exportName] of rawMdx.matchAll(/([\w$]+)\.exports\.([\w$]+)/g)) {
-    let pkg = docsImports.get(alias);
-    if (exportName === hookName && pkg) {
-      return /^(?:@react-stately\/|react-stately(?:\/|$))/.test(pkg)
-        ? 'react-stately'
-        : 'react-aria';
+  if (/^use[A-Z]/.test(pageName)) {
+    // A page may document several related hooks from both libraries. Use the
+    // package of the export that matches the page name.
+    for (let [, alias, exportName] of rawMdx.matchAll(/([\w$]+)\.exports\.([\w$]+)/g)) {
+      let pkg = docsImports.get(alias);
+      if (exportName === pageName && pkg) {
+        return /^(?:@react-stately\/|react-stately(?:\/|$))/.test(pkg)
+          ? 'react-stately'
+          : 'react-aria';
+      }
     }
+    return 'react-aria';
   }
-  return 'react-aria';
+
+  // Component testing guides import `@react-aria/test-utils` but belong under RAC.
+  if (pageName === 'testing' || slug.endsWith('/testing')) {
+    return 'rac';
+  }
+
+  let docPackages = [...docsImports.values()].filter(pkg => pkg !== '@react-aria/test-utils');
+  if (docPackages.some(pkg => /^react-aria-components(?:\/|$)/.test(pkg))) {
+    return 'rac';
+  }
+  let hasStately = docPackages.some(pkg => /^(?:@react-stately\/|react-stately(?:\/|$))/.test(pkg));
+  let hasAria = docPackages.some(pkg => /^(?:@react-aria\/|react-aria(?:\/|$))/.test(pkg));
+  if (hasStately && !hasAria) {
+    return 'react-stately';
+  }
+  if (hasAria) {
+    return 'react-aria';
+  }
+  return 'rac';
 }
 
 function classifyHeadingCategory(heading, slug) {
@@ -595,6 +616,13 @@ export function extractExportIR(ctx, pkgName, exportName, library) {
   }
 
   let typeParameters = extractTypeParameters(propsDecl || primaryDecl);
+  let typeText;
+  if (exportKind === 'type' && primaryDecl?.getKind() === SyntaxKind.TypeAliasDeclaration) {
+    let typeNode = primaryDecl.getTypeNode?.();
+    if (typeNode) {
+      typeText = cleanTypeString(typeNode.getText());
+    }
+  }
   let callSignatures = [];
 
   if ((exportKind === 'hook' || exportKind === 'function') && primaryDecl) {
@@ -969,6 +997,7 @@ export function extractExportIR(ctx, pkgName, exportName, library) {
     exportKind,
     description,
     typeParameters,
+    ...(typeText ? {typeText} : {}),
     callSignatures,
     props,
     events,
@@ -1505,6 +1534,12 @@ export function renderEntryMarkdown(entry, options = {}) {
         out.push('```');
       }
 
+      if (exp.typeText) {
+        out.push('```ts');
+        out.push(`type ${exp.name}${tp} = ${exp.typeText}`);
+        out.push('```');
+      }
+
       if (exp.constraints.length > 0) {
         out.push('');
         out.push('**Constraints:**');
@@ -1645,7 +1680,7 @@ async function extractS2Assets(targetRoot, s2Version) {
     .map(rel => {
       let clean = rel.replace(/^spectrum-illustrations\//, '').replace(/\.tsx$/, '');
       return {
-        id: path.posix.basename(clean),
+        id: clean,
         subpath: `@react-spectrum/s2/illustrations/${clean}`
       };
     })
@@ -1993,8 +2028,7 @@ export async function generateSnapshotFromTarget({
         }
 
         let pageName = path.posix.basename(slug);
-        let isHookPage = /^use[A-Z]/.test(pageName);
-        let entryLib = isHookPage ? getHookLibrary(raw, pageName) : 'rac';
+        let entryLib = getReactAriaPageLibrary(raw, pageName, slug);
         if (!matchesPageFilter && !slugAllowSet.has(`${entryLib}:${slug}`)) {
           continue;
         }
@@ -2003,8 +2037,8 @@ export async function generateSnapshotFromTarget({
         if (entryLib === 'react-stately' && !ownerPkg) {
           continue;
         }
-        if (entryLib === 'react-stately') {
-          docsLayouts[ownerPkg.name] = 's2-docs';
+        if (ownerPkg && (entryLib === 'react-stately' || entryLib === 'react-aria')) {
+          docsLayouts[ownerPkg.name] = useS2RacLayout ? 's2-docs' : 'legacy-docs';
         }
         ownerPkg ||= racPkg;
 
@@ -2053,6 +2087,7 @@ export async function generateSnapshotFromTarget({
         let umbrellaPkg = ctx.packagesByName.get(libPrefix);
         let subPkgDir = path.dirname(path.dirname(path.join(targetRoot, relPath)));
         let subPkgJson = JSON.parse(fs.readFileSync(path.join(subPkgDir, 'package.json'), 'utf8'));
+        docsLayouts[umbrellaPkg?.name || subPkgJson.name] = 'legacy-docs';
         let absPath = path.join(targetRoot, relPath);
         let raw = fs.readFileSync(absPath, 'utf8');
 

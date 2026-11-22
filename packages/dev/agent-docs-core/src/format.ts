@@ -58,7 +58,11 @@ export function formatResolutionMarkdown(resolution: ResolutionState): string {
   return lines.join('\n') + '\n';
 }
 
-export function formatSearchMarkdown(result: SearchDocsResult): string {
+export function formatSearchMarkdown(
+  result: SearchDocsResult,
+  options: {surface?: 'cli' | 'mcp'} = {}
+): string {
+  const surface = options.surface || 'cli';
   const lines: string[] = [];
   if (result.warnings.length > 0) {
     lines.push(formatWarningsBanner(result.warnings).trimEnd());
@@ -75,7 +79,7 @@ export function formatSearchMarkdown(result: SearchDocsResult): string {
   }
 
   // With several hits, state the shared context flags once instead of repeating them per hit.
-  const sharedFlags = result.results.length > 1 ? result.followUpFlags : '';
+  const sharedFlags = surface === 'cli' && result.results.length > 1 ? result.followUpFlags : '';
   const suffix = sharedFlags ? ` ${sharedFlags}` : '';
   if (sharedFlags) {
     lines.push(`Append to every \`Next\` command below: \`${sharedFlags}\``);
@@ -89,10 +93,14 @@ export function formatSearchMarkdown(result: SearchDocsResult): string {
     if (hit.summary) {
       lines.push(`  ${hit.summary}`);
     }
-    const command = hit.followUpCommands[0];
-    lines.push(
-      `  Next: \`${suffix && command.endsWith(suffix) ? command.slice(0, -suffix.length) : command}\``
-    );
+    if (surface === 'mcp') {
+      lines.push(`  Next: call \`read_docs\` with \`ids: ["${hit.id}"]\``);
+    } else {
+      const command = hit.followUpCommands[0];
+      lines.push(
+        `  Next: \`${suffix && command.endsWith(suffix) ? command.slice(0, -suffix.length) : command}\``
+      );
+    }
   }
 
   return lines.join('\n') + '\n';
