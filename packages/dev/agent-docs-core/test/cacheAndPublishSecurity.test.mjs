@@ -535,3 +535,274 @@ test('parses multi-byte UTF-8 PAX tar paths, allows additive entry schemaVersion
     fs.rmSync(tmp, {recursive: true, force: true});
   }
 });
+
+test('enforces cache size caps, rejects cache/source path traversal, recovers from corrupt cached index, and keeps lock waits non-blocking', async () => {
+  const {ensurePackageSliceExtracted, loadSnapshotIndex, loadSnapshotManifest} = await corePromise;
+  const {packTarGz} = await tarModPromise;
+  const {createServer} = await import('node:http');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rsp-test-cache-hardening-'));
+  let server;
+  try {
+    const snapRepo = path.join(tmp, 'snap-repo');
+    const sliceRel = 'by-id/s1/packages/s2.tar.gz';
+    const sliceAbs = path.join(snapRepo, sliceRel);
+    fs.mkdirSync(path.dirname(sliceAbs), {recursive: true});
+    const gzBytes = packTarGz([
+      {
+        path: 'slice-manifest.json',
+        content: JSON.stringify({schemaVersion: 1, snapshotId: 's1'})
+      }
+    ]);
+    fs.writeFileSync(sliceAbs, gzBytes);
+    const validSha = crypto.createHash('sha256').update(gzBytes).digest('hex');
+
+    // 1. Oversized declared manifestBytes / sliceBytes are rejected instead of bypassing hard caps
+    await assert.rejects(
+      () =>
+        loadSnapshotManifest(
+          {
+            snapshotId: 's1',
+            manifestPath: 'by-id/s1/manifest.json',
+            manifestBytes: 512 * 1024 * 1024
+          },
+          {snapshotSource: snapRepo, cacheDir: path.join(tmp, 'c-cap-manifest')}
+        ),
+      err => err.code === 'ERR_CACHE_INTEGRITY'
+    );
+    await assert.rejects(
+      () =>
+        ensurePackageSliceExtracted(
+          '@react-spectrum/s2',
+          '1.8.2',
+          {
+            snapshotId: 's1',
+            packageVersion: '1.8.2',
+            sliceRelPath: sliceRel,
+            sliceSha256: validSha,
+            sliceBytes: 512 * 1024 * 1024,
+            entryCount: 1
+          },
+          {snapshotSource: snapRepo, cacheDir: path.join(tmp, 'c-cap-slice')}
+        ),
+      err => err.code === 'ERR_CACHE_INTEGRITY'
+    );
+
+    // 2. Path traversal in version, sliceSha256, or local sliceRelPath is rejected
+    const basePointer = {
+      snapshotId: 's1',
+      packageVersion: '1.8.2',
+      sliceRelPath: sliceRel,
+      sliceSha256: validSha,
+      sliceBytes: gzBytes.length,
+      entryCount: 1
+    };
+    await assert.rejects(
+      () =>
+        ensurePackageSliceExtracted('@react-spectrum/s2', '../../escape', basePointer, {
+          snapshotSource: snapRepo,
+          cacheDir: path.join(tmp, 'c-trav-ver')
+        }),
+      err => err.code === 'ERR_CACHE_INTEGRITY'
+    );
+    await assert.rejects(
+      () =>
+        ensurePackageSliceExtracted(
+          '@react-spectrum/s2',
+          '1.8.2',
+          {...basePointer, sliceSha256: '../../badsha'},
+          {snapshotSource: snapRepo, cacheDir: path.join(tmp, 'c-trav-sha')}
+        ),
+      err => err.code === 'ERR_CACHE_INTEGRITY'
+    );
+    await assert.rejects(
+      () =>
+        ensurePackageSliceExtracted(
+          '@react-spectrum/s2',
+          '1.8.2',
+          {...basePointer, sliceRelPath: '../outside.tar.gz'},
+          {snapshotSource: snapRepo, cacheDir: path.join(tmp, 'c-trav-rel')}
+        ),
+      err => err.code === 'ERR_CACHE_INTEGRITY'
+    );
+
+    // 3. Corrupted cached index.json on disk is discarded and refetched instead of throwing SyntaxError
+    server = createServer((req, res) => {
+      res.writeHead(200, {'Content-Type': 'application/json'});
+      res.end(
+        JSON.stringify({
+          schemaVersion: 1,
+          minReaderSchemaVersion: 1,
+          updatedAt: '2026-04-20T00:00:00.000Z',
+          latest: {},
+          packages: {},
+          snapshots: {}
+        })
+      );
+    });
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+    const {port} = server.address();
+    const sourceUrl = `http://127.0.0.1:${port}`;
+    const corruptCacheDir = path.join(tmp, 'c-corrupt-index');
+    fs.mkdirSync(corruptCacheDir, {recursive: true});
+    const sourceHash = crypto.createHash('sha256').update(sourceUrl).digest('hex').slice(0, 12);
+    fs.writeFileSync(path.join(corruptCacheDir, `index-${sourceHash}.json`), '{truncated json');
+    const recovered = await loadSnapshotIndex({
+      snapshotSource: sourceUrl,
+      cacheDir: corruptCacheDir
+    });
+    assert.equal(recovered.schemaVersion, 1);
+
+    // 4. Waiting on an extraction lock does not block the Node.js event loop
+    const lockCacheDir = path.join(tmp, 'c-async-lock');
+    const slicesRoot = path.join(lockCacheDir, 'slices');
+    fs.mkdirSync(slicesRoot, {recursive: true});
+    const lockPath = path.join(
+      slicesRoot,
+      `react-spectrum__s2@1.8.2-${validSha.slice(0, 12)}.lock`
+    );
+    fs.writeFileSync(lockPath, 'held');
+    let timerTicks = 0;
+    const interval = setInterval(() => {
+      timerTicks++;
+    }, 10);
+    setTimeout(() => {
+      fs.rmSync(lockPath, {force: true});
+    }, 80);
+    try {
+      const extractedDir = await ensurePackageSliceExtracted(
+        '@react-spectrum/s2',
+        '1.8.2',
+        basePointer,
+        {snapshotSource: snapRepo, cacheDir: lockCacheDir}
+      );
+      assert.equal(fs.existsSync(path.join(extractedDir, '.ready.json')), true);
+      assert.ok(
+        timerTicks > 0,
+        `Expected event loop timers to tick during lock wait, got ${timerTicks}`
+      );
+    } finally {
+      clearInterval(interval);
+    }
+  } finally {
+    if (server?.listening) {
+      server.closeAllConnections();
+      await new Promise(resolve => server.close(resolve));
+    }
+    fs.rmSync(tmp, {recursive: true, force: true});
+  }
+});
+
+test('mergeSnapshotIndices preserves existing pointers at same docRevision without mutating input, and S3 headObject rethrows non-404 errors', async () => {
+  const {createAwsS3Storage, mergeSnapshotIndices} = await publishModPromise;
+
+  // 1. Existing version pointer is NOT overwritten by a different snapshot at docRevision 1,
+  //    and remoteIndex is not mutated in place.
+  const remoteIndex = {
+    schemaVersion: 1,
+    minReaderSchemaVersion: 1,
+    updatedAt: '2026-04-20T00:00:00.000Z',
+    latest: {'@react-spectrum/s2': '1.8.2'},
+    snapshots: {
+      'snap-release-182': {
+        snapshotId: 'snap-release-182',
+        packages: {'@react-spectrum/s2': '1.8.2'}
+      }
+    },
+    packages: {
+      '@react-spectrum/s2': {
+        '1.8.2': {
+          snapshotId: 'snap-release-182',
+          docRevision: 1,
+          packageVersion: '1.8.2',
+          sliceRelPath: 'by-id/snap-release-182/packages/s2.tar.gz',
+          sliceSha256: 'a'.repeat(64),
+          sliceBytes: 100,
+          entryCount: 1,
+          verifiedEquivalentPatches: ['1.8.3']
+        }
+      }
+    }
+  };
+  const stagedSameRev = {
+    schemaVersion: 1,
+    minReaderSchemaVersion: 1,
+    updatedAt: '2026-04-21T00:00:00.000Z',
+    latest: {'@react-spectrum/s2': '1.8.2'},
+    snapshots: {
+      'snap-unreleased-main': {
+        snapshotId: 'snap-unreleased-main',
+        packages: {'@react-spectrum/s2': '1.8.2'}
+      }
+    },
+    packages: {
+      '@react-spectrum/s2': {
+        '1.8.2': {
+          snapshotId: 'snap-unreleased-main',
+          docRevision: 1,
+          packageVersion: '1.8.2',
+          sliceRelPath: 'by-id/snap-unreleased-main/packages/s2.tar.gz',
+          sliceSha256: 'b'.repeat(64),
+          sliceBytes: 120,
+          entryCount: 2,
+          verifiedEquivalentPatches: ['1.8.4']
+        }
+      }
+    }
+  };
+
+  const mergedSameRev = mergeSnapshotIndices(remoteIndex, stagedSameRev);
+  assert.equal(
+    mergedSameRev.packages['@react-spectrum/s2']['1.8.2'].snapshotId,
+    'snap-release-182'
+  );
+  assert.deepEqual(
+    mergedSameRev.packages['@react-spectrum/s2']['1.8.2'].verifiedEquivalentPatches,
+    ['1.8.3', '1.8.4']
+  );
+  // Original remoteIndex must remain unmutated
+  assert.deepEqual(remoteIndex.packages['@react-spectrum/s2']['1.8.2'].verifiedEquivalentPatches, [
+    '1.8.3'
+  ]);
+
+  // 2. Strictly higher docRevision DOES replace the pointer while preserving verifiedEquivalentPatches
+  const stagedHigherRev = {
+    ...stagedSameRev,
+    packages: {
+      '@react-spectrum/s2': {
+        '1.8.2': {
+          ...stagedSameRev.packages['@react-spectrum/s2']['1.8.2'],
+          snapshotId: 'snap-docfix-182-d2',
+          docRevision: 2
+        }
+      }
+    }
+  };
+  const mergedHigherRev = mergeSnapshotIndices(remoteIndex, stagedHigherRev);
+  assert.equal(
+    mergedHigherRev.packages['@react-spectrum/s2']['1.8.2'].snapshotId,
+    'snap-docfix-182-d2'
+  );
+  assert.deepEqual(
+    mergedHigherRev.packages['@react-spectrum/s2']['1.8.2'].verifiedEquivalentPatches,
+    ['1.8.3', '1.8.4']
+  );
+
+  // 3. S3 headObject returns null only on 404/NotFound/NoSuchKey and rethrows AccessDenied/network errors
+  const s3NotFound = createAwsS3Storage('test-bucket', 'snapshots', {
+    async execAws() {
+      const err = new Error('Command failed');
+      err.stderr = 'An error occurred (404) when calling the HeadObject operation: Not Found';
+      throw err;
+    }
+  });
+  assert.equal(await s3NotFound.headObject('by-id/s1/manifest.json'), null);
+
+  const s3AccessDenied = createAwsS3Storage('test-bucket', 'snapshots', {
+    async execAws() {
+      const err = new Error('Command failed');
+      err.stderr = 'An error occurred (403) when calling the HeadObject operation: Forbidden';
+      throw err;
+    }
+  });
+  await assert.rejects(() => s3AccessDenied.headObject('by-id/s1/manifest.json'), /Command failed/);
+});

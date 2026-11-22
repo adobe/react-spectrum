@@ -107,7 +107,9 @@ export function mergeSnapshotIndices(remoteIndex, stagedIndex) {
 
   let mergedSnapshots = {...(base.snapshots || {})};
   for (let [snapId, snapInfo] of Object.entries(stagedIndex.snapshots || {})) {
-    mergedSnapshots[snapId] = snapInfo;
+    if (!(snapId in mergedSnapshots)) {
+      mergedSnapshots[snapId] = snapInfo;
+    }
   }
 
   let mergedPackages = {...(base.packages || {})};
@@ -115,24 +117,24 @@ export function mergeSnapshotIndices(remoteIndex, stagedIndex) {
     mergedPackages[pkgName] = {...(mergedPackages[pkgName] || {})};
     for (let [ver, sliceInfo] of Object.entries(verMap || {})) {
       let existing = mergedPackages[pkgName][ver];
-      if (!existing || sliceInfo.docRevision >= (existing.docRevision || 1)) {
-        let unionPatches = Array.from(
-          new Set([
-            ...(existing?.verifiedEquivalentPatches || []),
-            ...(sliceInfo.verifiedEquivalentPatches || [])
-          ])
-        ).sort();
+      let stagedDocRevision = sliceInfo.docRevision || 1;
+      let existingDocRevision = existing?.docRevision || 1;
+      let unionPatches = Array.from(
+        new Set([
+          ...(existing?.verifiedEquivalentPatches || []),
+          ...(sliceInfo.verifiedEquivalentPatches || [])
+        ])
+      ).sort();
+      if (!existing || stagedDocRevision > existingDocRevision) {
         mergedPackages[pkgName][ver] = {
           ...sliceInfo,
           verifiedEquivalentPatches: unionPatches
         };
       } else {
-        existing.verifiedEquivalentPatches = Array.from(
-          new Set([
-            ...(existing.verifiedEquivalentPatches || []),
-            ...(sliceInfo.verifiedEquivalentPatches || [])
-          ])
-        ).sort();
+        mergedPackages[pkgName][ver] = {
+          ...existing,
+          verifiedEquivalentPatches: unionPatches
+        };
       }
     }
   }
@@ -298,12 +300,18 @@ async function runWithConcurrency(items, concurrency, worker) {
   );
 }
 
+export function isS3NotFoundError(err) {
+  let text = String(err?.stderr || err?.message || '');
+  return /\b(404|NotFound|NoSuchKey)\b/i.test(text) || /Not Found/i.test(text);
+}
+
 /**
  * Storage adapter backed by `aws s3api` with native S3 conditional writes (`--if-match` /
  * `--if-none-match`). Uses async subprocess execution so uploads and verifications can run with
  * bounded concurrency.
  */
-export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
+export function createAwsS3Storage(bucketName, prefix = 'snapshots', options = {}) {
+  const execAws = options.execAws || execFileAsync;
   const cleanPrefix = prefix.replace(/^\/+|\/+$/g, '');
   const fullKey = relKey => (cleanPrefix ? `${cleanPrefix}/${relKey}` : relKey);
 
@@ -312,7 +320,7 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
       let tmpFile = path.join(os.tmpdir(), `rsp-s3-put-${process.pid}-${crypto.randomUUID()}`);
       fs.writeFileSync(tmpFile, bodyBuf);
       try {
-        await execFileAsync('aws', [
+        await execAws('aws', [
           's3api',
           'put-object',
           '--bucket',
@@ -350,7 +358,7 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
 
     async headObject(relKey) {
       try {
-        let {stdout} = await execFileAsync('aws', [
+        let {stdout} = await execAws('aws', [
           's3api',
           'head-object',
           '--bucket',
@@ -367,15 +375,18 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
           etag: parsed.ETag,
           cacheControl: parsed.CacheControl || null
         };
-      } catch {
-        return null;
+      } catch (err) {
+        if (isS3NotFoundError(err)) {
+          return null;
+        }
+        throw err;
       }
     },
 
     async getConditionalObject(relKey) {
       let tmpOut = path.join(os.tmpdir(), `rsp-s3-get-${process.pid}-${crypto.randomUUID()}`);
       try {
-        let {stdout: metaOut} = await execFileAsync('aws', [
+        let {stdout: metaOut} = await execAws('aws', [
           's3api',
           'get-object',
           '--bucket',
@@ -392,8 +403,7 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
           etag: meta.ETag
         };
       } catch (err) {
-        let stderr = String(err.stderr || err.message || '');
-        if (stderr.includes('NoSuchKey') || stderr.includes('404')) {
+        if (isS3NotFoundError(err)) {
           return null;
         }
         throw err;
@@ -427,7 +437,7 @@ export function createAwsS3Storage(bucketName, prefix = 'snapshots') {
         } else if (ifNoneMatch) {
           args.push('--if-none-match', ifNoneMatch);
         }
-        let {stdout} = await execFileAsync('aws', args);
+        let {stdout} = await execAws('aws', args);
         return {etag: JSON.parse(stdout).ETag};
       } catch (err) {
         let stderr = String(err.stderr || err.message || '');

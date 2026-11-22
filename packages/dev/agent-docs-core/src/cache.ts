@@ -78,15 +78,55 @@ function sha256Buffer(buf: Buffer): string {
   return crypto.createHash('sha256').update(buf).digest('hex');
 }
 
+function assertSafeRelativeArtifactPath(relPath: string): string {
+  const cleanRel = relPath.replace(/^\/+/, '');
+  if (
+    !cleanRel ||
+    cleanRel.includes('\0') ||
+    cleanRel.includes('\\') ||
+    /^[a-zA-Z]:/.test(cleanRel) ||
+    !cleanRel.split('/').every(seg => seg !== '' && seg !== '.' && seg !== '..')
+  ) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Invalid snapshot artifact path '${relPath}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
+  return cleanRel;
+}
+
+function resolveBoundedMaxBytes(
+  declaredBytes: number | undefined,
+  hardCap: number,
+  location: string
+): number {
+  if (declaredBytes === undefined) {
+    return hardCap;
+  }
+  if (!Number.isInteger(declaredBytes) || declaredBytes < 0 || declaredBytes > hardCap) {
+    throw downloadTooLargeError(location, hardCap);
+  }
+  return declaredBytes;
+}
+
 async function fetchSourceBytes(
   source: string,
   relPath: string,
   offline: boolean,
   maxBytes: number
 ): Promise<Buffer> {
-  const cleanRel = relPath.replace(/^\/+/, '');
+  const cleanRel = assertSafeRelativeArtifactPath(relPath);
   if (isLocalSource(source)) {
-    const fullPath = path.join(localSourcePath(source), cleanRel);
+    const rootDir = path.resolve(localSourcePath(source));
+    const fullPath = path.resolve(rootDir, cleanRel);
+    if (!fullPath.startsWith(rootDir + path.sep)) {
+      throw new AgentDocsError(
+        'ERR_CACHE_INTEGRITY',
+        `Snapshot artifact path '${relPath}' escapes local source root.`,
+        EXIT_CODES.INTEGRITY_OR_SCHEMA
+      );
+    }
     if (!fs.existsSync(fullPath)) {
       throw new AgentDocsError(
         'ERR_SNAPSHOT_NOT_FOUND',
@@ -194,8 +234,36 @@ export interface CacheAccessOptions {
   forceRefreshIndex?: boolean;
 }
 
+function readCachedIndexFile(filePath: string): SnapshotIndex | null {
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch {
+    try {
+      fs.rmSync(filePath, {force: true});
+    } catch {
+      // ignore cleanup error
+    }
+    return null;
+  }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    try {
+      fs.rmSync(filePath, {force: true});
+    } catch {
+      // ignore cleanup error
+    }
+    return null;
+  }
+  const index = parsed as SnapshotIndex;
+  assertCompatibleSchema(index.minReaderSchemaVersion, 'Cached snapshot index');
+  return index;
+}
+
 /**
- * Loads `index.json` with ETag/TTL caching, offline fallback, and `minReaderSchemaVersion` guard.
+ * Loads `index.json` with TTL caching, offline fallback, and `minReaderSchemaVersion` guard.
  */
 export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promise<SnapshotIndex> {
   const cacheDir = resolveDefaultCacheDir(options.cacheDir);
@@ -214,10 +282,9 @@ export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promi
       assertCompatibleSchema(parsed.minReaderSchemaVersion, 'Snapshot index');
       return parsed;
     }
-    if (fs.existsSync(cachedIndexPath)) {
-      const parsed = JSON.parse(fs.readFileSync(cachedIndexPath, 'utf8')) as SnapshotIndex;
-      assertCompatibleSchema(parsed.minReaderSchemaVersion, 'Cached snapshot index');
-      return parsed;
+    const cached = readCachedIndexFile(cachedIndexPath);
+    if (cached) {
+      return cached;
     }
     throw new AgentDocsError(
       'ERR_SNAPSHOT_NOT_FOUND',
@@ -229,9 +296,10 @@ export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promi
   if (fs.existsSync(cachedIndexPath) && !options.forceRefreshIndex) {
     const stat = fs.statSync(cachedIndexPath);
     if (offline || Date.now() - stat.mtimeMs < INDEX_TTL_MS) {
-      const parsed = JSON.parse(fs.readFileSync(cachedIndexPath, 'utf8')) as SnapshotIndex;
-      assertCompatibleSchema(parsed.minReaderSchemaVersion, 'Cached snapshot index');
-      return parsed;
+      const cached = readCachedIndexFile(cachedIndexPath);
+      if (cached) {
+        return cached;
+      }
     }
   }
 
@@ -251,10 +319,9 @@ export async function loadSnapshotIndex(options: CacheAccessOptions = {}): Promi
       throw err;
     }
     // Graceful stale-if-error fallback when cached index exists
-    if (fs.existsSync(cachedIndexPath)) {
-      const parsed = JSON.parse(fs.readFileSync(cachedIndexPath, 'utf8')) as SnapshotIndex;
-      assertCompatibleSchema(parsed.minReaderSchemaVersion, 'Cached snapshot index');
-      return parsed;
+    const cached = readCachedIndexFile(cachedIndexPath);
+    if (cached) {
+      return cached;
     }
     throw err;
   }
@@ -267,18 +334,25 @@ export async function loadSnapshotManifest(
   const cacheDir = resolveDefaultCacheDir(options.cacheDir);
   const source = resolveSnapshotSource(options.snapshotSource);
   const local = isLocalSource(source);
-  const key = sha256Buffer(Buffer.from(`${source}/${snapshot.manifestPath}`));
+  const cleanManifestPath = assertSafeRelativeArtifactPath(snapshot.manifestPath);
+  const maxManifestBytes = resolveBoundedMaxBytes(
+    snapshot.manifestBytes,
+    MAX_INDEX_BYTES,
+    cleanManifestPath
+  );
+  const key = sha256Buffer(Buffer.from(`${source}/${cleanManifestPath}`));
   const cachedPath = path.join(cacheDir, 'manifests', `${key}.json`);
   const useDiskCache = !local && fs.existsSync(cachedPath);
   const raw = useDiskCache
     ? fs.readFileSync(cachedPath)
     : await fetchSourceBytes(
         source,
-        snapshot.manifestPath,
+        cleanManifestPath,
         Boolean(options.offline || process.env.RSP_AGENT_DOCS_OFFLINE === '1'),
-        snapshot.manifestBytes || MAX_INDEX_BYTES
+        maxManifestBytes
       );
   if (
+    raw.length > maxManifestBytes ||
     (snapshot.manifestSha256 && sha256Buffer(raw) !== snapshot.manifestSha256) ||
     (snapshot.manifestBytes !== undefined && raw.length !== snapshot.manifestBytes)
   ) {
@@ -307,17 +381,47 @@ export async function loadSnapshotManifest(
 }
 
 function sanitizePackageCacheSeg(pkgName: string, version: string, sliceSha256: string): string {
+  if (
+    !pkgName ||
+    pkgName.includes('\0') ||
+    pkgName.includes('\\') ||
+    pkgName.includes('..') ||
+    !/^(?:@[a-z0-9._-]+\/)?[a-z0-9._-]+$/i.test(pkgName)
+  ) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Invalid package name in slice pointer: '${pkgName}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
+  if (!version || version.includes('..') || !/^[A-Za-z0-9][A-Za-z0-9._+-]*$/.test(version)) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Invalid package version in slice pointer: '${version}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
+  if (!/^[0-9a-f]{64}$/i.test(sliceSha256)) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Invalid SHA-256 digest in slice pointer: '${sliceSha256}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
   const safeName = pkgName.replace(/^@/, '').replace(/\//g, '__');
-  return `${safeName}@${version}-${sliceSha256.slice(0, 12)}`;
+  return `${safeName}@${version}-${sliceSha256.toLowerCase().slice(0, 12)}`;
 }
 
-function acquireLockSync(lockPath: string, timeoutMs = 15_000): () => void {
+async function acquireLock(lockPath: string, timeoutMs = 15_000): Promise<() => void> {
   const start = Date.now();
   while (true) {
     try {
-      const fd = fs.openSync(lockPath, 'wx');
-      fs.writeFileSync(fd, `${process.pid}:${Date.now()}`);
-      fs.closeSync(fd);
+      const handle = await fs.promises.open(lockPath, 'wx');
+      try {
+        await handle.writeFile(`${process.pid}:${Date.now()}`);
+      } finally {
+        await handle.close();
+      }
       return () => {
         try {
           fs.unlinkSync(lockPath);
@@ -332,9 +436,9 @@ function acquireLockSync(lockPath: string, timeoutMs = 15_000): () => void {
       }
       // Clear stale lock older than 30s
       try {
-        const stat = fs.statSync(lockPath);
+        const stat = await fs.promises.stat(lockPath);
         if (Date.now() - stat.mtimeMs > 30_000) {
-          fs.unlinkSync(lockPath);
+          await fs.promises.unlink(lockPath);
           continue;
         }
       } catch {
@@ -347,7 +451,7 @@ function acquireLockSync(lockPath: string, timeoutMs = 15_000): () => void {
           EXIT_CODES.INTEGRITY_OR_SCHEMA
         );
       }
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 25);
+      await new Promise(resolve => setTimeout(resolve, 25));
     }
   }
 }
@@ -365,25 +469,33 @@ export async function ensurePackageSliceExtracted(
   const source = resolveSnapshotSource(options.snapshotSource);
   const offline = Boolean(options.offline || process.env.RSP_AGENT_DOCS_OFFLINE === '1');
 
-  const slicesRoot = path.join(cacheDir, 'slices');
+  const slicesRoot = path.resolve(cacheDir, 'slices');
   fs.mkdirSync(slicesRoot, {recursive: true});
 
   const sliceKey = sanitizePackageCacheSeg(packageName, packageVersion, pointer.sliceSha256);
-  const targetDir = path.join(slicesRoot, sliceKey);
+  const targetDir = path.resolve(slicesRoot, sliceKey);
+  if (path.dirname(targetDir) !== slicesRoot) {
+    throw new AgentDocsError(
+      'ERR_CACHE_INTEGRITY',
+      `Invalid cache target directory for slice '${sliceKey}'.`,
+      EXIT_CODES.INTEGRITY_OR_SCHEMA
+    );
+  }
   const readyMarker = path.join(targetDir, '.ready.json');
 
   if (fs.existsSync(readyMarker)) {
     return targetDir;
   }
 
-  // Fetch bytes before taking synchronous directory lock
-  const gzBytes = await fetchSourceBytes(
-    source,
-    pointer.sliceRelPath,
-    offline,
-    pointer.sliceBytes || MAX_SLICE_BYTES
+  const maxSliceBytes = resolveBoundedMaxBytes(
+    pointer.sliceBytes,
+    MAX_SLICE_BYTES,
+    pointer.sliceRelPath
   );
-  if (pointer.sliceBytes && gzBytes.length !== pointer.sliceBytes) {
+
+  // Fetch bytes before taking directory lock
+  const gzBytes = await fetchSourceBytes(source, pointer.sliceRelPath, offline, maxSliceBytes);
+  if (pointer.sliceBytes !== undefined && gzBytes.length !== pointer.sliceBytes) {
     throw new AgentDocsError(
       'ERR_CACHE_INTEGRITY',
       `Byte length mismatch for slice '${pointer.sliceRelPath}': expected ${pointer.sliceBytes}, got ${gzBytes.length}.`,
@@ -391,7 +503,7 @@ export async function ensurePackageSliceExtracted(
     );
   }
   const actualSha = sha256Buffer(gzBytes);
-  if (actualSha !== pointer.sliceSha256) {
+  if (actualSha !== pointer.sliceSha256.toLowerCase()) {
     throw new AgentDocsError(
       'ERR_CACHE_INTEGRITY',
       `SHA-256 integrity mismatch for slice '${pointer.sliceRelPath}': expected ${pointer.sliceSha256}, got ${actualSha}.`,
@@ -400,7 +512,7 @@ export async function ensurePackageSliceExtracted(
   }
 
   const lockPath = path.join(slicesRoot, `${sliceKey}.lock`);
-  const release = acquireLockSync(lockPath);
+  const release = await acquireLock(lockPath);
   try {
     if (fs.existsSync(readyMarker)) {
       return targetDir;

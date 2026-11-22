@@ -2396,10 +2396,27 @@ export function updateSnapshotsIndex(outRoot, snapshotResults, options = {}) {
         indexData.packages[pkgName] = {};
       }
       let existing = indexData.packages[pkgName][sliceInfo.packageVersion];
-      if (!existing || sliceInfo.docRevision >= existing.docRevision) {
+      let stagedDocRevision = sliceInfo.docRevision || 1;
+      let existingDocRevision = existing?.docRevision || 1;
+      let unionPatches = Array.from(
+        new Set([
+          ...(existing?.verifiedEquivalentPatches || []),
+          ...(sliceInfo.verifiedEquivalentPatches || [])
+        ])
+      ).sort();
+      if (
+        !existing ||
+        stagedDocRevision > existingDocRevision ||
+        existing.snapshotId === sliceInfo.snapshotId
+      ) {
         indexData.packages[pkgName][sliceInfo.packageVersion] = {
           ...sliceInfo,
-          verifiedEquivalentPatches: existing?.verifiedEquivalentPatches || []
+          verifiedEquivalentPatches: unionPatches
+        };
+      } else {
+        indexData.packages[pkgName][sliceInfo.packageVersion] = {
+          ...existing,
+          verifiedEquivalentPatches: unionPatches
         };
       }
       if (options.markAsLatest) {
