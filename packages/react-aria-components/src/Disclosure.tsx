@@ -43,9 +43,11 @@ import React, {
   ForwardedRef,
   forwardRef,
   ReactNode,
-  useContext
+  useContext,
+  useRef
 } from 'react';
 import {useFocusRing} from 'react-aria/useFocusRing';
+import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useId} from 'react-aria/useId';
 
 export interface DisclosureGroupProps
@@ -159,6 +161,7 @@ export const DisclosureStateContext = createContext<DisclosureState | null>(null
 interface InternalDisclosureContextValue {
   panelProps: DOMAttributes<HTMLElement>;
   panelRef: React.RefObject<HTMLDivElement | null>;
+  isExpanded: boolean;
 }
 
 const InternalDisclosureContext = createContext<InternalDisclosureContextValue | null>(null);
@@ -234,7 +237,7 @@ export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
             }
           }
         ],
-        [InternalDisclosureContext, {panelProps, panelRef}],
+        [InternalDisclosureContext, {panelProps, panelRef, isExpanded: state.isExpanded}],
         [DisclosureStateContext, state]
       ]}>
       <dom.div
@@ -256,6 +259,18 @@ export interface DisclosurePanelRenderProps {
    * @selector [data-focus-visible-within]
    */
   isFocusVisibleWithin: boolean;
+  /**
+   * Whether the disclosure panel is currently entering (animating open).
+   *
+   * @selector [data-entering]
+   */
+  isEntering: boolean;
+  /**
+   * Whether the disclosure panel is currently exiting (animating closed).
+   *
+   * @selector [data-exiting]
+   */
+  isExiting: boolean;
 }
 
 export interface DisclosurePanelProps
@@ -289,15 +304,20 @@ export interface DisclosurePanelProps
 export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(
   function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLDivElement>) {
     let {role = 'group'} = props;
-    let {panelProps, panelRef} = useContext(InternalDisclosureContext)!;
+    let {panelProps, panelRef, isExpanded} = useContext(InternalDisclosureContext)!;
     let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
       within: true
     });
+    let isExiting = useExitAnimation(panelRef, isExpanded);
+    let isInitiallyExpanded = useRef(isExpanded);
+    let isEntering = useEnterAnimation(panelRef) && !isInitiallyExpanded.current;
     let renderProps = useRenderProps({
       ...props,
       defaultClassName: 'react-aria-DisclosurePanel',
       values: {
-        isFocusVisibleWithin
+        isFocusVisibleWithin,
+        isEntering,
+        isExiting
       }
     });
     let DOMProps = filterDOMProps(props, {global: true, labelable: true});
@@ -306,7 +326,9 @@ export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(
         {...mergeProps(DOMProps, renderProps, panelProps, focusWithinProps)}
         ref={mergeRefs(ref, panelRef)}
         role={role}
-        data-focus-visible-within={isFocusVisibleWithin || undefined}>
+        data-focus-visible-within={isFocusVisibleWithin || undefined}
+        data-entering={isEntering || undefined}
+        data-exiting={isExiting || undefined}>
         <Provider values={[[ButtonContext, null]]}>{props.children}</Provider>
       </dom.div>
     );

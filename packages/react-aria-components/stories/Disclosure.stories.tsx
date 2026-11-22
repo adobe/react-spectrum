@@ -61,3 +61,35 @@ export const DisclosureControlledExample: DisclosureStory = {
     );
   }
 };
+
+export const DisclosureWithAnimation: DisclosureStory = {
+  render: args => (
+    <div>
+      <style>{`
+        .animated-panel {
+          height: var(--disclosure-panel-height);
+          transition: height 400ms ease;
+        }
+        .animated-panel:is([data-entering], [data-exiting]) {
+          overflow: clip;
+        }
+      `}</style>
+      <Disclosure {...args}>
+        {({isExpanded}) => (
+          <>
+            <Heading level={3}>
+              <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} Disclosure with animation</Button>
+            </Heading>
+            <DisclosurePanel className="animated-panel">
+              <p style={{padding: '8px 16px'}}>
+                Panel content — focus rings, shadows, and text descenders (g, y, p, j) are no longer
+                clipped when fully open, because <code>overflow: clip</code> only applies during the
+                height transition via <code>data-entering</code> / <code>data-exiting</code>.
+              </p>
+            </DisclosurePanel>
+          </>
+        )}
+      </Disclosure>
+    </div>
+  )
+};

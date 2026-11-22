@@ -76,7 +76,7 @@ export function DisclosurePanel({children, ...props}: DisclosurePanelProps) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'h-(--disclosure-panel-height) motion-safe:transition-[height] overflow-clip'
+        'h-(--disclosure-panel-height) motion-safe:transition-[height] data-entering:overflow-clip data-exiting:overflow-clip'
       )}>
       <div className="px-4 py-2">{children}</div>
     </AriaDisclosurePanel>
