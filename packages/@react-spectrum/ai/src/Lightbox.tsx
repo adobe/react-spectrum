@@ -383,7 +383,7 @@ export function LightboxPickerItem(props: LightboxPickerItemProps) {
 /**
  * Contains the items displayed in a lightbox carousel.
  */
-export function LightboxItems<T>(props: LightboxItemsProps<T>) {
+export function LightboxItems(props: LightboxItemsProps) {
   let state = useContext(TabListStateContext)!;
   let slides = Children.toArray(props.children);
 
@@ -414,7 +414,7 @@ export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   );
 }
 
-interface FiniteLightboxItemsProps<T> extends Omit<LightboxItemsProps<T>, 'children'> {
+interface FiniteLightboxItemsProps extends Omit<LightboxItemsProps, 'children'> {
   children: (page: number) => ReactNode;
 }
 
@@ -422,7 +422,7 @@ function getScrollLeft(el: HTMLElement, index: number, isRTL: boolean) {
   return (isRTL ? -1 : 1) * index * el.offsetWidth;
 }
 
-function FiniteLightboxItems<T>(props: FiniteLightboxItemsProps<T>) {
+function FiniteLightboxItems(props: FiniteLightboxItemsProps) {
   let {children: renderPage} = props;
   let state = useContext(TabListStateContext)!;
   let isRTL = useLocale().direction === 'rtl';
