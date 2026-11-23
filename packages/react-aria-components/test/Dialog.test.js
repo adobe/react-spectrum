@@ -745,4 +745,135 @@ describe('Dialog', () => {
     expect(popover).not.toBeInTheDocument();
     expect(modal).toBeInTheDocument();
   });
+  describe('restoreFocus', () => {
+    function Rows({kind, restoreFocus}) {
+      let [rows, setRows] = React.useState(['Alpha', 'Beta']);
+      let listRef = useRef(null);
+      let remove = row => setRows(rows => rows.filter(r => r !== row));
+      return (
+        <div role="group" aria-label="Rows" tabIndex={-1} ref={listRef}>
+          {rows.map(row => (
+            <div key={row}>
+              {row}
+              {kind === 'menu' ? (
+                <MenuTrigger>
+                  <Button aria-label={`Actions for ${row}`}>⋯</Button>
+                  <Popover restoreFocus={restoreFocus?.(listRef)}>
+                    <Menu onAction={() => remove(row)}>
+                      <MenuItem>Delete</MenuItem>
+                    </Menu>
+                  </Popover>
+                </MenuTrigger>
+              ) : (
+                <DialogTrigger>
+                  <Button aria-label={`Actions for ${row}`}>Delete</Button>
+                  <Modal restoreFocus={restoreFocus?.(listRef)}>
+                    <Dialog aria-label="Confirm">
+                      <Button onPress={() => remove(row)}>Confirm</Button>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    it.each([
+      ['menu', 'without restoreFocus', 'body', undefined],
+      ['menu', 'with a restoreFocus ref', 'list', listRef => listRef],
+      ['modal', 'without restoreFocus', 'body', undefined],
+      ['modal', 'with a restoreFocus ref', 'list', listRef => listRef]
+    ])(
+      'a %s %s sends focus to the %s when its row is deleted from it',
+      async (kind, _, expected, restoreFocus) => {
+        let {getByRole, queryByText} = render(<Rows kind={kind} restoreFocus={restoreFocus} />);
+        await user.tab();
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Actions for Alpha'}));
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+
+        if (kind === 'modal') {
+          await user.tab();
+          expect(document.activeElement).toBe(getByRole('button', {name: 'Confirm'}));
+        } else {
+          expect(document.activeElement).toBe(getByRole('menuitem'));
+        }
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+
+        expect(queryByText('Alpha')).toBeNull();
+        expect(document.activeElement).toBe(
+          expected === 'list' ? getByRole('group') : document.body
+        );
+      }
+    );
+
+    it.each(['Popover', 'Modal', 'ModalOverlay'])(
+      'a %s restores focus to the element returned by a restoreFocus function',
+      async component => {
+        function Test() {
+          let [showTrigger, setShowTrigger] = React.useState(true);
+          let fallbackRef = useRef(null);
+          let restoreFocus = ({defaultTarget}) => defaultTarget ?? fallbackRef.current;
+          let dialog = (
+            <Dialog aria-label="Dialog">
+              <Button onPress={() => setShowTrigger(false)}>Remove trigger</Button>
+            </Dialog>
+          );
+          let overlay = {
+            Popover: <Popover restoreFocus={restoreFocus}>{dialog}</Popover>,
+            Modal: <Modal restoreFocus={restoreFocus}>{dialog}</Modal>,
+            ModalOverlay: (
+              <ModalOverlay restoreFocus={restoreFocus}>
+                <Modal>{dialog}</Modal>
+              </ModalOverlay>
+            )
+          }[component];
+          return (
+            <>
+              <Button ref={fallbackRef}>Fallback</Button>
+              {showTrigger && (
+                <DialogTrigger>
+                  <Button>Open</Button>
+                  {overlay}
+                </DialogTrigger>
+              )}
+            </>
+          );
+        }
+
+        let {getByRole} = render(<Test />);
+        await user.click(getByRole('button', {name: 'Open'}));
+        act(() => jest.runAllTimers());
+        await user.click(getByRole('button', {name: 'Remove trigger'}));
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Fallback'}));
+      }
+    );
+
+    it('does not restore focus when restoreFocus is false', async () => {
+      let {getByRole} = render(
+        <DialogTrigger>
+          <Button>Open</Button>
+          <ModalOverlay restoreFocus={false}>
+            <Modal>
+              <Dialog aria-label="Dialog">
+                <Button slot="close">Close</Button>
+              </Dialog>
+            </Modal>
+          </ModalOverlay>
+        </DialogTrigger>
+      );
+      await user.tab();
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(getByRole('dialog')).toBeInTheDocument();
+
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(document.body);
+    });
+  });
 });
