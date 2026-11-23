@@ -368,27 +368,29 @@ export const EmptyCombobox: Story = {
   }
 };
 
-export function WithCreateOption() {
-  let [inputValue, setInputValue] = useState('');
+export const WithCreateOption = {
+  render: function WithCreateOption() {
+    let [inputValue, setInputValue] = useState('');
 
-  return (
-    <ComboBox
-      label="Favorite Animal"
-      placeholder="Select an animal"
-      inputValue={inputValue}
-      onInputChange={setInputValue}>
-      {inputValue.length > 0 && (
-        <ComboBoxItem onAction={() => alert('hi')}>{`Create "${inputValue}"`}</ComboBoxItem>
-      )}
-      <ComboBoxItem>Aardvark</ComboBoxItem>
-      <ComboBoxItem>Cat</ComboBoxItem>
-      <ComboBoxItem>Dog</ComboBoxItem>
-      <ComboBoxItem>Kangaroo</ComboBoxItem>
-      <ComboBoxItem>Panda</ComboBoxItem>
-      <ComboBoxItem>Snake</ComboBoxItem>
-    </ComboBox>
-  );
-}
+    return (
+      <ComboBox
+        label="Favorite Animal"
+        placeholder="Select an animal"
+        inputValue={inputValue}
+        onInputChange={setInputValue}>
+        {inputValue.length > 0 && (
+          <ComboBoxItem onAction={() => alert('hi')}>{`Create "${inputValue}"`}</ComboBoxItem>
+        )}
+        <ComboBoxItem>Aardvark</ComboBoxItem>
+        <ComboBoxItem>Cat</ComboBoxItem>
+        <ComboBoxItem>Dog</ComboBoxItem>
+        <ComboBoxItem>Kangaroo</ComboBoxItem>
+        <ComboBoxItem>Panda</ComboBoxItem>
+        <ComboBoxItem>Snake</ComboBoxItem>
+      </ComboBox>
+    );
+  }
+};
 
 export const ComboboxInsideDialog: Story = {
   render: args => (

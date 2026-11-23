@@ -158,6 +158,8 @@ import SelectBoxGroupDark from 'url:../assets/component-illustrations/dark/Selec
 import SelectBoxGroupLight from 'url:../assets/component-illustrations/light/SelectBoxGroup.avif';
 import SelectionDark from 'url:../assets/component-illustrations/dark/Selection.avif';
 import SelectionLight from 'url:../assets/component-illustrations/light/Selection.avif';
+import SheetDark from 'url:../assets/component-illustrations/dark/Sheet.avif';
+import SheetLight from 'url:../assets/component-illustrations/light/Sheet.avif';
 import SideNavDark from 'url:../assets/component-illustrations/dark/SideNav.avif';
 import SideNavLight from 'url:../assets/component-illustrations/light/SideNav.avif';
 import SkeletonDark from 'url:../assets/component-illustrations/dark/Skeleton.avif';
@@ -284,7 +286,9 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Select: [PickerLight, PickerDark],
   SelectBoxGroup: [SelectBoxGroupLight, SelectBoxGroupDark],
   Separator: [DividerLight, DividerDark],
+  Sheet: [SheetLight, SheetDark],
   SideNav: [SideNavLight, SideNavDark],
+  SideNavPanel: [SideNavLight, SideNavDark],
   Skeleton: [SkeletonLight, SkeletonDark],
   Slider: [SliderLight, SliderDark],
   StatusLight: [StatusLightLight, StatusLightDark],
@@ -410,6 +414,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Accessible Color Descriptions for Improved Color Pickers': [ColorPickerLight, ColorPickerDark],
   'Creating a pointer-friendly submenu experience': [MenuLight, MenuDark],
   'Introducing React Spectrum': [AdobeLight, AdobeDark],
+  'Scrolling is All You Need: Building a Swipeable Sheet': [SheetLight, SheetDark],
   // Internationalized
   'Internationalized Date': [DateRangePickerLight, DateRangePickerDark],
   'Calendar Interface': [CalendarLight, CalendarDark],

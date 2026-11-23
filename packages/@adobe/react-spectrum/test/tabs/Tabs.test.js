@@ -20,14 +20,17 @@ import {
   waitFor,
   within
 } from '@react-spectrum/test-utils-internal';
+import {composeStory} from '@storybook/react';
 import {Item} from 'react-stately/Item';
-import {Links as LinksExample} from '../../stories/tabs/Tabs.stories';
+import Meta, {Links as LinksStory} from '../../stories/tabs/Tabs.stories';
 import {Provider} from '../../src/provider/Provider';
 import React from 'react';
 import {TabList, TabPanels, Tabs} from '../../src/tabs/Tabs';
 import {defaultTheme as theme} from '../../src/theme-default/defaultTheme';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+
+const LinksExample = composeStory(LinksStory, Meta);
 
 let defaultItems = [
   {name: 'Tab 1', children: 'Tab 1 body'},

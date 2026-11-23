@@ -12,7 +12,7 @@
 
 import {BackgroundColorValue, Responsive as TResponsive} from '@react-types/shared';
 import {Grid, repeat} from '../../src/layout/Grid';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {View} from '../../src/view/View';
 
@@ -41,69 +41,66 @@ export default {
   title: 'Grid'
 } as Meta<typeof Grid>;
 
-export type GridStory = StoryFn<typeof Grid>;
+export type GridStory = StoryObj<typeof Grid>;
 
-export const ExplicitGrid: GridStory = () => (
-  <Grid
-    areas={['header  header', 'sidebar content', 'footer  footer']}
-    columns={['size-3000', 'auto']}
-    rows={['size-1000', 'auto', 'size-1000']}
-    height="size-6000"
-    width="80%"
-    gap="size-100">
-    <View backgroundColor="celery-600" gridArea="header" padding="size-100">
-      Header
-    </View>
-    <View backgroundColor="blue-600" gridArea="sidebar" padding="size-100">
-      Sidebar
-    </View>
-    <View backgroundColor="purple-600" gridArea="content" padding="size-100">
-      Content
-    </View>
-    <View backgroundColor="magenta-600" gridArea="footer" padding="size-100">
-      Footer
-    </View>
-  </Grid>
-);
-
-ExplicitGrid.story = {
+export const ExplicitGrid: GridStory = {
+  render: () => (
+    <Grid
+      areas={['header  header', 'sidebar content', 'footer  footer']}
+      columns={['size-3000', 'auto']}
+      rows={['size-1000', 'auto', 'size-1000']}
+      height="size-6000"
+      width="80%"
+      gap="size-100">
+      <View backgroundColor="celery-600" gridArea="header" padding="size-100">
+        Header
+      </View>
+      <View backgroundColor="blue-600" gridArea="sidebar" padding="size-100">
+        Sidebar
+      </View>
+      <View backgroundColor="purple-600" gridArea="content" padding="size-100">
+        Content
+      </View>
+      <View backgroundColor="magenta-600" gridArea="footer" padding="size-100">
+        Footer
+      </View>
+    </Grid>
+  ),
   name: 'Explicit grid'
 };
 
-export const ImplicitGrid: GridStory = () => (
-  <Grid
-    columns={repeat('auto-fit', 'size-800')}
-    autoRows="size-800"
-    justifyContent="center"
-    width="80%"
-    gap="size-100">
-    {colors.map(color => (
-      <View key={String(color)} backgroundColor={color} />
-    ))}
-  </Grid>
-);
-
-ImplicitGrid.story = {
+export const ImplicitGrid: GridStory = {
+  render: () => (
+    <Grid
+      columns={repeat('auto-fit', 'size-800')}
+      autoRows="size-800"
+      justifyContent="center"
+      width="80%"
+      gap="size-100">
+      {colors.map(color => (
+        <View key={String(color)} backgroundColor={color} />
+      ))}
+    </Grid>
+  ),
   name: 'Implicit grid'
 };
 
-export const Responsive: GridStory = () => (
-  <Grid
-    columns={{
-      base: repeat('auto-fit', 'size-800'),
-      M: repeat('auto-fit', 'size-1200'),
-      L: repeat('auto-fit', 'size-2000')
-    }}
-    autoRows={{base: 'size-800', M: 'size-1200', L: 'size-2000'}}
-    justifyContent="center"
-    width="80%"
-    gap={{base: 'size-100', M: 'size-250', L: 'size-350'}}>
-    {colors.map(color => (
-      <View key={String(color)} backgroundColor={color} />
-    ))}
-  </Grid>
-);
-
-Responsive.story = {
+export const Responsive: GridStory = {
+  render: () => (
+    <Grid
+      columns={{
+        base: repeat('auto-fit', 'size-800'),
+        M: repeat('auto-fit', 'size-1200'),
+        L: repeat('auto-fit', 'size-2000')
+      }}
+      autoRows={{base: 'size-800', M: 'size-1200', L: 'size-2000'}}
+      justifyContent="center"
+      width="80%"
+      gap={{base: 'size-100', M: 'size-250', L: 'size-350'}}>
+      {colors.map(color => (
+        <View key={String(color)} backgroundColor={color} />
+      ))}
+    </Grid>
+  ),
   name: 'responsive'
 };

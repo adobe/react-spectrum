@@ -53,6 +53,7 @@ import {FieldLabel, helpTextStyles} from './Field';
 import {flushSync} from 'react-dom';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
+import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -214,7 +215,7 @@ function TagGroupInner<T>({
           !currContainerRef ||
           !currTagsRef ||
           collection.size === 0 ||
-          currContainerRef.parentElement == null
+          getParentElement(currContainerRef) == null
         ) {
           return {
             visibleTagCount: 0,
@@ -254,7 +255,8 @@ function TagGroupInner<T>({
           let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
           buttonsWidth += margins * 2;
           let end = direction === 'ltr' ? 'right' : 'left';
-          let containerEnd = currContainerRef.parentElement?.getBoundingClientRect()[end] - margins;
+          let containerEnd =
+            getParentElement(currContainerRef)?.getBoundingClientRect()[end] - margins;
           let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
           lastTagEnd += margins;
           let availableWidth = containerEnd - lastTagEnd;

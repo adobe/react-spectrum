@@ -45,6 +45,7 @@ import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import React from 'react';
 import {render} from 'vitest-browser-react';
 import {Token, TokenField, TokenInput} from '../src/TokenField';
+import {tokenFieldPositionToDOMRange} from 'react-aria/useTokenField';
 
 const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
@@ -138,6 +139,28 @@ describeOrSkip('TokenField browser interactions', () => {
   });
 
   describe('caret movement', () => {
+    it('reports every caret move through onChange', async () => {
+      let offsets: number[] = [];
+      let screen = await render(
+        <TokenField
+          defaultValue={segments(text('abcdefgh'))}
+          aria-label="Caret onChange"
+          onChange={value => offsets.push(value.caretPosition.offset)}>
+          <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
+        </TokenField>
+      );
+      let textbox = screen.getByRole('textbox', {name: 'Caret onChange'});
+      await focusField(textbox);
+      await userEvent.keyboard('{Home}');
+      await expect.poll(() => getFieldSelection(textbox.element())?.[0].offset).toBe(0);
+      offsets = [];
+      for (let i = 1; i <= 6; i++) {
+        await userEvent.keyboard('{ArrowRight}');
+        await expect.poll(() => offsets[offsets.length - 1]).toBe(i);
+      }
+      expect(offsets).toEqual([1, 2, 3, 4, 5, 6]);
+    });
+
     it('skips over token with ArrowRight from end of preceding text', async () => {
       let {textbox} = await renderControlledTokenField(abTokCd);
       await navigateCaret(textbox, abTokCd, {index: 0, offset: 2});
@@ -937,6 +960,60 @@ describeOrSkip('TokenField browser interactions', () => {
       } finally {
         await commands.unlockClipboard();
       }
+    });
+  });
+
+  describe('tokenFieldPositionToDOMRange', () => {
+    it.each([
+      {
+        name: 'at the start of text',
+        value: abTokCd,
+        position: {index: 0, offset: 0},
+        container: (root: Element) => root.firstChild,
+        offset: 0
+      },
+      {
+        name: 'at the end of text',
+        value: abTokCd,
+        position: {index: 2, offset: 2},
+        container: (root: Element) => root.lastChild,
+        offset: 2
+      },
+      {
+        name: 'before a token',
+        value: abTokCd,
+        position: {index: 1, offset: 0},
+        container: (root: Element) => root.childNodes[1].firstChild,
+        offset: 0
+      },
+      {
+        name: 'after a token',
+        value: abTokCd,
+        position: {index: 1, offset: 3},
+        container: (root: Element) => root.childNodes[1].lastChild,
+        offset: 1
+      },
+      {
+        name: 'after a trailing token',
+        value: segments(text('ab'), token('TOK')),
+        position: {index: 2, offset: 0},
+        container: (root: Element) => root.lastChild!.lastChild,
+        offset: 1
+      },
+      {
+        name: 'before a trailing line break',
+        value: segments(text('ab\n')),
+        position: {index: 1, offset: 0},
+        container: (root: Element) => root,
+        offset: 1
+      }
+    ])('returns a collapsed range $name', async ({value, position, container, offset}) => {
+      let {textbox} = await renderControlledTokenField(value, {allowsNewlines: true});
+      let root = textbox.element();
+      let range = tokenFieldPositionToDOMRange(root, position);
+      expect(range.collapsed).toBe(true);
+      expect(range.startContainer).toBe(container(root));
+      expect(range.startOffset).toBe(offset);
     });
   });
 

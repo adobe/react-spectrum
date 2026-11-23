@@ -52,6 +52,7 @@ import {
   DisabledBehavior,
   DragPreviewRenderer,
   Expandable,
+  FocusEvents,
   forwardRefType,
   GlobalDOMAttributes,
   HoverEvents,
@@ -65,6 +66,7 @@ import {
 import {
   DragAndDropContext,
   DropIndicatorContext,
+  getDraggableItemSlotProps,
   useDndPersistedKeys,
   useRenderDropIndicator
 } from './DragAndDrop';
@@ -107,11 +109,13 @@ import React, {
 } from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
+import {TextContext} from './Text';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {TreeState, useTreeState} from 'react-stately/useTreeState';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 import {useCollator} from 'react-aria/useCollator';
 import {useControlledState} from 'react-stately/useControlledState';
+import {useFocus} from 'react-aria/useFocus';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useGridListSection, useGridListSelectionCheckbox} from 'react-aria/useGridList';
 import {useHover} from 'react-aria/useHover';
@@ -728,6 +732,7 @@ export interface TreeItemProps<T = object>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
+    FocusEvents<HTMLDivElement>,
     Pick<AriaTreeItemOptions, 'hasChildItems' | 'focusMode' | 'allowsArrowNavigation'>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
@@ -778,14 +783,13 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let isDraggable =
       dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
 
-    // TODO: remove this when we support description in tree row
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem(
       {
         node: item,
-        shouldSelectOnPressUp: !!dragState,
+        shouldSelectOnPressUp: !!dragState && dragAndDropHooks?.pointerDragSource !== 'handle',
         focusMode: props.focusMode,
-        allowsArrowNavigation: props.allowsArrowNavigation
+        allowsArrowNavigation: props.allowsArrowNavigation,
+        hasChildItems: props.hasChildItems
       },
       state,
       ref
@@ -804,6 +808,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
       onHoverEnd: props.onHoverEnd
     });
 
+    let {focusProps: focusEventProps} = useFocus(props);
     let {isFocusVisible, focusProps} = useFocusRing();
     let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
       within: true
@@ -935,6 +940,11 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
+    let draggableSlotProps = getDraggableItemSlotProps(
+      draggableItem,
+      dragAndDropHooks,
+      dragButtonRef
+    );
 
     return (
       <>
@@ -971,9 +981,10 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
             DOMProps,
             rowProps,
             focusProps,
+            focusEventProps,
             hoverProps,
             focusWithinProps,
-            draggableItem?.dragProps
+            draggableSlotProps.itemProps
           )}
           {...renderProps}
           ref={ref}
@@ -1016,7 +1027,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
                     }
                   }
                 ],
-                // TODO: support description in the tree row
+                [TextContext, {slots: {[DEFAULT_SLOT]: {}, description: descriptionProps}}],
                 // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
                 [
                   ButtonContext,
@@ -1028,11 +1039,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
                         ref: expandButtonRef
                       },
                       drag: {
-                        ...draggableItem?.dragButtonProps,
-                        ref: dragButtonRef,
-                        style: {
-                          pointerEvents: 'none'
-                        }
+                        ...draggableSlotProps.dragButtonProps,
+                        ref: dragButtonRef
                       }
                     }
                   }

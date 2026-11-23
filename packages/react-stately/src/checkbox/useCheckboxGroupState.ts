@@ -135,9 +135,12 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      if (selectedValues.includes(value)) {
-        setValue(selectedValues.filter(existingValue => existingValue !== value));
-      }
+
+      setValue(currentValues =>
+        currentValues.includes(value)
+          ? currentValues.filter(existingValue => existingValue !== value)
+          : currentValues
+      );
     },
     toggleValue(value) {
       if (props.isReadOnly || props.isDisabled) {

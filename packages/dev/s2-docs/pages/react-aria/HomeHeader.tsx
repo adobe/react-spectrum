@@ -72,9 +72,15 @@ export default function HomeHeader() {
 
     viewTransition.finished.then(() => {
       document.documentElement.style.viewTransitionName = '';
-      iconRef.current!.style.viewTransitionName = '';
-      labelRef.current!.style.viewTransitionName = '';
-      searchRef.current!.style.viewTransitionName = '';
+      if (iconRef.current) {
+        iconRef.current.style.viewTransitionName = '';
+      }
+      if (labelRef.current) {
+        labelRef.current.style.viewTransitionName = '';
+      }
+      if (searchRef.current) {
+        searchRef.current.style.viewTransitionName = '';
+      }
     });
   };
 

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="210 0 500 500">
+<g style="--fg: light-dark(#24292f, #e6edf3); --muted: light-dark(#57606a, #9198a1); --line: light-dark(#8c959f, #6e7681); --hatch-bg: light-dark(#f6f8fa, #161b22); --hatch-line: light-dark(#d0d7de, #30363d); --surface: light-dark(#ffffff, #21262d); --grabber: light-dark(#afb8c1, #6e7681); --stage: light-dark(#0969da, #4493f8); --stage-bg: light-dark(#ddf4ff, #0d2a4d); --viewport: light-dark(#bf5700, #f0883e); --marker: light-dark(#8250df, #ab7df8); --sans: var(--anatomy-font, system-ui), system-ui, sans-serif; --mono: ui-monospace, SFMono-Regular, Menlo, monospace; font-family: var(--sans)" fill="var(--fg)" font-size="13">
+  <defs>
+    <pattern id="sheet-snap-points-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="var(--hatch-bg)"/>
+      <line x1="0" y1="0" x2="0" y2="8" stroke="var(--hatch-line)" stroke-width="2"/>
+    </pattern>
+    <filter id="sheet-snap-points-shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/>
+    </filter>
+    <marker id="sheet-snap-points-a-muted" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+    <marker id="sheet-snap-points-a-mk" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--marker)"/></marker>
+    <marker id="sheet-snap-points-a-stage" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--stage)"/></marker>
+  </defs>
+<g transform="translate(190 0)">
+  <rect x="90" y="20" width="200" height="300" rx="6" fill="var(--surface)"/>
+  <clipPath id="sheet-snap-points-vp"><rect x="90" y="20" width="200" height="300" rx="6"/></clipPath>
+  <g clip-path="url(#sheet-snap-points-vp)"><path d="M102,240 q0,-10 10,-10 h156 q10,0 10,10 v200 h-176 z" fill="var(--surface)" stroke="var(--fg)" filter="url(#sheet-snap-points-shadow)"/><rect x="172.0" y="236" width="36" height="5" rx="2.5" fill="var(--grabber)"/><text x="190.0" y="268" font-weight="600" text-anchor="middle">Sheet</text></g>
+  <path d="M102,320 v100 h176 v-100" fill="none" stroke="var(--line)" stroke-dasharray="4 4"/>
+  <rect x="102" y="420" width="176" height="26" fill="url(#sheet-snap-points-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/>
+  <rect x="90" y="20" width="200" height="300" rx="6" fill="none" stroke="var(--viewport)" stroke-width="2.5"/>
+<text x="98" y="40" fill="var(--viewport)" font-weight="600">window</text>
+<text x="190" y="375" fill="var(--muted)" font-size="12" text-anchor="middle">rest of sheet</text>
+<text x="190" y="391" fill="var(--muted)" font-size="12" text-anchor="middle">(off screen)</text>
+<text x="190" y="437" fill="var(--muted)" font-size="12" text-anchor="middle">overscroll padding</text>
+<line x1="74" y1="232" x2="74" y2="418" stroke="var(--muted)" stroke-width="1.5" marker-start="url(#sheet-snap-points-a-muted)" marker-end="url(#sheet-snap-points-a-muted)"/>
+<text x="64" y="322" font-weight="600" text-anchor="end">S</text>
+<text x="64" y="338" fill="var(--muted)" font-size="12" text-anchor="end">sheet</text>
+<line x1="122" y1="237" x2="122" y2="314" stroke="var(--marker)" stroke-width="1.5" marker-start="url(#sheet-snap-points-a-mk)" marker-end="url(#sheet-snap-points-a-mk)"/>
+<text x="132" y="304" style="font-family: var(--mono)" font-size="12" fill="var(--marker)">top: p</text>
+<circle cx="102" cy="320" r="6" fill="var(--marker)" stroke="var(--surface)" stroke-width="2"/>
+<line x1="310" y1="22" x2="310" y2="316" stroke="var(--marker)" stroke-width="1.5" marker-start="url(#sheet-snap-points-a-mk)" marker-end="url(#sheet-snap-points-a-mk)"/>
+<text x="320" y="150" style="font-family: var(--mono)" font-size="12" fill="var(--marker)">scroll-margin-top:</text>
+<text x="320" y="166" style="font-family: var(--mono)" font-size="12" fill="var(--marker)">100dvh</text>
+<text x="320" y="184" fill="var(--muted)" font-size="12">(constant)</text>
+<text x="320" y="266" font-weight="600">p visible</text>
+<text x="320" y="284" fill="var(--muted)" font-size="12">180 → 180px</text>
+<text x="320" y="300" fill="var(--muted)" font-size="12">'30%' → 0.3 × S</text>
+<circle cx="320" cy="467" r="6" fill="var(--marker)" stroke="var(--surface)" stroke-width="2"/>
+<text x="334" y="471" fill="var(--marker)" font-weight="600">snap marker</text>
+<text x="334" y="489" style="font-family: var(--mono)" font-size="12" fill="var(--muted)">scroll-snap-align: start</text></g>
+</g>
+</svg>

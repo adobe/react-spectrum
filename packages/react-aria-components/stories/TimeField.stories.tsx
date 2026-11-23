@@ -13,7 +13,7 @@
 import clsx from 'clsx';
 import {DateInput, DateSegment, TimeField} from '../src/DateField';
 import {Label} from '../src/Label';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
 import './styles.css';
@@ -23,18 +23,20 @@ export default {
   component: TimeField
 } as Meta<typeof TimeField>;
 
-export type TimeFieldStory = StoryFn<typeof TimeField>;
+export type TimeFieldStory = StoryObj<typeof TimeField>;
 
-export const TimeFieldExample: TimeFieldStory = () => (
-  <TimeField data-testid="time-field-example">
-    <Label style={{display: 'block'}}>Time</Label>
-    <DateInput className={styles.field}>
-      {segment => (
-        <DateSegment
-          segment={segment}
-          className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
-        />
-      )}
-    </DateInput>
-  </TimeField>
-);
+export const TimeFieldExample: TimeFieldStory = {
+  render: () => (
+    <TimeField data-testid="time-field-example">
+      <Label style={{display: 'block'}}>Time</Label>
+      <DateInput className={styles.field}>
+        {segment => (
+          <DateSegment
+            segment={segment}
+            className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+          />
+        )}
+      </DateInput>
+    </TimeField>
+  )
+};

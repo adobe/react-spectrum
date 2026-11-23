@@ -172,13 +172,7 @@ export interface NavigationTreeItemProps<T = object>
   extends
     Omit<
       TreeItemProps<T>,
-      | 'className'
-      | 'style'
-      | 'render'
-      | 'onAction'
-      | 'allowsArrowNavigation'
-      | 'focusMode'
-      | 'value'
+      'className' | 'style' | 'render' | 'onAction' | 'allowsArrowNavigation' | 'value'
     >,
     StyleRenderProps<NavigationTreeItemRenderProps> {
   /**

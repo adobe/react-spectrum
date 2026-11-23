@@ -23,7 +23,7 @@ import {Header} from '../src/Header';
 import {ListBox, ListBoxItem, ListBoxProps, ListBoxSection} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyHeader, MyListBoxItem} from './utils';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX, useState} from 'react';
 import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
@@ -39,19 +39,18 @@ export default {
   excludeStories: ['MyListBoxLoaderIndicator']
 } as Meta<typeof ListBox>;
 
-export type ListBoxStory = StoryFn<typeof ListBox>;
+export type ListBoxStory = StoryObj<typeof ListBox>;
 export type ListBoxStoryObj = StoryObj<typeof ListBox>;
 
-export const ListBoxExample: ListBoxStory = args => (
-  <ListBox className={styles.menu} {...args} aria-label="test listbox">
-    <MyListBoxItem>Foo</MyListBoxItem>
-    <MyListBoxItem>Bar</MyListBoxItem>
-    <MyListBoxItem aria-label="Baz with custom label">Baz (Custom aria-label)</MyListBoxItem>
-    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-  </ListBox>
-);
-
-ListBoxExample.story = {
+export const ListBoxExample: ListBoxStory = {
+  render: args => (
+    <ListBox className={styles.menu} {...args} aria-label="test listbox">
+      <MyListBoxItem>Foo</MyListBoxItem>
+      <MyListBoxItem>Bar</MyListBoxItem>
+      <MyListBoxItem aria-label="Baz with custom label">Baz (Custom aria-label)</MyListBoxItem>
+      <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+    </ListBox>
+  ),
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
@@ -81,57 +80,63 @@ ListBoxExample.story = {
 
 // Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
 // also has a aXe landmark error, not sure what it means
-export const ListBoxSections: ListBoxStory = () => (
-  <ListBox
-    className={styles.menu}
-    selectionMode="multiple"
-    selectionBehavior="replace"
-    aria-label="test listbox with section">
-    <ListBoxSection className={styles.group}>
-      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-      <MyListBoxItem>Foo</MyListBoxItem>
-      <MyListBoxItem>Bar</MyListBoxItem>
-      <MyListBoxItem>Baz</MyListBoxItem>
-    </ListBoxSection>
-    <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-    <ListBoxSection className={styles.group} aria-label="Section 2">
-      <MyListBoxItem>Foo</MyListBoxItem>
-      <MyListBoxItem>Bar</MyListBoxItem>
-      <MyListBoxItem>Baz</MyListBoxItem>
-    </ListBoxSection>
-  </ListBox>
-);
+export const ListBoxSections: ListBoxStory = {
+  render: () => (
+    <ListBox
+      className={styles.menu}
+      selectionMode="multiple"
+      selectionBehavior="replace"
+      aria-label="test listbox with section">
+      <ListBoxSection className={styles.group}>
+        <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+        <MyListBoxItem>Foo</MyListBoxItem>
+        <MyListBoxItem>Bar</MyListBoxItem>
+        <MyListBoxItem>Baz</MyListBoxItem>
+      </ListBoxSection>
+      <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+      <ListBoxSection className={styles.group} aria-label="Section 2">
+        <MyListBoxItem>Foo</MyListBoxItem>
+        <MyListBoxItem>Bar</MyListBoxItem>
+        <MyListBoxItem>Baz</MyListBoxItem>
+      </ListBoxSection>
+    </ListBox>
+  )
+};
 
-export const ListBoxComplex: ListBoxStory = () => (
-  <ListBox
-    className={styles.menu}
-    selectionMode="multiple"
-    selectionBehavior="replace"
-    aria-label="listbox complex">
-    <MyListBoxItem>
-      <Text slot="label">Item 1</Text>
-      <Text slot="description">Description</Text>
-    </MyListBoxItem>
-    <MyListBoxItem>
-      <Text slot="label">Item 2</Text>
-      <Text slot="description">Description</Text>
-    </MyListBoxItem>
-    <MyListBoxItem>
-      <Text slot="label">Item 3</Text>
-      <Text slot="description">Description</Text>
-    </MyListBoxItem>
-  </ListBox>
-);
+export const ListBoxComplex: ListBoxStory = {
+  render: () => (
+    <ListBox
+      className={styles.menu}
+      selectionMode="multiple"
+      selectionBehavior="replace"
+      aria-label="listbox complex">
+      <MyListBoxItem>
+        <Text slot="label">Item 1</Text>
+        <Text slot="description">Description</Text>
+      </MyListBoxItem>
+      <MyListBoxItem>
+        <Text slot="label">Item 2</Text>
+        <Text slot="description">Description</Text>
+      </MyListBoxItem>
+      <MyListBoxItem>
+        <Text slot="label">Item 3</Text>
+        <Text slot="description">Description</Text>
+      </MyListBoxItem>
+    </ListBox>
+  )
+};
 
-export const ListBoxDynamicStrings: ListBoxStory = args => (
-  <ListBox
-    className={styles.menu}
-    {...args}
-    aria-label="test listbox"
-    items={['Foo', 'Bar', 'Baz']}>
-    {item => <MyListBoxItem>{item}</MyListBoxItem>}
-  </ListBox>
-);
+export const ListBoxDynamicStrings: ListBoxStory = {
+  render: args => (
+    <ListBox
+      className={styles.menu}
+      {...args}
+      aria-label="test listbox"
+      items={['Foo', 'Bar', 'Baz']}>
+      {item => <MyListBoxItem>{item}</MyListBoxItem>}
+    </ListBox>
+  )
+};
 
 interface Album {
   id: number;
@@ -178,42 +183,41 @@ let albums: Album[] = [
   }
 ];
 
-type AlbumListBoxStory = StoryFn<typeof ListBox<Album>>;
-export const ListBoxDnd: AlbumListBoxStory = props => {
-  let list = useListData({
-    initialItems: albums
-  });
+type AlbumListBoxStory = StoryObj<typeof ListBox<Album>>;
+export const ListBoxDnd: AlbumListBoxStory = {
+  render: function ListBoxDnd(props) {
+    let list = useListData({
+      initialItems: albums
+    });
 
-  let {dragAndDropHooks} = useDragAndDrop<Album>({
-    getItems: (keys, items) => items.map(item => ({'text/plain': item.title ?? ''})),
-    onReorder(e) {
-      if (e.target.dropPosition === 'before') {
-        list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
-        list.moveAfter(e.target.key, e.keys);
+    let {dragAndDropHooks} = useDragAndDrop<Album>({
+      getItems: (keys, items) => items.map(item => ({'text/plain': item.title ?? ''})),
+      onReorder(e) {
+        if (e.target.dropPosition === 'before') {
+          list.moveBefore(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'after') {
+          list.moveAfter(e.target.key, e.keys);
+        }
       }
-    }
-  });
+    });
 
-  return (
-    <ListBox
-      {...props}
-      aria-label="Albums"
-      items={list.items}
-      selectionMode="multiple"
-      dragAndDropHooks={dragAndDropHooks}>
-      {item => (
-        <ListBoxItem>
-          <img src={item.image} alt="" />
-          <Text slot="label">{item.title}</Text>
-          <Text slot="description">{item.artist}</Text>
-        </ListBoxItem>
-      )}
-    </ListBox>
-  );
-};
-
-ListBoxDnd.story = {
+    return (
+      <ListBox
+        {...props}
+        aria-label="Albums"
+        items={list.items}
+        selectionMode="multiple"
+        dragAndDropHooks={dragAndDropHooks}>
+        {item => (
+          <ListBoxItem>
+            <img src={item.image} alt="" />
+            <Text slot="label">{item.title}</Text>
+            <Text slot="description">{item.artist}</Text>
+          </ListBoxItem>
+        )}
+      </ListBox>
+    );
+  },
   args: {
     layout: 'stack',
     orientation: 'horizontal'
@@ -333,63 +337,64 @@ export const ListBoxPreviewOffset = {
   }
 };
 
-export const ListBoxHover: ListBoxStory = () => (
-  <ListBox className={styles.menu} aria-label="test listbox" onAction={action('onAction')}>
-    <MyListBoxItem
-      onHoverStart={action('onHoverStart')}
-      onHoverChange={action('onHoverChange')}
-      onHoverEnd={action('onHoverEnd')}>
-      Hover
-    </MyListBoxItem>
-    <MyListBoxItem>Bar</MyListBoxItem>
-    <MyListBoxItem>Baz</MyListBoxItem>
-    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-  </ListBox>
-);
+export const ListBoxHover: ListBoxStory = {
+  render: () => (
+    <ListBox className={styles.menu} aria-label="test listbox" onAction={action('onAction')}>
+      <MyListBoxItem
+        onHoverStart={action('onHoverStart')}
+        onHoverChange={action('onHoverChange')}
+        onHoverEnd={action('onHoverEnd')}>
+        Hover
+      </MyListBoxItem>
+      <MyListBoxItem>Bar</MyListBoxItem>
+      <MyListBoxItem>Baz</MyListBoxItem>
+      <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+    </ListBox>
+  )
+};
 
-export const ListBoxGrid: ListBoxStory = args => (
-  <ListBox
-    {...args}
-    className={styles.menu}
-    aria-label="test listbox"
-    style={{
-      width: 300,
-      height: 300,
-      display: 'grid',
-      gridTemplate: 'repeat(3, 1fr) / repeat(3, 1fr)',
-      gridAutoFlow: args.orientation === 'vertical' ? 'row' : 'column'
-    }}>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      1,1
-    </MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      1,2
-    </MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      1,3
-    </MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      2,1
-    </MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      2,2
-    </MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      2,3
-    </MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      3,1
-    </MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      3,2
-    </MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      3,3
-    </MyListBoxItem>
-  </ListBox>
-);
-
-ListBoxGrid.story = {
+export const ListBoxGrid: ListBoxStory = {
+  render: args => (
+    <ListBox
+      {...args}
+      className={styles.menu}
+      aria-label="test listbox"
+      style={{
+        width: 300,
+        height: 300,
+        display: 'grid',
+        gridTemplate: 'repeat(3, 1fr) / repeat(3, 1fr)',
+        gridAutoFlow: args.orientation === 'vertical' ? 'row' : 'column'
+      }}>
+      <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        1,1
+      </MyListBoxItem>
+      <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        1,2
+      </MyListBoxItem>
+      <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        1,3
+      </MyListBoxItem>
+      <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        2,1
+      </MyListBoxItem>
+      <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        2,2
+      </MyListBoxItem>
+      <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        2,3
+      </MyListBoxItem>
+      <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        3,1
+      </MyListBoxItem>
+      <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        3,2
+      </MyListBoxItem>
+      <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        3,3
+      </MyListBoxItem>
+    </ListBox>
+  ),
   args: {
     layout: 'grid',
     orientation: 'vertical'
@@ -856,212 +861,217 @@ export const AsyncListBox: StoryObj<typeof AsyncListBoxRender> = {
   }
 };
 
-export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = args => {
-  let list = useAsyncList<Character>({
-    async load({signal, cursor, filterText}) {
-      if (cursor) {
-        cursor = cursor.replace(/^http:\/\//i, 'https://');
+export const AsyncListBoxVirtualized: StoryObj<typeof AsyncListBoxRender> = {
+  render: function AsyncListBoxVirtualized(args) {
+    let list = useAsyncList<Character>({
+      async load({signal, cursor, filterText}) {
+        if (cursor) {
+          cursor = cursor.replace(/^http:\/\//i, 'https://');
+        }
+
+        await new Promise(resolve => setTimeout(resolve, args.delay));
+        let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+          signal
+        });
+        let json = await res.json();
+        return {
+          items: json.results,
+          cursor: json.next
+        };
       }
+    });
 
-      await new Promise(resolve => setTimeout(resolve, args.delay));
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
-        signal
-      });
-      let json = await res.json();
-      return {
-        items: json.results,
-        cursor: json.next
-      };
-    }
-  });
-
-  return (
-    <Virtualizer
-      layout={ListLayout}
-      layoutOptions={{
-        rowHeight: 50,
-        padding: 4,
-        loaderHeight: 30
-      }}>
-      <ListBox
-        {...args}
-        style={{
-          height: 400,
-          width: 100,
-          border: '1px solid gray',
-          background: 'lightgray',
-          overflow: 'auto',
-          padding: 'unset',
-          display: 'flex'
-        }}
-        aria-label="async virtualized listbox"
-        renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
-        <Collection items={list.items}>
-          {(item: Character) => (
-            <MyListBoxItem
-              style={{
-                backgroundColor: 'lightgrey',
-                border: '1px solid black',
-                boxSizing: 'border-box',
-                height: '100%',
-                width: '100%'
-              }}
-              id={item.name}>
-              {item.name}
-            </MyListBoxItem>
-          )}
-        </Collection>
-        <MyListBoxLoaderIndicator
-          isLoading={list.loadingState === 'loadingMore'}
-          onLoadMore={list.loadMore}
-        />
-      </ListBox>
-    </Virtualizer>
-  );
-};
-
-export const ListBoxScrollMargin: ListBoxStory = args => {
-  let items: {id: number; name: string; description: string}[] = [];
-  for (let i = 0; i < 100; i++) {
-    items.push({id: i, name: `Item ${i}`, description: `Description ${i}`});
-  }
-  return (
-    <ListBox
-      className={styles.menu}
-      {...args}
-      aria-label="test listbox"
-      style={{height: 200, width: 100, overflow: 'scroll'}}
-      items={items}>
-      {item => (
-        <MyListBoxItem
+    return (
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: 50,
+          padding: 4,
+          loaderHeight: 30
+        }}>
+        <ListBox
+          {...args}
           style={{
-            scrollMargin: 10,
-            width: 150,
-            display: 'flex',
-            padding: '2px 20px',
-            justifyContent: 'space-between'
-          }}>
-          <span>{item.name}</span>
-          <span>{item.description}</span>
-        </MyListBoxItem>
-      )}
-    </ListBox>
-  );
-};
-
-export const ListBoxSmoothScroll: ListBoxStory = args => {
-  let items: {id: number; name: string}[] = [];
-  for (let i = 0; i < 100; i++) {
-    items.push({id: i, name: `Item ${i}`});
-  }
-  return (
-    <ListBox
-      className={styles.menu}
-      {...args}
-      aria-label="test listbox"
-      style={{
-        height: 200,
-        width: 200,
-        overflow: 'scroll',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 80px)',
-        scrollBehavior: 'smooth'
-      }}
-      items={items}
-      layout="grid">
-      {item => <MyListBoxItem style={{minHeight: 32}}>{item.name}</MyListBoxItem>}
-    </ListBox>
-  );
-};
-
-AsyncListBoxVirtualized.story = {
+            height: 400,
+            width: 100,
+            border: '1px solid gray',
+            background: 'lightgray',
+            overflow: 'auto',
+            padding: 'unset',
+            display: 'flex'
+          }}
+          aria-label="async virtualized listbox"
+          renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+          <Collection items={list.items}>
+            {(item: Character) => (
+              <MyListBoxItem
+                style={{
+                  backgroundColor: 'lightgrey',
+                  border: '1px solid black',
+                  boxSizing: 'border-box',
+                  height: '100%',
+                  width: '100%'
+                }}
+                id={item.name}>
+                {item.name}
+              </MyListBoxItem>
+            )}
+          </Collection>
+          <MyListBoxLoaderIndicator
+            isLoading={list.loadingState === 'loadingMore'}
+            onLoadMore={list.loadMore}
+          />
+        </ListBox>
+      </Virtualizer>
+    );
+  },
   args: {
     delay: 50
   }
 };
 
-export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
-  let items: {id: number; name: string}[] = [];
-  for (let i = 0; i < 100; i++) {
-    items.push({id: i, name: `Item ${i}`});
-  }
-
-  let list = useListData({
-    initialItems: items
-  });
-
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: keys => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
-    },
-    onReorder(e) {
-      if (e.target.dropPosition === 'before') {
-        list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
-        list.moveAfter(e.target.key, e.keys);
-      }
-    },
-    renderDropIndicator(target) {
-      return (
-        <DropIndicator
-          target={target}
-          style={({isDropTarget}) => ({
-            width: '100%',
-            height: 2,
-            background: isDropTarget ? 'blue' : 'gray',
-            margin: '2px 0'
-          })}
-        />
-      );
+export const ListBoxScrollMargin: ListBoxStory = {
+  render: args => {
+    let items: {id: number; name: string; description: string}[] = [];
+    for (let i = 0; i < 100; i++) {
+      items.push({id: i, name: `Item ${i}`, description: `Description ${i}`});
     }
-  });
+    return (
+      <ListBox
+        className={styles.menu}
+        {...args}
+        aria-label="test listbox"
+        style={{height: 200, width: 100, overflow: 'scroll'}}
+        items={items}>
+        {item => (
+          <MyListBoxItem
+            style={{
+              scrollMargin: 10,
+              width: 150,
+              display: 'flex',
+              padding: '2px 20px',
+              justifyContent: 'space-between'
+            }}>
+            <span>{item.name}</span>
+            <span>{item.description}</span>
+          </MyListBoxItem>
+        )}
+      </ListBox>
+    );
+  }
+};
 
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 20, alignItems: 'center'}}>
-      <div style={{padding: 20, background: '#f0f0f0', borderRadius: 8, maxWidth: 600}}>
-        <h3 style={{margin: '0 0 10px 0'}}>Instructions:</h3>
-        <ul style={{margin: 0, paddingLeft: 20}}>
-          <li>
-            <strong>Enter:</strong> Triggers onAction
-          </li>
-          <li>
-            <strong>Alt+Enter:</strong> Starts drag mode
-          </li>
-          <li>
-            <strong>Space:</strong> Toggles selection
-          </li>
-        </ul>
-      </div>
-      <div
+export const ListBoxSmoothScroll: ListBoxStory = {
+  render: args => {
+    let items: {id: number; name: string}[] = [];
+    for (let i = 0; i < 100; i++) {
+      items.push({id: i, name: `Item ${i}`});
+    }
+    return (
+      <ListBox
+        className={styles.menu}
+        {...args}
+        aria-label="test listbox"
         style={{
-          height: 400,
-          width: 300,
-          resize: 'both',
-          padding: 20,
-          overflow: 'hidden',
-          border: '2px solid #ccc',
-          borderRadius: 8
-        }}>
-        <Virtualizer
-          layout={ListLayout}
-          layoutOptions={{
-            rowHeight: 25,
-            gap: 4
+          height: 200,
+          width: 200,
+          overflow: 'scroll',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 80px)',
+          scrollBehavior: 'smooth'
+        }}
+        items={items}
+        layout="grid">
+        {item => <MyListBoxItem style={{minHeight: 32}}>{item.name}</MyListBoxItem>}
+      </ListBox>
+    );
+  }
+};
+
+export let VirtualizedListBoxDndOnAction: ListBoxStory = {
+  render: function VirtualizedListBoxDndOnAction() {
+    let items: {id: number; name: string}[] = [];
+    for (let i = 0; i < 100; i++) {
+      items.push({id: i, name: `Item ${i}`});
+    }
+
+    let list = useListData({
+      initialItems: items
+    });
+
+    let {dragAndDropHooks} = useDragAndDrop({
+      getItems: keys => {
+        return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
+      },
+      onReorder(e) {
+        if (e.target.dropPosition === 'before') {
+          list.moveBefore(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'after') {
+          list.moveAfter(e.target.key, e.keys);
+        }
+      },
+      renderDropIndicator(target) {
+        return (
+          <DropIndicator
+            target={target}
+            style={({isDropTarget}) => ({
+              width: '100%',
+              height: 2,
+              background: isDropTarget ? 'blue' : 'gray',
+              margin: '2px 0'
+            })}
+          />
+        );
+      }
+    });
+
+    return (
+      <div style={{display: 'flex', flexDirection: 'column', gap: 20, alignItems: 'center'}}>
+        <div style={{padding: 20, background: '#f0f0f0', borderRadius: 8, maxWidth: 600}}>
+          <h3 style={{margin: '0 0 10px 0'}}>Instructions:</h3>
+          <ul style={{margin: 0, paddingLeft: 20}}>
+            <li>
+              <strong>Enter:</strong> Triggers onAction
+            </li>
+            <li>
+              <strong>Alt+Enter:</strong> Starts drag mode
+            </li>
+            <li>
+              <strong>Space:</strong> Toggles selection
+            </li>
+          </ul>
+        </div>
+        <div
+          style={{
+            height: 400,
+            width: 300,
+            resize: 'both',
+            padding: 20,
+            overflow: 'hidden',
+            border: '2px solid #ccc',
+            borderRadius: 8
           }}>
-          <ListBox
-            className={styles.menu}
-            selectionMode="multiple"
-            style={{width: '100%', height: '100%'}}
-            aria-label="Virtualized listbox with drag and drop and onAction"
-            items={list.items}
-            dragAndDropHooks={dragAndDropHooks}
-            onAction={action('onAction')}>
-            {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-          </ListBox>
-        </Virtualizer>
+          <Virtualizer
+            layout={ListLayout}
+            layoutOptions={{
+              rowHeight: 25,
+              gap: 4
+            }}>
+            <ListBox
+              className={styles.menu}
+              selectionMode="multiple"
+              style={{width: '100%', height: '100%'}}
+              aria-label="Virtualized listbox with drag and drop and onAction"
+              items={list.items}
+              dragAndDropHooks={dragAndDropHooks}
+              onAction={action('onAction')}>
+              {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+            </ListBox>
+          </Virtualizer>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 interface AlbumListBoxProps {
@@ -1133,16 +1143,18 @@ function DroppableListBox() {
   return <AlbumListBox dragAndDropHooks={dragAndDropHooks} items={list.items} />;
 }
 
-export const DropOntoRoot = () => (
-  <div
-    style={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: 12,
-      justifyContent: 'center',
-      width: '100%'
-    }}>
-    <DraggableListBox />
-    <DroppableListBox />
-  </div>
-);
+export const DropOntoRoot = {
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 12,
+        justifyContent: 'center',
+        width: '100%'
+      }}>
+      <DraggableListBox />
+      <DroppableListBox />
+    </div>
+  )
+};

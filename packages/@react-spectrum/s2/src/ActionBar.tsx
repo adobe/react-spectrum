@@ -184,7 +184,7 @@ const ActionBarInner = forwardRef(function ActionBarInner(
   }, [stringFormatter, scrollRef]);
 
   let objectRef = useObjectRef(ref);
-  let isEntering = useEnterAnimation(objectRef, !!scrollRef);
+  let isEntering = useEnterAnimation(objectRef) && !!scrollRef;
 
   return (
     <FocusScope restoreFocus>

@@ -20,7 +20,7 @@ import {DialogTrigger} from '../../src/dialog/DialogTrigger';
 import {Divider} from '../../src/divider/Divider';
 import {Flex} from '../../src/layout/Flex';
 import {Heading} from '../../src/text/Heading';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {Modal} from '../../src/overlays/Modal';
 import React, {Fragment, JSX} from 'react';
 import {Text} from '../../src/text/Text';
@@ -33,17 +33,15 @@ export default {
   }
 } as Meta<typeof ModalExample>;
 
-export type ModalExampleStory = StoryFn<typeof ModalExample>;
+export type ModalExampleStory = StoryObj<typeof ModalExample>;
 
-export const Default: ModalExampleStory = () => <ModalExample />;
-
-Default.story = {
+export const Default: ModalExampleStory = {
+  render: () => <ModalExample />,
   name: 'default'
 };
 
-export const _UnmountingTrigger: ModalExampleStory = () => <UnmountingTrigger />;
-
-_UnmountingTrigger.story = {
+export const _UnmountingTrigger: ModalExampleStory = {
+  render: () => <UnmountingTrigger />,
   name: 'unmounting trigger'
 };
 

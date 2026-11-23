@@ -29,17 +29,16 @@ export default {
 
 export type StatusLightLanguagesStory = StoryObj<typeof StatusLight>;
 
-export const NeutralNoItalicInCcjk: StatusLightLanguagesStory = () => (
-  <Flex gap="size-200" direction="row" wrap>
-    <StatusLight variant="neutral">Help</StatusLight>
-    <StatusLight variant="neutral">مساعدة</StatusLight>
-    <StatusLight variant="neutral">帮助</StatusLight>
-    <StatusLight variant="neutral">說明</StatusLight>
-    <StatusLight variant="neutral">ヘルプ</StatusLight>
-    <StatusLight variant="neutral">도움말</StatusLight>
-  </Flex>
-);
-
-NeutralNoItalicInCcjk.story = {
+export const NeutralNoItalicInCcjk: StatusLightLanguagesStory = {
+  render: () => (
+    <Flex gap="size-200" direction="row" wrap>
+      <StatusLight variant="neutral">Help</StatusLight>
+      <StatusLight variant="neutral">مساعدة</StatusLight>
+      <StatusLight variant="neutral">帮助</StatusLight>
+      <StatusLight variant="neutral">說明</StatusLight>
+      <StatusLight variant="neutral">ヘルプ</StatusLight>
+      <StatusLight variant="neutral">도움말</StatusLight>
+    </Flex>
+  ),
   name: 'Neutral: no italic in CCJK'
 };

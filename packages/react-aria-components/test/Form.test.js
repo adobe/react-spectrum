@@ -12,8 +12,9 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
+import {createPortal} from 'react-dom';
 import {FieldError} from '../src/FieldError';
-import {Form} from '../src/Form';
+import {Form, FormContext} from '../src/Form';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import React from 'react';
@@ -278,5 +279,54 @@ describe('Form', () => {
       get: () => originalElements,
       configurable: true
     });
+  });
+  it('should not inherit props from a parent Form', async () => {
+    let outerSubmit = jest.fn(e => e.preventDefault());
+    let innerSubmit = jest.fn(e => e.preventDefault());
+    let {getByTestId, getAllByRole} = render(
+      <Form
+        id="outer"
+        className="outer"
+        data-testid="outer"
+        onSubmit={e => (e.target === getByTestId('outer') ? outerSubmit(e) : e.preventDefault())}
+        validationErrors={{name: 'Outer error.'}}>
+        {createPortal(
+          <Form data-testid="inner" onSubmit={innerSubmit}>
+            <TextField name="name">
+              <Label>Name</Label>
+              <Input />
+              <FieldError />
+            </TextField>
+            <Button type="submit">Submit</Button>
+          </Form>,
+          document.body
+        )}
+      </Form>
+    );
+
+    let inner = getByTestId('inner');
+    expect(inner).not.toHaveAttribute('id');
+    expect(inner).toHaveClass('react-aria-Form');
+    expect(inner).not.toHaveClass('outer');
+
+    let input = getAllByRole('textbox')[0];
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(true);
+
+    await user.click(getAllByRole('button')[0]);
+    expect(innerSubmit).toHaveBeenCalledTimes(1);
+    expect(outerSubmit).not.toHaveBeenCalled();
+  });
+
+  it('should merge props from FormContext not provided by a Form', () => {
+    let {getByTestId} = render(
+      <Form className="outer">
+        <FormContext.Provider value={{className: 'context'}}>
+          {createPortal(<Form data-testid="inner" />, document.body)}
+        </FormContext.Provider>
+      </Form>
+    );
+
+    expect(getByTestId('inner')).toHaveClass('context');
   });
 });

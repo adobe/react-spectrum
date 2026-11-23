@@ -23,9 +23,10 @@ import {
 } from './mocks';
 import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../../src/dnd/utils';
-import React, {useEffect} from 'react';
+import React, {Profiler, useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import {setMedia} from 'mock-match-media';
+import {useDrag} from '../../src/dnd/useDrag';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
@@ -3346,6 +3347,57 @@ describe('useDrag and useDrop', function () {
       expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent(
         'Double tap to drop.'
       );
+    });
+  });
+
+  describe('description', () => {
+    it('should not re-render draggables that mount after the description already exists', () => {
+      function TestDraggable({id}) {
+        let {dragProps} = useDrag({
+          getItems: () => [{'text/plain': id}]
+        });
+        return (
+          <div {...dragProps} role="button" tabIndex={0}>
+            {id}
+          </div>
+        );
+      }
+
+      let updated = [];
+      let onRender = (id, phase) => {
+        if (phase !== 'mount') {
+          updated.push(id);
+        }
+      };
+
+      let tree = render(<TestDraggable id="first" />);
+      let descriptionId = tree.getByText('first').getAttribute('aria-describedby');
+      let description = document.getElementById(descriptionId).textContent;
+      expect(description).toMatch(/drag/i);
+
+      tree.rerender(
+        <>
+          <TestDraggable id="first" />
+          <Profiler id="second" onRender={onRender}>
+            <TestDraggable id="second" />
+          </Profiler>
+          <Profiler id="third" onRender={onRender}>
+            <TestDraggable id="third" />
+          </Profiler>
+        </>
+      );
+
+      expect(updated).toEqual([]);
+      expect(tree.getByText('second')).toHaveAttribute('aria-describedby', descriptionId);
+      expect(tree.getByText('third')).toHaveAttribute('aria-describedby', descriptionId);
+
+      tree.rerender(<></>);
+      expect(document.getElementById(descriptionId)).toBeNull();
+
+      tree.rerender(<TestDraggable id="fourth" />);
+      let fourthDescriptionId = tree.getByText('fourth').getAttribute('aria-describedby');
+      expect(fourthDescriptionId).not.toBe(descriptionId);
+      expect(document.getElementById(fourthDescriptionId)).toHaveTextContent(description);
     });
   });
 });

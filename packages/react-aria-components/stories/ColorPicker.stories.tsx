@@ -88,7 +88,7 @@ function ColorPickerExampleRender(args) {
               })}>
               {({isSelected}) => (
                 <>
-                  <ColorSwatchExampleRender />
+                  <ColorSwatchExampleRender.render />
                   {isSelected && (
                     <div
                       style={{
@@ -150,7 +150,7 @@ function ColorPickerTrigger({children}) {
   return (
     <DialogTrigger>
       <Button style={{background: 'none', border: 'none', padding: 0}}>
-        <ColorSwatchExampleRender aria-label="Color picker" />
+        <ColorSwatchExampleRender.render aria-label="Color picker" />
       </Button>
       <Popover
         placement="bottom start"

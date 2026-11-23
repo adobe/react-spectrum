@@ -88,7 +88,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum@npm:3.47.5, @adobe/react-spectrum@npm:^3.46.2, @adobe/react-spectrum@npm:^3.47.0, @adobe/react-spectrum@workspace:packages/@adobe/react-spectrum":
+"@adobe/react-spectrum@npm:3.47.7, @adobe/react-spectrum@npm:^3.46.2, @adobe/react-spectrum@npm:^3.47.0, @adobe/react-spectrum@workspace:packages/@adobe/react-spectrum":
   version: 0.0.0-use.local
   resolution: "@adobe/react-spectrum@workspace:packages/@adobe/react-spectrum"
   dependencies:
@@ -97,17 +97,17 @@ __metadata:
     "@babel/core": "npm:^7.24.3"
     "@internationalized/date": "npm:^3.12.4"
     "@react-spectrum/style-macro-s1": "npm:3.0.0-alpha.6"
-    "@react-types/shared": "npm:^3.36.1"
+    "@react-types/shared": "npm:^3.37.0"
     "@spectrum-icons/ui": "npm:^3.7.2"
     "@spectrum-icons/workflow": "npm:^4.3.2"
     "@swc/helpers": "npm:^0.5.0"
     client-only: "npm:^0.0.1"
     clsx: "npm:^2.0.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
-    react-aria: "npm:3.52.1"
-    react-aria-components: "npm:1.21.1"
+    react-aria: "npm:3.53.1"
+    react-aria-components: "npm:1.22.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
-    react-stately: "npm:3.50.0"
+    react-stately: "npm:3.51.0"
     react-transition-group: "npm:^4.4.5"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
@@ -2649,7 +2649,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@internationalized/number@npm:^3.6.8, @internationalized/number@workspace:packages/@internationalized/number":
+"@internationalized/number@npm:^3.6.9, @internationalized/number@workspace:packages/@internationalized/number":
   version: 0.0.0-use.local
   resolution: "@internationalized/number@workspace:packages/@internationalized/number"
   dependencies:
@@ -5178,74 +5178,74 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-darwin-arm64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-darwin-arm64@npm:0.0.6"
+"@parcel/parcel3-darwin-arm64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-darwin-arm64@npm:3.0.0-alpha.3"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-darwin-x64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-darwin-x64@npm:0.0.6"
+"@parcel/parcel3-darwin-x64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-darwin-x64@npm:3.0.0-alpha.3"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-arm64-musl@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-linux-arm64-musl@npm:0.0.6"
+"@parcel/parcel3-linux-arm64-musl@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-linux-arm64-musl@npm:3.0.0-alpha.3"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-arm64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-linux-arm64@npm:0.0.6"
+"@parcel/parcel3-linux-arm64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-linux-arm64@npm:3.0.0-alpha.3"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-x64-musl@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-linux-x64-musl@npm:0.0.6"
+"@parcel/parcel3-linux-x64-musl@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-linux-x64-musl@npm:3.0.0-alpha.3"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-linux-x64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-linux-x64@npm:0.0.6"
+"@parcel/parcel3-linux-x64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-linux-x64@npm:3.0.0-alpha.3"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-win32-arm64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-win32-arm64@npm:0.0.6"
+"@parcel/parcel3-win32-arm64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-win32-arm64@npm:3.0.0-alpha.3"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3-win32-x64@npm:0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3-win32-x64@npm:0.0.6"
+"@parcel/parcel3-win32-x64@npm:3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3-win32-x64@npm:3.0.0-alpha.3"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/parcel3@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "@parcel/parcel3@npm:0.0.6"
+"@parcel/parcel3@npm:^3.0.0-alpha.3":
+  version: 3.0.0-alpha.3
+  resolution: "@parcel/parcel3@npm:3.0.0-alpha.3"
   dependencies:
-    "@parcel/parcel3-darwin-arm64": "npm:0.0.6"
-    "@parcel/parcel3-darwin-x64": "npm:0.0.6"
-    "@parcel/parcel3-linux-arm64": "npm:0.0.6"
-    "@parcel/parcel3-linux-arm64-musl": "npm:0.0.6"
-    "@parcel/parcel3-linux-x64": "npm:0.0.6"
-    "@parcel/parcel3-linux-x64-musl": "npm:0.0.6"
-    "@parcel/parcel3-win32-arm64": "npm:0.0.6"
-    "@parcel/parcel3-win32-x64": "npm:0.0.6"
+    "@parcel/parcel3-darwin-arm64": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-darwin-x64": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-linux-arm64": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-linux-arm64-musl": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-linux-x64": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-linux-x64-musl": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-win32-arm64": "npm:3.0.0-alpha.3"
+    "@parcel/parcel3-win32-x64": "npm:3.0.0-alpha.3"
   dependenciesMeta:
     "@parcel/parcel3-darwin-arm64":
       optional: true
@@ -5265,7 +5265,7 @@ __metadata:
       optional: true
   bin:
     parcel3: bin/parcel3
-  checksum: 10c0/af2b9d4943a4d34e459cb68485c149aabe000066d65c45c2f7958f98358d38ac580afff98affb521617daa1ce0bb75fa16b8b3aa1a7d9200ff30395df038cd24
+  checksum: 10c0/a77b2c92529917083f9c8c60c15f97e862139c300b4ae1c0a57bdbd6e87b2fd35a6d7a6354889508f123a79bfc5ee5fa6cf9d8b54fad41682bfb48e0e1f7d04c
   languageName: node
   linkType: hard
 
@@ -5829,59 +5829,59 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-darwin-arm64@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-darwin-arm64@npm:0.0.2"
+"@parcel/transformer-storybook-darwin-arm64@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-darwin-arm64@npm:0.0.3"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-darwin-x64@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-darwin-x64@npm:0.0.2"
+"@parcel/transformer-storybook-darwin-x64@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-darwin-x64@npm:0.0.3"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-linux-arm64-gnu@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-linux-arm64-gnu@npm:0.0.2"
+"@parcel/transformer-storybook-linux-arm64-gnu@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-linux-arm64-gnu@npm:0.0.3"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-linux-arm64-musl@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-linux-arm64-musl@npm:0.0.2"
+"@parcel/transformer-storybook-linux-arm64-musl@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-linux-arm64-musl@npm:0.0.3"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-linux-x64-gnu@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-linux-x64-gnu@npm:0.0.2"
+"@parcel/transformer-storybook-linux-x64-gnu@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-linux-x64-gnu@npm:0.0.3"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-linux-x64-musl@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-linux-x64-musl@npm:0.0.2"
+"@parcel/transformer-storybook-linux-x64-musl@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-linux-x64-musl@npm:0.0.3"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-v3@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-v3@npm:0.0.2"
+"@parcel/transformer-storybook-v3@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-v3@npm:0.0.3"
   dependencies:
-    "@parcel/transformer-storybook-darwin-arm64": "npm:0.0.2"
-    "@parcel/transformer-storybook-darwin-x64": "npm:0.0.2"
-    "@parcel/transformer-storybook-linux-arm64-gnu": "npm:0.0.2"
-    "@parcel/transformer-storybook-linux-arm64-musl": "npm:0.0.2"
-    "@parcel/transformer-storybook-linux-x64-gnu": "npm:0.0.2"
-    "@parcel/transformer-storybook-linux-x64-musl": "npm:0.0.2"
-    "@parcel/transformer-storybook-win32-x64-msvc": "npm:0.0.2"
+    "@parcel/transformer-storybook-darwin-arm64": "npm:0.0.3"
+    "@parcel/transformer-storybook-darwin-x64": "npm:0.0.3"
+    "@parcel/transformer-storybook-linux-arm64-gnu": "npm:0.0.3"
+    "@parcel/transformer-storybook-linux-arm64-musl": "npm:0.0.3"
+    "@parcel/transformer-storybook-linux-x64-gnu": "npm:0.0.3"
+    "@parcel/transformer-storybook-linux-x64-musl": "npm:0.0.3"
+    "@parcel/transformer-storybook-win32-x64-msvc": "npm:0.0.3"
   dependenciesMeta:
     "@parcel/transformer-storybook-darwin-arm64":
       optional: true
@@ -5897,13 +5897,13 @@ __metadata:
       optional: true
     "@parcel/transformer-storybook-win32-x64-msvc":
       optional: true
-  checksum: 10c0/3ef62a1855956e579951c27bc701f3ee6964449d7c4458caa3063778b64a79abd9fd7fda1468cb159453aabe1af0a1c72c76ba55f71c0e1ec097f446fce86819
+  checksum: 10c0/6dbac6b7a99da36008fae7acfe81b343498946f32c6d43818031479547f476e71709b07ffb50f453d1c9bfae1013a9eaa33ec8a4c15319d4f3c319561da94f89
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook-win32-x64-msvc@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-storybook-win32-x64-msvc@npm:0.0.2"
+"@parcel/transformer-storybook-win32-x64-msvc@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-storybook-win32-x64-msvc@npm:0.0.3"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -5946,66 +5946,66 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-darwin-arm64@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-darwin-arm64@npm:0.0.2"
+"@parcel/transformer-ts-doc-darwin-arm64@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-darwin-arm64@npm:0.0.3"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-darwin-x64@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-darwin-x64@npm:0.0.2"
+"@parcel/transformer-ts-doc-darwin-x64@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-darwin-x64@npm:0.0.3"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-linux-arm64-gnu@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-linux-arm64-gnu@npm:0.0.2"
+"@parcel/transformer-ts-doc-linux-arm64-gnu@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-linux-arm64-gnu@npm:0.0.3"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-linux-arm64-musl@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-linux-arm64-musl@npm:0.0.2"
+"@parcel/transformer-ts-doc-linux-arm64-musl@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-linux-arm64-musl@npm:0.0.3"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-linux-x64-gnu@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-linux-x64-gnu@npm:0.0.2"
+"@parcel/transformer-ts-doc-linux-x64-gnu@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-linux-x64-gnu@npm:0.0.3"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-linux-x64-musl@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-linux-x64-musl@npm:0.0.2"
+"@parcel/transformer-ts-doc-linux-x64-musl@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-linux-x64-musl@npm:0.0.3"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc-win32-x64-msvc@npm:0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc-win32-x64-msvc@npm:0.0.2"
+"@parcel/transformer-ts-doc-win32-x64-msvc@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc-win32-x64-msvc@npm:0.0.3"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/transformer-ts-doc@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@parcel/transformer-ts-doc@npm:0.0.2"
+"@parcel/transformer-ts-doc@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@parcel/transformer-ts-doc@npm:0.0.3"
   dependencies:
-    "@parcel/transformer-ts-doc-darwin-arm64": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-darwin-x64": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-linux-arm64-gnu": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-linux-arm64-musl": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-linux-x64-gnu": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-linux-x64-musl": "npm:0.0.2"
-    "@parcel/transformer-ts-doc-win32-x64-msvc": "npm:0.0.2"
+    "@parcel/transformer-ts-doc-darwin-arm64": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-darwin-x64": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-linux-arm64-gnu": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-linux-arm64-musl": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-linux-x64-gnu": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-linux-x64-musl": "npm:0.0.3"
+    "@parcel/transformer-ts-doc-win32-x64-msvc": "npm:0.0.3"
   dependenciesMeta:
     "@parcel/transformer-ts-doc-darwin-arm64":
       optional: true
@@ -6021,7 +6021,7 @@ __metadata:
       optional: true
     "@parcel/transformer-ts-doc-win32-x64-msvc":
       optional: true
-  checksum: 10c0/4e1bfdcdac1b938412c296b1a219e83d6faca72cd71bccd6d3c9221385dd36f7e358920facfbeae22233b27f64a3b824ce96256c21a0ffefbc14c5834615cac1
+  checksum: 10c0/7b002d00a53d6fd781e93239653ab082448e3454aa931aadeed756faa01df899f0d7b10d0f33d044b86af0f4d534032edb1a27a35150aaaa3dc4c0257e915040
   languageName: node
   linkType: hard
 
@@ -7156,24 +7156,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/ai@npm:^0.4.0, @react-spectrum/ai@workspace:packages/@react-spectrum/ai":
+"@react-spectrum/ai@npm:^0.5.0, @react-spectrum/ai@workspace:packages/@react-spectrum/ai":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/ai@workspace:packages/@react-spectrum/ai"
   dependencies:
     "@internationalized/date": "npm:^3.12.4"
-    "@internationalized/number": "npm:^3.6.8"
+    "@internationalized/number": "npm:^3.6.9"
     "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
-    "@react-spectrum/s2": "npm:1.7.1"
-    "@react-types/shared": "npm:^3.36.1"
+    "@react-spectrum/s2": "npm:1.8.2"
+    "@react-types/shared": "npm:^3.37.0"
     "@storybook/jest": "npm:^0.2.3"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/react": "npm:^16.0.0"
     "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.5#~/.yarn/patches/@testing-library-user-event-npm-14.6.5-1fcf457da8.patch"
     react: "npm:^19.0.0-rc.1"
-    react-aria: "npm:3.52.1"
-    react-aria-components: "npm:1.21.1"
+    react-aria: "npm:3.53.1"
+    react-aria-components: "npm:1.22.1"
     react-dom: "npm:^19.0.0-rc.1"
-    react-stately: "npm:3.50.0"
+    react-stately: "npm:3.51.0"
   peerDependencies:
     react: ^19.0.0-rc.1
     react-dom: ^19.0.0-rc.1
@@ -7312,12 +7312,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/codemods@workspace:packages/dev/codemods"
   dependencies:
-    "@adobe/react-spectrum": "npm:3.47.5"
+    "@adobe/react-spectrum": "npm:3.47.7"
     "@babel/parser": "npm:^7.24.5"
     "@babel/traverse": "npm:^7.24.5"
     "@babel/types": "npm:^7.24.5"
-    "@react-spectrum/s2": "npm:1.7.1"
-    "@react-types/shared": "npm:^3.34.0"
+    "@react-spectrum/s2": "npm:1.8.2"
+    "@react-types/shared": "npm:^3.37.0"
     "@types/jscodeshift": "npm:^0.11.11"
     "@types/node": "npm:^24"
     boxen: "npm:^5.1.2"
@@ -7502,7 +7502,7 @@ __metadata:
   dependencies:
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
-    react-aria-components: "npm:1.21.1"
+    react-aria-components: "npm:1.22.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7827,7 +7827,7 @@ __metadata:
     "@react-aria/i18n": "npm:^3.12.10"
     "@react-aria/interactions": "npm:^3.25.1"
     "@react-aria/utils": "npm:^3.29.0"
-    "@react-spectrum/ai": "npm:^0.4.0"
+    "@react-spectrum/ai": "npm:^0.5.0"
     "@react-spectrum/s2": "npm:^1.0.0"
     "@react-spectrum/utils": "npm:^3.12.6"
     "@react-types/shared": "npm:^3.30.0"
@@ -7896,25 +7896,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/s2@npm:1.7.1, @react-spectrum/s2@npm:^1.0.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
+"@react-spectrum/s2@npm:1.8.2, @react-spectrum/s2@npm:^1.0.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
     "@adobe/spectrum-tokens": "npm:14.15.0"
     "@internationalized/date": "npm:^3.12.4"
-    "@internationalized/number": "npm:^3.6.8"
+    "@internationalized/number": "npm:^3.6.9"
     "@parcel/macros": "npm:^2.16.3"
     "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
-    "@react-types/shared": "npm:^3.36.1"
+    "@react-types/shared": "npm:^3.37.0"
     "@storybook/jest": "npm:^0.2.3"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/react": "npm:^16.0.0"
     "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.5#~/.yarn/patches/@testing-library-user-event-npm-14.6.5-1fcf457da8.patch"
     react: "npm:^19.0.0-rc.1"
-    react-aria: "npm:3.52.1"
-    react-aria-components: "npm:1.21.1"
+    react-aria: "npm:3.53.1"
+    react-aria-components: "npm:1.22.1"
     react-dom: "npm:^19.0.0-rc.1"
-    react-stately: "npm:3.50.0"
+    react-stately: "npm:3.51.0"
   peerDependencies:
     react: ^19.0.0-rc.1
     react-dom: ^19.0.0-rc.1
@@ -9251,13 +9251,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/shared@npm:^3.30.0, @react-types/shared@npm:^3.34.0, @react-types/shared@npm:^3.36.1, @react-types/shared@workspace:packages/@react-types/shared":
+"@react-types/shared@npm:^3.30.0, @react-types/shared@npm:^3.34.0, @react-types/shared@npm:^3.37.0, @react-types/shared@workspace:packages/@react-types/shared":
   version: 0.0.0-use.local
   resolution: "@react-types/shared@workspace:packages/@react-types/shared"
   dependencies:
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   peerDependencies:
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -10853,21 +10857,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:19.1.6":
-  version: 19.1.6
-  resolution: "@types/react-dom@npm:19.1.6"
+"@types/react-dom@npm:19.3.0":
+  version: 19.3.0
+  resolution: "@types/react-dom@npm:19.3.0"
   peerDependencies:
-    "@types/react": ^19.0.0
-  checksum: 10c0/7ba74eee2919e3f225e898b65fdaa16e54952aaf9e3472a080ddc82ca54585e46e60b3c52018d21d4b7053f09d27b8293e9f468b85f9932ff452cd290cc131e8
+    "@types/react": ^19.3.0
+  checksum: 10c0/ce0066d28b62bc6afdd17ca84756b8fbe0f6ffc0c8b1e60739abc30e81510da2edbc1007e6ab3d974d30f5a8c25bb0f7de8d7ce09736c909fe84c0f9aed0b946
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.1.8":
-  version: 19.1.8
-  resolution: "@types/react@npm:19.1.8"
+"@types/react@npm:19.3.0":
+  version: 19.3.0
+  resolution: "@types/react@npm:19.3.0"
   dependencies:
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/4908772be6dc941df276931efeb0e781777fa76e4d5d12ff9f75eb2dcc2db3065e0100efde16fde562c5bafa310cc8f50c1ee40a22640459e066e72cd342143e
+    csstype: "npm:^3.2.2"
+  checksum: 10c0/fbcabf303f935ca9f36ed2dcf81751cf84744098c5a683c8a62a0fa7edd31714b48d5c46b12fd0014f7f2dfe4d9ec6de428a850748eec719a70294e51029551b
   languageName: node
   linkType: hard
 
@@ -14725,10 +14729,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csstype@npm:^3.0.2":
-  version: 3.0.3
-  resolution: "csstype@npm:3.0.3"
-  checksum: 10c0/20f2e9f5cc3c419a9f110f45a8e1e8c653159cb8b403715bbbab7bd113b3f7d519d3c8efc587221d02900d76b7dc3c8c3110d4c7bd84a9e0b2bd421488ca6bdb
+"csstype@npm:^3.0.2, csstype@npm:^3.2.2":
+  version: 3.2.3
+  resolution: "csstype@npm:3.2.3"
+  checksum: 10c0/cd29c51e70fa822f1cecd8641a1445bed7063697469d35633b516e60fe8c1bde04b08f6c5b6022136bb669b64c63d4173af54864510fbb4ee23281801841a3ce
   languageName: node
   linkType: hard
 
@@ -17236,31 +17240,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@npm:2.3.2":
-  version: 2.3.2
-  resolution: "fsevents@npm:2.3.2"
-  dependencies:
-    node-gyp: "npm:latest"
-  checksum: 10c0/be78a3efa3e181cda3cf7a4637cb527bcebb0bd0ea0440105a3bb45b86f9245b307dc10a2507e8f4498a7d4ec349d1910f4d73e4d4495b16103106e07eee735b
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
 "fsevents@npm:^2.3.3, fsevents@npm:~2.3.2, fsevents@npm:~2.3.3":
   version: 2.3.3
   resolution: "fsevents@npm:2.3.3"
   dependencies:
     node-gyp: "npm:latest"
   checksum: 10c0/a1f0c44595123ed717febbc478aa952e47adfc28e2092be66b8ab1635147254ca6cfe1df792a8997f22716d4cbafc73309899ff7bfac2ac3ad8cf2e4ecc3ec60
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
-"fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>":
-  version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
-  dependencies:
-    node-gyp: "npm:latest"
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -24671,7 +24656,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.57.0, playwright-core@npm:>=1.2.0":
+"playwright-core@npm:1.65.1":
+  version: 1.65.1
+  resolution: "playwright-core@npm:1.65.1"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/4406d4f8eff668a93aaada8382d25fcce8da5f679e9f31311888178d631ed0270eb40c0288129e41e15709c957a31932cac9753fdb332547a19bc3541d317e44
+  languageName: node
+  linkType: hard
+
+"playwright-core@npm:>=1.2.0":
   version: 1.57.0
   resolution: "playwright-core@npm:1.57.0"
   bin:
@@ -24681,17 +24675,13 @@ __metadata:
   linkType: hard
 
 "playwright@npm:^1.14.0, playwright@npm:^1.45.3, playwright@npm:^1.57.0":
-  version: 1.57.0
-  resolution: "playwright@npm:1.57.0"
+  version: 1.65.1
+  resolution: "playwright@npm:1.65.1"
   dependencies:
-    fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.57.0"
-  dependenciesMeta:
-    fsevents:
-      optional: true
+    playwright-core: "npm:1.65.1"
   bin:
     playwright: cli.js
-  checksum: 10c0/ab03c99a67b835bdea9059f516ad3b6e42c21025f9adaa161a4ef6bc7ca716dcba476d287140bb240d06126eb23f889a8933b8f5f1f1a56b80659d92d1358899
+  checksum: 10c0/30ce029c9fb2a6e88cf81b150b978fd60edb59b8af5a6460f5576f0fe6e2bb739454109f0ce4904eac63cb2cf10390518d7d71d335fd695b5897734a5af7250d
   languageName: node
   linkType: hard
 
@@ -25161,46 +25151,55 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-aria-components@npm:1.21.1, react-aria-components@npm:^1.7.1, react-aria-components@workspace:packages/react-aria-components":
+"react-aria-components@npm:1.22.1, react-aria-components@npm:^1.7.1, react-aria-components@workspace:packages/react-aria-components":
   version: 0.0.0-use.local
   resolution: "react-aria-components@workspace:packages/react-aria-components"
   dependencies:
     "@internationalized/date": "npm:^3.12.4"
     "@internationalized/string": "npm:^3.2.10"
-    "@react-types/shared": "npm:^3.36.1"
+    "@react-types/shared": "npm:^3.37.0"
     "@swc/helpers": "npm:^0.5.0"
     "@tailwindcss/postcss": "npm:^4.0.0"
     client-only: "npm:^0.0.1"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
-    react-aria: "npm:3.52.1"
+    react-aria: "npm:3.53.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
-    react-stately: "npm:3.50.0"
+    react-stately: "npm:3.51.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
   languageName: unknown
   linkType: soft
 
-"react-aria@npm:3.52.1, react-aria@npm:^3.40.0, react-aria@npm:^3.47.0, react-aria@npm:^3.48.0, react-aria@workspace:packages/react-aria":
+"react-aria@npm:3.53.1, react-aria@npm:^3.40.0, react-aria@npm:^3.47.0, react-aria@npm:^3.48.0, react-aria@workspace:packages/react-aria":
   version: 0.0.0-use.local
   resolution: "react-aria@workspace:packages/react-aria"
   dependencies:
     "@babel/cli": "npm:^7.24.1"
     "@babel/core": "npm:^7.24.3"
     "@internationalized/date": "npm:^3.12.4"
-    "@internationalized/number": "npm:^3.6.8"
+    "@internationalized/number": "npm:^3.6.9"
     "@internationalized/string": "npm:^3.2.10"
-    "@react-types/shared": "npm:^3.36.1"
+    "@react-types/shared": "npm:^3.37.0"
     "@swc/helpers": "npm:^0.5.0"
     aria-hidden: "npm:^1.2.3"
     clsx: "npm:^2.0.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
-    react-stately: "npm:3.50.0"
+    react-stately: "npm:3.51.0"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -25240,14 +25239,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.2.4":
-  version: 19.2.4
-  resolution: "react-dom@npm:19.2.4"
+"react-dom@npm:19.3.0":
+  version: 19.3.0
+  resolution: "react-dom@npm:19.3.0"
   dependencies:
-    scheduler: "npm:^0.27.0"
+    scheduler: "npm:^0.28.0"
   peerDependencies:
-    react: ^19.2.4
-  checksum: 10c0/f0c63f1794dedb154136d4d0f59af00b41907f4859571c155940296808f4b94bf9c0c20633db75b5b2112ec13d8d7dd4f9bf57362ed48782f317b11d05a44f35
+    react: ^19.3.0
+  checksum: 10c0/c513044b724dd6bfe9500a9682d60973e7f8a48cffba00b6b16d3e910e27dcc459bf71bf0a5c33d7d62a3843ca30de1bd1e2098058aa4ed71f618a24b6061da5
   languageName: node
   linkType: hard
 
@@ -25290,10 +25289,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^19.1.0":
-  version: 19.1.1
-  resolution: "react-is@npm:19.1.1"
-  checksum: 10c0/3dba763fcd69835ae263dcd6727d7ffcc44c1d616f04b7329e67aefdc66a567af4f8dcecdd29454c7a707c968aa1eb85083a83fb616f01675ef25e71cf082f97
+"react-is@npm:^19.3.0":
+  version: 19.3.0
+  resolution: "react-is@npm:19.3.0"
+  checksum: 10c0/99b16fc1009222ec0bbe05286566c865908430778ea6ba90dd418c7a11594c6cbb8db58432735b9203e3c6463e3eef5a399df1317ee2d75fd96b3a88cfaa662e
   languageName: node
   linkType: hard
 
@@ -25317,13 +25316,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-server-dom-parcel@npm:canary":
-  version: 19.2.0-canary-bdb4a96f-20250801
-  resolution: "react-server-dom-parcel@npm:19.2.0-canary-bdb4a96f-20250801"
+"react-server-dom-parcel@npm:^19.1.1, react-server-dom-parcel@npm:^19.2.8":
+  version: 19.3.1
+  resolution: "react-server-dom-parcel@npm:19.3.1"
   peerDependencies:
-    react: 19.2.0-canary-bdb4a96f-20250801
-    react-dom: 19.2.0-canary-bdb4a96f-20250801
-  checksum: 10c0/987567a4773091ede967ecd86a188d7dcd56a4337dfcff5cfb2f5a5b5fa284ec2514bb684f43bda1b13f23bd05f7b5d110169880f9f6b62fab1a153293e2ae5c
+    react: ^19.3.1
+    react-dom: ^19.3.1
+  checksum: 10c0/7757e23f7e6def44798f136de40cf7b0c9197ba7813760e531b6164506aee0b80b1c54bea73439ee6972799d9330c9110c67f40876217bb23da5e8fa2ac47954
   languageName: node
   linkType: hard
 
@@ -25353,7 +25352,7 @@ __metadata:
     "@parcel/optimizer-terser": "npm:^2.16.3"
     "@parcel/packager-react-static": "npm:^2.16.3"
     "@parcel/packager-ts": "npm:^2.16.3"
-    "@parcel/parcel3": "npm:^0.0.6"
+    "@parcel/parcel3": "npm:^3.0.0-alpha.3"
     "@parcel/reporter-bundle-analyzer": "npm:^2.16.3"
     "@parcel/reporter-cli": "npm:^2.16.3"
     "@parcel/resolver-glob": "npm:^2.16.3"
@@ -25361,9 +25360,9 @@ __metadata:
     "@parcel/transformer-inline": "npm:^2.16.3"
     "@parcel/transformer-inline-string": "npm:^2.16.3"
     "@parcel/transformer-react-static": "npm:^2.16.3"
-    "@parcel/transformer-storybook-v3": "npm:^0.0.2"
+    "@parcel/transformer-storybook-v3": "npm:^0.0.3"
     "@parcel/transformer-svg-react": "npm:^2.16.3"
-    "@parcel/transformer-ts-doc": "npm:^0.0.2"
+    "@parcel/transformer-ts-doc": "npm:^0.0.3"
     "@parcel/transformer-typescript-types": "npm:^2.16.3"
     "@react-spectrum/parcel-namer-s2": "workspace:^"
     "@react-spectrum/s2-icon-builder": "workspace:^"
@@ -25434,10 +25433,10 @@ __metadata:
     postcss-custom-properties: "npm:^13.2.0"
     postcss-import: "npm:^15.1.0"
     prop-types: "npm:^15.8.1"
-    react: "npm:^19.2.0"
-    react-dom: "npm:^19.2.0"
+    react: "npm:^19.3.0"
+    react-dom: "npm:^19.3.0"
     react-frame-component: "npm:^5.0.0"
-    react-test-renderer: "npm:^19.2.0"
+    react-test-renderer: "npm:^19.3.0"
     recast: "npm:^0.23"
     recursive-readdir: "npm:^2.2.2"
     regenerator-runtime: "npm:0.13.3"
@@ -25463,33 +25462,37 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-stately@npm:3.50.0, react-stately@npm:^3.38.0, react-stately@npm:^3.46.0, react-stately@workspace:packages/react-stately":
+"react-stately@npm:3.51.0, react-stately@npm:^3.38.0, react-stately@npm:^3.46.0, react-stately@workspace:packages/react-stately":
   version: 0.0.0-use.local
   resolution: "react-stately@workspace:packages/react-stately"
   dependencies:
     "@babel/cli": "npm:^7.24.1"
     "@babel/core": "npm:^7.24.3"
     "@internationalized/date": "npm:^3.12.4"
-    "@internationalized/number": "npm:^3.6.8"
+    "@internationalized/number": "npm:^3.6.9"
     "@internationalized/string": "npm:^3.2.10"
-    "@react-types/shared": "npm:^3.36.1"
+    "@react-types/shared": "npm:^3.37.0"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
   languageName: unknown
   linkType: soft
 
-"react-test-renderer@npm:19.1.0":
-  version: 19.1.0
-  resolution: "react-test-renderer@npm:19.1.0"
+"react-test-renderer@npm:19.3.0":
+  version: 19.3.0
+  resolution: "react-test-renderer@npm:19.3.0"
   dependencies:
-    react-is: "npm:^19.1.0"
-    scheduler: "npm:^0.26.0"
+    react-is: "npm:^19.3.0"
+    scheduler: "npm:^0.28.0"
   peerDependencies:
-    react: ^19.1.0
-  checksum: 10c0/34ed4a37ba8b0beb96c048de6ff28574f018a18dd1042c24f8f46142d48eb5b27f82ff7c2823d082932fd3983c5a3529ab8cc8f15191d4306df0082f9f84678f
+    react: ^19.3.0
+  checksum: 10c0/40b64160bbc42d72e9ab60327cc3646865656f314a28a31a7496460d19a1a1af89c0785573010fe758f2deeca362185cec6304b15e22c4770fde3736f56716fe
   languageName: node
   linkType: hard
 
@@ -25508,10 +25511,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.2.4":
-  version: 19.2.4
-  resolution: "react@npm:19.2.4"
-  checksum: 10c0/cd2c9ff67a720799cc3b38a516009986f7fc4cb8d3e15716c6211cf098d1357ee3e348ab05ad0600042bbb0fd888530ba92e329198c92eafa0994f5213396596
+"react@npm:19.3.0":
+  version: 19.3.0
+  resolution: "react@npm:19.3.0"
+  checksum: 10c0/dd3099c3c43a7122bc01223bb26b0f8d5ba13cca569af6fb94a005fb54fa73223c9cb203bb226d40cfd49a82cbeef2e36ce84062a3a6d5b9fe8f4437694c7b52
   languageName: node
   linkType: hard
 
@@ -26626,17 +26629,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.26.0":
-  version: 0.26.0
-  resolution: "scheduler@npm:0.26.0"
-  checksum: 10c0/5b8d5bfddaae3513410eda54f2268e98a376a429931921a81b5c3a2873aab7ca4d775a8caac5498f8cbc7d0daeab947cf923dbd8e215d61671f9f4e392d34356
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:^0.27.0":
-  version: 0.27.0
-  resolution: "scheduler@npm:0.27.0"
-  checksum: 10c0/4f03048cb05a3c8fddc45813052251eca00688f413a3cee236d984a161da28db28ba71bd11e7a3dd02f7af84ab28d39fb311431d3b3772fed557945beb00c452
+"scheduler@npm:^0.28.0":
+  version: 0.28.0
+  resolution: "scheduler@npm:0.28.0"
+  checksum: 10c0/783c8e5ce89d41273a02ed6dc0e3d24bd60e05c9e8f7e3adfc6c82e7c69935500d90e343f1ee26d592fc7504e8a2532573c6368def3e93bfe812391fa53efaf4
   languageName: node
   linkType: hard
 

@@ -97,6 +97,8 @@ export async function dragAndDrop(
 ): Promise<void> {
   if (server.browser !== 'chromium') {
     await userEvent.dragAndDrop(source, target, options);
+    // Reset WebKit's pointer state after the native drag before the next test.
+    await server.commands.mouseUp();
     return;
   }
 

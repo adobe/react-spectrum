@@ -10,8 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render
+} from '@react-spectrum/test-utils-internal';
+import {Group} from '../src/Group';
+import {Input} from '../src/Input';
 import {Label} from '../src/Label';
+import {NumberField} from '../src/NumberField';
 import React, {useState} from 'react';
 import {
   Slider,
@@ -455,5 +464,462 @@ describe('Slider', () => {
       <TestSlider sliderProps={{value: 80, orientation: 'vertical'}} fillProps={{offset: 50}} />
     );
     expect(fill).toHaveStyle({position: 'absolute', bottom: '50%', height: '30%', width: '100%'});
+  });
+
+  it('commits pending NumberField text before a track press starts dragging', async () => {
+    let onChangeEnd = jest.fn();
+    let {getByRole} = render(
+      <Slider defaultValue={30} onChangeEnd={onChangeEnd}>
+        <Label>Opacity</Label>
+        <SliderTrack>
+          <SliderThumb />
+        </SliderTrack>
+        <NumberField slot="0">
+          <Input />
+        </NumberField>
+      </Slider>
+    );
+
+    let input = getByRole('textbox');
+    let track = getByRole('group').querySelector('.react-aria-SliderTrack');
+    await user.click(input);
+    await user.clear(input);
+    await user.keyboard('75');
+    expect(onChangeEnd).not.toHaveBeenCalled();
+
+    await user.pointer({target: track, keys: '[MouseLeft>]', coords: {x: 20}});
+    expect(onChangeEnd).toHaveBeenCalledTimes(1);
+    expect(onChangeEnd).toHaveBeenLastCalledWith(75);
+
+    await user.pointer({keys: '[/MouseLeft]', target: track});
+    expect(onChangeEnd).toHaveBeenCalledTimes(2);
+  });
+
+  describe('with PointerEvent', () => {
+    installPointerEvent();
+
+    it('commits pending NumberField text before a range track press starts dragging', async () => {
+      let onChangeEnd = jest.fn();
+      let errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      function ControlledRange() {
+        let [value, setValue] = useState([20, 80]);
+        return (
+          <Slider value={value} onChange={setValue} onChangeEnd={onChangeEnd}>
+            <Label>Price</Label>
+            <SliderTrack>
+              <SliderThumb index={0} aria-label="Minimum" />
+              <SliderThumb index={1} aria-label="Maximum" />
+            </SliderTrack>
+            <NumberField slot="0" aria-label="Minimum">
+              <Input />
+            </NumberField>
+            <NumberField slot="1" aria-label="Maximum">
+              <Input />
+            </NumberField>
+          </Slider>
+        );
+      }
+      let {getAllByRole, getByRole} = render(<ControlledRange />);
+
+      let sliders = getAllByRole('slider');
+      let minInput = getByRole('textbox', {name: 'Minimum Price'});
+      let maxInput = getByRole('textbox', {name: 'Maximum Price'});
+      let track = getByRole('group').querySelector('.react-aria-SliderTrack');
+      jest.spyOn(track, 'getBoundingClientRect').mockReturnValue({
+        left: 0,
+        right: 100,
+        top: 0,
+        bottom: 20,
+        width: 100,
+        height: 20,
+        x: 0,
+        y: 0,
+        toJSON: () => ({})
+      });
+
+      await user.click(minInput);
+      await user.clear(minInput);
+      await user.keyboard('40');
+      expect(onChangeEnd).not.toHaveBeenCalled();
+
+      fireEvent.pointerDown(track, {
+        button: 0,
+        pointerId: 1,
+        pointerType: 'mouse',
+        clientX: 90,
+        clientY: 10
+      });
+      expect(sliders[0]).toHaveValue('40');
+      expect(sliders[1]).toHaveValue('90');
+      expect(minInput).toHaveValue('40');
+      expect(maxInput).toHaveValue('90');
+      expect(onChangeEnd).toHaveBeenCalledTimes(1);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([40, 80]);
+      fireEvent.pointerUp(window, {pointerId: 1});
+      expect(onChangeEnd).toHaveBeenCalledTimes(2);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([40, 90]);
+
+      // Mouse and touch track presses without a preceding pointerdown also commit pending text
+      await user.click(minInput);
+      await user.clear(minInput);
+      await user.keyboard('30');
+      fireEvent.mouseDown(track, {button: 0, clientX: 70, clientY: 10});
+      expect(sliders[0]).toHaveValue('30');
+      expect(sliders[1]).toHaveValue('70');
+      expect(onChangeEnd).toHaveBeenCalledTimes(3);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([30, 90]);
+      fireEvent.mouseUp(window);
+      expect(onChangeEnd).toHaveBeenCalledTimes(4);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([30, 70]);
+
+      await user.click(minInput);
+      await user.clear(minInput);
+      await user.keyboard('35');
+      fireEvent.touchStart(track, {changedTouches: [{identifier: 2, clientX: 85, clientY: 10}]});
+      expect(sliders[0]).toHaveValue('35');
+      expect(sliders[1]).toHaveValue('85');
+      expect(onChangeEnd).toHaveBeenCalledTimes(5);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([35, 70]);
+      fireEvent.touchEnd(window, {changedTouches: [{identifier: 2, clientX: 85, clientY: 10}]});
+      expect(onChangeEnd).toHaveBeenCalledTimes(6);
+      expect(onChangeEnd).toHaveBeenLastCalledWith([35, 85]);
+
+      expect(errorSpy).not.toHaveBeenCalled();
+      jest.restoreAllMocks();
+    });
+  });
+
+  it('keeps the composed NumberField ref stable across value updates', async () => {
+    let refSpy = jest.fn();
+    let {getByRole} = render(
+      <Slider defaultValue={30}>
+        <Label>Opacity</Label>
+        <SliderTrack>
+          <SliderThumb />
+        </SliderTrack>
+        <NumberField slot="0" ref={refSpy}>
+          <Input />
+        </NumberField>
+      </Slider>
+    );
+
+    expect(refSpy).toHaveBeenCalledTimes(1);
+    let slider = getByRole('slider');
+    await user.tab();
+    expect(document.activeElement).toBe(slider);
+    await user.keyboard('{ArrowRight}{ArrowRight}');
+    expect(slider).toHaveValue('32');
+    expect(refSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support composing a NumberField inside Slider', async () => {
+    let onChange = jest.fn();
+    let onChangeEnd = jest.fn();
+    let {getByRole} = render(
+      <Slider
+        defaultValue={0.3}
+        maxValue={1}
+        step={0.01}
+        formatOptions={{style: 'percent'}}
+        onChange={onChange}
+        onChangeEnd={onChangeEnd}>
+        <Label>Opacity</Label>
+        <SliderTrack>
+          <SliderThumb />
+        </SliderTrack>
+        <NumberField slot="0">
+          <Input />
+        </NumberField>
+      </Slider>
+    );
+
+    let slider = getByRole('slider', {name: 'Opacity'});
+    let input = getByRole('textbox', {name: 'Opacity'});
+    expect(slider).toHaveValue('0.3');
+    expect(input).toHaveValue('30%');
+
+    // Commit via Enter
+    await user.click(input);
+    await user.clear(input);
+    await user.keyboard('75{Enter}');
+    expect(slider).toHaveValue('0.75');
+    expect(input).toHaveValue('75%');
+    expect(onChange).toHaveBeenLastCalledWith(0.75);
+    expect(onChangeEnd).toHaveBeenLastCalledWith(0.75);
+    expect(onChangeEnd).toHaveBeenCalledTimes(1);
+
+    // Blurring without further changes should not fire onChangeEnd again
+    await user.tab();
+    expect(onChangeEnd).toHaveBeenCalledTimes(1);
+
+    // Clamp out-of-range value on blur
+    await user.click(input);
+    await user.clear(input);
+    await user.keyboard('150');
+    await user.tab();
+    expect(slider).toHaveValue('1');
+    expect(input).toHaveValue('100%');
+    expect(onChange).toHaveBeenLastCalledWith(1);
+    expect(onChangeEnd).toHaveBeenLastCalledWith(1);
+
+    // Clearing input and blurring reverts to current slider value without NaN
+    onChange.mockClear();
+    onChangeEnd.mockClear();
+    await user.click(input);
+    await user.clear(input);
+    await user.tab();
+    expect(slider).toHaveValue('1');
+    expect(input).toHaveValue('100%');
+    expect(onChange).not.toHaveBeenCalled();
+    expect(onChangeEnd).not.toHaveBeenCalled();
+
+    // Moving slider thumb updates NumberField
+    act(() => {
+      slider.focus();
+    });
+    await user.keyboard('{PageDown}');
+    expect(slider).toHaveValue('0.9');
+    expect(input).toHaveValue('90%');
+
+    // ArrowUp/ArrowDown in NumberField steps slider value
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+    expect(slider).toHaveValue('0.89');
+    expect(input).toHaveValue('89%');
+  });
+
+  it('should support disabled state, aria-label, and form reset/submit with composed NumberField', async () => {
+    let submittedEntries = [];
+    let {getByRole, rerender} = render(
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          submittedEntries = Array.from(new FormData(e.currentTarget).entries());
+        }}>
+        <Slider aria-label="Volume" defaultValue={25}>
+          <SliderTrack>
+            <SliderThumb name="volume" />
+          </SliderTrack>
+          <NumberField slot="0">
+            <Input />
+          </NumberField>
+        </Slider>
+        <button type="submit">Submit</button>
+        <button type="reset">Reset</button>
+      </form>
+    );
+
+    let slider = getByRole('slider', {name: 'Volume'});
+    let input = getByRole('textbox', {name: 'Volume'});
+    expect(input).toHaveValue('25');
+
+    await user.click(input);
+    await user.clear(input);
+    await user.keyboard('60{Enter}');
+    expect(slider).toHaveValue('60');
+
+    await user.click(getByRole('button', {name: 'Submit'}));
+    expect(submittedEntries).toEqual([['volume', '60']]);
+
+    await user.click(getByRole('button', {name: 'Reset'}));
+    expect(slider).toHaveValue('25');
+    expect(input).toHaveValue('25');
+
+    await user.tab();
+    rerender(
+      <Slider aria-label="Volume" defaultValue={25} isDisabled>
+        <SliderTrack>
+          <SliderThumb name="volume" />
+        </SliderTrack>
+        <NumberField slot="0">
+          <Input />
+        </NumberField>
+      </Slider>
+    );
+    expect(getByRole('slider', {name: 'Volume'})).toBeDisabled();
+    expect(getByRole('textbox', {name: 'Volume'})).toBeDisabled();
+  });
+
+  it('labels the slotted NumberField and leaves an independent NumberField alone', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <>
+        <span id="volume-label">Volume</span>
+        <Slider aria-labelledby="volume-label" defaultValue={25} onChange={onChange}>
+          <SliderTrack>
+            <SliderThumb />
+          </SliderTrack>
+          <NumberField slot="0">
+            <Input />
+          </NumberField>
+          <NumberField aria-label="Example" defaultValue={5}>
+            <Input />
+          </NumberField>
+        </Slider>
+      </>
+    );
+
+    expect(getByRole('textbox', {name: 'Volume'})).toHaveValue('25');
+    let example = getByRole('textbox', {name: 'Example'});
+    expect(example).toHaveValue('5');
+    await user.click(example);
+    await user.clear(example);
+    await user.keyboard('9{Enter}');
+    expect(example).toHaveValue('9');
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it.each([false, true])(
+    'resets both editable range values (controlled: %s)',
+    async isControlled => {
+      let onChangeEnd = jest.fn();
+      function Example() {
+        let [value, setValue] = useState([20, 80]);
+        return (
+          <form data-testid="form">
+            <Slider
+              aria-label="Range"
+              defaultValue={[20, 80]}
+              value={isControlled ? value : undefined}
+              onChange={setValue}
+              onChangeEnd={onChangeEnd}>
+              <SliderTrack>
+                <SliderThumb index={0} name="start" aria-label="Minimum" />
+                <SliderThumb index={1} name="end" aria-label="Maximum" />
+              </SliderTrack>
+              <NumberField slot="0" aria-label="Minimum">
+                <Input />
+              </NumberField>
+              <NumberField slot="1" aria-label="Maximum">
+                <Input />
+              </NumberField>
+            </Slider>
+            <button type="reset">Reset</button>
+          </form>
+        );
+      }
+
+      let {getByRole, getAllByRole, getByTestId} = render(<Example />);
+      let minInput = getByRole('textbox', {name: 'Minimum Range'});
+      let maxInput = getByRole('textbox', {name: 'Maximum Range'});
+      await user.click(minInput);
+      await user.clear(minInput);
+      await user.keyboard('40{Enter}');
+      await user.click(maxInput);
+      await user.clear(maxInput);
+      await user.keyboard('60{Enter}');
+      onChangeEnd.mockClear();
+      await user.click(getByRole('button', {name: 'Reset'}));
+
+      expect(onChangeEnd).not.toHaveBeenCalled();
+      expect(getAllByRole('slider').map(input => input.value)).toEqual(['20', '80']);
+      expect(minInput).toHaveValue('20');
+      expect(maxInput).toHaveValue('80');
+      expect(Array.from(new FormData(getByTestId('form')).entries())).toEqual([
+        ['start', '20'],
+        ['end', '80']
+      ]);
+    }
+  );
+
+  it('keeps the NumberField disabled state in sync with the thumb', () => {
+    function Example({isDisabled, isThumbDisabled}) {
+      return (
+        <Slider aria-label="Volume" isDisabled={isDisabled}>
+          <SliderTrack>
+            <SliderThumb isDisabled={isThumbDisabled} />
+          </SliderTrack>
+          <NumberField slot="0">
+            <Input />
+          </NumberField>
+        </Slider>
+      );
+    }
+
+    let {getByRole, rerender} = render(<Example isThumbDisabled />);
+    expect(getByRole('textbox')).toBeDisabled();
+    rerender(<Example isDisabled />);
+    expect(getByRole('textbox')).toBeDisabled();
+    rerender(<Example />);
+    expect(getByRole('slider')).toBeEnabled();
+    expect(getByRole('textbox')).toBeEnabled();
+    rerender(<Example isThumbDisabled />);
+    expect(getByRole('textbox')).toBeDisabled();
+  });
+
+  it('should support slotted NumberFields and boundary arrow navigation for multi-thumb Sliders', async () => {
+    let {getAllByRole, getByRole, getByTestId, rerender} = render(
+      <Slider defaultValue={[20, 60]}>
+        <Label>Price</Label>
+        <SliderTrack>
+          <SliderThumb index={0} aria-label="Minimum" />
+          <SliderThumb index={1} aria-label="Maximum" />
+        </SliderTrack>
+        <Group data-testid="range-group">
+          <NumberField slot="0" aria-label="Minimum">
+            <Input />
+          </NumberField>
+          <NumberField slot="1" aria-label="Maximum">
+            <Input />
+          </NumberField>
+        </Group>
+      </Slider>
+    );
+
+    let sliders = getAllByRole('slider');
+    let minInput = getByRole('textbox', {name: 'Minimum Price'});
+    let maxInput = getByRole('textbox', {name: 'Maximum Price'});
+    expect(minInput).toHaveValue('20');
+    expect(maxInput).toHaveValue('60');
+
+    // Typing above the upper thumb value clamps to the upper thumb's value
+    await user.click(minInput);
+    await user.clear(minInput);
+    await user.keyboard('80{Enter}');
+    expect(sliders[0]).toHaveValue('60');
+    expect(minInput).toHaveValue('60');
+
+    // ArrowRight at end of minInput moves focus to start of maxInput (committing edits)
+    await user.clear(minInput);
+    await user.keyboard('35');
+    expect(minInput.selectionStart).toBe(2);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(maxInput);
+    expect(sliders[0]).toHaveValue('35');
+    expect(maxInput.selectionStart).toBe(0);
+
+    // ArrowRight inside maxInput moves caret without leaving maxInput
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(maxInput);
+    expect(maxInput.selectionStart).toBe(1);
+
+    // ArrowLeft back to start, then ArrowLeft moves focus back to end of minInput
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(maxInput);
+    expect(maxInput.selectionStart).toBe(0);
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(minInput);
+    expect(minInput.selectionStart).toBe(2);
+
+    await user.tab();
+    await user.tab();
+    rerender(
+      <Slider defaultValue={[20, 60]} isDisabled>
+        <Label>Price</Label>
+        <SliderTrack>
+          <SliderThumb index={0} aria-label="Minimum" />
+          <SliderThumb index={1} aria-label="Maximum" />
+        </SliderTrack>
+        <Group data-testid="range-group">
+          <NumberField slot="0" aria-label="Minimum">
+            <Input />
+          </NumberField>
+          <NumberField slot="1" aria-label="Maximum">
+            <Input />
+          </NumberField>
+        </Group>
+      </Slider>
+    );
+    expect(getByTestId('range-group')).toHaveAttribute('data-disabled', 'true');
   });
 });

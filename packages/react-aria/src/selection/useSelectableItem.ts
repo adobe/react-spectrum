@@ -23,7 +23,7 @@ import {
   RefObject
 } from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
-import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getEventTarget, getParentElement} from '../utils/shadowdom/DOMFunctions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
 import {isCtrlKeyPressed} from '../utils/keyboard';
 import {isTabbable} from '../utils/isFocusable';
@@ -433,6 +433,12 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   };
 
+  // Presses handled by a descendant (e.g. a drag handle button) don't reach onPressStart,
+  // so reset the long press state here to avoid reusing it from a previous press.
+  let onPointerDownCapture = () => {
+    longPressEnabledOnPressStart.current = false;
+  };
+
   // Prevent default on link clicks so that we control exactly
   // when they open (to match selection behavior).
   let onClick =
@@ -448,7 +454,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     itemProps,
     allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled) ? pressProps : {},
     longPressEnabled ? longPressProps : {},
-    {onDoubleClick, onDragStartCapture, onClick, id},
+    {onDoubleClick, onDragStartCapture, onPointerDownCapture, onClick, id},
     // Prevent DOM focus from moving on mouse down when using virtual focus
     shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined
   );
@@ -463,7 +469,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       if (elCollection != null) {
         return elCollection !== collectionId;
       }
-      el = el.parentElement;
+      el = getParentElement(el);
     }
     return isTabbable(target);
   };

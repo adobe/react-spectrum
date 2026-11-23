@@ -14,7 +14,7 @@ import {Button} from '../src/Button';
 
 import {Disclosure, DisclosurePanel} from '../src/Disclosure';
 import {Heading} from '../src/Heading';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';
 
@@ -23,27 +23,11 @@ export default {
   component: Disclosure
 } as Meta<typeof Disclosure>;
 
-export type DisclosureStory = StoryFn<typeof Disclosure>;
+export type DisclosureStory = StoryObj<typeof Disclosure>;
 
-export const DisclosureExample: DisclosureStory = args => (
-  <Disclosure {...args}>
-    {({isExpanded}) => (
-      <>
-        <Heading level={3}>
-          <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is a disclosure header</Button>
-        </Heading>
-        <DisclosurePanel>
-          <p>This is the content of the disclosure panel.</p>
-        </DisclosurePanel>
-      </>
-    )}
-  </Disclosure>
-);
-
-export const DisclosureControlledExample: DisclosureStory = args => {
-  let [isExpanded, setExpanded] = React.useState(false);
-  return (
-    <Disclosure {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>
+export const DisclosureExample: DisclosureStory = {
+  render: args => (
+    <Disclosure {...args}>
       {({isExpanded}) => (
         <>
           <Heading level={3}>
@@ -55,5 +39,25 @@ export const DisclosureControlledExample: DisclosureStory = args => {
         </>
       )}
     </Disclosure>
-  );
+  )
+};
+
+export const DisclosureControlledExample: DisclosureStory = {
+  render: function DisclosureControlledExample(args) {
+    let [isExpanded, setExpanded] = React.useState(false);
+    return (
+      <Disclosure {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>
+        {({isExpanded}) => (
+          <>
+            <Heading level={3}>
+              <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is a disclosure header</Button>
+            </Heading>
+            <DisclosurePanel>
+              <p>This is the content of the disclosure panel.</p>
+            </DisclosurePanel>
+          </>
+        )}
+      </Disclosure>
+    );
+  }
 };

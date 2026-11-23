@@ -366,14 +366,12 @@ const NotificationBadgesExample = args => {
 };
 
 export const NotificationBadges: Story = {
-  render: NotificationBadgesExample
-};
-
-NotificationBadges.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
+  render: NotificationBadgesExample,
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
 let badgeValue = 10;
 let formattedValue = useNumberFormatter().format(badgeValue);
 
@@ -386,6 +384,7 @@ return (
     {!isQuiet && <ActionButton><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>}
   </div>
         )`;
+        }
       }
     }
   }

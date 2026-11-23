@@ -128,7 +128,9 @@ export {
   SideNavSection,
   SideNavHeader
 } from '../src/SideNav';
+export {SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
 export {Slider, SliderContext} from '../src/Slider';
+export {SliderInput} from '../src/SliderInput';
 export {Skeleton, useIsSkeleton} from '../src/Skeleton';
 export {SkeletonCollection} from '../src/SkeletonCollection';
 export {StatusLight, StatusLightContext} from '../src/StatusLight';
@@ -265,6 +267,7 @@ export type {SearchFieldProps} from '../src/SearchField';
 export type {SegmentedControlProps, SegmentedControlItemProps} from '../src/SegmentedControl';
 export type {SelectBoxProps, SelectBoxGroupProps} from '../src/SelectBoxGroup';
 export type {SliderProps} from '../src/Slider';
+export type {SliderInputProps} from '../src/SliderInput';
 export type {RangeCalendarProps} from '../src/RangeCalendar';
 export type {RangeSliderProps} from '../src/RangeSlider';
 export type {
@@ -275,6 +278,7 @@ export type {
   SideNavSectionProps,
   SideNavHeaderProps
 } from '../src/SideNav';
+export type {SideNavPanelProps} from '../src/SideNavPanel';
 export type {SkeletonProps} from '../src/Skeleton';
 export type {SkeletonCollectionProps} from '../src/SkeletonCollection';
 export type {StatusLightProps} from '../src/StatusLight';

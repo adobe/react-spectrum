@@ -518,6 +518,7 @@ const layoutPropertyValues: {[key: string]: (string | number)[]} = {
   overflowY: ['auto', 'hidden', 'clip', 'visible', 'scroll'],
   overscrollBehaviorX: ['auto', 'contain', 'none'],
   overscrollBehaviorY: ['auto', 'contain', 'none'],
+  scrollbarGutter: ['auto', 'stable', 'stable both-edges'],
   scrollBehavior: ['auto', 'smooth'],
   order: ['number']
 };
@@ -1505,6 +1506,12 @@ const mdnPropertyLinks: {[key: string]: {[value: string]: string}} = {
     left: 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#left',
     right: 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#right',
     column: 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#column'
+  },
+  scrollbarGutter: {
+    auto: 'https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-gutter#auto',
+    stable: 'https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-gutter#stable',
+    'stable both-edges':
+      'https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-gutter#both-edges'
   },
   scrollBehavior: {
     auto: 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior#auto',

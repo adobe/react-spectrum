@@ -39,21 +39,19 @@ export default {
 
 export type StatusLightStory = StoryObj<typeof StatusLight>;
 
-export const AllVariants: StatusLightStory = () => render();
-
-AllVariants.story = {
+export const AllVariants: StatusLightStory = {
+  render: () => render(),
   name: 'all variants'
 };
 
-export const Multiline: StatusLightStory = () => (
-  <View width="size-3000">
-    <StatusLight variant="celery">
-      Super long status light label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
-    </StatusLight>
-  </View>
-);
-
-Multiline.story = {
+export const Multiline: StatusLightStory = {
+  render: () => (
+    <View width="size-3000">
+      <StatusLight variant="celery">
+        Super long status light label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
+      </StatusLight>
+    </View>
+  ),
   name: 'multiline'
 };
 

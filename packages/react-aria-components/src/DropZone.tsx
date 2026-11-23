@@ -24,7 +24,11 @@ import {
 import {DropOptions, useDrop} from 'react-aria/useDrop';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
-import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {
+  getEventTarget,
+  getParentElement,
+  nodeContains
+} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {mergeProps} from 'react-aria/mergeProps';
@@ -156,7 +160,7 @@ export const DropZone = forwardRef(function DropZone(
               break;
             }
 
-            target = target.parentElement;
+            target = getParentElement(target) as HTMLElement | null;
           }
         }}
         data-hovered={isHovered || undefined}

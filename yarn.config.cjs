@@ -164,7 +164,11 @@ function enforceWorkspaceDependencies({Yarn}) {
   // workspace tree has the same peer dependency.
   let seen = new Map();
   for (const dependency of Yarn.dependencies()) {
-    if (dependency.type === 'peerDependencies') {
+    // Do not turn optional peers into required peers of dependent workspaces.
+    if (
+      dependency.type === 'peerDependencies' &&
+      !dependency.workspace.manifest.peerDependenciesMeta?.[dependency.ident]?.optional
+    ) {
       for (const workspace of Yarn.workspaces()) {
         if (
           // must check in manifest because yarn is reporting all peer in workspace.pkg.dependencies

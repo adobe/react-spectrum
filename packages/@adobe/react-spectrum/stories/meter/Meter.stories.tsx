@@ -60,15 +60,7 @@ export default {
 
 export const Default: MeterStory = {
   args: {label: 'Meter', value: 50},
-  name: 'value: 50',
-  parameters: {
-    a11y: {
-      config: {
-        // Erroring attributes work for meter and/or progressbar, but combined role confuses aXe
-        rules: [{id: 'aria-allowed-attr', selector: '*:not([role="meter progressbar"])'}]
-      }
-    }
-  }
+  name: 'value: 50'
 };
 
 export const ValueLabel1Of4: MeterStory = {

@@ -22,6 +22,7 @@ import {
 import {ContextValue} from 'react-aria-components/slots';
 import {
   controlFont,
+  controlSize,
   field,
   fieldInput,
   getAllowedOverrides,
@@ -40,8 +41,9 @@ import {focusRing, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
+import type {SliderState} from 'react-stately/useSliderState';
+import {snapValueToStep} from 'react-stately/private/utils/number';
 import {useFocusableRef} from './useDOMRef';
-import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SliderBaseProps<T>
@@ -52,6 +54,9 @@ export interface SliderBaseProps<T>
     >,
     Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>,
     StyleProps {
+  /**
+   * An optional `<SliderInput />` to allow editing the slider value within a text field.
+   */
   children?: ReactNode;
   /**
    * The size of the Slider.
@@ -75,16 +80,23 @@ export interface SliderBaseProps<T>
    * @default 'default'
    */
   thumbStyle?: 'default' | 'precise';
-  // TODO
-  // isEditable?: boolean,
 }
 
-export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, InputDOMProps {
+export interface SliderProps extends SliderBaseProps<number>, InputDOMProps {
   /**
    * The offset from which to start the fill.
    */
   fillOffset?: number;
 }
+
+export interface SliderInternalContextValue {
+  size: 'S' | 'M' | 'L' | 'XL';
+  state: SliderState;
+  minSizer: string;
+  maxSizer: string;
+}
+
+export const SliderInternalContext = createContext<SliderInternalContextValue | null>(null);
 
 export const SliderContext =
   createContext<ContextValue<Partial<SliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
@@ -104,7 +116,7 @@ const slider = style(
     },
     columnGap: {
       size: {
-        S: 16,
+        S: 12,
         M: 16,
         L: 20,
         XL: 24
@@ -153,17 +165,9 @@ const output = style({
   gridArea: 'output',
   textAlign: {
     labelPosition: {
-      top: {
-        direction: {
-          ltr: 'end',
-          rtl: 'start'
-        }
-      },
+      top: 'end',
       side: {
-        direction: {
-          ltr: 'start',
-          rtl: 'end'
-        },
+        default: 'start',
         isInForm: 'end'
       }
     }
@@ -174,12 +178,56 @@ export let track = style({
   gridArea: 'track',
   position: 'relative',
   width: 'full',
+  minWidth: {
+    default: controlSize(),
+    isRange: {
+      default: 56,
+      size: {
+        S: 48,
+        L: 68,
+        XL: 80
+      }
+    }
+  },
   height: {
     size: {
       S: 24,
       M: 32,
       L: 40,
       XL: 48
+    }
+  }
+});
+
+const sliderControls = style({
+  ...fieldInput(),
+  display: 'inline-flex',
+  alignItems: 'center',
+  minWidth: {
+    default: controlSize(),
+    ':has([data-slider-input])': {
+      default: 96,
+      size: {
+        S: 72,
+        L: 120,
+        XL: 144
+      },
+      isRange: {
+        default: 152,
+        size: {
+          S: 124,
+          L: 184,
+          XL: 216
+        }
+      }
+    }
+  },
+  gap: {
+    default: 16,
+    size: {
+      S: 12,
+      L: 20,
+      XL: 24
     }
   }
 });
@@ -358,7 +406,7 @@ export let filledTrack = style<{
 });
 
 export function SliderBase<T extends number | number[]>(
-  props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}
+  props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>; track: ReactNode}
 ): ReactNode {
   let formContext = useContext(FormContext);
   // oxlint-disable-next-line react/immutability
@@ -369,15 +417,22 @@ export function SliderBase<T extends number | number[]>(
     labelAlign = 'start',
     size = 'M',
     minValue = 0,
-    maxValue = 100
+    maxValue = 100,
+    children,
+    track: trackElement,
+    sliderRef,
+    ...ariaProps
   } = props;
-  let {direction} = useLocale();
+  // SliderInput is currently the only supported child.
+  let hasInput = !!children;
 
   // oxlint-disable react/refs
   return (
     <AriaSlider
-      {...props}
-      ref={props.sliderRef}
+      {...ariaProps}
+      minValue={minValue}
+      maxValue={maxValue}
+      ref={sliderRef}
       className={renderProps =>
         (props.UNSAFE_className || '') +
         mergeStyles(
@@ -387,56 +442,70 @@ export function SliderBase<T extends number | number[]>(
       }>
       {({state}) => {
         let maxLabelLength = 0;
+        // Also measure one step in from each bound: for decimal steps (e.g. 0–10 with step 0.1),
+        // 0.1 and 9.9 are wider than 0 and 10.
+        let minStep = snapValueToStep(minValue + state.step, minValue, maxValue, state.step);
+        let maxStep = snapValueToStep(maxValue - state.step, minValue, maxValue, state.step);
+        let minFormatted = state.getFormattedValue(minValue);
+        let minStepFormatted = state.getFormattedValue(minStep);
+        let maxFormatted = state.getFormattedValue(maxValue);
+        let maxStepFormatted = state.getFormattedValue(maxStep);
+        let minSizer =
+          [...minStepFormatted].length > [...minFormatted].length ? minStepFormatted : minFormatted;
+        let maxSizer =
+          [...maxStepFormatted].length > [...maxFormatted].length ? maxStepFormatted : maxFormatted;
         switch (state.values.length) {
           case 1:
-            maxLabelLength = Math.max(
-              [...state.getFormattedValue(minValue)].length,
-              [...state.getFormattedValue(maxValue)].length
-            );
+            maxLabelLength = Math.max([...minSizer].length, [...maxSizer].length);
             break;
           case 2:
             maxLabelLength = Math.max(
-              [...state.getFormattedValue([minValue, minValue + (props.step || 1)])].length,
-              [...state.getFormattedValue([maxValue - (props.step || 1), maxValue])].length
+              [...state.getFormattedValue([minValue, minStep])].length,
+              [...state.getFormattedValue([maxStep, maxValue])].length
             );
             break;
           default:
             throw new Error('Only sliders with 1 or 2 handles are supported!');
         }
 
-        let outputValue = (
+        let outputValue = !hasInput ? (
           <SliderOutput
             style={{
               width: `${maxLabelLength}ch`,
               minWidth: `${maxLabelLength}ch`,
               fontVariantNumeric: 'tabular-nums'
             }}
-            className={output({direction, labelPosition, isInForm: !!formContext})}
+            className={output({labelPosition, isInForm: !!formContext})}
           />
-        );
+        ) : null;
 
         return (
           <>
-            <div className={labelContainer({labelPosition, labelAlign})}>
-              <FieldLabel
-                isDisabled={props.isDisabled}
-                size={props.size}
-                labelPosition={labelPosition}
-                labelAlign={labelAlign}
-                contextualHelp={props.contextualHelp}>
-                {label}
-              </FieldLabel>
-              {labelPosition === 'top' && outputValue}
-            </div>
+            {(label != null || (labelPosition === 'top' && !hasInput)) && (
+              <div className={labelContainer({labelPosition, labelAlign})}>
+                <FieldLabel
+                  isDisabled={props.isDisabled}
+                  size={props.size}
+                  labelPosition={labelPosition}
+                  labelAlign={labelAlign}
+                  contextualHelp={props.contextualHelp}>
+                  {label}
+                </FieldLabel>
+                {labelPosition === 'top' && outputValue}
+              </div>
+            )}
             <div
-              className={style({
-                ...fieldInput(),
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: {default: 16, size: {L: 20, XL: 24}}
-              })({size})}>
-              {props.children}
+              className={sliderControls({
+                size,
+                isRange: state.values.length > 1
+              })}>
+              {trackElement}
               {labelPosition === 'side' && outputValue}
+              {hasInput && (
+                <SliderInternalContext.Provider value={{size, state, minSizer, maxSizer}}>
+                  {children}
+                </SliderInternalContext.Provider>
+              )}
             </div>
           </>
         );
@@ -473,45 +542,49 @@ export const Slider = /*#__PURE__*/ forwardRef(function Slider(
   let isStaticColor = props['PRIVATE_staticColor'];
 
   return (
-    <SliderBase {...props} sliderRef={domRef}>
-      <SliderTrack className={track({size, labelPosition, isInForm: !!formContext})}>
-        {({isDisabled}) => {
-          return (
-            <>
-              <div className={upperTrack({isDisabled, isStaticColor, trackStyle})}>
-                <SliderFill
-                  offset={fillOffset}
-                  className={filledTrack({isDisabled, isEmphasized, trackStyle})}
-                />
-              </div>
-              <SliderThumb
-                className={thumbContainer}
-                index={0}
-                name={props.name}
-                form={props.form}
-                ref={thumbRef}
-                style={renderProps =>
-                  pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({
-                    ...renderProps,
-                    isPressed: renderProps.isDragging
-                  })
-                }>
-                {renderProps => (
-                  <div className={thumbHitArea({size})}>
-                    <div
-                      className={thumb({
-                        ...renderProps,
-                        size,
-                        thumbStyle
-                      })}
-                    />
-                  </div>
-                )}
-              </SliderThumb>
-            </>
-          );
-        }}
-      </SliderTrack>
-    </SliderBase>
+    <SliderBase
+      {...props}
+      sliderRef={domRef}
+      track={
+        <SliderTrack className={track({size, labelPosition, isInForm: !!formContext})}>
+          {({isDisabled}) => {
+            return (
+              <>
+                <div className={upperTrack({isDisabled, isStaticColor, trackStyle})}>
+                  <SliderFill
+                    offset={fillOffset}
+                    className={filledTrack({isDisabled, isEmphasized, trackStyle})}
+                  />
+                </div>
+                <SliderThumb
+                  className={thumbContainer}
+                  index={0}
+                  name={props.name}
+                  form={props.form}
+                  ref={thumbRef}
+                  style={renderProps =>
+                    pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({
+                      ...renderProps,
+                      isPressed: renderProps.isDragging
+                    })
+                  }>
+                  {renderProps => (
+                    <div className={thumbHitArea({size})}>
+                      <div
+                        className={thumb({
+                          ...renderProps,
+                          size,
+                          thumbStyle
+                        })}
+                      />
+                    </div>
+                  )}
+                </SliderThumb>
+              </>
+            );
+          }}
+        </SliderTrack>
+      }
+    />
   );
 });

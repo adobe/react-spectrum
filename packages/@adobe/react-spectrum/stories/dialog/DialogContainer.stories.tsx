@@ -16,7 +16,7 @@ import {
   MenuExample,
   NestedDialogContainerExample
 } from './DialogContainerExamples';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -24,46 +24,38 @@ export default {
   providerSwitcher: {status: 'notice'}
 } as Meta<typeof DialogContainer>;
 
-export type DialogContainerStory = StoryFn<typeof DialogContainer>;
+export type DialogContainerStory = StoryObj<typeof DialogContainer>;
 
-export const Default: DialogContainerStory = () => <DialogContainerExample />;
-
-Default.story = {
+export const Default: DialogContainerStory = {
+  render: () => <DialogContainerExample />,
   name: 'default'
 };
 
-export const InAMenu: DialogContainerStory = () => <MenuExample />;
-
-InAMenu.story = {
+export const InAMenu: DialogContainerStory = {
+  render: () => <MenuExample />,
   name: 'in a menu'
 };
 
-export const TypeFullscreen: DialogContainerStory = () => <MenuExample type="fullscreen" />;
-
-TypeFullscreen.story = {
+export const TypeFullscreen: DialogContainerStory = {
+  render: () => <MenuExample type="fullscreen" />,
   name: 'type: fullscreen'
 };
 
-export const TypeFullscreenTakeover: DialogContainerStory = () => (
-  <MenuExample type="fullscreenTakeover" />
-);
-
-TypeFullscreenTakeover.story = {
+export const TypeFullscreenTakeover: DialogContainerStory = {
+  render: () => <MenuExample type="fullscreenTakeover" />,
   name: 'type: fullscreenTakeover'
 };
 
-export const IsDismissable: DialogContainerStory = () => <MenuExample isDismissable />;
-
-IsDismissable.story = {
+export const IsDismissable: DialogContainerStory = {
+  render: () => <MenuExample isDismissable />,
   name: 'isDismissable'
 };
 
-export const IsKeyboardDismissDisabled: DialogContainerStory = () => (
-  <MenuExample isKeyboardDismissDisabled />
-);
-
-IsKeyboardDismissDisabled.story = {
+export const IsKeyboardDismissDisabled: DialogContainerStory = {
+  render: () => <MenuExample isKeyboardDismissDisabled />,
   name: 'isKeyboardDismissDisabled'
 };
 
-export const NestedDialogContainers: DialogContainerStory = () => <NestedDialogContainerExample />;
+export const NestedDialogContainers: DialogContainerStory = {
+  render: () => <NestedDialogContainerExample />
+};

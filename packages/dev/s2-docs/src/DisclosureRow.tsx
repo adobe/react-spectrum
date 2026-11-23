@@ -3,17 +3,22 @@
 import {Button} from 'react-aria-components';
 import Chevron from '@react-spectrum/s2/icons/ChevronRight';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ReactNode, useRef} from 'react';
 import {TableBody, TableRow} from './Table';
-import {useDisclosure} from 'react-aria';
+import {useDisclosure, useIsSSR} from 'react-aria';
 import {useDisclosureState} from 'react-stately';
-import {useRef} from 'react';
+
+const SUPPORTS_UNTIL_FOUND =
+  typeof HTMLElement !== 'undefined' && 'onbeforematch' in HTMLElement.prototype;
 
 const tableCell = style({
   padding: 0,
   borderWidth: 0,
   borderBottomWidth: {
     default: 1,
-    ':is(tbody:last-child > tr:last-child > *)': 0
+    ':is(tbody:nth-last-child(2) > tr:last-child > *)': {
+      isCollapsed: 0
+    }
   },
   borderStyle: 'solid',
   borderColor: 'gray-300',
@@ -21,6 +26,15 @@ const tableCell = style({
   display: {
     default: 'block',
     sm: '[table-cell]'
+  }
+});
+
+const panelStyles = style({
+  backgroundColor: 'gray-25',
+  display: {
+    ':is([hidden="until-found"])': {
+      isUntilFoundSupported: 'block'
+    }
   }
 });
 
@@ -65,27 +79,42 @@ const chevronStyles = iconStyle({
   flexShrink: 0
 });
 
-export function DisclosureRow({title, children, defaultExpanded}) {
+export function DisclosureRow({
+  title,
+  children,
+  defaultExpanded
+}: {
+  title: string;
+  children: ReactNode;
+  defaultExpanded?: boolean;
+}) {
   let state = useDisclosureState({defaultExpanded});
-  let ref = useRef(null);
-  let {buttonProps} = useDisclosure({}, state, ref);
-  // oxlint-disable-next-line react/immutability
-  delete buttonProps['aria-controls']; // there is no panel element in this implementation
+  let ref = useRef<HTMLTableSectionElement | null>(null);
+  let {buttonProps, panelProps} = useDisclosure({}, state, ref);
+  let {role: _, ...panelDomProps} = panelProps;
+  let isSSR = useIsSSR();
 
   return (
-    <TableBody>
-      <TableRow>
-        <td colSpan={3} className={tableCell}>
-          <Button
-            {...buttonProps}
-            className={p => buttonStyles({...p, isExpanded: state.isExpanded})}>
-            {/* @ts-ignore */}
-            <Chevron styles={chevronStyles({isExpanded: state.isExpanded})} />
-            {title}
-          </Button>
-        </td>
-      </TableRow>
-      {state.isExpanded && children}
-    </TableBody>
+    <>
+      <TableBody>
+        <TableRow>
+          <td colSpan={3} className={tableCell({isCollapsed: !state.isExpanded})}>
+            <Button
+              {...buttonProps}
+              className={p => buttonStyles({...p, isExpanded: state.isExpanded})}>
+              {/* @ts-ignore */}
+              <Chevron styles={chevronStyles({isExpanded: state.isExpanded})} />
+              {title}
+            </Button>
+          </td>
+        </TableRow>
+      </TableBody>
+      <tbody
+        ref={ref}
+        {...panelDomProps}
+        className={panelStyles({isUntilFoundSupported: !isSSR && SUPPORTS_UNTIL_FOUND})}>
+        {children}
+      </tbody>
+    </>
   );
 }

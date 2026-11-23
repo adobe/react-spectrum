@@ -24,6 +24,7 @@ import {
 } from '@react-types/shared';
 import {createFocusManager} from '../focus/FocusScope';
 import {filterDOMProps} from '../utils/filterDOMProps';
+import {getParentElement} from '../utils/shadowdom/DOMFunctions';
 import {ListState} from 'react-stately/useListState';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
@@ -80,7 +81,7 @@ export function useActionGroup<T>(
 
   let [isInToolbar, setInToolbar] = useState(false);
   useLayoutEffect(() => {
-    setInToolbar(!!(ref.current && ref.current.parentElement?.closest('[role="toolbar"]')));
+    setInToolbar(!!(ref.current && getParentElement(ref.current)?.closest('[role="toolbar"]')));
   }, [ref]);
 
   let allKeys = [...state.collection.getKeys()];

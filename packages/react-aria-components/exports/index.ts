@@ -183,6 +183,7 @@ export {
 export {SelectionIndicator, SelectionIndicatorContext} from '../src/SelectionIndicator';
 export {Separator, SeparatorContext} from '../src/Separator';
 export {SharedElementTransition, SharedElement} from '../src/SharedElementTransition';
+export {SheetTrigger, SheetOverlay, Sheet, SheetBackdrop, SheetContent} from '../src/Sheet';
 export {
   Slider,
   SliderOutput,
@@ -452,6 +453,14 @@ export type {
   SharedElementRenderProps
 } from '../src/SharedElementTransition';
 export type {SeparatorProps} from '../src/Separator';
+export type {
+  SheetOverlayProps,
+  SheetProps,
+  SheetRenderProps,
+  SheetBackdropProps,
+  SheetContentProps,
+  SheetTriggerProps
+} from '../src/Sheet';
 export type {
   SliderOutputProps,
   SliderProps,

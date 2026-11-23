@@ -3,5 +3,7 @@ export {
   getPropagationTargets,
   nodeContains,
   isFocusWithin,
-  getActiveElement
+  getActiveElement,
+  getParentNode,
+  getParentElement
 } from '../../../../src/utils/shadowdom/DOMFunctions';

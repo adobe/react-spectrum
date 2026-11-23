@@ -601,7 +601,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
         open(null, 'focus');
       }
     } else {
-      if (shouldCloseOnBlur) {
+      if (shouldCloseOnBlur && !props.isReadOnly) {
         commitValue();
       }
 

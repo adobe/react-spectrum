@@ -14,32 +14,34 @@ import {Checkbox} from '../../src/checkbox/Checkbox';
 import {Flex} from '../../src/layout/Flex';
 import React from 'react';
 import {Render} from '../../chromatic/checkbox/Checkbox.stories';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 import {View} from '../../src/view/View';
 
 export default {
   title: 'Checkbox'
 };
 
-export type CheckboxStory = StoryFn<typeof Checkbox>;
+export type CheckboxStory = StoryObj<typeof Checkbox>;
 
-export const Default: CheckboxStory = () => (
-  <Flex gap="size-100" direction={'column'}>
-    <View>
-      <h2>Default</h2>
-      <Render />
-    </View>
-    <View>
-      <h2>Invalid</h2>
-      <Render isInvalid />
-    </View>
-    <View>
-      <h2>Disabled</h2>
-      <Render isDisabled />
-    </View>
-    <View>
-      <h2>Emphasized</h2>
-      <Render isEmphasized />
-    </View>
-  </Flex>
-);
+export const Default: CheckboxStory = {
+  render: () => (
+    <Flex gap="size-100" direction={'column'}>
+      <View>
+        <h2>Default</h2>
+        <Render />
+      </View>
+      <View>
+        <h2>Invalid</h2>
+        <Render isInvalid />
+      </View>
+      <View>
+        <h2>Disabled</h2>
+        <Render isDisabled />
+      </View>
+      <View>
+        <h2>Emphasized</h2>
+        <Render isEmphasized />
+      </View>
+    </Flex>
+  )
+};
