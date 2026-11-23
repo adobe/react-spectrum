@@ -12,9 +12,11 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
 import {AttachmentCard, AttachmentPreviewContext, isAttachmentLoading} from './AttachmentList';
+import {chain} from 'react-aria/chain';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {forwardRef, ReactNode} from 'react';
+import {forwardRef, ReactNode, useContext} from 'react';
+import {LightboxTriggerContext} from './LightboxTrigger';
 import {ListBox, ListBoxItem, ListBoxItemProps, ListBoxProps} from 'react-aria-components/ListBox';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {scrollFade} from './style/style-macro' with {type: 'macro'};
@@ -79,10 +81,14 @@ export const AttachmentGrid = (forwardRef as forwardRefType)(function Attachment
 ) {
   let {styles, items, children, dependencies, align = 'start', ...otherProps} = props;
   let domRef = useDOMRef(ref);
+  let ctx = useContext(LightboxTriggerContext);
+  let onAction =
+    otherProps.onAction || ctx?.onAction ? chain(otherProps.onAction, ctx?.onAction) : undefined;
 
   return (
     <ListBox
       {...otherProps}
+      onAction={onAction}
       layout="grid"
       selectionMode="none"
       items={items}
