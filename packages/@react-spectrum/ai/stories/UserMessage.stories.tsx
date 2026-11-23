@@ -62,8 +62,7 @@ export const WithImage: Story = {
           className={style({
             display: 'flex',
             flexDirection: 'row',
-            alignItems: 'baseline',
-            gap: 8
+            alignItems: 'baseline'
           })}>
           <Heading
             styles={style({
@@ -108,7 +107,7 @@ export const WithCard: Story = {
             alignItems: 'center',
             justifyContent: 'space-between',
             flexGrow: 1,
-            gap: 8,
+            columnGap: 4,
             minWidth: 0
           })}>
           <div

@@ -21,7 +21,7 @@ import {ListBox} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {LoadingSpinner, MyListBoxItem} from './utils';
-import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
 import React, {JSX} from 'react';
@@ -48,84 +48,92 @@ export default {
   }
 } as Meta<typeof Select>;
 
-export type SelectStory = StoryFn<typeof Select>;
+export type SelectStory = StoryObj<typeof Select>;
 
-export const SelectExample: SelectStory = args => (
-  <Select {...args} data-testid="select-example" id="select-example-id">
-    <Label style={{display: 'block'}}>Test</Label>
-    <Button>
-      <SelectValue />
-      <span aria-hidden="true" style={{paddingLeft: 5}}>
-        ▼
-      </span>
-    </Button>
-    <Popover style={{width: 'var(--trigger-width)', boxSizing: 'border-box'}}>
-      <ListBox className={styles.menu} style={{minWidth: 0, width: '100%'}}>
-        <MyListBoxItem>Foo</MyListBoxItem>
-        <MyListBoxItem>Bar</MyListBoxItem>
-        <MyListBoxItem>Baz</MyListBoxItem>
-        <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-      </ListBox>
-    </Popover>
-  </Select>
-);
+export const SelectExample: SelectStory = {
+  render: args => (
+    <Select {...args} data-testid="select-example" id="select-example-id">
+      <Label style={{display: 'block'}}>Test</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true" style={{paddingLeft: 5}}>
+          ▼
+        </span>
+      </Button>
+      <Popover style={{width: 'var(--trigger-width)', boxSizing: 'border-box'}}>
+        <ListBox className={styles.menu} style={{minWidth: 0, width: '100%'}}>
+          <MyListBoxItem>Foo</MyListBoxItem>
+          <MyListBoxItem>Bar</MyListBoxItem>
+          <MyListBoxItem>Baz</MyListBoxItem>
+          <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+        </ListBox>
+      </Popover>
+    </Select>
+  )
+};
 
-export const SelectRenderProps: SelectStory = args => (
-  <Select {...args} data-testid="select-render-props">
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <Button>
-          <SelectValue>
-            {({selectedItems, defaultChildren}) =>
-              selectedItems.length <= 1 ? defaultChildren : `${selectedItems.length} selected items`
-            }
-          </SelectValue>
-          <span aria-hidden="true" style={{paddingLeft: 5}}>
-            {isOpen ? '▲' : '▼'}
-          </span>
-        </Button>
-        <Popover>
-          <ListBox className={styles.menu}>
-            <MyListBoxItem>Foo</MyListBoxItem>
-            <MyListBoxItem>Bar</MyListBoxItem>
-            <MyListBoxItem>Baz</MyListBoxItem>
-            <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </Select>
-);
-
-export const SelectWithTagGroup: SelectStory = args => (
-  <Select {...args} data-testid="select-example" id="select-example-id">
-    <Label style={{display: 'block'}}>States</Label>
-    <div style={{display: 'flex', gap: 8, alignItems: 'start', maxWidth: 250}}>
-      <SelectValue>
-        {({selectedItems, state}) => (
-          <TagGroup
-            aria-label="Selected states"
-            items={selectedItems as {name: string}[]}
-            renderEmptyState={() => 'No selected items'}
-            onRemove={keys => {
-              for (let key of keys) {
-                state.selectionManager.toggleSelection(key);
+export const SelectRenderProps: SelectStory = {
+  render: args => (
+    <Select {...args} data-testid="select-render-props">
+      {({isOpen}) => (
+        <>
+          <Label style={{display: 'block'}}>Test</Label>
+          <Button>
+            <SelectValue>
+              {({selectedItems, defaultChildren}) =>
+                selectedItems.length <= 1
+                  ? defaultChildren
+                  : `${selectedItems.length} selected items`
               }
-            }}>
-            {item => <Tag>{item.name}</Tag>}
-          </TagGroup>
-        )}
-      </SelectValue>
-      <Button>+</Button>
-    </div>
-    <Popover placement="bottom end">
-      <ListBox className={styles.menu} items={usStateOptions}>
-        {state => <MyListBoxItem>{state.name}</MyListBoxItem>}
-      </ListBox>
-    </Popover>
-  </Select>
-);
+            </SelectValue>
+            <span aria-hidden="true" style={{paddingLeft: 5}}>
+              {isOpen ? '▲' : '▼'}
+            </span>
+          </Button>
+          <Popover>
+            <ListBox className={styles.menu}>
+              <MyListBoxItem>Foo</MyListBoxItem>
+              <MyListBoxItem>Bar</MyListBoxItem>
+              <MyListBoxItem>Baz</MyListBoxItem>
+              <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+            </ListBox>
+          </Popover>
+        </>
+      )}
+    </Select>
+  )
+};
+
+export const SelectWithTagGroup: SelectStory = {
+  render: args => (
+    <Select {...args} data-testid="select-example" id="select-example-id">
+      <Label style={{display: 'block'}}>States</Label>
+      <div style={{display: 'flex', gap: 8, alignItems: 'start', maxWidth: 250}}>
+        <SelectValue>
+          {({selectedItems, state}) => (
+            <TagGroup
+              aria-label="Selected states"
+              items={selectedItems as {name: string}[]}
+              renderEmptyState={() => 'No selected items'}
+              onRemove={keys => {
+                for (let key of keys) {
+                  state.selectionManager.toggleSelection(key);
+                }
+              }}>
+              {item => <Tag>{item.name}</Tag>}
+            </TagGroup>
+          )}
+        </SelectValue>
+        <Button>+</Button>
+      </div>
+      <Popover placement="bottom end">
+        <ListBox className={styles.menu} items={usStateOptions}>
+          {state => <MyListBoxItem>{state.name}</MyListBoxItem>}
+        </ListBox>
+      </Popover>
+    </Select>
+  )
+};
 
 let makeItems = (length: number) =>
   Array.from({length}, (_, i) => ({
@@ -196,51 +204,55 @@ const usStateOptions = [
   {id: 'WY', name: 'Wyoming'}
 ];
 
-export const SelectManyItems: SelectStory = args => (
-  <Select {...args}>
-    <Label style={{display: 'block'}}>Test</Label>
-    <Button>
-      <SelectValue />
-      <span aria-hidden="true" style={{paddingLeft: 5}}>
-        ▼
-      </span>
-    </Button>
-    <Popover>
-      <OverlayArrow>
-        <svg width={12} height={12}>
-          <path d="M0 0,L6 6,L12 0" />
-        </svg>
-      </OverlayArrow>
-      <ListBox items={usStateOptions} className={styles.menu}>
-        {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-      </ListBox>
-    </Popover>
-  </Select>
-);
-
-export const VirtualizedSelect: SelectStory = args => (
-  <Select {...args}>
-    <Label style={{display: 'block'}}>Test</Label>
-    <Button>
-      <SelectValue />
-      <span aria-hidden="true" style={{paddingLeft: 5}}>
-        ▼
-      </span>
-    </Button>
-    <Popover>
-      <OverlayArrow>
-        <svg width={12} height={12}>
-          <path d="M0 0,L6 6,L12 0" />
-        </svg>
-      </OverlayArrow>
-      <Virtualizer layout={new ListLayout({rowHeight: 25})}>
-        <ListBox items={manyItems} className={styles.menu}>
+export const SelectManyItems: SelectStory = {
+  render: args => (
+    <Select {...args}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true" style={{paddingLeft: 5}}>
+          ▼
+        </span>
+      </Button>
+      <Popover>
+        <OverlayArrow>
+          <svg width={12} height={12}>
+            <path d="M0 0,L6 6,L12 0" />
+          </svg>
+        </OverlayArrow>
+        <ListBox items={usStateOptions} className={styles.menu}>
           {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
         </ListBox>
-      </Virtualizer>
-    </Popover>
-  </Select>
-);
+      </Popover>
+    </Select>
+  )
+};
+
+export const VirtualizedSelect: SelectStory = {
+  render: args => (
+    <Select {...args}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true" style={{paddingLeft: 5}}>
+          ▼
+        </span>
+      </Button>
+      <Popover>
+        <OverlayArrow>
+          <svg width={12} height={12}>
+            <path d="M0 0,L6 6,L12 0" />
+          </svg>
+        </OverlayArrow>
+        <Virtualizer layout={new ListLayout({rowHeight: 25})}>
+          <ListBox items={manyItems} className={styles.menu}>
+            {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Virtualizer>
+      </Popover>
+    </Select>
+  )
+};
 
 interface Character {
   name: string;
@@ -325,151 +337,157 @@ export const AsyncVirtualizedCollectionRenderSelect: StoryObj<
   }
 };
 
-export const SelectSubmitExample: SelectStory = args => (
-  <Form>
-    <TextField
-      isRequired
-      autoComplete="username"
-      className={styles.textfieldExample}
-      name="username">
-      <Label>Username</Label>
-      <Input />
-      <FieldError className={styles.errorMessage} />
-    </TextField>
-    <Select {...args} isRequired autoComplete="organization" name="company">
-      <Label style={{display: 'block'}}>Company</Label>
-      <Button>
-        <SelectValue />
-        <span aria-hidden="true" style={{paddingLeft: 5}}>
-          ▼
-        </span>
-      </Button>
-      <Popover>
-        <OverlayArrow>
-          <svg height={12} width={12}>
-            <path d="M0 0,L6 6,L12 0" />
-          </svg>
-        </OverlayArrow>
-        <ListBox className={styles.menu}>
-          <MyListBoxItem>Adobe</MyListBoxItem>
-          <MyListBoxItem>Google</MyListBoxItem>
-          <MyListBoxItem>Microsoft</MyListBoxItem>
-        </ListBox>
-      </Popover>
-      <FieldError className={styles.errorMessage} />
-    </Select>
-    <Button type="submit">Submit</Button>
-    <Button type="reset">Reset</Button>
-  </Form>
-);
+export const SelectSubmitExample: SelectStory = {
+  render: args => (
+    <Form>
+      <TextField
+        isRequired
+        autoComplete="username"
+        className={styles.textfieldExample}
+        name="username">
+        <Label>Username</Label>
+        <Input />
+        <FieldError className={styles.errorMessage} />
+      </TextField>
+      <Select {...args} isRequired autoComplete="organization" name="company">
+        <Label style={{display: 'block'}}>Company</Label>
+        <Button>
+          <SelectValue />
+          <span aria-hidden="true" style={{paddingLeft: 5}}>
+            ▼
+          </span>
+        </Button>
+        <Popover>
+          <OverlayArrow>
+            <svg height={12} width={12}>
+              <path d="M0 0,L6 6,L12 0" />
+            </svg>
+          </OverlayArrow>
+          <ListBox className={styles.menu}>
+            <MyListBoxItem>Adobe</MyListBoxItem>
+            <MyListBoxItem>Google</MyListBoxItem>
+            <MyListBoxItem>Microsoft</MyListBoxItem>
+          </ListBox>
+        </Popover>
+        <FieldError className={styles.errorMessage} />
+      </Select>
+      <Button type="submit">Submit</Button>
+      <Button type="reset">Reset</Button>
+    </Form>
+  )
+};
 
 // Test case for https://github.com/adobe/react-spectrum/issues/8034
 // Required select validation cannot currently be tested in the jsdom environment.
 // In jsdom, forms are submitted even when required fields are empty.
 // See: https://github.com/jsdom/jsdom/issues/2898
-export const RequiredSelectWithManyItems = props => (
-  <form>
-    <Select {...props} name="select" isRequired>
-      <Label style={{display: 'block'}}>Required Select with many items</Label>
-      <Button>
-        <SelectValue />
-        <span aria-hidden="true" style={{paddingLeft: 5}}>
-          ▼
-        </span>
-      </Button>
-      <FieldError />
-      <Popover>
-        <ListBox items={makeItems(301)} className={styles.menu}>
-          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-        </ListBox>
-      </Popover>
-    </Select>
-    <Button type="submit">Submit</Button>
-  </form>
-);
+export const RequiredSelectWithManyItems = {
+  render: props => (
+    <form>
+      <Select {...props} name="select" isRequired>
+        <Label style={{display: 'block'}}>Required Select with many items</Label>
+        <Button>
+          <SelectValue />
+          <span aria-hidden="true" style={{paddingLeft: 5}}>
+            ▼
+          </span>
+        </Button>
+        <FieldError />
+        <Popover>
+          <ListBox items={makeItems(301)} className={styles.menu}>
+            {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Popover>
+      </Select>
+      <Button type="submit">Submit</Button>
+    </form>
+  )
+};
 
-export const SelectScrollBug = () => {
-  return (
-    <div style={{display: 'flex', flexDirection: 'row', height: '100vh'}}>
-      <div style={{flex: 3}}>Scrolling here should do nothing.</div>
+export const SelectScrollBug = {
+  render: () => {
+    return (
+      <div style={{display: 'flex', flexDirection: 'row', height: '100vh'}}>
+        <div style={{flex: 3}}>Scrolling here should do nothing.</div>
 
-      <div style={{flex: 1, overflowY: 'auto'}}>
-        Scrolling here should scroll the right side.
-        <br />
-        <br />
-        <br />
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        <br />
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        <br />
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        <br />
-        <br />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
-        neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
-        eligendi officia ipsam mollitia!
-        <br />
-        <br />
-        <br />
-        <Select>
-          <Label>Favorite Animal</Label>
-          <Button>
-            <SelectValue />
-            <span aria-hidden="true">▼</span>
-          </Button>
-          <Popover>
-            <ListBox>
-              <MyListBoxItem>Cat</MyListBoxItem>
-              <MyListBoxItem>Dog</MyListBoxItem>
-              <MyListBoxItem>Kangaroo</MyListBoxItem>
-            </ListBox>
-          </Popover>
-        </Select>
+        <div style={{flex: 1, overflowY: 'auto'}}>
+          Scrolling here should scroll the right side.
+          <br />
+          <br />
+          <br />
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          <br />
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          <br />
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          <br />
+          <br />
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Error voluptatibus esse qui enim
+          neque aliquam facere velit ipsa non, voluptates aperiam odit minima dolorum harum! Facere
+          eligendi officia ipsam mollitia!
+          <br />
+          <br />
+          <br />
+          <Select>
+            <Label>Favorite Animal</Label>
+            <Button>
+              <SelectValue />
+              <span aria-hidden="true">▼</span>
+            </Button>
+            <Popover>
+              <ListBox>
+                <MyListBoxItem>Cat</MyListBoxItem>
+                <MyListBoxItem>Dog</MyListBoxItem>
+                <MyListBoxItem>Kangaroo</MyListBoxItem>
+              </ListBox>
+            </Popover>
+          </Select>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 };

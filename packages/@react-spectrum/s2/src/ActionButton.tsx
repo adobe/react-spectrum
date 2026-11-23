@@ -59,7 +59,7 @@ export interface ActionButtonStyleProps {
   staticColor?: 'black' | 'white' | 'auto';
   /**
    * Whether the button should be displayed with a [quiet
-   * style](https://spectrum.adobe.com/page/action-button/#Quiet).
+   * style](https://spectrum.adobe.com/web/rsp/components/action-button#component-options).
    */
   isQuiet?: boolean;
 }
@@ -69,7 +69,7 @@ interface ToggleButtonStyleProps {
   isSelected?: boolean;
   /**
    * Whether the button should be displayed with an [emphasized
-   * style](https://spectrum.adobe.com/page/action-button/#Emphasis).
+   * style](https://spectrum.adobe.com/web/rsp/components/action-button#component-options).
    */
   isEmphasized?: boolean;
 }
@@ -463,7 +463,7 @@ export const ActionButton = forwardRef(function ActionButton(
                 })({isProgressVisible, isPending})}>
                 <ProgressCircle
                   isIndeterminate
-                  aria-label={stringFormatter.format('button.pending')}
+                  aria-label={stringFormatter.format('actionbutton.pending')}
                   size="S"
                   staticColor={staticColor}
                   styles={style({size: '1lh'})}

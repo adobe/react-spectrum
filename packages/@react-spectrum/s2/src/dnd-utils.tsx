@@ -11,11 +11,11 @@
  */
 
 import {Button} from 'react-aria-components/Button';
+import {css, style} from '../style' with {type: 'macro'};
 import {DragAndDropContext, DropIndicator} from 'react-aria-components/useDragAndDrop';
 import DragHandle from '../ui-icons/DragHandle';
 import {ItemDropTarget} from '@react-types/shared';
 import React, {useContext} from 'react';
-import {style} from '../style' with {type: 'macro'};
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 let insertionIndicatorWrapper = style<{isDropTarget?: boolean; isRoot?: boolean}>({
@@ -85,8 +85,28 @@ export function InsertionIndicator({target}: {target: ItemDropTarget}) {
   );
 }
 
-let dragButton = style({
+let dragButton = style<{
+  isFocusVisible: boolean;
+  isPressed: boolean;
+  isHandlePointerSource: boolean;
+  isFocusVisibleWithin: boolean;
+}>({
   color: 'inherit',
+  // Preserve the handle's size when hover ends during native drag initiation.
+  opacity: {
+    default: 1,
+    isHandlePointerSource: {
+      default: '--dragHandleOpacity',
+      isFocusVisibleWithin: 1
+    }
+  },
+  cursor: {
+    default: 'default',
+    isHandlePointerSource: {
+      default: 'grab',
+      isPressed: 'grabbing'
+    }
+  },
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -114,13 +134,35 @@ let dragButton = style({
   }
 });
 
+// Expands the handle's touch target without affecting layout. The pseudo-element is positioned
+// relative to the item (or cell), spanning its full height from the start edge to
+// --dragHandleHitAreaWidth, so it doesn't overlap the selection checkbox.
+const dragHandleHitArea = css(`
+  @media not ((hover: hover) and (pointer: fine)) {
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      inset-inline-start: 0;
+      width: var(--dragHandleHitAreaWidth);
+    }
+  }
+`);
+
 export function DragHandleButton({isFocusVisibleWithin}: {isFocusVisibleWithin: boolean}) {
   let {visuallyHiddenProps} = useVisuallyHidden();
+  let {dragAndDropHooks} = useContext(DragAndDropContext) ?? {};
+  let isHandlePointerSource = dragAndDropHooks?.pointerDragSource === 'handle';
+  let isHidden = !isFocusVisibleWithin && !isHandlePointerSource;
   return (
     <Button
       slot="drag"
-      style={!isFocusVisibleWithin ? visuallyHiddenProps.style : {}}
-      className={dragButton}>
+      style={isHidden ? visuallyHiddenProps.style : {}}
+      className={renderProps =>
+        dragButton({...renderProps, isHandlePointerSource, isFocusVisibleWithin}) +
+        (isHandlePointerSource ? ' ' + dragHandleHitArea : '')
+      }>
       <DragHandle size="M" />
     </Button>
   );

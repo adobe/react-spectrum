@@ -11,7 +11,7 @@
  */
 
 import {Icon} from '../../src/icon/Icon';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -19,16 +19,15 @@ export default {
   providerSwitcher: {status: 'positive'}
 } as Meta<typeof Icon>;
 
-export type IconStory = StoryFn<typeof Icon>;
+export type IconStory = StoryObj<typeof Icon>;
 
-export const ExcitingSquare: IconStory = () => (
-  <Icon>
-    <svg viewBox="0 0 25 25">
-      <rect x="0" y="0" width="25" height="25" />
-    </svg>
-  </Icon>
-);
-
-ExcitingSquare.story = {
+export const ExcitingSquare: IconStory = {
+  render: () => (
+    <Icon>
+      <svg viewBox="0 0 25 25">
+        <rect x="0" y="0" width="25" height="25" />
+      </svg>
+    </Icon>
+  ),
   name: 'exciting square'
 };

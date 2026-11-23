@@ -48,6 +48,7 @@ let {
   EmptyTreeStaticStory: EmptyLoadingTree,
   LoadingStoryDepOnTopStory: LoadingMoreTree,
   TreeWithDragAndDrop,
+  TreeWithLazyChildren,
   TreeWithTextFieldStory
 } = composeStories(stories);
 
@@ -409,6 +410,47 @@ describe('Tree', () => {
     for (let row of getAllByRole('row')) {
       expect(row).toHaveAttribute('class', 'react-aria-TreeItem');
     }
+  });
+
+  describe('descriptions', () => {
+    function DescriptionTree({
+      hideDescription = false,
+      itemAriaLabel
+    }: {
+      hideDescription?: boolean;
+      itemAriaLabel?: string;
+    }) {
+      return (
+        <Tree aria-label="Files">
+          <TreeItem id="projects" textValue="Projects" aria-label={itemAriaLabel}>
+            <TreeItemContent>
+              <Text>Projects</Text>
+              {!hideDescription && (
+                <Text slot="description" id="tree-desc">
+                  Shared files
+                </Text>
+              )}
+            </TreeItemContent>
+          </TreeItem>
+        </Tree>
+      );
+    }
+
+    it('includes the description in the row name', () => {
+      let {getByRole} = render(<DescriptionTree />);
+      expect(getByRole('row')).toHaveAccessibleName('Projects Shared files');
+    });
+
+    it('includes the description with an explicit item aria-label', () => {
+      let {getByRole} = render(<DescriptionTree itemAriaLabel="Team projects" />);
+      expect(getByRole('row')).toHaveAccessibleName('Team projects Shared files');
+    });
+
+    it('keeps the row name when there is no description', () => {
+      let {getByRole} = render(<DescriptionTree hideDescription />);
+      expect(getByRole('row')).toHaveAccessibleName('Projects');
+      expect(getByRole('row')).not.toHaveAttribute('aria-labelledby');
+    });
   });
 
   it('should render a Tree with custom classes', () => {
@@ -1577,6 +1619,61 @@ describe('Tree', () => {
           new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
         );
       });
+
+      it('should expand a row with hasChildItems even if it has no child rows', async () => {
+        let {getByRole} = render(
+          <Tree aria-label="test tree" onExpandedChange={onExpandedChange}>
+            <StaticTreeItem id="folder" textValue="Folder" hasChildItems>
+              Folder
+            </StaticTreeItem>
+          </Tree>
+        );
+        let row = getByRole('row');
+        expect(row).toHaveAttribute('aria-expanded', 'false');
+
+        await user.tab();
+        let chevron = within(row).getAllByRole('button')[0];
+        await trigger(chevron);
+        expect(row).toHaveAttribute('aria-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['folder']));
+      });
+    });
+
+    it('should render and navigate into children that are added to the collection on expand', async () => {
+      let {getAllByRole} = render(<TreeWithLazyChildren />);
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.keyboard('{ArrowRight}');
+      rows = getAllByRole('row');
+      expect(rows).toHaveLength(7);
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+      expect(document.activeElement).toBe(rows[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[1]);
+      expect(rows[1]).toHaveTextContent('Project 1');
+      expect(rows[1]).toHaveAttribute('aria-level', '2');
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[2]);
+      expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
+      await user.keyboard('{ArrowRight}');
+      rows = getAllByRole('row');
+      expect(rows).toHaveLength(10);
+      expect(document.activeElement).toBe(rows[2]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[3]);
+      expect(rows[3]).toHaveTextContent('Project 2A');
+      expect(rows[3]).toHaveAttribute('aria-level', '3');
+
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(rows[2]);
     });
 
     it('should apply the proper attributes to the chevron', async () => {
@@ -1596,6 +1693,63 @@ describe('Tree', () => {
   });
 
   describe('empty state', () => {
+    it.each([false, true])('should tab through interactive empty state (shift=%s)', async shift => {
+      let {getByRole} = render(
+        <>
+          <button>Before</button>
+          <Tree
+            aria-label="Test"
+            renderEmptyState={() => (
+              <div>
+                <a href="/#">No results</a>
+                <a href="/#">Another link</a>
+              </div>
+            )}>
+            {[]}
+          </Tree>
+          <button>After</button>
+        </>
+      );
+
+      await user.click(getByRole('button', {name: shift ? 'After' : 'Before'}));
+      for (let name of shift ? ['Another link', 'No results'] : ['No results', 'Another link']) {
+        await user.tab({shift});
+        expect(getByRole('link', {name})).toHaveFocus();
+      }
+      await user.tab({shift});
+      expect(getByRole('button', {name: shift ? 'Before' : 'After'})).toHaveFocus();
+    });
+
+    it('should navigate to rows that arrive while the empty tree is focused', async () => {
+      let Example = ({items}: {items: Array<{id: string; name: string}>}) => (
+        <Tree aria-label="Async tree" items={items} renderEmptyState={() => 'No items'}>
+          {item => (
+            <TreeItem id={item.id} textValue={item.name}>
+              <TreeItemContent>{item.name}</TreeItemContent>
+            </TreeItem>
+          )}
+        </Tree>
+      );
+      let {getByRole, getAllByRole, rerender} = render(<Example items={[]} />);
+      let tree = getByRole('treegrid');
+
+      await user.tab();
+      expect(tree).toHaveFocus();
+
+      rerender(
+        <Example
+          items={[
+            {id: 'one', name: 'One'},
+            {id: 'two', name: 'Two'}
+          ]}
+        />
+      );
+      await user.keyboard('{ArrowDown}');
+      expect(getAllByRole('row')[0]).toHaveFocus();
+      await user.keyboard('{ArrowDown}');
+      expect(getAllByRole('row')[1]).toHaveFocus();
+    });
+
     it('should allow the user to tab to the empty tree', async () => {
       let {getAllByRole, getByRole} = render(
         <Tree
@@ -2282,6 +2436,76 @@ describe('Tree', () => {
       expect(button).toHaveAttribute('aria-label', 'Drag Projects');
     });
 
+    describe('pointerDragSource', () => {
+      it('should allow dragging from anywhere on the item by default', () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(<DraggableTree onDragStart={onDragStart} />);
+        let row = getAllByRole('row')[0];
+        let button = within(row).getAllByRole('button')[0];
+        expect(button).toHaveAttribute('aria-label', 'Drag Projects');
+        expect(row).toHaveAttribute('draggable', 'true');
+        expect(button).not.toHaveAttribute('draggable');
+        expect(button).toHaveStyle({pointerEvents: 'none'});
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(row, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+      });
+
+      it('should only allow pointer dragging from the drag button when set to "handle"', () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableTree pointerDragSource="handle" onDragStart={onDragStart} />
+        );
+        let row = getAllByRole('row')[0];
+        let button = within(row).getAllByRole('button')[0];
+        expect(button).toHaveAttribute('aria-label', 'Drag Projects');
+        expect(row).not.toHaveAttribute('draggable');
+        expect(button).toHaveAttribute('draggable', 'true');
+        expect(button).not.toHaveStyle({pointerEvents: 'none'});
+
+        for (let pointerType of ['mouse', 'touch']) {
+          let content = within(row).getByText('Projects');
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(content, {pointerType, button: 0, pointerId: 1});
+          fireEvent(content, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+          act(() => jest.runAllTimers());
+          expect(onDragStart).not.toHaveBeenCalled();
+          expect(row).not.toHaveAttribute('data-dragging');
+        }
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(button, {pointerType: 'mouse', button: 0, pointerId: 1});
+        fireEvent(button, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith(
+          expect.objectContaining({keys: new Set(['projects'])})
+        );
+        expect(row).toHaveAttribute('data-dragging', 'true');
+        expect(dataTransfer._dragImage.node).toBe(row);
+
+        fireEvent(button, new DragEvent('dragend', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(row).not.toHaveAttribute('data-dragging');
+      });
+
+      it('should support keyboard dragging via the drag button when set to "handle"', async () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableTree pointerDragSource="handle" onDragStart={onDragStart} />
+        );
+        let button = within(getAllByRole('row')[0]).getAllByRole('button')[0];
+        act(() => button.focus());
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        await user.keyboard('{Escape}');
+        act(() => jest.runAllTimers());
+      });
+    });
+
     describe('collapsing the drag source branch', () => {
       type DragTreeItem = {id: string; name: string; childItems?: DragTreeItem[]};
       function renderMovingItem(item: TreeData<DragTreeItem>['items'][number]) {
@@ -2871,6 +3095,165 @@ describe('Tree', () => {
         expect(onClick).toHaveBeenCalledTimes(1);
       }
     );
+  });
+
+  describe('item focus events', () => {
+    it.each(['keyboard', 'mouse'])(
+      'should report item focus transitions using %s',
+      async interactionType => {
+        let onFocus = jest.fn();
+        let onBlur = jest.fn();
+        let onFocusChange = jest.fn();
+        let itemProps = {
+          onFocus: (e: React.FocusEvent) => onFocus(e.target),
+          onBlur: (e: React.FocusEvent) => onBlur(e.target),
+          onFocusChange
+        };
+        let {getAllByRole, getByRole} = render(
+          <>
+            <button>Before</button>
+            <Tree aria-label="Test" selectionMode="single">
+              <TreeItem id="cat" textValue="Cat" {...itemProps}>
+                <TreeItemContent>Cat</TreeItemContent>
+              </TreeItem>
+              <TreeItem id="dog" textValue="Dog" {...itemProps}>
+                <TreeItemContent>Dog</TreeItemContent>
+              </TreeItem>
+            </Tree>
+            <button>After</button>
+          </>
+        );
+        let rows = getAllByRole('row');
+
+        if (interactionType === 'keyboard') {
+          await user.tab();
+          await user.tab();
+        } else {
+          await user.click(rows[0]);
+        }
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('data-focused', 'true');
+        expect(onFocus).toHaveBeenCalledTimes(1);
+        expect(onFocus).toHaveBeenLastCalledWith(rows[0]);
+        expect(onBlur).not.toHaveBeenCalled();
+        expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+        if (interactionType === 'keyboard') {
+          expect(rows[0]).toHaveAttribute('data-focus-visible', 'true');
+          await user.keyboard('{ArrowDown}');
+        } else {
+          expect(rows[0]).not.toHaveAttribute('data-focus-visible');
+          await user.click(rows[1]);
+        }
+        expect(document.activeElement).toBe(rows[1]);
+        expect(rows[0]).not.toHaveAttribute('data-focused');
+        expect(rows[1]).toHaveAttribute('data-focused', 'true');
+        expect(onFocus).toHaveBeenCalledTimes(2);
+        expect(onFocus).toHaveBeenLastCalledWith(rows[1]);
+        expect(onBlur).toHaveBeenCalledTimes(1);
+        expect(onBlur).toHaveBeenLastCalledWith(rows[0]);
+        expect(onFocusChange.mock.calls).toEqual([[true], [false], [true]]);
+
+        if (interactionType === 'keyboard') {
+          await user.tab();
+        } else {
+          await user.click(getByRole('button', {name: 'After'}));
+        }
+        expect(document.activeElement).toBe(getByRole('button', {name: 'After'}));
+        expect(onBlur).toHaveBeenCalledTimes(2);
+        expect(onBlur).toHaveBeenLastCalledWith(rows[1]);
+        expect(onFocusChange.mock.calls).toEqual([[true], [false], [true], [false]]);
+      }
+    );
+
+    it('should not report focus changes when expanding, collapsing, or rerendering a focused item', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let example = (label: string) => (
+        <Tree aria-label="Test" defaultExpandedKeys={['projects']}>
+          <TreeItem
+            id="projects"
+            textValue={label}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onFocusChange={onFocusChange}>
+            <TreeItemContent>
+              <Button slot="chevron">Expand</Button>
+              {label}
+            </TreeItemContent>
+            <TreeItem id="project-1" textValue="Project 1">
+              <TreeItemContent>Project 1</TreeItemContent>
+            </TreeItem>
+          </TreeItem>
+        </Tree>
+      );
+      let {rerender, getAllByRole} = render(example('Projects'));
+      await user.tab();
+      let rows = getAllByRole('row');
+      expect(document.activeElement).toBe(rows[0]);
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(rows[0]);
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(rows[0]);
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+      rerender(example('Updated projects'));
+      expect(document.activeElement).toBe(getAllByRole('row')[0]);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+    });
+
+    it('should not report descendant focus as item focus', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let {getByRole} = render(
+        <Tree aria-label="Files">
+          <TreeItem
+            id="cat"
+            textValue="Cat"
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onFocusChange={onFocusChange}>
+            <TreeItemContent>
+              Cat <Button>First action</Button>
+              <Button>Second action</Button>
+            </TreeItemContent>
+          </TreeItem>
+        </Tree>
+      );
+      await user.tab();
+      let row = getByRole('row');
+      expect(document.activeElement).toBe(row);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'First action'}));
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+
+      onFocus.mockClear();
+      onBlur.mockClear();
+      onFocusChange.mockClear();
+
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Second action'}));
+      expect(onFocus).not.toHaveBeenCalled();
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange).not.toHaveBeenCalled();
+    });
   });
 
   describe('sections', () => {

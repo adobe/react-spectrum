@@ -58,3 +58,7 @@ createServer(async (req, res) => {
   }
 }).listen(1234);
 console.log('Server listening on port 1234');
+
+if ('hot' in module && module.hot) {
+  (module.hot as any).accept('./pages/**/*.mdx?async=true&flat=true');
+}

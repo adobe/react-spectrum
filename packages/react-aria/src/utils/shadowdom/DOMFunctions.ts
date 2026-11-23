@@ -1,9 +1,41 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
-/* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target */
+/* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target, rsp-rules/shadow-safe-parent-node */
 
-import {getOwnerWindow, isShadowRoot} from '../domHelpers';
+import {EventTargetType} from '@react-types/shared';
+import {getOwnerWindow} from '../domHelpers';
+import {isElement, isShadowRoot} from '../typeHelpers';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 import type {SyntheticEvent} from 'react';
+
+/**
+ * ShadowDOM safe version of Node.parentNode.
+ */
+export function getParentNode(node: Node | Element | null | undefined): Node | null {
+  let currentNode: HTMLElement | Node | null | undefined = node;
+
+  if (!shadowDOM()) {
+    return currentNode?.parentNode ?? null;
+  }
+
+  if (!currentNode) {
+    return null;
+  }
+
+  if (
+    typeof (currentNode as HTMLSlotElement).assignedElements !== 'function' &&
+    (currentNode as HTMLSlotElement).assignedSlot?.parentNode
+  ) {
+    // Element is slotted
+    currentNode = (currentNode as HTMLSlotElement).assignedSlot!.parentNode;
+  } else if (isShadowRoot(currentNode)) {
+    // Element is in shadow root
+    currentNode = currentNode.host;
+  } else {
+    currentNode = currentNode.parentNode;
+  }
+
+  return currentNode;
+}
 
 /**
  * ShadowDOM safe version of Node.contains.
@@ -22,7 +54,7 @@ export function nodeContains(
 
   let currentNode: HTMLElement | Node | null | undefined = otherNode;
 
-  while (currentNode !== null) {
+  while (currentNode != null) {
     if (currentNode === node) {
       return true;
     }
@@ -45,6 +77,19 @@ export function nodeContains(
 }
 
 /**
+ * ShadowDOM safe version of element.parentElement.
+ */
+export function getParentElement(node: Node | Element | null | undefined): Element | null {
+  let parentNode = getParentNode(node);
+
+  while (parentNode != null && !isElement(parentNode)) {
+    parentNode = getParentNode(parentNode);
+  }
+
+  return parentNode;
+}
+
+/**
  * ShadowDOM safe version of document.activeElement.
  */
 export const getActiveElement = (doc: Document = document): Element | null => {
@@ -63,9 +108,6 @@ export const getActiveElement = (doc: Document = document): Element | null => {
 
   return activeElement;
 };
-
-// Type helper to extract the target element type from an event
-type EventTargetType<T> = T extends SyntheticEvent<infer E, any> ? E : EventTarget;
 
 // Possibly we can improve the types for this using https://github.com/adobe/react-spectrum/pull/8991/changes#diff-2d491c0c91701d28d08e1cf9fcadbdb21a030b67ab681460c9934140f29127b8R68 but it was more changes than I
 // wanted to make to fix the function.

@@ -488,42 +488,52 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
       );
     }
 
+    let raf: number | undefined;
     if (
       hasTransition.current &&
       selectedKeyRef.current != null &&
       selectedKeyRef.current !== state.selectedKey
     ) {
-      // Measure auto size.
-      el.style.setProperty('--tab-panel-width', 'auto');
-      el.style.setProperty('--tab-panel-height', 'auto');
-      let {width, height} = el.getBoundingClientRect();
+      // Wait until the next frame to measure, so that content which renders in a follow-up update
+      // (e.g. the TabList and TabPanel of a nested Tabs) is included. This runs before paint.
+      raf = requestAnimationFrame(() => {
+        // Measure auto size.
+        el.style.setProperty('--tab-panel-width', 'auto');
+        el.style.setProperty('--tab-panel-height', 'auto');
+        let {width, height} = el.getBoundingClientRect();
 
-      if (
-        prevSize.current &&
-        (prevSize.current.width !== width || prevSize.current.height !== height)
-      ) {
-        // Revert to previous size.
-        el.style.setProperty('--tab-panel-width', prevSize.current.width + 'px');
-        el.style.setProperty('--tab-panel-height', prevSize.current.height + 'px');
+        if (
+          prevSize.current &&
+          (prevSize.current.width !== width || prevSize.current.height !== height)
+        ) {
+          // Revert to previous size.
+          el.style.setProperty('--tab-panel-width', prevSize.current.width + 'px');
+          el.style.setProperty('--tab-panel-height', prevSize.current.height + 'px');
 
-        // Force style re-calculation to trigger animations.
-        window.getComputedStyle(el).height;
+          // Force style re-calculation to trigger animations.
+          window.getComputedStyle(el).height;
 
-        // Animate to current pixel size.
-        el.style.setProperty('--tab-panel-width', width + 'px');
-        el.style.setProperty('--tab-panel-height', height + 'px');
+          // Animate to current pixel size.
+          el.style.setProperty('--tab-panel-width', width + 'px');
+          el.style.setProperty('--tab-panel-height', height + 'px');
 
-        // When animations complete, revert back to auto size.
-        Promise.all(el.getAnimations().map(a => a.finished))
-          .then(() => {
-            el.style.setProperty('--tab-panel-width', 'auto');
-            el.style.setProperty('--tab-panel-height', 'auto');
-          })
-          .catch(() => {});
-      }
+          // When animations complete, revert back to auto size.
+          Promise.all(el.getAnimations().map(a => a.finished))
+            .then(() => {
+              el.style.setProperty('--tab-panel-width', 'auto');
+              el.style.setProperty('--tab-panel-height', 'auto');
+            })
+            .catch(() => {});
+        }
+      });
     }
 
     selectedKeyRef.current = state.selectedKey;
+    return () => {
+      if (raf != null) {
+        cancelAnimationFrame(raf);
+      }
+    };
   }, [ref, state.selectedKey]);
 
   // Store previous size before DOM updates occur.
@@ -543,12 +553,20 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
   let DOMProps = filterDOMProps(props, {labelable: true, global: true});
   delete DOMProps.id;
 
+  // Define the size variables on every TabPanels so that a nested TabPanels does not inherit
+  // the pixel values of an outer TabPanels while it is animating.
+  let style = {
+    '--tab-panel-width': 'auto',
+    '--tab-panel-height': 'auto',
+    ...props.style
+  };
+
   return (
     <dom.div
       render={props.render}
       {...DOMProps}
       ref={ref}
-      style={props.style}
+      style={style}
       className={props.className || 'react-aria-TabPanels'}>
       <Collection {...props} />
     </dom.div>

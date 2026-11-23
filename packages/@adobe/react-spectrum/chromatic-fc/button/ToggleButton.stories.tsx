@@ -15,7 +15,7 @@ import {classNames} from '../../src/utils/classNames';
 import {Flex} from '../../src/layout/Flex';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '../../src/layout/Grid';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {ToggleButton} from '../../src/button/ToggleButton';
@@ -37,36 +37,35 @@ export default {
   title: 'Button/ToggleButton'
 } as Meta<typeof ToggleButton>;
 
-export type ToggleButtonStory = StoryFn<typeof ToggleButton>;
+export type ToggleButtonStory = StoryObj<typeof ToggleButton>;
 
-export const AllPossibleStates: ToggleButtonStory = () => (
-  <Flex direction={'column'} gap={'size-300'}>
-    <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
-      {combinations.map(c => (
-        <ToggleButton {...c}>Button</ToggleButton>
-      ))}
-    </Grid>
-    <View backgroundColor="static-yellow-400" padding="size-1000">
+export const AllPossibleStates: ToggleButtonStory = {
+  render: () => (
+    <Flex direction={'column'} gap={'size-300'}>
       <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
         {combinations.map(c => (
-          <ToggleButton {...c} staticColor="black">
-            Button
-          </ToggleButton>
+          <ToggleButton {...c}>Button</ToggleButton>
         ))}
       </Grid>
-    </View>
-    <View backgroundColor="static-blue-700" padding="size-1000">
-      <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
-        {combinations.map(c => (
-          <ToggleButton {...c} staticColor="white">
-            Button
-          </ToggleButton>
-        ))}
-      </Grid>
-    </View>
-  </Flex>
-);
-
-AllPossibleStates.story = {
+      <View backgroundColor="static-yellow-400" padding="size-1000">
+        <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+          {combinations.map(c => (
+            <ToggleButton {...c} staticColor="black">
+              Button
+            </ToggleButton>
+          ))}
+        </Grid>
+      </View>
+      <View backgroundColor="static-blue-700" padding="size-1000">
+        <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+          {combinations.map(c => (
+            <ToggleButton {...c} staticColor="white">
+              Button
+            </ToggleButton>
+          ))}
+        </Grid>
+      </View>
+    </Flex>
+  ),
   name: 'all'
 };

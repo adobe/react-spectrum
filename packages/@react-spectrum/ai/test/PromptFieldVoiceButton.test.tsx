@@ -165,7 +165,7 @@ function renderSubmitHarness(): SubmitHarness {
     user,
     onSubmit,
     micButton: () => tree.getByRole('button', {name: /recording/i}),
-    submitButton: () => tree.getByRole('button', {name: /send/i}),
+    submitButton: () => tree.getByRole('button', {name: /submit/i}),
     getText: () => valueRef.current.toString(),
     lastSubmitted: () => {
       let call = onSubmit.mock.calls.at(-1);

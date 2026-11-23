@@ -296,7 +296,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
     renderEmptyState = () => (
       <div className={centeredWrapper}>
         <div className={loadingSpinnerWrapper}>
-          <ProgressCircle isIndeterminate aria-label={stringFormatter.format('table.loading')} />
+          <ProgressCircle isIndeterminate aria-label={stringFormatter.format('listview.loading')} />
         </div>
       </div>
     );
@@ -311,7 +311,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
         <div className={loadingSpinnerWrapper}>
           <ProgressCircle
             isIndeterminate
-            aria-label={stringFormatter.format('table.loadingMore')}
+            aria-label={stringFormatter.format('listview.loadingMore')}
           />
         </div>
       </div>
@@ -509,6 +509,20 @@ const listitem = style<
   '--radius': {
     type: 'borderTopStartRadius',
     value: 'default'
+  },
+  '--dragHandleOpacity': {
+    type: 'opacity',
+    value: {
+      default: 0,
+      isHovered: 1,
+      isSelected: 1,
+      touch: 1
+    }
+  },
+  '--dragHandleHitAreaWidth': {
+    type: 'width',
+    // Spans the start padding, drag handle, and gap before the checkbox
+    value: 22
   },
   forcedColorAdjust: 'none'
 });

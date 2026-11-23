@@ -3,7 +3,6 @@ export {Attachment, AttachmentList, AttachmentPreview} from '../src/AttachmentLi
 export {AttachmentGrid, AttachmentGridItem} from '../src/AttachmentGrid';
 export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
-export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 export {
   PromptFieldValue,
   PromptField,
@@ -19,6 +18,7 @@ export {
   PromptToken,
   PromptFieldVoiceButton
 } from '../src/PromptField';
+export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 export {
   ExecutionTrace,
   ExecutionTraceItem,
@@ -26,14 +26,7 @@ export {
   ResponseStatusTitle,
   ResponseStatusPanel
 } from '../src/ResponseStatus';
-export {
-  Chat,
-  Thread,
-  ThreadItem,
-  ThreadLoadMoreItem,
-  ThreadScrollButton,
-  PromptFocusContext
-} from '../src/Chat';
+export {Chat, Thread, ThreadItem, ThreadLoadMoreItem, PromptFocusContext} from '../src/Chat';
 export {TokenFieldValue} from 'react-aria-components/TokenField';
 export {UserMessage} from '../src/UserMessage';
 export {PixelLoader} from '../src/loader/react';
@@ -73,13 +66,7 @@ export type {
   ResponseStatusTitleProps,
   ResponseStatusPanelProps
 } from '../src/ResponseStatus';
-export type {
-  ChatProps,
-  ThreadProps,
-  ThreadItemProps,
-  ThreadLoadMoreItemProps,
-  ThreadScrollButtonProps
-} from '../src/Chat';
+export type {ChatProps, ThreadProps, ThreadItemProps, ThreadLoadMoreItemProps} from '../src/Chat';
 export type {TokenFieldValueOptions} from 'react-aria-components/TokenField';
 export type {UserMessageProps} from '../src/UserMessage';
 export type {PixelLoaderProps} from '../src/loader/react';

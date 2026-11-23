@@ -36,6 +36,7 @@ export interface HoverResult {
 // We want to ignore these emulated events so they do not trigger hover behavior.
 // See https://bugs.webkit.org/show_bug.cgi?id=214609.
 let globalIgnoreEmulatedMouseEvents = false;
+let globalIgnoreEmulatedMouseEventsTimeout: ReturnType<typeof setTimeout> | null = null;
 let hoverCount = 0;
 
 function setGlobalIgnoreEmulatedMouseEvents() {
@@ -45,8 +46,12 @@ function setGlobalIgnoreEmulatedMouseEvents() {
   // with pointerType="mouse" immediately after onPointerUp and before onFocus. On other
   // devices that don't have this quirk, we don't want to ignore a mouse hover sometime in
   // the distant future because a user previously touched the element.
-  setTimeout(() => {
+  if (globalIgnoreEmulatedMouseEventsTimeout != null) {
+    clearTimeout(globalIgnoreEmulatedMouseEventsTimeout);
+  }
+  globalIgnoreEmulatedMouseEventsTimeout = setTimeout(() => {
     globalIgnoreEmulatedMouseEvents = false;
+    globalIgnoreEmulatedMouseEventsTimeout = null;
   }, 500);
 }
 
@@ -105,7 +110,6 @@ export function useHover(props: HoverProps): HoverResult {
 
   let {hoverProps, triggerHoverEnd} = useMemo(() => {
     let triggerHoverStart = (event, pointerType) => {
-      state.pointerType = pointerType;
       if (
         isDisabled ||
         pointerType === 'touch' ||
@@ -115,6 +119,7 @@ export function useHover(props: HoverProps): HoverResult {
         return;
       }
 
+      state.pointerType = pointerType;
       state.isHovered = true;
       let target = event.currentTarget;
       state.target = target;
@@ -156,13 +161,12 @@ export function useHover(props: HoverProps): HoverResult {
 
     let triggerHoverEnd = (event, pointerType) => {
       let target = state.target;
-      state.pointerType = '';
-      state.target = null;
-
       if (pointerType === 'touch' || !state.isHovered || !target) {
         return;
       }
 
+      state.pointerType = '';
+      state.target = null;
       state.isHovered = false;
       removeAllGlobalListeners();
 

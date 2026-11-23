@@ -56,6 +56,7 @@ import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../src/Virtualizer';
 
 let {
+  DndTableExample,
   RenderEmptyStateStory: EmptyLoadingTable,
   TableLoadingBodyWrapperStory: LoadingMoreTable,
   TableCellColSpanWithVariousSpansExample: TableCellColSpan,
@@ -816,6 +817,116 @@ describe('Table', () => {
     await user.hover(column);
     expect(column).not.toHaveAttribute('data-hovered');
     expect(column).not.toHaveClass('hover');
+  });
+
+  describe('row focus events', () => {
+    it('should report row focus transitions using the keyboard', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let {getAllByRole, getByRole} = render(
+        <>
+          <button>Before</button>
+          <TestTable
+            rowProps={{
+              onFocus: e => onFocus(e.target),
+              onBlur: e => onBlur(e.target),
+              onFocusChange
+            }}
+          />
+          <button>After</button>
+        </>
+      );
+      let rows = getAllByRole('row').slice(1);
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      expect(rows[0]).toHaveAttribute('data-focused', 'true');
+      expect(rows[0]).toHaveAttribute('data-focus-visible', 'true');
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onFocus).toHaveBeenLastCalledWith(rows[0]);
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[1]);
+      expect(rows[0]).not.toHaveAttribute('data-focused');
+      expect(rows[0]).not.toHaveAttribute('data-focus-visible');
+      expect(rows[1]).toHaveAttribute('data-focused', 'true');
+      expect(rows[1]).toHaveAttribute('data-focus-visible', 'true');
+      expect(onFocus).toHaveBeenCalledTimes(2);
+      expect(onFocus).toHaveBeenLastCalledWith(rows[1]);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenLastCalledWith(rows[0]);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false], [true]]);
+
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'After'}));
+      expect(onBlur).toHaveBeenCalledTimes(2);
+      expect(onBlur).toHaveBeenLastCalledWith(rows[1]);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false], [true], [false]]);
+    });
+
+    it('should not report focus changes when a focused row rerenders', async () => {
+      let onFocusChange = jest.fn();
+      let {rerender, getAllByRole} = renderTable({rowProps: {onFocusChange}});
+      await user.tab();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+      rerender(<TestTable rowProps={{onFocusChange, 'aria-label': 'Updated row'}} />);
+      expect(document.activeElement).toBe(getAllByRole('row')[1]);
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+    });
+
+    it('should not report cell or descendant focus as row focus', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let {getByRole} = render(
+        <Table aria-label="Files">
+          <TableHeader>
+            <Column isRowHeader>Name</Column>
+            <Column>Actions</Column>
+          </TableHeader>
+          <TableBody>
+            <Row onFocus={onFocus} onBlur={onBlur} onFocusChange={onFocusChange}>
+              <Cell>Cat</Cell>
+              <Cell>
+                <Button>First action</Button>
+                <Button>Second action</Button>
+              </Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+      await user.tab();
+      let row = getByRole('row', {name: 'Cat'});
+      expect(document.activeElement).toBe(row);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('rowheader'));
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+
+      onFocus.mockClear();
+      onBlur.mockClear();
+      onFocusChange.mockClear();
+
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'First action'}));
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Second action'}));
+      expect(row).toHaveAttribute('data-focus-visible-within', 'true');
+      await user.click(getByRole('rowheader'));
+      expect(document.activeElement).toBe(getByRole('rowheader'));
+      expect(row).not.toHaveAttribute('data-focus-visible');
+      expect(onFocus).not.toHaveBeenCalled();
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange).not.toHaveBeenCalled();
+    });
   });
 
   it('should support hover', async () => {
@@ -1751,6 +1862,94 @@ describe('Table', () => {
       expect(button).toHaveAttribute('aria-label', 'Drag Games');
     });
 
+    describe('pointerDragSource', () => {
+      it('should allow dragging from anywhere on the row by default', () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(<DraggableTable onDragStart={onDragStart} />);
+        let row = getAllByRole('row')[1];
+        let button = within(row).getByRole('button');
+        expect(row).toHaveAttribute('draggable', 'true');
+        expect(button).not.toHaveAttribute('draggable');
+        expect(button).toHaveStyle({pointerEvents: 'none'});
+
+        let cell = within(row).getAllByRole('rowheader')[0];
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+      });
+
+      it('should only allow pointer dragging from the drag button when set to "handle"', () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableTable pointerDragSource="handle" onDragStart={onDragStart} />
+        );
+        let row = getAllByRole('row')[1];
+        let button = within(row).getByRole('button');
+        expect(row).not.toHaveAttribute('draggable');
+        expect(button).toHaveAttribute('draggable', 'true');
+        expect(button).not.toHaveStyle({pointerEvents: 'none'});
+
+        for (let pointerType of ['mouse', 'touch']) {
+          let cell = within(row).getAllByRole('rowheader')[0];
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(cell, {pointerType, button: 0, pointerId: 1});
+          fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+          act(() => jest.runAllTimers());
+          expect(onDragStart).not.toHaveBeenCalled();
+          expect(row).not.toHaveAttribute('data-dragging');
+        }
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(button, {pointerType: 'mouse', button: 0, pointerId: 1});
+        fireEvent(button, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith(expect.objectContaining({keys: new Set(['1'])}));
+        expect(row).toHaveAttribute('data-dragging', 'true');
+        // Without a custom drag preview, the whole row is used as the drag image.
+        expect(dataTransfer._dragImage.node).toBe(row);
+
+        fireEvent(button, new DragEvent('dragend', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(row).not.toHaveAttribute('data-dragging');
+      });
+
+      it('should not select the row when clicking the drag button when set to "handle"', async () => {
+        let onSelectionChange = jest.fn();
+        function SelectableTable() {
+          let {dragAndDropHooks} = useDragAndDrop({
+            getItems: keys => [...keys].map(key => ({'text/plain': key})),
+            pointerDragSource: 'handle'
+          });
+          return (
+            <TestTable
+              tableProps={{dragAndDropHooks, selectionMode: 'multiple', onSelectionChange}}
+            />
+          );
+        }
+        let {getAllByRole} = render(<SelectableTable />);
+        let row = getAllByRole('row')[1];
+        let button = within(row).getAllByRole('button')[0];
+        await user.click(button);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(row).toHaveAttribute('aria-selected', 'false');
+      });
+
+      it('should support keyboard dragging via the drag button when set to "handle"', async () => {
+        let onDragStart = jest.fn();
+        render(<DraggableTable pointerDragSource="handle" onDragStart={onDragStart} />);
+        await user.tab();
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        await user.keyboard('{Escape}');
+        act(() => jest.runAllTimers());
+      });
+    });
+
     it('should render drop indicators', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(
@@ -1929,7 +2128,6 @@ describe('Table', () => {
     });
 
     it('support drop target keyboard navigation', async () => {
-      const DndTableExample = stories.DndTableExample;
       render(<DndTableExample />);
       await user.tab();
       await user.keyboard('{ArrowRight}');
@@ -2010,7 +2208,6 @@ describe('Table', () => {
     });
 
     it('should select dropped item', async () => {
-      const DndTableExample = stories.DndTableExample;
       let {getAllByRole} = render(<DndTableExample />);
       let tableTester = testUtilUser.createTester('Table', {root: getAllByRole('grid')[1]});
       expect(tableTester.getRows()).toHaveLength(7);

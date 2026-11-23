@@ -179,20 +179,19 @@ export type DefaultStory = StoryObj<typeof DefaultSubmenu>;
 
 export const Default: DefaultStory = {
   render: () => <DefaultSubmenu />,
-  name: 'sub menu expanded'
-};
+  name: 'sub menu expanded',
+  play: async ({canvasElement}) => {
+    // TODO: upgrade storybook testing library so we get user event 14 support
+    let body = canvasElement.ownerDocument.body;
+    let menu = await within(body).getByRole('menu');
+    let menuItems = within(menu).getAllByRole('menuitem');
 
-Default.play = async ({canvasElement}) => {
-  // TODO: upgrade storybook testing library so we get user event 14 support
-  let body = canvasElement.ownerDocument.body;
-  let menu = await within(body).getByRole('menu');
-  let menuItems = within(menu).getAllByRole('menuitem');
-
-  // clean up any previous click state
-  await userEvent.click(document.body);
-  await userEvent.hover(menuItems[0]);
-  let submenuTrigger = await within(body).findByText('Baseline');
-  await userEvent.hover(submenuTrigger);
+    // clean up any previous click state
+    await userEvent.click(document.body);
+    await userEvent.hover(menuItems[0]);
+    let submenuTrigger = await within(body).findByText('Baseline');
+    await userEvent.hover(submenuTrigger);
+  }
 };
 
 export const Mobile: DefaultStory = {
@@ -206,18 +205,17 @@ export const Mobile: DefaultStory = {
       scales: ['large'],
       disableAnimations: true
     }
+  },
+  play: async ({canvasElement}) => {
+    let body = canvasElement.ownerDocument.body;
+    let menu = await within(body).getByRole('menu');
+    let menuItems = within(menu).getAllByRole('menuitem');
+
+    // clean up any previous click state
+    await userEvent.click(document.body);
+    await userEvent.click(menuItems[0]);
+    await within(body).findByText('Baseline');
   }
-};
-
-Mobile.play = async ({canvasElement}) => {
-  let body = canvasElement.ownerDocument.body;
-  let menu = await within(body).getByRole('menu');
-  let menuItems = within(menu).getAllByRole('menuitem');
-
-  // clean up any previous click state
-  await userEvent.click(document.body);
-  await userEvent.click(menuItems[0]);
-  await within(body).findByText('Baseline');
 };
 
 function DefaultSubmenu(props: Omit<SpectrumMenuTriggerProps, 'children'>): JSX.Element {

@@ -51,6 +51,7 @@ import {
   DragAndDropContext,
   DropIndicatorContext,
   DropIndicatorProps,
+  getDraggableItemSlotProps,
   useDndPersistedKeys,
   useRenderDropIndicator
 } from './DragAndDrop';
@@ -66,8 +67,8 @@ import {
   SelectableCollectionContextValue
 } from './Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {FocusScope} from 'react-aria/FocusScope';
 import {
+  FocusEvents,
   forwardRefType,
   GlobalDOMAttributes,
   HoverEvents,
@@ -77,6 +78,7 @@ import {
   PressEvents,
   RefObject
 } from '@react-types/shared';
+import {FocusScope} from 'react-aria/FocusScope';
 import {
   HeaderNode,
   ItemNode,
@@ -109,6 +111,7 @@ import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 import {useCollator} from 'react-aria/useCollator';
+import {useFocus} from 'react-aria/useFocus';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -486,6 +489,7 @@ export interface GridListItemProps<T = object>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
+    FocusEvents<HTMLDivElement>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -538,7 +542,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,
-      shouldSelectOnPressUp: !!dragState,
+      shouldSelectOnPressUp: !!dragState && dragAndDropHooks?.pointerDragSource !== 'handle',
       isVirtualized,
       focusMode: props.focusMode,
       allowsArrowNavigation: props.allowsArrowNavigation
@@ -556,6 +560,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
     onHoverEnd: item.props.onHoverEnd
   });
 
+  let {focusProps: focusEventProps} = useFocus(props);
   let {isFocusVisible, focusProps} = useFocusRing();
   let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
     within: true
@@ -630,6 +635,11 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
   delete DOMProps.onClick;
+  let draggableSlotProps = getDraggableItemSlotProps(
+    draggableItem,
+    dragAndDropHooks,
+    dragButtonRef
+  );
 
   return (
     <>
@@ -650,10 +660,11 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
           DOMProps,
           renderProps,
           rowProps,
+          focusEventProps,
           focusProps,
           focusWithinProps,
           hoverProps,
-          draggableItem?.dragProps
+          draggableSlotProps.itemProps
         )}
         ref={ref}
         data-selected={states.isSelected || undefined}
@@ -698,11 +709,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
                   slots: {
                     [DEFAULT_SLOT]: buttonProps,
                     drag: {
-                      ...draggableItem?.dragButtonProps,
-                      ref: dragButtonRef,
-                      style: {
-                        pointerEvents: 'none'
-                      }
+                      ...draggableSlotProps.dragButtonProps,
+                      ref: dragButtonRef
                     }
                   }
                 }

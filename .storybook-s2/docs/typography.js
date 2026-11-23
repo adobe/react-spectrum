@@ -1,6 +1,7 @@
 import {style} from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
 import {Link as S2Link} from '@react-spectrum/s2';
-import {useFocusRing, useHover} from 'react-aria';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
 
 function AnchorLink({id, isHovered}) {
   let {isFocusVisible, focusProps} = useFocusRing({within: true});

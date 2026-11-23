@@ -20,7 +20,7 @@ import {
   useMemo,
   useRef
 } from 'react';
-import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getParentNode, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality, setInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
 import {getScrollParents} from '../utils/getScrollParents';
@@ -665,8 +665,8 @@ function getPosition(container: Element, node: Node, offset: number, isRangeEnd 
   }
 
   let originalNode = node;
-  while (node.parentNode !== container) {
-    node = node.parentNode!;
+  while (getParentNode(node) !== container) {
+    node = getParentNode(node)!;
   }
 
   let index = indexOfNode(node);
@@ -721,7 +721,6 @@ export function setTokenFieldSelection(
     // anchor comes after the current position (backward selections).
     let [anchorNode, anchorOffset] = getDOMPosition(root, selectedRange.anchor);
     let [focusNode, focusOffset] = getDOMPosition(root, selectedRange.current);
-    root[isProgrammaticSelectionChange] = !fireEvent;
 
     // Only set selection if it has changed, because this can clobber the browser's selection direction.
     if (
@@ -730,6 +729,9 @@ export function setTokenFieldSelection(
       selection.focusNode !== focusNode ||
       selection.focusOffset !== focusOffset
     ) {
+      // Only flag the change when the selection actually moves. Otherwise no selectionchange
+      // event fires to consume the flag, and the next user selection change would be ignored.
+      root[isProgrammaticSelectionChange] = !fireEvent;
       selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
     }
   }
@@ -751,6 +753,11 @@ function scrollCaretIntoView(root: HTMLElement): void {
   }
 
   let range = selection.getRangeAt(0);
+  if (range.collapsed && range.endContainer === root) {
+    // Root-level positions around tokens have no rect. Measure the adjacent
+    // zero width space without moving the actual selection into the token.
+    range = tokenFieldPositionToDOMRange(root, {index: range.endOffset, offset: 0});
+  }
   let rect = range.getBoundingClientRect();
 
   // A collapsed range doesn't always produce a client rect. This happens for empty lines.
@@ -766,10 +773,10 @@ function scrollCaretIntoView(root: HTMLElement): void {
       rect = root.getBoundingClientRect();
     } else {
       // Otherwise find the next sibling element (e.g. trailing <br>) and use its rect in this case.
-      let nextSibling = node.nextSibling;
+      let nextSibling = node === root ? root.childNodes[range.endOffset] : node.nextSibling;
       while (node && node !== root && !nextSibling) {
-        node = node.parentNode as Node | null;
-        nextSibling = node ? node.nextSibling : null;
+        node = getParentNode(node);
+        nextSibling = node && node !== root ? node.nextSibling : null;
       }
 
       if (nextSibling?.nodeType === Node.ELEMENT_NODE) {
@@ -809,7 +816,15 @@ export function tokenFieldPositionToDOMRange(root: Element, pos: Position): Rang
 
 function getDOMRectPosition(root: Element, pos: Position): [Node, number] {
   let child = root.childNodes[pos.index];
-  if (child && child.nodeType === Node.ELEMENT_NODE) {
+  if (
+    pos.index >= root.childNodes.length &&
+    root.lastChild?.lastChild?.nodeType === Node.TEXT_NODE
+  ) {
+    // A position after the last token belongs to its trailing zero width space.
+    let text = root.lastChild.lastChild;
+    return [text, text.textContent!.length];
+  }
+  if (child && child.nodeType === Node.ELEMENT_NODE && child.firstChild) {
     // Place the position inside the zero width space wrappers around the token.
     if (pos.offset > 0) {
       return [child.lastChild!, 1];

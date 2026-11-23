@@ -52,10 +52,6 @@ export const Example: StoryTextField = {
   }
 };
 
-Example.args = {
-  label: 'Name'
-};
-
 export const Validation: StoryTextField = {
   render: args => (
     <Form>

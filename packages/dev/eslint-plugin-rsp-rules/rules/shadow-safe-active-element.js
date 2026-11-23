@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+const DOM_FUNCTIONS = 'react-aria/private/utils/shadowdom/DOMFunctions';
+
 const plugin = {
   meta: {
     type: 'suggestion',
@@ -27,17 +29,19 @@ const plugin = {
   create: context => {
     let hasGetActiveElementImport = false;
     let getActiveElementLocalName = 'getActiveElement';
-    let existingReactAriaUtilsImport = null;
+    let existingDOMFunctionsImport = null;
 
     return {
-      // Track imports from @react-aria/utils
+      // Track imports from DOMFunctions, and from the legacy @react-aria/utils package
       ImportDeclaration(node) {
         if (
           node.source &&
           node.source.type === 'Literal' &&
-          node.source.value === '@react-aria/utils'
+          (node.source.value === DOM_FUNCTIONS || node.source.value === '@react-aria/utils')
         ) {
-          existingReactAriaUtilsImport = node;
+          if (node.source.value === DOM_FUNCTIONS) {
+            existingDOMFunctionsImport = node;
+          }
           // Check if getActiveElement is already imported
           const hasGetActiveElement = node.specifiers.some(
             spec =>
@@ -72,14 +76,14 @@ const plugin = {
 
             // Add import if not present
             if (!hasGetActiveElementImport) {
-              if (existingReactAriaUtilsImport) {
-                // Add getActiveElement to existing @react-aria/utils import
-                const specifiers = existingReactAriaUtilsImport.specifiers;
+              if (existingDOMFunctionsImport) {
+                // Add getActiveElement to existing DOMFunctions import
+                const specifiers = existingDOMFunctionsImport.specifiers;
                 if (specifiers.length > 0) {
                   fixes.push(
                     fixer.insertTextAfter(
                       sourceCode.getFirstToken(
-                        existingReactAriaUtilsImport,
+                        existingDOMFunctionsImport,
                         token => token.value === '{'
                       ),
                       'getActiveElement, '
@@ -87,17 +91,17 @@ const plugin = {
                   );
                 }
               } else {
-                // No existing import from @react-aria/utils, create a new one
+                // No existing import from DOMFunctions, create a new one
                 const programNode = context.sourceCode.ast;
                 const imports = programNode.body.filter(node => node.type === 'ImportDeclaration');
 
                 if (imports.length > 0) {
                   const lastImport = imports[imports.length - 1];
-                  const importStatement = "\nimport {getActiveElement} from '@react-aria/utils';";
+                  const importStatement = `\nimport {getActiveElement} from '${DOM_FUNCTIONS}';`;
                   fixes.push(fixer.insertTextAfter(lastImport, importStatement));
                 } else {
                   // No imports, add at the beginning
-                  const importStatement = "import {getActiveElement} from '@react-aria/utils';\n";
+                  const importStatement = `import {getActiveElement} from '${DOM_FUNCTIONS}';\n`;
                   fixes.push(fixer.insertTextBefore(programNode.body[0], importStatement));
                 }
               }

@@ -23,6 +23,7 @@ import {Checkbox as AriaCheckbox, CheckboxButton, CheckboxField} from '../src/Ch
 import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
 import {ComboBox} from '../src/ComboBox';
+import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
@@ -512,6 +513,47 @@ describe('GridList', () => {
     expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
+  describe('items arriving after an empty list', () => {
+    function Example({items}) {
+      return (
+        <>
+          <GridList aria-label="Async list" items={items} renderEmptyState={() => 'No results'}>
+            {item => <GridListItem id={item.id}>{item.name}</GridListItem>}
+          </GridList>
+          <button>After</button>
+        </>
+      );
+    }
+
+    let items = [
+      {id: 'one', name: 'One'},
+      {id: 'two', name: 'Two'}
+    ];
+
+    it('should navigate to the new rows while the list is focused', async () => {
+      let {getByRole, getAllByRole, rerender} = render(<Example items={[]} />);
+      await user.tab();
+      expect(getByRole('grid')).toHaveFocus();
+
+      rerender(<Example items={items} />);
+      await user.keyboard('{ArrowDown}');
+      expect(getAllByRole('row')[0]).toHaveFocus();
+    });
+
+    it('should leave focus outside the list when items arrive after tabbing away', async () => {
+      let {getByRole, rerender} = render(<Example items={[]} />);
+      await user.tab();
+      expect(getByRole('grid')).toHaveFocus();
+      await user.tab();
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+
+      rerender(<Example items={items} />);
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+      await user.keyboard('{ArrowDown}');
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+    });
+  });
+
   it('should support empty state', () => {
     render(
       <GridList aria-label="Test" renderEmptyState={() => 'No results'}>
@@ -521,6 +563,49 @@ describe('GridList', () => {
     // JSDOM seems to pretend to be WebKit so uses role="group" instead of role="grid".
     let gridList = document.querySelector('.react-aria-GridList');
     expect(gridList).toHaveAttribute('data-empty', 'true');
+  });
+
+  it.each([false, true])('should tab through interactive empty state (shift=%s)', async shift => {
+    let {getByRole} = render(
+      <>
+        <button>Before</button>
+        <GridList
+          aria-label="Test"
+          renderEmptyState={() => (
+            <div>
+              <a href="/#">No results</a>
+              <a href="/#">Another link</a>
+            </div>
+          )}>
+          {[]}
+        </GridList>
+        <button>After</button>
+      </>
+    );
+
+    await user.click(getByRole('button', {name: shift ? 'After' : 'Before'}));
+    for (let name of shift ? ['Another link', 'No results'] : ['No results', 'Another link']) {
+      await user.tab({shift});
+      expect(getByRole('link', {name})).toHaveFocus();
+    }
+    await user.tab({shift});
+    expect(getByRole('button', {name: shift ? 'Before' : 'After'})).toHaveFocus();
+  });
+
+  it('should allow text selection in an empty state input', async () => {
+    let {getByRole} = render(
+      <GridList
+        aria-label="Test"
+        selectionMode="multiple"
+        renderEmptyState={() => <input aria-label="Search" defaultValue="hello" />}>
+        {[]}
+      </GridList>
+    );
+
+    let input = getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{Control>}a{/Control}x');
+    expect(input).toHaveValue('x');
   });
 
   it('should support dynamic collections', () => {
@@ -1253,6 +1338,276 @@ describe('GridList', () => {
       expect(button).toHaveAttribute('aria-label', 'Drag Cat');
     });
 
+    describe('pointerDragSource', () => {
+      describe('after touch selection', () => {
+        installPointerEvent();
+
+        it.each([
+          ['item', 'touch'],
+          ['item', 'mouse'],
+          ['handle', 'touch'],
+          ['handle', 'mouse']
+        ])(
+          'should drag from the %s with %s after long pressing to select',
+          async (pointerDragSource, pointerType) => {
+            let onDragStart = jest.fn();
+            let onDragEnd = jest.fn();
+            let onAction = jest.fn();
+            function SelectableGridList() {
+              let {dragAndDropHooks} = useDragAndDrop({
+                pointerDragSource,
+                getItems: keys => [...keys].map(key => ({'text/plain': key})),
+                onDragStart,
+                onDragEnd
+              });
+              return (
+                <GridList
+                  aria-label="Test"
+                  selectionMode="multiple"
+                  onAction={onAction}
+                  dragAndDropHooks={dragAndDropHooks}>
+                  <GridListItem id="cat" textValue="Cat">
+                    <Button slot="drag">≡</Button>
+                    Cat
+                  </GridListItem>
+                </GridList>
+              );
+            }
+
+            let {getByRole} = render(<SelectableGridList />);
+            let row = getByRole('row');
+            await user.pointer({target: row, keys: '[TouchA>]'});
+            act(() => jest.advanceTimersByTime(800));
+            expect(row).toHaveAttribute('aria-selected', 'true');
+
+            let dataTransfer = new DataTransfer();
+            if (pointerDragSource === 'item') {
+              for (let target of [row, within(row).getByRole('gridcell')]) {
+                let event = new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0});
+                fireEvent(target, event);
+                expect(event.defaultPrevented).toBe(true);
+                expect(onDragStart).not.toHaveBeenCalled();
+              }
+            }
+            await user.pointer({target: row, keys: '[/TouchA]'});
+
+            let source = pointerDragSource === 'handle' ? within(row).getByRole('button') : row;
+            let pointer = pointerType === 'touch' ? 'TouchA' : 'MouseLeft';
+            await user.pointer({target: source, keys: `[${pointer}>]`});
+            fireEvent(source, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+            act(() => jest.runAllTimers());
+            expect(onDragStart).toHaveBeenCalledTimes(1);
+            expect(onDragStart).toHaveBeenCalledWith(
+              expect.objectContaining({keys: new Set(['cat'])})
+            );
+            expect(row).toHaveAttribute('data-dragging', 'true');
+            expect(row).toHaveAttribute('aria-selected', 'true');
+
+            fireEvent(source, new DragEvent('dragend', {dataTransfer, clientX: 0, clientY: 0}));
+            await user.pointer({target: source, keys: `[/${pointer}]`});
+            act(() => jest.runAllTimers());
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(row).not.toHaveAttribute('data-dragging');
+            expect(onAction).not.toHaveBeenCalled();
+          }
+        );
+
+        it.each(['none', 'handle'])(
+          'should prevent native dragging of item content on touch when long press selects (dnd: %s)',
+          async mode => {
+            function SelectableGridList() {
+              let {dragAndDropHooks} = useDragAndDrop({
+                pointerDragSource: 'handle',
+                getItems: keys => [...keys].map(key => ({'text/plain': key}))
+              });
+              return (
+                <GridList
+                  aria-label="Test"
+                  selectionMode="multiple"
+                  onAction={() => {}}
+                  dragAndDropHooks={mode === 'handle' ? dragAndDropHooks : undefined}>
+                  <GridListItem id="cat" textValue="Cat">
+                    {mode === 'handle' && <Button slot="drag">≡</Button>}
+                    <img alt="Cat" />
+                  </GridListItem>
+                </GridList>
+              );
+            }
+
+            let {getByRole} = render(<SelectableGridList />);
+            let img = getByRole('img');
+            await user.pointer({target: img, keys: '[TouchA>]'});
+            let event = new DragEvent('dragstart', {
+              dataTransfer: new DataTransfer(),
+              clientX: 0,
+              clientY: 0
+            });
+            fireEvent(img, event);
+            expect(event.defaultPrevented).toBe(true);
+            await user.pointer({target: img, keys: '[/TouchA]'});
+          }
+        );
+      });
+
+      it('should allow dragging from anywhere on the item by default', () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(<DraggableGridList onDragStart={onDragStart} />);
+        let row = getAllByRole('row')[0];
+        let button = within(row).getAllByRole('button')[0];
+        expect(button).toHaveAttribute('aria-label', 'Drag Cat');
+        expect(row).toHaveAttribute('draggable', 'true');
+        expect(button).not.toHaveAttribute('draggable');
+        expect(button).toHaveStyle({pointerEvents: 'none'});
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(row, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+      });
+
+      it('should only allow pointer dragging from the drag button when set to "handle"', () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableGridList pointerDragSource="handle" onDragStart={onDragStart} />
+        );
+        let row = getAllByRole('row')[0];
+        let button = within(row).getAllByRole('button')[0];
+        expect(button).toHaveAttribute('aria-label', 'Drag Cat');
+        expect(row).not.toHaveAttribute('draggable');
+        expect(button).toHaveAttribute('draggable', 'true');
+        expect(button).not.toHaveStyle({pointerEvents: 'none'});
+
+        for (let pointerType of ['mouse', 'touch']) {
+          let content = within(row).getByText('Cat');
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(content, {pointerType, button: 0, pointerId: 1});
+          fireEvent(content, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+          act(() => jest.runAllTimers());
+          expect(onDragStart).not.toHaveBeenCalled();
+          expect(row).not.toHaveAttribute('data-dragging');
+        }
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(button, {pointerType: 'mouse', button: 0, pointerId: 1});
+        fireEvent(button, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith(expect.objectContaining({keys: new Set(['cat'])}));
+        expect(row).toHaveAttribute('data-dragging', 'true');
+        expect(dataTransfer._dragImage.node).toBe(row);
+
+        fireEvent(button, new DragEvent('dragend', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(row).not.toHaveAttribute('data-dragging');
+      });
+
+      it('should position custom drag previews relative to the item when set to "handle"', () => {
+        // Place the handle at the item's far edge (e.g. RTL) so item and handle offsets differ.
+        jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+          if (this.getAttribute('role') === 'row') {
+            return {x: 100, y: 50, width: 300, height: 40, top: 50, left: 100};
+          }
+          if (this.getAttribute('slot') === 'drag') {
+            return {x: 380, y: 60, width: 20, height: 20, top: 60, left: 380};
+          }
+          return {x: 0, y: 0, width: 300, height: 40, top: 0, left: 0};
+        });
+
+        try {
+          let {getAllByRole} = render(
+            <DraggableGridList
+              pointerDragSource="handle"
+              renderDragPreview={() => <div>Drag preview</div>}
+            />
+          );
+          let row = getAllByRole('row')[0];
+          let button = within(row).getAllByRole('button')[0];
+
+          let dataTransfer = new DataTransfer();
+          fireEvent(button, new DragEvent('dragstart', {dataTransfer, clientX: 390, clientY: 70}));
+          expect(dataTransfer._dragImage.node.textContent).toBe('Drag preview');
+          expect(dataTransfer._dragImage.x).toBe(290);
+          expect(dataTransfer._dragImage.y).toBe(20);
+
+          fireEvent(button, new DragEvent('dragend', {dataTransfer, clientX: 390, clientY: 70}));
+          act(() => jest.runAllTimers());
+        } finally {
+          jest.restoreAllMocks();
+        }
+      });
+
+      it('should ignore native drag events from item content when set to "handle"', () => {
+        let onDragStart = jest.fn();
+        let onDragEnd = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableGridList
+            pointerDragSource="handle"
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+          />
+        );
+        let row = getAllByRole('row')[0];
+        let content = within(row).getByText('Cat');
+        let dataTransfer = new DataTransfer();
+        let event = new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0});
+        fireEvent(content, event);
+        fireEvent(content, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(content, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+        act(() => jest.runAllTimers());
+        expect(event.defaultPrevented).toBe(false);
+        expect(dataTransfer._dragImage).toBeUndefined();
+        expect(onDragStart).not.toHaveBeenCalled();
+        expect(onDragEnd).not.toHaveBeenCalled();
+      });
+
+      it.each([
+        ['item', 'false'],
+        ['handle', 'true']
+      ])(
+        'should select on mouse down only when pointerDragSource is "handle" (%s)',
+        async (pointerDragSource, selectedOnPressStart) => {
+          function SelectableGridList() {
+            let {dragAndDropHooks} = useDragAndDrop({
+              pointerDragSource,
+              getItems: keys => [...keys].map(key => ({'text/plain': key}))
+            });
+            return (
+              <GridList
+                aria-label="Test"
+                selectionMode="multiple"
+                dragAndDropHooks={dragAndDropHooks}>
+                <GridListItem id="cat" textValue="Cat">
+                  <Button slot="drag">≡</Button>
+                  Cat
+                </GridListItem>
+              </GridList>
+            );
+          }
+
+          let {getByRole, getByText} = render(<SelectableGridList />);
+          let row = getByRole('row');
+          await user.pointer({target: getByText('Cat'), keys: '[MouseLeft>]'});
+          expect(row).toHaveAttribute('aria-selected', selectedOnPressStart);
+          await user.pointer({target: getByText('Cat'), keys: '[/MouseLeft]'});
+          expect(row).toHaveAttribute('aria-selected', 'true');
+        }
+      );
+
+      it('should support keyboard dragging via the drag button when set to "handle"', async () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableGridList pointerDragSource="handle" onDragStart={onDragStart} />
+        );
+        let button = within(getAllByRole('row')[0]).getAllByRole('button')[0];
+        act(() => button.focus());
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        await user.keyboard('{Escape}');
+        act(() => jest.runAllTimers());
+      });
+    });
+
     it('should render drop indicators', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(
@@ -1853,6 +2208,121 @@ describe('GridList', () => {
           }
         }
       });
+    });
+  });
+
+  describe('item focus events', () => {
+    it.each(['keyboard', 'mouse'])(
+      'should report item focus transitions using %s',
+      async interactionType => {
+        let onFocus = jest.fn();
+        let onBlur = jest.fn();
+        let onFocusChange = jest.fn();
+        let itemProps = {
+          onFocus: e => onFocus(e.target),
+          onBlur: e => onBlur(e.target),
+          onFocusChange
+        };
+        let {getAllByRole, getByRole} = render(
+          <>
+            <button>Before</button>
+            <GridList aria-label="Test" selectionMode="single">
+              <GridListItem id="cat" {...itemProps}>
+                Cat
+              </GridListItem>
+              <GridListItem id="dog" {...itemProps}>
+                Dog
+              </GridListItem>
+            </GridList>
+            <button>After</button>
+          </>
+        );
+        let rows = getAllByRole('row');
+
+        if (interactionType === 'keyboard') {
+          await user.tab();
+          await user.tab();
+        } else {
+          await user.click(rows[0]);
+        }
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('data-focused', 'true');
+        expect(onFocus).toHaveBeenCalledTimes(1);
+        expect(onFocus).toHaveBeenLastCalledWith(rows[0]);
+        expect(onBlur).not.toHaveBeenCalled();
+        expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+        if (interactionType === 'keyboard') {
+          expect(rows[0]).toHaveAttribute('data-focus-visible', 'true');
+          await user.keyboard('{ArrowDown}');
+        } else {
+          expect(rows[0]).not.toHaveAttribute('data-focus-visible');
+          await user.click(rows[1]);
+        }
+        expect(document.activeElement).toBe(rows[1]);
+        expect(onFocus).toHaveBeenCalledTimes(2);
+        expect(onFocus).toHaveBeenLastCalledWith(rows[1]);
+        expect(onBlur).toHaveBeenCalledTimes(1);
+        expect(onBlur).toHaveBeenLastCalledWith(rows[0]);
+        expect(onFocusChange.mock.calls).toEqual([[true], [false], [true]]);
+
+        if (interactionType === 'keyboard') {
+          await user.tab();
+        } else {
+          await user.click(getByRole('button', {name: 'After'}));
+        }
+        expect(document.activeElement).toBe(getByRole('button', {name: 'After'}));
+        expect(onBlur).toHaveBeenCalledTimes(2);
+        expect(onBlur).toHaveBeenLastCalledWith(rows[1]);
+        expect(onFocusChange.mock.calls).toEqual([[true], [false], [true], [false]]);
+      }
+    );
+
+    it('should not report focus changes when a focused item rerenders', async () => {
+      let onFocusChange = jest.fn();
+      let example = label => (
+        <GridList aria-label="Test">
+          <GridListItem id="cat" onFocusChange={onFocusChange}>
+            {label}
+          </GridListItem>
+        </GridList>
+      );
+      let {rerender, getByRole} = render(example('Cat'));
+      await user.tab();
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+      rerender(example('Updated cat'));
+      expect(document.activeElement).toBe(getByRole('row'));
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+    });
+
+    it('should not report descendant focus as item focus', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let {getByRole} = render(
+        <GridList aria-label="Test">
+          <GridListItem
+            textValue="Cat"
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onFocusChange={onFocusChange}>
+            Cat <Button>First action</Button>
+            <Button>Second action</Button>
+          </GridListItem>
+        </GridList>
+      );
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('row'));
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'First action'}));
+      expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Second action'}));
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(onFocusChange.mock.calls).toEqual([[true], [false]]);
+      expect(getByRole('row')).toHaveAttribute('data-focus-visible-within', 'true');
     });
   });
 

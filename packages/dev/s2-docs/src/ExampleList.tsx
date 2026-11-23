@@ -11,8 +11,6 @@ import path from 'path';
 import photos from 'url:../pages/react-aria/examples/photos.png?as=avif&quality=50';
 import photosDark from 'url:../pages/react-aria/examples/photos-dark.png?as=avif&quality=50';
 import rippleButton from 'url:../pages/react-aria/examples/ripple-button.png?as=avif&quality=50';
-import sheet from 'url:../pages/react-aria/examples/sheet.png?as=avif&quality=50';
-import sheetDark from 'url:../pages/react-aria/examples/sheet-dark.png?as=avif&quality=50';
 import {size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import swipeableTabs from 'url:../pages/react-aria/examples//swipeable-tabs.png?as=avif&quality=50';
 import swipeableTabsDark from 'url:../pages/react-aria/examples//swipeable-tabs-dark.png?as=avif&quality=50';
@@ -24,7 +22,6 @@ export const images: Record<string, [string, string]> = {
   photos: [photos, photosDark],
   crud: [crud, crudDark],
   'ripple-button': [rippleButton, rippleButton],
-  sheet: [sheet, sheetDark],
   'swipeable-tabs': [swipeableTabs, swipeableTabsDark]
 };
 

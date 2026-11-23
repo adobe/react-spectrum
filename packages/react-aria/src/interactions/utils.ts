@@ -12,9 +12,15 @@
 
 import {FocusableElement} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
-import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
-import {getOwnerWindow, isNode, isShadowRoot} from '../utils/domHelpers';
+import {
+  getActiveElement,
+  getEventTarget,
+  getParentElement,
+  nodeContains
+} from '../utils/shadowdom/DOMFunctions';
+import {getOwnerWindow} from '../utils/domHelpers';
 import {isFocusable} from '../utils/isFocusable';
+import {isNode, isShadowRoot} from '../utils/typeHelpers';
 import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
@@ -121,7 +127,7 @@ export let ignoreFocusEvent = false;
 export function preventFocus(target: FocusableElement | null): (() => void) | undefined {
   // The browser will focus the nearest focusable ancestor of our target.
   while (target && !isFocusable(target, {skipVisibilityCheck: true})) {
-    target = target.parentElement;
+    target = getParentElement(target) as FocusableElement | null;
   }
 
   let ownerWindow = getOwnerWindow(target);

@@ -49,11 +49,11 @@ const bubble = style({
     ':has([slot=image])': 'stretch'
   },
   gap: 8,
-  paddingY: 8,
-  paddingX: {
-    default: 16,
-    ':has(img)': 8
+  paddingY: {
+    default: 12,
+    ':has([slot=image])': 16
   },
+  paddingX: 16,
   backgroundColor: 'transparent-overlay-50',
   color: 'neutral',
   borderRadius: 'lg',
