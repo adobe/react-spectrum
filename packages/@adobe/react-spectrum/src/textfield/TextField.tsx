@@ -52,9 +52,7 @@ export const TextField = forwardRef(function TextField(
   props: SpectrumTextFieldProps,
   ref: Ref<TextFieldRef>
 ) {
-  // oxlint-disable-next-line react/immutability
   props = useProviderProps(props);
-  // oxlint-disable-next-line react/immutability
   props = useFormProps(props);
 
   let inputRef = useRef<HTMLInputElement>(null);

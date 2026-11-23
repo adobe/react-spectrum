@@ -87,6 +87,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
     delete submenuTriggerProps.onBlur;
     // oxlint-disable-next-line react/immutability
     delete submenuTriggerProps.onHoverChange;
+    // oxlint-disable-next-line react/immutability
     submenuProps.autoFocus ??= true;
     // oxlint-disable-next-line react/refs
     if (trayContainerRef.current && submenuTriggerState.isOpen) {

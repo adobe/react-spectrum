@@ -227,7 +227,6 @@ export const Switch = /*#__PURE__*/ forwardRef(function Switch(
   props: SwitchProps,
   ref: FocusableRef<HTMLInputElement, HTMLDivElement>
 ) {
-  // oxlint-disable-next-line react/immutability
   [props, ref] = useSpectrumContextProps(props, ref, SwitchContext);
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -235,7 +234,6 @@ export const Switch = /*#__PURE__*/ forwardRef(function Switch(
   let handleRef = useRef(null);
   let isInForm = !!useContext(FormContext);
   let {direction} = useLocale();
-  // oxlint-disable-next-line react/immutability
   props = useFormProps(props);
   return (
     <SwitchField

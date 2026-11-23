@@ -49,7 +49,6 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
   );
 
   let setFocusedKey = selectionState.setFocusedKey;
-  // oxlint-disable-next-line react/immutability
   selectionState.setFocusedKey = (key, child) => {
     // If focusMode is cell and an item is focused, focus a child cell instead.
     if (focusMode === 'cell' && key != null) {

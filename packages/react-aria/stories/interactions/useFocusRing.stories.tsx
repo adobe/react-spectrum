@@ -108,10 +108,10 @@ function SearchExample(): JSX.Element {
 }
 
 function MyButton(props) {
+  // oxlint-disable-next-line react/refs
   const buttonRef = props.btnRef;
 
   const {focusProps, isFocusVisible, isFocused} = useFocusRing();
-  // oxlint-disable react/refs
   let {buttonProps} = useButton(props, buttonRef);
 
   return (
@@ -120,7 +120,6 @@ function MyButton(props) {
       Focused: {isFocused ? 'true' : 'false'}
     </button>
   );
-  // oxlint-enable react/refs
 }
 
 const IFrameExample = props => {

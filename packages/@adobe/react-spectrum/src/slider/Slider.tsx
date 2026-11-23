@@ -102,7 +102,6 @@ export const Slider = React.forwardRef(function Slider(
           `linear-gradient(to ${direction === 'ltr' ? 'right' : 'left'}, ${trackGradient.join(', ')})`
       }}>
       {({trackRef, inputRef, state}: SliderBaseChildArguments) => {
-        // oxlint-disable-next-line react/immutability
         fillOffset =
           fillOffset != null
             ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0))

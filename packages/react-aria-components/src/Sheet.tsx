@@ -297,7 +297,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
 
           hasEntered ||= entry.intersectionRatio > 0;
           if (hasEntered && entry.intersectionRatio <= 0) {
-            // eslint-disable-next-line react/react-compiler
+            // oxlint-disable-next-line react-hooks/rules-of-hooks
             onCloseEvent();
             element.dispatchEvent(new CustomEvent('react-aria-sheet-close'));
           }

@@ -34,6 +34,7 @@ export function useFormatHelpText(
     }
 
     if (props.showFormatHelpText) {
+      // oxlint-disable-next-line react/purity
       return formatter.formatToParts(new Date()).map((s, i) => {
         if (s.type === 'literal' || s.type === 'unknown' || (s.type as string) === 'yearName') {
           return <span key={i}>{` ${s.value} `}</span>;
@@ -95,6 +96,7 @@ export function useFormattedDateWidth(state: {
   getDateFormatter: (locale: string, formatOptions: FormatterOptions) => DateFormatter;
 }): number {
   let locale = useLocale()?.locale;
+  // oxlint-disable-next-line react/purity
   let currentDate = new Date();
   let formatedDate = state
     .getDateFormatter(locale, {shouldForceLeadingZeros: true})

@@ -86,10 +86,8 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(
   props: RadioGroupProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  // oxlint-disable-next-line react/immutability
   [props, ref] = useSpectrumContextProps(props, ref, RadioGroupContext);
   let formContext = useContext(FormContext);
-  // oxlint-disable-next-line react/immutability
   props = useFormProps(props);
   let domRef = useDOMRef(ref);
 

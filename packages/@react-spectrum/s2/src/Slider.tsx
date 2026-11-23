@@ -426,7 +426,6 @@ export function SliderBase<T extends number | number[]>(
   // SliderInput is currently the only supported child.
   let hasInput = !!children;
 
-  // oxlint-disable react/refs
   return (
     <AriaSlider
       {...ariaProps}
@@ -512,7 +511,6 @@ export function SliderBase<T extends number | number[]>(
       }}
     </AriaSlider>
   );
-  // oxlint-enable react/refs
 }
 
 /**

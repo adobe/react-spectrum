@@ -52,9 +52,7 @@ export const TextArea = React.forwardRef(function TextArea(
   props: SpectrumTextAreaProps,
   ref: Ref<TextFieldRef<HTMLTextAreaElement>>
 ) {
-  // oxlint-disable-next-line react/immutability
   props = useProviderProps(props);
-  // oxlint-disable-next-line react/immutability
   props = useFormProps(props);
   let {
     isDisabled = false,

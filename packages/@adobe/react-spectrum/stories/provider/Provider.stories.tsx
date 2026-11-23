@@ -164,7 +164,6 @@ export const CustomResponsiveStyleProps: ProviderStory = {
     };
     return (
       <Provider breakpoints={{S: 480, M: 640, L: 1024}} UNSAFE_style={{padding: 50}}>
-        {/* oxlint-disable-next-line react/static-components */}
         <Breakpoint />
       </Provider>
     );
@@ -189,7 +188,6 @@ export const BreakpointOmitted: ProviderStory = {
     };
     return (
       <Provider UNSAFE_style={{padding: 50}}>
-        {/* oxlint-disable-next-line react/static-components */}
         <Breakpoint />
       </Provider>
     );

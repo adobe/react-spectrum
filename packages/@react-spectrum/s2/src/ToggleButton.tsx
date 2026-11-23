@@ -73,9 +73,7 @@ export const ToggleButton = forwardRef(function ToggleButton(
   props: ToggleButtonProps,
   ref: FocusableRef<HTMLButtonElement>
 ) {
-  // oxlint-disable-next-line react/immutability
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
-  // oxlint-disable-next-line react/immutability
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
   let ctx = useSlottedContext(ToggleButtonGroupContext);
@@ -93,7 +91,6 @@ export const ToggleButton = forwardRef(function ToggleButton(
   let {holdAffordance} = props as ToggleButtonContextProps;
   let {direction} = useLocale();
 
-  // oxlint-disable react/refs
   return (
     <RACToggleButton
       {...props}
@@ -166,5 +163,4 @@ export const ToggleButton = forwardRef(function ToggleButton(
       )}
     </RACToggleButton>
   );
-  // oxlint-enable react/refs
 });

@@ -167,7 +167,6 @@ describe('useSliderThumb', () => {
       let input0Ref = useRef(null);
       let input1Ref = useRef(null);
       let state = useSliderState({...props, numberFormatter});
-      // oxlint-disable-next-line react/immutability
       stateRef.current = state;
       let {trackProps, thumbProps: commonThumbProps} = useSlider(props, state, trackRef);
       let {inputProps: input0Props, thumbProps: thumb0Props} = useSliderThumb(
@@ -349,7 +348,6 @@ describe('useSliderThumb', () => {
       let trackRef = useRef(null);
       let inputRef = useRef(null);
       let state = useSliderState({...props, numberFormatter});
-      // oxlint-disable-next-line react/immutability
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       let {inputProps, thumbProps} = useSliderThumb(

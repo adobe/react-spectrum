@@ -166,13 +166,13 @@ export const ButtonGroup = forwardRef(function ButtonGroup(
 
   // 2. External changes: buttongroup won't change size due to any parents changing size, so listen to its container for size changes to figure out if we should remeasure
   let parent = useRef<HTMLElement | null>(null);
-  // oxlint-disable react/refs, react-hooks/exhaustive-deps
+  // oxlint-disable react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     if (domRef.current) {
       parent.current = getParentElement(domRef.current) as HTMLElement;
     }
   }, [domRef.current]);
-  // oxlint-enable react/refs, react-hooks/exhaustive-deps
+  // oxlint-enable react-hooks/exhaustive-deps
   useResizeObserver({ref: parent, onResize: checkForOverflow});
 
   if ((props as ButtonGroupContextValue).isHidden) {

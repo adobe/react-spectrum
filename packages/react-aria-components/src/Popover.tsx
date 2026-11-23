@@ -260,17 +260,12 @@ function PopoverInner({
   let enterAnimation = useEnterAnimation(ref, !!placement && isOpen);
   // oxlint-disable-next-line react/refs
   let isEntering = props.isEntering || (!props.shouldSkipAnimation && enterAnimation) || false;
-  // oxlint-disable-next-line react/refs
   let renderProps = useRenderProps({
-    // oxlint-disable-next-line react/refs
     ...props,
     defaultClassName: 'react-aria-Popover',
-    // oxlint-disable-next-line react/refs
     values: {
-      // oxlint-disable-next-line react/refs
       trigger: props.trigger || null,
       placement,
-      // oxlint-disable-next-line react/refs
       isEntering,
       isExiting
     }
@@ -281,17 +276,17 @@ function PopoverInner({
   let shouldBeDialog =
     // oxlint-disable-next-line react/refs
     !props.isNonModal || props.trigger === 'SubmenuTrigger' || props.trigger === 'PreviewTrigger';
-  // oxlint-disable-next-line react/refs
   let [isDialog, setDialog] = useState(props.trigger === 'PreviewTrigger');
   useLayoutEffect(() => {
     if (ref.current) {
+      // oxlint-disable-next-line react/refs
       setDialog(shouldBeDialog && !ref.current.querySelector('[role=dialog]'));
     }
+    // oxlint-disable-next-line react/refs
   }, [ref, shouldBeDialog]);
 
   // Focus the popover itself on mount, unless a child element is already focused.
   // Skip this for submenus since hovering a submenutrigger should keep focus on the trigger
-  // oxlint-disable react/refs
   useEffect(() => {
     if (
       isDialog &&
@@ -303,7 +298,6 @@ function PopoverInner({
       focusSafely(ref.current);
     }
   }, [isDialog, ref, props.trigger]);
-  // oxlint-enable react/refs
 
   let children = useMemo(() => {
     let children = renderProps.children;
@@ -321,9 +315,7 @@ function PopoverInner({
   }, [props.triggerRef]);
 
   useLayoutEffect(onResize, [onResize]);
-  // oxlint-disable-next-line react/refs
   useResizeObserver({
-    // oxlint-disable-next-line react/refs
     ref: renderProps.style?.['--trigger-width'] ? undefined : props.triggerRef,
     onResize: onResize
   });
@@ -370,7 +362,6 @@ function PopoverInner({
 
   // If this is a root popover, render an extra div to act as the portal container for submenus/subdialogs.
   if (!isSubPopover) {
-    // oxlint-disable react/refs
     return (
       <Overlay
         {...props}
@@ -388,11 +379,9 @@ function PopoverInner({
         </div>
       </Overlay>
     );
-    // oxlint-enable react/refs
   }
 
   // Submenus/subdialogs are mounted into the root popover's container.
-  // oxlint-disable react/refs
   return (
     <Overlay
       {...props}
@@ -402,5 +391,4 @@ function PopoverInner({
       {overlay}
     </Overlay>
   );
-  // oxlint-enable react/refs
 }
