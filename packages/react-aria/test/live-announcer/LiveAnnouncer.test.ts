@@ -28,7 +28,7 @@ describe('LiveAnnouncer', () => {
 
     clearAnnouncer(assertiveness);
 
-    let other = assertiveness === 'assertive' ? 'polite' : 'assertive';
+    let other: 'assertive' | 'polite' = assertiveness === 'assertive' ? 'polite' : 'assertive';
     expect(getLog(assertiveness).childNodes).toHaveLength(0);
     expect(getLog(other).childNodes).toHaveLength(1);
     expect(getLog(assertiveness)).toHaveAttribute('role', 'log');
