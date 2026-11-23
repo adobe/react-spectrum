@@ -10,95 +10,55 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Direction, Key, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
+import {Direction, Key, Orientation} from '@react-types/shared';
+import {ListKeyboardDelegate, ListKeyboardDelegateOptions} from '../selection/ListKeyboardDelegate';
 
-export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
-  private collection: Collection<Node<T>>;
-  private flipDirection: boolean;
-  private disabledKeys: Set<Key>;
-  private tabDirection: boolean;
+export interface TabsKeyboardDelegateOptions<T> extends Omit<
+  ListKeyboardDelegateOptions<T>,
+  'layout'
+> {}
 
-  constructor(
-    collection: Collection<Node<T>>,
-    direction: Direction,
-    orientation: Orientation,
-    disabledKeys: Set<Key> = new Set()
-  ) {
-    this.collection = collection;
-    // getKeyLeftOf/getKeyRightOf follow the locale's text direction regardless of orientation,
-    // so ArrowLeft always moves to the next tab in RTL. getKeyAbove/getKeyBelow are never flipped.
-    this.flipDirection = direction === 'rtl';
-    this.disabledKeys = disabledKeys;
-    this.tabDirection = orientation === 'horizontal';
-  }
+export class TabsKeyboardDelegate<T> extends ListKeyboardDelegate<T> {
+  private _orientation: Orientation;
+  private _direction: Direction;
 
-  getKeyLeftOf(key: Key): Key | null {
-    if (this.flipDirection) {
-      return this.getNextKey(key);
+  // @ts-expect-error - Reset to nullable because of the override
+  getKeyBelow?(key: Key): Key | null;
+  // @ts-expect-error - Reset to nullable because of the override
+  getKeyAbove?(key: Key): Key | null;
+  // @ts-expect-error - Reset to nullable because of the override
+  getKeyPageAbove?(key: Key): Key | null;
+  // @ts-expect-error - Reset to nullable because of the override
+  getKeyPageBelow?(key: Key): Key | null;
+
+  constructor(opts: TabsKeyboardDelegateOptions<T>) {
+    super({...opts, layout: 'stack'});
+    this._orientation = opts.orientation || 'horizontal';
+    this._direction = opts.direction || 'ltr';
+
+    this.getKeyPageAbove = undefined;
+    this.getKeyPageBelow = undefined;
+
+    if (this._orientation === 'vertical') {
+      super.getKeyLeftOf = this._getKeyLeftOf;
+      super.getKeyRightOf = this._getKeyRightOf;
+    } else {
+      this.getKeyAbove = undefined;
+      this.getKeyBelow = undefined;
     }
-    return this.getPreviousKey(key);
   }
 
-  getKeyRightOf(key: Key): Key | null {
-    if (this.flipDirection) {
-      return this.getPreviousKey(key);
+  private _getKeyLeftOf(key: Key): Key | null {
+    if (this._orientation === 'vertical') {
+      return this._direction === 'rtl' ? super.getKeyBelow(key) : super.getKeyAbove(key);
     }
-    return this.getNextKey(key);
+    return super.getKeyLeftOf!(key);
   }
 
-  private isDisabled(key: Key) {
-    return this.disabledKeys.has(key) || !!this.collection.getItem(key)?.props?.isDisabled;
-  }
-
-  getFirstKey(): Key | null {
-    let key = this.collection.getFirstKey();
-    if (key != null && this.isDisabled(key)) {
-      key = this.getNextKey(key);
+  private _getKeyRightOf(key: Key): Key | null {
+    if (this._orientation === 'vertical') {
+      return this._direction === 'rtl' ? super.getKeyAbove(key) : super.getKeyBelow(key);
     }
-    return key;
-  }
-
-  getLastKey(): Key | null {
-    let key = this.collection.getLastKey();
-    if (key != null && this.isDisabled(key)) {
-      key = this.getPreviousKey(key);
-    }
-    return key;
-  }
-
-  getKeyAbove(key: Key): Key | null {
-    if (this.tabDirection) {
-      return null;
-    }
-    return this.getPreviousKey(key);
-  }
-
-  getKeyBelow(key: Key): Key | null {
-    if (this.tabDirection) {
-      return null;
-    }
-    return this.getNextKey(key);
-  }
-
-  getNextKey(startKey: Key): Key | null {
-    let key: Key | null = startKey;
-    do {
-      key = this.collection.getKeyAfter(key);
-      if (key == null) {
-        key = this.collection.getFirstKey();
-      }
-    } while (key != null && this.isDisabled(key) && key !== startKey);
-    return key;
-  }
-
-  getPreviousKey(startKey: Key): Key | null {
-    let key: Key | null = startKey;
-    do {
-      key = this.collection.getKeyBefore(key);
-      if (key == null) {
-        key = this.collection.getLastKey();
-      }
-    } while (key != null && this.isDisabled(key) && key !== startKey);
-    return key;
+    return super.getKeyRightOf!(key);
   }
 }
