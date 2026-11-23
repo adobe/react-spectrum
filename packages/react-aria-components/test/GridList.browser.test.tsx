@@ -129,8 +129,7 @@ it.each`
   expect(document.activeElement).toBe(rows[8]);
 });
 
-// https://github.com/adobe/react-spectrum/issues/11016
-it('restores focus to the last focused row when tabbing into a GridList inside a Dialog', async () => {
+it('restores focus to the last focused row, not a selection checkbox, when tabbing into a GridList inside a Dialog', async () => {
   let {container} = await render(<GridListInDialog />);
 
   await userEvent.click(container.querySelector('button') as HTMLElement);
@@ -150,9 +149,6 @@ it('restores focus to the last focused row when tabbing into a GridList inside a
   await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
   expect(document.activeElement).toBe(input);
 
-  // FocusScope contains Tab within the Dialog and focuses the next tabbable element, which is the
-  // first row's selection checkbox. The GridList then restores focus to the last focused row, and
-  // focus must stay there rather than briefly going back to the checkbox.
   let focusedElements: Element[] = [];
   let onFocusIn = (e: FocusEvent) => focusedElements.push(e.target as Element);
   dialog.addEventListener('focusin', onFocusIn);
