@@ -17,7 +17,7 @@ import {
   render,
   within
 } from '@react-spectrum/test-utils-internal';
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, HebrewCalendar} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
 import {I18nProvider} from 'react-aria/I18nProvider';
@@ -572,6 +572,33 @@ describe('DateField', () => {
 
     let eraSegment = getByRole('group').querySelector('[data-type=era]');
     expect(eraSegment).toHaveTextContent('AM');
+  });
+
+  it('keeps the month when cycling the year across a Hebrew leap year', async () => {
+    for (let [from, key, to] of [
+      // 14 Adar II 5784 (leap year) -> 14 Adar 5785
+      [[5784, 7, 14], '{ArrowUp}', [5785, 6, 14]],
+      // 14 Nisan 5785 -> 14 Nisan 5784 (leap year)
+      [[5785, 7, 14], '{ArrowDown}', [5784, 8, 14]]
+    ]) {
+      let onChange = jest.fn();
+      let {getAllByRole, unmount} = render(
+        <I18nProvider locale="en-US-u-ca-hebrew">
+          <DateField
+            defaultValue={new CalendarDate(new HebrewCalendar(), ...from)}
+            onChange={onChange}>
+            <Label>Date</Label>
+            <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          </DateField>
+        </I18nProvider>
+      );
+
+      let segment = getAllByRole('spinbutton').find(s => s.getAttribute('data-type') === 'year');
+      await user.click(segment);
+      await user.keyboard(key);
+      expect(onChange).toHaveBeenLastCalledWith(new CalendarDate(new HebrewCalendar(), ...to));
+      unmount();
+    }
   });
 
   it('does not crash for locales whose 12-hour time has no day period', async () => {

@@ -167,17 +167,23 @@ export class IncompleteDate {
         break;
       }
       case 'year': {
-        // Use CalendarDate to cycle so that we update the era when going between 1 AD and 1 BC.
+        // Use CalendarDate to cycle so that we update the era when going between 1 AD and 1 BC,
+        // and the month number in calendars with leap months (e.g. Hebrew).
+        let month = this.month ?? 1;
         let date = new CalendarDate(
           this.calendar,
           this.era ?? placeholder.era,
           this.year ?? placeholder.year,
-          this.month ?? 1,
+          month,
           this.day ?? 1
         );
+        let isValidMonth = date.month === month;
         date = date.cycle(field, amount, {round: field === 'year'});
         res.era = date.era;
         res.year = date.year;
+        if (this.month != null && isValidMonth) {
+          res.month = date.month;
+        }
         break;
       }
       case 'month':
