@@ -193,7 +193,8 @@ describeOrSkip('Lightbox', () => {
 
   describe('navigation buttons', () => {
     it('navigates forward and backward using Next and Previous', async () => {
-      let {getByRole} = render(<Carousel defaultSelectedKey="two" />);
+      let {getByRole} = render(<Carousel />);
+      await user.click(getByRole('tab', {name: 'Photo two'}));
 
       await user.click(getByRole('button', {name: 'Next attachment'}));
       expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo three');
@@ -208,9 +209,9 @@ describeOrSkip('Lightbox', () => {
       'marks the boundary button %s/%s as aria-disabled and ignores activation',
       async (selectedKey, disabledButton, enabledButton) => {
         let onSelectionChange = jest.fn();
-        let {getByRole} = render(
-          <Carousel defaultSelectedKey={selectedKey} onSelectionChange={onSelectionChange} />
-        );
+        let {getByRole} = render(<Carousel onSelectionChange={onSelectionChange} />);
+        await user.click(getByRole('tab', {name: `Photo ${selectedKey}`}));
+        onSelectionChange.mockClear();
         let button = getByRole('button', {name: disabledButton});
         expect(button).toHaveAttribute('aria-disabled', 'true');
         expect(getByRole('button', {name: enabledButton})).not.toHaveAttribute(
@@ -230,12 +231,9 @@ describeOrSkip('Lightbox', () => {
     it('disables both navigation actions when there is only one slide', async () => {
       let onSelectionChange = jest.fn();
       let {getByRole} = render(
-        <Carousel
-          itemIds={['one']}
-          defaultSelectedKey="one"
-          onSelectionChange={onSelectionChange}
-        />
+        <Carousel itemIds={['one']} onSelectionChange={onSelectionChange} />
       );
+      onSelectionChange.mockClear();
       for (let name of ['Previous attachment', 'Next attachment']) {
         let button = getByRole('button', {name});
         expect(button).toHaveAttribute('aria-disabled', 'true');
@@ -264,9 +262,10 @@ describeOrSkip('Lightbox', () => {
     it('reverses panel arrow-key navigation in RTL', async () => {
       let {getByRole} = render(
         <I18nProvider locale="ar-AE">
-          <Carousel defaultSelectedKey="two" />
+          <Carousel />
         </I18nProvider>
       );
+      await user.click(getByRole('tab', {name: 'Photo two'}));
       act(() => getByRole('tabpanel').focus());
 
       await user.keyboard('{ArrowLeft}');
@@ -288,9 +287,9 @@ describeOrSkip('Lightbox', () => {
 
     it('preserves child-input arrow-key behavior without changing slides', async () => {
       let onSelectionChange = jest.fn();
-      let {getByRole} = render(
-        <Carousel defaultSelectedKey="two" withControls onSelectionChange={onSelectionChange} />
-      );
+      let {getByRole} = render(<Carousel withControls onSelectionChange={onSelectionChange} />);
+      await user.click(getByRole('tab', {name: 'Photo two'}));
+      onSelectionChange.mockClear();
       let input = getByRole('textbox', {name: 'Caption two'});
       await user.click(input);
       await user.type(input, 'abc');
@@ -306,9 +305,11 @@ describeOrSkip('Lightbox', () => {
       let onSelectionChange = jest.fn();
       let {getByRole} = render(
         <div onKeyDownCapture={e => e.preventDefault()}>
-          <Carousel defaultSelectedKey="two" onSelectionChange={onSelectionChange} />
+          <Carousel onSelectionChange={onSelectionChange} />
         </div>
       );
+      await user.click(getByRole('tab', {name: 'Photo two'}));
+      onSelectionChange.mockClear();
       act(() => getByRole('tabpanel').focus());
 
       await user.keyboard('{ArrowLeft}{ArrowRight}');
@@ -327,12 +328,14 @@ describeOrSkip('Lightbox', () => {
       expect(getByRole('tab', {name: 'Photo three'})).toHaveFocus();
     });
 
-    it('synchronizes picker focus when controlled selection changes while focus remains inside the picker', async () => {
-      let {getByRole, rerender} = render(<Carousel selectedKey="one" />);
+    it('synchronizes picker focus when scrolling changes selection while focus remains inside the picker', async () => {
+      let {getByRole} = render(<Carousel />);
       await user.tab();
       expect(getByRole('tab', {name: 'Photo one'})).toHaveFocus();
 
-      rerender(<Carousel selectedKey="four" />);
+      let viewport = getByRole('tabpanel').parentElement!.parentElement!;
+      Object.defineProperty(viewport, 'offsetWidth', {value: 100});
+      fireEvent.scroll(viewport, {target: {scrollLeft: 300}});
       expect(getByRole('tab', {name: 'Photo four'})).toHaveFocus();
     });
 
@@ -374,11 +377,11 @@ describeOrSkip('Lightbox', () => {
       expect(getByRole('region')).toContainElement(onBlur.mock.calls[0][0].relatedTarget);
     });
 
-    it('does not restore picker focus after focus moves outside and controlled selection changes', async () => {
-      let {getByRole, rerender} = render(
+    it('does not restore picker focus after focus moves outside and scrolling changes selection', async () => {
+      let {getByRole} = render(
         <>
           <button>Outside</button>
-          <Carousel selectedKey="one" />
+          <Carousel />
         </>
       );
       let pickerItem = getByRole('tab', {name: 'Photo one'});
@@ -387,12 +390,9 @@ describeOrSkip('Lightbox', () => {
 
       let outside = getByRole('button', {name: 'Outside'});
       await user.click(outside);
-      rerender(
-        <>
-          <button>Outside</button>
-          <Carousel selectedKey="three" />
-        </>
-      );
+      let viewport = getByRole('tabpanel').parentElement!.parentElement!;
+      Object.defineProperty(viewport, 'offsetWidth', {value: 100});
+      fireEvent.scroll(viewport, {target: {scrollLeft: 200}});
       expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo three');
       expect(outside).toHaveFocus();
     });

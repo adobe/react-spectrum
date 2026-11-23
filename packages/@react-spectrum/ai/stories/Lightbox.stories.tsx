@@ -132,10 +132,7 @@ export const Basic: Story = {
         </LightboxItems>
       </LightboxCarousel>
     </div>
-  ),
-  args: {
-    defaultSelectedKey: 'amsterdam'
-  }
+  )
 };
 
 function AttachmentDialogExample() {

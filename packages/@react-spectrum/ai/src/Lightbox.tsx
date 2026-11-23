@@ -19,7 +19,7 @@ import {Children, ReactNode, useCallback, useContext, useRef} from 'react';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
 import {flushSync} from 'react-dom';
-import {FocusableElement, Key} from '@react-types/shared';
+import {FocusableElement, Key, LinkDOMProps} from '@react-types/shared';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
 import {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
@@ -43,7 +43,6 @@ import {
   TabListProps,
   TabListStateContext,
   TabPanelProps,
-  TabPanelsProps,
   TabProps,
   TabsProps
 } from 'react-aria-components/Tabs';
@@ -65,6 +64,9 @@ export interface LightboxCarouselProps extends Omit<
   | 'keyboardActivation'
   | 'isDisabled'
   | 'disabledKeys'
+  // TODO: Expose selection props when LightboxTrigger supports controlled selection and opening.
+  | 'selectedKey'
+  | 'defaultSelectedKey'
 > {
   /**
    * The children of the component.
@@ -80,23 +82,23 @@ export interface LightboxPickerProps<T> extends Omit<
 > {}
 export interface LightboxPickerItemProps extends Omit<
   TabProps,
-  'className' | 'style' | 'render' | 'children' | 'isDisabled'
+  'className' | 'style' | 'render' | 'children' | 'isDisabled' | keyof LinkDOMProps
 > {
   /**
    * The children of the component.
    */
   children: ReactNode;
 }
-export interface LightboxItemsProps<T> extends Omit<
-  TabPanelsProps<T>,
-  'className' | 'style' | 'render' | 'children'
-> {
+export interface LightboxItemsProps {
   /**
    * The children of the component.
    */
   children: ReactNode;
 }
-export interface LightboxItemProps extends Pick<TabPanelProps, 'id'> {
+export interface LightboxItemProps extends Pick<
+  TabPanelProps,
+  'id' | 'aria-label' | 'aria-labelledby' | 'aria-describedby' | 'aria-details'
+> {
   /**
    * The children of the component.
    */
