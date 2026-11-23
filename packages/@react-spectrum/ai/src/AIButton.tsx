@@ -69,6 +69,8 @@ const button = style({
   userSelect: 'none',
   width: 'fit',
   transition: '[--color2, --color3, transform, scale, box-shadow, color]',
+  transitionDuration: 220,
+  transitionTimingFunction: 'out',
   color: {
     default: lightDark('[#530035]', 'white/80'),
     isDisabled: 'transparent-overlay-400'
@@ -127,8 +129,8 @@ defineProperties(`
 
 const bg = css(`  
   --color1: light-dark(rgb(243 222 238), rgb(62 33 50));
-  --color2: light-dark(rgb(241 188 233), rgb(100 46 63));
-  --color3: light-dark(rgb(248 198 183), rgb(92 44 75));
+  --color2: light-dark(rgb(241 195 233), rgb(95 46 63));
+  --color3: light-dark(rgb(248 212 200), rgb(82 44 75));
   --color4: light-dark(rgb(246 230 225), rgb(47 29 47));
   --top-shine: light-dark(transparent, rgb(255 255 255 / 12%));
   --inner-shadow: light-dark(white, rgb(24 24 24));
@@ -154,8 +156,8 @@ const bg = css(`
     0 4px 12px 0 rgb(0 0 0 / 6%);
 
   &[data-hovered] {
-    --color2: light-dark(rgb(241 177 235), rgb(137 65 98));
-    --color3: light-dark(rgb(250 187 163), rgb(122 61 84));
+    --color2: light-dark(rgb(241 177 235), rgb(116, 54, 98));
+    --color3: light-dark(rgb(250 197 173), rgb(106, 52, 79));
   }
 
   &::before, &::after {
@@ -189,12 +191,12 @@ const bg = css(`
       linear-gradient(
         to bottom,
         light-dark(
-          color-mix(rgb(0 0 0 / 8%), rgb(255 255 255 / 40%)),
-          color-mix(rgb(255 255 255 / 6%), rgb(0 0 0 / 64%))
+          rgb(0 0 0 / 8%),
+          color-mix(rgb(255 255 255 / 20%), rgb(0 0 0 / 64%))
         ),
         light-dark(
-          color-mix(rgb(0 0 0 / 8%), rgb(255 255 255 / 16%)),
-          color-mix(rgb(255 255 255 / 6%), rgb(0 0 0 / 56%))
+          rgb(0 0 0 / 2%),
+          color-mix(rgb(255 255 255 / 20%), rgb(0 0 0 / 56%))
         )
       );
   }
@@ -205,7 +207,7 @@ const bg = css(`
     --color3: light-dark(rgb(245 245 245), rgb(24 24 24));
     --color4: light-dark(rgb(245 245 245), rgb(24 24 24));
     --top-shine: light-dark(transparent, rgb(255 255 255 / 6%));
-    --inner-shadow: light-dark(rgb(245 245 245), rgb(24 24 24));
+    --inner-shadow: light-dark(rgb(245 245 245), rgb(20 20 20));
     --outer-stroke: light-dark(rgb(0 0 0 / 4%), rgb(255 255 255 / 4%));
 
     &::before,
