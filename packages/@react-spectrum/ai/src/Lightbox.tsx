@@ -12,6 +12,7 @@
 
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Button';
+import {chain} from 'react-aria/chain';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {Children, ReactNode, useCallback, useContext, useRef} from 'react';
@@ -65,6 +66,9 @@ export interface LightboxCarouselProps extends Omit<
   | 'isDisabled'
   | 'disabledKeys'
 > {
+  /**
+   * The children of the component.
+   */
   children: ReactNode;
   // TODO: Support infinite carousel
   // isInfinite?: boolean;
@@ -78,18 +82,24 @@ export interface LightboxPickerItemProps extends Omit<
   TabProps,
   'className' | 'style' | 'render' | 'children' | 'isDisabled'
 > {
+  /**
+   * The children of the component.
+   */
   children: ReactNode;
 }
 export interface LightboxItemsProps<T> extends Omit<
   TabPanelsProps<T>,
   'className' | 'style' | 'render' | 'children'
 > {
+  /**
+   * The children of the component.
+   */
   children: ReactNode;
 }
-export interface LightboxItemProps extends Omit<
-  TabPanelProps,
-  'className' | 'style' | 'render' | 'children' | 'shouldForceMount'
-> {
+export interface LightboxItemProps extends Pick<TabPanelProps, 'id'> {
+  /**
+   * The children of the component.
+   */
   children: ReactNode;
 }
 
@@ -187,6 +197,9 @@ const itemStyles = style({
   outlineStyle: 'none'
 });
 
+/**
+ * Displays content in a carousel, either inline or in a modal when used within a LightboxTrigger.
+ */
 export function LightboxCarousel(props: LightboxCarouselProps) {
   let ctx = useContext(LightboxTriggerContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
@@ -258,7 +271,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
                   {...props}
                   id={undefined}
                   selectedKey={ctx?.activeKey}
-                  onSelectionChange={ctx?.setActiveKey}
+                  onSelectionChange={chain(props.onSelectionChange, ctx?.setActiveKey)}
                   className={carouselStyles}
                 />
               </>
@@ -280,6 +293,9 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
   );
 }
 
+/**
+ * Displays a list of thumbnails for selecting an item in a lightbox carousel.
+ */
 export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
   let ctx = useContext(LightboxTriggerContext);
   let state = useContext(TabListStateContext);
@@ -345,6 +361,9 @@ const thumbnailStyles = style({
   }
 });
 
+/**
+ * A thumbnail that selects its corresponding item in a lightbox carousel.
+ */
 export function LightboxPickerItem(props: LightboxPickerItemProps) {
   let isInModal = useContext(LightboxTriggerContext) != null;
 
@@ -359,6 +378,9 @@ export function LightboxPickerItem(props: LightboxPickerItemProps) {
   );
 }
 
+/**
+ * Contains the items displayed in a lightbox carousel.
+ */
 export function LightboxItems<T>(props: LightboxItemsProps<T>) {
   let state = useContext(TabListStateContext)!;
   let slides = Children.toArray(props.children);
@@ -735,6 +757,9 @@ const innerImageStyles = style({
   maxHeight: '100cqh'
 });
 
+/**
+ * Displays the content for an individual item in a lightbox carousel.
+ */
 export function LightboxItem(props: LightboxItemProps) {
   return (
     <RACTabPanel {...props} shouldForceMount className={itemStyles}>

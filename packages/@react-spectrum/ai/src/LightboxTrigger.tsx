@@ -14,6 +14,9 @@ import {createContext, ReactNode, useState} from 'react';
 import {Key} from '@react-types/shared';
 
 export interface LightboxTriggerProps {
+  /**
+   * The children of the component.
+   */
   children: ReactNode;
 }
 
@@ -27,6 +30,9 @@ export interface LightboxTriggerContextProps {
 
 export const LightboxTriggerContext = createContext<LightboxTriggerContextProps | null>(null);
 
+/**
+ * Manages opening a modal lightbox and selecting which item to display.
+ */
 export function LightboxTrigger(props: LightboxTriggerProps) {
   let [isOpen, setIsOpen] = useState<boolean>(false);
   let [activeKey, setActiveKey] = useState<Key | undefined>(undefined);
