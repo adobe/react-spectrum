@@ -246,19 +246,33 @@ function TagGroupInner<T>({
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttons = currActionsRef ? [...currActionsRef.children] : [];
-        if (buttons.length > 0 && rowCount >= maxRows) {
-          let buttonsWidth = buttons.reduce(
-            (acc, curr) => (acc += curr.getBoundingClientRect().width),
-            0
-          );
+        let hasGroupAction = Boolean(groupActionLabel && onGroupAction);
+        if (
+          buttons.length > 0 &&
+          (rowCount > maxRows || (rowCount === maxRows && hasGroupAction))
+        ) {
           let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
-          buttonsWidth += margins * 2;
           let end = direction === 'ltr' ? 'right' : 'left';
           let containerEnd =
             getParentElement(currContainerRef)?.getBoundingClientRect()[end] - margins;
           let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
           lastTagEnd += margins;
           let availableWidth = containerEnd - lastTagEnd;
+
+          let buttonsWidth = buttons.reduce(
+            (acc, curr) => (acc += curr.getBoundingClientRect().width),
+            0
+          );
+          buttonsWidth += margins * 2;
+
+          // If all tags fit within maxRows, check if the group action button alone fits before reserving space for the collapse button too.
+          if (rowCount === maxRows && hasGroupAction) {
+            let groupActionWidth =
+              buttons[buttons.length - 1].getBoundingClientRect().width + margins * 2;
+            if (availableWidth > groupActionWidth) {
+              buttonsWidth = 0;
+            }
+          }
 
           while (availableWidth <= buttonsWidth && index > 0) {
             let tagWidth = tagWidths.pop();

@@ -130,13 +130,13 @@ describe('TagGroup', () => {
 
   it('recalculates collapse state when tags are removed', async () => {
     function RemovableTagGroup() {
-      let [items, setItems] = useState(defaultItems.slice(0, 6));
+      let [items, setItems] = useState(defaultItems.slice(0, 4));
       return (
         <div style={{width: 260}}>
           <TagGroup
             label="Ice cream flavors"
             items={items}
-            maxRows={2}
+            maxRows={1}
             onRemove={keys => setItems(prev => prev.filter(item => !keys.has(item.id)))}>
             {item => <Tag id={item.id}>{item.name}</Tag>}
           </TagGroup>
@@ -148,8 +148,8 @@ describe('TagGroup', () => {
 
     await expect.element(getByRole('button', {name: /Show all/})).toBeVisible();
 
-    // Remove visible tags one at a time until the remaining tags fit within maxRows
-    for (let i = 0; i < 6; i++) {
+    // Remove visible tags one at a time until the remaining tags fit on a single row
+    for (let i = 0; i < 4; i++) {
       let showAll = getByRole('button', {name: /Show all/}).all();
       if (showAll.length === 0) {
         break;
