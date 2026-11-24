@@ -189,4 +189,29 @@ describe('TagGroup', () => {
     await clearButton.click();
     expect(onGroupAction).toHaveBeenCalledTimes(1);
   });
+
+  it('collapses tags properly in RTL', async () => {
+    const {getByRole, getByTestId} = await render(
+      <div data-testid="wrapper" style={{width: 550}}>
+        <TagGroup label="Ice cream flavors" items={defaultItems} maxRows={1}>
+          {item => <Tag id={item.id}>{item.name}</Tag>}
+        </TagGroup>
+      </div>,
+      {providerOptions: {locale: 'ar-AE'}}
+    );
+
+    let showAllButton = getByRole('button', {name: /عرض الكل/});
+    await expect.element(showAllButton).toBeVisible();
+
+    // Trigger a resize with the collapse button mounted so computeVisibleTagCount measures availableWidth in RTL
+    let wrapper = getByTestId('wrapper').element() as HTMLElement;
+    wrapper.style.width = '545px';
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    // Multiple tags should fit alongside the collapse button in 545px
+    // (the inverted RTL availableWidth calculation collapsed down to 1 tag)
+    let collapsedCount = getByRole('row').all().length;
+    expect(collapsedCount).toBeGreaterThan(2);
+    expect(collapsedCount).toBeLessThan(defaultItems.length);
+  });
 });

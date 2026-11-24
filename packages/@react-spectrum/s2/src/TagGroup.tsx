@@ -252,12 +252,15 @@ function TagGroupInner<T>({
           (rowCount > maxRows || (rowCount === maxRows && hasGroupAction))
         ) {
           let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
-          let end = direction === 'ltr' ? 'right' : 'left';
-          let containerEnd =
-            getParentElement(currContainerRef)?.getBoundingClientRect()[end] - margins;
-          let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
-          lastTagEnd += margins;
-          let availableWidth = containerEnd - lastTagEnd;
+          let containerRect = getParentElement(currContainerRef)?.getBoundingClientRect();
+          let lastTagRect = tags[index - 1]?.getBoundingClientRect();
+          let availableWidth =
+            containerRect && lastTagRect
+              ? (direction === 'ltr'
+                  ? containerRect.right - lastTagRect.right
+                  : lastTagRect.left - containerRect.left) -
+                margins * 2
+              : 0;
 
           let buttonsWidth = buttons.reduce(
             (acc, curr) => (acc += curr.getBoundingClientRect().width),
