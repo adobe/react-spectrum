@@ -12,7 +12,11 @@
 
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from '../utils/constants';
 
-import {dispatchVirtualFocus, moveVirtualFocus} from '../focus/virtualFocus';
+import {
+  dispatchVirtualFocus,
+  getVirtuallyFocusedElement,
+  moveVirtualFocus
+} from '../focus/virtualFocus';
 import {
   DOMAttributes,
   FocusableElement,
@@ -35,6 +39,7 @@ import {
 import {getFocusableTreeWalker} from '../focus/FocusScope';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
+import {getOwnerDocument} from '../utils/domHelpers';
 import {isCtrlKeyPressed} from '../utils/keyboard';
 import {isMac} from '../utils/platform';
 import {isTabbable} from '../utils/isFocusable';
@@ -575,6 +580,16 @@ export function useSelectableCollection(
         }
       } else {
         manager.setFocusedKey(firstKey);
+        // The autocomplete's input tracks the virtually focused item via aria-activedescendant,
+        // but a different queued descendant update may still be pending. If the item we just
+        // focused is already the element aria-activedescendant points to, moveVirtualFocus in
+        // useSelectableItem will not dispatch the focus event the autocomplete relies on to update
+        // that queue, so dispatch it here. Otherwise the queue keeps pointing at an item that may
+        // have been filtered out and keyboard actions like Enter stop working.
+        let element = getItemElement(ref, firstKey);
+        if (element && element === getVirtuallyFocusedElement(getOwnerDocument(ref.current))) {
+          dispatchVirtualFocus(element, null);
+        }
         // Only set shouldVirtualFocusFirst to false if we've successfully set the first key as the focused key
         // If there wasn't a key to focus, we might be in a temporary loading state so we'll want to still focus the first key
         // after the collection updates after load

@@ -832,6 +832,61 @@ describe('Autocomplete', () => {
     expect(button).toHaveTextContent('Bar');
   });
 
+  it('should select the focused item on Enter when typing refocuses the current active descendant', async function () {
+    // https://github.com/adobe/react-spectrum/issues/8938
+    let numberItems = Array.from({length: 100}, (_, i) => ({
+      id: String(i + 1),
+      name: `Item ${i + 1}`
+    }));
+    let {getByRole, queryByRole} = render(
+      <Select defaultSelectedKey="33">
+        <Label>Test</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <AutocompleteWrapper inputProps={{autoFocus: true}}>
+            <ListBox items={numberItems}>
+              {(item: AutocompleteItem) => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
+            </ListBox>
+          </AutocompleteWrapper>
+        </Popover>
+      </Select>
+    );
+
+    let button = getByRole('button');
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    await user.keyboard('{Enter}');
+    act(() => jest.runAllTimers());
+
+    let searchfield = getByRole('searchbox');
+    expect(document.activeElement).toBe(searchfield);
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(100);
+    // The selected item is auto focused when the select opens.
+    expect(searchfield).toHaveAttribute('aria-activedescendant', options[32].id);
+
+    // Type "33" quickly. The first keystroke virtually focuses "Item 3" and queues the
+    // aria-activedescendant update, the second refocuses "Item 33" while it is still pending.
+    await user.keyboard('3');
+    options = within(listbox).getAllByRole('option');
+    expect(options.length).toBeLessThan(100);
+    expect(options[0]).toHaveTextContent('Item 3');
+
+    await user.keyboard('3');
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveTextContent('Item 33');
+
+    await user.keyboard('{Enter}');
+    act(() => jest.runAllTimers());
+    expect(queryByRole('listbox')).toBeNull();
+    expect(document.activeElement).toBe(button);
+    expect(button).toHaveTextContent('Item 33');
+  });
+
   it('should be able to tab inside a focus scope that contains', async () => {
     const MyMenu = () => {
       let {contains} = useFilter({sensitivity: 'base'});
