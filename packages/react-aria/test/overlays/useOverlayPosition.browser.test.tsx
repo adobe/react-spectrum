@@ -91,3 +91,59 @@ it.each(['fixed', 'absolute'] as const)(
     }
   }
 );
+
+it('preserves the scroll position of the scroll container when repositioning', async () => {
+  function Example() {
+    let targetRef = useRef<HTMLButtonElement>(null);
+    let overlayRef = useRef<HTMLDivElement>(null);
+    let scrollRef = useRef<HTMLDivElement>(null);
+    let {overlayProps} = useOverlayPosition({
+      targetRef,
+      overlayRef,
+      scrollRef,
+      placement: 'bottom left',
+      isOpen: true
+    });
+    return (
+      <>
+        <button ref={targetRef} style={{position: 'absolute', top: 200, left: 20, height: 30}}>
+          Trigger
+        </button>
+        {createPortal(
+          <div
+            ref={overlayRef}
+            {...overlayProps}
+            style={{...overlayProps.style, width: 200, display: 'flex'}}>
+            <div
+              ref={scrollRef}
+              data-testid="scroller"
+              style={{maxHeight: 'inherit', overflow: 'auto', flex: 1}}>
+              {Array.from({length: 100}, (_, i) => (
+                <div key={i} style={{height: 30}}>
+                  Item {i + 1}
+                </div>
+              ))}
+            </div>
+          </div>,
+          document.body
+        )}
+      </>
+    );
+  }
+
+  let result = await render(<Example />);
+  let scroller = document.querySelector('[data-testid="scroller"]') as HTMLElement;
+  await expect.poll(() => scroller.scrollHeight > scroller.clientHeight).toBe(true);
+
+  // Scroll to the bottom of the list.
+  scroller.scrollTop = scroller.scrollHeight;
+  let scrollTop = scroller.scrollTop;
+  expect(scrollTop).toBeGreaterThan(0);
+
+  // Trigger a reposition, as happens when the window is resized.
+  window.dispatchEvent(new Event('resize'));
+  await new Promise(resolve => requestAnimationFrame(resolve));
+
+  expect(scroller.scrollTop).toBe(scrollTop);
+  await result.unmount();
+});
