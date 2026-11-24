@@ -724,12 +724,12 @@ function CarouselNavButton(props: CarouselNavButtonProps) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let isRTL = useLocale().direction === 'rtl';
   let Icon = (side === 'start') !== isRTL ? ChevronLeft : ChevronRight;
-  // oxlint-disable react/react-compiler
   return (
     <Button
       {...otherProps}
       ref={ref}
       onPress={isDisabled ? undefined : props.onPress}
+      // oxlint-disable-next-line react/refs
       style={pressScale(ref, {})}
       className={renderProps =>
         carouselNavButtonStyles({...renderProps, side, isInModal, isDisabled})
@@ -738,7 +738,6 @@ function CarouselNavButton(props: CarouselNavButtonProps) {
       <Icon />
     </Button>
   );
-  // oxlint-enable react/react-compiler
 }
 
 const imageStyles = style({
