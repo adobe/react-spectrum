@@ -50,7 +50,6 @@ import {
   SpectrumLabelableProps
 } from '@react-types/shared';
 import {FieldLabel, helpTextStyles} from './Field';
-import {flushSync} from 'react-dom';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
@@ -276,9 +275,7 @@ function TagGroupInner<T>({
         };
       };
       let result = computeVisibleTagCount();
-      flushSync(() => {
-        setTagState(result);
-      });
+      setTagState(result);
     }
   };
 
@@ -378,10 +375,7 @@ function TagGroupInner<T>({
                   flexWrap: 'wrap',
                   fontFamily: 'sans',
                   position: 'absolute',
-                  top: 0,
-                  bottom: 0,
-                  start: -4,
-                  end: 4,
+                  inset: 0,
                   visibility: 'hidden',
                   overflow: 'hidden',
                   opacity: 0
