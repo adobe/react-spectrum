@@ -175,7 +175,6 @@ function TagGroupInner<T>({
   } = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
-  let tagsRef = useRef<HTMLDivElement | null>(null);
   let actionsRef = useRef<HTMLDivElement | null>(null);
   let hiddenTagsRef = useRef<HTMLDivElement | null>(null);
   let [tagState, setTagState] = useState({
@@ -207,15 +206,10 @@ function TagGroupInner<T>({
 
     if (maxRows != null && maxRows > 0) {
       let computeVisibleTagCount = () => {
-        let currContainerRef: HTMLDivElement | null = hiddenTagsRef.current;
         let currTagsRef: HTMLDivElement | null = hiddenTagsRef.current;
         let currActionsRef: HTMLDivElement | null = actionsRef.current;
-        if (
-          !currContainerRef ||
-          !currTagsRef ||
-          collection.size === 0 ||
-          getParentElement(currContainerRef) == null
-        ) {
+        let containerEl = currTagsRef ? getParentElement(currTagsRef) : null;
+        if (!currTagsRef || !containerEl || collection.size === 0) {
           return {
             visibleTagCount: 0,
             showCollapseButton: false
@@ -252,15 +246,14 @@ function TagGroupInner<T>({
           (rowCount > maxRows || (rowCount === maxRows && hasGroupAction))
         ) {
           let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
-          let containerRect = getParentElement(currContainerRef)?.getBoundingClientRect();
+          let containerRect = containerEl.getBoundingClientRect();
           let lastTagRect = tags[index - 1]?.getBoundingClientRect();
-          let availableWidth =
-            containerRect && lastTagRect
-              ? (direction === 'ltr'
-                  ? containerRect.right - lastTagRect.right
-                  : lastTagRect.left - containerRect.left) -
-                margins * 2
-              : 0;
+          let availableWidth = lastTagRect
+            ? (direction === 'ltr'
+                ? containerRect.right - lastTagRect.right
+                : lastTagRect.left - containerRect.left) -
+              margins * 2
+            : 0;
 
           let buttonsWidth = buttons.reduce(
             (acc, curr) => (acc += curr.getBoundingClientRect().width),
@@ -388,8 +381,6 @@ function TagGroupInner<T>({
                 inert={inertValue(true)}
                 ref={hiddenTagsRef}
                 className={style({
-                  display: 'inline',
-                  flexWrap: 'wrap',
                   fontFamily: 'sans',
                   position: 'absolute',
                   inset: 0,
@@ -427,7 +418,6 @@ function TagGroupInner<T>({
             )}
             {/* real tag list */}
             <TagList
-              ref={tagsRef}
               items={items}
               renderEmptyState={renderEmptyState}
               className={style({
