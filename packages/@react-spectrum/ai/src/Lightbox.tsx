@@ -23,11 +23,7 @@ import {FocusableElement, Key, LinkDOMProps} from '@react-types/shared';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
 import {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
-import {
-  getActiveElement,
-  getEventTarget,
-  nodeContains
-} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {getActiveElement, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {ImageContext} from '@react-spectrum/s2/Image';
@@ -473,9 +469,8 @@ function FiniteLightboxItems(props: FiniteLightboxItemsProps) {
       // Briefly hiding overflow cancels a smooth scroll that's still running. Otherwise
       // Safari keeps animating after the jump and lands on the wrong slide.
       // Fixed in Safari 27, needed in Safari 26
-      el.style.overflowX = 'hidden';
+      el.scrollTo({left: el.scrollLeft, behavior: 'instant'});
       el.scrollTo({left, behavior: 'instant'});
-      el.style.overflowX = '';
       return;
     }
 
@@ -537,32 +532,21 @@ function FiniteLightboxItems(props: FiniteLightboxItemsProps) {
 
   let onScrollEnd = () => {
     let el = ref.current;
-    // Rapid arrow presses on a tab panel can make Safari fire scrollend before the
-    // latest scroll finishes. Keep scroll-driven selection suppressed until the viewport
-    // maps to selectedIndex, so intermediate scroll events cannot overwrite selectedKey.
-    if (
-      isProgrammaticScroll.current &&
-      el &&
-      selectedIndex != null &&
-      Math.round(Math.abs(el.scrollLeft) / el.offsetWidth) !== selectedIndex
-    ) {
-      return;
-    }
-
     // When a jump interrupts a smooth scroll (i.e. going from the last tab to the first tab), Chrome adds the smooth scroll's last few pixels
     // after the jump and doesn't re-snap causing the slide to be incorrectly aligned.
     // https://issues.chromium.org/issues/40722572
     if (isProgrammaticScroll.current && el && selectedIndex != null) {
-      el.scrollTo({left: getScrollLeft(el, selectedIndex, isRTL)});
+      el.scrollTo({
+        left: getScrollLeft(el, selectedIndex, isRTL),
+        behavior: 'instant'
+      });
     }
 
     isProgrammaticScroll.current = false;
   };
 
-  // Only handle arrows from the panel itself, preserving keyboard behavior in text fields and other child controls.
   let handleArrow = (e: KeyboardEvent, delta: -1 | 1) => {
-    let panel = ref.current?.querySelector('[role="tabpanel"]');
-    if (e.isDefaultPrevented() || getEventTarget(e) !== panel) {
+    if (e.isDefaultPrevented()) {
       return false;
     }
 
