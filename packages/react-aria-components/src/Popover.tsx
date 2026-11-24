@@ -258,7 +258,6 @@ function PopoverInner({
   // Skip the automatic entry animation when opening instantly (e.g. swapping between previews
   // during warmup). An explicitly provided isEntering prop still takes precedence.
   let enterAnimation = useEnterAnimation(ref, !!placement && isOpen);
-  // oxlint-disable-next-line react/refs
   let isEntering = props.isEntering || (!props.shouldSkipAnimation && enterAnimation) || false;
   let renderProps = useRenderProps({
     ...props,
@@ -274,15 +273,12 @@ function PopoverInner({
   // Automatically render Popover with role=dialog except when isNonModal is true,
   // or a dialog is already nested inside the popover.
   let shouldBeDialog =
-    // oxlint-disable-next-line react/refs
     !props.isNonModal || props.trigger === 'SubmenuTrigger' || props.trigger === 'PreviewTrigger';
   let [isDialog, setDialog] = useState(props.trigger === 'PreviewTrigger');
   useLayoutEffect(() => {
     if (ref.current) {
-      // oxlint-disable-next-line react/refs
       setDialog(shouldBeDialog && !ref.current.querySelector('[role=dialog]'));
     }
-    // oxlint-disable-next-line react/refs
   }, [ref, shouldBeDialog]);
 
   // Focus the popover itself on mount, unless a child element is already focused.
@@ -332,7 +328,6 @@ function PopoverInner({
   // Since our trigger may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
   useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
 
-  // oxlint-disable react/refs
   let overlay = (
     <dom.div
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
@@ -350,7 +345,6 @@ function PopoverInner({
       data-placement={placement}
       data-entering={isEntering || undefined}
       data-exiting={isExiting || undefined}>
-      {/* oxlint-disable-next-line react/refs */}
       {!props.isNonModal && <DismissButton onDismiss={state.close} />}
       <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
         {children}
@@ -358,7 +352,6 @@ function PopoverInner({
       <DismissButton onDismiss={state.close} />
     </dom.div>
   );
-  // oxlint-enable react/refs
 
   // If this is a root popover, render an extra div to act as the portal container for submenus/subdialogs.
   if (!isSubPopover) {
@@ -368,7 +361,6 @@ function PopoverInner({
         shouldContainFocus={isDialog && props.trigger !== 'PreviewTrigger'}
         isExiting={isExiting}
         portalContainer={UNSTABLE_portalContainer}>
-        {/* oxlint-disable-next-line react/refs */}
         {!props.isNonModal && state.isOpen && (
           <div data-testid="underlay" {...underlayProps} style={{position: 'fixed', inset: 0}} />
         )}

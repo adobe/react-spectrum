@@ -288,11 +288,10 @@ export function Collection<T>(props: CollectionProps<T>): JSX.Element {
   // Propagate dependencies and idScope to child collections.
   ctx = useMemo(
     () => ({
-      // oxlint-disable-next-line react-hooks/exhaustive-deps
       dependencies,
       idScope
     }),
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps, react/use-memo
     [idScope, ...dependencies]
   );
 

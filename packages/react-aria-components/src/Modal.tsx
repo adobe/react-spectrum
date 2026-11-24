@@ -316,7 +316,6 @@ function ModalOverlayInner({
   // Since an auto-focused input may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
   useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
 
-  // oxlint-disable react/refs
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
       <dom.div
@@ -347,7 +346,6 @@ function ModalOverlayInner({
       </dom.div>
     </Overlay>
   );
-  // oxlint-enable react/refs
 }
 
 function mergeDialogContext(

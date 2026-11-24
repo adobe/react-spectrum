@@ -84,6 +84,7 @@ export function useScrollView(
     ...otherProps
   } = props;
 
+  // oxlint-disable-next-line react/refs
   let state = useRef({
     // Internal scroll position of the scroll view.
     scrollPosition: new Point(),
@@ -371,6 +372,7 @@ export function useScrollView(
   if (scrollDirection === 'horizontal') {
     style.overflowX = 'auto';
     style.overflowY = 'hidden';
+    // oxlint-disable-next-line react/refs
   } else if (scrollDirection === 'vertical' || contentSize.width === state.size.width) {
     // Set overflow-x: hidden if content size is equal to the width of the scroll view.
     // This prevents horizontal scrollbars from flickering during resizing due to resize observer

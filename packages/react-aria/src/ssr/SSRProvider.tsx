@@ -66,6 +66,7 @@ function LegacySSRProvider(props: SSRProviderProps): JSX.Element {
     // because the condition never changes after mounting.
     // oxlint-disable-next-line react-hooks/rules-of-hooks
     useLayoutEffect(() => {
+      // oxlint-disable-next-line react/set-state-in-effect
       setIsSSR(false);
     }, []);
   }

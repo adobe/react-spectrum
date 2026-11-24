@@ -395,6 +395,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>): ReactElement {
   let stylePropsFinal = orientation === 'vertical' ? styleProps : {style: collapseStyle};
 
   if (collapsed && orientation !== 'vertical') {
+    // oxlint-disable-next-line react/immutability
     tabListProps['aria-hidden'] = true;
   }
 

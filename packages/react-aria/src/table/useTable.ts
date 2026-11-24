@@ -113,10 +113,12 @@ export function useTable<T>(
 
   // Override to include header rows
   if (isVirtualized) {
+    // oxlint-disable-next-line react/immutability
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
   if (state.treeColumn != null) {
+    // oxlint-disable-next-line react/immutability
     gridProps.role = 'treegrid';
   }
 

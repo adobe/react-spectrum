@@ -639,6 +639,7 @@ function useRestoreFocus(
   const nodeToRestoreRef = useRef(
     typeof document !== 'undefined'
       ? (getActiveElement(
+          // oxlint-disable-next-line react/refs
           getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined)
         ) as FocusableElement)
       : null

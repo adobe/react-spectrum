@@ -184,6 +184,7 @@ function ControlledTableResizing(props: {
     [columns, onResize]
   );
   let [savedCols, setSavedCols] = useState(widths);
+  // oxlint-disable-next-line react/purity
   let [renderKey, setRenderKey] = useState(Math.random());
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   let cols = useMemo(() => columns.map(col => ({...col})), [columns, widths]);

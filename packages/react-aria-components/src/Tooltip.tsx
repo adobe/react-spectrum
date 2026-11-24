@@ -225,7 +225,6 @@ function TooltipInner(
 
   let DOMProps = filterDOMProps(props, {global: true});
 
-  // oxlint-disable react/refs
   return (
     <dom.div
       {...mergeProps(DOMProps, renderProps, tooltipProps)}
@@ -247,5 +246,4 @@ function TooltipInner(
       </OverlayArrowContext.Provider>
     </dom.div>
   );
-  // oxlint-enable react/refs
 }

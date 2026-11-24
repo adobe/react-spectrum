@@ -108,7 +108,6 @@ function SearchExample(): JSX.Element {
 }
 
 function MyButton(props) {
-  // oxlint-disable-next-line react/refs
   const buttonRef = props.btnRef;
 
   const {focusProps, isFocusVisible, isFocused} = useFocusRing();

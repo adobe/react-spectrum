@@ -22,6 +22,7 @@ interface ContextValue<T> {
 export function useSyncRef<T>(context?: ContextValue<T> | null, ref?: RefObject<T | null>): void {
   useLayoutEffect(() => {
     if (context && context.ref && ref) {
+      // oxlint-disable-next-line react/immutability
       context.ref.current = ref.current;
       return () => {
         if (context.ref) {

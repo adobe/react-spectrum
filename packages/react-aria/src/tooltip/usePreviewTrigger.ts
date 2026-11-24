@@ -238,6 +238,7 @@ export function usePreviewTrigger(
     }
   });
 
+  // oxlint-disable-next-line react/refs
   let triggerProps = mergeProps(focusableProps, hoverProps, longPressProps);
   let describedBy = [triggerProps['aria-describedby'], state.isOpen ? popoverId : null]
     .filter(Boolean)

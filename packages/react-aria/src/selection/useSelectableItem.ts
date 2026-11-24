@@ -281,6 +281,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // the pointer up on the menu item rather than requiring a separate press.
   // For keyboard events, selection still occurs on key down.
   let itemPressProps: PressHookProps = {ref};
+  // oxlint-disable react/refs
   if (shouldSelectOnPressUp) {
     itemPressProps.onPressStart = e => {
       modality.current = e.pointerType;
@@ -396,6 +397,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     }
   }
+  // oxlint-enable react/refs
 
   let {pressProps, isPressed} = usePress(itemPressProps);
 
@@ -451,9 +453,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       : undefined;
 
   let mergedItemProps = mergeProps(
+    // oxlint-disable-next-line react/refs
     itemProps,
     allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled) ? pressProps : {},
     longPressEnabled ? longPressProps : {},
+    // oxlint-disable-next-line react/refs
     {onDoubleClick, onDragStartCapture, onPointerDownCapture, onClick, id},
     // Prevent DOM focus from moving on mouse down when using virtual focus
     shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined
