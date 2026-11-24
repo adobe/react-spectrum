@@ -119,6 +119,7 @@ const carouselStyles = style({
 
 const pickerStyles = style({
   display: 'flex',
+  minWidth: 0,
   maxWidth: {
     default: 300,
     md: 600
@@ -126,7 +127,7 @@ const pickerStyles = style({
   overflowX: 'auto',
   flexDirection: 'row',
   scrollbarWidth: 'none',
-  flexShrink: 0,
+  flexShrink: 1,
   order: 1,
   gap: 8,
   boxSizing: 'border-box',
@@ -252,9 +253,13 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
               height: 'full',
               paddingX: {
                 default: 24,
-                [smallTouchScreen]: 0
+                [smallTouchScreen]: 4
               },
-              paddingY: 24,
+              paddingTop: {
+                default: 24,
+                [smallTouchScreen]: 48
+              },
+              paddingBottom: 24,
               color: 'white'
             })}>
             {({close}) => (
@@ -264,8 +269,8 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
                   onPress={close}
                   styles={style({
                     position: 'absolute',
-                    top: 24,
-                    insetEnd: 24,
+                    top: 8,
+                    insetEnd: 16,
                     zIndex: 1
                   })}
                 />
@@ -356,7 +361,11 @@ const thumbnailStyles = style({
   width: 64,
   height: 64,
   objectFit: 'cover',
-  borderRadius: 'default',
+  borderRadius: 'lg',
+  outlineStyle: 'solid',
+  outlineWidth: 1,
+  outlineColor: 'gray-800/10',
+  outlineOffset: -1,
   opacity: {
     default: 0.8,
     isSelected: 1
