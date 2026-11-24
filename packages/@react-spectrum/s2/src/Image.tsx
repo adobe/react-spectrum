@@ -122,9 +122,8 @@ export interface ImageProps extends UnsafeStyles, SlotProps {
 
 interface ImageContextValue extends ImageProps {
   hidden?: boolean;
-  // TODO: Review exposing inner image styles. Lightbox needs the rounded wrapper
-  // to follow the photo's size, rather than making the photo fill the wrapper.
-  imgStyles?: StyleString;
+  // Lightbox needs the rounded wrapper to follow the photo's size, rather than making the photo fill the wrapper.
+  UNSTABLE_imgStyles?: StyleString;
 }
 
 export const ImageContext =
