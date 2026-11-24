@@ -760,7 +760,7 @@ export function LightboxItem(props: LightboxItemProps) {
     <RACTabPanel {...props} shouldForceMount className={itemStyles}>
       {renderProps => (
         <ImageContext.Provider
-          value={{styles: imageStyles({...renderProps}), imgStyles: innerImageStyles}}>
+          value={{styles: imageStyles({...renderProps}), UNSTABLE_imgStyles: innerImageStyles}}>
           {props.children}
         </ImageContext.Provider>
       )}

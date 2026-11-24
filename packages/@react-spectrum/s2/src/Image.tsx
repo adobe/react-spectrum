@@ -233,7 +233,7 @@ export const Image = forwardRef(function Image(
     height,
     itemProp
   } = props;
-  let {hidden, imgStyles: contextImgStyles} = props as ImageContextValue;
+  let {hidden, UNSTABLE_imgStyles: contextImgStyles} = props as ImageContextValue;
   let colorScheme = useContext(ColorSchemeContext);
   let cacheKey = useMemo(
     () => (typeof srcProp === 'object' ? JSON.stringify(srcProp) : srcProp),
