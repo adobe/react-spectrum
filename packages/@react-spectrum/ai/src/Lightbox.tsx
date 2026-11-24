@@ -466,10 +466,6 @@ function FiniteLightboxItems(props: FiniteLightboxItemsProps) {
     // Distant selections may have unmounted pages between them, so jump instead.
     // Also avoids distant selections from whipping through
     if (!isAdjacent) {
-      // Briefly hiding overflow cancels a smooth scroll that's still running. Otherwise
-      // Safari keeps animating after the jump and lands on the wrong slide.
-      // Fixed in Safari 27, needed in Safari 26
-      el.scrollTo({left: el.scrollLeft, behavior: 'instant'});
       el.scrollTo({left, behavior: 'instant'});
       return;
     }
@@ -538,6 +534,8 @@ function FiniteLightboxItems(props: FiniteLightboxItemsProps) {
     if (isProgrammaticScroll.current && el && selectedIndex != null) {
       el.scrollTo({
         left: getScrollLeft(el, selectedIndex, isRTL),
+        // Instant, so the correction doesn't start another smooth scroll.
+        // In Safari 26, that smooth scroll could land on the wrong slide.
         behavior: 'instant'
       });
     }
