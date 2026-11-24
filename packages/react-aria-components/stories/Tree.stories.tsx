@@ -330,6 +330,51 @@ export const WithDescriptions: TreeStory = {
   )
 };
 
+export const ItemFocusEvents: TreeStory = {
+  render: args => (
+    <div>
+      <p>
+        Tab into the tree, use the arrow keys, or click an item. Focus events appear in the Actions
+        panel. Moving into a descendant button blurs the item.
+      </p>
+      <Tree
+        {...args}
+        aria-label="Item focus events"
+        className={styles.tree}
+        defaultExpandedKeys={['projects']}>
+        <StaticTreeItem
+          id="photos"
+          textValue="Photos"
+          onFocus={action('Photos: onFocus')}
+          onBlur={action('Photos: onBlur')}
+          onFocusChange={action('Photos: onFocusChange')}>
+          Photos
+        </StaticTreeItem>
+        <StaticTreeItem
+          id="projects"
+          textValue="Projects"
+          title="Projects"
+          onFocus={action('Projects: onFocus')}
+          onBlur={action('Projects: onBlur')}
+          onFocusChange={action('Projects: onFocusChange')}>
+          <StaticTreeItem
+            id="project-1"
+            textValue="Project 1"
+            onFocus={action('Project 1: onFocus')}
+            onBlur={action('Project 1: onBlur')}
+            onFocusChange={action('Project 1: onFocusChange')}>
+            Project 1
+          </StaticTreeItem>
+        </StaticTreeItem>
+      </Tree>
+      <Button>After the tree</Button>
+    </div>
+  ),
+  args: {
+    selectionMode: 'single'
+  }
+};
+
 export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
   render: args => <TreeExampleStaticRender {...args} />,
   args: {

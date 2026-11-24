@@ -122,6 +122,8 @@ export interface ImageProps extends UnsafeStyles, SlotProps {
 
 interface ImageContextValue extends ImageProps {
   hidden?: boolean;
+  // Lightbox needs the rounded wrapper to follow the photo's size, rather than making the photo fill the wrapper.
+  UNSTABLE_imgStyles?: StyleString;
 }
 
 export const ImageContext =
@@ -231,7 +233,7 @@ export const Image = forwardRef(function Image(
     height,
     itemProp
   } = props;
-  let hidden = (props as ImageContextValue).hidden;
+  let {hidden, UNSTABLE_imgStyles: contextImgStyles} = props as ImageContextValue;
   let colorScheme = useContext(ColorSchemeContext);
   let cacheKey = useMemo(
     () => (typeof srcProp === 'object' ? JSON.stringify(srcProp) : srcProp),
@@ -330,7 +332,7 @@ export const Image = forwardRef(function Image(
         itemProp={itemProp}
         onLoad={onLoad}
         onError={onError}
-        className={imgStyles({isRevealed, isTransitioning})}
+        className={mergeStyles(imgStyles({isRevealed, isTransitioning}), contextImgStyles)}
       />
     );
 
@@ -378,6 +380,7 @@ export const Image = forwardRef(function Image(
   }, [
     slot,
     hidden,
+    contextImgStyles,
     domRef,
     UNSAFE_style,
     UNSAFE_className,

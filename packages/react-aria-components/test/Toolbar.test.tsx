@@ -18,6 +18,7 @@ import Meta, {ToolbarExample as ToolbarExampleStory} from '../stories/Toolbar.st
 import {pointerMap} from '@react-spectrum/test-utils-internal';
 
 import React, {createRef} from 'react';
+import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {Text} from '../src/Text';
 import {Toolbar, ToolbarContext} from '../src/Toolbar';
 import userEvent from '@testing-library/user-event';
@@ -300,6 +301,50 @@ describe('Toolbar', () => {
     await user.keyboard('{Enter}');
     expect(zoomOut).toHaveFocus();
   });
+
+  it.each(['React Aria', 'native'])(
+    'restores focus only on keyboard entry with %s buttons',
+    async type => {
+      const TestButton = type === 'native' ? 'button' : Button;
+      render(
+        <>
+          <Toolbar aria-label="Tools">
+            <TestButton>First</TestButton>
+            <TestButton>Second</TestButton>
+          </Toolbar>
+          <TestButton>After</TestButton>
+        </>
+      );
+
+      let first = screen.getByRole('button', {name: 'First'});
+      let second = screen.getByRole('button', {name: 'Second'});
+      let after = screen.getByRole('button', {name: 'After'});
+
+      await user.click(second);
+      await user.tab();
+      expect(after).toHaveFocus();
+      await user.click(first);
+      expect(first).toHaveFocus();
+
+      await user.click(after);
+      await user.tab({shift: true});
+      expect(first).toHaveFocus();
+
+      await user.keyboard('{ArrowRight}');
+      await user.tab();
+      expect(after).toHaveFocus();
+      act(() => {
+        setInteractionModality('virtual');
+      });
+      act(() => {
+        first.focus();
+      });
+      act(() => {
+        setInteractionModality('keyboard');
+      });
+      expect(first).toHaveFocus();
+    }
+  );
 
   it('scrolls the newly focused item into view when navigating with arrow keys', async () => {
     let scrollIntoView = jest.fn();

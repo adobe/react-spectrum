@@ -258,7 +258,9 @@ export const FieldGroup = forwardRef(function FieldGroup(
       onPointerDown={e => {
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
         if (
+          !e.defaultPrevented &&
           e.pointerType === 'mouse' &&
+          e.button === 0 &&
           !(getEventTarget(e) as Element).closest('button,input,textarea,[role="button"]')
         ) {
           e.preventDefault();
@@ -267,7 +269,11 @@ export const FieldGroup = forwardRef(function FieldGroup(
       }}
       onTouchEnd={e => {
         let target = getEventTarget(e) as HTMLElement;
-        if (!target.isContentEditable && !target.closest('button,input,textarea,[role="button"]')) {
+        if (
+          !e.defaultPrevented &&
+          !target.isContentEditable &&
+          !target.closest('button,input,textarea,[role="button"]')
+        ) {
           e.preventDefault();
           (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }

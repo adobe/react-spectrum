@@ -52,6 +52,7 @@ import {
   DisabledBehavior,
   DragPreviewRenderer,
   Expandable,
+  FocusEvents,
   forwardRefType,
   GlobalDOMAttributes,
   HoverEvents,
@@ -65,6 +66,7 @@ import {
 import {
   DragAndDropContext,
   DropIndicatorContext,
+  getDraggableItemSlotProps,
   useDndPersistedKeys,
   useRenderDropIndicator
 } from './DragAndDrop';
@@ -113,6 +115,7 @@ import {TreeState, useTreeState} from 'react-stately/useTreeState';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 import {useCollator} from 'react-aria/useCollator';
 import {useControlledState} from 'react-stately/useControlledState';
+import {useFocus} from 'react-aria/useFocus';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useGridListSection, useGridListSelectionCheckbox} from 'react-aria/useGridList';
 import {useHover} from 'react-aria/useHover';
@@ -733,6 +736,7 @@ export interface TreeItemProps<T = object>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
+    FocusEvents<HTMLDivElement>,
     Pick<AriaTreeItemOptions, 'hasChildItems' | 'focusMode' | 'allowsArrowNavigation'>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
@@ -786,7 +790,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem(
       {
         node: item,
-        shouldSelectOnPressUp: !!dragState,
+        shouldSelectOnPressUp: !!dragState && dragAndDropHooks?.pointerDragSource !== 'handle',
         focusMode: props.focusMode,
         allowsArrowNavigation: props.allowsArrowNavigation,
         hasChildItems: props.hasChildItems
@@ -808,6 +812,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
       onHoverEnd: props.onHoverEnd
     });
 
+    let {focusProps: focusEventProps} = useFocus(props);
     let {isFocusVisible, focusProps} = useFocusRing();
     let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
       within: true
@@ -939,6 +944,11 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
+    let draggableSlotProps = getDraggableItemSlotProps(
+      draggableItem,
+      dragAndDropHooks,
+      dragButtonRef
+    );
 
     return (
       <>
@@ -975,9 +985,10 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
             DOMProps,
             rowProps,
             focusProps,
+            focusEventProps,
             hoverProps,
             focusWithinProps,
-            draggableItem?.dragProps
+            draggableSlotProps.itemProps
           )}
           {...renderProps}
           ref={ref}
@@ -1032,11 +1043,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
                         ref: expandButtonRef
                       },
                       drag: {
-                        ...draggableItem?.dragButtonProps,
-                        ref: dragButtonRef,
-                        style: {
-                          pointerEvents: 'none'
-                        }
+                        ...draggableSlotProps.dragButtonProps,
+                        ref: dragButtonRef
                       }
                     }
                   }

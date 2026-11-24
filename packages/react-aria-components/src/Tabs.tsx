@@ -345,15 +345,19 @@ interface TabListInnerProps<T> {
 function TabListInner<T>({props, forwardedRef: ref}: TabListInnerProps<T>) {
   let state = useContext(TabListStateContext)!;
   let {CollectionRoot} = useContext(CollectionRendererContext);
-  let {orientation = 'horizontal', keyboardActivation = 'automatic'} =
-    useSlottedContext(TabsContext)!;
+  let {
+    orientation = 'horizontal',
+    keyboardActivation = 'automatic',
+    shouldFocusWrap
+  } = useSlottedContext(TabsContext)!;
   let objectRef = useObjectRef(ref);
 
   let {tabListProps} = useTabList(
     {
       ...props,
       orientation,
-      keyboardActivation
+      keyboardActivation,
+      shouldFocusWrap
     },
     state,
     objectRef

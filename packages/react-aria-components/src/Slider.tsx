@@ -17,10 +17,11 @@ import {
   useSliderThumb
 } from 'react-aria/useSlider';
 
-import {clamp} from 'react-stately/private/utils/number';
+import {clamp, snapValueToStep} from 'react-stately/private/utils/number';
 import {
   ClassNameOrFunction,
   ContextValue,
+  DEFAULT_SLOT,
   dom,
   Provider,
   RenderProps,
@@ -28,25 +29,39 @@ import {
   useContextProps,
   useRenderProps,
   useSlot,
-  useSlottedContext
+  useSlottedContext,
+  WithRef
 } from './utils';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {
+  getActiveElement,
+  getEventTarget,
+  nodeContains
+} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {GroupContext} from './Group';
 import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
+import {NumberFieldContext, NumberFieldProps} from './NumberField';
 import React, {
   createContext,
   ForwardedRef,
   forwardRef,
   HTMLAttributes,
   OutputHTMLAttributes,
+  useCallback,
   useContext,
-  useRef
+  useEffect,
+  useMemo,
+  useRef,
+  useState
 } from 'react';
 import {SliderState, useSliderState} from 'react-stately/useSliderState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
@@ -73,6 +88,11 @@ export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElem
 export const SliderStateContext = createContext<SliderState | null>(null);
 export const SliderTrackContext =
   createContext<ContextValue<SliderTrackContextValue, HTMLDivElement>>(null);
+// useSliderState tracks per-thumb editability in a ref, so toggling SliderThumb's isDisabled
+// wouldn't re-render Slider to update NumberFieldContext. Report it here instead.
+const SliderThumbDisabledContext = createContext<
+  ((index: number, isDisabled: boolean) => void) | null
+>(null);
 export const SliderFillContext = createContext<ContextValue<SliderFillProps, HTMLDivElement>>(null);
 export const SliderOutputContext =
   createContext<ContextValue<SliderOutputContextValue, HTMLOutputElement>>(null);
@@ -102,16 +122,53 @@ export interface SliderRenderProps {
 export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slider<
   T extends number | number[]
 >(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, SliderContext);
+  let domRef: RefObject<HTMLDivElement | null>;
+  [props, domRef] = useContextProps(props, ref, SliderContext);
   let trackRef = useRef<HTMLDivElement>(null);
+  let numberFieldRefs = useRef<(HTMLDivElement | null)[]>([]);
+  let isResettingRef = useRef(false);
+  let [disabledThumbs, setDisabledThumbs] = useState<Record<number, boolean>>({});
+  let setThumbDisabled = useCallback((index: number, isDisabled: boolean) => {
+    setDisabledThumbs(current =>
+      Boolean(current[index]) === isDisabled ? current : {...current, [index]: isDisabled}
+    );
+  }, []);
+  let {direction} = useLocale();
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
+  let numberFieldRefCallbacks = useMemo(
+    () =>
+      Array.from({length: state.values.length}, (_, index) => (el: HTMLDivElement | null) => {
+        numberFieldRefs.current[index] = el;
+      }),
+    [state.values.length]
+  );
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let {groupProps, trackProps, labelProps, outputProps} = useSlider(
     {...props, label},
     state,
     trackRef
   );
+
+  // SliderThumb already handles form reset for each thumb. Ignore NumberField's own form reset
+  // handler so it doesn't duplicate updates or fire onChangeEnd on reset.
+  useEffect(() => {
+    let form = trackRef.current?.closest('form');
+    if (!form) {
+      return;
+    }
+    let onReset = () => {
+      isResettingRef.current = true;
+      queueMicrotask(() => {
+        isResettingRef.current = false;
+      });
+    };
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
+    form.addEventListener('reset', onReset, true);
+    return () => {
+      form.removeEventListener('reset', onReset, true);
+    };
+  }, []);
 
   let renderProps = useRenderProps({
     ...props,
@@ -126,17 +183,182 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
+  // Props for a NumberField bound to the thumb at the given index. The NumberField displays and
+  // edits that thumb's value, and its constraints mirror the thumb's (neighboring thumbs in a range
+  // slider limit its min/max).
+  let getNumberFieldProps = (index: number): WithRef<NumberFieldProps, HTMLDivElement> => ({
+    ref: numberFieldRefCallbacks[index],
+    minValue: state.getThumbMinValue(index),
+    maxValue: state.getThumbMaxValue(index),
+    step: state.step,
+    formatOptions: props.formatOptions,
+    value: state.values[index],
+    // A thumb can be individually disabled via SliderThumb's isDisabled.
+    isDisabled: state.isDisabled || Boolean(disabledThumbs[index]),
+    // Label the NumberField with the slider's labelling ids (its Label and any aria-labelledby
+    // passed to the Slider), falling back to the slider group's id (e.g. aria-label only).
+    'aria-labelledby': groupProps['aria-labelledby'] || groupProps.id,
+    'aria-describedby': props['aria-describedby'],
+    'aria-details': props['aria-details'],
+    // In a range slider, the inputs behave like one continuous text field: pressing the arrow
+    // key in the reading direction at the end of one input's text moves the caret into the next
+    // enabled input, and vice versa at the start.
+    onKeyDown(e) {
+      if (
+        state.values.length <= 1 ||
+        e.nativeEvent.isComposing ||
+        e.altKey ||
+        e.ctrlKey ||
+        e.metaKey ||
+        e.shiftKey
+      ) {
+        return;
+      }
+
+      let target = getEventTarget(e) as Element;
+      if (target.tagName !== 'INPUT') {
+        return;
+      }
+      let input = target as HTMLInputElement;
+
+      let nextKey = direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
+      let prevKey = direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
+      if (
+        e.key === nextKey &&
+        index < state.values.length - 1 &&
+        input.selectionStart === input.value.length &&
+        input.selectionEnd === input.value.length
+      ) {
+        for (let next = index + 1; next < state.values.length; next++) {
+          let nextInput = numberFieldRefs.current[next]?.querySelector('input');
+          if (nextInput && !nextInput.disabled) {
+            e.preventDefault();
+            nextInput.focus();
+            nextInput.setSelectionRange(0, 0);
+            break;
+          }
+        }
+      } else if (
+        e.key === prevKey &&
+        index > 0 &&
+        input.selectionStart === 0 &&
+        input.selectionEnd === 0
+      ) {
+        for (let prev = index - 1; prev >= 0; prev--) {
+          let prevInput = numberFieldRefs.current[prev]?.querySelector('input');
+          if (prevInput && !prevInput.disabled) {
+            e.preventDefault();
+            prevInput.focus();
+            prevInput.setSelectionRange(prevInput.value.length, prevInput.value.length);
+            break;
+          }
+        }
+      }
+    },
+    onChange(val) {
+      // NumberField emits NaN when its input is cleared, and also fires onChange on form reset
+      // (already handled by SliderThumb). Ignore both, and skip committing values that snap to
+      // the thumb's current value so no redundant onChange/onChangeEnd fires.
+      if (
+        isResettingRef.current ||
+        Number.isNaN(val) ||
+        snapValueToStep(
+          val,
+          state.getThumbMinValue(index),
+          state.getThumbMaxValue(index),
+          state.step
+        ) === state.getThumbValue(index)
+      ) {
+        return;
+      }
+
+      // A committed text value is a complete interaction, so wrap it in a drag start/end. Slider
+      // state only fires onChangeEnd when a thumb stops dragging, so this makes typed values fire
+      // onChangeEnd just like a keyboard or pointer interaction on the thumb.
+      state.setThumbDragging(index, true);
+      state.setThumbValue(index, val);
+      state.setThumbDragging(index, false);
+    }
+  });
+
+  // Only NumberFields with an explicit thumb index slot (e.g. slot="0", slot="1") are bound to the
+  // slider. NumberFields without a slot keep their own state, so a slider can contain unrelated
+  // NumberFields.
+  let numberFieldContext = {
+    slots: {
+      [DEFAULT_SLOT]: {},
+      ...Object.fromEntries(
+        state.values.map((_, index) => [String(index), getNumberFieldProps(index)])
+      )
+    }
+  };
+
+  // When the user presses the track while a bound NumberField has uncommitted text, blur the
+  // input first so the text is committed before the track press starts a drag. Otherwise the
+  // commit (which toggles thumb dragging in onChange above) would happen mid-drag, ending the
+  // gesture and firing onChangeEnd early. Use native capture listeners so this runs before
+  // React's delegated listeners collect bubble handlers (in React 16, synthetic capture and bubble
+  // handlers are collected upfront before capture runs, leaving the track handler with stale state).
+  useEffect(() => {
+    let el = domRef.current;
+    if (!el || state.isDisabled) {
+      return;
+    }
+
+    let commitActiveNumberField = (e: Event) => {
+      if (e.defaultPrevented || !nodeContains(trackRef.current, getEventTarget(e) as Node)) {
+        return;
+      }
+
+      // Commit pending text before the track handles the press and starts dragging.
+      let active = getActiveElement(el.ownerDocument);
+      if (
+        active?.tagName === 'INPUT' &&
+        numberFieldRefs.current.some(field => nodeContains(field, active))
+      ) {
+        (active as HTMLInputElement).blur();
+      }
+    };
+
+    let onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+        return;
+      }
+      commitActiveNumberField(e);
+    };
+
+    let onMouseDown = (e: MouseEvent) => {
+      if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+        return;
+      }
+      commitActiveNumberField(e);
+    };
+
+    el.addEventListener('pointerdown', onPointerDown, true);
+    el.addEventListener('mousedown', onMouseDown, true);
+    el.addEventListener('touchstart', commitActiveNumberField, {capture: true, passive: true});
+    return () => {
+      el.removeEventListener('pointerdown', onPointerDown, true);
+      el.removeEventListener('mousedown', onMouseDown, true);
+      el.removeEventListener('touchstart', commitActiveNumberField, true);
+    };
+  }, [domRef, state.isDisabled]);
+
   return (
     <Provider
       values={[
         [SliderStateContext, state],
         [SliderTrackContext, {...trackProps, ref: trackRef}],
+        [SliderThumbDisabledContext, setThumbDisabled],
         [SliderOutputContext, outputProps],
-        [LabelContext, {...labelProps, ref: labelRef}]
+        [LabelContext, {...labelProps, ref: labelRef}],
+        // Lets a Group inside the slider (e.g. wrapping range inputs) inherit the disabled state.
+        [GroupContext, {isDisabled: state.isDisabled}],
+        [NumberFieldContext, numberFieldContext]
       ]}>
       <dom.div
         {...mergeProps(DOMProps, renderProps, groupProps)}
-        ref={ref}
+        ref={domRef}
         slot={props.slot || undefined}
         data-orientation={state.orientation}
         data-disabled={state.isDisabled || undefined}
@@ -318,8 +540,15 @@ export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 ) {
   let {inputRef: userInputRef = null} = props;
   let state = useContext(SliderStateContext)!;
+  let setThumbDisabled = useContext(SliderThumbDisabledContext);
   let {ref: trackRef} = useSlottedContext(SliderTrackContext)!;
   let {index = 0} = props;
+  useLayoutEffect(() => {
+    if (props.isDisabled && setThumbDisabled) {
+      setThumbDisabled(index, true);
+      return () => setThumbDisabled(index, false);
+    }
+  }, [index, props.isDisabled, setThumbDisabled]);
   let defaultInputRef = useRef<HTMLInputElement>(null);
   let inputRef = userInputRef || defaultInputRef;
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
