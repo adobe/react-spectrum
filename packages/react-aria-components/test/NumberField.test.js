@@ -11,9 +11,11 @@
  */
 
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button} from '../src/Button';
+import {Calendar, CalendarCell, CalendarGrid} from '../src/Calendar';
+import {CalendarDate} from '@internationalized/date';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Group} from '../src/Group';
@@ -561,6 +563,70 @@ describe('NumberField', () => {
     expect(announce).toHaveBeenLastCalledWith('200', 'assertive');
     await user.keyboard('{Enter}');
     expect(input).toHaveValue('200');
+  });
+
+  it('announces the clamped value on blur', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <>
+        <TestNumberField defaultValue={1} minValue={1} maxValue={8} onChange={onChange} />
+        <button>After</button>
+      </>
+    );
+    let input = getByRole('textbox');
+    await user.click(input);
+    await user.clear(input);
+    await user.keyboard('9');
+    await user.click(getByRole('button', {name: 'After'}));
+    expect(input).toHaveValue('8');
+    expect(onChange).toHaveBeenLastCalledWith(8);
+    expect(announce).toHaveBeenLastCalledWith('8', 'assertive');
+  });
+
+  it('announces the clamped value when a calendar cell takes focus', async () => {
+    using errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <>
+        <TestNumberField defaultValue={1} minValue={1} maxValue={8} onChange={onChange} />
+        <Calendar aria-label="Date" defaultValue={new CalendarDate(2026, 11, 10)}>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+        </Calendar>
+      </>
+    );
+    let input = getByRole('textbox');
+    await user.click(input);
+    await user.clear(input);
+    await user.keyboard('9');
+    let cell = within(getByRole('grid')).getByText('15');
+    await user.click(cell);
+    expect(document.activeElement).toBe(cell);
+    expect(input).toHaveValue('8');
+    expect(onChange).toHaveBeenLastCalledWith(8);
+    expect(announce).toHaveBeenCalledWith('8', 'assertive');
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it('announces the clamped value when an autoFocus element mounts', async () => {
+    using errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    let onChange = jest.fn();
+    let AutoFocusExample = ({showInput}) => (
+      <>
+        <TestNumberField defaultValue={1} minValue={1} maxValue={8} onChange={onChange} />
+        {showInput && <input aria-label="Other" autoFocus />}
+      </>
+    );
+    let {getByRole, rerender} = render(<AutoFocusExample showInput={false} />);
+    let input = getByRole('textbox');
+    await user.click(input);
+    await user.clear(input);
+    await user.keyboard('9');
+    await act(async () => rerender(<AutoFocusExample showInput />));
+    expect(document.activeElement).toBe(getByRole('textbox', {name: 'Other'}));
+    expect(input).toHaveValue('8');
+    expect(onChange).toHaveBeenLastCalledWith(8);
+    expect(announce).toHaveBeenLastCalledWith('8', 'assertive');
+    expect(errorSpy).not.toHaveBeenCalled();
   });
 
   it('should not reset validation errors on blur when value has not changed', async () => {
