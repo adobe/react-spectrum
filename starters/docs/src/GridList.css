@@ -245,6 +245,23 @@
     border-radius: var(--radius);
     color: var(--text-color);
 
+    &[draggable='true'] {
+      cursor: grab;
+      -webkit-user-drag: element;
+
+      &[data-pressed] {
+        cursor: grabbing;
+      }
+
+      @media not ((hover: hover) and (pointer: fine)) {
+        &::before {
+          content: '';
+          position: absolute;
+          inset: calc(-1 * var(--spacing-2));
+        }
+      }
+    }
+
     &[data-focus-visible] {
       border-radius: 4px;
       outline: 2px solid var(--focus-ring-color);

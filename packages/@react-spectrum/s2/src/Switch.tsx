@@ -131,10 +131,14 @@ const track = style<RenderProps>({
     type: 'height',
     value: controlSize('sm')
   },
+  '--trackBorderWidth': {
+    type: 'borderTopWidth',
+    value: 2
+  },
   width: '--trackWidth',
   height: '--trackHeight',
   boxSizing: 'border-box',
-  borderWidth: 2,
+  borderWidth: '--trackBorderWidth',
   borderStyle: 'solid',
   transition: 'default',
   forcedColorAdjust: 'none',
@@ -163,7 +167,14 @@ const track = style<RenderProps>({
 
 const handle = style<RenderProps>({
   height: 'full',
-  aspectRatio: 'square',
+  // In a Form, it sizes its grid columns from its children, so Switch contributes
+  // to the same sizing calculation used by sibling fields and their subgrids.
+  // In Firefox 159, using aspect-ratio on this percentage-height handle can
+  // trigger a layout bug causing many issues to other components (Checkbox, TextArea)
+  // within the same form. Deriving width directly from the track height avoids that
+  // trigger while keeping the handle square.
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=2067007
+  width: 'calc(var(--trackHeight) - 2 * var(--trackBorderWidth))',
   borderRadius: 'full',
   backgroundColor: {
     default: baseColor('neutral'),

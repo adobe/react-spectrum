@@ -54,6 +54,7 @@ export interface PopoverProps
       | 'shouldCloseOnInteractOutside'
       | 'shouldUpdatePosition'
       | 'shouldSkipAnimation'
+      | 'restoreFocus'
       | 'style'
       | 'className'
       | 'render'

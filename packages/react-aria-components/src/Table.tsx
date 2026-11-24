@@ -1,5 +1,6 @@
 import {
   AriaLabelingProps,
+  FocusEvents,
   GlobalDOMAttributes,
   HoverEvents,
   Key,
@@ -55,6 +56,7 @@ import {
   DragAndDropContext,
   DropIndicatorContext,
   DropIndicatorProps,
+  getDraggableItemSlotProps,
   useDndPersistedKeys,
   useRenderDropIndicator
 } from './DragAndDrop';
@@ -113,6 +115,7 @@ import {TableColumnResizeState} from 'react-stately/useTableState';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 import {useControlledState} from 'react-stately/useControlledState';
+import {useFocus} from 'react-aria/useFocus';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -1710,6 +1713,7 @@ export interface RowProps<T>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
+    FocusEvents<HTMLTableRowElement | HTMLDivElement>,
     Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -1797,12 +1801,13 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let {rowProps, expandButtonProps, ...states} = useTableRow(
       {
         node: item,
-        shouldSelectOnPressUp: !!dragState,
+        shouldSelectOnPressUp: !!dragState && dragAndDropHooks?.pointerDragSource !== 'handle',
         isVirtualized
       },
       state,
       ref
     );
+    let {focusProps: focusEventProps} = useFocus(props);
     let {isFocused, isFocusVisible, focusProps} = useFocusRing();
     let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
       within: true
@@ -1884,6 +1889,11 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
+    let draggableSlotProps = getDraggableItemSlotProps(
+      draggableItem,
+      dragAndDropHooks,
+      dragButtonRef
+    );
 
     return (
       <>
@@ -1908,8 +1918,9 @@ export const Row = /*#__PURE__*/ createBranchComponent(
             renderProps,
             rowProps,
             focusProps,
+            focusEventProps,
             hoverProps,
-            draggableItem?.dragProps,
+            draggableSlotProps.itemProps,
             focusWithinProps
           )}
           ref={ref as any}
@@ -1957,11 +1968,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                     [DEFAULT_SLOT]: {},
                     chevron: expandButtonProps,
                     drag: {
-                      ...draggableItem?.dragButtonProps,
-                      ref: dragButtonRef,
-                      style: {
-                        pointerEvents: 'none'
-                      }
+                      ...draggableSlotProps.dragButtonProps,
+                      ref: dragButtonRef
                     }
                   }
                 }
@@ -2125,7 +2133,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
   ) => {
     let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
     let state = useContext(TableStateContext)!;
-    let {dragState} = useContext(DragAndDropContext);
+    let {dragAndDropHooks, dragState} = useContext(DragAndDropContext);
     let {isVirtualized} = useContext(CollectionRendererContext);
 
     cell.column = state.collection.columns[cell.index];
@@ -2133,7 +2141,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
     let {gridCellProps, isPressed} = useTableCell(
       {
         node: cell,
-        shouldSelectOnPressUp: !!dragState,
+        shouldSelectOnPressUp: !!dragState && dragAndDropHooks?.pointerDragSource !== 'handle',
         isVirtualized,
         focusMode: props.focusMode,
         allowsArrowNavigation: props.allowsArrowNavigation

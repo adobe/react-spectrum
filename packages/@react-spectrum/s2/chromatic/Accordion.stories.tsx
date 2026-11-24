@@ -81,6 +81,11 @@ export const WithLongTitle: Story = {
         </Accordion>
       </div>
     );
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
@@ -102,18 +107,11 @@ export const WithDisabledItem: Story = {
         </Accordion>
       </div>
     );
-  }
-};
-
-WithLongTitle.parameters = {
-  docs: {
-    disable: true
-  }
-};
-
-WithDisabledItem.parameters = {
-  docs: {
-    disable: true
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 

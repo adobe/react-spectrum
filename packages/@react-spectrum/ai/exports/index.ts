@@ -1,9 +1,16 @@
 export {Alert} from '../src/Alert';
 export {Attachment, AttachmentList, AttachmentPreview} from '../src/AttachmentList';
 export {AttachmentGrid, AttachmentGridItem} from '../src/AttachmentGrid';
+export {
+  LightboxCarousel,
+  LightboxItem,
+  LightboxItems,
+  LightboxPicker,
+  LightboxPickerItem
+} from '../src/Lightbox';
+export {LightboxTrigger} from '../src/LightboxTrigger';
 export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
-export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 export {
   PromptFieldValue,
   PromptField,
@@ -19,6 +26,7 @@ export {
   PromptToken,
   PromptFieldVoiceButton
 } from '../src/PromptField';
+export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 export {
   ExecutionTrace,
   ExecutionTraceItem,
@@ -39,6 +47,14 @@ export type {
   AttachmentPreviewProps
 } from '../src/AttachmentList';
 export type {AttachmentGridProps, AttachmentGridItemProps} from '../src/AttachmentGrid';
+export type {
+  LightboxCarouselProps,
+  LightboxItemProps,
+  LightboxItemsProps,
+  LightboxPickerItemProps,
+  LightboxPickerProps
+} from '../src/Lightbox';
+export type {LightboxTriggerProps} from '../src/LightboxTrigger';
 export type {
   PromptFieldProps,
   PromptFieldSubmitButtonProps,

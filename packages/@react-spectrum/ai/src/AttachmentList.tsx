@@ -30,6 +30,7 @@ import {
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button, ButtonProps} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
+import {chain} from 'react-aria/chain';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {ContentContext} from '@react-spectrum/s2/Content';
@@ -38,12 +39,13 @@ import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import File from '@react-spectrum/s2/icons/File';
 import FileText from '@react-spectrum/s2/icons/FileText';
-import {getMimeTypeLabel, matchMimeType} from './PromptField';
+import {getMimeTypeLabel, matchMimeType} from './mimeType';
 import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
 import intlMessages from '../intl/*.json';
 import {keyframes, scrollFade} from './style/style-macro' with {type: 'macro'};
+import {LightboxTriggerContext} from './LightboxTrigger';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
@@ -345,7 +347,6 @@ export interface AttachmentListProps<T>
       | 'escapeKeyBehavior'
       | 'onSelectionChange'
       | 'shouldSelectOnPressUp'
-      | 'onAction'
       | 'render'
       | 'style'
       | 'className'
@@ -497,6 +498,10 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   let domRef = useDOMRef(ref);
   let scrollRef = useRef<HTMLDivElement>(null);
   let {direction} = useLocale();
+  let ctx = useContext(LightboxTriggerContext);
+  let onAction =
+    otherProps.onAction || ctx?.onAction ? chain(otherProps.onAction, ctx?.onAction) : undefined;
+
   let scroll = (dir: 1 | -1) => {
     let el = scrollRef.current;
     if (!el) {
@@ -520,6 +525,7 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   return (
     <TagGroup
       {...otherProps}
+      onAction={onAction}
       className={mergeStyles(style({...flexRow, gap: 8, position: 'relative'}), styles)}
       style={
         {

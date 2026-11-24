@@ -12,6 +12,7 @@
 
 import {
   AriaLabelingProps,
+  FocusableElement,
   forwardRefType,
   GlobalDOMAttributes,
   RefObject
@@ -32,6 +33,7 @@ import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {mergeProps} from 'react-aria/mergeProps';
+import {Modality} from 'react-aria/useFocusVisible';
 import {OverlayArrowContext} from './OverlayArrow';
 import {
   OverlayTriggerProps,
@@ -111,6 +113,22 @@ export interface PopoverProps
    */
   UNSTABLE_portalContainer?: Element;
   /**
+   * Where focus goes when the popover closes. By default, focus returns to the element that was
+   * focused when the popover opened. Pass a ref or a function to choose another element, for
+   * example when that element was removed while the popover was open. A function receives the
+   * current interaction modality and the element focus is about to return to by default, or
+   * `null` if there is none. Returning a boolean is the same as passing it directly in.
+   *
+   * @default true
+   */
+  restoreFocus?:
+    | boolean
+    | RefObject<FocusableElement | null>
+    | ((details: {
+        modality: Modality | null;
+        defaultTarget: FocusableElement | null;
+      }) => FocusableElement | boolean | null);
+  /**
    * The additional offset applied along the main axis between the element and its
    * anchor element.
    *
@@ -164,7 +182,13 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   props: PopoverProps,
   ref: ForwardedRef<HTMLElement>
 ) {
+  let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, PopoverContext);
+  // aria-labelledby from context labels the popover by its trigger as a fallback.
+  // An aria-label passed via props should take precedence over it.
+  if (props['aria-label'] && !originalAriaLabelledby) {
+    props = {...props, 'aria-labelledby': undefined};
+  }
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
   let state =

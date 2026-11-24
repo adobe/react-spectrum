@@ -13,22 +13,22 @@
 import {Flex} from '../../src/layout/Flex';
 import React from 'react';
 import {Render} from '../../chromatic/button/LogicButton.stories';
-import {StoryFn} from '@storybook/react';
+import {StoryObj} from '@storybook/react';
 
 export default {
   title: 'Button/LogicButton'
 };
 
-export type LogicButtonStory = StoryFn<typeof Render>;
+export type LogicButtonStory = StoryObj<typeof Render>;
 
-export const All: LogicButtonStory = () => (
-  <Flex gap="size-100" direction={'column'}>
-    <h2>And</h2>
-    <Render variant="and" />
-    <h2>Or</h2>
-    <Render variant="or" />
-  </Flex>
-);
-All.story = {
+export const All: LogicButtonStory = {
+  render: () => (
+    <Flex gap="size-100" direction={'column'}>
+      <h2>And</h2>
+      <Render variant="and" />
+      <h2>Or</h2>
+      <Render variant="or" />
+    </Flex>
+  ),
   name: 'all'
 };

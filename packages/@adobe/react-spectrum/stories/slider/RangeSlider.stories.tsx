@@ -15,7 +15,7 @@ import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {ErrorBoundary} from '@react-spectrum/story-utils';
 import {Heading} from '../../src/text/Heading';
-import {Meta, StoryFn} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {RangeSlider, SpectrumRangeSliderProps} from '../../src/slider/RangeSlider';
 import React from 'react';
 
@@ -39,95 +39,84 @@ export default {
   }
 } as Meta<SpectrumRangeSliderProps>;
 
-export type RangeSliderStory = StoryFn<typeof RangeSlider>;
+export type RangeSliderStory = StoryObj<typeof RangeSlider>;
 
-export const Default: RangeSliderStory = args =>
-  render({...args, 'aria-label': 'Label', label: undefined});
-export const Label: RangeSliderStory = args => render(args);
-
-Label.story = {
+export const Default: RangeSliderStory = {
+  render: args => render({...args, 'aria-label': 'Label', label: undefined})
+};
+export const Label: RangeSliderStory = {
+  render: args => render(args),
   name: 'label'
 };
 
-export const CustomWidth: RangeSliderStory = args => render({...args, width: '300px'});
-
-CustomWidth.story = {
+export const CustomWidth: RangeSliderStory = {
+  render: args => render({...args, width: '300px'}),
   name: 'custom width'
 };
 
-export const LabelOverflow: RangeSliderStory = args =>
-  render({
-    ...args,
-    label: 'This is a rather long label for this narrow slider element.',
-    maxValue: 1000,
-    width: '300px'
-  });
-
-LabelOverflow.story = {
+export const LabelOverflow: RangeSliderStory = {
+  render: args =>
+    render({
+      ...args,
+      label: 'This is a rather long label for this narrow slider element.',
+      maxValue: 1000,
+      width: '300px'
+    }),
   name: 'label overflow'
 };
 
-export const ShowValueLabelFalse: RangeSliderStory = args =>
-  render({...args, showValueLabel: false});
-
-ShowValueLabelFalse.story = {
+export const ShowValueLabelFalse: RangeSliderStory = {
+  render: args => render({...args, showValueLabel: false}),
   name: 'showValueLabel: false'
 };
 
-export const FormatOptionsPercent: RangeSliderStory = args =>
-  render({...args, minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}});
-
-FormatOptionsPercent.story = {
+export const FormatOptionsPercent: RangeSliderStory = {
+  render: args =>
+    render({...args, minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}}),
   name: 'formatOptions percent'
 };
 
-export const FormatOptionsCentimeter: RangeSliderStory = args =>
-  render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}});
-
-FormatOptionsCentimeter.story = {
+export const FormatOptionsCentimeter: RangeSliderStory = {
+  render: args =>
+    render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}}),
   name: 'formatOptions centimeter'
 };
 
-export const CustomValueLabel: RangeSliderStory = args =>
-  render({...args, getValueLabel: value => `${value.start} <-> ${value.end}`});
-
-CustomValueLabel.story = {
+export const CustomValueLabel: RangeSliderStory = {
+  render: args => render({...args, getValueLabel: value => `${value.start} <-> ${value.end}`}),
   name: 'custom valueLabel'
 };
 
-export const CustomValueLabelWithLabelOverflow: RangeSliderStory = args =>
-  render({
-    ...args,
-    label: 'This is a rather long label for this narrow slider element.',
-    getValueLabel: value => `${value.start} <-> ${value.end}`
-  });
-
-CustomValueLabelWithLabelOverflow.story = {
+export const CustomValueLabelWithLabelOverflow: RangeSliderStory = {
+  render: args =>
+    render({
+      ...args,
+      label: 'This is a rather long label for this narrow slider element.',
+      getValueLabel: value => `${value.start} <-> ${value.end}`
+    }),
   name: 'custom valueLabel with label overflow'
 };
 
-export const MinMax: RangeSliderStory = args => render({...args, minValue: 30, maxValue: 70});
-
-MinMax.story = {
+export const MinMax: RangeSliderStory = {
+  render: args => render({...args, minValue: 30, maxValue: 70}),
   name: 'min/max'
 };
 
-export const _ContextualHelp: RangeSliderStory = args =>
-  render({
-    ...args,
-    label: 'Label',
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>
-          Segments identify who your visitors are, what devices and services they use, where they
-          navigated from, and much more.
-        </Content>
-      </ContextualHelp>
-    )
-  });
-
-_ContextualHelp.story = {
+export const _ContextualHelp: RangeSliderStory = {
+  render: args =>
+    render({
+      ...args,
+      label: 'Label',
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    }),
   name: 'contextual help'
 };
 
