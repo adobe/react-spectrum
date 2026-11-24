@@ -696,6 +696,7 @@ export interface SheetProps
       | 'onOpenChange'
       | 'isKeyboardDismissDisabled'
       | 'shouldCloseOnInteractOutside'
+      | 'restoreFocus'
     >,
     RenderProps<SheetRenderProps> {
   /**
