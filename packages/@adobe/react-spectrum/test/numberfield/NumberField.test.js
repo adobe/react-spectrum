@@ -1256,6 +1256,7 @@ describe('NumberField', function () {
     act(() => {
       textField.blur();
     });
+    act(() => jest.runAllTicks());
     expect(textField).toHaveAttribute('value', '($18.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(-18);
@@ -1273,6 +1274,7 @@ describe('NumberField', function () {
     act(() => {
       textField.blur();
     });
+    act(() => jest.runAllTicks());
     expect(announce).toHaveBeenCalledTimes(6);
     expect(announce).toHaveBeenLastCalledWith('$18.00', 'assertive');
     expect(textField).toHaveAttribute('value', '$18.00');
@@ -1294,6 +1296,7 @@ describe('NumberField', function () {
     act(() => {
       textField.blur();
     });
+    act(() => jest.runAllTicks());
     expect(textField).toHaveAttribute('value', '($32.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(4);
     expect(onChangeSpy).toHaveBeenLastCalledWith(-32);
