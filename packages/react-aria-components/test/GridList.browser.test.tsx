@@ -10,13 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button} from '../src/Button';
+import {Checkbox} from '../src/Checkbox';
+import {Dialog, DialogTrigger} from '../src/Dialog';
 import {expect, it} from 'vitest';
 import {GridLayout} from '../src/GridLayout';
 import {GridList, GridListItem} from '../src/GridList';
+import {Input} from '../src/Input';
+import {Modal} from '../src/Modal';
 import React, {useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {Size} from 'react-stately/useVirtualizerState';
 import {User} from '@react-aria/test-utils';
+import {userEvent} from 'vitest/browser';
 import {Virtualizer} from '../src/Virtualizer';
 
 function Grid() {
@@ -36,6 +42,30 @@ function Grid() {
       <GridListItem>2,1</GridListItem>
       <GridListItem>2,2</GridListItem>
     </GridList>
+  );
+}
+
+function GridListInDialog() {
+  return (
+    <DialogTrigger>
+      <Button>Open dialog</Button>
+      <Modal>
+        <Dialog aria-label="Animals dialog">
+          <Input aria-label="Search" />
+          <GridList aria-label="Animals" selectionMode="multiple">
+            <GridListItem id="cat" textValue="Cat">
+              <Checkbox slot="selection" /> Cat
+            </GridListItem>
+            <GridListItem id="dog" textValue="Dog">
+              <Checkbox slot="selection" /> Dog
+            </GridListItem>
+            <GridListItem id="kangaroo" textValue="Kangaroo">
+              <Checkbox slot="selection" /> Kangaroo
+            </GridListItem>
+          </GridList>
+        </Dialog>
+      </Modal>
+    </DialogTrigger>
   );
 }
 
@@ -97,6 +127,36 @@ it.each`
   await tester.toggleRowSelection({row: rows[8]});
   expect(rows[8].getAttribute('aria-selected')).toBe('true');
   expect(document.activeElement).toBe(rows[8]);
+});
+
+it('restores focus to the last focused row, not a selection checkbox, when tabbing into a GridList inside a Dialog', async () => {
+  let {container} = await render(<GridListInDialog />);
+
+  await userEvent.click(container.querySelector('button') as HTMLElement);
+  let dialog = document.querySelector('[role=dialog]') as HTMLElement;
+  let input = dialog.querySelector('input[aria-label=Search]') as HTMLInputElement;
+  let rows = Array.from(dialog.querySelectorAll('[role=row]'));
+
+  await userEvent.click(input);
+  expect(document.activeElement).toBe(input);
+
+  await userEvent.keyboard('{Tab}');
+  expect(document.activeElement).toBe(rows[0]);
+
+  await userEvent.keyboard('{ArrowDown}');
+  expect(document.activeElement).toBe(rows[1]);
+
+  await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
+  expect(document.activeElement).toBe(input);
+
+  let focusedElements: Element[] = [];
+  let onFocusIn = (e: FocusEvent) => focusedElements.push(e.target as Element);
+  dialog.addEventListener('focusin', onFocusIn);
+  await userEvent.keyboard('{Tab}');
+  dialog.removeEventListener('focusin', onFocusIn);
+
+  expect(document.activeElement).toBe(rows[1]);
+  expect(focusedElements.slice(focusedElements.indexOf(rows[1]))).toEqual([rows[1]]);
 });
 
 it('virtualizer renders items after toggling display:none', async () => {

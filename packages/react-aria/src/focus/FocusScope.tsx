@@ -404,7 +404,13 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
       e.preventDefault();
       if (nextElement) {
         focusElement(nextElement, true);
-        if (nextElement instanceof getOwnerWindow(nextElement).HTMLInputElement) {
+        // A focus handler may have already moved focus elsewhere (e.g. a collection restoring focus
+        // to its last focused item). Only select if the input still has focus, because select()
+        // moves focus back to the input in some browsers.
+        if (
+          nextElement instanceof getOwnerWindow(nextElement).HTMLInputElement &&
+          getActiveElement(ownerDocument) === nextElement
+        ) {
           nextElement.select();
         }
       }
