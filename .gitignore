@@ -24,3 +24,5 @@ starters/tailwind/yarn.lock
 .scout/
 .codex/
 perf/.local/
+test-results
+playwright-report

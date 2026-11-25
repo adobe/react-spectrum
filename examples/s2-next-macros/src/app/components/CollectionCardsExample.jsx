@@ -22,7 +22,6 @@ import {
 } from '@react-spectrum/s2';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
 
 const cardViewStyles = style({
   width: 'full',
@@ -30,6 +29,153 @@ const cardViewStyles = style({
   height: '[800px]',
   margin: 32
 });
+
+const topicItems = [
+  {
+    id: 'topic-nature',
+    title: 'Nature',
+    total_photos: 1240,
+    links: {html: 'https://unsplash.com/t/nature'},
+    preview_photos: [
+      {
+        id: 'n1',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 'n2',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 'n3',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 'n4',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop'
+        }
+      }
+    ]
+  },
+  {
+    id: 'topic-landscapes',
+    title: 'Landscapes',
+    total_photos: 865,
+    links: {html: 'https://unsplash.com/t/wallpapers'},
+    preview_photos: [
+      {
+        id: 'l1',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1721661657253-6621d52db753?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 'l2',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1721598359121-363311b3b263?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 'l3',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1720987517313-23d8c4092cfb?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 'l4',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1671225137978-aa9a19071b9a?q=80&w=600&auto=format&fit=crop'
+        }
+      }
+    ]
+  },
+  {
+    id: 'topic-food',
+    title: 'Food & Drink',
+    total_photos: 420,
+    links: {html: 'https://unsplash.com/t/food-drink'},
+    preview_photos: [
+      {
+        id: 'f1',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1460306855393-0410f61241c7?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 'f2',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 'f3',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1721661657253-6621d52db753?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 'f4',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1720987517313-23d8c4092cfb?q=80&w=600&auto=format&fit=crop'
+        }
+      }
+    ]
+  },
+  {
+    id: 'topic-travel',
+    title: 'Travel',
+    total_photos: 980,
+    links: {html: 'https://unsplash.com/t/travel'},
+    preview_photos: [
+      {
+        id: 't1',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 't2',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1671225137978-aa9a19071b9a?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 't3',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop'
+        }
+      },
+      {
+        id: 't4',
+        urls: {
+          small:
+            'https://images.unsplash.com/photo-1721598359121-363311b3b263?q=80&w=600&auto=format&fit=crop'
+        }
+      }
+    ]
+  }
+];
 
 function TopicCard({topic}) {
   return (
@@ -51,35 +197,18 @@ function TopicCard({topic}) {
 }
 
 export const CollectionCardsExample = props => {
-  let list = useAsyncList({
-    async load({signal, cursor}) {
-      let page = cursor || 1;
-      let res = await fetch(
-        `https://api.unsplash.com/topics?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
-        {signal}
-      );
-      let items = (await res.json()).filter(topic => !!topic.preview_photos);
-      return {items, cursor: items.length ? page + 1 : null};
-    }
-  });
-
-  let loadingState = props.loadingState === 'idle' ? list.loadingState : props.loadingState;
-  let items = loadingState === 'loading' ? [] : list.items;
+  let loadingState = props.loadingState || 'idle';
+  let items = loadingState === 'loading' ? [] : topicItems;
 
   return (
-    <CardView
-      aria-label="Topics"
-      {...props}
-      loadingState={loadingState}
-      onLoadMore={props.loadingState === 'idle' ? list.loadMore : undefined}
-      styles={cardViewStyles}>
+    <CardView aria-label="Topics" {...props} loadingState={loadingState} styles={cardViewStyles}>
       <Collection items={items}>{topic => <TopicCard topic={topic} />}</Collection>
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         <SkeletonCollection>
           {() => (
             <TopicCard
               topic={{
-                id: Math.random().toString(36),
+                id: 'skeleton',
                 title: 'Topic title',
                 total_photos: 80,
                 links: {html: ''},
