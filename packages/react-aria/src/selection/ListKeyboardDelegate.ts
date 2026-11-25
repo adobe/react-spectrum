@@ -26,7 +26,7 @@ import {DOMLayoutDelegate} from './DOMLayoutDelegate';
 import {getItemElement} from './utils';
 import {isScrollable} from '../utils/isScrollable';
 
-interface ListKeyboardDelegateOptions<T> {
+export interface ListKeyboardDelegateOptions<T> {
   collection: Collection<Node<T>>;
   ref: RefObject<HTMLElement | null>;
   collator?: Intl.Collator;

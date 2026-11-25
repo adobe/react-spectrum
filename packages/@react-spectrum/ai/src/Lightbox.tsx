@@ -23,11 +23,7 @@ import {FocusableElement, Key, LinkDOMProps} from '@react-types/shared';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
 import {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
-import {
-  getActiveElement,
-  getEventTarget,
-  nodeContains
-} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {getActiveElement, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {ImageContext} from '@react-spectrum/s2/Image';
@@ -119,6 +115,7 @@ const carouselStyles = style({
 
 const pickerStyles = style({
   display: 'flex',
+  minWidth: 0,
   maxWidth: {
     default: 300,
     md: 600
@@ -126,7 +123,7 @@ const pickerStyles = style({
   overflowX: 'auto',
   flexDirection: 'row',
   scrollbarWidth: 'none',
-  flexShrink: 0,
+  flexShrink: 1,
   order: 1,
   gap: 8,
   boxSizing: 'border-box',
@@ -252,9 +249,13 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
               height: 'full',
               paddingX: {
                 default: 24,
-                [smallTouchScreen]: 0
+                [smallTouchScreen]: 4
               },
-              paddingY: 24,
+              paddingTop: {
+                default: 24,
+                [smallTouchScreen]: 48
+              },
+              paddingBottom: 24,
               color: 'white'
             })}>
             {({close}) => (
@@ -264,8 +265,8 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
                   onPress={close}
                   styles={style({
                     position: 'absolute',
-                    top: 24,
-                    insetEnd: 24,
+                    top: 8,
+                    insetEnd: 16,
                     zIndex: 1
                   })}
                 />
@@ -356,7 +357,11 @@ const thumbnailStyles = style({
   width: 64,
   height: 64,
   objectFit: 'cover',
-  borderRadius: 'default',
+  borderRadius: 'lg',
+  outlineStyle: 'solid',
+  outlineWidth: 1,
+  outlineColor: 'gray-800/10',
+  outlineOffset: -1,
   opacity: {
     default: 0.8,
     isSelected: 1
@@ -461,12 +466,7 @@ function FiniteLightboxItems(props: FiniteLightboxItemsProps) {
     // Distant selections may have unmounted pages between them, so jump instead.
     // Also avoids distant selections from whipping through
     if (!isAdjacent) {
-      // Briefly hiding overflow cancels a smooth scroll that's still running. Otherwise
-      // Safari keeps animating after the jump and lands on the wrong slide.
-      // Fixed in Safari 27, needed in Safari 26
-      el.style.overflowX = 'hidden';
       el.scrollTo({left, behavior: 'instant'});
-      el.style.overflowX = '';
       return;
     }
 
@@ -528,32 +528,23 @@ function FiniteLightboxItems(props: FiniteLightboxItemsProps) {
 
   let onScrollEnd = () => {
     let el = ref.current;
-    // Rapid arrow presses on a tab panel can make Safari fire scrollend before the
-    // latest scroll finishes. Keep scroll-driven selection suppressed until the viewport
-    // maps to selectedIndex, so intermediate scroll events cannot overwrite selectedKey.
-    if (
-      isProgrammaticScroll.current &&
-      el &&
-      selectedIndex != null &&
-      Math.round(Math.abs(el.scrollLeft) / el.offsetWidth) !== selectedIndex
-    ) {
-      return;
-    }
-
     // When a jump interrupts a smooth scroll (i.e. going from the last tab to the first tab), Chrome adds the smooth scroll's last few pixels
     // after the jump and doesn't re-snap causing the slide to be incorrectly aligned.
     // https://issues.chromium.org/issues/40722572
     if (isProgrammaticScroll.current && el && selectedIndex != null) {
-      el.scrollTo({left: getScrollLeft(el, selectedIndex, isRTL)});
+      el.scrollTo({
+        left: getScrollLeft(el, selectedIndex, isRTL),
+        // Instant, so the correction doesn't start another smooth scroll.
+        // In Safari 26, that smooth scroll could land on the wrong slide.
+        behavior: 'instant'
+      });
     }
 
     isProgrammaticScroll.current = false;
   };
 
-  // Only handle arrows from the panel itself, preserving keyboard behavior in text fields and other child controls.
   let handleArrow = (e: KeyboardEvent, delta: -1 | 1) => {
-    let panel = ref.current?.querySelector('[role="tabpanel"]');
-    if (e.isDefaultPrevented() || getEventTarget(e) !== panel) {
+    if (e.isDefaultPrevented()) {
       return false;
     }
 
@@ -767,7 +758,7 @@ export function LightboxItem(props: LightboxItemProps) {
     <RACTabPanel {...props} shouldForceMount className={itemStyles}>
       {renderProps => (
         <ImageContext.Provider
-          value={{styles: imageStyles({...renderProps}), imgStyles: innerImageStyles}}>
+          value={{styles: imageStyles({...renderProps}), UNSTABLE_imgStyles: innerImageStyles}}>
           {props.children}
         </ImageContext.Provider>
       )}
