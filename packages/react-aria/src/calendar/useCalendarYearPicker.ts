@@ -101,7 +101,14 @@ export function useCalendarYearPicker(
       formatted: formatter.format(itemDate.toDate(state.timeZone))
     });
 
-    date = date.add({years: 1});
+    let nextDate = date.add({years: 1});
+    // Calendar systems clamp at their maximum date (Gregorian year 9999).
+    // Once that year is included, another step repeats it and never finishes.
+    if (isSameYear(nextDate, itemDate)) {
+      break;
+    }
+
+    date = nextDate;
   }
 
   let {locale} = useLocale();
