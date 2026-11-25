@@ -12,6 +12,7 @@ export function isValidEmail(email: string) {
 interface FieldProps {
   value: string;
   onChange: (value: string) => void;
+  autoFocus?: boolean;
 }
 
 export function NameField(props: FieldProps) {

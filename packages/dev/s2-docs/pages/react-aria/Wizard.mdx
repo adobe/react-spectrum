@@ -27,6 +27,8 @@ export const description = 'Guides users through a multi-step process one step a
     let [step, setStep] = useState<Key>('details');
     let [name, setName] = useState('');
     let [email, setEmail] = useState('');
+    // Only focus the field when the back or next button changes the step.
+    let [focusField, setFocusField] = useState(false);
 
     return (
       <Form
@@ -35,14 +37,21 @@ export const description = 'Guides users through a multi-step process one step a
           e.preventDefault();
           if (step === 'details') {
             setStep('members');
+            setFocusField(true);
           } else if (step === 'members') {
             setStep('review');
+            setFocusField(true);
           } else {
             alert(`Created ${name}!`);
           }
         }}>
         {/*- begin highlight -*/}
-        <Wizard selectedKey={step} onSelectionChange={setStep}/* PROPS */>
+        <Wizard
+          selectedKey={step}
+          onSelectionChange={key => {
+            setStep(key);
+            setFocusField(false);
+          }}/* PROPS */>
           <WizardStepList aria-label="Create project">
             <WizardStep id="details">Details</WizardStep>
             <WizardStep id="members">Members</WizardStep>
@@ -51,17 +60,17 @@ export const description = 'Guides users through a multi-step process one step a
         {/*- end highlight -*/}
           <WizardPanels>
             <WizardPanel id="details">
-              <NameField value={name} onChange={setName} />
+              <NameField value={name} onChange={setName} autoFocus={focusField} />
             </WizardPanel>
             <WizardPanel id="members">
-              <EmailField value={email} onChange={setEmail} />
+              <EmailField value={email} onChange={setEmail} autoFocus={focusField} />
             </WizardPanel>
             <WizardPanel id="review">
               <Summary name={name} email={email} />
             </WizardPanel>
           </WizardPanels>
           <div className="wizard-buttons">
-            <Button slot="previous" variant="secondary">Back</Button>
+            <Button slot="previous" variant="secondary" onPress={() => setFocusField(true)}>Back</Button>
             <Button type="submit">{step === 'review' ? 'Create project' : 'Next'}</Button>
           </div>
         </Wizard>
@@ -84,6 +93,8 @@ export const description = 'Guides users through a multi-step process one step a
     let [step, setStep] = useState<Key>('details');
     let [name, setName] = useState('');
     let [email, setEmail] = useState('');
+    // Only focus the field when the back or next button changes the step.
+    let [focusField, setFocusField] = useState(false);
 
     return (
       <Form
@@ -92,14 +103,21 @@ export const description = 'Guides users through a multi-step process one step a
           e.preventDefault();
           if (step === 'details') {
             setStep('members');
+            setFocusField(true);
           } else if (step === 'members') {
             setStep('review');
+            setFocusField(true);
           } else {
             alert(`Created ${name}!`);
           }
         }}>
         {/*- begin highlight -*/}
-        <Wizard selectedKey={step} onSelectionChange={setStep}/* PROPS */>
+        <Wizard
+          selectedKey={step}
+          onSelectionChange={key => {
+            setStep(key);
+            setFocusField(false);
+          }}/* PROPS */>
           <WizardStepList aria-label="Create project">
             <WizardStep id="details">Details</WizardStep>
             <WizardStep id="members">Members</WizardStep>
@@ -111,6 +129,7 @@ export const description = 'Guides users through a multi-step process one step a
               <TextField
                 value={name}
                 onChange={setName}
+                autoFocus={focusField}
                 label="Name"
                 isRequired
                 validate={name => (isValidName(name) ? null : 'Enter a name for the project.')} />
@@ -119,6 +138,7 @@ export const description = 'Guides users through a multi-step process one step a
               <TextField
                 value={email}
                 onChange={setEmail}
+                autoFocus={focusField}
                 label="Email"
                 description="Invite someone to work on the project with you."
                 isRequired
@@ -134,7 +154,7 @@ export const description = 'Guides users through a multi-step process one step a
             </WizardPanel>
           </WizardPanels>
           <div className="flex justify-between">
-            <Button slot="previous" variant="secondary">Back</Button>
+            <Button slot="previous" variant="secondary" onPress={() => setFocusField(true)}>Back</Button>
             <Button type="submit">{step === 'review' ? 'Create project' : 'Next'}</Button>
           </div>
         </Wizard>
@@ -258,6 +278,8 @@ function Example() {
   let [step, setStep] = useState<Key>('details');
   let [name, setName] = useState('');
   let [email, setEmail] = useState('');
+  // Only focus the field when the back or next button changes the step.
+  let [focusField, setFocusField] = useState(false);
 
   /*- begin highlight -*/
   // A step is completed once its field is valid, and the steps before it are completed.
@@ -273,7 +295,10 @@ function Example() {
   return (
     <Wizard
       selectedKey={step}
-      onSelectionChange={setStep}
+      onSelectionChange={key => {
+        setStep(key);
+        setFocusField(false);
+      }}
       ///- begin highlight -///
       completedKeys={completedKeys}
       ///- end highlight -///
@@ -285,20 +310,20 @@ function Example() {
       </WizardStepList>
       <WizardPanels>
         <WizardPanel id="details">
-          <NameField value={name} onChange={setName} />
+          <NameField value={name} onChange={setName} autoFocus={focusField} />
         </WizardPanel>
         <WizardPanel id="members">
-          <EmailField value={email} onChange={setEmail} />
+          <EmailField value={email} onChange={setEmail} autoFocus={focusField} />
         </WizardPanel>
         <WizardPanel id="review">
           <Summary name={name} email={email} />
         </WizardPanel>
       </WizardPanels>
       <div className="wizard-buttons">
-        <Button slot="previous" variant="secondary">Back</Button>
+        <Button slot="previous" variant="secondary" onPress={() => setFocusField(true)}>Back</Button>
         {step === 'review'
           ? <Button onPress={() => alert(`Created ${name}!`)}>Create project</Button>
-          : <Button slot="next">Next</Button>}
+          : <Button slot="next" onPress={() => setFocusField(true)}>Next</Button>}
       </div>
     </Wizard>
   );
@@ -323,6 +348,8 @@ function Example() {
   let [step, setStep] = useState<Key>('details');
   let [name, setName] = useState('');
   let [email, setEmail] = useState('');
+  // Only focus the field when the back or next button changes the step.
+  let [focusField, setFocusField] = useState(false);
 
   /*- begin highlight -*/
   // Each step is completed once its field is valid, in any order.
@@ -338,7 +365,10 @@ function Example() {
   return (
     <Wizard
       selectedKey={step}
-      onSelectionChange={setStep}
+      onSelectionChange={key => {
+        setStep(key);
+        setFocusField(false);
+      }}
       ///- begin highlight -///
       allowsRandomAccess
       completedKeys={completedKeys}
@@ -351,20 +381,20 @@ function Example() {
       </WizardStepList>
       <WizardPanels>
         <WizardPanel id="details">
-          <NameField value={name} onChange={setName} />
+          <NameField value={name} onChange={setName} autoFocus={focusField} />
         </WizardPanel>
         <WizardPanel id="members">
-          <EmailField value={email} onChange={setEmail} />
+          <EmailField value={email} onChange={setEmail} autoFocus={focusField} />
         </WizardPanel>
         <WizardPanel id="review">
           <Summary name={name} email={email} />
         </WizardPanel>
       </WizardPanels>
       <div className="wizard-buttons">
-        <Button slot="previous" variant="secondary">Back</Button>
+        <Button slot="previous" variant="secondary" onPress={() => setFocusField(true)}>Back</Button>
         {step === 'review'
           ? <Button isDisabled={completedKeys.length < 2} onPress={() => alert(`Created ${name}!`)}>Create project</Button>
-          : <Button slot="next">Save</Button>}
+          : <Button slot="next" onPress={() => setFocusField(true)}>Save</Button>}
       </div>
     </Wizard>
   );
