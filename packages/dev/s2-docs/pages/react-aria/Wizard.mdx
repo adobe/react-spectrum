@@ -111,7 +111,7 @@ function Example() {
   let [step, setStep] = useState<Key>('members');
 
   return (
-    <div>
+    <div style={{maxWidth: '100%'}}>
       <Wizard
         ///- begin highlight -///
         selectedKey={step}
@@ -162,6 +162,7 @@ function Example() {
 
   return (
     <Form
+      style={{maxWidth: '100%'}}
       /*- begin highlight -*/
       onSubmit={e => {
         e.preventDefault();

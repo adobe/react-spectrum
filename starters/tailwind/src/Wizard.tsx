@@ -79,7 +79,9 @@ export function WizardStep(props: WizardStepProps) {
               aria-hidden>
               {isCompleted ? <Check className="size-3.5" /> : stepNumber}
             </span>
-            <span className="col-span-full row-start-2 px-1">{children}</span>
+            <span className="col-span-full row-start-2 px-0.5 overflow-hidden text-ellipsis">
+              {children}
+            </span>
           </>
         )
       )}

@@ -49,7 +49,8 @@ export function Summary({name, email}: SummaryProps) {
         display: 'grid',
         gridTemplateColumns: 'auto 1fr',
         gap: 'var(--spacing-2) var(--spacing-4)',
-        margin: 0
+        margin: 0,
+        overflowWrap: 'anywhere'
       }}>
       <dt>Name</dt>
       <dd style={{margin: 0}}>{name || 'None'}</dd>

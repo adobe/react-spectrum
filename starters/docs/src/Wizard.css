@@ -44,7 +44,9 @@
 
   .label {
     grid-area: label;
-    padding-inline: var(--spacing-1);
+    padding-inline: calc(var(--spacing) / 2);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &[data-selected] .marker,
