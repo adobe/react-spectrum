@@ -270,6 +270,8 @@ describe('useKeyboard', function () {
         act(() => el.focus());
         fireEvent.keyDown(el, {key: 'a', isComposing: true});
         expect(action).not.toHaveBeenCalled();
+        fireEvent.keyDown(el, {key: 'a', keyCode: 229, isComposing: false});
+        expect(action).not.toHaveBeenCalled();
       });
 
       it('handles composing keydown events when allowComposing is true', () => {
@@ -279,6 +281,8 @@ describe('useKeyboard', function () {
         act(() => el.focus());
         fireEvent.keyDown(el, {key: 'a', isComposing: true});
         expect(action).toHaveBeenCalledTimes(1);
+        fireEvent.keyDown(el, {key: 'a', keyCode: 229, isComposing: false});
+        expect(action).toHaveBeenCalledTimes(2);
       });
 
       it('does not run shortcuts on keyup, including repeated and composing keyups', () => {
@@ -289,6 +293,7 @@ describe('useKeyboard', function () {
         fireEvent.keyUp(el, {key: 'a'});
         fireEvent.keyUp(el, {key: 'a', repeat: true});
         fireEvent.keyUp(el, {key: 'a', isComposing: true});
+        fireEvent.keyUp(el, {key: 'a', keyCode: 229});
         expect(action).not.toHaveBeenCalled();
       });
 

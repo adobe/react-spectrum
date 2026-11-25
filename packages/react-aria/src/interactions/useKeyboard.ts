@@ -54,7 +54,7 @@ export function useKeyboard(props: KeyboardProps): KeyboardResult {
       }
       if (
         (e.nativeEvent?.repeat && !allowRepeats) ||
-        (e.nativeEvent?.isComposing && !allowComposing)
+        ((e.nativeEvent?.isComposing || e.nativeEvent?.keyCode === 229) && !allowComposing)
       ) {
         e.continuePropagation();
         return;
@@ -71,7 +71,7 @@ export function useKeyboard(props: KeyboardProps): KeyboardResult {
       }
       if (
         (e.nativeEvent?.repeat && !allowRepeats) ||
-        (e.nativeEvent?.isComposing && !allowComposing)
+        ((e.nativeEvent?.isComposing || e.nativeEvent?.keyCode === 229) && !allowComposing)
       ) {
         e.continuePropagation();
         return;

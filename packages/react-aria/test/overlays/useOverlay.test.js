@@ -131,6 +131,16 @@ describe('useOverlay', function () {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it('should not hide the overlay when pressing escape during IME composition or Safari composition-ending keydown (keyCode 229)', function () {
+    let onClose = jest.fn();
+    let res = render(<Example isOpen onClose={onClose} />);
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'Escape', isComposing: true});
+    expect(onClose).not.toHaveBeenCalled();
+    fireEvent.keyDown(el, {key: 'Escape', keyCode: 229, isComposing: false});
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   it('should still hide the overlay when pressing the escape key if isDismissable is false', function () {
     let onClose = jest.fn();
     let res = render(<Example isOpen onClose={onClose} isDismissable={false} />);
