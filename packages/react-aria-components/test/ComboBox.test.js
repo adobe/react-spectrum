@@ -958,6 +958,71 @@ describe('ComboBox', () => {
     }
   );
 
+  it.each(['{Tab}', '{Shift>}{Tab}{/Shift}'])(
+    'should keep the multi-select selection when %s closes the popover',
+    async key => {
+      let onChange = jest.fn();
+      let {container, queryByRole} = render(
+        <TestComboBox selectionMode="multiple" defaultInputValue="" onChange={onChange} />
+      );
+      let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+      let value = container.querySelector('.react-aria-ComboBoxValue');
+
+      await comboboxTester.open();
+      await user.keyboard('{ArrowDown}{Enter}');
+      expect(onChange).toHaveBeenLastCalledWith(['1']);
+      expect(value).toHaveTextContent('Cat');
+
+      await user.keyboard(key);
+
+      expect(queryByRole('listbox')).toBeNull();
+      expect(onChange).toHaveBeenLastCalledWith(['1']);
+      expect(value).toHaveTextContent('Cat');
+    }
+  );
+
+  it('should not select a focused option when Tab closes a multi-select combobox', async () => {
+    let onChange = jest.fn();
+    let {container, queryByRole} = render(
+      <TestComboBox selectionMode="multiple" defaultInputValue="" onChange={onChange} />
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    let value = container.querySelector('.react-aria-ComboBoxValue');
+
+    await comboboxTester.open();
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Tab}');
+
+    expect(queryByRole('listbox')).toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
+    expect(value).toHaveTextContent('No items selected');
+  });
+
+  it('should preserve multi-select value and custom input when Tab closes on a focused option', async () => {
+    let {container, queryByRole} = render(
+      <TestComboBox
+        selectionMode="multiple"
+        allowsCustomValue
+        defaultValue={['1', '2']}
+        defaultInputValue=""
+      />
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    let value = container.querySelector('.react-aria-ComboBoxValue');
+
+    expect(value).toHaveTextContent('Cat and Dog');
+
+    await user.tab();
+    await user.keyboard('D');
+    expect(comboboxTester.getCombobox()).toHaveValue('D');
+
+    await user.keyboard('{ArrowDown}{Tab}');
+
+    expect(queryByRole('listbox')).toBeNull();
+    expect(comboboxTester.getCombobox()).toHaveValue('D');
+    expect(value).toHaveTextContent('Cat and Dog');
+  });
+
   it('should allow the user to deselect items with keyboard when multiselect (uncontrolled)', async () => {
     let onChange = jest.fn();
     let {container} = render(
