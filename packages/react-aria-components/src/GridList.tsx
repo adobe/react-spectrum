@@ -777,6 +777,7 @@ function GridListDropIndicator(props: GridListDropIndicatorProps, ref: Forwarded
   let renderProps = useRenderProps({
     ...otherProps,
     defaultClassName: 'react-aria-DropIndicator',
+    defaultStyle: {position: 'relative'},
     values: {
       isDropTarget
     }
