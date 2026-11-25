@@ -411,6 +411,21 @@ describeOrSkip('Lightbox', () => {
       expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo one');
       expect(previous).toHaveFocus();
     });
+
+    it('does not wrap picker focus at the boundaries', async () => {
+      let {getByRole} = render(<Carousel itemIds={['one', 'two']} />);
+      let firstTab = getByRole('tab', {name: 'Photo one'});
+      let lastTab = getByRole('tab', {name: 'Photo two'});
+
+      await user.tab();
+      expect(firstTab).toHaveFocus();
+      await user.keyboard('{ArrowLeft}');
+      expect(firstTab).toHaveFocus();
+      await user.keyboard('{ArrowRight}');
+      expect(lastTab).toHaveFocus();
+      await user.keyboard('{ArrowRight}');
+      expect(lastTab).toHaveFocus();
+    });
   });
 
   it('updates the mounted slide window, keeping only selected and neighboring slides mounted and neighboring wrappers inert', async () => {

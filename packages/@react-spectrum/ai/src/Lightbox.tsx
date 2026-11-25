@@ -59,6 +59,7 @@ export interface LightboxCarouselProps extends Omit<
   | 'children'
   | 'orientation'
   | 'keyboardActivation'
+  | 'shouldFocusWrap'
   | 'isDisabled'
   | 'disabledKeys'
   // TODO: Expose selection props when LightboxTrigger supports controlled selection and opening.
@@ -261,6 +262,14 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
             })}>
             {({close}) => (
               <>
+                <RACTabs
+                  {...props}
+                  id={undefined}
+                  shouldFocusWrap={false}
+                  selectedKey={ctx?.activeKey}
+                  onSelectionChange={chain(props.onSelectionChange, ctx?.setActiveKey)}
+                  className={carouselStyles}
+                />
                 <CloseButton
                   staticColor="white"
                   onPress={close}
@@ -273,13 +282,6 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
                     insetEnd: 16,
                     zIndex: 1
                   })}
-                />
-                <RACTabs
-                  {...props}
-                  id={undefined}
-                  selectedKey={ctx?.activeKey}
-                  onSelectionChange={chain(props.onSelectionChange, ctx?.setActiveKey)}
-                  className={carouselStyles}
                 />
               </>
             )}
@@ -295,7 +297,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
       {...labelProps}
       aria-roledescription={stringFormatter.format('lightbox.carousel')}
       style={{width: '100%', height: '100%'}}>
-      <RACTabs {...props} id={undefined} className={carouselStyles} />
+      <RACTabs {...props} id={undefined} shouldFocusWrap={false} className={carouselStyles} />
     </div>
   );
 }
