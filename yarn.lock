@@ -1765,6 +1765,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chromatic-com/playwright@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@chromatic-com/playwright@npm:1.1.0"
+  dependencies:
+    "@chromaui/rrweb-snapshot": "npm:2.0.0-alpha.19-noAbsolute"
+  peerDependencies:
+    "@playwright/test": ^1.0.0
+  bin:
+    archive-storybook: dist/bin/archive-storybook.mjs
+    build-archive-storybook: dist/bin/build-archive-storybook.mjs
+  checksum: 10c0/6a0102823ee91b63106be30a68614382362aaf898aeeb2d88411dbc4584a788fcdaa17184879ebd72e5da20cd74902811ac4df39022a081683cd8480c813579d
+  languageName: node
+  linkType: hard
+
+"@chromaui/rrweb-snapshot@npm:2.0.0-alpha.19-noAbsolute":
+  version: 2.0.0-alpha.19-noAbsolute
+  resolution: "@chromaui/rrweb-snapshot@npm:2.0.0-alpha.19-noAbsolute"
+  dependencies:
+    postcss: "npm:^8.4.38"
+  checksum: 10c0/286c30cc7c6fe3488e19438b827b530da74143d903a9ba81ff27d823c51290276fb72c63f6ef3b67ab1b77d055b5f46ef949a3f193cc14817ea1dfdee6586d36
+  languageName: node
+  linkType: hard
+
 "@cspotcode/source-map-support@npm:^0.8.0":
   version: 0.8.1
   resolution: "@cspotcode/source-map-support@npm:0.8.1"
@@ -6312,6 +6335,17 @@ __metadata:
   version: 0.2.9
   resolution: "@pkgr/core@npm:0.2.9"
   checksum: 10c0/ac8e4e8138b1a7a4ac6282873aef7389c352f1f8b577b4850778f5182e4a39a5241facbe48361fec817f56d02b51691b383010843fb08b34a8e8ea3614688fd5
+  languageName: node
+  linkType: hard
+
+"@playwright/test@npm:^1.65.1":
+  version: 1.65.1
+  resolution: "@playwright/test@npm:1.65.1"
+  dependencies:
+    playwright: "npm:1.65.1"
+  bin:
+    playwright: cli.js
+  checksum: 10c0/f3c0c6ce1d426c84c2ee370e7b7a81fcd4a7a8eaa9d51a880ec853e98ce437482772a09c58c7fbb4444002b127068f076458bec99cecca60c3b51e9ba93e2cc6
   languageName: node
   linkType: hard
 
@@ -24674,7 +24708,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.14.0, playwright@npm:^1.45.3, playwright@npm:^1.57.0":
+"playwright@npm:1.65.1, playwright@npm:^1.14.0, playwright@npm:^1.45.3, playwright@npm:^1.57.0":
   version: 1.65.1
   resolution: "playwright@npm:1.65.1"
   dependencies:
@@ -25341,6 +25375,7 @@ __metadata:
     "@babel/preset-react": "npm:^7.24.1"
     "@babel/preset-typescript": "npm:^7.24.1"
     "@babel/register": "npm:^7.23.7"
+    "@chromatic-com/playwright": "npm:^1.1.0"
     "@faker-js/faker": "npm:^8.4.1"
     "@jdb8/eslint-plugin-monorepo": "npm:^1.0.1"
     "@octokit/rest": "npm:*"
@@ -25364,6 +25399,7 @@ __metadata:
     "@parcel/transformer-svg-react": "npm:^2.16.3"
     "@parcel/transformer-ts-doc": "npm:^0.0.3"
     "@parcel/transformer-typescript-types": "npm:^2.16.3"
+    "@playwright/test": "npm:^1.65.1"
     "@react-spectrum/parcel-namer-s2": "workspace:^"
     "@react-spectrum/s2-icon-builder": "workspace:^"
     "@spectrum-css/component-builder": "workspace:^"

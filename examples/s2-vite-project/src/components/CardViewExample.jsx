@@ -17,17 +17,14 @@ import {
   CardPreview,
   CardView,
   Collection,
-  CollectionCardPreview,
   Content,
   Image,
   MenuItem,
   SkeletonCollection,
   Text
 } from '@react-spectrum/s2';
-import Folder from '@react-spectrum/s2/icons/Folder';
 import ErrorIcon from '@react-spectrum/s2/illustrations/linear/AlertNotice';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
 
 const cardViewStyles = style({
   width: 'full',
@@ -43,6 +40,111 @@ const avatarSize = {
   L: 28,
   XL: 32
 };
+
+const AVATAR_URL =
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80';
+
+const photoItems = [
+  {
+    id: 'photo-1',
+    description: 'Desert sand dunes at sunset',
+    width: 600,
+    height: 450,
+    urls: {
+      regular:
+        'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop'
+    },
+    user: {name: 'Devon Govett', profile_image: {small: AVATAR_URL}}
+  },
+  {
+    id: 'photo-2',
+    description: 'Misty mountain ridge',
+    width: 600,
+    height: 800,
+    urls: {
+      regular:
+        'https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop'
+    },
+    user: {name: 'Rob Snow', profile_image: {small: AVATAR_URL}}
+  },
+  {
+    id: 'photo-3',
+    description: 'Sunlit forest canopy',
+    width: 600,
+    height: 400,
+    urls: {
+      regular:
+        'https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop'
+    },
+    user: {name: 'Daniel Lu', profile_image: {small: AVATAR_URL}}
+  },
+  {
+    id: 'photo-4',
+    description: 'Coastal cliffs overlooking ocean',
+    width: 600,
+    height: 750,
+    urls: {
+      regular:
+        'https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop'
+    },
+    user: {name: 'Reid Barber', profile_image: {small: AVATAR_URL}}
+  },
+  {
+    id: 'photo-5',
+    description: 'Alpine lake reflections',
+    width: 600,
+    height: 450,
+    urls: {
+      regular:
+        'https://images.unsplash.com/photo-1721661657253-6621d52db753?q=80&w=600&auto=format&fit=crop'
+    },
+    user: {name: 'Kyle Tabor', profile_image: {small: AVATAR_URL}}
+  },
+  {
+    id: 'photo-6',
+    description: 'Golden hour valley vista',
+    width: 600,
+    height: 600,
+    urls: {
+      regular:
+        'https://images.unsplash.com/photo-1721598359121-363311b3b263?q=80&w=600&auto=format&fit=crop'
+    },
+    user: {name: 'Danni Hickox', profile_image: {small: AVATAR_URL}}
+  },
+  {
+    id: 'photo-7',
+    description: 'Wildflowers in meadow',
+    width: 600,
+    height: 450,
+    urls: {
+      regular:
+        'https://images.unsplash.com/photo-1720987517313-23d8c4092cfb?q=80&w=600&auto=format&fit=crop'
+    },
+    user: {name: 'Devon Govett', profile_image: {small: AVATAR_URL}}
+  },
+  {
+    id: 'photo-8',
+    description: 'Starry night sky over peaks',
+    width: 600,
+    height: 800,
+    urls: {
+      regular:
+        'https://images.unsplash.com/photo-1671225137978-aa9a19071b9a?q=80&w=600&auto=format&fit=crop'
+    },
+    user: {name: 'Rob Snow', profile_image: {small: AVATAR_URL}}
+  },
+  {
+    id: 'photo-9',
+    description: 'Artisan cafe breakfast table',
+    width: 600,
+    height: 450,
+    urls: {
+      regular:
+        'https://images.unsplash.com/photo-1460306855393-0410f61241c7?q=80&w=600&auto=format&fit=crop'
+    },
+    user: {name: 'Daniel Lu', profile_image: {small: AVATAR_URL}}
+  }
+];
 
 function PhotoCard({item, layout}) {
   return (
@@ -99,32 +201,14 @@ function PhotoCard({item, layout}) {
 }
 
 export const CardViewExample = props => {
-  let list = useAsyncList({
-    async load({signal, cursor, items}) {
-      let page = cursor || 1;
-      let res = await fetch(
-        `https://api.unsplash.com/topics/nature/photos?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
-        {signal}
-      );
-      let nextItems = await res.json();
-      // Filter duplicates which might be returned by the API.
-      let existingKeys = new Set(items.map(i => i.id));
-      nextItems = nextItems.filter(
-        i => !existingKeys.has(i.id) && (i.description || i.alt_description)
-      );
-      return {items: nextItems, cursor: nextItems.length ? page + 1 : null};
-    }
-  });
-
-  let loadingState = props.loadingState === 'idle' ? list.loadingState : props.loadingState;
-  let items = loadingState === 'loading' ? [] : list.items;
+  let loadingState = props.loadingState || 'idle';
+  let items = loadingState === 'loading' ? [] : photoItems;
 
   return (
     <CardView
       aria-label="Nature photos"
       {...props}
       loadingState={loadingState}
-      onLoadMore={props.loadingState === 'idle' ? list.loadMore : undefined}
       styles={cardViewStyles}>
       <Collection items={items} dependencies={[props.layout]}>
         {item => <PhotoCard item={item} layout={props.layout || 'grid'} />}
@@ -134,82 +218,15 @@ export const CardViewExample = props => {
           {() => (
             <PhotoCard
               item={{
-                id: Math.random(),
+                id: 'skeleton',
                 user: {name: 'Devon Govett', profile_image: {small: ''}},
                 urls: {regular: ''},
                 description: 'This is a fake description. Kinda long so it wraps to a new line.',
                 alt_description: '',
                 width: 400,
-                height: 200 + Math.max(0, Math.round(Math.random() * 400))
+                height: 300
               }}
               layout={props.layout || 'grid'}
-            />
-          )}
-        </SkeletonCollection>
-      )}
-    </CardView>
-  );
-};
-
-function TopicCard({topic}) {
-  return (
-    <Card href={topic.links.html} target="_blank" textValue={topic.title}>
-      <CollectionCardPreview>
-        {topic.preview_photos.slice(0, 4).map(photo => (
-          <Image key={photo.id} alt="" src={photo.urls.small} />
-        ))}
-      </CollectionCardPreview>
-      <Content>
-        <Text slot="title">{topic.title}</Text>
-        <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
-          <Folder />
-          <Text slot="description">{topic.total_photos.toLocaleString()} photos</Text>
-        </div>
-      </Content>
-    </Card>
-  );
-}
-
-export const CollectionCardsExample = props => {
-  let list = useAsyncList({
-    async load({signal, cursor}) {
-      let page = cursor || 1;
-      let res = await fetch(
-        `https://api.unsplash.com/topics?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
-        {signal}
-      );
-      let items = (await res.json()).filter(topic => !!topic.preview_photos);
-      return {items, cursor: items.length ? page + 1 : null};
-    }
-  });
-
-  let loadingState = props.loadingState === 'idle' ? list.loadingState : props.loadingState;
-  let items = loadingState === 'loading' ? [] : list.items;
-
-  return (
-    <CardView
-      aria-label="Topics"
-      {...props}
-      loadingState={loadingState}
-      onLoadMore={props.loadingState === 'idle' ? list.loadMore : undefined}
-      styles={cardViewStyles}>
-      <Collection items={items}>{topic => <TopicCard topic={topic} />}</Collection>
-      {(loadingState === 'loading' || loadingState === 'loadingMore') && (
-        <SkeletonCollection>
-          {() => (
-            <TopicCard
-              topic={{
-                id: Math.random().toString(36),
-                title: 'Topic title',
-                total_photos: 80,
-                links: {html: ''},
-                preview_photos: [
-                  {id: 'a', urls: {small: ''}},
-                  {id: 'b', urls: {small: ''}},
-                  {id: 'c', urls: {small: ''}},
-                  {id: 'd', urls: {small: ''}}
-                ]
-              }}
             />
           )}
         </SkeletonCollection>
