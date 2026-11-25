@@ -431,18 +431,20 @@ describe.each(['Switch', 'SwitchField'])('%s', comp => {
   }
 
   it('should support implicit form submission from a focused switch on Enter', async () => {
+    let onChange = jest.fn();
     let onSubmit = jest.fn(e => e.preventDefault());
     let {getByRole} = render(
       <form onSubmit={onSubmit}>
-        <Switch>Test</Switch>
+        <Switch onChange={onChange}>Test</Switch>
         <button type="submit">Submit</button>
       </form>
     );
 
     let s = getByRole('switch');
-    await user.click(s);
+    await user.tab();
+    expect(s).toHaveFocus();
     await user.keyboard('{Enter}');
-
+    expect(onChange).not.toHaveBeenCalled();
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 });
