@@ -40,6 +40,12 @@ export interface AriaTabListProps<T> extends TabListProps<T>, DOMProps, AriaLabe
    * @default 'horizontal'
    */
   orientation?: Orientation;
+  /**
+   * Whether focus should wrap around when the end/start is reached.
+   *
+   * @default true
+   */
+  shouldFocusWrap?: boolean;
 }
 
 export interface AriaTabListOptions<T> extends Omit<AriaTabListProps<T>, 'children'> {}
@@ -58,18 +64,23 @@ export function useTabList<T>(
   state: TabListState<T>,
   ref: RefObject<HTMLElement | null>
 ): TabListAria {
-  let {orientation = 'horizontal', keyboardActivation = 'automatic'} = props;
+  let {
+    orientation = 'horizontal',
+    keyboardActivation = 'automatic',
+    shouldFocusWrap = true
+  } = props;
   let {collection, selectionManager: manager, disabledKeys} = state;
   let {direction} = useLocale();
   let delegate = useMemo(
-    () => new TabsKeyboardDelegate(collection, direction, orientation, disabledKeys),
-    [collection, disabledKeys, orientation, direction]
+    () => new TabsKeyboardDelegate({collection, ref, direction, orientation, disabledKeys}),
+    [collection, ref, disabledKeys, orientation, direction]
   );
 
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: manager,
     keyboardDelegate: delegate,
+    shouldFocusWrap,
     selectOnFocus: keyboardActivation === 'automatic',
     disallowEmptySelection: true,
     scrollRef: ref,

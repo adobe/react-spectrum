@@ -54,7 +54,14 @@ function Carousel({itemIds = ids, withControls = false, ...props}: CarouselProps
             {(withControls === true ||
               (Array.isArray(withControls) && withControls.includes(id))) && (
               <>
-                <input aria-label={`Caption ${id}`} />
+                <input
+                  aria-label={`Caption ${id}`}
+                  onKeyDown={e => {
+                    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                      e.stopPropagation();
+                    }
+                  }}
+                />
                 <button>Download {id}</button>
               </>
             )}
@@ -285,7 +292,7 @@ describeOrSkip('Lightbox', () => {
       expect(getByRole('tabpanel')).toHaveFocus();
     });
 
-    it('preserves child-input arrow-key behavior without changing slides', async () => {
+    it('does not change slides when a child input stops arrow-key propagation', async () => {
       let onSelectionChange = jest.fn();
       let {getByRole} = render(<Carousel withControls onSelectionChange={onSelectionChange} />);
       await user.click(getByRole('tab', {name: 'Photo two'}));
