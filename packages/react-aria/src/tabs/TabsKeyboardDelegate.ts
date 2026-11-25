@@ -32,9 +32,11 @@ export class TabsKeyboardDelegate<T> extends ListKeyboardDelegate<T> {
   getKeyPageBelow?(key: Key): Key | null;
 
   constructor(opts: TabsKeyboardDelegateOptions<T>) {
-    super({...opts, layout: 'stack'});
-    this._orientation = opts.orientation || 'horizontal';
-    this._direction = opts.direction || 'ltr';
+    let orientation = opts.orientation || 'horizontal';
+    let direction = opts.direction || 'ltr';
+    super({...opts, layout: 'stack', orientation, direction});
+    this._orientation = orientation;
+    this._direction = direction;
 
     this.getKeyPageAbove = undefined;
     this.getKeyPageBelow = undefined;
