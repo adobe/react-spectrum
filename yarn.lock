@@ -5393,16 +5393,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@parcel/rsc@npm:next":
-  version: 3.0.0-alpha.0
-  resolution: "@parcel/rsc@npm:3.0.0-alpha.0"
+"@parcel/rsc@npm:^3.0.0-alpha.4":
+  version: 3.0.0-alpha.4
+  resolution: "@parcel/rsc@npm:3.0.0-alpha.4"
   dependencies:
     react-server-dom-parcel: "npm:^19.1.1"
     rsc-html-stream: "npm:^0.0.6"
   peerDependencies:
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/2e86fcec8fc01f8483fe80cca17ed67bf9a88b2f8d0cabd020680a91f7f991ecdda649ba304ed563a75e8063ecdeb80d8619dd25d35ee056d76248a427876a74
+  checksum: 10c0/4db7f4198a9b17f3a6909d432409e90960a886ba22a8396bad93a93a410ae225ecdb48bbb2600076dffc7340881e4a3be2678c2f4d087f5b03f282f6ac60e9f0
   languageName: node
   linkType: hard
 
@@ -7822,7 +7822,7 @@ __metadata:
   dependencies:
     "@babel/parser": "npm:^7.26.3"
     "@parcel/plugin": "npm:^2.16.3"
-    "@parcel/rsc": "npm:next"
+    "@parcel/rsc": "npm:^3.0.0-alpha.4"
     "@react-aria/focus": "npm:^3.20.4"
     "@react-aria/i18n": "npm:^3.12.10"
     "@react-aria/interactions": "npm:^3.25.1"
