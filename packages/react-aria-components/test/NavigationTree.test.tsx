@@ -12,6 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
+import {Dialog, DialogTrigger} from '../src/Dialog';
 import {Link} from '../src/Link';
 import {
   NavigationTree,
@@ -21,6 +22,7 @@ import {
   NavigationTreeProps,
   NavigationTreeSection
 } from '../src/NavigationTree';
+import {Popover} from '../src/Popover';
 import React from 'react';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
@@ -353,6 +355,39 @@ describe('NavigationTree', () => {
     expect(getByRole('link', {name: 'Your files'})).toHaveFocus();
     await user.tab({shift: true});
     expect(getByRole('textbox')).toHaveFocus();
+  });
+
+  it('moves to the last and first row with End and Home from a link', async () => {
+    let {getByRole} = render(<NavigationTreeExample selectedRoute="/files" />);
+    await user.tab();
+    expect(getByRole('link', {name: 'Your files'})).toHaveFocus();
+    await user.keyboard('{End}');
+    expect(getByRole('link', {name: 'Your libraries'})).toHaveFocus();
+    await user.keyboard('{Home}');
+    expect(getByRole('link', {name: 'Your files'})).toHaveFocus();
+  });
+
+  it('closes a parent popover with Escape from a link', async () => {
+    let {getByRole, queryByRole} = render(
+      <DialogTrigger>
+        <Button>Open</Button>
+        <Popover>
+          <Dialog aria-label="Navigation">
+            <NavigationTreeExample selectedRoute="/files" />
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+    let trigger = getByRole('button', {name: 'Open'});
+    await user.click(trigger);
+    act(() => jest.runAllTimers());
+    await user.tab();
+    expect(getByRole('dialog')).toBeInTheDocument();
+    expect(getByRole('link', {name: 'Your files'})).toHaveFocus();
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    expect(queryByRole('dialog')).toBeNull();
+    expect(trigger).toHaveFocus();
   });
 
   it('keeps focus on the row (not a secondary action) for an item with no href/link', async () => {
