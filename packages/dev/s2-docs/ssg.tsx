@@ -59,14 +59,15 @@ export async function render(routes) {
     console.log('rendering ' + page);
     try {
       let mod = await routes[page]();
-      let Page = mod.default;
+      let {default: Page, ...exports} = mod;
       let url = page.slice(base.length, -4);
       let {html, rsc} = await prerenderHTML(
         <Page
           currentPage={{
             url: '/' + url,
             name: url + '.html',
-            tableOfContents: mod.tableOfContents
+            tableOfContents: mod.tableOfContents,
+            exports
           }}
         />,
         {component: Page}
