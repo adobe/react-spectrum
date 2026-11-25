@@ -72,11 +72,11 @@ export interface WizardProps extends Omit<TabsProps, 'children' | 'selectedKey'>
   /** Handler called when the selected step changes. */
   onSelectionChange?: (key: Key) => void;
   /**
-   * The keys of the completed steps. The application decides when a step is completed, for example
-   * once its fields are valid. Unless `allowsRandomAccess` is set, the steps up to and including
-   * the one after the last completed step are navigable, and the `next` button only moves to
-   * navigable steps. When omitted, the steps before the current step are completed, or none are
-   * when `allowsRandomAccess` is set.
+   * The keys of the completed steps. The application decides when a step is completed, for example,
+   * when all its fields are valid. Unless `allowsRandomAccess` is set, any step up to and including
+   * the step immediately following the last completed step is navigable, and the `next` button only
+   * moves to navigable steps. When omitted, the steps before the current step are considered
+   * completed. If `allowsRandomAccess` is set, no steps are considered completed.
    */
   completedKeys?: Iterable<Key>;
   /**
@@ -132,8 +132,8 @@ export interface WizardStateOptions<T> {
   /** Handler called when the selected step changes. */
   onSelectionChange?: (key: Key) => void;
   /**
-   * The keys of the completed steps. When omitted, the steps before the selected step are
-   * completed, or none are when random access is allowed.
+   * The keys of the completed steps. When omitted, every step before the selected step are
+   * considered complete. If random access is allowed, none of the steps are considered complete.
    */
   completedKeys?: Iterable<Key>;
   /** Whether every step that is not in `disabledKeys` is navigable at any time. */
@@ -369,7 +369,8 @@ function WizardInner({props, collection, tabsRef}: WizardInnerProps) {
           keyboardActivation: 'manual',
           selectedKey: state.selectedKey!,
           onSelectionChange: state.setSelectedKey,
-          disabledKeys: state.disabledKeys
+          disabledKeys: state.disabledKeys,
+          shouldFocusWrap: false
         }}
         collection={collection}
         tabsRef={tabsRef}
