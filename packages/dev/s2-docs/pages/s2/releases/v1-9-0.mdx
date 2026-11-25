@@ -1,0 +1,142 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'November 30, 2026';
+export const title = 'v1.9.0';
+export const description = 'This release adds editable values to Slider and RangeSlider, handle-only drag and drop for collections, and a new LightboxCarousel component for AI Components, along with bug fixes.';
+export const isSubpage = true;
+
+# v1.9.0
+
+This release introduces editable value support for [Slider](../Slider#editable) and [RangeSlider](../RangeSlider#editable) via the new SliderInput component.
+
+```tsx render hideCode
+"use client";
+import {Slider, SliderInput} from '@react-spectrum/s2/Slider';
+
+<Slider
+  label="Opacity"
+  defaultValue={0.5}
+  maxValue={1}
+  step={0.01}
+  formatOptions={{style: 'percent'}}>
+  <SliderInput />
+</Slider>
+```
+
+It also adds handle-only pointer dragging via `pointerDragSource: 'handle'` in [drag and drop](../dnd#drag-handle) for [ListView](../ListView#drag-and-drop), [TableView](../TableView#drag-and-drop), and [TreeView](../TreeView#drag-and-drop)!
+
+<ExampleSwitcher type="component" examples={['ListView', 'TableView', 'TreeView']}>
+
+```tsx render hideCode type="s2" dir="s2/releases" files={['packages/dev/s2-docs/pages/s2/EditableCOMPONENT.tsx']}
+"use client";
+import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
+import {useTreeData} from '@react-spectrum/s2/useTreeData';
+import {EditableCOMPONENT, FileItem, defaultItems} from '../EditableCOMPONENT';
+
+function DraggableCOMPONENT() {
+  let tree = useTreeData({initialItems: defaultItems});
+
+  let {dragAndDropHooks} = useDragAndDrop<FileItem>({
+    getItems(keys, items: FileItem[]) {
+      return items.map(item => ({
+        'text/plain': item.name
+      }));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      }
+    },
+    pointerDragSource: 'handle'
+  });
+
+  let processItem = item => ({
+    ...item.value,
+    children: item.children.map(processItem)
+  });
+
+  return <EditableCOMPONENT items={tree.items.map(processItem)} dragAndDropHooks={dragAndDropHooks} />;
+}
+```
+
+</ExampleSwitcher>
+
+As always, many thanks to all of our contributors!
+
+## AI Components
+
+This release introduces the [LightboxCarousel](../ai-components#attachments-and-actions) component for previewing image attachments in full view, updates AIButton styling, improves Chat scroll anchoring, and fixes card attachment widths and `prose()` macro packaging.
+
+## Changelog
+
+### AI Components
+- Add LightboxCarousel component - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10821), [PR](https://github.com/adobe/react-spectrum/pull/11021)
+- Render card attachments at full width in AttachmentList - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10818)
+- Improve scroll anchoring stability in Chat when content resizes or streams - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10600)
+- Update AIButton design and colors - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10960)
+- Fix `prose()` style macro packaging - [@BDesta](https://github.com/BDesta) - [PR](https://github.com/adobe/react-spectrum/pull/10976)
+
+### Breadcrumbs
+- Prevent items from collapsing after web fonts load - [@arba-octo](https://github.com/arba-octo) - [PR](https://github.com/adobe/react-spectrum/pull/10828)
+
+### DatePicker
+- Prevent the popup time field from collapsing when rendered inside a Form - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/10915)
+
+### DateRangePicker
+- Prevent the popup time field from collapsing when rendered inside a Form - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/10915)
+
+### Docs
+- Fix CustomDialog anatomy example in Dialog documentation - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/10758)
+- Fix closing CardPreview tags in Card anatomy documentation examples - [@mangeshraut712](https://github.com/mangeshraut712) - [PR](https://github.com/adobe/react-spectrum/pull/10853)
+
+### ListView
+- Support handle-only pointer dragging via `pointerDragSource: 'handle'` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10738)
+
+### Popover
+- Add `restoreFocus` prop to customize or disable focus restoration - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10962)
+
+### RangeSlider
+- Support editable RangeSliders - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10978)
+
+### SideNavPanel
+- Expand SideNavPanel to show child items when pressing a non-navigable parent item - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10778)
+
+### Slider
+- Support editable Sliders - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10978)
+
+### Switch
+- Work around a Firefox grid sizing regression when Switch is used inside a Form - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10988)
+
+### TableView
+- Support handle-only pointer dragging via `pointerDragSource: 'handle'` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10738)
+
+### Toast
+- Keep spacing between toast action buttons and the expanded list while scrolling - [@Zakkaus](https://github.com/Zakkaus) - [PR](https://github.com/adobe/react-spectrum/pull/10621)
+
+### TreeView
+- Support handle-only pointer dragging via `pointerDragSource: 'handle'` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10738)
+
+## Released packages
+
+```
+[TODO: paste output of yarn bumpVersions here]
+```

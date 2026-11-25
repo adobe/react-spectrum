@@ -1,0 +1,213 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'November 30, 2026';
+export const title = 'v1.23.0';
+export const description = 'This release adds editable Slider values, handle-only drag and drop for collections, focus events for collection items, and many bug fixes.';
+export const isSubpage = true;
+
+# v1.23.0
+
+This release adds support for editable [Slider](../Slider#editable) values via a slotted NumberField.
+
+```tsx render hideCode
+"use client";
+import {Input, NumberField, Slider, SliderFill, SliderThumb, SliderTrack} from 'react-aria-components';
+import {Label} from 'vanilla-starter/Form';
+import 'vanilla-starter/Slider.css';
+
+<Slider
+  defaultValue={0.5}
+  maxValue={1}
+  step={0.01}
+  formatOptions={{style: 'percent'}}>
+  <Label>Opacity</Label>
+  <SliderTrack>
+    <div className="track inset">
+      <SliderFill />
+    </div>
+    <SliderThumb className="react-aria-SliderThumb indicator" />
+  </SliderTrack>
+  <NumberField slot="0">
+    <Input className="react-aria-Input inset" />
+  </NumberField>
+</Slider>
+```
+
+It also adds handle-only pointer dragging via `pointerDragSource: 'handle'` in [drag and drop](../dnd#drag-handle) for [GridList](../GridList#drag-and-drop), [Table](../Table#drag-and-drop), and [Tree](../Tree#drag-and-drop).
+
+<ExampleSwitcher type="component" examples={['GridList', 'Table', 'Tree']}>
+
+```tsx render hideCode dir="react-aria/releases" files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx', 'packages/dev/s2-docs/pages/react-aria/DroppableCOMPONENT.tsx']}
+"use client";
+import {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
+import {PokemonCOMPONENT, Pokemon} from '../PokemonCOMPONENT';
+import {DroppableCOMPONENT} from '../DroppableCOMPONENT';
+
+function DraggableCOMPONENT() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems(keys, items: Pokemon[]) {
+      return items.map(item => ({
+        'text/plain': item.name,
+        'pokemon': JSON.stringify(item)
+      }));
+    },
+    pointerDragSource: 'handle'
+  });
+
+  return <PokemonCOMPONENT dragAndDropHooks={dragAndDropHooks} />;
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
+  <DraggableCOMPONENT />
+  <DroppableCOMPONENT />
+</div>
+```
+
+</ExampleSwitcher>
+
+Other highlights include focus events for collection items, description slot support for TreeItem, and numerous bug fixes across components and hooks.
+
+As always, many thanks to all of our contributors!
+
+## Changelog
+
+### General Changes
+- Declare `@types/react` as an optional peer dependency for better TypeScript resolution in pnpm workspaces - [@Sophran-fbj](https://github.com/Sophran-fbj) - [PR](https://github.com/adobe/react-spectrum/pull/10953)
+- Fix `optimizeLocales.turbopack()` return types so rules can be spread into Next.js `NextConfig` - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/10889)
+- Remove the `signDisplay` polyfill from `NumberFormatter` to support all native `Intl.NumberFormat` options - [@UditDewan](https://github.com/UditDewan) - [PR](https://github.com/adobe/react-spectrum/pull/10780)
+- Fix duplicate click events in `usePress` when pressing <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> on native buttons and inputs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10840)
+- Prevent default <Keyboard>Enter</Keyboard> behavior on macOS in `usePress` (except <Keyboard>Control</Keyboard> + <Keyboard>Enter</Keyboard>) so menus like Select don't reopen on selection - [@jsabutis](https://github.com/jsabutis) - [PR](https://github.com/adobe/react-spectrum/pull/10820)
+- Fix `useHover` getting stuck after touch interactions on hybrid touch/mouse devices - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10824)
+- Allow `getTargetRect` in `useOverlayPosition` to return read-only rectangles without mutating them - [@minwookshin](https://github.com/minwookshin) - [PR](https://github.com/adobe/react-spectrum/pull/10716)
+- Avoid an extra render on mount in `useDescription` for shared descriptions - [@tabedzki](https://github.com/tabedzki) - [PR](https://github.com/adobe/react-spectrum/pull/10754)
+- Fix memory leak in `runAfterTransition` when CSS transitions are cancelled - [@ali-idrizi](https://github.com/ali-idrizi) - [PR](https://github.com/adobe/react-spectrum/pull/10730)
+- Prevent import errors in environments where `window.screen` is unavailable - [@jkugsiya](https://github.com/jkugsiya) - [PR](https://github.com/adobe/react-spectrum/pull/10774)
+- Refactor shared layout types and DOM type guards, and add shadow-DOM-safe parent helpers and lint rules - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/10831), [PR](https://github.com/adobe/react-spectrum/pull/10832), [PR](https://github.com/adobe/react-spectrum/pull/10834)
+- Fix `LiveAnnouncer` clearing under Trusted Types - [@okeken](https://github.com/okeken) - [PR](https://github.com/adobe/react-spectrum/pull/11013)
+
+### CheckboxGroup
+- Restore default selection on form reset when multiple checkboxes are selected - [@Bhavani2016](https://github.com/Bhavani2016) - [PR](https://github.com/adobe/react-spectrum/pull/10686)
+- Inherit `validationBehavior` on child Checkbox components - [@mangeshraut712](https://github.com/mangeshraut712) - [PR](https://github.com/adobe/react-spectrum/pull/10860)
+
+### Collections
+- Fix <Keyboard>Home</Keyboard>, <Keyboard>End</Keyboard>, <Keyboard>PageUp</Keyboard>, <Keyboard>PageDown</Keyboard>, and range selection keyboard shortcuts in `useSelectableCollection` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10728)
+- Cycle through matching options when typing repeated letters in type-ahead - [@withlakshmanan](https://github.com/withlakshmanan) - [PR](https://github.com/adobe/react-spectrum/pull/10006)
+
+### ColorField
+- Inherit `validationBehavior` from a parent Form - [@mangeshraut712](https://github.com/mangeshraut712) - [PR](https://github.com/adobe/react-spectrum/pull/10863)
+
+### ComboBox
+- Improve VoiceOver announcements by limiting live regions to section changes - [@gonzoblasco](https://github.com/gonzoblasco) - [PR](https://github.com/adobe/react-spectrum/pull/10503)
+- Fix keyboard navigation when the input and popover are in different shadow roots - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/10631)
+- Don't commit value on blur when `isReadOnly` - [@mangeshraut712](https://github.com/mangeshraut712) - [PR](https://github.com/adobe/react-spectrum/pull/10869)
+- Prevent default browser behavior on <Keyboard>Escape</Keyboard> when closing the popover - [@ayuxy027](https://github.com/ayuxy027) - [PR](https://github.com/adobe/react-spectrum/pull/10883)
+- Allow <Keyboard>Cmd</Keyboard>/<Keyboard>Ctrl</Keyboard> + <Keyboard>A</Keyboard> to select input text while a multi-select menu is open - [@mangeshraut712](https://github.com/mangeshraut712) - [PR](https://github.com/adobe/react-spectrum/pull/10868)
+
+### Date and Time
+- Fix `useDateSegment` crash in 12-hour locales without a day period - [@mangeshraut712](https://github.com/mangeshraut712) - [PR](https://github.com/adobe/react-spectrum/pull/10842)
+
+### DateField
+- Fix `onKeyDown` and `onKeyUp` event propagation in `useDateField` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10745)
+
+### DatePicker
+- Fix `onKeyDown` and `onKeyUp` event propagation in `useDatePicker` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10745)
+- Prevent default <Keyboard>ArrowLeft</Keyboard> and <Keyboard>ArrowRight</Keyboard> behavior when moving between segments - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10728)
+
+### DateRangePicker
+- Fix `onKeyDown` and `onKeyUp` event propagation in `useDateRangePicker` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10745)
+- Prevent default <Keyboard>ArrowLeft</Keyboard> and <Keyboard>ArrowRight</Keyboard> behavior when moving between segments - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10728)
+
+### Drag and Drop
+- Add `pointerDragSource` to `useDragAndDrop` to restrict pointer dragging to drag handles - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10738)
+- Fix drop target calculations for horizontal virtualized lists in `ListLayout` - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/10699)
+
+### FocusScope
+- Allow `restoreFocus` to accept a ref or callback to customize where focus returns - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10962)
+
+### Form
+- Prevent nested Forms from inheriting props from a parent Form - [@UditDewan](https://github.com/UditDewan) - [PR](https://github.com/adobe/react-spectrum/pull/10746)
+
+### GridList
+- Add `onFocus`, `onBlur`, and `onFocusChange` props to GridListItem - [@dagemawinegash](https://github.com/dagemawinegash) - [PR](https://github.com/adobe/react-spectrum/pull/10822)
+- Support handle-only pointer dragging via `pointerDragSource: 'handle'` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10738)
+- Preserve focus tracking when items load into a focused empty GridList - [@minwookshin](https://github.com/minwookshin) - [PR](https://github.com/adobe/react-spectrum/pull/10689)
+
+### Menu
+- Fix `onKeyDown` and `onKeyUp` event propagation in `useMenu` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10745)
+
+### Modal
+- Add `restoreFocus` prop to Modal and ModalOverlay to customize or disable focus restoration - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10962)
+
+### NumberField
+- Preserve the numbering system in `NumberParser` for separator-only input - [@adobe-ddavidso](https://github.com/adobe-ddavidso) - [PR](https://github.com/adobe/react-spectrum/pull/10876)
+- Fix native decimal and grouping separators in `NumberParser` for Sindhi and Arabic-digit locales - [@itsrayeedscodespace](https://github.com/itsrayeedscodespace) - [PR](https://github.com/adobe/react-spectrum/pull/10939)
+
+### Popover
+- Add `restoreFocus` prop to customize or disable focus restoration - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10962)
+- Let a standalone Popover's `aria-label` override its trigger label - [@UditDewan](https://github.com/UditDewan) - [PR](https://github.com/adobe/react-spectrum/pull/10789)
+
+### PreviewTrigger
+- Allow <Keyboard>Escape</Keyboard> to close parent dialogs when the preview is closed - [@arba-octo](https://github.com/arba-octo) - [PR](https://github.com/adobe/react-spectrum/pull/10921)
+
+### Select
+- Restore default selection on form reset for large lists (300+ items) without a `name` prop - [@Bhavani2016](https://github.com/Bhavani2016) - [PR](https://github.com/adobe/react-spectrum/pull/10695)
+- Remove unsupported `excludeFromTabOrder` prop from `AriaSelectProps` - [@UditDewan](https://github.com/UditDewan) - [PR](https://github.com/adobe/react-spectrum/pull/10790)
+
+### Separator
+- Omit redundant `role="separator"` when rendering a default `<hr>` element - [@okeken](https://github.com/okeken) - [PR](https://github.com/adobe/react-spectrum/pull/10946)
+
+### Sheet
+- Add `restoreFocus` prop to customize or disable focus restoration - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10962)
+- Start the slide-in enter animation immediately without an offscreen delay - [@georgereade](https://github.com/georgereade) - [PR](https://github.com/adobe/react-spectrum/pull/10815)
+- Fix stacked Sheet backdrops flashing in Firefox when nested sheets open or close - [@dagemawinegash](https://github.com/dagemawinegash) - [PR](https://github.com/adobe/react-spectrum/pull/10933)
+
+### Slider
+- Support editable Sliders - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10978)
+- Avoid duplicate `onChange` calls while dragging a controlled thumb within the same step - [@isihussain](https://github.com/isihussain) - [PR](https://github.com/adobe/react-spectrum/pull/10952)
+
+### Table
+- Add `onFocus`, `onBlur`, and `onFocusChange` props to Row - [@dagemawinegash](https://github.com/dagemawinegash) - [PR](https://github.com/adobe/react-spectrum/pull/10857)
+- Support handle-only pointer dragging via `pointerDragSource: 'handle'` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10738)
+
+### Tabs
+- Fix TabPanel size measurement for nested content and stop size CSS variables from leaking into nested TabPanels - [@jsabutis](https://github.com/jsabutis) - [PR](https://github.com/adobe/react-spectrum/pull/10819)
+- Extend `ListKeyboardDelegate` in `TabsKeyboardDelegate` - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/11018)
+
+### TokenField
+- Report every user caret movement through `onChange` - [@UditDewan](https://github.com/UditDewan) - [PR](https://github.com/adobe/react-spectrum/pull/10766)
+- Prevent crash when moving the caret onto an empty trailing line - [@maricastroc](https://github.com/maricastroc) - [PR](https://github.com/adobe/react-spectrum/pull/10763)
+
+### Toolbar
+- Scroll keyboard-focused items into view inside overflowing containers - [@devteamaegis](https://github.com/devteamaegis) - [PR](https://github.com/adobe/react-spectrum/pull/10712)
+- Keep focus on a clicked button instead of restoring focus to the previously focused item - [@arba-octo](https://github.com/arba-octo) - [PR](https://github.com/adobe/react-spectrum/pull/10938)
+
+### Tree
+- Add `onFocus`, `onBlur`, and `onFocusChange` props to TreeItem - [@bellussi1](https://github.com/bellussi1) - [PR](https://github.com/adobe/react-spectrum/pull/10993)
+- Add support for Text with `slot="description"` in TreeItem - [@minwookshin](https://github.com/minwookshin) - [PR](https://github.com/adobe/react-spectrum/pull/10710)
+- Support handle-only pointer dragging via `pointerDragSource: 'handle'` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10738)
+- Allow TreeItem with `hasChildItems` to expand before child rows are rendered - [@SimenB](https://github.com/SimenB) - [PR](https://github.com/adobe/react-spectrum/pull/10799)
+- Preserve focus tracking when items load into a focused empty Tree - [@minwookshin](https://github.com/minwookshin) - [PR](https://github.com/adobe/react-spectrum/pull/10689)
+- Support falsy parent keys (such as `0` and `""`) in `useTreeData` updates - [@raunakpandey1](https://github.com/raunakpandey1) - [PR](https://github.com/adobe/react-spectrum/pull/10908)
+
+## Released packages
+
+```
+[TODO: paste output of yarn bumpVersions here]
+```
