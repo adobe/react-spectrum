@@ -2418,11 +2418,14 @@ export const TableLoadMoreItem = createLeafComponent(
         {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
         {/* @ts-ignore - compatibility with React < 19 */}
         <TableRowElementType style={{height: 0}} inert={inertValue(true)}>
-          <TableCellElementType style={{padding: 0, border: 0}}>
+          <TableCellElementType
+            colSpan={isVirtualized ? undefined : numColumns}
+            style={{padding: 0, border: 0}}>
+            {/* Span the full row so the sentinel stays within the observer root when scrolled horizontally. */}
             <div
               data-testid="loadMoreSentinel"
               ref={sentinelRef}
-              style={{position: 'relative', height: 1, width: 1}}
+              style={{position: 'relative', height: 1, width: '100%'}}
             />
           </TableCellElementType>
         </TableRowElementType>

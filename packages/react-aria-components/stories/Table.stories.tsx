@@ -1438,6 +1438,101 @@ export const VirtualizedTableLoaderWidthTestStory: StoryObj<
   }
 };
 
+const wideColumns = Array.from({length: 12}, (_, i) => ({id: `c${i}`, name: `Column ${i + 1}`}));
+
+const HorizontallyScrolledLoadMoreTable = (args: {
+  delay: number;
+  isVirtualized: boolean;
+}): JSX.Element => {
+  let [loadMoreCount, setLoadMoreCount] = useState(0);
+  let list = useAsyncList<{id: number}>({
+    async load({cursor}) {
+      let start = cursor ? Number(cursor) : 0;
+      if (cursor) {
+        setLoadMoreCount(count => count + 1);
+      }
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      return {
+        items: Array.from({length: 20}, (_, i) => ({id: start + i})),
+        cursor: start + 20 < 200 ? String(start + 20) : undefined
+      };
+    }
+  });
+
+  let table = (
+    <Table
+      aria-label="Wide load more table"
+      style={
+        args.isVirtualized
+          ? {width: 400, height: 300, overflow: 'auto'}
+          : {width: 2400, tableLayout: 'fixed'}
+      }>
+      <TableHeader columns={wideColumns}>
+        {column => (
+          <Column id={column.id} isRowHeader={column.id === 'c0'} width={200}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody>
+        <Collection items={list.items}>
+          {item => (
+            <Row id={item.id} columns={wideColumns}>
+              {column => <Cell>{`${column.name}, row ${item.id + 1}`}</Cell>}
+            </Row>
+          )}
+        </Collection>
+        <TableLoadMoreItem
+          onLoadMore={list.loadMore}
+          isLoading={list.loadingState === 'loadingMore'}
+          style={{height: 30}}>
+          <LoadingSpinner style={{height: 20, position: 'unset'}} />
+        </TableLoadMoreItem>
+      </TableBody>
+    </Table>
+  );
+
+  return (
+    <div>
+      <p data-testid="load-more-status">
+        Pages loaded by onLoadMore: {loadMoreCount}, rows loaded: {list.items.length}
+      </p>
+      {args.isVirtualized ? (
+        <Virtualizer
+          layout={TableLayout}
+          layoutOptions={{rowHeight: 25, headingHeight: 25, loaderHeight: 30}}>
+          {table}
+        </Virtualizer>
+      ) : (
+        <div data-testid="scroller" style={{width: 400, height: 300, overflow: 'auto'}}>
+          {table}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export const HorizontallyScrolledLoadMoreTableStory: StoryObj<
+  typeof HorizontallyScrolledLoadMoreTable
+> = {
+  render: HorizontallyScrolledLoadMoreTable,
+  name: 'onLoadMore table, scrolled horizontally',
+  args: {delay: 200, isVirtualized: false},
+  parameters: {
+    description: {
+      data: 'Scroll all the way to the right, then to the bottom. onLoadMore should still fire and load more rows.'
+    }
+  }
+};
+
+export const HorizontallyScrolledLoadMoreTableVirtualizedStory: StoryObj<
+  typeof HorizontallyScrolledLoadMoreTable
+> = {
+  ...HorizontallyScrolledLoadMoreTableStory,
+  name: 'Virtualized onLoadMore table, scrolled horizontally',
+  args: {delay: 200, isVirtualized: true}
+};
+
 interface Launch {
   id: number;
   mission_name: string;
