@@ -42,7 +42,8 @@ const avatarSize = {
   XL: 32
 };
 
-const AVATAR_URL = 'https://i.imgur.com/xIe7Wlb.png';
+const AVATAR_URL =
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80';
 
 const photoItems = [
   {

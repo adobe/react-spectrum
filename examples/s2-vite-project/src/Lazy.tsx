@@ -408,13 +408,28 @@ export default function Lazy() {
       </Section>
 
       <Section title="Content">
-        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+        <Avatar
+          src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80"
+          alt="default Adobe avatar"
+        />
 
         <AvatarGroup aria-label="Users">
-          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
-          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
-          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
-          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          <Avatar
+            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80"
+            alt="default Adobe avatar"
+          />
+          <Avatar
+            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80"
+            alt="default Adobe avatar"
+          />
+          <Avatar
+            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80"
+            alt="default Adobe avatar"
+          />
+          <Avatar
+            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80"
+            alt="default Adobe avatar"
+          />
         </AvatarGroup>
 
         <Content>Content is king</Content>
@@ -431,7 +446,10 @@ export default function Lazy() {
           <Content>Try another search</Content>
         </IllustratedMessage>
 
-        <Image src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" />
+        <Image
+          src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
+          alt="Sky and roof"
+        />
 
         <Keyboard>⌘V</Keyboard>
 

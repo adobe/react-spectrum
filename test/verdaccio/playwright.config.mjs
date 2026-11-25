@@ -23,7 +23,7 @@ export default defineConfig({
     // Chromatic options (consumed by @chromatic-com/playwright)
     disableAutoSnapshot: true,
     pauseAnimationAtEnd: true,
-    assetDomains: ['images.unsplash.com', 'i.imgur.com', 'use.typekit.net', 'p.typekit.net']
+    assetDomains: ['images.unsplash.com', 'use.typekit.net', 'p.typekit.net']
   },
   projects: [
     {
