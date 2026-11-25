@@ -22,6 +22,7 @@ import {
   createContext,
   createRef,
   forwardRef,
+  RefObject,
   use,
   useCallback,
   useContext,
@@ -496,6 +497,16 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [isFocused, setFocused] = useState(false);
 
+  // Escape dismisses the completion menu until the text changes again.
+  let [isDismissed, setDismissed] = useState(false);
+  let text = prompt.toString();
+  let [lastText, setLastText] = useState(text);
+  if (text !== lastText) {
+    setLastText(text);
+    setDismissed(false);
+  }
+  let isMenuOpenRef = useRef(false);
+
   let [filterAnchor, filterValue, filterType] = useMemo(() => {
     // If on a placeholder token, show suggestions.
     let slice = prompt.slice(prompt.selectedRange.start, prompt.selectedRange.end);
@@ -561,7 +572,14 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       Tab: () => tab(1),
-      'Shift+Tab': () => tab(-1)
+      'Shift+Tab': () => tab(-1),
+      Escape: () => {
+        if (isMenuOpenRef.current) {
+          setDismissed(true);
+          return true;
+        }
+        return false;
+      }
     }
   });
 
@@ -756,6 +774,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           filterAnchor={filterAnchor}
           items={useDeferredValue(items)}
           isFocused={isFocused}
+          isDismissed={isDismissed}
+          isOpenRef={isMenuOpenRef}
           menuWidth={menuWidth}
         />
       </Autocomplete>
@@ -788,17 +808,28 @@ export interface PromptTokenFieldPopoverProps extends Omit<PopoverProps, 'should
   filterAnchor?: Position | null;
   items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   isFocused?: boolean;
+  isDismissed?: boolean;
+  isOpenRef?: RefObject<boolean>;
   // TODO: temp for coworker see above comment
   menuWidth?: number;
 }
 
 function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
-  let {filterAnchor, items, isFocused, menuWidth} = props;
+  let {filterAnchor, items, isFocused, isDismissed, isOpenRef, menuWidth} = props;
   let {inputRef, prompt} = useContext(PromptFieldContext);
 
   let resolvedItems = items instanceof Promise ? use(items) : items;
   let isOpen =
-    isFocused && filterAnchor != null && resolvedItems != null && resolvedItems.length > 0;
+    !!isFocused &&
+    !isDismissed &&
+    filterAnchor != null &&
+    resolvedItems != null &&
+    resolvedItems.length > 0;
+  useLayoutEffect(() => {
+    if (isOpenRef) {
+      isOpenRef.current = isOpen;
+    }
+  });
 
   // Cache items so that popover content doesn't flicker to empty while animating out
   let [menuItems, setMenuItems] = useState(resolvedItems);

@@ -111,6 +111,60 @@ describeOrSkip('PromptField', () => {
       expect(queryMenuItem('Welcome Flow')).not.toBeInTheDocument();
     });
 
+    it('closes completions with Escape and reopens them on the next text change', async () => {
+      let {user, textbox, getValue, setValue} = renderPromptField();
+      await user.click(textbox);
+      await user.keyboard('@New');
+      expect(await findMenuItem('New Customers')).toBeInTheDocument();
+
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+      expect(getValue().toString()).toBe('@New');
+      expect(document.activeElement).toBe(textbox);
+
+      // Moving the caret alone doesn't reopen the menu (jsdom can't move it with arrow keys).
+      let moveCaret = (offset: number) =>
+        act(() =>
+          setValue(
+            v =>
+              v.withSelectedRange(
+                new PromptFieldValue.SelectedRange({index: 0, offset})
+              ) as PromptFieldValue
+          )
+        );
+      moveCaret(3);
+      act(() => jest.runAllTimers());
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+      moveCaret(4);
+
+      // Editing back to the dismissed text still reopens the menu.
+      await user.keyboard(' {Backspace}');
+      expect(await findMenuItem('New Customers')).toBeInTheDocument();
+    });
+
+    it('does not stop Escape from propagating when completions are closed', async () => {
+      let onKeyDown = jest.fn();
+      render(
+        <PromptField>
+          <PromptTokenField
+            completionTrigger={/(?<=^|\s)@/}
+            onKeyDown={onKeyDown}
+            renderCompletions={() => [<MenuItem key="blah">blah</MenuItem>]}
+          />
+        </PromptField>
+      );
+      await user.click(screen.getByRole('textbox'));
+      await user.keyboard('@');
+      expect(await findMenuItem('blah')).toBeInTheDocument();
+
+      await user.keyboard('{Escape}');
+      expect(onKeyDown).not.toHaveBeenCalledWith(expect.objectContaining({key: 'Escape'}));
+
+      await user.keyboard('{Escape}');
+      expect(onKeyDown).toHaveBeenCalledWith(expect.objectContaining({key: 'Escape'}));
+    });
+
     it('does not trigger when @ is not preceded by whitespace or start', async () => {
       let {user, textbox} = renderPromptField();
       await user.click(textbox);
