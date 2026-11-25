@@ -50,7 +50,6 @@ import {
   SpectrumLabelableProps
 } from '@react-types/shared';
 import {FieldLabel, helpTextStyles} from './Field';
-import {flushSync} from 'react-dom';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {getParentElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
@@ -176,7 +175,6 @@ function TagGroupInner<T>({
   } = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
-  let tagsRef = useRef<HTMLDivElement | null>(null);
   let actionsRef = useRef<HTMLDivElement | null>(null);
   let hiddenTagsRef = useRef<HTMLDivElement | null>(null);
   let [tagState, setTagState] = useState({
@@ -208,15 +206,10 @@ function TagGroupInner<T>({
 
     if (maxRows != null && maxRows > 0) {
       let computeVisibleTagCount = () => {
-        let currContainerRef: HTMLDivElement | null = hiddenTagsRef.current;
         let currTagsRef: HTMLDivElement | null = hiddenTagsRef.current;
         let currActionsRef: HTMLDivElement | null = actionsRef.current;
-        if (
-          !currContainerRef ||
-          !currTagsRef ||
-          collection.size === 0 ||
-          getParentElement(currContainerRef) == null
-        ) {
+        let containerEl = currTagsRef ? getParentElement(currTagsRef) : null;
+        if (!currTagsRef || !containerEl || collection.size === 0) {
           return {
             visibleTagCount: 0,
             showCollapseButton: false
@@ -247,19 +240,35 @@ function TagGroupInner<T>({
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttons = currActionsRef ? [...currActionsRef.children] : [];
-        if (buttons.length > 0 && rowCount >= maxRows) {
+        let hasGroupAction = Boolean(groupActionLabel && onGroupAction);
+        if (
+          buttons.length > 0 &&
+          (rowCount > maxRows || (rowCount === maxRows && hasGroupAction))
+        ) {
+          let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
+          let containerRect = containerEl.getBoundingClientRect();
+          let lastTagRect = tags[index - 1]?.getBoundingClientRect();
+          let availableWidth = lastTagRect
+            ? (direction === 'ltr'
+                ? containerRect.right - lastTagRect.right
+                : lastTagRect.left - containerRect.left) -
+              margins * 2
+            : 0;
+
           let buttonsWidth = buttons.reduce(
             (acc, curr) => (acc += curr.getBoundingClientRect().width),
             0
           );
-          let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
           buttonsWidth += margins * 2;
-          let end = direction === 'ltr' ? 'right' : 'left';
-          let containerEnd =
-            getParentElement(currContainerRef)?.getBoundingClientRect()[end] - margins;
-          let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
-          lastTagEnd += margins;
-          let availableWidth = containerEnd - lastTagEnd;
+
+          // If all tags fit within maxRows, check if the group action button alone fits before reserving space for the collapse button too.
+          if (rowCount === maxRows && hasGroupAction) {
+            let groupActionWidth =
+              buttons[buttons.length - 1].getBoundingClientRect().width + margins * 2;
+            if (availableWidth > groupActionWidth) {
+              buttonsWidth = 0;
+            }
+          }
 
           while (availableWidth <= buttonsWidth && index > 0) {
             let tagWidth = tagWidths.pop();
@@ -276,9 +285,7 @@ function TagGroupInner<T>({
         };
       };
       let result = computeVisibleTagCount();
-      flushSync(() => {
-        setTagState(result);
-      });
+      setTagState(result);
     }
   };
 
@@ -374,14 +381,9 @@ function TagGroupInner<T>({
                 inert={inertValue(true)}
                 ref={hiddenTagsRef}
                 className={style({
-                  display: 'inline',
-                  flexWrap: 'wrap',
                   fontFamily: 'sans',
                   position: 'absolute',
-                  top: 0,
-                  bottom: 0,
-                  start: -4,
-                  end: 4,
+                  inset: 0,
                   visibility: 'hidden',
                   overflow: 'hidden',
                   opacity: 0
@@ -416,7 +418,6 @@ function TagGroupInner<T>({
             )}
             {/* real tag list */}
             <TagList
-              ref={tagsRef}
               items={items}
               renderEmptyState={renderEmptyState}
               className={style({
