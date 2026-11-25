@@ -132,7 +132,7 @@ export interface WizardStateOptions<T> {
   /** Handler called when the selected step changes. */
   onSelectionChange?: (key: Key) => void;
   /**
-   * The keys of the completed steps. When omitted, every step before the selected step are
+   * The keys of the completed steps. When omitted, every step before the selected step is
    * considered complete. If random access is allowed, none of the steps are considered complete.
    */
   completedKeys?: Iterable<Key>;
