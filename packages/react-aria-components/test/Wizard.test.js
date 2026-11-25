@@ -349,10 +349,8 @@ describe('Wizard', () => {
     expect(getSelectedStep(tree)).toBe('domain');
     expect(onSelectionChange).not.toHaveBeenCalled();
 
-    // The last step isn't navigable yet, so it is skipped.
+    // The last step isn't navigable yet and focus doesn't wrap.
     await user.keyboard('{ArrowRight}');
-    expect(document.activeElement).toBe(tabs[0]);
-    await user.keyboard('{ArrowLeft}');
     expect(document.activeElement).toBe(tabs[2]);
 
     await user.keyboard('{Enter}');
