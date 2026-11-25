@@ -198,6 +198,8 @@ declare module 'vitest/browser' {
     mouseDownOnElement: (selector: string, offsetX?: number, offsetY?: number) => Promise<void>;
     // Same as above
     mouseUp: () => Promise<void>;
+    // Wheel input at the current pointer position.
+    wheel: (deltaX: number, deltaY: number) => Promise<void>;
   }
 }
 
@@ -338,14 +340,20 @@ export default defineConfig({
           offsetX?: number,
           offsetY?: number
         ) => {
-          const box = await iframe.locator(selector).boundingBox();
-          const x = box.x + (offsetX ?? box.width / 2);
-          const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY;
+          const locator = iframe.locator(selector);
+          const box = await locator.boundingBox();
+          const rect = await locator.evaluate((el: Element) => el.getBoundingClientRect().toJSON());
+          const scale = rect.width ? box.width / rect.width : 1;
+          const x = offsetX == null ? box.x + box.width / 2 : box.x + offsetX * scale;
+          const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY * scale;
           await page.mouse.move(x, y);
           await page.mouse.down();
         },
         mouseUp: async ({page}: any) => {
           await page.mouse.up();
+        },
+        wheel: async ({page}: any, deltaX: number, deltaY: number) => {
+          await page.mouse.wheel(deltaX, deltaY);
         }
       }
     },

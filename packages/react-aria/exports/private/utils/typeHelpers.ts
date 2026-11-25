@@ -1,1 +1,8 @@
-export {isWindow, isDocument, isElement, isShadowRoot} from '../../../src/utils/typeHelpers';
+export {
+  isWindow,
+  isDocument,
+  isElement,
+  isHTMLElement,
+  isSVGElement,
+  isShadowRoot
+} from '../../../src/utils/typeHelpers';
