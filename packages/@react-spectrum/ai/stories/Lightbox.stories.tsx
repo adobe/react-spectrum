@@ -358,3 +358,39 @@ export const AttachmentGridDialog: StoryObj<typeof AttachmentGridDialogExample> 
     showCardContent: {control: 'boolean'}
   }
 };
+
+export const SingleItemDialog: Story = {
+  render: () => (
+    <LightboxTrigger>
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 16, width: 400})}>
+        <AttachmentList aria-label="Attachments">
+          <Attachment id="amsterdam" textValue="photo.png">
+            <AttachmentPreview
+              mimeType="image/jpg"
+              slot="thumbnail"
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/amsterdamslide__800x600.jpg"
+            />
+          </Attachment>
+        </AttachmentList>
+      </div>
+      <LightboxCarousel>
+        <LightboxPicker aria-label="Choose photo">
+          <LightboxPickerItem id="amsterdam" aria-label="Amsterdam">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/amsterdamslide__800x600.jpg"
+              alt=""
+            />
+          </LightboxPickerItem>
+        </LightboxPicker>
+        <LightboxItems>
+          <LightboxItem id="amsterdam">
+            <Image
+              src="https://www.w3.org/WAI/content-images/wai-aria-practices/patterns/carousel/examples/images/amsterdamslide__800x600.jpg"
+              alt="Amsterdam canal"
+            />
+          </LightboxItem>
+        </LightboxItems>
+      </LightboxCarousel>
+    </LightboxTrigger>
+  )
+};

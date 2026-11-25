@@ -18,6 +18,7 @@ import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {Children, ReactNode, useCallback, useContext, useRef} from 'react';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {Dialog, Modal, ModalOverlay} from 'react-aria-components/Modal';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {flushSync} from 'react-dom';
 import {FocusableElement, Key, LinkDOMProps} from '@react-types/shared';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
@@ -58,6 +59,7 @@ export interface LightboxCarouselProps extends Omit<
   | 'children'
   | 'orientation'
   | 'keyboardActivation'
+  | 'shouldFocusWrap'
   | 'isDisabled'
   | 'disabledKeys'
   // TODO: Expose selection props when LightboxTrigger supports controlled selection and opening.
@@ -260,22 +262,26 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
             })}>
             {({close}) => (
               <>
+                <RACTabs
+                  {...props}
+                  id={undefined}
+                  shouldFocusWrap={false}
+                  selectedKey={ctx?.activeKey}
+                  onSelectionChange={chain(props.onSelectionChange, ctx?.setActiveKey)}
+                  className={carouselStyles}
+                />
                 <CloseButton
                   staticColor="white"
                   onPress={close}
                   styles={style({
                     position: 'absolute',
-                    top: 8,
+                    top: {
+                      default: 16,
+                      [smallTouchScreen]: 16
+                    },
                     insetEnd: 16,
                     zIndex: 1
                   })}
-                />
-                <RACTabs
-                  {...props}
-                  id={undefined}
-                  selectedKey={ctx?.activeKey}
-                  onSelectionChange={chain(props.onSelectionChange, ctx?.setActiveKey)}
-                  className={carouselStyles}
                 />
               </>
             )}
@@ -291,7 +297,7 @@ export function LightboxCarousel(props: LightboxCarouselProps) {
       {...labelProps}
       aria-roledescription={stringFormatter.format('lightbox.carousel')}
       style={{width: '100%', height: '100%'}}>
-      <RACTabs {...props} id={undefined} className={carouselStyles} />
+      <RACTabs {...props} id={undefined} shouldFocusWrap={false} className={carouselStyles} />
     </div>
   );
 }
@@ -307,10 +313,11 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
   let selectedKey = state?.selectedKey;
   let manager = state?.selectionManager;
   let focusedKey = manager?.focusedKey;
+  let isHidden = state != null && state.collection.size <= 1;
 
   useLayoutEffect(() => {
     let tabList = ref.current;
-    if (!tabList || selectedKey == null || !manager) {
+    if (isHidden || !tabList || selectedKey == null || !manager) {
       return;
     }
 
@@ -344,7 +351,11 @@ export function LightboxPicker<T>(props: LightboxPickerProps<T>) {
     }
 
     scrollIntoView(tabList, selectedTab, {inline: 'center'});
-  }, [selectedKey, focusedKey, manager, ctx?.isOpen]);
+  }, [isHidden, selectedKey, focusedKey, manager, ctx?.isOpen]);
+
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <div className={style({display: 'flex', justifyContent: 'center', order: 1})}>
@@ -610,20 +621,24 @@ function FiniteLightboxItems(props: FiniteLightboxItemsProps) {
           }}
         />
       </div>
-      <CarouselNavButton
-        onPress={() => {
-          selectIndex(selectedIndex - 1);
-        }}
-        side="start"
-        aria-disabled={selectedIndex === 0}
-      />
-      <CarouselNavButton
-        onPress={() => {
-          selectIndex(selectedIndex + 1);
-        }}
-        side="end"
-        aria-disabled={selectedIndex === size - 1}
-      />
+      {size > 1 && (
+        <>
+          <CarouselNavButton
+            onPress={() => {
+              selectIndex(selectedIndex - 1);
+            }}
+            side="start"
+            aria-disabled={selectedIndex === 0}
+          />
+          <CarouselNavButton
+            onPress={() => {
+              selectIndex(selectedIndex + 1);
+            }}
+            side="end"
+            aria-disabled={selectedIndex === size - 1}
+          />
+        </>
+      )}
     </>
   );
 }
@@ -754,6 +769,22 @@ const innerImageStyles = style({
  * Displays the content for an individual item in a lightbox carousel.
  */
 export function LightboxItem(props: LightboxItemProps) {
+  let state = useContext(TabListStateContext);
+  if (state && state.collection.size <= 1) {
+    let DOMProps = filterDOMProps({...props, id: undefined}, {labelable: true, global: true});
+    return (
+      <div {...DOMProps} className={itemStyles}>
+        <ImageContext.Provider
+          value={{
+            styles: imageStyles({isFocusVisible: false}),
+            UNSTABLE_imgStyles: innerImageStyles
+          }}>
+          {props.children}
+        </ImageContext.Provider>
+      </div>
+    );
+  }
+
   return (
     <RACTabPanel {...props} shouldForceMount className={itemStyles}>
       {renderProps => (

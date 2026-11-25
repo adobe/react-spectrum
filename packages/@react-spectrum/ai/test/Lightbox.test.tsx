@@ -235,19 +235,14 @@ describeOrSkip('Lightbox', () => {
       }
     );
 
-    it('disables both navigation actions when there is only one slide', async () => {
-      let onSelectionChange = jest.fn();
-      let {getByRole} = render(
-        <Carousel itemIds={['one']} onSelectionChange={onSelectionChange} />
-      );
-      onSelectionChange.mockClear();
-      for (let name of ['Previous attachment', 'Next attachment']) {
-        let button = getByRole('button', {name});
-        expect(button).toHaveAttribute('aria-disabled', 'true');
-        await user.click(button);
-      }
-      expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo one');
-      expect(onSelectionChange).not.toHaveBeenCalled();
+    it('hides the picker, navigation buttons, and tab roles when there is only one slide', () => {
+      let {getByRole, queryByRole} = render(<Carousel itemIds={['one']} />);
+      expect(queryByRole('tablist')).not.toBeInTheDocument();
+      expect(queryByRole('tab')).not.toBeInTheDocument();
+      expect(queryByRole('tabpanel')).not.toBeInTheDocument();
+      expect(queryByRole('button', {name: 'Previous attachment'})).not.toBeInTheDocument();
+      expect(queryByRole('button', {name: 'Next attachment'})).not.toBeInTheDocument();
+      expect(getByRole('img', {name: 'Photo one'})).toBeInTheDocument();
     });
   });
 
@@ -415,6 +410,21 @@ describeOrSkip('Lightbox', () => {
       await user.click(previous);
       expect(within(getByRole('tabpanel')).getByRole('img')).toHaveAccessibleName('Photo one');
       expect(previous).toHaveFocus();
+    });
+
+    it('does not wrap picker focus at the boundaries', async () => {
+      let {getByRole} = render(<Carousel itemIds={['one', 'two']} />);
+      let firstTab = getByRole('tab', {name: 'Photo one'});
+      let lastTab = getByRole('tab', {name: 'Photo two'});
+
+      await user.tab();
+      expect(firstTab).toHaveFocus();
+      await user.keyboard('{ArrowLeft}');
+      expect(firstTab).toHaveFocus();
+      await user.keyboard('{ArrowRight}');
+      expect(lastTab).toHaveFocus();
+      await user.keyboard('{ArrowRight}');
+      expect(lastTab).toHaveFocus();
     });
   });
 
