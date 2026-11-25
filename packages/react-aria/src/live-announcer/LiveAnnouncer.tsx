@@ -167,12 +167,13 @@ class LiveAnnouncer {
       return;
     }
 
+    // Use replaceChildren rather than innerHTML so this works on pages that enforce Trusted Types.
     if ((!assertiveness || assertiveness === 'assertive') && this.assertiveLog) {
-      this.assertiveLog.innerHTML = '';
+      this.assertiveLog.replaceChildren();
     }
 
     if ((!assertiveness || assertiveness === 'polite') && this.politeLog) {
-      this.politeLog.innerHTML = '';
+      this.politeLog.replaceChildren();
     }
   }
 }
