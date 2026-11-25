@@ -399,6 +399,18 @@ describe('Tabs', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
+  it('skips disabled tabs when wrapping focus', async () => {
+    let {getAllByRole} = renderTabs({disabledKeys: ['c']});
+    let tabs = getAllByRole('tab');
+    await user.tab();
+    expect(document.activeElement).toBe(tabs[0]);
+
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(tabs[1]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tabs[0]);
+  });
+
   it('selects first tab if all tabs are disabled', async () => {
     let {getByRole} = renderTabs({}, {}, {isDisabled: true});
     let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
@@ -507,6 +519,73 @@ describe('Tabs', () => {
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
     await user.keyboard('{ArrowRight}');
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+  });
+
+  describe.each`
+    orientation     | locale     | previousKey     | nextKey
+    ${'horizontal'} | ${'en-US'} | ${'ArrowLeft'}  | ${'ArrowRight'}
+    ${'horizontal'} | ${'ar-AE'} | ${'ArrowRight'} | ${'ArrowLeft'}
+    ${'vertical'}   | ${'en-US'} | ${'ArrowUp'}    | ${'ArrowDown'}
+    ${'vertical'}   | ${'en-US'} | ${'ArrowLeft'}  | ${'ArrowRight'}
+    ${'vertical'}   | ${'ar-AE'} | ${'ArrowRight'} | ${'ArrowLeft'}
+  `(
+    'focus wrapping with $previousKey/$nextKey in $orientation tabs ($locale)',
+    ({orientation, locale, previousKey, nextKey}) => {
+      let renderLocalizedTabs = tabsProps =>
+        render(
+          <I18nProvider locale={locale}>
+            <Tabs orientation={orientation} {...tabsProps}>
+              <TabList aria-label="Test">
+                <Tab id="a">A</Tab>
+                <Tab id="b">B</Tab>
+                <Tab id="c">C</Tab>
+              </TabList>
+              <TabPanel id="a">A</TabPanel>
+              <TabPanel id="b">B</TabPanel>
+              <TabPanel id="c">C</TabPanel>
+            </Tabs>
+          </I18nProvider>
+        );
+
+      it('wraps focus between the first and last tabs by default', async () => {
+        let {getAllByRole} = renderLocalizedTabs();
+        let tabs = getAllByRole('tab');
+        await user.tab();
+        expect(document.activeElement).toBe(tabs[0]);
+
+        await user.keyboard(`{${previousKey}}`);
+        expect(document.activeElement).toBe(tabs[2]);
+        await user.keyboard(`{${nextKey}}`);
+        expect(document.activeElement).toBe(tabs[0]);
+      });
+
+      it('does not wrap focus when shouldFocusWrap is false', async () => {
+        let {getAllByRole} = renderLocalizedTabs({shouldFocusWrap: false});
+        let tabs = getAllByRole('tab');
+        await user.tab();
+        expect(document.activeElement).toBe(tabs[0]);
+
+        await user.keyboard(`{${previousKey}}`);
+        expect(document.activeElement).toBe(tabs[0]);
+        await user.keyboard(`{${nextKey}}{${nextKey}}`);
+        expect(document.activeElement).toBe(tabs[2]);
+        await user.keyboard(`{${nextKey}}`);
+        expect(document.activeElement).toBe(tabs[2]);
+      });
+    }
+  );
+
+  it('does not move focus with PageUp or PageDown', async () => {
+    let {getAllByRole} = renderTabs();
+    let tabs = getAllByRole('tab');
+    await user.tab();
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tabs[1]);
+
+    await user.keyboard('{PageDown}');
+    expect(document.activeElement).toBe(tabs[1]);
+    await user.keyboard('{PageUp}');
+    expect(document.activeElement).toBe(tabs[1]);
   });
 
   it.each`
