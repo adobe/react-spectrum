@@ -172,6 +172,49 @@ describe('Slider', () => {
     expect(thumb).not.toHaveClass('dragging');
   });
 
+  it.each([
+    [false, 80, {maxValue: 60}, 60],
+    [false, 20, {minValue: 40}, 40],
+    [true, 80, {maxValue: 60}, 60],
+    [true, 20, {minValue: 40}, 40]
+  ])(
+    'commits within updated bounds after dragging (controlled: %s, value: %s)',
+    (controlled, value, bounds, expected) => {
+      let onChangeEnd = jest.fn();
+      let valueProps = controlled ? {value} : {defaultValue: value};
+      let {getByRole, rerender} = renderSlider({...valueProps, onChangeEnd});
+      let thumb = getByRole('slider').closest('.react-aria-SliderThumb');
+
+      fireEvent.mouseDown(thumb);
+      rerender(<TestSlider sliderProps={{...valueProps, ...bounds, onChangeEnd}} />);
+      fireEvent.mouseUp(thumb);
+
+      expect(onChangeEnd).toHaveBeenCalledTimes(1);
+      expect(onChangeEnd).toHaveBeenLastCalledWith(expected);
+    }
+  );
+
+  it('clamps all range values when both bounds change during a drag', () => {
+    let onChangeEnd = jest.fn();
+    let renderRange = bounds => (
+      <Slider defaultValue={[20, 80]} onChangeEnd={onChangeEnd} {...bounds}>
+        <Label>Range</Label>
+        <SliderTrack>
+          <SliderThumb index={0} />
+          <SliderThumb index={1} />
+        </SliderTrack>
+      </Slider>
+    );
+    let {getAllByRole, rerender} = render(renderRange({}));
+    let thumb = getAllByRole('slider')[0].closest('.react-aria-SliderThumb');
+    fireEvent.mouseDown(thumb);
+    rerender(renderRange({minValue: 30, maxValue: 60}));
+    fireEvent.mouseUp(thumb);
+    expect(onChangeEnd).toHaveBeenLastCalledWith([30, 60]);
+    expect(getAllByRole('slider')[0]).toHaveValue('30');
+    expect(getAllByRole('slider')[1]).toHaveValue('60');
+  });
+
   it('should support hover state', async () => {
     let hoverStartTrackSpy = jest.fn();
     let hoverChangeTrackSpy = jest.fn();

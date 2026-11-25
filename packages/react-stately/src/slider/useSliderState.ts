@@ -13,7 +13,7 @@
 import {clamp, snapValueToStep} from '../utils/number';
 
 import {LabelableProps, Orientation, RangeInputBase, ValueBase} from '@react-types/shared';
-import {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
 export interface SliderProps<T = number | number[]>
@@ -198,6 +198,11 @@ export interface SliderState {
   readonly isDisabled: boolean;
 }
 
+const useEarlyEffect: typeof React.useLayoutEffect =
+  typeof document !== 'undefined' || parseInt(React.version, 10) >= 19
+    ? (React['useInsertionEffect'] ?? React.useLayoutEffect)
+    : () => {};
+
 const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP_VALUE = 1;
@@ -262,6 +267,10 @@ export function useSliderState<T extends number | number[]>(
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
+  const boundsRef = useRef({minValue, maxValue});
+  useEarlyEffect(() => {
+    boundsRef.current = {minValue, maxValue};
+  }, [minValue, maxValue]);
   const valuesRef = useRef<number[]>(values);
   const isDraggingsRef = useRef<boolean[]>(isDraggings);
 
@@ -323,8 +332,13 @@ export function useSliderState<T extends number | number[]>(
     setDraggings(isDraggingsRef.current);
 
     // Call onChangeEnd if no handles are dragging.
-    if (onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
-      onChangeEnd(valuesRef.current);
+    if (wasDragging && !isDraggingsRef.current.some(Boolean)) {
+      let {minValue, maxValue} = boundsRef.current;
+      let nextValues = valuesRef.current.map(value => clamp(value, minValue, maxValue));
+      if (nextValues.some((value, index) => value !== valuesRef.current[index])) {
+        setValues(nextValues);
+      }
+      onChangeEnd?.(nextValues);
     }
   }
 
