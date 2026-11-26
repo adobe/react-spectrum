@@ -94,7 +94,7 @@ export class GregorianCalendar implements Calendar {
     let leapAdj = 2;
     if (jd0 < gregorianToJulianDay(era, year, 3, 1)) {
       leapAdj = 0;
-    } else if (isLeapYear(year)) {
+    } else if (isLeapYear(extendedYear)) {
       leapAdj = 1;
     }
     let month = Math.floor(((yearDay + leapAdj) * 12 + 373) / 367);
@@ -108,7 +108,8 @@ export class GregorianCalendar implements Calendar {
   }
 
   getDaysInMonth(date: AnyCalendarDate): number {
-    return daysInMonth[isLeapYear(date.year) ? 'leapyear' : 'standard'][date.month - 1];
+    let year = getExtendedYear(date.era, date.year);
+    return daysInMonth[isLeapYear(year) ? 'leapyear' : 'standard'][date.month - 1];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -117,7 +118,7 @@ export class GregorianCalendar implements Calendar {
   }
 
   getDaysInYear(date: AnyCalendarDate): number {
-    return isLeapYear(date.year) ? 366 : 365;
+    return isLeapYear(getExtendedYear(date.era, date.year)) ? 366 : 365;
   }
 
   getMaximumMonthsInYear(): number {
