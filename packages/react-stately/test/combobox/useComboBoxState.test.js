@@ -456,5 +456,68 @@ describe('useComboBoxState tests', function () {
       // Menu should close because items are uncontrolled and filtered to empty
       expect(result.current.isOpen).toBe(false);
     });
+
+    it('should open the menu when initially-empty controlled items load after typing', function () {
+      let onOpenChange = jest.fn();
+      let initialProps = {
+        items: [],
+        inputValue: '',
+        children: props => <Item>{props.name}</Item>,
+        onOpenChange
+      };
+
+      let {result, rerender} = renderHook(props => useComboBoxState(props), {initialProps});
+
+      act(() => {
+        result.current.setFocused(true);
+      });
+      expect(result.current.isOpen).toBe(false);
+
+      // Simulate user typing while async search still has empty initial results
+      rerender({...initialProps, items: [], inputValue: 'L'});
+      expect(result.current.isOpen).toBe(false);
+      expect(onOpenChange).not.toHaveBeenCalled();
+
+      // Simulate async results arriving on a later render
+      rerender({...initialProps, items: [{id: 1, name: 'Luke Skywalker'}], inputValue: 'L'});
+      expect(result.current.isOpen).toBe(true);
+      expect(result.current.collection.size).toEqual(1);
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'input');
+    });
+
+    it('should not open the menu if blurred before initially-empty async items load', function () {
+      let onOpenChange = jest.fn();
+      let initialProps = {
+        items: [],
+        shouldCloseOnBlur: false,
+        children: props => <Item>{props.name}</Item>,
+        onOpenChange
+      };
+
+      let {result, rerender} = renderHook(props => useComboBoxState(props), {initialProps});
+
+      act(() => {
+        result.current.setFocused(true);
+      });
+      act(() => {
+        result.current.setInputValue('L');
+      });
+      expect(result.current.isOpen).toBe(false);
+
+      // Blur before async results arrive, then receive items while blurred
+      act(() => {
+        result.current.setFocused(false);
+      });
+      rerender({...initialProps, items: [{id: 1, name: 'Luke Skywalker'}]});
+      expect(result.current.isOpen).toBe(false);
+
+      // Refocusing afterwards should not trigger a delayed open from the earlier keystroke
+      act(() => {
+        result.current.setFocused(true);
+      });
+      expect(result.current.isOpen).toBe(false);
+      expect(onOpenChange).not.toHaveBeenCalled();
+    });
   });
 });
