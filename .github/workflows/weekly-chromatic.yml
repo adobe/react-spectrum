@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+env:
+  PARCEL_V3: '1'
+
 jobs:
   chromatic:
     runs-on: ubuntu-latest

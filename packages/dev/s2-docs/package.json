@@ -11,8 +11,8 @@
     "build:s2": "LIBRARY=s2 parcel build 'pages/s2/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/s2 --cache-dir ../../../.parcel-cache/s2",
     "build:react-aria": "LIBRARY=react-aria parcel build 'pages/react-aria/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/react-aria --cache-dir ../../../.parcel-cache/react-aria",
     "build:parcel3": "yarn build:s2-parcel3 && yarn build:react-aria-parcel3",
-    "build:s2-parcel3": "LIBRARY=s2 parcel3 build ssg-s2.tsx --config .parcelrc-s2-docs-v3 --dist-dir dist/s2 --public-url $PUBLIC_URL && node dist/s2/server/ssg-s2.js && rm -rf dist/s2/server",
-    "build:react-aria-parcel3": "LIBRARY=react-aria parcel3 build ssg-react-aria.tsx --config .parcelrc-s2-docs-v3 --dist-dir dist/react-aria --public-url $PUBLIC_URL && node dist/react-aria/server/ssg-react-aria.js && rm -rf dist/react-aria/server",
+    "build:s2-parcel3": "LIBRARY=s2 parcel3 build ssg-s2.tsx --config .parcelrc-s2-docs-v3 --dist-dir dist/s2 --public-url $PUBLIC_URL && node dist/s2/ssg-s2.js && rm -rf dist/s2/server",
+    "build:react-aria-parcel3": "LIBRARY=react-aria parcel3 build ssg-react-aria.tsx --config .parcelrc-s2-docs-v3 --dist-dir dist/react-aria --public-url $PUBLIC_URL && node dist/react-aria/ssg-react-aria.js && rm -rf dist/react-aria/server",
     "generate:og": "node scripts/generateOGImages.mjs",
     "generate:md": "node scripts/generateMarkdownDocs.mjs",
     "generate:mcpb": "node scripts/generateMcpb.mjs"
@@ -20,7 +20,7 @@
   "dependencies": {
     "@babel/parser": "^7.26.3",
     "@parcel/plugin": "^2.16.3",
-    "@parcel/rsc": "next",
+    "@parcel/rsc": "^3.0.0-alpha.4",
     "@react-aria/focus": "^3.20.4",
     "@react-aria/i18n": "^3.12.10",
     "@react-aria/interactions": "^3.25.1",

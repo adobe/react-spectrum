@@ -3,7 +3,7 @@
   "resolvers": ["@parcel/resolver-glob", "..."],
   "transformers": {
     "docs:*": ["@parcel/transformer-ts-doc"],
-    "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
+    "js:packages/**/intl/**/*.json": ["parcel-transformer-intl"],
     "url:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-raw"],
     "data-url:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline"],
     "starters/tailwind/**/*.css": ["@parcel/transformer-tailwind", "..."],

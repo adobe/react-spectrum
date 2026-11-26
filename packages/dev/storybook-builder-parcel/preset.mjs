@@ -137,7 +137,9 @@ async function createParcel(options, isDev = false) {
         '3000',
         '--dist-dir',
         options.outputDir,
-        path.join(generatedEntries, 'iframe.html')
+        path.join(generatedEntries, 'iframe.html'),
+        '--public-url',
+        './'
       ],
       {stdio: 'inherit'}
     );
@@ -159,17 +161,7 @@ async function createParcel(options, isDev = false) {
       mode: isDev ? 'development' : 'production',
       serveOptions: isDev ? {port: 3000} : null,
       hmrOptions: isDev ? {port: 3001} : null,
-      additionalReporters: [
-        {packageName: '@parcel/reporter-cli', resolveFrom: __filename},
-        ...(options.statsJson
-          ? [
-              {
-                packageName: 'parcel-reporter-turbosnap-stats',
-                resolveFrom: __filename
-              }
-            ]
-          : [])
-      ],
+      additionalReporters: [{packageName: '@parcel/reporter-cli', resolveFrom: __filename}],
       targets: {
         storybook: {
           distDir: options.outputDir,
