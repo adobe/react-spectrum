@@ -161,4 +161,34 @@ describe('ListLayout', () => {
       expect(target).toEqual({type: 'root'});
     });
   });
+
+  describe('measured item sizes', () => {
+    let setup = (orientation: 'vertical' | 'horizontal') => {
+      let layout = setupListLayout({rowHeight: undefined, estimatedRowHeight: 50, orientation}, 20);
+      let size = orientation === 'horizontal' ? new Size(120, 400) : new Size(400, 120);
+      expect(layout.updateItemSize('item-0', size)).toBe(true);
+      return layout;
+    };
+
+    it('keeps measured sizes when only the height of a vertical list changes', () => {
+      let layout = setup('vertical');
+      layout.update({sizeChanged: true, heightChanged: true});
+      expect(layout.getLayoutInfo('item-0')!.rect.height).toBe(120);
+      expect(layout.getContentSize().height).toBe(120 + 19 * 50);
+    });
+
+    it('keeps measured sizes when only the width of a horizontal list changes', () => {
+      let layout = setup('horizontal');
+      layout.update({sizeChanged: true, widthChanged: true});
+      expect(layout.getLayoutInfo('item-0')!.rect.width).toBe(120);
+      expect(layout.getContentSize().width).toBe(120 + 19 * 50);
+    });
+
+    it('discards measured sizes when the width of a vertical list changes', () => {
+      let layout = setup('vertical');
+      layout.update({sizeChanged: true, widthChanged: true, heightChanged: true});
+      expect(layout.getLayoutInfo('item-0')!.rect.height).toBe(50);
+      expect(layout.getContentSize().height).toBe(20 * 50);
+    });
+  });
 });
