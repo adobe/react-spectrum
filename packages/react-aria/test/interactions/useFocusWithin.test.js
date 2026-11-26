@@ -11,6 +11,7 @@
  */
 
 import {act, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {dispatchVirtualBlur, dispatchVirtualFocus} from '../../src/focus/virtualFocus';
 import React, {useState} from 'react';
 import {useFocusWithin} from '../../src/interactions/useFocusWithin';
 
@@ -226,6 +227,52 @@ describe('useFocusWithin', function () {
       {type: 'focus', target: el},
       {type: 'focuschange', isFocused: true},
       {type: 'blur', target: tree.getByTestId('test')},
+      {type: 'focuschange', isFocused: false}
+    ]);
+  });
+
+  it('should ignore virtual focus moving outside while focus stays inside', function () {
+    function Test(props) {
+      let {focusWithinProps} = useFocusWithin(props);
+      return (
+        <div {...focusWithinProps} data-testid="test">
+          <input data-testid="inner" />
+        </div>
+      );
+    }
+
+    let events = [];
+    let addEvent = e => events.push({type: e.type, target: e.target});
+    let tree = render(
+      <>
+        <Test
+          onFocusWithin={addEvent}
+          onBlurWithin={addEvent}
+          onFocusWithinChange={isFocused => events.push({type: 'focuschange', isFocused})}
+        />
+        <div data-testid="outside" tabIndex={-1} />
+      </>
+    );
+
+    let inner = tree.getByTestId('inner');
+    act(() => inner.focus());
+    expect(events).toEqual([
+      {type: 'focus', target: inner},
+      {type: 'focuschange', isFocused: true}
+    ]);
+
+    events = [];
+    let outside = tree.getByTestId('outside');
+    act(() => {
+      dispatchVirtualBlur(inner, outside);
+      dispatchVirtualFocus(outside, inner);
+    });
+    expect(document.activeElement).toBe(inner);
+    expect(events).toEqual([]);
+
+    act(() => outside.focus());
+    expect(events).toEqual([
+      {type: 'blur', target: inner},
       {type: 'focuschange', isFocused: false}
     ]);
   });

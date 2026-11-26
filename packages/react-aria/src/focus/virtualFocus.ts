@@ -34,9 +34,11 @@ export function getVirtuallyFocusedElement(document: Document): Element | null {
   return activeElement;
 }
 
+let virtualFocusEvents = new WeakSet<Event>();
 let originalRelatedTargetMap: WeakMap<FocusEvent, EventTarget> | null = null;
 function createFocusEvent(type: string, eventInitDict?: FocusEventInit) {
   const event = new FocusEvent(type, eventInitDict);
+  virtualFocusEvents.add(event);
   if (shadowDOM()) {
     originalRelatedTargetMap ??= new WeakMap();
     const relatedTarget = event.relatedTarget;
@@ -52,4 +54,9 @@ export function getOriginalRelatedTarget(event: FocusEvent): EventTarget | null 
     return event.relatedTarget;
   }
   return originalRelatedTargetMap?.get(event) ?? event.relatedTarget;
+}
+
+/** Whether the event was dispatched by virtual focus rather than a real DOM focus change. */
+export function isVirtualFocusEvent(event: Event): boolean {
+  return virtualFocusEvents.has(event);
 }
