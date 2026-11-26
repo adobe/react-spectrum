@@ -12,7 +12,7 @@
 
 import {chain} from './chain';
 import clsx from 'clsx';
-import {mergeIds} from './useId';
+import {mergeIds} from './mergeIds';
 import {mergeRefs} from './mergeRefs';
 
 interface Props {
