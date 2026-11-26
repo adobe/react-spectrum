@@ -21,7 +21,7 @@ The expanded width comes from the `styles` prop you pass to `SideNavPanel`.
 
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SideNavPanelApp.tsx']}
 "use client";
-import {SideNavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SideNavPanel';
+import {SideNavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, SideNavPanelExpandButton, Text} from '@react-spectrum/s2/SideNavPanel';
 import {SideNavPanelApp} from './SideNavPanelApp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
@@ -91,6 +91,17 @@ import Project from '@react-spectrum/s2/icons/Project';
           </SideNavItem>
         </SideNavSection>
       </SideNav>
+      <div
+        className={style({
+          flexGrow: 0,
+          flexShrink: 0,
+          marginBottom: 4,
+          marginTop: 4,
+          display: 'flex',
+          marginStart: 4
+        })}>
+        <SideNavPanelExpandButton />
+      </div>
     </SideNavPanel>
   )}
 </SideNavPanelApp>
@@ -102,7 +113,7 @@ The collapsed state is uncontrolled by default. Use `defaultCollapsed` for the i
 
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SideNavPanelApp.tsx']}
 "use client";
-import {SideNavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/SideNavPanel';
+import {SideNavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavPanelExpandButton, Collection, Text} from '@react-spectrum/s2/SideNavPanel';
 import {SideNavPanelApp} from './SideNavPanelApp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import File from '@react-spectrum/s2/icons/File';
@@ -175,6 +186,17 @@ function CollapsibleSideNavPanel() {
               );
             }}
           </SideNav>
+          <div
+            className={style({
+              flexGrow: 0,
+              flexShrink: 0,
+              marginBottom: 4,
+              marginTop: 4,
+              display: 'flex',
+              marginStart: 4
+            })}>
+            <SideNavPanelExpandButton />
+          </div>
         </SideNavPanel>
       )}
     </SideNavPanelApp>
@@ -188,7 +210,7 @@ function CollapsibleSideNavPanel() {
 
 `SideNavPanel` and [SideNav](SideNav) animate themselves. The panel's width animates first, and its contents animate only once it has settled.
 
-Because the contents wait for the width, the `isCollapsed` you read from `SideNavPanelContext` trails the panel itself while it is expanding.
+Because the contents wait for the width, the `isCollapsed` you read from `SideNavPanelContext` trails the panel itself while it is expanding. Read `isPanelCollapsed` instead when you need the panel's own state, such as in your own expand and collapse trigger.
 
 `AccountFooter` in the example below reads `isCollapsed` from `SideNavPanelContext` and hides its name with `display: none` while the panel is collapsed.
 
@@ -197,12 +219,13 @@ Because the contents wait for the width, the `isCollapsed` you read from `SideNa
   codeColumns={[0]}
   rows={[
     ["isCollapsed", "Whether the panel's contents are collapsed. This trails the panel itself while it is expanding, since its contents are only brought back once it has finished widening."],
+    ['isPanelCollapsed', 'Whether the panel itself is collapsed. This changes as soon as the panel is collapsed or expanded, so use it for the state of your own expand and collapse trigger.'],
     ['setCollapsed', 'Collapses or expands the panel. Useful for building your own expand and collapse trigger.']
   ]} />
 
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SideNavPanelApp.tsx']}
 "use client";
-import {SideNavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/SideNavPanel';
+import {SideNavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavPanelExpandButton, Collection, Text} from '@react-spectrum/s2/SideNavPanel';
 import {SideNavPanelApp, AccountFooter} from './SideNavPanelApp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import File from '@react-spectrum/s2/icons/File';
@@ -264,6 +287,17 @@ let items: Item[] = [
           );
         }}
       </SideNav>
+      <div
+        className={style({
+          flexGrow: 0,
+          flexShrink: 0,
+          marginBottom: 4,
+          marginTop: 4,
+          display: 'flex',
+          marginStart: 4
+        })}>
+        <SideNavPanelExpandButton />
+      </div>
       {/*- begin highlight -*/}
       <AccountFooter />
       {/*- end highlight -*/}

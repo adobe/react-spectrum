@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {createIcon} from '../src/Icon';
-import React from 'react';
+import React, {useContext} from 'react';
 import {RouterProvider} from 'react-aria-components';
 import {
   SideNav,
@@ -21,7 +21,12 @@ import {
   SideNavItemLink,
   SideNavProps
 } from '../src/SideNav';
-import {SideNavPanel, SideNavPanelProps} from '../src/SideNavPanel';
+import {
+  SideNavPanel,
+  SideNavPanelContext,
+  SideNavPanelExpandButton,
+  SideNavPanelProps
+} from '../src/SideNavPanel';
 import {Text} from '../src/Content';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
@@ -96,6 +101,7 @@ function SideNavPanelExample(
           </SideNavItem>
         </SideNavItem>
       </SideNav>
+      <SideNavPanelExpandButton />
     </SideNavPanel>
   );
 
@@ -163,6 +169,32 @@ describe('SideNavPanel', () => {
     finishExpanding();
     expect(getByRole('link', {name: 'Files'})).toBeInTheDocument();
     expect(getByRole('link', {name: 'Libraries'})).toBeInTheDocument();
+  });
+
+  it('reports the panel state in context ahead of its contents while expanding', async () => {
+    function CustomToggle() {
+      let {isCollapsed, isPanelCollapsed, setCollapsed} = useContext(SideNavPanelContext);
+      return (
+        <button
+          data-contents-collapsed={isCollapsed}
+          onClick={() => setCollapsed?.(!isPanelCollapsed)}>
+          {isPanelCollapsed ? 'Expand' : 'Collapse'}
+        </button>
+      );
+    }
+    let {getByRole} = render(
+      <SideNavPanel defaultCollapsed>
+        <CustomToggle />
+      </SideNavPanel>
+    );
+
+    await user.click(getByRole('button', {name: 'Expand'}));
+    // The trigger flips right away, while the contents wait for the panel to finish widening.
+    let toggle = getByRole('button', {name: 'Collapse'});
+    expect(toggle).toHaveAttribute('data-contents-collapsed', 'true');
+
+    finishExpanding();
+    expect(toggle).toHaveAttribute('data-contents-collapsed', 'false');
   });
 
   it('navigates without expanding the panel when a collapsed link is clicked, with or without children', async () => {
