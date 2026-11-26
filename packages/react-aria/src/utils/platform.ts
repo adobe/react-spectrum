@@ -23,9 +23,13 @@ function testUserAgent(re: RegExp) {
 }
 
 function testPlatform(re: RegExp) {
-  return typeof window !== 'undefined' && window.navigator != null
-    ? re.test(window.navigator['userAgentData']?.platform || window.navigator.platform)
-    : false;
+  if (typeof window === 'undefined' || window.navigator == null) {
+    return false;
+  }
+
+  let platform = window.navigator['userAgentData']?.platform;
+  // The iOS platform hint is shared by iPhone and iPad.
+  return re.test(platform && platform !== 'iOS' ? platform : window.navigator.platform);
 }
 
 function cached(fn: () => boolean) {
