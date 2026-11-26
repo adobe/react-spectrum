@@ -302,8 +302,14 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
 
   protected shouldInvalidateEverything(invalidationContext: InvalidationContext<O>): boolean {
     let options = invalidationContext.layoutOptions;
+    let {widthChanged, heightChanged} = invalidationContext;
+    let isHorizontal = (options?.orientation ?? this.orientation) === 'horizontal';
+    // Measured item sizes stay valid when only the scroll axis size changed.
+    let onlyScrollAxisSizeChanged = isHorizontal
+      ? widthChanged && !heightChanged
+      : heightChanged && !widthChanged;
     return (
-      invalidationContext.sizeChanged ||
+      (invalidationContext.sizeChanged && !onlyScrollAxisSizeChanged) ||
       this.rowSize !== (options?.rowSize ?? options?.rowHeight ?? this.rowSize) ||
       this.orientation !== (options?.orientation ?? this.orientation) ||
       this.headingSize !== (options?.headingSize ?? options?.headingHeight ?? this.headingSize) ||
