@@ -269,7 +269,15 @@ export {
   TreeSection,
   TreeStateContext
 } from '../src/Tree';
-export {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel} from '../src/Wizard';
+export {
+  Wizard,
+  WizardStepList,
+  WizardStep,
+  WizardPanels,
+  WizardPanel,
+  WizardContext,
+  WizardStateContext
+} from '../src/Wizard';
 export {useDrag} from 'react-aria/useDrag';
 export {
   useDrop,

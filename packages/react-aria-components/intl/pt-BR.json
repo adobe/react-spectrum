@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Amostras de cores",
   "dropzoneLabel": "DropZone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Selecione um item",
   "tableResizer": "Redimensionador"
 }

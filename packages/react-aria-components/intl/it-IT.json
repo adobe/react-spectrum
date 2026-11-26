@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Campioni di colore",
   "dropzoneLabel": "Zona di rilascio",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Seleziona un elemento",
   "tableResizer": "Ridimensionamento"
 }

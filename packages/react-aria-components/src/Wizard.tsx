@@ -12,14 +12,17 @@
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
+  ContextValue,
   DEFAULT_SLOT,
   PossibleLinkDOMRenderProps,
   Provider,
-  RenderProps
+  RenderProps,
+  useContextProps
 } from './utils';
 import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
-import {FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
+import {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
 import {Collection as ICollection, Key, Node} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import React, {
@@ -28,7 +31,8 @@ import React, {
   forwardRef,
   ReactNode,
   useContext,
-  useMemo
+  useMemo,
+  useState
 } from 'react';
 import {
   TabInner,
@@ -48,13 +52,14 @@ import {
 } from './Tabs';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useId} from 'react-aria/useId';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface WizardProps extends Omit<
   TabsProps,
-  'children' | 'selectedKey' | 'keyboardActivation'
+  'children' | 'selectedKey' | 'keyboardActivation' | 'shouldFocusWrap'
 > {
   /**
    * The children of the component (a `WizardStepList` and optional `WizardPanels`). Buttons with
@@ -89,6 +94,9 @@ export interface WizardProps extends Omit<
   allowsRandomAccess?: boolean;
 }
 
+export const WizardContext = createContext<ContextValue<WizardProps, HTMLDivElement>>(null);
+export const WizardStateContext = createContext<WizardState<unknown> | null>(null);
+
 /**
  * A Wizard guides users through a multi-step process one step at a time, and allows them to
  * navigate between the steps they have reached.
@@ -97,6 +105,8 @@ export const Wizard = /*#__PURE__*/ forwardRef(function Wizard(
   props: WizardProps,
   ref: ForwardedRef<HTMLDivElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
+  [props, ref] = useContextProps(props, ref, WizardContext);
   let {children} = props;
   // Like Select, the wizard builds the collection of its steps once and provides its state to the
   // TabList, rather than rendering Tabs, which would build the collection again.
@@ -107,7 +117,7 @@ export const Wizard = /*#__PURE__*/ forwardRef(function Wizard(
   );
 });
 
-// Used so that Wizard can use render props for className with it's own default classname
+// Used so that Wizard can use render props for className with its own default classname
 function withDefaultClassName<T>(
   className: ClassNameOrFunction<T> | undefined,
   defaultClassName: string
@@ -122,8 +132,6 @@ interface WizardInnerProps {
   collection: ICollection<Node<unknown>>;
   tabsRef: ForwardedRef<HTMLDivElement>;
 }
-
-const WizardStateContext = createContext<WizardState<unknown> | null>(null);
 
 export interface WizardStateOptions<T> {
   /** The collection of steps, in order. */
@@ -166,6 +174,10 @@ export interface WizardState<T> {
    * current step.
    */
   nextKey: Key | null;
+  /** Whether the current step is focused. */
+  isFocused: boolean;
+  /** Sets whether the current step is focused. */
+  setFocused(isFocused: boolean): void;
 }
 
 /**
@@ -280,6 +292,8 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
         )
       : null;
 
+  let [isFocused, setFocused] = useState(false);
+
   return {
     collection,
     selectedKey,
@@ -287,7 +301,9 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
     completedKeys,
     disabledKeys,
     previousKey,
-    nextKey
+    nextKey,
+    isFocused,
+    setFocused
   };
 }
 
@@ -331,31 +347,50 @@ function WizardInner({props, collection, tabsRef}: WizardInnerProps) {
     disabledKeys
   });
 
+  let {previousKey, nextKey} = state;
+
+  // Like Calendar, if the previous or next button becomes disabled while it's focused, e.g. on the
+  // first or last step, focus moves to the current step (see useWizardStep).
+  let [previousFocused, setPreviousFocused] = useState(false);
+  let previousDisabled = props.isDisabled || previousKey == null;
+  if (previousDisabled && previousFocused) {
+    setPreviousFocused(false);
+    state.setFocused(true);
+  }
+
+  let [nextFocused, setNextFocused] = useState(false);
+  let nextDisabled = props.isDisabled || nextKey == null;
+  if (nextDisabled && nextFocused) {
+    setNextFocused(false);
+    state.setFocused(true);
+  }
+
   // Buttons with the previous and next slots move to the previous and next steps, and are disabled
   // when there isn't one. The slots of an outer ButtonContext, such as the close slot of a Dialog,
   // are kept so that their buttons still work within the wizard.
   let buttonContext = useContext(ButtonContext);
   let outerButtonSlots =
     buttonContext && 'slots' in buttonContext ? buttonContext.slots : undefined;
-  let {previousKey, nextKey} = state;
   let buttonSlots = {
     [DEFAULT_SLOT]: {},
     ...outerButtonSlots,
     previous: {
-      isDisabled: props.isDisabled || previousKey == null,
+      isDisabled: previousDisabled,
       onPress: () => {
         if (previousKey != null) {
           state.setSelectedKey(previousKey);
         }
-      }
+      },
+      onFocusChange: setPreviousFocused
     },
     next: {
-      isDisabled: props.isDisabled || nextKey == null,
+      isDisabled: nextDisabled,
       onPress: () => {
         if (nextKey != null) {
           state.setSelectedKey(nextKey);
         }
-      }
+      },
+      onFocusChange: setNextFocused
     }
   };
 
@@ -440,6 +475,8 @@ export interface WizardStepProps
 }
 
 export interface WizardStepAria {
+  /** Props for the step element. */
+  stepProps: DOMAttributes;
   /** Whether this step is the current (selected) step. */
   isCurrent: boolean;
   /** Whether this step is completed. */
@@ -454,21 +491,42 @@ interface AriaWizardStepProps {
 }
 
 /**
- * Provides the state of a step within a wizard: whether it is the current step, whether it is
- * completed, and its position.
+ * Provides the behavior and state of a step within a wizard: whether it is the current step,
+ * whether it is completed, and its position. The current step is focused when `state.isFocused`
+ * becomes true.
  */
 export function useWizardStep<T>(
   props: AriaWizardStepProps,
   state: WizardState<T>,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ref: RefObject<FocusableElement | null>
 ): WizardStepAria {
   let {key} = props;
   let {collection, selectedKey, completedKeys} = state;
   let index = getStepIndex(collection, key);
+  let isCurrent = key === selectedKey;
+  let isFocused = isCurrent && state.isFocused;
+
+  // Like a calendar cell, the step is focused in the DOM when the state updates. This is a layout
+  // effect so that a field in the new panel that focuses itself when it mounts (e.g. with autoFocus)
+  // does so afterward, and keeps focus.
+  useLayoutEffect(() => {
+    if (isFocused && ref.current) {
+      focusWithoutScrolling(ref.current);
+    }
+  }, [isFocused, ref]);
 
   return {
-    isCurrent: key === selectedKey,
+    stepProps: {
+      onFocus() {
+        if (isCurrent) {
+          state.setFocused(true);
+        }
+      },
+      onBlur() {
+        state.setFocused(false);
+      }
+    },
+    isCurrent,
     isCompleted: index >= 0 && completedKeys.has(key),
     stepNumber: index + 1
   };
@@ -491,7 +549,12 @@ export const WizardStep = /*#__PURE__*/ createLeafComponent(
     let state = useContext(WizardStateContext)!;
     let {children, className, style, render, ...otherProps} = props;
     let ref = useObjectRef(forwardedRef);
-    let {isCurrent, isCompleted, stepNumber} = useWizardStep({key: item.key}, state, ref);
+    let {stepProps, isCurrent, isCompleted, stepNumber} = useWizardStep(
+      {key: item.key},
+      state,
+      ref
+    );
+
     let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
     let stateText = isCompleted
       ? stringFormatter.format('progressListItemCompleted')
@@ -546,7 +609,7 @@ export const WizardStep = /*#__PURE__*/ createLeafComponent(
       )
     };
 
-    return <TabInner props={tabProps} forwardedRef={ref} item={item} />;
+    return <TabInner props={tabProps} forwardedRef={ref} item={item} elementProps={stepProps} />;
   }
 );
 

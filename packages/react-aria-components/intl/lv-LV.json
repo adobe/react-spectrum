@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Krāsu paraugi",
   "dropzoneLabel": "DropZone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Izvēlēties vienumu",
   "tableResizer": "Izmēra mainītājs"
 }

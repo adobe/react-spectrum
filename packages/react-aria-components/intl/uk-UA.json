@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Зразки кольорів",
   "dropzoneLabel": "DropZone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Виберіть елемент",
   "tableResizer": "Засіб змінення розміру"
 }

@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "تغييرات الألوان",
   "dropzoneLabel": "DropZone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "حدد عنصرًا",
   "tableResizer": "أداة تغيير الحجم"
 }

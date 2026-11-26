@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "דוגמיות צבע",
   "dropzoneLabel": "DropZone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "בחר פריט",
   "tableResizer": "שינוי גודל"
 }

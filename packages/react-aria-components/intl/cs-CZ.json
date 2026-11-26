@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Vzorky barev",
   "dropzoneLabel": "Místo pro přetažení",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Vyberte položku",
   "tableResizer": "Změna velikosti"
 }

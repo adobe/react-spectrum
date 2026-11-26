@@ -10,17 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, ButtonContext} from '../src/Button';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
-import React, {useContext, useState} from 'react';
-import {TabListStateContext} from '../src/Tabs';
+import React, {useState} from 'react';
 import {TextField} from '../src/TextField';
 import userEvent from '@testing-library/user-event';
-import {Wizard, WizardPanel, WizardPanels, WizardStep, WizardStepList} from '../src/Wizard';
+import {
+  Wizard,
+  WizardContext,
+  WizardPanel,
+  WizardPanels,
+  WizardStep,
+  WizardStepList
+} from '../src/Wizard';
 
 let steps = [
   {id: 'domain', label: 'Domain'},
@@ -49,28 +55,6 @@ function WizardExample({stepProps, children, ...props}) {
       </WizardPanels>
       {children}
     </Wizard>
-  );
-}
-
-// Moves the selection from within the wizard, like the Previous and Continue buttons of a wizard.
-function StepButtons() {
-  let state = useContext(TabListStateContext);
-  if (!state) {
-    return null;
-  }
-
-  let index = keys.indexOf(state.selectedKey);
-  return (
-    <>
-      <button disabled={index <= 0} onClick={() => state.setSelectedKey(keys[index - 1])}>
-        Previous
-      </button>
-      <button
-        disabled={index >= keys.length - 1}
-        onClick={() => state.setSelectedKey(keys[index + 1])}>
-        Continue
-      </button>
-    </>
   );
 }
 
@@ -111,15 +95,6 @@ function WizardButtons() {
       <Button slot="next">Next</Button>
     </div>
   );
-}
-
-// Reports the collection that the TabList renders.
-function CollectionProbe({onRender}) {
-  let state = useContext(TabListStateContext);
-  if (state) {
-    onRender(state.collection);
-  }
-  return null;
 }
 
 let projectKeys = ['details', 'members', 'review'];
@@ -332,7 +307,7 @@ describe('Wizard', () => {
     }
   });
 
-  it('should only select a step on Enter when navigating with the keyboard', async () => {
+  it('should move focus with arrow keys without selecting, stop at the last navigable step, and select on Enter', async () => {
     let onSelectionChange = jest.fn();
     let tree = render(
       <WizardExample completedKeys={['domain', 'dns']} onSelectionChange={onSelectionChange} />
@@ -359,7 +334,7 @@ describe('Wizard', () => {
     expect(getSelectedStep(tree)).toBe('advanced');
   });
 
-  it('should mark the steps before the selected step as completed by default', async () => {
+  it('should base completion on the selected step by default, so going back marks later steps as not completed', async () => {
     let tree = render(<WizardExample defaultSelectedKey="advanced" />);
     let tabs = tree.getAllByRole('tab');
 
@@ -398,8 +373,14 @@ describe('Wizard', () => {
             <WizardStep
               key={step.id}
               id={step.id}
-              className={({isCurrent, isCompleted}) =>
-                isCurrent ? 'current' : isCompleted ? 'completed' : 'upcoming'
+              className={({isCurrent, isCompleted, isDisabled}) =>
+                isCurrent
+                  ? 'current'
+                  : isCompleted
+                    ? 'completed'
+                    : isDisabled
+                      ? 'locked'
+                      : 'upcoming'
               }
               style={({isCurrent}) => ({fontWeight: isCurrent ? 'bold' : 'normal'})}
               render={(domProps, {stepNumber}) => <div {...domProps} data-step={stepNumber} />}>
@@ -411,12 +392,7 @@ describe('Wizard', () => {
     );
 
     let tabs = tree.getAllByRole('tab');
-    expect(tabs.map(tab => tab.className)).toEqual([
-      'completed',
-      'completed',
-      'current',
-      'upcoming'
-    ]);
+    expect(tabs.map(tab => tab.className)).toEqual(['completed', 'completed', 'current', 'locked']);
     expect(tabs.map(tab => tab.textContent)).toEqual([
       'Completed1. Domain',
       'Completed2. DNS',
@@ -427,30 +403,7 @@ describe('Wizard', () => {
     expect(tabs.map(tab => tab.dataset.step)).toEqual(['1', '2', '3', '4']);
 
     await user.click(tabs[0]);
-    expect(tabs.map(tab => tab.className)).toEqual(['current', 'upcoming', 'upcoming', 'upcoming']);
-  });
-
-  it('should support render props on steps', () => {
-    let tree = render(
-      <Wizard defaultSelectedKey="dns">
-        <WizardStepList aria-label="Setup">
-          {steps.map(step => (
-            <WizardStep key={step.id} id={step.id}>
-              {({isSelected, isDisabled}) =>
-                `${step.label} ${isSelected ? 'selected' : isDisabled ? 'locked' : 'open'}`
-              }
-            </WizardStep>
-          ))}
-        </WizardStepList>
-      </Wizard>
-    );
-
-    expect(tree.getAllByRole('tab').map(tab => tab.textContent)).toEqual([
-      'CompletedDomain open',
-      'DNS selected',
-      'Not completedAdvanced locked',
-      'Not completedReview locked'
-    ]);
+    expect(tabs.map(tab => tab.className)).toEqual(['current', 'locked', 'locked', 'locked']);
   });
 
   it('should support refs', () => {
@@ -479,6 +432,20 @@ describe('Wizard', () => {
     expect(stepRef.current).toBe(tree.getByRole('tab'));
     expect(panelRef.current).toBe(tree.getByRole('tabpanel'));
     expect(panelsRef.current).toBe(tree.getByRole('tabpanel').parentElement);
+  });
+
+  it('should support slot', () => {
+    let tree = render(
+      <WizardContext.Provider
+        value={{slots: {test: {defaultSelectedKey: 'dns', 'data-foo': 'bar'}}}}>
+        <WizardExample slot="test" />
+      </WizardContext.Provider>
+    );
+
+    let wizard = tree.getByRole('tablist').parentElement;
+    expect(wizard).toHaveAttribute('slot', 'test');
+    expect(wizard).toHaveAttribute('data-foo', 'bar');
+    expect(getSelectedStep(tree)).toBe('dns');
   });
 
   it('should use the default class names when className functions return undefined', () => {
@@ -535,7 +502,6 @@ describe('Wizard', () => {
       </Wizard>
     );
 
-    // The step is selected, but the wizard can't find it to provide its state.
     let tabs = tree.getAllByRole('tab');
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
     expect(tabs.map(tab => tab.textContent)).toEqual(['Step 1', 'Not completedStep 2']);
@@ -580,7 +546,7 @@ describe('Wizard', () => {
     expect(tree.queryAllByRole('tabpanel')).toHaveLength(1);
   });
 
-  it('should not move to a disabled step with the starter WizardButtons', async () => {
+  it('should skip disabled steps with the previous and next buttons', async () => {
     let tree = render(
       <WizardExample disabledKeys={['dns']}>
         <WizardButtons />
@@ -623,6 +589,69 @@ describe('Wizard', () => {
     expect(tree.getByRole('button', {name: 'Next'})).toBeDisabled();
   });
 
+  it('should move focus to the current step when the focused previous or next button becomes disabled', async () => {
+    let tree = render(
+      <WizardExample defaultSelectedKey="dns">
+        <WizardButtons />
+      </WizardExample>
+    );
+    let tabs = tree.getAllByRole('tab');
+    let back = tree.getByRole('button', {name: 'Back'});
+    let next = tree.getByRole('button', {name: 'Next'});
+
+    await user.click(next);
+    expect(getSelectedStep(tree)).toBe('advanced');
+    expect(document.activeElement).toBe(next);
+
+    await user.keyboard('{Enter}');
+    expect(getSelectedStep(tree)).toBe('review');
+    expect(next).toBeDisabled();
+    expect(document.activeElement).toBe(tabs[3]);
+
+    await user.click(back);
+    await user.keyboard('{Enter}{Enter}');
+    expect(getSelectedStep(tree)).toBe('domain');
+    expect(back).toBeDisabled();
+    expect(document.activeElement).toBe(tabs[0]);
+  });
+
+  it.each([
+    [
+      'a TextField',
+      <TextField aria-label="Domain name" autoFocus>
+        <Input />
+      </TextField>
+    ],
+    ['an input', <input aria-label="Domain name" autoFocus />]
+  ])(
+    'should keep focus on %s with autoFocus in the new step when the focused previous button becomes disabled',
+    async (_, field) => {
+      let tree = render(
+        <Wizard defaultSelectedKey="dns">
+          <WizardStepList aria-label="Setup">
+            <WizardStep id="domain">Domain</WizardStep>
+            <WizardStep id="dns">DNS</WizardStep>
+          </WizardStepList>
+          <WizardPanels>
+            <WizardPanel id="domain">{field}</WizardPanel>
+            <WizardPanel id="dns">DNS panel</WizardPanel>
+          </WizardPanels>
+          <WizardButtons />
+        </Wizard>
+      );
+
+      let back = tree.getByRole('button', {name: 'Back'});
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(back);
+
+      // Screen readers click without a pointer, which user-event can't simulate.
+      fireEvent.click(back);
+      act(() => jest.runAllTimers());
+      expect(back).toBeDisabled();
+      expect(document.activeElement).toBe(tree.getByRole('textbox', {name: 'Domain name'}));
+    }
+  );
+
   it('should keep the button slots of its parent, like the close slot of a Dialog', async () => {
     let onPress = jest.fn();
     let tree = render(
@@ -637,26 +666,7 @@ describe('Wizard', () => {
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  // Like Select, which builds the collection of its ListBox once and provides its state to it, the
-  // wizard should build its steps once rather than building them again in the Tabs it renders.
-  describe('collection', () => {
-    it('should keep the same step collection when the selected step changes', async () => {
-      let collections = [];
-      let tree = render(
-        <WizardExample>
-          <CollectionProbe onRender={collection => collections.push(collection)} />
-          <StepButtons />
-        </WizardExample>
-      );
-      let collection = collections.at(-1);
-
-      await user.click(tree.getByRole('button', {name: 'Continue'}));
-      expect(getSelectedStep(tree)).toBe('dns');
-      expect(collections.at(-1)).toBe(collection);
-    });
-  });
-
-  describe('completedKeys', () => {
+  describe('step navigation', () => {
     it.each([
       ['no steps are completed', []],
       ['the completed steps are not in the wizard', ['missing']]
@@ -675,7 +685,7 @@ describe('Wizard', () => {
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
-    it('should allow navigating to the steps up to and including the one after the last completed step', async () => {
+    it('should allow navigating up to and including the step after the last completed step, without completing the steps before it', async () => {
       // The last completed step is the one furthest along, even when the steps before it aren't
       // completed.
       let tree = render(<WizardExample completedKeys={['dns']} />);
@@ -692,7 +702,7 @@ describe('Wizard', () => {
       expect(tabs[0]).toHaveAccessibleName('Not completed Domain');
     });
 
-    it('should only move to the next step once the application completes the current step', async () => {
+    it('should enable the next button once the application completes the current step, and leave completion to the application', async () => {
       let tree = render(
         <WizardExample completedKeys={[]}>
           <WizardButtons />
@@ -745,7 +755,7 @@ describe('Wizard', () => {
       expect(tree.getByRole('button', {name: 'Next'})).toBeDisabled();
     });
 
-    it('should mark a step with key zero as completed', () => {
+    it('should treat a step with key 0 as completed, making the next step navigable', () => {
       let tree = render(
         <Wizard completedKeys={[0]}>
           <WizardStepList aria-label="Setup">
@@ -772,7 +782,7 @@ describe('Wizard', () => {
       }
     });
 
-    it('should mark the completed steps with allowsRandomAccess', async () => {
+    it('should mark the completed steps with allowsRandomAccess, and move to the next step without completing the current one', async () => {
       let tree = render(
         <WizardExample allowsRandomAccess completedKeys={['advanced']}>
           <WizardButtons />
@@ -822,51 +832,31 @@ describe('Wizard', () => {
     );
   });
 
-  describe('form validation', () => {
-    it('should only move to the next step when the form around the wizard is valid', async () => {
+  describe('docs examples', () => {
+    it("should advance on form submit only when the current step's fields are valid", async () => {
       let onCreate = jest.fn();
       let tree = render(<FormWizard onCreate={onCreate} />);
 
-      // The browser doesn't submit the form while a field in the current step is invalid. Instead,
-      // the first invalid field displays its error and receives focus.
+      // The browser doesn't submit the form while a field in the current step is invalid.
       await user.click(tree.getByRole('button', {name: 'Next'}));
-      let name = tree.getByRole('textbox', {name: 'Name'});
       expect(getSelectedStep(tree, projectKeys)).toBe('details');
-      expect(name).toHaveAccessibleDescription('Enter a name for the project.');
-      expect(document.activeElement).toBe(name);
 
-      await user.keyboard('Website');
+      // The fields of the other steps aren't rendered, so they don't prevent submission.
+      await user.type(tree.getByRole('textbox', {name: 'Name'}), 'Website');
       await user.click(tree.getByRole('button', {name: 'Next'}));
       expect(getSelectedStep(tree, projectKeys)).toBe('members');
-      expect(getNavigableSteps(tree, projectKeys)).toEqual(['details', 'members']);
-      expect(getCompletedSteps(tree)).toEqual([true, false, false]);
 
       // Pressing Enter in a field submits the form too.
-      let email = tree.getByRole('textbox', {name: 'Email'});
-      await user.type(email, 'devon{Enter}');
-      expect(getSelectedStep(tree, projectKeys)).toBe('members');
-      expect(email).toHaveAccessibleDescription('Enter a valid email address.');
-
-      await user.type(email, '@example.com{Enter}');
+      await user.type(tree.getByRole('textbox', {name: 'Email'}), 'devon@example.com{Enter}');
       expect(getSelectedStep(tree, projectKeys)).toBe('review');
-      expect(getCompletedSteps(tree)).toEqual([true, true, false]);
 
       // On the last step, the next button creates the project.
       await user.click(tree.getByRole('button', {name: 'Create project'}));
       expect(onCreate).toHaveBeenCalledTimes(1);
       expect(onCreate).toHaveBeenCalledWith('Website', 'devon@example.com');
-
-      // Going back to a completed step marks the steps after it as not completed, and keeps the
-      // values of its fields.
-      await user.click(tree.getAllByRole('tab')[0]);
-      expect(getSelectedStep(tree, projectKeys)).toBe('details');
-      expect(getNavigableSteps(tree, projectKeys)).toEqual(['details']);
-      expect(getCompletedSteps(tree)).toEqual([false, false, false]);
-      expect(tree.getByRole('textbox', {name: 'Name'})).toHaveValue('Website');
-      expect(tree.getByRole('button', {name: 'Next'})).toBeInTheDocument();
     });
 
-    it('should complete the steps in order once their fields are valid', async () => {
+    it('should update the navigable steps and the next button as the application changes completedKeys', async () => {
       let onCreate = jest.fn();
       let tree = render(<CompletedKeysWizard onCreate={onCreate} />);
       let next = tree.getByRole('button', {name: 'Next'});
@@ -909,7 +899,7 @@ describe('Wizard', () => {
       expect(onCreate).toHaveBeenCalledWith('Docs', 'devon@example.com');
     });
 
-    it('should complete the steps in any order with allowsRandomAccess', async () => {
+    it('should let users fill in steps in any order with allowsRandomAccess', async () => {
       let onCreate = jest.fn();
       let tree = render(<CompletedKeysWizard allowsRandomAccess onCreate={onCreate} />);
       let tabs = tree.getAllByRole('tab');

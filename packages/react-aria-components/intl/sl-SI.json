@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Barvne palete",
   "dropzoneLabel": "DropZone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Izberite element",
   "tableResizer": "Spreminjanje velikosti"
 }

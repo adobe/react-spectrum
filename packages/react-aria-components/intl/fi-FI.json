@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Värimallit",
   "dropzoneLabel": "DropZone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Valitse kohde",
   "tableResizer": "Koon muuttaja"
 }

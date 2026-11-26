@@ -12,6 +12,7 @@
 
 import {
   AriaLabelingProps,
+  DOMAttributes,
   FocusEvents,
   forwardRefType,
   GlobalDOMAttributes,
@@ -409,10 +410,13 @@ interface TabInnerProps {
   props: TabProps;
   forwardedRef: ForwardedRef<HTMLDivElement>;
   item: Node<unknown>;
+  // Props for the tab element that aren't filtered like the props above, e.g. the focus handlers
+  // of a Wizard step.
+  elementProps?: DOMAttributes;
 }
 
 // Renders a tab for an item in the collection. Wizard also renders its steps with it.
-export function TabInner({props, forwardedRef, item}: TabInnerProps): JSX.Element {
+export function TabInner({props, forwardedRef, item, elementProps}: TabInnerProps): JSX.Element {
   let state = useContext(TabListStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key, ...props}, state, ref);
@@ -452,7 +456,15 @@ export function TabInner({props, forwardedRef, item}: TabInnerProps): JSX.Elemen
 
   return (
     <ElementType
-      {...mergeProps(DOMProps, renderProps, tabProps, labelProps, focusProps, hoverProps)}
+      {...mergeProps(
+        DOMProps,
+        renderProps,
+        tabProps,
+        labelProps,
+        focusProps,
+        hoverProps,
+        elementProps
+      )}
       ref={ref}
       data-selected={isSelected || undefined}
       data-disabled={isDisabled || undefined}

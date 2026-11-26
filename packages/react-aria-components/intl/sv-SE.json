@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Färgrutor",
   "dropzoneLabel": "DropZone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Välj en artikel",
   "tableResizer": "Storleksändrare"
 }

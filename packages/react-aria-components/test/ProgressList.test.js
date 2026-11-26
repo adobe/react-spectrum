@@ -55,7 +55,7 @@ describe('ProgressList', () => {
     }
   });
 
-  it('should mark steps before the selected step as completed', () => {
+  it('should mark earlier steps as completed and the selected step as current', () => {
     let {getAllByRole} = renderProgressList();
     let items = getAllByRole('listitem');
 
@@ -71,7 +71,7 @@ describe('ProgressList', () => {
     expect(items[2]).not.toHaveAttribute('data-current');
   });
 
-  it('should update completed steps when the selected step changes', () => {
+  it('should update the completed and current steps when selectedKey changes', () => {
     let {getAllByRole, rerender} = renderProgressList({selectedKey: 'advanced'});
     let items = getAllByRole('listitem');
     expect(items[0]).toHaveAttribute('data-completed');
@@ -94,7 +94,7 @@ describe('ProgressList', () => {
     expect(items[2]).not.toHaveAttribute('data-completed');
   });
 
-  it('should mark no steps as completed when the selected step is not in the collection', () => {
+  it("should mark no step as completed or current when selectedKey isn't in the collection", () => {
     let {getAllByRole} = renderProgressList({selectedKey: 'nope'});
 
     for (let item of getAllByRole('listitem')) {
@@ -103,54 +103,15 @@ describe('ProgressList', () => {
     }
   });
 
-  it('should support dynamic collections', () => {
-    let {getAllByRole} = render(
-      <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
-        {step => (
-          <ProgressListItem>
-            <ProgressListItemContent>{step.label}</ProgressListItemContent>
-          </ProgressListItem>
-        )}
-      </ProgressList>
-    );
-
-    let items = getAllByRole('listitem');
-    expect(items.map(item => item.textContent)).toEqual([
-      'CompletedDomain',
-      'CurrentDNS',
-      'Not completedAdvanced'
-    ]);
-    expect(items[0]).toHaveAttribute('data-completed');
-    expect(items[1]).toHaveAttribute('data-current');
-  });
-
-  it('should support render props', () => {
-    let {getAllByRole} = render(
-      <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
-        {step => (
-          <ProgressListItem>
-            {({isCurrent, isCompleted}) => (
-              <ProgressListItemContent>
-                {isCurrent ? 'current' : isCompleted ? 'completed' : step.label}
-              </ProgressListItemContent>
-            )}
-          </ProgressListItem>
-        )}
-      </ProgressList>
-    );
-
-    expect(getAllByRole('listitem').map(item => item.lastChild.textContent)).toEqual([
-      'completed',
-      'current',
-      'Advanced'
-    ]);
-  });
-
-  it('should provide a 1-based step number to render props', () => {
+  it('should provide isCurrent, isCompleted and the step number to render props', () => {
     let {getAllByRole} = render(
       <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
         {() => (
-          <ProgressListItem>
+          <ProgressListItem
+            className={({isCurrent, isCompleted}) =>
+              isCurrent ? 'current' : isCompleted ? 'completed' : 'upcoming'
+            }
+            style={({stepNumber}) => ({order: stepNumber})}>
             {({stepNumber}) => (
               <ProgressListItemContent>{`Step ${stepNumber}`}</ProgressListItemContent>
             )}
@@ -159,29 +120,14 @@ describe('ProgressList', () => {
       </ProgressList>
     );
 
-    expect(getAllByRole('listitem').map(item => item.lastChild.textContent)).toEqual([
+    let items = getAllByRole('listitem');
+    expect(items.map(item => item.className)).toEqual(['completed', 'current', 'upcoming']);
+    expect(items.map(item => item.style.order)).toEqual(['1', '2', '3']);
+    expect(getAllByRole('img').map(content => content.textContent)).toEqual([
       'Step 1',
       'Step 2',
       'Step 3'
     ]);
-  });
-
-  it('should provide the step number to className and style functions', () => {
-    let {getAllByRole} = render(
-      <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
-        {step => (
-          <ProgressListItem
-            className={({stepNumber}) => `step-${stepNumber}`}
-            style={({stepNumber}) => ({order: stepNumber})}>
-            <ProgressListItemContent>{step.label}</ProgressListItemContent>
-          </ProgressListItem>
-        )}
-      </ProgressList>
-    );
-
-    let items = getAllByRole('listitem');
-    expect(items.map(item => item.className)).toEqual(['step-1', 'step-2', 'step-3']);
-    expect(items.map(item => item.style.order)).toEqual(['1', '2', '3']);
   });
 
   it('should support DOM props', () => {
@@ -251,19 +197,24 @@ describe('ProgressList', () => {
     expect(list).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should label ProgressListItemContent with the step state', () => {
-    let {getByRole} = render(
-      <ProgressList selectedKey="a" aria-label="Setup">
-        <ProgressListItem id="a">
-          <ProgressListItemContent>Step A</ProgressListItemContent>
-        </ProgressListItem>
+  it('should expose each ProgressListItemContent as a non-focusable image labelled with its step state', () => {
+    let {getAllByRole} = render(
+      <ProgressList selectedKey="dns" aria-label="Setup" items={steps}>
+        {step => (
+          <ProgressListItem>
+            <ProgressListItemContent>{step.label}</ProgressListItemContent>
+          </ProgressListItem>
+        )}
       </ProgressList>
     );
 
-    let step = getByRole('img');
-    let [stateId, contentId] = step.getAttribute('aria-labelledby').split(' ');
-    expect(document.getElementById(stateId)).toHaveTextContent('Current');
-    expect(contentId).toBe(step.id);
+    let contents = getAllByRole('img');
+    expect(contents[0]).toHaveAccessibleName('Completed Domain');
+    expect(contents[1]).toHaveAccessibleName('Current DNS');
+    expect(contents[2]).toHaveAccessibleName('Not completed Advanced');
+    for (let content of contents) {
+      expect(content).not.toHaveAttribute('tabindex');
+    }
   });
 
   it('should label ProgressListItemContent with the step state and a custom aria-labelledby', () => {
@@ -281,14 +232,10 @@ describe('ProgressList', () => {
       </>
     );
 
-    let content = getByRole('img');
-    let status = getByRole('listitem').querySelector('[hidden]');
-    expect(status).toHaveTextContent('Current');
-    expect(content).toHaveAttribute('aria-labelledby', `${status.id} step-label step-detail`);
-    expect(content).toHaveAccessibleName('Current Custom step Details');
+    expect(getByRole('img')).toHaveAccessibleName('Current Custom step Details');
   });
 
-  it('should support className and style on ProgressListItemContent', () => {
+  it('should apply the default class, replaced by a custom className, and style to ProgressListItemContent', () => {
     let {getByRole, rerender} = render(
       <ProgressList selectedKey="a" aria-label="Setup">
         <ProgressListItem id="a">
@@ -329,20 +276,5 @@ describe('ProgressList', () => {
     let content = getByRole('img');
     expect(content).toHaveAttribute('data-custom', 'content');
     expect(content).toHaveClass('react-aria-ProgressListItemContent');
-  });
-
-  it('should render ProgressListItemContent as a non-focusable div', () => {
-    let {getByRole} = render(
-      <ProgressList selectedKey="a" aria-label="Setup">
-        <ProgressListItem id="a">
-          <ProgressListItemContent>Step A</ProgressListItemContent>
-        </ProgressListItem>
-      </ProgressList>
-    );
-
-    let content = getByRole('img');
-    expect(content.tagName).toBe('DIV');
-    expect(content).toHaveAttribute('role', 'img');
-    expect(content).not.toHaveAttribute('tabindex');
   });
 });

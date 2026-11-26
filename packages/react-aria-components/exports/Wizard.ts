@@ -14,7 +14,15 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel} from '../src/Wizard';
+export {
+  Wizard,
+  WizardStepList,
+  WizardStep,
+  WizardPanels,
+  WizardPanel,
+  WizardContext,
+  WizardStateContext
+} from '../src/Wizard';
 export type {
   WizardProps,
   WizardStepListProps,

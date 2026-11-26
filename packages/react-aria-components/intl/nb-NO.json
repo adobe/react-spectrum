@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Fargekart",
   "dropzoneLabel": "Droppsone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Velg et element",
   "tableResizer": "Størrelsesendrer"
 }
