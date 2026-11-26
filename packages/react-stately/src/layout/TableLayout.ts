@@ -232,6 +232,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     let layoutInfo = new LayoutInfo('header', collection.head?.key ?? 'header', rect);
     layoutInfo.isSticky = true;
     layoutInfo.zIndex = 1;
+    layoutInfo.allowOverflow = true;
 
     let y = this.padding;
     let width = 0;
@@ -259,6 +260,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
   protected buildHeaderRow(headerRow: GridNode<T>, x: number, y: number): LayoutNode {
     let rect = new Rect(x, y, 0, 0);
     let row = new LayoutInfo('headerrow', headerRow.key, rect);
+    row.allowOverflow = true;
 
     let height = 0;
     let columns: LayoutNode[] = [];
@@ -358,6 +360,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     layoutInfo.isSticky = this.isStickyColumn(node);
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
+    layoutInfo.allowOverflow = true;
     layoutInfo.estimatedSize = isEstimated;
 
     return {
@@ -461,6 +464,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     let collection = this.virtualizer!.collection as TableCollection<T>;
     let rect = new Rect(x, y, 0, 0);
     let layoutInfo = new LayoutInfo('row', node.key, rect);
+    layoutInfo.allowOverflow = true;
 
     let children: LayoutNode[] = [];
     let height = 0;
@@ -511,6 +515,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     layoutInfo.isSticky = this.isStickyColumn(node);
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
+    layoutInfo.allowOverflow = true;
     layoutInfo.estimatedSize = isEstimated;
 
     return {
