@@ -1,10 +1,13 @@
-<!-- If you are an AI assistant opening this PR, use this template as the PR body, complete the checklist below honestly, and disclose AI use. See CONTRIBUTING.md (AI-assisted contributions) and AGENTS.md. -->
+<!-- If you are an AI assistant opening this PR, use this template as the PR body, complete the checklist below honestly, and disclose AI use. Keep it concise and factual, with no filler. Open it only after the person you're working with has reviewed it. See CONTRIBUTING.md (AI-assisted contributions) and AGENTS.md. -->
 
 Closes <!-- Github issue # here -->
 
 ## Summary
 
 <!-- Describe the problem, intended behavior, and why you chose this approach.
+For bugs, start with a simple, real-life example of how the issue occurs.
+For performance fixes, include confirmed benchmark harness results
+(see Performance changes in CONTRIBUTING.md).
 If there is no linked issue, provide the same information expected in an issue:
 for bugs, include expected vs. actual behavior, your use case, and reproduction steps ;
 for features, explain the current limitation, use case, and proposed behavior.
@@ -12,10 +15,13 @@ If there is a linked issue, address relevant decisions or concerns in its discus
 
 ## 📝 Test Instructions
 
-<!-- Include test commands and actual results, plus relevant manual verification steps.
+<!-- Steps a reviewer can follow to verify this change by hand, such as which story
+or docs page to open, what to do, and what should happen.
+Put test commands and actual results inside a details/summary.
 For bug fixes, identify the regression test and report whether it fails before
 and passes after the fix. If this was not verified, say so.
-Explain any inapplicable coverage and note what remains untested. -->
+Explain any inapplicable coverage and note what remains untested.
+ -->
 
 ## Release impact
 
@@ -29,7 +35,7 @@ Explain any inapplicable coverage and note what remains untested. -->
 ## ✅ PR Checklist
 
 - [ ] I followed the [contributing guide](https://github.com/adobe/react-spectrum/blob/main/CONTRIBUTING.md).
-- [ ] I tested this change locally and included the results in Test Instructions, or explained why testing does not apply.
+- [ ] I tested this change locally and filled out Test Instructions, or explained why they don't apply.
 - [ ] I understand and can explain every change in this PR. If I used AI assistance, I followed the [AI contribution guidance](https://github.com/adobe/react-spectrum/blob/main/CONTRIBUTING.md#ai-assisted-contributions).
 
 ## 🧢 Your Project

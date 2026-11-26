@@ -86,6 +86,16 @@ The confirmation `summary.md` places each repeat beside the original:
 
 Judge the size of the change from the confirmation runs: selecting an initial run because it showed an effect can overstate that effect.
 
+### 4. Share the result
+
+A PR that claims a performance improvement must show it with results from this suite. Include:
+
+- The commands you ran, with any `--scenario`, `--scale`, or `--cpu` options.
+- The result table from `report.md`, plus the lines at the top of the report that record the browser, CPU, settings, and builds.
+- The table from the confirmation `summary.md`. Describe the size of the change using the confirmation runs.
+
+Report results as measured, including any regressions. If a scenario your change targets is inconclusive, within the practical threshold, or not confirmed, say so rather than claiming an improvement. `smoke` compares a build with itself and `run` measures a single build, so neither can show an improvement.
+
 ## Choose a workload
 
 A filter accepts an exact scenario ID or a whole fixture, separated by commas. For example, `--scenario table.scroll,collection` runs one table action and all collection-mutation actions.

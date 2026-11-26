@@ -43,6 +43,19 @@ Run only one of the Parcel 3 Storybooks at a time: both public Storybook servers
 - **Match the surrounding code** — follow the naming, structure, and patterns of neighboring files.
 - **Before committing** — run `yarn format <changed-file-paths>` to format the files you changed, and include the formatting fixes in your commit. Then run `yarn format:check` to verify formatting. CI runs this check as part of `yarn lint`.
 - **Commit format** — use conventional-commit prefixes (`fix:`, `feat:`, `chore:`, `docs:`) as seen in the git history.
+- **Performance fixes** — prove the improvement with the [benchmark harness](perf/README.md) and include the confirmed results in the PR. See [Performance changes](CONTRIBUTING.md#performance-changes).
+
+## Keep a human in the loop
+
+The person you're working with must be part of the entire process, not just reviewing the end result. Agree on the problem and approach with them before implementing, and have them review your changes and anything you write before it's pushed or posted. Don't open issues or PRs, push commits, or reply to reviewers on your own. See [AI-assisted contributions](CONTRIBUTING.md#ai-assisted-contributions).
+
+## Writing on GitHub
+
+Keep everything you write on GitHub (issues, PR descriptions, comments, and review replies) concise and realistic:
+
+- **Lead with the point.** Skip filler: greetings, thanks, "happy to help", restating the diff or the reviewer, narrating your process, bumps asking for review, and closing summaries.
+- **Only claim what you verified.** Don't inflate impact or certainty, and say what you didn't test.
+- **Describe bugs with a simple, real-life example** of what someone does in an app and what goes wrong, not just the faulty code path or a contrived input.
 
 ## Filing GitHub issues
 
@@ -51,7 +64,7 @@ This repository uses GitHub issue **forms** defined in [`.github/ISSUE_TEMPLATE/
 - **Search first.** Check existing open and closed issues to avoid duplicates.
 - **Prefer the web flow** so the correct form is applied: <https://github.com/adobe/react-spectrum/issues/new/choose>
 - **If filing via the `gh` CLI, replicate the template's fields in the body.** `gh issue create --template` does *not* render these YAML issue forms, so passing `--template` alone will not produce a valid issue. Instead, fill in the chosen template's fields manually. For a bug report (`Bug_Report.yml`), include:
-  - a general summary
+  - a general summary, including a simple, real-life example of how the issue occurs
   - Expected Behavior
   - Current Behavior
   - Possible Solution (optional)
@@ -71,4 +84,4 @@ Read the relevant file before starting that kind of work (other agents: read the
 - Styling S2 components → [`docs/contributing/s2-styling.md`](docs/contributing/s2-styling.md)
 - Adding user-facing strings → [`docs/contributing/i18n-strings.md`](docs/contributing/i18n-strings.md)
 - Touching generated code (icons) → [`docs/contributing/codegen.md`](docs/contributing/codegen.md)
-- Comments and opening a PR → [`docs/contributing/pull-requests.md`](docs/contributing/pull-requests.md)
+- Code comments and opening a PR → [`docs/contributing/pull-requests.md`](docs/contributing/pull-requests.md)
