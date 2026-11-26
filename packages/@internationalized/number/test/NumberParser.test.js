@@ -18,6 +18,16 @@ import {NumberParser} from '../src/NumberParser';
 // for some reason hu-HU isn't supported in jsdom/node
 let locales = Object.keys(messages).filter(locale => locale !== 'hu-HU');
 
+function expectRoundTrip(locale, options, value, expected = value) {
+  let formatter = new NumberFormatter(locale, options);
+  let parser = new NumberParser(locale, options);
+  let formatted = formatter.format(value);
+  let parsed = parser.parse(formatted);
+  expect(parsed).toBe(expected);
+  expect(formatter.format(parsed)).toBe(formatted);
+  expect(parser.isValidPartialNumber(formatted)).toBe(true);
+}
+
 describe('NumberParser', function () {
   describe('parse', function () {
     it('should support basic numbers', function () {
@@ -501,6 +511,260 @@ describe('NumberParser', function () {
       expect(
         new NumberParser('ar-AE', {style: 'unit', unit: 'day', unitDisplay: 'long'}).parse('يوم')
       ).toBe(1);
+    });
+
+    describe('round-trip regressions', () => {
+      it.each(['zh-CN', 'zh-TW', 'ja-JP', 'ko-KR'])(
+        'should round trip compound units surrounding the number in %s',
+        locale => {
+          for (let unit of ['meter-per-second', 'kilometer-per-hour']) {
+            for (let value of [5, -5, 1.5]) {
+              expectRoundTrip(locale, {style: 'unit', unit, unitDisplay: 'long'}, value);
+            }
+          }
+        }
+      );
+
+      it.each([
+        ['ar-AE', 'day', 1],
+        ['ar-AE', 'day', 2],
+        ['ar-EG', 'hour', 1],
+        ['ar-EG', 'hour', 2],
+        ['he-IL', 'hour', 2]
+      ])('should round trip unit-only quantities in %s: %s %s', (locale, unit, value) => {
+        expectRoundTrip(locale, {style: 'unit', unit, unitDisplay: 'long'}, value);
+      });
+
+      it.each([
+        ['ru-RU', 'hour', [1, 2, 5, 21, 1.5, -1.5]],
+        ['pl-PL', 'meter', [1, 2, 5, 21, 1.5, -1.5]],
+        ['en-US', 'hour', [1, 2, 1.5, -1.5]]
+      ])('should round trip integer and fractional unit forms in %s', (locale, unit, values) => {
+        for (let value of values) {
+          expectRoundTrip(locale, {style: 'unit', unit, unitDisplay: 'long'}, value);
+        }
+      });
+
+      it.each([
+        ['en-US', {minimumFractionDigits: 1}, 1, 1],
+        ['ru-RU', {minimumFractionDigits: 1}, 1, 1],
+        ['en-US', {maximumFractionDigits: 1}, 1.04, 1],
+        ['ru-RU', {maximumFractionDigits: 1}, 1.04, 1]
+      ])(
+        'should round trip unit forms after applying precision in %s with %j',
+        (locale, precision, value, expected) => {
+          let options = {style: 'unit', unit: 'hour', unitDisplay: 'long', ...precision};
+          expectRoundTrip(locale, options, value, expected);
+        }
+      );
+
+      it.each(['en-US', 'fr-FR', 'zh-CN'])('should round trip accounting signs in %s', locale => {
+        for (let currencyDisplay of ['symbol', 'code']) {
+          let options = {
+            style: 'currency',
+            currency: 'USD',
+            currencySign: 'accounting',
+            currencyDisplay
+          };
+          for (let value of [-5, -0, 0, 5]) {
+            expectRoundTrip(locale, options, value);
+          }
+        }
+      });
+
+      it.each([0.5, -0.5, 0, -0, 0.005])(
+        'should round trip a leading percent sign in Turkish for %s',
+        value => {
+          expectRoundTrip('tr-TR', {style: 'percent', maximumFractionDigits: 1}, value);
+        }
+      );
+
+      it.each(['ar-EG', 'ar-EG-u-nu-latn'])(
+        'should round trip signed units with bidi literals in %s',
+        locale => {
+          for (let value of [-5, -1.5]) {
+            expectRoundTrip(locale, {style: 'unit', unit: 'meter', unitDisplay: 'long'}, value);
+          }
+        }
+      );
+
+      it.each(
+        [
+          ['en-US', 'short'],
+          ['en-US', 'long'],
+          ['zh-CN', 'short'],
+          ['zh-CN', 'long']
+        ].flatMap(([locale, compactDisplay]) =>
+          [10000, -10000, 15000].map(value => [locale, compactDisplay, value])
+        )
+      )(
+        'should round trip compact unit magnitudes in %s with %s display for %s',
+        (locale, compactDisplay, value) => {
+          let options = {
+            style: 'unit',
+            unit: 'meter',
+            unitDisplay: 'long',
+            notation: 'compact',
+            compactDisplay
+          };
+          expectRoundTrip(locale, options, value);
+        }
+      );
+
+      it.each(
+        [
+          ['en-US', 'scientific'],
+          ['en-US', 'engineering'],
+          ['de-DE', 'scientific'],
+          ['de-DE', 'engineering'],
+          ['ar-EG', 'scientific'],
+          ['ar-EG', 'engineering']
+        ].flatMap(([locale, notation]) =>
+          [123000, -123000, 0.000123, -0.000123].map(value => [locale, notation, value])
+        )
+      )('should round trip %s units with %s notation for %s', (locale, notation, value) => {
+        let options = {
+          style: 'unit',
+          unit: 'meter-per-second',
+          unitDisplay: 'long',
+          notation,
+          maximumSignificantDigits: 3
+        };
+        expectRoundTrip(locale, options, value);
+      });
+    });
+
+    describe('notation', () => {
+      it.each([
+        ['en-US', {notation: 'compact'}, 1000000000],
+        ['en-US', {notation: 'compact', maximumSignificantDigits: 3}, 0.000123],
+        ['zh-CN', {notation: 'compact'}, 1000000000000],
+        ['hi-IN', {notation: 'compact'}, 100000],
+        ['sw-TZ', {notation: 'compact', compactDisplay: 'long'}, 1000],
+        ['pl-PL', {notation: 'compact', compactDisplay: 'long'}, 2000],
+        ['pl-PL', {notation: 'compact', compactDisplay: 'long'}, 5000],
+        [
+          'fr-FR',
+          {
+            notation: 'compact',
+            compactDisplay: 'long',
+            style: 'unit',
+            unit: 'meter',
+            unitDisplay: 'narrow'
+          },
+          10000
+        ],
+        [
+          'en-US',
+          {notation: 'compact', style: 'currency', currency: 'SEK', currencyDisplay: 'code'},
+          10000
+        ],
+        [
+          'en-US',
+          {
+            notation: 'compact',
+            style: 'currency',
+            currency: 'PGK',
+            currencyDisplay: 'narrowSymbol'
+          },
+          10000
+        ],
+        // "K" is both the kina currency symbol and the compact symbol for thousand: "K 10K".
+        ['en-PG', {notation: 'compact', style: 'currency', currency: 'PGK'}, 10000],
+        [
+          'en-US',
+          {notation: 'compact', style: 'currency', currency: 'USD', currencySign: 'accounting'},
+          -10000
+        ],
+        ['en-US', {notation: 'compact', style: 'percent'}, 100],
+        ['en-US', {notation: 'scientific', style: 'percent'}, 0.0001],
+        ['en-US', {notation: 'engineering', style: 'percent'}, 0.00012],
+        ['en-US', {notation: 'scientific', style: 'percent', maximumSignificantDigits: 3}, 0.00123],
+        [
+          'en-US',
+          {notation: 'engineering', style: 'percent', maximumSignificantDigits: 3},
+          -0.00123
+        ],
+        ['fa-IR', {notation: 'scientific', maximumSignificantDigits: 3}, -0.000123]
+      ])('should round trip %s with %j for %s', (locale, options, value) => {
+        expectRoundTrip(locale, options, value);
+      });
+
+      it.each(['1E', '1E-', '1E+'])('should allow an incomplete exponent in %s', value => {
+        let parser = new NumberParser('en-US', {notation: 'scientific'});
+        expect(parser.isValidPartialNumber(value)).toBe(true);
+        expect(parser.parse(value)).toBeNaN();
+      });
+
+      it.each([
+        ['', 0],
+        ['.', 0],
+        ['+', 0],
+        ['+.', 0],
+        ['-', -0],
+        ['-.', -0]
+      ])('should preserve incomplete percent input %s as zero', (value, expected) => {
+        expect(new NumberParser('en-US', {style: 'percent'}).parse(value)).toBe(expected);
+      });
+
+      it.each([
+        ['compact', 1, 123.4567, 123],
+        ['scientific', 3, 1.234567, 1.235],
+        ['engineering', 3, 0.01234567, 0.01235]
+      ])(
+        'should round percentages using %s notation',
+        (notation, maximumFractionDigits, value, expected) => {
+          let options = {notation, maximumFractionDigits, style: 'percent'};
+          expectRoundTrip('en-US', options, value, expected);
+        }
+      );
+
+      it.each(['E3', '1E2E3', '1E2.3', '1E1,0', '1E--2'])(
+        'should reject an invalid exponent in %s',
+        value => {
+          let parser = new NumberParser('en-US', {notation: 'scientific'});
+          expect(parser.isValidPartialNumber(value)).toBe(false);
+          expect(parser.parse(value)).toBeNaN();
+        }
+      );
+
+      it.each(['K', 'K10', 'K10K', '10KK', '10KM'])(
+        'should reject an invalid compact magnitude in %s',
+        value => {
+          let parser = new NumberParser('en-US', {notation: 'compact'});
+          expect(parser.isValidPartialNumber(value)).toBe(false);
+          expect(parser.parse(value)).toBeNaN();
+        }
+      );
+
+      // In af-ZA, "m" is both the narrow unit for meter and the compact symbol for million (miljoen),
+      // and both appear after the number. The formatter writes 5 meters as "5 m", 1500 meters as
+      // "1,5 k m", and 5 million meters as "5 m m".
+      it.skip.each([
+        ['5 m', 5],
+        ['1,5 k m', 1500],
+        ['5 m m', 5000000]
+      ])(
+        'should not read the meter unit as the compact million symbol in af-ZA: %s',
+        (value, expected) => {
+          let parser = new NumberParser('af-ZA', {
+            notation: 'compact',
+            style: 'unit',
+            unit: 'meter',
+            unitDisplay: 'narrow'
+          });
+          expect(parser.parse(value)).toBe(expected);
+        }
+      );
+
+      it('should validate exponent signs independently of the value bounds', () => {
+        let parser = new NumberParser('en-US', {notation: 'scientific'});
+        expect(parser.isValidPartialNumber('1E-2', 0)).toBe(true);
+        expect(parser.parse('1E-2')).toBe(0.01);
+        expect(parser.isValidPartialNumber('-1E2', 0)).toBe(false);
+        expect(parser.isValidPartialNumber('1E+2')).toBe(true);
+        expect(parser.parse('1E+2')).toBe(100);
+      });
     });
 
     describe('round trips', function () {
