@@ -528,7 +528,6 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
       tableRef,
       scrollRef,
       tableWidth: width,
-      // oxlint-disable-next-line react/react-compiler
       useTableColumnResizeState,
       onResizeStart: props.onResizeStart,
       onResize: props.onResize,
@@ -629,7 +628,7 @@ export const Table = forwardRef(function Table(
   props: TableProps,
   ref: ForwardedRef<HTMLTableElement | HTMLDivElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   [props, ref] = useContextProps(props, ref, TableContext);
 
   // Separate selection state so we have access to it from collection components via useTableOptions.
@@ -696,11 +695,11 @@ const EXPANSION_KEYS = {
 };
 
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
-  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, filter, ...DOMCollectionProps} = props;
   let tableContainerContext = useContext(ResizableTableContainerContext);
+  // oxlint-disable-next-line react/immutability
   ref = useObjectRef(
     useMemo(
       () => mergeRefs(ref, tableContainerContext?.tableRef),
@@ -712,7 +711,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
     props.onExpandedChange
   );
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   collection = useMemo(() => collection.withExpandedKeys(expandedKeys), [collection, expandedKeys]);
 
   let tableState = useTableState({
@@ -724,7 +723,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     onExpandedChange: setExpandedKeys
   });
 
-  // oxlint-disable-next-line react/react-compiler
   let filteredState = UNSTABLE_useFilteredTableState(tableState, filter);
   let {
     isVirtualized,
@@ -773,13 +771,11 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   let [treeDropTargetDelegate] = useState(() => new TreeDropTargetDelegate());
 
   if (hasDragHooks && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection: filteredState.collection,
       selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
-    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
 
     let DragPreview = dragAndDropHooks.DragPreview!;
@@ -789,7 +785,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   }
 
   if (hasDropHooks && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: filteredState.collection,
       selectionManager
@@ -807,7 +802,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       ctxDropTargetDelegate ||
       new dragAndDropHooks.ListDropTargetDelegate(collection.rows, ref);
     treeDropTargetDelegate.setup(dropTargetDelegate, tableState, direction);
-    // oxlint-disable-next-line react/react-compiler
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
@@ -872,7 +866,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   let style = renderProps.style;
   let layoutState: TableColumnResizeState<unknown> | null = null;
   if (tableContainerContext) {
-    // oxlint-disable-next-line react/react-compiler
     layoutState = tableContainerContext.useTableColumnResizeState(
       {
         tableWidth: tableContainerContext.tableWidth
@@ -2213,7 +2206,6 @@ function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
-  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
@@ -2311,7 +2303,6 @@ function RootDropIndicator() {
   let state = useContext(TableStateContext)!;
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let ref = useRef<HTMLDivElement>(null);
-  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
     {
       target: {type: 'root'}

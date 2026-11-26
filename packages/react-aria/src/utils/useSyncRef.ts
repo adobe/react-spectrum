@@ -20,10 +20,9 @@ interface ContextValue<T> {
 
 // Syncs ref from context with ref passed to hook
 export function useSyncRef<T>(context?: ContextValue<T> | null, ref?: RefObject<T | null>): void {
-  // oxlint-disable-next-line react/react-compiler
   useLayoutEffect(() => {
     if (context && context.ref && ref) {
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/immutability
       context.ref.current = ref.current;
       return () => {
         if (context.ref) {

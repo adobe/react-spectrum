@@ -724,14 +724,14 @@ const ExampleRender = (args: Omit<CardViewProps<any>, 'children' | 'layout'>) =>
           {() => (
             <PhotoCard
               item={{
-                // oxlint-disable-next-line react/react-compiler
+                // oxlint-disable-next-line react/purity
                 id: Math.random(),
                 user: {name: 'Devon Govett', profile_image: {small: ''}},
                 urls: {regular: ''},
                 description: 'This is a fake description. Kinda long so it wraps to a new line.',
                 alt_description: '',
                 width: 400,
-                // oxlint-disable-next-line react/react-compiler
+                // oxlint-disable-next-line react/purity
                 height: 200 + Math.max(0, Math.round(Math.random() * 400))
               }}
               layout={'grid'}

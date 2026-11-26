@@ -128,7 +128,7 @@ export const ButtonGroup = forwardRef(function ButtonGroup(
 
   let [hasOverflow, setHasOverflow] = useValueEffect(false);
 
-  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
+  // oxlint-disable react-hooks/exhaustive-deps
   let checkForOverflow = useCallback(() => {
     let computeHasOverflow = () => {
       if (domRef.current && orientation === 'horizontal') {
@@ -156,7 +156,7 @@ export const ButtonGroup = forwardRef(function ButtonGroup(
       });
     }
   }, [domRef, orientation, setHasOverflow, children]);
-  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
+  // oxlint-enable react-hooks/exhaustive-deps
 
   // There are two main reasons we need to remeasure:
   // 1. Internal changes: Check for initial overflow or when orientation/scale/children change (from checkForOverflow dep array)
@@ -166,13 +166,13 @@ export const ButtonGroup = forwardRef(function ButtonGroup(
 
   // 2. External changes: buttongroup won't change size due to any parents changing size, so listen to its container for size changes to figure out if we should remeasure
   let parent = useRef<HTMLElement | null>(null);
-  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
+  // oxlint-disable react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     if (domRef.current) {
       parent.current = getParentElement(domRef.current) as HTMLElement;
     }
   }, [domRef.current]);
-  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
+  // oxlint-enable react-hooks/exhaustive-deps
   useResizeObserver({ref: parent, onResize: checkForOverflow});
 
   if ((props as ButtonGroupContextValue).isHidden) {

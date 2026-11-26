@@ -169,6 +169,7 @@ let articleStyles = style({
 });
 
 function Footer() {
+  // oxlint-disable-next-line react/purity
   const year = new Date().getFullYear();
   return (
     <footer

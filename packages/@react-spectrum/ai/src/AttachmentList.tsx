@@ -317,7 +317,7 @@ const imageThumbnailStyles = style({
 
 const CloseButton = function CloseButton(props) {
   let ref = useRef(null);
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <Button
       {...props}
@@ -330,7 +330,7 @@ const CloseButton = function CloseButton(props) {
       <Cross size="M" />
     </Button>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 };
 
 export interface AttachmentListProps<T>
@@ -468,7 +468,7 @@ function CarouselNavButton({side, ...otherProps}: ButtonProps & {side: 'start' |
   let {direction} = useLocale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let Icon = side === 'start' ? ChevronLeft : ChevronRight;
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <Button
       {...otherProps}
@@ -484,7 +484,7 @@ function CarouselNavButton({side, ...otherProps}: ButtonProps & {side: 'start' |
       <Icon />
     </Button>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 }
 
 /**

@@ -68,7 +68,6 @@ export const ColorField = forwardRef(function ColorField(
   props: ColorFieldProps,
   ref: Ref<TextFieldRef>
 ) {
-  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ColorFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

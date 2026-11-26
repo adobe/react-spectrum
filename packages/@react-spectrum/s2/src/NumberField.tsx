@@ -177,8 +177,9 @@ export const NumberField = forwardRef(function NumberField(
   props: NumberFieldProps,
   ref: Ref<TextFieldRef>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
+  // oxlint-disable-next-line react/immutability
   props = useFormProps(props);
   let {
     label,

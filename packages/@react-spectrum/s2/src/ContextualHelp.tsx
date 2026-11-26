@@ -185,7 +185,7 @@ export const ContextualHelp = forwardRef(function ContextualHelp(
   // then ContextualHelp variant
   let labelProps = useLabels(props);
   let label = stringFormatter.format(`contextualhelp.${variant}`);
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   labelProps['aria-label'] = labelProps['aria-label']
     ? labelProps['aria-label'] + ' ' + label
     : label;

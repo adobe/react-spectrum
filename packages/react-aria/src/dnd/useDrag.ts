@@ -108,11 +108,12 @@ const MESSAGES = {
 export function useDrag(options: DragOptions): DragResult {
   let {hasDragButton, isDisabled} = options;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/refs
   let state = useRef({
     options,
     x: 0,
     y: 0
+    // oxlint-disable-next-line react/refs
   }).current;
   state.options = options;
   let isDraggingRef = useRef<Element | null>(null);

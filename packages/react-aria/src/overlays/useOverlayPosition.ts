@@ -203,14 +203,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let deps = [
     shouldUpdatePosition,
     placement,
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable react/refs
     overlayRef.current,
-    // oxlint-disable-next-line react/react-compiler
     targetRef.current,
-    // oxlint-disable-next-line react/react-compiler
     arrowRef?.current,
-    // oxlint-disable-next-line react/react-compiler
     scrollRef.current,
+    // oxlint-enable react/refs
     containerPadding,
     shouldFlip,
     boundaryElement,
@@ -320,13 +318,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps, react/use-memo, react/refs
   }, deps);
 
   // Update position when anything changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react-hooks/exhaustive-deps, react/refs
   useLayoutEffect(updatePosition, deps);
 
   // Update position on window resize

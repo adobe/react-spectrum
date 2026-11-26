@@ -104,7 +104,6 @@ export const DropZone = forwardRef(function DropZone(
   ref: ForwardedRef<HTMLDivElement>
 ) {
   let {isDisabled = false} = props;
-  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let dropzoneRef = useObjectRef(ref);
   let buttonRef = useRef<HTMLButtonElement>(null);

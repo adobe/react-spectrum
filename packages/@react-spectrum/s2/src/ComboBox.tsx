@@ -455,7 +455,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalComboboxContext);
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <ListBoxItem
       {...props}
@@ -516,7 +516,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
       }}
     </ListBoxItem>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 }
 
 export interface ComboBoxSectionProps<T> extends Omit<
@@ -622,7 +622,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
       }
     } else if (!isLoadingOrFiltering) {
       // If loading is no longer happening, clear any timers and hide the loading circle
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/set-state-in-effect
       setShowLoading(false);
       if (timeout.current) {
         clearTimeout(timeout.current);

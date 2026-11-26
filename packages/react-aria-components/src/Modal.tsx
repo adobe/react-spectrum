@@ -342,7 +342,6 @@ function ModalOverlayInner({
   // Since an auto-focused input may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
   useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
 
-  // oxlint-disable react/react-compiler
   return (
     <Overlay
       isExiting={props.isExiting}
@@ -376,7 +375,6 @@ function ModalOverlayInner({
       </dom.div>
     </Overlay>
   );
-  // oxlint-enable react/react-compiler
 }
 
 function mergeDialogContext(

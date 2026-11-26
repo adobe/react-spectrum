@@ -50,7 +50,6 @@ export interface SliderAria {
  *   accepts click and drag motions, so that the closest thumb will follow clicks and drags on
  *   the track.
  */
-// oxlint-disable-next-line react/react-compiler
 export function useSlider<T extends number | number[]>(
   props: AriaSliderProps<T>,
   state: SliderState,
@@ -199,7 +198,9 @@ export function useSlider<T extends number | number[]>(
     // causes this to override the `aria-labelledby` on the thumb. This causes the first
     // thumb to only be announced as the slider label rather than its individual name as well.
     // See https://bugs.webkit.org/show_bug.cgi?id=172464.
+    // oxlint-disable-next-line react/immutability
     delete labelProps.htmlFor;
+    // oxlint-disable-next-line react/immutability
     labelProps.onClick = () => {
       // Safari does not focus <input type="range"> elements when clicking on an associated <label>,
       // so do it manually. In addition, make sure we show the focus ring.
@@ -218,6 +219,7 @@ export function useSlider<T extends number | number[]>(
       ...fieldProps
     },
     trackProps: mergeProps(
+      // oxlint-disable-next-line react/refs
       {
         onMouseDown(e: React.MouseEvent) {
           if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {

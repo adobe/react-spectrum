@@ -139,11 +139,11 @@ export function useToggleButtonGroupItem(
     ref
   );
   if (state.selectionMode === 'single') {
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     buttonProps.role = 'radio';
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     buttonProps['aria-checked'] = toggleState.isSelected;
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     delete buttonProps['aria-pressed'];
   }
 

@@ -339,7 +339,7 @@ function ColorItem({
       ? textSwatches[item.name]
       : backgroundSwatches[item.name] || scaleSwatches[item.name] || '';
 
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <ListBoxItem
       id={item.id}
@@ -434,5 +434,5 @@ function ColorItem({
       )}
     </ListBoxItem>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 }

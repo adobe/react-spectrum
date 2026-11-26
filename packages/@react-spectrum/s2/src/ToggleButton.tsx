@@ -73,7 +73,6 @@ export const ToggleButton = forwardRef(function ToggleButton(
   props: ToggleButtonProps,
   ref: FocusableRef<HTMLButtonElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
@@ -92,7 +91,6 @@ export const ToggleButton = forwardRef(function ToggleButton(
   let {holdAffordance} = props as ToggleButtonContextProps;
   let {direction} = useLocale();
 
-  // oxlint-disable react/react-compiler
   return (
     <RACToggleButton
       {...props}
@@ -165,5 +163,4 @@ export const ToggleButton = forwardRef(function ToggleButton(
       )}
     </RACToggleButton>
   );
-  // oxlint-enable react/react-compiler
 });

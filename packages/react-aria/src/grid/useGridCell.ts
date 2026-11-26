@@ -370,7 +370,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
     });
   };
 
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/refs
   let gridCellProps: DOMAttributes = mergeProps(itemProps, {
     role: 'gridcell',
     onKeyDownCapture:

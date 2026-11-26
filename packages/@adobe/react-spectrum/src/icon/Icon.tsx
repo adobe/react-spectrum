@@ -71,7 +71,7 @@ export function Icon(props: IconProps): JSX.Element {
 
   let provider: undefined | ProviderContext;
   try {
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react-hooks/rules-of-hooks
     provider = useProvider();
   } catch {
     // ignore

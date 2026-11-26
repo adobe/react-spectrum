@@ -57,7 +57,6 @@ function TreeViewExample() {
         return (
           <TreeViewItem textValue={item.title}>
             <TreeViewItemContent>{item.title}</TreeViewItemContent>
-            {/* oxlint-disable-next-line react/react-compiler */}
             <Collection items={item.children}>{renderItem}</Collection>
           </TreeViewItem>
         );

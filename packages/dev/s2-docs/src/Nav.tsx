@@ -272,7 +272,7 @@ export function SideNavLink(props) {
     link.scrollIntoView({block: 'start'});
   }, [props.isSelected]);
 
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <BaseLink
       {...linkProps}
@@ -326,7 +326,7 @@ export function SideNavLink(props) {
       )}
     </BaseLink>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 }
 
 function useCurrentSection() {

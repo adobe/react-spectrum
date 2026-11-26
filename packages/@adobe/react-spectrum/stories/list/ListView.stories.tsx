@@ -459,11 +459,10 @@ function EmptyTest() {
 
   useEffect(() => {
     let newItems: typeof items = [];
-    // oxlint-disable-next-line react/react-compiler
     for (i = 0; i < 20; i++) {
       newItems.push({key: i, name: `Item ${i}`});
     }
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/set-state-in-effect
     setItems(newItems);
   }, []);
 

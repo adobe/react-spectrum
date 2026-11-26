@@ -39,7 +39,7 @@ export function useAutoScroll(ref: RefObject<Element | null>): AutoScrollAria {
     }
   }, [ref]);
 
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/refs
   let state = useRef<{
     timer: ReturnType<typeof requestAnimationFrame> | undefined;
     dx: number;
@@ -69,7 +69,7 @@ export function useAutoScroll(ref: RefObject<Element | null>): AutoScrollAria {
     }
 
     if (state.timer) {
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/immutability
       state.timer = requestAnimationFrame(scroll);
     }
   }, [scrollableRef, state]);

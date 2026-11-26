@@ -66,7 +66,7 @@ export function useToolbar(
   });
   const {direction} = useLocale();
   const shouldReverse = direction === 'rtl' && orientation === 'horizontal';
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/refs
   let focusManager = createFocusManager(ref);
 
   const onKeyDown: KeyboardEventHandler = e => {

@@ -69,9 +69,9 @@ export function useTableCell<T>(
   let {gridCellProps, isPressed} = useGridCell(props, state, ref);
   let columnKey = props.node.column?.key;
   if (columnKey != null && state.collection.rowHeaderColumnKeys.has(columnKey)) {
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     gridCellProps.role = 'rowheader';
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     gridCellProps.id = getCellId(state, props.node.parentKey!, columnKey);
   }
 

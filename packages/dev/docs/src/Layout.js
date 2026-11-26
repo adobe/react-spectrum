@@ -635,6 +635,7 @@ function Nav({currentPage, pages}) {
 }
 
 function Footer() {
+  // oxlint-disable-next-line react/purity
   const year = new Date().getFullYear();
   return (
     <footer className={docStyles.pageFooter}>

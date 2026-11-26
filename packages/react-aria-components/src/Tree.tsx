@@ -488,13 +488,11 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (hasDragHooks && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
-    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
 
     let DragPreview = dragAndDropHooks.DragPreview!;
@@ -505,7 +503,6 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
 
   let [treeDropTargetDelegate] = useState(() => new TreeDropTargetDelegate());
   if (hasDropHooks && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager
@@ -526,7 +523,6 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
       layoutDelegate
     });
 
-    // oxlint-disable-next-line react/react-compiler
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
@@ -1176,7 +1172,6 @@ function TreeDropIndicatorWrapper(
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
-  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
@@ -1246,7 +1241,6 @@ const TreeDropIndicatorForwardRef = forwardRef(TreeDropIndicator);
 function RootDropIndicator() {
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let ref = useRef<HTMLDivElement>(null);
-  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
     {
       target: {type: 'root'}
