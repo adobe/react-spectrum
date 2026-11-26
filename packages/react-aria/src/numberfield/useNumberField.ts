@@ -134,13 +134,15 @@ export function useNumberField(
   let commitAndAnnounce = useCallback(() => {
     let oldValue = inputRef.current?.value ?? '';
     // Set input value to normalized valid value
-    flushSync(() => {
-      commit();
-    });
+    commit();
 
-    if (inputRef.current?.value !== oldValue) {
-      announce(inputRef.current?.value ?? '', 'assertive');
-    }
+    // Blur can happen during a React commit (e.g. another element is focused in an effect),
+    // where flushSync can't flush. Compare after React renders so the new value is announced.
+    queueMicrotask(() => {
+      if (inputRef.current?.value !== oldValue) {
+        announce(inputRef.current?.value ?? '', 'assertive');
+      }
+    });
   }, [commit, inputRef]);
 
   let inputId = useId(id);
