@@ -1,6 +1,6 @@
 import {DOMAttributes} from '@react-types/shared';
 import {isFocusVisible, useFocusVisibleListener} from '../interactions/useFocusVisible';
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useFocus} from '../interactions/useFocus';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 
@@ -72,6 +72,13 @@ export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
     [isTextInput, isFocused],
     {enabled: isFocused, isTextInput}
   );
+
+  useEffect(() => {
+    if (isFocused && state.current.isFocusVisible !== isFocusVisible()) {
+      state.current.isFocusVisible = isFocusVisible();
+      updateState();
+    }
+  }, [isFocused, updateState]);
 
   let {focusProps} = useFocus({
     isDisabled: within,
