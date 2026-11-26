@@ -44,7 +44,7 @@ import {
   SideNavProps,
   SideNavSection
 } from '../src/SideNav';
-import {SideNavPanelExpandButton, SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
+import {SideNavPanel, SideNavPanelContext, SideNavPanelExpandButton} from '../src/SideNavPanel';
 import {style} from '../style' with {type: 'macro'};
 import {useLandmark} from 'react-aria/useLandmark';
 

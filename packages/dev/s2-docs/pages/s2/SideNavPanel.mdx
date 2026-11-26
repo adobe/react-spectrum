@@ -210,7 +210,7 @@ function CollapsibleSideNavPanel() {
 
 `SideNavPanel` and [SideNav](SideNav) animate themselves. The panel's width animates first, and its contents animate only once it has settled.
 
-Because the contents wait for the width, the `isCollapsed` you read from `SideNavPanelContext` trails the panel itself while it is expanding.
+Because the contents wait for the width, the `isCollapsed` you read from `SideNavPanelContext` trails the panel itself while it is expanding. Read `isPanelCollapsed` instead when you need the panel's own state, such as in your own expand and collapse trigger.
 
 `AccountFooter` in the example below reads `isCollapsed` from `SideNavPanelContext` and hides its name with `display: none` while the panel is collapsed.
 
@@ -219,6 +219,7 @@ Because the contents wait for the width, the `isCollapsed` you read from `SideNa
   codeColumns={[0]}
   rows={[
     ["isCollapsed", "Whether the panel's contents are collapsed. This trails the panel itself while it is expanding, since its contents are only brought back once it has finished widening."],
+    ['isPanelCollapsed', 'Whether the panel itself is collapsed. This changes as soon as the panel is collapsed or expanded, so use it for the state of your own expand and collapse trigger.'],
     ['setCollapsed', 'Collapses or expands the panel. Useful for building your own expand and collapse trigger.']
   ]} />
 
