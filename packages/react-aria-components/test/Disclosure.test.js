@@ -342,6 +342,66 @@ describe('Disclosure', () => {
     expect(panel2).not.toBeVisible();
   });
 
+  it('should not set data-entering or data-exiting on initial render', () => {
+    const {container} = render(
+      <Disclosure>
+        <Heading level={3}>
+          <Button slot="trigger">Trigger</Button>
+        </Heading>
+        <DisclosurePanel>
+          <p>Content</p>
+        </DisclosurePanel>
+      </Disclosure>
+    );
+    const panel = container.querySelector('.react-aria-DisclosurePanel');
+    expect(panel).not.toHaveAttribute('data-entering');
+    expect(panel).not.toHaveAttribute('data-exiting');
+  });
+
+  it('should not set data-entering on initial render when already expanded', () => {
+    const {container} = render(
+      <Disclosure defaultExpanded>
+        <Heading level={3}>
+          <Button slot="trigger">Trigger</Button>
+        </Heading>
+        <DisclosurePanel>
+          <p>Content</p>
+        </DisclosurePanel>
+      </Disclosure>
+    );
+    const panel = container.querySelector('.react-aria-DisclosurePanel');
+    expect(panel).not.toHaveAttribute('data-entering');
+    expect(panel).not.toHaveAttribute('data-exiting');
+  });
+
+  it('should expose isEntering and isExiting as render props on DisclosurePanel', async () => {
+    const {getByRole, getByTestId} = render(
+      <Disclosure>
+        <Heading level={3}>
+          <Button slot="trigger">Trigger</Button>
+        </Heading>
+        <DisclosurePanel
+          data-testid="panel"
+          className={({isEntering, isExiting}) =>
+            [isEntering && 'entering', isExiting && 'exiting'].filter(Boolean).join(' ')
+          }>
+          <p>Content</p>
+        </DisclosurePanel>
+      </Disclosure>
+    );
+    const panel = getByTestId('panel');
+    const button = getByRole('button');
+
+    expect(panel).not.toHaveClass('entering');
+    expect(panel).not.toHaveClass('exiting');
+
+    await user.click(button);
+    expect(panel).not.toHaveClass('exiting');
+
+    await user.click(button);
+    expect(panel).not.toHaveClass('entering');
+  });
+
   it('should not expand or collapse on repeat keydown events', async () => {
     let onExpandedChange = jest.fn();
     const {getByRole, queryByText} = render(

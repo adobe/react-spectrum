@@ -65,7 +65,10 @@
   color: var(--text-color);
   height: var(--disclosure-panel-height);
   transition: height 250ms;
-  overflow: clip;
+
+  &:is([data-entering], [data-exiting]) {
+    overflow: clip;
+  }
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
