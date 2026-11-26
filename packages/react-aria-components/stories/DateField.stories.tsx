@@ -58,6 +58,10 @@ export default {
     validationBehavior: {
       control: 'select',
       options: ['native', 'aria']
+    },
+    keyboardNavigationBehavior: {
+      control: 'select',
+      options: ['arrow', 'tab']
     }
   },
   args: {
