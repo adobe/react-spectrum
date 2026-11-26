@@ -17,6 +17,7 @@ import {Key} from '@react-types/shared';
 import {TableState} from 'react-stately/useTableState';
 import {useGridSelectionCheckbox} from '../grid/useGridSelectionCheckbox';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
+import {useRef} from 'react';
 
 export interface AriaTableSelectionCheckboxProps {
   /** A unique key for the checkbox. */
@@ -44,12 +45,29 @@ export function useTableSelectionCheckbox<T>(
   state: TableState<T>
 ): TableSelectionCheckboxAria {
   let {key} = props;
+  let isShiftClick = useRef(false);
   const {checkboxProps} = useGridSelectionCheckbox(props, state);
 
   return {
     checkboxProps: {
       ...checkboxProps,
-      'aria-labelledby': `${checkboxProps.id} ${getRowLabelledBy(state, key)}`
+      'aria-labelledby': `${checkboxProps.id} ${getRowLabelledBy(state, key)}`,
+      // onChange does not receive the event, so track whether the triggering
+      // press had the shift key held in order to support range selection.
+      onPressUp: e => {
+        isShiftClick.current = e.shiftKey && e.pointerType !== 'keyboard';
+      },
+      onChange: () => {
+        let shouldExtend =
+          isShiftClick.current && state.selectionManager.selectionMode === 'multiple';
+        isShiftClick.current = false;
+
+        if (shouldExtend) {
+          state.selectionManager.extendSelection(key);
+        } else {
+          state.selectionManager.toggleSelection(key);
+        }
+      }
     }
   };
 }
