@@ -17,6 +17,7 @@ import React, {ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallbac
 import {ScrollView} from './ScrollView';
 import {useLoadMore} from '../utils/useLoadMore';
 import {useObjectRef} from '../utils/useObjectRef';
+import {useVirtualizer} from './useVirtualizer';
 import {VirtualizerItem} from './VirtualizerItem';
 
 type RenderWrapper<T extends object, V> = (
@@ -79,6 +80,7 @@ export const Virtualizer = React.forwardRef(function Virtualizer<
   });
 
   useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, ref);
+  useVirtualizer({}, state, ref);
   let onVisibleRectChange = useCallback(
     (rect: Rect) => {
       state.setVisibleRect(rect);

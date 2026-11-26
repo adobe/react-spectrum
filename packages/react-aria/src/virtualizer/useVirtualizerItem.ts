@@ -11,6 +11,7 @@
  */
 
 import {isElementVisible} from '../utils/isElementVisible';
+import {itemMap} from './useVirtualizer';
 import {Key, RefObject} from '@react-types/shared';
 import {LayoutInfo, Size} from 'react-stately/useVirtualizerState';
 import {useCallback, useEffect} from 'react';
@@ -48,8 +49,8 @@ export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize
   let updateSizeEvent = useEffectEvent(updateSize);
 
   useLayoutEffect(() => {
-    if (layoutInfo?.estimatedSize) {
-      updateSizeEvent();
+    if (layoutInfo && ref.current) {
+      itemMap.set(layoutInfo, ref.current);
     }
   });
 
