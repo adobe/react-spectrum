@@ -32,6 +32,7 @@ import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';
 import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressCircle} from '../progress/ProgressCircle';
 import React, {
+  FocusEvent,
   ForwardedRef,
   HTMLAttributes,
   InputHTMLAttributes,
@@ -150,6 +151,44 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(
     formValue === 'text' ? state.setInputValue : state.setSelectedKey
   );
 
+  // The button and the tray input act as a single field, so only call onFocus/onBlur
+  // when focus enters or leaves the field as a whole, not when it moves between them.
+  let isFocusWithin = useRef(false);
+  let onFocus = (e: FocusEvent<HTMLElement>) => {
+    if (isFocusWithin.current) {
+      return;
+    }
+
+    isFocusWithin.current = true;
+    props.onFocus?.(e as FocusEvent<HTMLInputElement>);
+  };
+
+  let onBlur = (e: FocusEvent<HTMLElement>) => {
+    isFocusWithin.current = false;
+    props.onBlur?.(e as FocusEvent<HTMLInputElement>);
+  };
+
+  let onButtonBlur = (e: FocusEvent<HTMLElement>) => {
+    // Ignore blur when focus moves into the tray.
+    if (!state.isOpen) {
+      onBlur(e);
+    }
+  };
+
+  let onTrayInputBlur = (e: FocusEvent<HTMLInputElement>) => {
+    // Ignore blur when focus is restored to the button as the tray closes.
+    if (e.relatedTarget !== buttonRef.current) {
+      onBlur(e);
+    }
+  };
+
+  // oxlint-disable-next-line react/react-compiler
+  let buttonProps = mergeProps(triggerProps, fieldProps, {
+    autoFocus: props.autoFocus,
+    onFocus,
+    onBlur: onButtonBlur
+  });
+
   return (
     <>
       <Field
@@ -165,7 +204,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
         <ComboBoxButton
-          {...mergeProps(triggerProps, fieldProps, {autoFocus: props.autoFocus})}
+          {...buttonProps}
           ref={buttonRef}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
@@ -177,7 +216,14 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(
       </Field>
       <input {...inputProps} ref={inputRef} />
       <Tray state={state} isFixedHeight {...overlayProps}>
-        <ComboBoxTray {...props} onClose={state.close} overlayProps={overlayProps} state={state} />
+        <ComboBoxTray
+          {...props}
+          onFocus={onFocus}
+          onBlur={onTrayInputBlur}
+          onClose={state.close}
+          overlayProps={overlayProps}
+          state={state}
+        />
       </Tray>
     </>
   );

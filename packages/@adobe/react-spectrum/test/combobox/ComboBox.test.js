@@ -4011,6 +4011,41 @@ describe('ComboBox', function () {
       expect(document.activeElement).toBe(button);
     });
 
+    it('calls onFocus and onBlur when focus enters and leaves the field', async function () {
+      let {getByRole} = render(
+        <>
+          <ExampleComboBox />
+          <input aria-label="after" />
+        </>
+      );
+      let button = getByRole('button');
+
+      await user.tab();
+      expect(document.activeElement).toBe(button);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+
+      await user.keyboard('{Enter}');
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(document.activeElement).toBe(getByRole('searchbox'));
+
+      await user.keyboard('{Escape}');
+      act(() => {
+        jest.runAllTimers();
+      });
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(button);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).not.toHaveBeenCalled();
+
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('textbox', {name: 'after'}));
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+    });
+
     it('height of the tray remains fixed even if the number of items changes', async function () {
       let {getByRole, getByTestId} = renderComboBox();
       let button = getByRole('button');
