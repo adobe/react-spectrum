@@ -175,4 +175,114 @@ describe('ColorSwatchPicker', function () {
     await user.keyboard('{Enter}');
     expect(options[1]).toHaveAttribute('aria-selected', 'true');
   });
+
+  describe('item focus events', () => {
+    it.each(['keyboard', 'mouse'])(
+      'should report item focus transitions using %s',
+      async interactionType => {
+        let onFocus = jest.fn();
+        let onBlur = jest.fn();
+        let onFocusChange = jest.fn();
+        let itemProps = {
+          onFocus: e => onFocus(e.target),
+          onBlur: e => onBlur(e.target),
+          onFocusChange
+        };
+        let {getAllByRole, getByRole} = render(
+          <>
+            <button>Before</button>
+            <ColorSwatchPicker aria-label="Test">
+              {['#f00', '#0f0'].map(color => (
+                <ColorSwatchPickerItem key={color} color={color} {...itemProps}>
+                  <ColorSwatch />
+                </ColorSwatchPickerItem>
+              ))}
+            </ColorSwatchPicker>
+            <button>After</button>
+          </>
+        );
+        let options = getAllByRole('option');
+
+        if (interactionType === 'keyboard') {
+          await user.tab();
+          await user.tab();
+        } else {
+          await user.click(options[0]);
+        }
+        expect(document.activeElement).toBe(options[0]);
+        expect(options[0]).toHaveAttribute('data-focused', 'true');
+        if (interactionType === 'keyboard') {
+          expect(options[0]).toHaveAttribute('data-focus-visible', 'true');
+        } else {
+          expect(options[0]).not.toHaveAttribute('data-focus-visible');
+        }
+        expect(onFocus).toHaveBeenCalledTimes(1);
+        expect(onFocus).toHaveBeenLastCalledWith(options[0]);
+        expect(onBlur).not.toHaveBeenCalled();
+        expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+        if (interactionType === 'keyboard') {
+          await user.keyboard('{ArrowRight}');
+        } else {
+          await user.click(options[1]);
+        }
+        expect(document.activeElement).toBe(options[1]);
+        expect(options[0]).not.toHaveAttribute('data-focused');
+        expect(options[0]).not.toHaveAttribute('data-focus-visible');
+        expect(options[1]).toHaveAttribute('data-focused', 'true');
+        if (interactionType === 'keyboard') {
+          expect(options[1]).toHaveAttribute('data-focus-visible', 'true');
+        } else {
+          expect(options[1]).not.toHaveAttribute('data-focus-visible');
+        }
+        expect(onFocus).toHaveBeenCalledTimes(2);
+        expect(onFocus).toHaveBeenLastCalledWith(options[1]);
+        expect(onBlur).toHaveBeenCalledTimes(1);
+        expect(onBlur).toHaveBeenLastCalledWith(options[0]);
+        expect(onFocusChange.mock.calls).toEqual([[true], [false], [true]]);
+
+        if (interactionType === 'keyboard') {
+          await user.tab();
+        } else {
+          await user.click(getByRole('button', {name: 'After'}));
+        }
+        expect(document.activeElement).toBe(getByRole('button', {name: 'After'}));
+        expect(options[1]).not.toHaveAttribute('data-focused');
+        expect(onBlur).toHaveBeenCalledTimes(2);
+        expect(onBlur).toHaveBeenLastCalledWith(options[1]);
+        expect(onFocusChange.mock.calls).toEqual([[true], [false], [true], [false]]);
+      }
+    );
+
+    it('should not report focus changes when a focused item rerenders', async () => {
+      let onFocus = jest.fn();
+      let onBlur = jest.fn();
+      let onFocusChange = jest.fn();
+      let example = label => (
+        <ColorSwatchPicker aria-label={label}>
+          <ColorSwatchPickerItem
+            color="#f00"
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onFocusChange={onFocusChange}>
+            <ColorSwatch />
+          </ColorSwatchPickerItem>
+        </ColorSwatchPicker>
+      );
+      let {rerender, getByRole} = render(example('Test'));
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('option'));
+      expect(onFocus).toHaveBeenCalledTimes(1);
+      expect(onFocusChange.mock.calls).toEqual([[true]]);
+
+      onFocus.mockClear();
+      onBlur.mockClear();
+      onFocusChange.mockClear();
+      rerender(example('Updated test'));
+      expect(document.activeElement).toBe(getByRole('option'));
+      expect(onFocus).not.toHaveBeenCalled();
+      expect(onBlur).not.toHaveBeenCalled();
+      expect(onFocusChange).not.toHaveBeenCalled();
+    });
+  });
 });
