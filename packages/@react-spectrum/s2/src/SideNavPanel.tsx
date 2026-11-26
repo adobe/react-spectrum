@@ -28,6 +28,7 @@ import React, {
   FunctionComponent,
   ReactNode,
   SVGProps,
+  useContext,
   useMemo,
   useState
 } from 'react';
@@ -186,44 +187,33 @@ export const SideNavPanel = /*#__PURE__*/ forwardRef(function SideNavPanel(
           })}>
           {children}
         </div>
-        <div
-          className={style({
-            flexGrow: 0,
-            flexShrink: 0,
-            marginBottom: 4,
-            marginTop: 4,
-            display: 'flex',
-            marginStart: 4
-          })}>
-          <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
-        </div>
       </div>
     </SideNavPanelContext.Provider>
   );
 });
 
-function ExpandButton(props: {isCollapsed: boolean; setCollapsed: (isCollapsed: boolean) => void}) {
+export const SideNavPanelExpandButton = forwardRef((_props, _ref) => {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  let label = stringFormatter.format(`sidepanel.${props.isCollapsed ? 'expand' : 'collapse'}`);
-  let {isCollapsed, setCollapsed, ...otherProps} = props;
+  let {isCollapsed, setCollapsed, ...otherProps} = useContext(SideNavPanelContext);
+  let label = stringFormatter.format(`sidepanel.${isCollapsed ? 'expand' : 'collapse'}`);
   let [isHovered, setHovered] = useState(false);
   let {hoverProps} = useHover({onHoverChange: setHovered});
 
   return (
-    <div {...hoverProps} className={style({display: 'contents', marginBottom: 2})}>
+    <div {...hoverProps} className={style({display: 'contents'})}>
       <ActionButton
         {...otherProps}
         aria-label={label}
         isQuiet
         onPress={() => {
-          setCollapsed(!isCollapsed);
+          setCollapsed?.(!isCollapsed);
           setHovered(false);
         }}>
         <PanelIcon isCollapsed={isCollapsed} isHovered={isHovered} />
       </ActionButton>
     </div>
   );
-}
+});
 
 interface PanelIconProps extends IconProps {
   isCollapsed?: boolean;

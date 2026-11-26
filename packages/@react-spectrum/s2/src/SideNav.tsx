@@ -33,9 +33,11 @@ import {
   useState,
   ViewTransitionClass
 } from 'react';
+import {divider} from './Divider';
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
+import {mergeStyles} from '../style/runtime';
 import {
   NavigationTree,
   NavigationTreeHeader,
@@ -636,33 +638,63 @@ export interface SideNavHeaderProps extends Omit<
   'value' | 'render' | 'style' | 'className'
 > {}
 
-export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
+const sideNavHeader = style<{isCollapsed: boolean}>({
+  position: 'relative',
+  display: {
+    default: 'block',
+    // Centers the divider shown in place of the label.
+    isCollapsed: 'flex'
+  },
+  font: 'ui-sm',
+  // Component/S/Medium for the font, doesn't appear to match our fonts
+  fontWeight: 'medium',
+  color: 'gray-600',
+  paddingStart: {
+    default: 'edge-to-text',
+    isCollapsed: 0
+  },
+  marginBottom: '[8px]',
+  height: 16
+});
+
+const sideNavHeaderDivider = style({
+  // The divider styles stretch it, which would pin it to the top of the header.
+  alignSelf: 'center',
+  width: 'full'
+});
+
+/**
+ * Renders the header for `NavigationTreeHeader`'s `render` prop. `isCollapsed` is read here, not
+ * in SideNavHeader, whose output comes from the collection and only updates after the transition.
+ */
+function SideNavHeaderElement(props): ReactNode {
+  let {isCollapsed = false} = useContext(SideNavPanelContext);
   let {header} = useContext(SideNavViewTransitionContext);
-  let id = useId();
+  let {children, ...domProps} = props.domProps;
   return (
-    <NavigationTreeHeader
-      id={id}
-      // For some reason I'm unable to use a ViewTransition component directly here. Not sure why
-      style={header ? {viewTransitionName: `${id}-header`, viewTransitionClass: header} : undefined}
-      className={style({
-        position: 'relative',
-        // Hidden by the panel rather than by the header itself — see the attribute in SideNavPanel.
-        display: {
-          default: 'block',
-          ':is([data-side-panel-collapsed] *)': 'none'
-        },
-        font: 'ui-sm',
-        // Component/S/Medium for the font, doesn't appear to match our fonts
-        fontWeight: 'medium',
-        color: 'gray-600',
-        paddingStart: 'edge-to-text',
-        marginBottom: '[8px]',
-        height: 16
-      })}>
-      {props.children}
-    </NavigationTreeHeader>
+    <ViewTransition default={header ?? 'none'}>
+      <div {...domProps} className={sideNavHeader({isCollapsed})}>
+        {isCollapsed ? (
+          <div
+            role="separator"
+            className={mergeStyles(
+              divider({size: 'M', orientation: 'horizontal', isStaticColor: false}),
+              sideNavHeaderDivider
+            )}
+          />
+        ) : (
+          children
+        )}
+      </div>
+    </ViewTransition>
   );
-};
+}
+
+export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => (
+  <NavigationTreeHeader render={domProps => <SideNavHeaderElement domProps={domProps} />}>
+    {props.children}
+  </NavigationTreeHeader>
+);
 
 export interface SideNavItemLinkProps {
   /** Rendered contents of the link. */

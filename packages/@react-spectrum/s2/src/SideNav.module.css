@@ -1,6 +1,6 @@
 /* Collapse/expand animations for SideNav.
  *
- * SideNav puts a <ViewTransition> around every row and names every section header, and SideNavPanel
+ * SideNav puts a <ViewTransition> around every row and section header, and SideNavPanel
  * animates its own width with a plain CSS transition so the rest of the page reflows along with it.
  * The two never run at the same time. */
 
@@ -36,11 +36,6 @@
   mix-blend-mode: normal;
 }
 
-/* Expanding the panel puts section headers back into the layout, which pushes every row below them
- * down. A header comes back from display: none, so it has no box in the old state and enters rather
- * than moves. Holding that fade in until the second half keeps the header from appearing on top of
- * the rows that are still sliding past it. */
-:root:active-view-transition-type(side-panel-expand)::view-transition-new(.side-nav-header) {
-  animation-duration: 100ms;
-  animation-delay: 100ms;
+:root:active-view-transition-type(side-panel-expand)::view-transition-old(.side-nav-header) {
+  animation-duration: 120ms;
 }

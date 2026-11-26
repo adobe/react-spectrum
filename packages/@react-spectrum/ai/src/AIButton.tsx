@@ -9,23 +9,28 @@ import {
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {CSSProperties, useRef} from 'react';
 import {defaultBrand, defineProperties} from './tokens.macro' with {type: 'macro'};
+import {getAllowedOverrides} from '../../s2/src/style-utils' with {type: 'macro'};
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {pressScale} from '@react-spectrum/s2/pressScale';
+import type {StyleProps} from '@react-spectrum/s2';
 
-export interface AIButtonProps extends Omit<
-  ButtonProps,
-  | 'className'
-  | 'style'
-  | 'render'
-  | 'children'
-  | 'onHover'
-  | 'onHoverStart'
-  | 'onHoverEnd'
-  | 'onHoverChange'
-  | 'onClick'
-  | 'isPending'
-  | keyof GlobalDOMAttributes
-> {
+export interface AIButtonProps
+  extends
+    Omit<
+      ButtonProps,
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'children'
+      | 'onHover'
+      | 'onHoverStart'
+      | 'onHoverEnd'
+      | 'onHoverChange'
+      | 'onClick'
+      | 'isPending'
+      | keyof GlobalDOMAttributes
+    >,
+    StyleProps {
   size?: 'S' | 'M' | 'L' | 'XL';
   brandColor?: string;
   children?: string;
@@ -41,59 +46,62 @@ const controlSize = {
   }
 } as const;
 
-const button = style({
-  ...focusRing(),
-  font: {
-    default: 'ui',
-    size: {
-      S: 'ui-sm',
-      L: 'ui-lg',
-      XL: 'ui-xl'
-    }
-  },
-  display: 'flex',
-  alignItems: 'center',
-  columnGap: 'text-to-visual',
-  boxSizing: 'border-box',
-  paddingX: {
-    default: 'edge-to-text',
-    ':has(svg:only-child)': 0
-  },
-  minWidth: controlSize,
-  height: controlSize,
-  borderRadius: 'pill',
-  borderWidth: 0,
-  position: 'relative',
-  justifyContent: 'center',
-  textAlign: 'start',
-  userSelect: 'none',
-  width: 'fit',
-  transition: '[--color2, --color3, transform, scale, box-shadow, color]',
-  transitionDuration: 220,
-  transitionTimingFunction: 'out',
-  color: {
-    default: lightDark('[#530035]', 'white/80'),
-    isDisabled: 'transparent-overlay-400'
-  },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
-  forcedColorAdjust: 'none',
-  disableTapHighlight: true,
-  overflow: 'clip',
-  '--inner-shadow-size': {
-    type: 'top',
-    value: {
+const button = style(
+  {
+    ...focusRing(),
+    font: {
+      default: 'ui',
       size: {
-        S: 12,
-        M: 16,
-        L: 20,
-        XL: 24
+        S: 'ui-sm',
+        L: 'ui-lg',
+        XL: 'ui-xl'
+      }
+    },
+    display: 'flex',
+    alignItems: 'center',
+    columnGap: 'text-to-visual',
+    boxSizing: 'border-box',
+    paddingX: {
+      default: 'edge-to-text',
+      ':has(svg:only-child)': 0
+    },
+    minWidth: controlSize,
+    height: controlSize,
+    borderRadius: 'pill',
+    borderWidth: 0,
+    position: 'relative',
+    justifyContent: 'center',
+    textAlign: 'start',
+    userSelect: 'none',
+    width: 'fit',
+    transition: '[--color2, --color3, transform, scale, box-shadow, color]',
+    transitionDuration: 220,
+    transitionTimingFunction: 'out',
+    color: {
+      default: lightDark('[#530035]', 'white/80'),
+      isDisabled: 'transparent-overlay-400'
+    },
+    '--iconPrimary': {
+      type: 'fill',
+      value: 'currentColor'
+    },
+    forcedColorAdjust: 'none',
+    disableTapHighlight: true,
+    overflow: 'clip',
+    '--inner-shadow-size': {
+      type: 'top',
+      value: {
+        size: {
+          S: 12,
+          M: 16,
+          L: 20,
+          XL: 24
+        }
       }
     }
-  }
-});
+  },
+  getAllowedOverrides()
+);
 
 defineProperties(`
   @property --brand {
@@ -226,7 +234,7 @@ export function AIButton({size = 'M', brandColor, children, ...otherProps}: AIBu
     <Button
       {...otherProps}
       ref={ref}
-      className={renderProps => bg + button({size, ...renderProps})}
+      className={renderProps => bg + button({size, ...renderProps}, otherProps.styles)}
       // eslint-disable-next-line react/react-compiler
       style={pressScale(ref, {'--brand': brandColor} as CSSProperties)}>
       <IconContext.Provider value={{styles: style({size: fontRelative(16), flexShrink: 0})}}>

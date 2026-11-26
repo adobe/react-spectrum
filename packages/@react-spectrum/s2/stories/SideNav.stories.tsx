@@ -14,7 +14,7 @@ import {action} from 'storybook/actions';
 import {ActionButton} from '../src/ActionButton';
 import {ActionMenu} from '../src/ActionMenu';
 import {AdobeLogo} from '../../../dev/s2-docs/src/icons/AdobeLogo';
-import {AIButton} from './SideNavAIButton';
+import {AIButton} from '@react-spectrum/ai';
 import {Avatar} from '../src/Avatar';
 import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import {categorizeArgTypes, getActionArgs} from './utils';
@@ -44,7 +44,7 @@ import {
   SideNavProps,
   SideNavSection
 } from '../src/SideNav';
-import {SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
+import {SideNavPanelExpandButton, SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
 import {style} from '../style' with {type: 'macro'};
 import {useLandmark} from 'react-aria/useLandmark';
 
@@ -559,6 +559,7 @@ const SideNavPanelExtraControls = () => {
         flexGrow: 0,
         gap: 8,
         padding: 4,
+        marginBottom: 8,
         alignItems: {
           default: 'center',
           isCollapsed: 'start'
@@ -625,16 +626,21 @@ export const SideNavPanelExample = {
         aria-label="Side panel">
         <SideNavPanelContext.Consumer>
           {({isCollapsed}) => (
-            <div className={style({display: 'flex', flexDirection: 'column', gap: 2})}>
+            <div
+              className={style({
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                marginBottom: 16
+              })}>
               <AIButton
                 key={isCollapsed ? 'hidden' : 'visible'}
                 size="M"
                 brandColor="#FF0000"
                 aria-label="Ask Coworker"
-                styles={style({marginStart: 8})}>
+                styles={style({marginStart: 4})}>
                 {isCollapsed ? undefined : 'Ask Coworker'}
               </AIButton>
-              <Divider styles={style({marginY: 16})} />
             </div>
           )}
         </SideNavPanelContext.Consumer>
@@ -707,6 +713,17 @@ export const SideNavPanelExample = {
             </SideNavItem>
           </SideNavSection>
         </RoutedSideNav>
+        <div
+          className={style({
+            flexGrow: 0,
+            flexShrink: 0,
+            marginBottom: 4,
+            marginTop: 4,
+            display: 'flex',
+            marginStart: 4
+          })}>
+          <SideNavPanelExpandButton />
+        </div>
         <SideNavPanelExtraControls />
       </SideNavPanel>
       <div
@@ -775,6 +792,17 @@ export const SideNavPanelExample2 = {
             </SideNavItem>
           </SideNavItem>
         </RoutedSideNav>
+        <div
+          className={style({
+            flexGrow: 0,
+            flexShrink: 0,
+            marginBottom: 4,
+            marginTop: 4,
+            display: 'flex',
+            marginStart: 4
+          })}>
+          <SideNavPanelExpandButton />
+        </div>
       </SideNavPanel>
       <div
         className={style({

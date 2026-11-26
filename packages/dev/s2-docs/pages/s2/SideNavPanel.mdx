@@ -91,6 +91,17 @@ import Project from '@react-spectrum/s2/icons/Project';
           </SideNavItem>
         </SideNavSection>
       </SideNav>
+        <div
+          className={style({
+            flexGrow: 0,
+            flexShrink: 0,
+            marginBottom: 4,
+            marginTop: 4,
+            display: 'flex',
+            marginStart: 4
+          })}>
+          <SideNavPanelExpandButton />
+        </div>
     </SideNavPanel>
   )}
 </SideNavPanelApp>
@@ -175,6 +186,17 @@ function CollapsibleSideNavPanel() {
               );
             }}
           </SideNav>
+        <div
+          className={style({
+            flexGrow: 0,
+            flexShrink: 0,
+            marginBottom: 4,
+            marginTop: 4,
+            display: 'flex',
+            marginStart: 4
+          })}>
+          <SideNavPanelExpandButton />
+        </div>
         </SideNavPanel>
       )}
     </SideNavPanelApp>
@@ -264,6 +286,17 @@ let items: Item[] = [
           );
         }}
       </SideNav>
+        <div
+          className={style({
+            flexGrow: 0,
+            flexShrink: 0,
+            marginBottom: 4,
+            marginTop: 4,
+            display: 'flex',
+            marginStart: 4
+          })}>
+          <SideNavPanelExpandButton />
+        </div>
       {/*- begin highlight -*/}
       <AccountFooter />
       {/*- end highlight -*/}
