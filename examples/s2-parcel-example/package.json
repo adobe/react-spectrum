@@ -12,7 +12,6 @@
     "parcel": "^2.16.3",
     "process": "^0.11.10"
   },
-  "packageManager": "yarn@4.18.0",
   "@parcel/bundler-default": {
     "manualSharedBundles": [
       {

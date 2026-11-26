@@ -23,6 +23,5 @@
   },
   "devDependencies": {
     "process": "^0.11.10"
-  },
-  "packageManager": "yarn@4.18.0"
+  }
 }
