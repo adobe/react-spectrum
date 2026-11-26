@@ -16,6 +16,7 @@
 // Uses ComboBox which sets isNonModal: true so its Popover registers a
 // document.addEventListener('scroll', ...) via useCloseOnScroll.
 
+import {userEvent as browserUserEvent} from 'vitest/browser';
 import {Button} from '../src/Button';
 import {ComboBox} from '../src/ComboBox';
 import {createRoot} from 'react-dom/client';
@@ -82,6 +83,66 @@ it('overlay closes when a scrollable light DOM ancestor scrolls', async () => {
 
   root.unmount();
   document.body.removeChild(scrollable);
+});
+
+it('keeps the popover open when pressing a non-field part of it', async () => {
+  let container = document.createElement('div');
+  document.body.appendChild(container);
+  let root = createRoot(container);
+  root.render(
+    <>
+      <ComboBox>
+        <Label>Favorite Animal</Label>
+        <Input />
+        <Button>▼</Button>
+        <Popover data-testid="popover" style={{padding: 16}}>
+          <div data-testid="toolbar" style={{display: 'flex', gap: 40}}>
+            <Button>Reset selection</Button>
+            <button type="button">Another action</button>
+          </div>
+          <span>Some text</span>
+          <ListBox>
+            <ListBoxItem id="cat">Cat</ListBoxItem>
+            <ListBoxItem id="dog">Dog</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+      <div>Outside</div>
+    </>
+  );
+  await new Promise<void>(resolve => setTimeout(resolve, 100));
+
+  let screen = within(container);
+  let input = screen.getByRole('combobox');
+  await browserUserEvent.click(input);
+  await browserUserEvent.keyboard('{ArrowDown}');
+  let popover = document.querySelector<HTMLElement>('[data-testid="popover"]')!;
+  let toolbar = popover.querySelector<HTMLElement>('[data-testid="toolbar"]')!;
+  let popoverScreen = within(popover);
+  let firstButton = popoverScreen.getByRole('button', {name: 'Reset selection'});
+  let gapX = firstButton.getBoundingClientRect().right - toolbar.getBoundingClientRect().left + 20;
+
+  let presses: Array<[Element, Parameters<typeof browserUserEvent.click>[1]]> = [
+    [popover, {position: {x: 4, y: 4}, force: true}],
+    [toolbar, {position: {x: gapX, y: toolbar.offsetHeight / 2}}],
+    [popoverScreen.getByText('Some text'), {}],
+    // WebKit doesn't focus a pressed native button.
+    [popoverScreen.getByRole('button', {name: 'Another action'}), {}],
+    [firstButton, {}]
+  ];
+  for (let [target, options] of presses) {
+    await browserUserEvent.click(target, options);
+    await new Promise<void>(resolve => setTimeout(resolve, 50));
+    expect(document.querySelector('[role="listbox"]')).not.toBeNull();
+    expect(document.activeElement).toBe(input);
+  }
+
+  await browserUserEvent.click(screen.getByText('Outside'));
+  await new Promise<void>(resolve => setTimeout(resolve, 50));
+  expect(document.querySelector('[role="listbox"]')).toBeNull();
+
+  root.unmount();
+  document.body.removeChild(container);
 });
 
 describe('Shadow DOM', () => {
