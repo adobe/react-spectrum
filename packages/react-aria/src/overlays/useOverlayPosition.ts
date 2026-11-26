@@ -13,7 +13,7 @@
 import {addEvent} from '../utils/domHelpers';
 import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {getActiveElement, isFocusWithin} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, isFocusWithin, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getPropagationTargets} from '../utils/shadowdom/DOMFunctions';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
@@ -253,8 +253,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // so it can be restored after repositioning. This way if the overlay height
     // changes, the focused element appears to stay in the same position.
     let anchor: ScrollAnchor | null = null;
-    if (scrollRef.current && isFocusWithin(scrollRef.current)) {
-      let anchorRect = getActiveElement()?.getBoundingClientRect();
+    let anchorElement = scrollRef.current ? getFocusedElementWithin(scrollRef.current) : null;
+    if (scrollRef.current && anchorElement) {
+      let anchorRect = anchorElement.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       // Anchor from the top if the offset is in the top half of the scrollable element,
       // otherwise anchor from the bottom.
@@ -267,6 +268,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         anchor.offset = (anchorRect?.bottom ?? 0) - scrollRect.bottom;
       }
     }
+
+    // Resetting the max height below can cause the browser to clamp the scroll container's
+    // scrollTop. Save it so it can be restored if there is no focused element to anchor to.
+
+    let savedScrollTop = scrollRef.current?.scrollTop;
 
     // Always reset the overlay's previous max height if not defined by the user so that we can compensate for
     // RAC collections populating after a second render and properly set a correct max height + positioning when it populates.
@@ -310,12 +316,15 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlay.style.maxHeight = position.maxHeight != null ? position.maxHeight + 'px' : '';
 
     // Restore scroll position relative to anchor element.
-    let activeElement = getActiveElement();
-    if (anchor && activeElement && scrollRef.current) {
-      let anchorRect = activeElement.getBoundingClientRect();
+    if (anchor && anchorElement && scrollRef.current) {
+      let anchorRect = anchorElement.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       let newOffset = anchorRect[anchor.type] - scrollRect[anchor.type];
       scrollRef.current.scrollTop += newOffset - anchor.offset;
+    } else if (scrollRef.current && savedScrollTop != null) {
+      // No focused element to anchor to (e.g. the user scrolled with the mouse), so restore
+      // the scroll position from before the max height was reset.
+      scrollRef.current.scrollTop = savedScrollTop;
     }
 
     // Trigger a set state for a second render anyway for arrow positioning
@@ -420,6 +429,30 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     },
     updatePosition
   };
+}
+
+/**
+ * Returns the element within the scroll container that currently has focus, either real DOM focus
+ * or virtual focus via aria-activedescendant (e.g. a ComboBox, where focus staus in the input).
+ */
+
+function getFocusedElementWithin(scrollNode: Element): Element | null {
+  let activeElement = getActiveElement();
+  if (!activeElement) {
+    return null;
+  }
+  if (isFocusWithin(scrollNode)) {
+    return activeElement;
+  }
+  let activeDescendantId = activeElement.getAttribute('aria-activedescendant');
+  if (activeDescendantId) {
+    let root = activeElement.getRootNode() as Document | ShadowRoot;
+    let activeDescendant = root.getElementById(activeDescendantId);
+    if (activeDescendant && nodeContains(scrollNode, activeDescendant)) {
+      return activeDescendant;
+    }
+  }
+  return null;
 }
 
 function useResize(onResize) {
