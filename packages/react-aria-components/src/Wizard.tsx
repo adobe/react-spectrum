@@ -52,7 +52,10 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
-export interface WizardProps extends Omit<TabsProps, 'children' | 'selectedKey'> {
+export interface WizardProps extends Omit<
+  TabsProps,
+  'children' | 'selectedKey' | 'keyboardActivation'
+> {
   /**
    * The children of the component (a `WizardStepList` and optional `WizardPanels`). Buttons with
    * `slot="previous"` and `slot="next"` move to the previous and next steps.

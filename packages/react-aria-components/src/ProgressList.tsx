@@ -75,8 +75,8 @@ interface ProgressListState {
 const InternalProgressListContext = createContext<ProgressListState | null>(null);
 
 /**
- * A ProgressList displays the steps of a multi-step process, and which of them the user has
- * completed.
+ * A ProgressList displays the steps of a multi-step process and indicates which of the steps the
+ * user has completed.
  */
 export const ProgressList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ProgressList<T>(
   props: ProgressListProps<T>,

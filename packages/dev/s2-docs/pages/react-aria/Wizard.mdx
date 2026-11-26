@@ -256,11 +256,11 @@ They can be placed anywhere inside the `Wizard`, and are disabled when there is 
 
 ## Completed steps
 
-Wizards can work in two different ways, linearly, where steps must be completed in order, although you can visit previous steps. 
+Wizards can work in two different ways, sequentially, where steps must be completed in order, although you can visit previous steps. 
 In this mode, users cannot skip ahead to incomplete steps and any steps after the last completed step plus one are disabled. 
-Or non-linearly, where users can navigate freely between steps at any time and you are responsible for tracking which steps are completed and disabled.
+Or non-sequentially, where users can navigate freely between steps at any time and you are responsible for tracking which steps are completed and disabled.
 
-### Controlled linear
+### Controlled Sequential Navigation
 
 Set `completedKeys` to decide which steps are completed, for example once a step's fields are valid, or to restore saved progress. 
 Users can select the steps up to and including the one after the last completed step, and the next button is disabled until the current step is completed. 
