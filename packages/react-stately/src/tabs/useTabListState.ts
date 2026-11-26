@@ -54,6 +54,7 @@ export interface TabListState<T> extends SingleSelectListState<T> {
  * which tab is currently selected and displays the content associated with that Tab in a TabPanel.
  */
 export function useTabListState<T extends object>(props: TabListStateOptions<T>): TabListState<T> {
+  let disabledKeys = new Set(props.disabledKeys);
   let state = useSingleSelectListState<T>({
     ...props,
     onSelectionChange: props.onSelectionChange
@@ -68,7 +69,7 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
       props.defaultSelectedKey ??
       findDefaultSelectedKey(
         props.collection,
-        props.disabledKeys ? new Set(props.disabledKeys) : new Set()
+        key => disabledKeys.has(key) || !!props.collection?.getItem(key)?.props?.isDisabled
       ) ??
       undefined
   });
@@ -76,18 +77,36 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
   let {selectionManager, collection, selectedKey: currentSelectedKey} = state;
 
   let lastSelectedKey = useRef(currentSelectedKey);
+  let pendingSelection = useRef<{from: Key | null; to: Key} | null>(null);
   useEffect(() => {
-    // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
+    // Keep uncontrolled selection on an available tab when the collection changes.
     let selectedKey = currentSelectedKey;
     if (
       props.selectedKey == null &&
-      (selectionManager.isEmpty || selectedKey == null || !collection.getItem(selectedKey))
+      (selectionManager.isEmpty ||
+        selectedKey == null ||
+        !collection.getItem(selectedKey) ||
+        selectionManager.isDisabled(selectedKey))
     ) {
-      selectedKey = findDefaultSelectedKey(collection, state.disabledKeys);
-      if (selectedKey != null) {
-        // directly set selection because replace/toggle selection won't consider disabled keys
+      selectedKey = findDefaultSelectedKey(
+        collection,
+        key => selectionManager.isDisabled(key),
+        currentSelectedKey != null && collection.getItem(currentSelectedKey)
+          ? currentSelectedKey
+          : collection.getFirstKey()
+      );
+      if (
+        selectedKey != null &&
+        selectedKey !== currentSelectedKey &&
+        (pendingSelection.current?.from !== currentSelectedKey ||
+          pendingSelection.current?.to !== selectedKey)
+      ) {
+        // A collection update may render again before the pending selection is committed.
+        pendingSelection.current = {from: currentSelectedKey, to: selectedKey};
         selectionManager.setSelectedKeys([selectedKey]);
       }
+    } else {
+      pendingSelection.current = null;
     }
 
     // If the tablist doesn't have focus and the selected key changes or if there isn't a focused key yet, change focused key to the selected key if it exists.
@@ -108,28 +127,16 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
 
 function findDefaultSelectedKey<T>(
   collection: Collection<Node<T>> | undefined,
-  disabledKeys: Set<Key>
+  isDisabled: (key: Key) => boolean,
+  fallbackKey: Key | null = collection?.getFirstKey() ?? null
 ) {
-  let selectedKey: Key | null = null;
-  if (collection) {
-    selectedKey = collection.getFirstKey();
-    // loop over tabs until we find one that isn't disabled and select that
-    while (
-      selectedKey != null &&
-      (disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) &&
-      selectedKey !== collection.getLastKey()
-    ) {
-      selectedKey = collection.getKeyAfter(selectedKey);
-    }
-    // if this check is true, then every item is disabled, it makes more sense to default to the first key than the last
-    if (
-      selectedKey != null &&
-      (disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) &&
-      selectedKey === collection.getLastKey()
-    ) {
-      selectedKey = collection.getFirstKey();
-    }
+  if (!collection) {
+    return null;
   }
-
-  return selectedKey;
+  let selectedKey = collection.getFirstKey();
+  while (selectedKey != null && isDisabled(selectedKey)) {
+    selectedKey = collection.getKeyAfter(selectedKey);
+  }
+  // Preserve an existing selection when no enabled tab is available.
+  return selectedKey ?? fallbackKey;
 }
