@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {isEqual, useDeepMemo} from '../utils/useDeepMemo';
 import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
 
@@ -20,6 +21,7 @@ import {useMemo} from 'react';
  * @param options - Formatting options.
  */
 export function useListFormatter(options: Intl.ListFormatOptions = {}): Intl.ListFormat {
+  let memoedOptions = useDeepMemo(options, isEqual);
   let {locale} = useLocale();
-  return useMemo(() => new Intl.ListFormat(locale, options), [locale, options]);
+  return useMemo(() => new Intl.ListFormat(locale, memoedOptions), [locale, memoedOptions]);
 }

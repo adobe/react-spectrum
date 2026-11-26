@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {isEqual, useDeepMemo} from '../utils/useDeepMemo';
 import {NumberFormatOptions, NumberFormatter} from '@internationalized/number';
 import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
@@ -21,6 +22,7 @@ import {useMemo} from 'react';
  * @param options - Formatting options.
  */
 export function useNumberFormatter(options: NumberFormatOptions = {}): Intl.NumberFormat {
+  let memoedOptions = useDeepMemo(options, isEqual);
   let {locale} = useLocale();
-  return useMemo(() => new NumberFormatter(locale, options), [locale, options]);
+  return useMemo(() => new NumberFormatter(locale, memoedOptions), [locale, memoedOptions]);
 }
