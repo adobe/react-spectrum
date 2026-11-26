@@ -631,14 +631,14 @@ export const SideNavPanelExample = {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 2,
-                marginBottom: 16
+                marginBottom: 16,
+                marginStart: 4
               })}>
               <AIButton
                 key={isCollapsed ? 'hidden' : 'visible'}
                 size="M"
                 brandColor="#FF0000"
-                aria-label="Ask Coworker"
-                styles={style({marginStart: 4})}>
+                aria-label="Ask Coworker">
                 {isCollapsed ? undefined : 'Ask Coworker'}
               </AIButton>
             </div>
