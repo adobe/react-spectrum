@@ -44,3 +44,30 @@ export const WithLongLabel: StoryObj<typeof Tooltip> = {
   ...LongLabel,
   play: Default.play
 } as StoryObj;
+
+export const Informative: StoryObj<typeof Tooltip> = {
+  ...Example,
+  args: {
+    ...Example.args,
+    variant: 'informative'
+  },
+  play: Default.play
+} as StoryObj;
+
+export const Negative: StoryObj<typeof Tooltip> = {
+  ...Example,
+  args: {
+    ...Example.args,
+    variant: 'negative'
+  },
+  play: Default.play
+} as StoryObj;
+
+export const HideArrow: StoryObj<typeof Tooltip> = {
+  ...Example,
+  args: {
+    ...Example.args,
+    hideArrow: true
+  },
+  play: Default.play
+} as StoryObj;
