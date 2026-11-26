@@ -1,4 +1,4 @@
-export {SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
+export {SideNavPanel, SideNavPanelExpandButton, SideNavPanelContext} from '../src/SideNavPanel';
 export type {SideNavPanelProps} from '../src/SideNavPanel';
 export {
   SideNav,
