@@ -22,7 +22,6 @@ import {
   TableFooter as AriaTableFooter,
   type TableFooterProps
 } from 'react-aria-components/Table';
-import {Group} from 'react-aria-components/Group';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {twMerge} from 'tailwind-merge';
 import {tv} from 'tailwind-variants';
@@ -49,10 +48,8 @@ export function Table(props: TableProps) {
   );
 }
 
-const columnStyles = tv({
-  extend: focusRing,
-  base: 'px-2 h-5 box-border flex-1 flex gap-1 items-center overflow-hidden'
-});
+const columnStyles =
+  'px-2 h-5 box-border flex-1 flex gap-1 items-center overflow-hidden outline-none focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-500 forced-colors:focus-visible:outline-[Highlight]';
 
 const resizerStyles = tv({
   extend: focusRing,
@@ -69,7 +66,7 @@ export function Column(props: ColumnProps) {
       )}>
       {composeRenderProps(props.children, (children, {allowsSorting, sortDirection}) => (
         <div className="flex items-center">
-          <Group role="presentation" tabIndex={-1} className={columnStyles}>
+          <div role={allowsSorting ? 'button' : undefined} tabIndex={-1} className={columnStyles}>
             <span className="truncate">{children}</span>
             {allowsSorting && (
               <span
@@ -84,7 +81,7 @@ export function Column(props: ColumnProps) {
                 )}
               </span>
             )}
-          </Group>
+          </div>
           {!props.width && <ColumnResizer className={resizerStyles} />}
         </div>
       ))}
