@@ -186,7 +186,7 @@ function FormWizard({onCreate}) {
 // Like the Controlled and Random access examples in the docs, which complete each step once its
 // field is valid. Without random access, a step is only completed once the steps before it are, so
 // that users can't skip ahead of a step that isn't completed.
-function CompletedKeysWizard({allowsRandomAccess, onCreate}) {
+function CompletedKeysWizard({allowsSelectingAnyStep, onCreate}) {
   let [step, setStep] = useState('details');
   let [name, setName] = useState('');
   let [email, setEmail] = useState('');
@@ -194,13 +194,13 @@ function CompletedKeysWizard({allowsRandomAccess, onCreate}) {
   if (isValidName(name)) {
     completedKeys.push('details');
   }
-  if (isValidEmail(email) && (allowsRandomAccess || isValidName(name))) {
+  if (isValidEmail(email) && (allowsSelectingAnyStep || isValidName(name))) {
     completedKeys.push('members');
   }
 
   return (
     <Wizard
-      allowsRandomAccess={allowsRandomAccess}
+      allowsSelectingAnyStep={allowsSelectingAnyStep}
       completedKeys={completedKeys}
       selectedKey={step}
       onSelectionChange={setStep}>
@@ -804,8 +804,8 @@ describe('Wizard', () => {
       expect(tabs[1]).not.toHaveAttribute('aria-disabled');
     });
 
-    it('should allow navigating to any step without completing steps with allowsRandomAccess', async () => {
-      let tree = render(<WizardExample allowsRandomAccess />);
+    it('should allow navigating to any step without completing steps with allowsSelectingAnyStep', async () => {
+      let tree = render(<WizardExample allowsSelectingAnyStep />);
       expect(getNavigableSteps(tree)).toEqual(keys);
 
       await user.click(tree.getAllByRole('tab')[3]);
@@ -815,9 +815,9 @@ describe('Wizard', () => {
       }
     });
 
-    it('should mark the completed steps with allowsRandomAccess, and move to the next step without completing the current one', async () => {
+    it('should mark the completed steps with allowsSelectingAnyStep, and move to the next step without completing the current one', async () => {
       let tree = render(
-        <WizardExample allowsRandomAccess completedKeys={['advanced']}>
+        <WizardExample allowsSelectingAnyStep completedKeys={['advanced']}>
           <WizardButtons />
         </WizardExample>
       );
@@ -839,7 +839,7 @@ describe('Wizard', () => {
       expect(getNavigableSteps(tree)).toEqual(['domain', 'advanced', 'review']);
       tree.unmount();
 
-      tree = render(<WizardExample allowsRandomAccess {...disabledProps} />);
+      tree = render(<WizardExample allowsSelectingAnyStep {...disabledProps} />);
       expect(getNavigableSteps(tree)).toEqual(['domain', 'advanced', 'review']);
 
       await user.click(tree.getAllByRole('tab')[1]);
@@ -932,9 +932,9 @@ describe('Wizard', () => {
       expect(onCreate).toHaveBeenCalledWith('Docs', 'devon@example.com');
     });
 
-    it('should let users fill in steps in any order with allowsRandomAccess', async () => {
+    it('should let users fill in steps in any order with allowsSelectingAnyStep', async () => {
       let onCreate = jest.fn();
-      let tree = render(<CompletedKeysWizard allowsRandomAccess onCreate={onCreate} />);
+      let tree = render(<CompletedKeysWizard allowsSelectingAnyStep onCreate={onCreate} />);
       let tabs = tree.getAllByRole('tab');
       expect(getNavigableSteps(tree, projectKeys)).toEqual(projectKeys);
 

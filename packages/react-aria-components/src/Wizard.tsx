@@ -85,17 +85,17 @@ export interface WizardProps extends Omit<
   onSelectionChange?: (key: Key) => void;
   /**
    * The keys of the completed steps. The application decides when a step is completed, for example,
-   * when all its fields are valid. Unless `allowsRandomAccess` is set, any step up to and including
+   * when all its fields are valid. Unless `allowsSelectingAnyStep` is set, any step up to and including
    * the step immediately following the last completed step is navigable, and the `next` button only
    * moves to navigable steps. When omitted, the steps before the current step are considered
-   * completed. If `allowsRandomAccess` is set, no steps are considered completed.
+   * completed. If `allowsSelectingAnyStep` is set, no steps are considered completed.
    */
   completedKeys?: Iterable<Key>;
   /**
    * Whether every step that is not in `disabledKeys` is navigable at any time, rather than only the
    * steps up to and including the one after the last completed step.
    */
-  allowsRandomAccess?: boolean;
+  allowsSelectingAnyStep?: boolean;
 }
 
 export const WizardContext = createContext<ContextValue<WizardProps, HTMLDivElement>>(null);
@@ -152,7 +152,7 @@ export interface WizardStateOptions<T> {
    */
   completedKeys?: Iterable<Key>;
   /** Whether every step that is not in `disabledKeys` is navigable at any time. */
-  allowsRandomAccess?: boolean;
+  allowsSelectingAnyStep?: boolean;
   /** The step keys that are disabled. These steps are never navigable. */
   disabledKeys?: Iterable<Key>;
 }
@@ -194,7 +194,7 @@ export interface WizardState<T> {
 export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> {
   let {
     collection,
-    allowsRandomAccess = false,
+    allowsSelectingAnyStep = false,
     disabledKeys: disabledStepKeys,
     completedKeys: completedStepKeys,
     onSelectionChange
@@ -240,7 +240,7 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
     }
     // uncontrolled and linear
     let set = new Set<Key>();
-    if (!allowsRandomAccess && selectedKey != null) {
+    if (!allowsSelectingAnyStep && selectedKey != null) {
       let key = collection.getKeyBefore(selectedKey);
       while (key != null) {
         set.add(key);
@@ -248,11 +248,11 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
       }
     }
     return set;
-  }, [collection, completedStepKeys, allowsRandomAccess, selectedKey]);
+  }, [collection, completedStepKeys, allowsSelectingAnyStep, selectedKey]);
 
   let disabledKeys = useMemo(() => {
     let set = new Set<Key>(disabledSteps);
-    if (!allowsRandomAccess) {
+    if (!allowsSelectingAnyStep) {
       // In linear, everything after the last completed step is disabled.
       let lastCompletedKey: Key | null = null;
       for (let key of completedKeys) {
@@ -276,7 +276,7 @@ export function useWizardState<T>(props: WizardStateOptions<T>): WizardState<T> 
       }
     }
     return set;
-  }, [collection, selectedKey, completedKeys, allowsRandomAccess, disabledSteps]);
+  }, [collection, selectedKey, completedKeys, allowsSelectingAnyStep, disabledSteps]);
 
   let previousKey =
     selectedKey != null
@@ -336,7 +336,7 @@ function WizardInner({props, collection, tabsRef}: WizardInnerProps) {
     defaultSelectedKey,
     onSelectionChange,
     completedKeys,
-    allowsRandomAccess,
+    allowsSelectingAnyStep,
     disabledKeys,
     ...tabsProps
   } = props;
@@ -347,7 +347,7 @@ function WizardInner({props, collection, tabsRef}: WizardInnerProps) {
     defaultSelectedKey,
     onSelectionChange,
     completedKeys,
-    allowsRandomAccess,
+    allowsSelectingAnyStep,
     disabledKeys
   });
 

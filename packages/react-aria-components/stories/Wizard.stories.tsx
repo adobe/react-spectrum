@@ -40,7 +40,7 @@ export default {
   title: 'React Aria Components/Wizard',
   component: Wizard,
   args: {
-    allowsRandomAccess: false
+    allowsSelectingAnyStep: false
   }
 } as Meta<typeof Wizard>;
 
@@ -119,7 +119,7 @@ function FormWizardExample(args: WizardProps): ReactNode {
     <Wizard
       {...args}
       className="wizard wizard-with-forms"
-      allowsRandomAccess={false}
+      allowsSelectingAnyStep={false}
       selectedKey={selectedKey}
       onSelectionChange={key => {
         setSelectedKey(key);
