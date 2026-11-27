@@ -12,10 +12,12 @@
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, ButtonContext} from '../src/Button';
+import {composeStory} from '@storybook/react';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
+import Meta, {WizardWithForms as WizardWithFormsStory} from '../stories/Wizard.stories';
 import React, {useState} from 'react';
 import {TextField} from '../src/TextField';
 import userEvent from '@testing-library/user-event';
@@ -27,6 +29,8 @@ import {
   WizardStep,
   WizardStepList
 } from '../src/Wizard';
+
+const WizardWithForms = composeStory(WizardWithFormsStory, Meta);
 
 let steps = [
   {id: 'domain', label: 'Domain'},
@@ -223,6 +227,35 @@ describe('Wizard', () => {
 
   afterEach(() => {
     act(() => jest.runAllTimers());
+  });
+
+  it('should validate each story form before advancing and preserve values when going back', async () => {
+    let tree = render(<WizardWithForms />);
+    expect(tree.getByRole('button', {name: 'Previous'})).toBeDisabled();
+    await user.click(tree.getByRole('button', {name: 'Next'}));
+    expect(getSelectedStep(tree, ['domain', 'dns', 'advanced'])).toBe('domain');
+    expect(tree.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
+
+    await user.type(tree.getByRole('textbox'), 'example.com');
+    await user.click(tree.getByRole('button', {name: 'Next'}));
+    expect(getSelectedStep(tree, ['domain', 'dns', 'advanced'])).toBe('dns');
+    expect(tree.getAllByRole('form')).toHaveLength(1);
+    await user.click(tree.getByRole('button', {name: 'Previous'}));
+    expect(tree.getByRole('textbox')).toHaveValue('example.com');
+    await user.click(tree.getByRole('button', {name: 'Next'}));
+    await user.type(tree.getByRole('textbox'), 'verification=123');
+    await user.keyboard('{Enter}');
+    expect(getSelectedStep(tree, ['domain', 'dns', 'advanced'])).toBe('advanced');
+
+    await user.type(tree.getByRole('textbox'), 'invalid-email');
+    await user.click(tree.getByRole('button', {name: 'Finish'}));
+    expect(tree.queryByRole('status')).toBeNull();
+    expect(tree.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
+    await user.clear(tree.getByRole('textbox'));
+    await user.type(tree.getByRole('textbox'), 'sender@example.com');
+    await user.click(tree.getByRole('button', {name: 'Finish'}));
+    expect(tree.getByRole('status')).toHaveTextContent('Email domain setup complete.');
+    expect(tree.getAllByRole('tab').every(tab => tab.hasAttribute('data-completed'))).toBe(true);
   });
 
   it('should render a step list and the panel of the selected step', () => {

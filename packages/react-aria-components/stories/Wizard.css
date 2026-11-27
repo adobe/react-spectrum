@@ -13,6 +13,38 @@
     background: var(--spectrum-global-color-gray-300);
   }
 
+  .wizard-with-forms {
+    width: 600px;
+    max-width: 100%;
+
+    .react-aria-WizardPanel {
+      padding: 20px 0;
+    }
+
+    .react-aria-Form,
+    .react-aria-TextField {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+    }
+
+    .react-aria-FieldError {
+      color: var(--spectrum-global-color-red-600);
+      font-size: 12px;
+    }
+
+    .wizard-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+    }
+  }
+
   .react-aria-WizardStep {
     display: flex;
     flex: 1 1 0;
