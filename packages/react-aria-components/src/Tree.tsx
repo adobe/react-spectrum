@@ -643,7 +643,7 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
               [DropIndicatorContext, {render: TreeDropIndicatorWrapper}]
             ]}>
             {hasDropHooks && <RootDropIndicator />}
-            <SharedElementTransition>
+            <SharedElementTransition containerRef={ref}>
               <CollectionRoot
                 collection={state.collection}
                 persistedKeys={useDndPersistedKeys(
