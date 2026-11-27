@@ -23,6 +23,9 @@ import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuild
 import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {DOMAttributes, FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
+import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
+import {getScrollParent} from 'react-aria/private/utils/getScrollParent';
 import {Collection as ICollection, Key, Node} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import React, {
@@ -34,6 +37,7 @@ import React, {
   useMemo,
   useState
 } from 'react';
+import {scrollIntoViewport} from 'react-aria/private/utils/scrollIntoView';
 import {
   TabInner,
   TabList,
@@ -510,8 +514,21 @@ export function useWizardStep<T>(
   // effect so that a field in the new panel that focuses itself when it mounts (e.g. with autoFocus)
   // does so afterward, and keeps focus.
   useLayoutEffect(() => {
-    if (isFocused && ref.current) {
-      focusWithoutScrolling(ref.current);
+    if (ref.current) {
+      if (isFocused) {
+        focusWithoutScrolling(ref.current);
+      }
+
+      // Scroll into view if navigating with a keyboard, otherwise
+      // try not to shift the view under the user's mouse/finger.
+      // If in a overlay, scrollIntoViewport will only cause scrolling
+      // up to the overlay scroll body to prevent overlay shifting.
+      // Also only scroll into view if the cell actually got focused.
+      // There are some cases where the cell might be disabled or inside,
+      // an inert container and we don't want to scroll then.
+      if (getInteractionModality() !== 'pointer' && getActiveElement() === ref.current) {
+        scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+      }
     }
   }, [isFocused, ref]);
 
