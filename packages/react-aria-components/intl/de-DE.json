@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Farbfelder",
   "dropzoneLabel": "Ablegebereich",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Element wählen",
   "tableResizer": "Größenanpassung"
 }

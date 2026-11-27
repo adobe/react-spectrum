@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Χρωματικά δείγματα",
   "dropzoneLabel": "DropZone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Επιλέξτε ένα αντικείμενο",
   "tableResizer": "Αλλαγή μεγέθους"
 }

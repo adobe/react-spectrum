@@ -1,0 +1,444 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+
+export const tags = ['stepper', 'steps', 'multi-step', 'form', 'flow'];
+export const version = 'alpha';
+export const description = 'Guides users through a multi-step process one step at a time.';
+
+# Wizard
+
+<PageDescription>{docs.exports.Wizard.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.Wizard} links={docs.links} props={['allowsSelectingAnyStep']} type="vanilla" files={["starters/docs/src/Wizard.tsx", "starters/docs/src/Wizard.css", "packages/dev/s2-docs/pages/react-aria/ProjectFields.tsx"]}
+  "use client";
+  import type {Key} from 'react-aria-components/Wizard';
+  import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel} from 'vanilla-starter/Wizard';
+  import {Button} from 'vanilla-starter/Button';
+  import {Form} from 'vanilla-starter/Form';
+  import {NameField, EmailField, Summary} from './ProjectFields';
+  import {useState} from 'react';
+
+  function Example() {
+    let [step, setStep] = useState<Key>('details');
+    let [name, setName] = useState('');
+    let [email, setEmail] = useState('');
+    // Only focus the field when the back or next button changes the step.
+    let [focusField, setFocusField] = useState(false);
+
+    return (
+      <Form
+        style={{maxWidth: '100%'}}
+        onSubmit={e => {
+          e.preventDefault();
+          if (step === 'details') {
+            setStep('members');
+            setFocusField(true);
+          } else if (step === 'members') {
+            setStep('review');
+            setFocusField(true);
+          } else {
+            alert(`Created ${name}!`);
+          }
+        }}>
+        {/*- begin highlight -*/}
+        <Wizard
+          selectedKey={step}
+          onSelectionChange={key => {
+            setStep(key);
+            setFocusField(false);
+          }}/* PROPS */>
+          <WizardStepList aria-label="Create project">
+            <WizardStep id="details">Details</WizardStep>
+            <WizardStep id="members">Members</WizardStep>
+            <WizardStep id="review">Review</WizardStep>
+          </WizardStepList>
+        {/*- end highlight -*/}
+          <WizardPanels>
+            <WizardPanel id="details">
+              <NameField value={name} onChange={setName} autoFocus={focusField} />
+            </WizardPanel>
+            <WizardPanel id="members">
+              <EmailField value={email} onChange={setEmail} autoFocus={focusField} />
+            </WizardPanel>
+            <WizardPanel id="review">
+              <Summary name={name} email={email} />
+            </WizardPanel>
+          </WizardPanels>
+          <div className="wizard-buttons">
+            <Button slot="previous" variant="secondary" onPress={() => setFocusField(true)}>Back</Button>
+            <Button type="submit">{step === 'review' ? 'Create project' : 'Next'}</Button>
+          </div>
+        </Wizard>
+      </Form>
+    );
+  }
+  ```
+
+  ```tsx render docs={docs.exports.Wizard} links={docs.links} props={['allowsSelectingAnyStep']} type="tailwind" files={["starters/tailwind/src/Wizard.tsx", "packages/dev/s2-docs/pages/react-aria/ProjectFields.tsx"]}
+  "use client";
+  import type {Key} from 'react-aria-components/Wizard';
+  import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel} from 'tailwind-starter/Wizard';
+  import {Button} from 'tailwind-starter/Button';
+  import {Form} from 'tailwind-starter/Form';
+  import {TextField} from 'tailwind-starter/TextField';
+  import {isValidName, isValidEmail} from './ProjectFields';
+  import {useState} from 'react';
+
+  function Example() {
+    let [step, setStep] = useState<Key>('details');
+    let [name, setName] = useState('');
+    let [email, setEmail] = useState('');
+    // Only focus the field when the back or next button changes the step.
+    let [focusField, setFocusField] = useState(false);
+
+    return (
+      <Form
+        className="max-w-full"
+        onSubmit={e => {
+          e.preventDefault();
+          if (step === 'details') {
+            setStep('members');
+            setFocusField(true);
+          } else if (step === 'members') {
+            setStep('review');
+            setFocusField(true);
+          } else {
+            alert(`Created ${name}!`);
+          }
+        }}>
+        {/*- begin highlight -*/}
+        <Wizard
+          selectedKey={step}
+          onSelectionChange={key => {
+            setStep(key);
+            setFocusField(false);
+          }}/* PROPS */>
+          <WizardStepList aria-label="Create project">
+            <WizardStep id="details">Details</WizardStep>
+            <WizardStep id="members">Members</WizardStep>
+            <WizardStep id="review">Review</WizardStep>
+          </WizardStepList>
+          {/*- end highlight -*/}
+          <WizardPanels>
+            <WizardPanel id="details">
+              <TextField
+                value={name}
+                onChange={setName}
+                autoFocus={focusField}
+                label="Name"
+                isRequired
+                validate={name => (isValidName(name) ? null : 'Enter a name for the project.')} />
+            </WizardPanel>
+            <WizardPanel id="members">
+              <TextField
+                value={email}
+                onChange={setEmail}
+                autoFocus={focusField}
+                label="Email"
+                description="Invite someone to work on the project with you."
+                isRequired
+                validate={email => (isValidEmail(email) ? null : 'Enter a valid email address.')} />
+            </WizardPanel>
+            <WizardPanel id="review">
+              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 m-0 wrap-anywhere">
+                <dt>Name</dt>
+                <dd className="m-0">{name || 'None'}</dd>
+                <dt>Member</dt>
+                <dd className="m-0">{email || 'None'}</dd>
+              </dl>
+            </WizardPanel>
+          </WizardPanels>
+          <div className="flex justify-between">
+            <Button slot="previous" variant="secondary" onPress={() => setFocusField(true)}>Back</Button>
+            <Button type="submit">{step === 'review' ? 'Create project' : 'Next'}</Button>
+          </div>
+        </Wizard>
+      </Form>
+    );
+  }
+  ```
+
+</ExampleSwitcher>
+
+By default, the steps before the current step are completed. Users move forward with the next button, and can go back to a completed step, which marks the steps after it as not completed. To validate each step before moving forward, wrap the wizard in a [Form](Form), and move to the next step when the form is submitted. The browser only submits the form when the fields in the current step are valid. Otherwise, it displays the errors and focuses the first invalid field.
+
+This example creates a project with a field on each step. Panels are unmounted when their step is not current, so the values are stored in state. The example controls `selectedKey` so that the next button can create the project on the last step, while leaving completion uncontrolled.
+
+<InlineAlert variant="notice">
+  <Heading>Wizard vs. ProgressList</Heading>
+  <Content>Use a `Wizard` if any of the steps need to be interactive. Otherwise, use a `ProgressList` to show the user's progress through steps.</Content>
+</InlineAlert>
+
+## Content
+
+`WizardStepList` and `WizardPanels` follow the [Collection Components API](collections?component=WizardStepList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render
+"use client";
+import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel, WizardButtons} from 'vanilla-starter/Wizard';
+
+let steps = [
+  {id: 'account', label: 'Account', content: 'Choose a username and password.'},
+  {id: 'profile', label: 'Profile', content: 'Add a photo and a short bio.'},
+  {id: 'settings', label: 'Settings', content: 'Choose which notifications you receive.'},
+  {id: 'confirm', label: 'Confirm', content: 'Check your details, then create your account.'}
+];
+
+<Wizard>
+  <WizardStepList
+    aria-label="Sign up"
+    /*- begin highlight -*/
+    items={steps}>
+    {/*- end highlight -*/}
+    {step => <WizardStep>{step.label}</WizardStep>}
+  </WizardStepList>
+  <WizardPanels
+    /*- begin highlight -*/
+    items={steps}>
+    {/*- end highlight -*/}
+    {step => <WizardPanel>{step.content}</WizardPanel>}
+  </WizardPanels>
+  <WizardButtons />
+</Wizard>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Provide an `aria-label` or `aria-labelledby` on the `WizardStepList` that describes the process, such as "Sign up". Each step announces whether it is completed, so hide visual indicators such as step numbers and checkmarks with `aria-hidden`. Steps are selected with the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key rather than when they receive focus, so users can review the steps without leaving the current one.</Content>
+</InlineAlert>
+
+## Current step
+
+Use the `defaultSelectedKey` or `selectedKey` prop to set the current step. The selected key corresponds to the `id` prop of a `<WizardStep>`. By default, steps before the current step are marked as completed, and steps after it are disabled. Use the `data-current` and `data-completed` attributes to style them.
+
+```tsx render
+"use client";
+import type {Key} from 'react-aria-components/Wizard';
+import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel, WizardButtons} from 'vanilla-starter/Wizard';
+import {useState} from 'react';
+
+function Example() {
+  let [step, setStep] = useState<Key>('members');
+
+  return (
+    <div style={{maxWidth: '100%'}}>
+      <Wizard
+        ///- begin highlight -///
+        selectedKey={step}
+        onSelectionChange={setStep}
+        ///- end highlight -///
+      >
+        <WizardStepList aria-label="Create project">
+          <WizardStep id="details">Details</WizardStep>
+          <WizardStep id="members">Members</WizardStep>
+          <WizardStep id="review">Review</WizardStep>
+        </WizardStepList>
+        <WizardPanels>
+          <WizardPanel id="details">Name your project and choose who can see it.</WizardPanel>
+          <WizardPanel id="members">Invite people to work on the project with you.</WizardPanel>
+          <WizardPanel id="review">Check the details, then create the project.</WizardPanel>
+        </WizardPanels>
+        <WizardButtons />
+      </Wizard>
+      <p>Current step: {step}</p>
+    </div>
+  );
+}
+```
+
+Buttons with `slot="previous"` and `slot="next"` move to the previous and next steps, skipping disabled steps. 
+They can be placed anywhere inside the `Wizard`, and are disabled when there is no previous or next step.
+
+## Completed steps
+
+Wizards can work in two different ways, sequentially, where steps must be completed in order, although you can visit previous steps. 
+In this mode, users cannot skip ahead to incomplete steps and any steps after the last completed step plus one are disabled. 
+Or non-sequentially, where users can navigate freely between steps at any time and you are responsible for tracking which steps are completed and disabled.
+
+### Controlled Sequential Navigation
+
+Set `completedKeys` to decide which steps are completed, for example once a step's fields are valid, or to restore saved progress. 
+Users can select the steps up to and including the one after the last completed step, and the next button is disabled until the current step is completed. 
+Completed steps stay completed when users go back. Complete steps in order, so that users can't skip ahead of a step that isn't completed.
+
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/ProjectFields.tsx"]}
+"use client";
+import type {Key} from 'react-aria-components/Wizard';
+import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel} from 'vanilla-starter/Wizard';
+import {Button} from 'vanilla-starter/Button';
+import {NameField, EmailField, Summary, isValidName, isValidEmail} from './ProjectFields';
+import {useState} from 'react';
+
+function Example() {
+  let [step, setStep] = useState<Key>('details');
+  let [name, setName] = useState('');
+  let [email, setEmail] = useState('');
+  // Only focus the field when the back or next button changes the step.
+  let [focusField, setFocusField] = useState(false);
+
+  /*- begin highlight -*/
+  // A step is completed once its field is valid, and the steps before it are completed.
+  let completedKeys: Key[] = [];
+  if (isValidName(name)) {
+    completedKeys.push('details');
+    if (isValidEmail(email)) {
+      completedKeys.push('members');
+    }
+  }
+  /*- end highlight -*/
+
+  return (
+    <Wizard
+      selectedKey={step}
+      onSelectionChange={key => {
+        setStep(key);
+        setFocusField(false);
+      }}
+      ///- begin highlight -///
+      completedKeys={completedKeys}
+      ///- end highlight -///
+    >
+      <WizardStepList aria-label="Create project">
+        <WizardStep id="details">Details</WizardStep>
+        <WizardStep id="members">Members</WizardStep>
+        <WizardStep id="review">Review</WizardStep>
+      </WizardStepList>
+      <WizardPanels>
+        <WizardPanel id="details">
+          <NameField value={name} onChange={setName} autoFocus={focusField} />
+        </WizardPanel>
+        <WizardPanel id="members">
+          <EmailField value={email} onChange={setEmail} autoFocus={focusField} />
+        </WizardPanel>
+        <WizardPanel id="review">
+          <Summary name={name} email={email} />
+        </WizardPanel>
+      </WizardPanels>
+      <div className="wizard-buttons">
+        <Button slot="previous" variant="secondary" onPress={() => setFocusField(true)}>Back</Button>
+        {step === 'review'
+          ? <Button onPress={() => alert(`Created ${name}!`)}>Create project</Button>
+          : <Button slot="next" onPress={() => setFocusField(true)}>Next</Button>}
+      </div>
+    </Wizard>
+  );
+}
+```
+
+### Controlled any order
+
+Set `allowsSelectingAnyStep` to let users select any step, in any order. 
+Steps are only completed when they are in `completedKeys`, so users can see which steps still need their attention. 
+Users can reach the last step at any time, so check that every step is completed before creating the project.
+
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/ProjectFields.tsx"]}
+"use client";
+import type {Key} from 'react-aria-components/Wizard';
+import {Wizard, WizardStepList, WizardStep, WizardPanels, WizardPanel} from 'vanilla-starter/Wizard';
+import {Button} from 'vanilla-starter/Button';
+import {NameField, EmailField, Summary, isValidName, isValidEmail} from './ProjectFields';
+import {useState} from 'react';
+
+function Example() {
+  let [step, setStep] = useState<Key>('details');
+  let [name, setName] = useState('');
+  let [email, setEmail] = useState('');
+  // Only focus the field when the back or next button changes the step.
+  let [focusField, setFocusField] = useState(false);
+
+  /*- begin highlight -*/
+  // Each step is completed once its field is valid, in any order.
+  let completedKeys: Key[] = [];
+  if (isValidName(name)) {
+    completedKeys.push('details');
+  }
+  if (isValidEmail(email)) {
+    completedKeys.push('members');
+  }
+  /*- end highlight -*/
+
+  return (
+    <Wizard
+      selectedKey={step}
+      onSelectionChange={key => {
+        setStep(key);
+        setFocusField(false);
+      }}
+      ///- begin highlight -///
+      allowsSelectingAnyStep
+      completedKeys={completedKeys}
+      ///- end highlight -///
+    >
+      <WizardStepList aria-label="Create project">
+        <WizardStep id="details">Details</WizardStep>
+        <WizardStep id="members">Members</WizardStep>
+        <WizardStep id="review">Review</WizardStep>
+      </WizardStepList>
+      <WizardPanels>
+        <WizardPanel id="details">
+          <NameField value={name} onChange={setName} autoFocus={focusField} />
+        </WizardPanel>
+        <WizardPanel id="members">
+          <EmailField value={email} onChange={setEmail} autoFocus={focusField} />
+        </WizardPanel>
+        <WizardPanel id="review">
+          <Summary name={name} email={email} />
+        </WizardPanel>
+      </WizardPanels>
+      <div className="wizard-buttons">
+        <Button slot="previous" variant="secondary" onPress={() => setFocusField(true)}>Back</Button>
+        {step === 'review'
+          ? <Button isDisabled={completedKeys.length < 2} onPress={() => alert(`Created ${name}!`)}>Create project</Button>
+          : <Button slot="next" onPress={() => setFocusField(true)}>Save</Button>}
+      </div>
+    </Wizard>
+  );
+}
+```
+
+## API
+
+```tsx links={{Wizard: '#wizard', Button: 'Button', WizardStepList: '#wizardsteplist', WizardStep: '#wizardstep', WizardPanels: '#wizardpanels', WizardPanel: '#wizardpanel'}}
+<Wizard>
+  <WizardStepList>
+    <WizardStep />
+  </WizardStepList>
+  <WizardPanels>
+    <WizardPanel />
+  </WizardPanels>
+  <Button slot="previous" />
+  <Button slot="next" />
+</Wizard>
+```
+
+### Wizard
+
+<PropTable component={docs.exports.Wizard} links={docs.links} showDescription />
+
+### WizardStepList
+
+<PropTable component={docs.exports.WizardStepList} links={docs.links} showDescription />
+
+### WizardStep
+
+<PropTable component={docs.exports.WizardStep} links={docs.links} showDescription />
+
+### WizardPanels
+
+<PropTable
+  component={docs.exports.WizardPanels}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--tab-panel-width': 'The width of the active panel in pixels. Useful for animations. Set when width, inline-size, or all is used in the CSS transition.',
+    '--tab-panel-height': 'The height of the active panel in pixels. Useful for animations. Set when height, block-size, or all is used in the CSS transition.'
+  }} />
+
+### WizardPanel
+
+<PropTable component={docs.exports.WizardPanel} links={docs.links} showDescription />

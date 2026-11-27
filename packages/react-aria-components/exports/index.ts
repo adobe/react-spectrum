@@ -196,6 +196,12 @@ export {
   SliderFillContext,
   SliderStateContext
 } from '../src/Slider';
+export {
+  ProgressList,
+  ProgressListContext,
+  ProgressListItem,
+  ProgressListItemContent
+} from '../src/ProgressList';
 export {Switch, SwitchField, SwitchButton, SwitchContext, SwitchFieldContext} from '../src/Switch';
 export {
   TableLoadMoreItem,
@@ -263,6 +269,15 @@ export {
   TreeSection,
   TreeStateContext
 } from '../src/Tree';
+export {
+  Wizard,
+  WizardStepList,
+  WizardStep,
+  WizardPanels,
+  WizardPanel,
+  WizardContext,
+  WizardStateContext
+} from '../src/Wizard';
 export {useDrag} from 'react-aria/useDrag';
 export {
   useDrop,
@@ -473,6 +488,12 @@ export type {
   SliderThumbRenderProps
 } from '../src/Slider';
 export type {
+  ProgressListProps,
+  ProgressListItemProps,
+  ProgressListItemRenderProps,
+  ProgressListItemContentProps
+} from '../src/ProgressList';
+export type {
   SwitchProps,
   SwitchRenderProps,
   SwitchFieldProps,
@@ -559,6 +580,17 @@ export type {
   TreeLoadMoreItemProps,
   TreeLoadMoreItemRenderProps
 } from '../src/Tree';
+export type {
+  WizardProps,
+  WizardStepListProps,
+  WizardStepProps,
+  WizardStepRenderProps,
+  WizardPanelsProps,
+  WizardPanelProps,
+  WizardStepAria,
+  WizardState,
+  WizardStateOptions
+} from '../src/Wizard';
 export type {DragOptions, DragResult} from 'react-aria/useDrag';
 export type {
   DragAndDropHooks,

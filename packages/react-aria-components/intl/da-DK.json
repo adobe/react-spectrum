@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Farveprøver",
   "dropzoneLabel": "DropZone",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Vælg et element",
   "tableResizer": "Størrelsesændring"
 }

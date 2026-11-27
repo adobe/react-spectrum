@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "Specimene de culoare",
   "dropzoneLabel": "Zonă de plasare",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "Selectați un element",
   "tableResizer": "Instrument de redimensionare"
 }

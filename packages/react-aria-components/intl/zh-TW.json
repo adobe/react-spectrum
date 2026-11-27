@@ -1,6 +1,9 @@
 {
   "colorSwatchPicker": "色票",
   "dropzoneLabel": "放置區",
+  "progressListItemCompleted": "Completed",
+  "progressListItemCurrent": "Current",
+  "progressListItemNotCompleted": "Not completed",
   "selectPlaceholder": "選取項目",
   "tableResizer": "大小調整器"
 }
