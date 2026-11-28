@@ -206,8 +206,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     }
   });
 
-  observer.observe(root, {childList: true, subtree: true});
-  let shadowObservers = new Set<MutationObserver>();
+  let shadowObservers = new Map<ShadowRoot, MutationObserver>();
   if (shadowDOM()) {
     for (let shadowRoot of shadowRootsToWatch) {
       // Disconnect single target instead of all https://github.com/whatwg/dom/issues/126
@@ -246,8 +245,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
           }
         }
       });
-      shadowObserver.observe(shadowRoot, {childList: true, subtree: true});
-      shadowObservers.add(shadowObserver);
+      shadowObservers.set(shadowRoot, shadowObserver);
     }
   }
 
@@ -256,21 +254,23 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     hiddenNodes,
     observe() {
       observer.observe(root, {childList: true, subtree: true});
+      for (let [shadowRoot, shadowObserver] of shadowObservers) {
+        shadowObserver.observe(shadowRoot, {childList: true, subtree: true});
+      }
     },
     disconnect() {
       observer.disconnect();
-    }
-  };
-
-  observerStack.push(observerWrapper);
-
-  return (): void => {
-    observer.disconnect();
-    if (shadowDOM()) {
-      for (let shadowObserver of shadowObservers) {
+      for (let shadowObserver of shadowObservers.values()) {
         shadowObserver.disconnect();
       }
     }
+  };
+
+  observerWrapper.observe();
+  observerStack.push(observerWrapper);
+
+  return (): void => {
+    observerWrapper.disconnect();
 
     for (let node of hiddenNodes) {
       let count = refCountMap.get(node);
