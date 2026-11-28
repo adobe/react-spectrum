@@ -796,6 +796,33 @@ describe('ariaHideOutside with shadow DOM', function () {
       // Expectations
       expect(shadowRoot.getElementById('extraContent').getAttribute('aria-hidden')).toBe('true');
     });
+
+    it('should keep a nested modal in the same shadow root visible and resume hiding outside it after closing', async () => {
+      let {shadowRoot} = createShadowRoot();
+      let portalContainer = document.createElement('div');
+      let outerModal = document.createElement('div');
+      shadowRoot.append(portalContainer);
+      portalContainer.append(outerModal);
+      cleanup = ariaHideOutside([outerModal]);
+
+      let innerModal = document.createElement('div');
+      portalContainer.append(innerModal);
+      let closeInner = ariaHideOutside([innerModal]);
+      try {
+        expect(innerModal).not.toHaveAttribute('aria-hidden');
+        await waitForMutationObserver();
+        expect(innerModal).not.toHaveAttribute('aria-hidden');
+      } finally {
+        closeInner();
+        innerModal.remove();
+      }
+
+      let outsideContent = document.createElement('div');
+      portalContainer.append(outsideContent);
+      await waitForMutationObserver();
+      expect(outerModal).not.toHaveAttribute('aria-hidden');
+      expect(outsideContent).toHaveAttribute('aria-hidden', 'true');
+    });
   });
 
   function waitForMutationObserver() {
