@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render
+} from '@react-spectrum/test-utils-internal';
 import {
   Switch as AriaSwitch,
   SwitchButton,
@@ -444,5 +450,78 @@ describe.each(['Switch', 'SwitchField'])('%s', comp => {
     await user.keyboard('{Enter}');
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  describe('touch pointer events on label', () => {
+    installPointerEvent();
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it.each([
+      {
+        name: 'zero-size touch press under a Linux desktop user agent',
+        userAgent:
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        platform: 'Linux x86_64',
+        width: 0,
+        height: 0
+      },
+      {
+        name: 'positive-size touch press under a Linux desktop user agent',
+        userAgent:
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        platform: 'Linux x86_64',
+        width: 20,
+        height: 20
+      },
+      {
+        name: 'zero-size touch press under a mobile Android user agent',
+        userAgent:
+          'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36',
+        platform: 'Linux armv81',
+        width: 0,
+        height: 0
+      },
+      {
+        name: 'positive-size touch press under a mobile Android user agent',
+        userAgent:
+          'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36',
+        platform: 'Linux armv81',
+        width: 20,
+        height: 20
+      }
+    ])('should toggle on $name', ({userAgent, platform, width, height}) => {
+      jest.spyOn(navigator, 'userAgent', 'get').mockReturnValue(userAgent);
+      jest.spyOn(navigator, 'platform', 'get').mockReturnValue(platform);
+
+      let onChange = jest.fn();
+      let {getByRole, getByText} = render(<Switch onChange={onChange}>Test</Switch>);
+      let s = getByRole('switch');
+      let labelText = getByText('Test');
+
+      expect(s).not.toBeChecked();
+
+      fireEvent.pointerDown(labelText, {
+        button: 0,
+        pointerId: 1,
+        pointerType: 'touch',
+        width,
+        height
+      });
+      fireEvent.pointerUp(labelText, {
+        button: 0,
+        pointerId: 1,
+        pointerType: 'touch',
+        width,
+        height
+      });
+      fireEvent.click(labelText, {button: 0, detail: 1});
+
+      expect(s).toBeChecked();
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(true);
+    });
   });
 });
