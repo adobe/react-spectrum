@@ -19,6 +19,7 @@ const path = require('path');
 const crypto = require('crypto');
 const packlist = require('npm-packlist');
 const tar = require('tar');
+const {prepare, restore} = require('./prepareForPublish');
 
 const REGISTRY = process.env.SEED_REGISTRY || 'http://localhost:4000';
 const CONCURRENCY = Number(process.env.SEED_CONCURRENCY) || 16;
@@ -40,7 +41,7 @@ function tarballBuffer(dir, files) {
 
 async function seedOne(storagePath, location) {
   const dir = path.resolve(process.cwd(), location);
-  const manifest = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+  let manifest = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
   if (manifest.private) {
     return null;
   }
@@ -49,8 +50,20 @@ async function seedOne(storagePath, location) {
     throw new Error(`Workspace at ${location} is missing name or version`);
   }
 
-  const files = await packlist({path: dir});
-  const buf = await tarballBuffer(dir, files);
+  const stripSource = manifest.files?.includes('!exports/**') && manifest.exports?.['.']?.source;
+  let buf;
+  if (stripSource) {
+    prepare(dir);
+  }
+  try {
+    manifest = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+    const files = await packlist({path: dir});
+    buf = await tarballBuffer(dir, files);
+  } finally {
+    if (stripSource) {
+      restore(dir);
+    }
+  }
 
   const shasum = crypto.createHash('sha1').update(buf).digest('hex');
   const integrity = 'sha512-' + crypto.createHash('sha512').update(buf).digest('base64');
@@ -126,7 +139,7 @@ async function main() {
   if (fs.existsSync(dbPath)) {
     try {
       db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-    } catch (e) {
+    } catch {
       // corrupt/empty db, start fresh
     }
   }
