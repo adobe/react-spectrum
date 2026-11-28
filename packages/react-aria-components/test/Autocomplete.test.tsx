@@ -756,6 +756,35 @@ describe('Autocomplete', () => {
     expect(foo).not.toHaveAttribute('data-focus-visible');
   });
 
+  it('should activate the focused option after typing and quickly navigating the listbox', async () => {
+    let onAction = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox onAction={onAction} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    await user.keyboard('Ba');
+    act(() => jest.advanceTimersByTime(500));
+
+    let bar = getByRole('option', {name: 'Bar'});
+    let baz = getByRole('option', {name: 'Baz'});
+    expect(input).toHaveAttribute('aria-activedescendant', bar.id);
+
+    await user.keyboard('{ArrowDown}');
+    expect(baz).toHaveAttribute('data-focused');
+    await user.keyboard('{ArrowUp}');
+    expect(bar).toHaveAttribute('data-focused');
+
+    act(() => jest.advanceTimersByTime(500));
+    expect(input).toHaveAttribute('aria-activedescendant', bar.id);
+    await user.keyboard('{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onAction).toHaveBeenCalledWith('2');
+  });
+
   it('should not move focus to the input field if tapping on a menu item via touch', async function () {
     let {getByRole} = render(
       <AutocompleteWrapper>

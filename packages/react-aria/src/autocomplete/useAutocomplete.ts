@@ -395,6 +395,7 @@ export function useAutocomplete<T>(
 
         // Prevent these keys from moving the text cursor in the input
         e.preventDefault();
+        delayNextActiveDescendant.current = false;
         // Move virtual focus into the wrapped collection
         let focusCollection = new CustomEvent(FOCUS_EVENT, {
           cancelable: true,
